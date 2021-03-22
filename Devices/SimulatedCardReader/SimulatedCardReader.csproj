@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>XFS4IoT.SP.CardReader</AssemblyName>
+    <RootNamespace>KAL.XFS4IoTSP.CardReader.Simulator</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Core\Core.csproj" />
+    <ProjectReference Include="..\..\Framework\Server\Server.csproj" />
+    <ProjectReference Include="..\..\Framework\ServiceClasses\CardReaderServiceProvider\CardReaderServiceProvider.csproj" />
+  </ItemGroup>
+
+</Project>

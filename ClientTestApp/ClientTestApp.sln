@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClientForms", "TestClientForms\TestClientForms.csproj", "{6E63E85A-EF89-4542-B616-FDC0EA044FD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClient", "TestClient\TestClient.csproj", "{7B61F158-FDD4-4DE9-A3B0-6AC7EE77F6FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\Framework\Core\Core.csproj", "{4C40265C-8CEF-4139-B39B-AD0B6061BDD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "..\Framework\Server\Server.csproj", "{BD634E24-9A40-49DC-ABAE-6BE324320877}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E63E85A-EF89-4542-B616-FDC0EA044FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E63E85A-EF89-4542-B616-FDC0EA044FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E63E85A-EF89-4542-B616-FDC0EA044FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E63E85A-EF89-4542-B616-FDC0EA044FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B61F158-FDD4-4DE9-A3B0-6AC7EE77F6FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B61F158-FDD4-4DE9-A3B0-6AC7EE77F6FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B61F158-FDD4-4DE9-A3B0-6AC7EE77F6FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B61F158-FDD4-4DE9-A3B0-6AC7EE77F6FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C40265C-8CEF-4139-B39B-AD0B6061BDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C40265C-8CEF-4139-B39B-AD0B6061BDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C40265C-8CEF-4139-B39B-AD0B6061BDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C40265C-8CEF-4139-B39B-AD0B6061BDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD634E24-9A40-49DC-ABAE-6BE324320877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD634E24-9A40-49DC-ABAE-6BE324320877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD634E24-9A40-49DC-ABAE-6BE324320877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD634E24-9A40-49DC-ABAE-6BE324320877}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {685379E1-AEF1-4AA7-A893-504DB5E6587F}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://teamsystem:8080/tfs/kal-tfs-collection
+		SccProjectUniqueName0 = TestClientForms\\TestClientForms.csproj
+		SccProjectName0 = TestClientForms
+		SccAuxPath0 = http://teamsystem:8080/tfs/kal-tfs-collection
+		SccLocalPath0 = TestClientForms
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = TestClient\\TestClient.csproj
+		SccProjectName1 = TestClient
+		SccAuxPath1 = http://teamsystem:8080/tfs/kal-tfs-collection
+		SccLocalPath1 = TestClient
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName2 = ..\\Framework\\Core\\Core.csproj
+		SccProjectName2 = ../Framework/Core
+		SccAuxPath2 = http://teamsystem:8080/tfs/kal-tfs-collection
+		SccLocalPath2 = ..\\Framework\\Core
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName3 = ..\\Framework\\Server\\Server.csproj
+		SccProjectName3 = ../Framework/Server
+		SccAuxPath3 = http://teamsystem:8080/tfs/kal-tfs-collection
+		SccLocalPath3 = ..\\Framework\\Server
+		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

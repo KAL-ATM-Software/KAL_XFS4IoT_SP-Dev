@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+      <SccProjectName>SAK</SccProjectName>
+      <SccProvider>SAK</SccProvider>
+      <SccAuxPath>SAK</SccAuxPath>
+      <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <ApplicationIcon />
+        <OutputType>Library</OutputType>
+        <StartupObject />
+        <AssemblyName>XFS4IoT.SP.Framework.Core</AssemblyName>
+        <RootNamespace>XFS4IoT</RootNamespace>
+        </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <OutputPath>..\bin\Debug\</OutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <OutputPath>..\bin\Release\</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="CoreTest\**" />
+        <Compile Remove="XFS4IoTCoreTest\**" />
+        <EmbeddedResource Remove="CoreTest\**" />
+        <EmbeddedResource Remove="XFS4IoTCoreTest\**" />
+        <None Remove="CoreTest\**" />
+        <None Remove="XFS4IoTCoreTest\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Core.csproj.vspscc" />
+    </ItemGroup>
+
+</Project>
