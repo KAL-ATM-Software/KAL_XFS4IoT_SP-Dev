@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * GetCommandRandomNumber_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetCommandRandomNumber_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,13 +29,14 @@ namespace XFS4IoT.Common.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string CommandRandomNumber = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetCommandRandomNumberCompletion.PayloadData)}");
-
                 this.CommandRandomNumber = CommandRandomNumber;
             }
 
             /// <summary>
-            ///A random number that should be included in the authorisation token in a command used to provide end to end protection.The random number will be given as HEX (upper case.)
+            /// A nonce that should be included in the authorisation token in a command used to provide 
+            /// end to end protection.
+            /// 
+            /// The nonce will be given as HEX (upper case.)
             /// </summary>
             [DataMember(Name = "commandRandomNumber")] 
             public string CommandRandomNumber { get; private set; }

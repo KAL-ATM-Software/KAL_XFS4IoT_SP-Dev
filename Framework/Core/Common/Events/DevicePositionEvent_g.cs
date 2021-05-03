@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * DevicePositionEvent_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * DevicePositionEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -18,11 +17,11 @@ namespace XFS4IoT.Common.Events
 
     [DataContract]
     [Event(Name = "Common.DevicePositionEvent")]
-    public sealed class DevicePositionEvent : Event<DevicePositionEvent.PayloadData>
+    public sealed class DevicePositionEvent : UnsolicitedEvent<DevicePositionEvent.PayloadData>
     {
 
-        public DevicePositionEvent(string RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public DevicePositionEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 
@@ -45,7 +44,7 @@ namespace XFS4IoT.Common.Events
             }
 
             /// <summary>
-            ///Position of the device.
+            /// Position of the device.
             /// </summary>
             [DataMember(Name = "position")] 
             public PositionEnum? Position { get; private set; }

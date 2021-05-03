@@ -17,21 +17,19 @@ namespace XFS4IoTServer
         /// <summary>
         /// Tag a class to handle a message type for a service
         /// </summary>
-        /// <param name="ServiceType">Type of service class this handler is related to</param>
+        /// <param name="ServiceClass">Service class this handler is related to</param>
         /// <param name="HandledType">Type of message class this handler will handle</param>
-        public CommandHandlerAttribute(Type ServiceType, Type HandledType)
+        public CommandHandlerAttribute(XFS4IoT.XFSConstants.ServiceClass ServiceClass, Type HandledType)
         {
-            ServiceType.IsNotNull($"Invalid parameter received in {nameof(CommandHandlerAttribute)}. {nameof(ServiceType)}");
             HandledType.IsNotNull($"Invalid parameter received in {nameof(CommandHandlerAttribute)}. {nameof(HandledType)}");
 
-            this.ServiceType = ServiceType;
+            this.ServiceClass = ServiceClass;
             this.HandledType = HandledType;
 
             Contracts.IsTrue(typeof(Command<MessagePayload>).IsAssignableFrom(HandledType), $"Type {HandledType} is registered as a handled type but is not a {nameof(Command<MessagePayload>)}");
-            Contracts.IsTrue(typeof(IServiceProvider).IsAssignableFrom(ServiceType), $"Type {ServiceType} is registered as a service type but is not a {nameof(IServiceProvider)}");
         }
 
-        public Type ServiceType { get; }
+        public XFS4IoT.XFSConstants.ServiceClass ServiceClass { get; }
         public Type HandledType { get; }
     }
 }

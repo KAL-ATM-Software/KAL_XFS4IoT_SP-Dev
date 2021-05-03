@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * GetMediaList_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetMediaList_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,13 +29,11 @@ namespace XFS4IoT.Printer.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<string> MediaList = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetMediaListCompletion.PayloadData)}");
-
                 this.MediaList = MediaList;
             }
 
             /// <summary>
-            ///The list of media names.
+            /// The list of media names.
             /// </summary>
             [DataMember(Name = "mediaList")] 
             public List<string> MediaList{ get; private set; }

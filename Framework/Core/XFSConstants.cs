@@ -37,6 +37,6 @@ namespace XFS4IoT
         /// <remarks>
         /// Use .ToString() to get service class name strings. 
         /// </remarks>
-        public enum ServiceClass { CardReader, Publisher, Printer, TextTerminal, PinPad };
+        public enum ServiceClass { CardReader, Publisher, Printer, TextTerminal, PinPad, Common };
     }
 }

@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * FieldErrorEvent_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * FieldErrorEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -18,11 +17,11 @@ namespace XFS4IoT.TextTerminal.Events
 
     [DataContract]
     [Event(Name = "TextTerminal.FieldErrorEvent")]
-    public sealed class FieldErrorEvent : Event<FieldErrorEvent.PayloadData>
+    public sealed class FieldErrorEvent : UnsolicitedEvent<FieldErrorEvent.PayloadData>
     {
 
-        public FieldErrorEvent(string RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public FieldErrorEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 
@@ -51,17 +50,17 @@ namespace XFS4IoT.TextTerminal.Events
             }
 
             /// <summary>
-            ///Specifies the form name.
+            /// Specifies the form name.
             /// </summary>
             [DataMember(Name = "formName")] 
             public string FormName { get; private set; }
             /// <summary>
-            ///Specifies the field name.
+            /// Specifies the field name.
             /// </summary>
             [DataMember(Name = "fieldName")] 
             public string FieldName { get; private set; }
             /// <summary>
-            ///Specifies the type of failure.
+            /// Specifies the type of failure.
             /// </summary>
             [DataMember(Name = "failure")] 
             public FailureEnum? Failure { get; private set; }

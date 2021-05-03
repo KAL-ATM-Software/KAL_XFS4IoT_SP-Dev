@@ -6,8 +6,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -45,25 +47,28 @@ namespace XFS4IoTServer
 
         private readonly HttpListener HttpListener;
 
+        private readonly List<(Task task, IConnection socket)> ConnectionDetails = new();
+        public IEnumerable<IConnection> Connections { get => from d in ConnectionDetails select d.socket; }
+
         public async Task RunAsync()
         {
-            var tasks = new List<Task>();
             Task<HttpListenerContext> listenerTask = HttpListener.GetContextAsync();
             while (true)
             {
                 // Wait until client connects
                 // We need to let client connections keep running, so await everything. 
 
-                Logger.Log(Constants.Component, $"{HttpListener.Prefixes.First()} listing for new connections and on {tasks.Count} existing connections");
+                Logger.Log(Constants.Component, $"{HttpListener.Prefixes.First()} listing for new connections and on {ConnectionDetails.Count} existing connections");
 
                 // And wait for something to happen. Note that multiple things can happen at the 
                 // same time. 
+                var tasks = from c in ConnectionDetails select c.task; 
                 Task completedTask = await Task.WhenAny(Enumerable.Append(tasks, listenerTask ));
 
                 // If it's one of the client connection tasks ending then we just need to stop waiting for it.  
                 if (completedTask != listenerTask)
                 {
-                    tasks.Remove(completedTask);
+                    ConnectionDetails.Remove( ConnectionDetails.Find( x => x.task == completedTask) );
                 }
                 // If we got a new connection we need to start handling that connection, and start 
                 // listening for new connections. 
@@ -78,12 +83,15 @@ namespace XFS4IoTServer
                         var client = (await context.AcceptWebSocketAsync(null)).WebSocket;
 
                         // Create the client connection and run it. 
-                        tasks.Add(new ClientConnection(client,
-                                                    CommandDecoder,
-                                                    CommandDispatcher,
-                                                    Logger)
-                              .RunAsync()
-                              );
+                        ClientConnection clientConnection = new(client,
+                                                                CommandDecoder,
+                                                                CommandDispatcher,
+                                                                Logger);
+                        var task = clientConnection.RunAsync();
+
+                        // Remember the connection and the task that's running it so 
+                        // that we can send events to it later, and clean up when it's finished. 
+                        ConnectionDetails.Add((task, clientConnection));
                     }
                     else
                     {

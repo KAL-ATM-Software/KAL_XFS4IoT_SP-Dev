@@ -12,7 +12,7 @@
         <AssemblyName>XFS4IoT.SP.Framework.Server</AssemblyName>
         <RootNamespace>XFS4IoTServer</RootNamespace>
     </PropertyGroup>
-
+  
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <OutputPath>..\bin\Debug\</OutputPath>
     </PropertyGroup>
@@ -26,7 +26,6 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     </ItemGroup>
 

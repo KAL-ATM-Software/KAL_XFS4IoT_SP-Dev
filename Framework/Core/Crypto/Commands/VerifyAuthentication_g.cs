@@ -5,7 +5,7 @@
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
  * VerifyAuthentication_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * created at 4/20/2021 12:28:05 PM
 \***********************************************************************************************/
 
 using System;
@@ -28,7 +28,9 @@ namespace XFS4IoT.Crypto.Commands
         public sealed class PayloadData : MessagePayload
         {
             /// <summary>
-            ///This parameter specifies the encryption algorithm, cryptographic method, and mode to be used for this command. For a list of valid values see the Attributes capability field. The values specified must be compatible with the key identified by Key.
+            /// This parameter specifies the encryption algorithm, cryptographic method, and mode to be used for this
+            /// command. For a list of valid values see the Attributes [Crypto.capability](#common.capabilities.completion.properties.crypto.verifyattributes) 
+            /// field. The values specified must be compatible with the key identified by Key.
             /// </summary>
             public class VerifyAttributesClass
             {
@@ -79,42 +81,51 @@ namespace XFS4IoT.Crypto.Commands
             }
 
             /// <summary>
-            ///Specifies the name of the stored key.
+            /// Specifies the name of the stored key.
             /// </summary>
             [DataMember(Name = "key")] 
             public string Key { get; private set; }
             /// <summary>
-            ///If startValue specifies an Initialization Vector (IV), then this property specifies the name of the stored key used to decrypt the startValue to obtain the IV. If startValue is not set and this property is also not set, then this property specifies the name of the IV that has been previously imported via TR-31. If this property is not set, startValue is used as the Initialization Vector.
+            /// If startValue specifies an Initialization Vector (IV), then this property specifies the name of the
+            /// stored key used to decrypt the startValue to obtain the IV. If startValue is not set and this property
+            /// is also not set, then this property specifies the name of the IV that has been previously imported via
+            /// TR-31. If this property is not set, startValue is used as the Initialization Vector.
             /// </summary>
             [DataMember(Name = "startValueKey")] 
             public string StartValueKey { get; private set; }
             /// <summary>
-            ///The initialization vector for CBC / CFB encryption. If this parameter and startValueKey are both not set the default value for CBC / CFB is all zeroes.
+            /// The initialization vector for CBC / CFB encryption. If this parameter and startValueKey are both not
+            /// set the default value for CBC / CFB is all zeroes.
             /// </summary>
             [DataMember(Name = "startValue")] 
             public string StartValue { get; private set; }
             /// <summary>
-            ///Commonly used padding data.
+            /// Commonly used padding data.
             /// </summary>
             [DataMember(Name = "padding")] 
             public int? Padding { get; private set; }
             /// <summary>
-            ///Specifies whether data is to be compressed (blanks removed) before building the mac. If compression is 0x00 no compression is selected, otherwise compression holds the representation of the blank character (e.g. 0x20 in ASCII or 0x40 in EBCDIC).
+            /// Specifies whether data is to be compressed (blanks removed) before building the mac. If compression is
+            /// 0x00 no compression is selected, otherwise compression holds the representation of the blank character
+            /// (e.g. 0x20 in ASCII or 0x40 in EBCDIC).
             /// </summary>
             [DataMember(Name = "compression")] 
             public bool? Compression { get; private set; }
             /// <summary>
-            ///The device will either generate a MAC or sign the authenticationData and compare with verifyData formatted in base64.
+            /// The device will either generate a MAC or sign the authenticationData and compare with verifyData
+            /// formatted in base64.
             /// </summary>
             [DataMember(Name = "authenticationData")] 
             public string AuthenticationData { get; private set; }
             /// <summary>
-            ///The authentication data to be verified by MAC or signature formatted in base64.
+            /// The authentication data to be verified by MAC or signature formatted in base64.
             /// </summary>
             [DataMember(Name = "verifyData")] 
             public string VerifyData { get; private set; }
             /// <summary>
-            ///This parameter specifies the encryption algorithm, cryptographic method, and mode to be used for this command. For a list of valid values see the Attributes capability field. The values specified must be compatible with the key identified by Key.
+            /// This parameter specifies the encryption algorithm, cryptographic method, and mode to be used for this
+            /// command. For a list of valid values see the Attributes [Crypto.capability](#common.capabilities.completion.properties.crypto.verifyattributes) 
+            /// field. The values specified must be compatible with the key identified by Key.
             /// </summary>
             [DataMember(Name = "verifyAttributes")] 
             public object VerifyAttributes { get; private set; }

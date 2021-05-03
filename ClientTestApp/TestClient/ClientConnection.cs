@@ -32,11 +32,11 @@ namespace XFS4IoTClient
         /// Open the network connection to the endpoint
         /// </summary>
         /// <returns></returns>
-        public async Task ConnectAsync()
+        public async Task ConnectAsync(CancellationToken? cancellation = null)
         {
             if (Socket.State != WebSocketState.Open)
             {
-                await Socket.ConnectAsync(EndPoint, CancellationToken.None);
+                await Socket.ConnectAsync(EndPoint, cancellation ?? CancellationToken.None);
             }
         }
 

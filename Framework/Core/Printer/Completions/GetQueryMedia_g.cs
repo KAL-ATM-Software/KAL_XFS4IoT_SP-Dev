@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * GetQueryMedia_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetQueryMedia_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -54,7 +53,8 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            ///Specifies the Paper sources to use when printing forms using this media as a combination of the following flags
+            /// Specifies the Paper sources to use when printing forms using this media as a combination of the
+            /// following flags
             /// </summary>
             public class PaperSourcesClass
             {
@@ -91,8 +91,6 @@ namespace XFS4IoT.Printer.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, MediaTypeEnum? MediaType = null, BaseEnum? Base = null, int? UnitX = null, int? UnitY = null, int? SizeWidth = null, int? SizeHeight = null, int? PageCount = null, int? LineCount = null, int? PrintAreaX = null, int? PrintAreaY = null, int? PrintAreaWidth = null, int? PrintAreaHeight = null, int? RestrictedAreaX = null, int? RestrictedAreaY = null, int? RestrictedAreaWidth = null, int? RestrictedAreaHeight = null, int? Stagger = null, FoldTypeEnum? FoldType = null, PaperSourcesClass PaperSources = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetQueryMediaCompletion.PayloadData)}");
-
                 this.ErrorCode = ErrorCode;
                 this.MediaType = MediaType;
                 this.Base = Base;
@@ -116,113 +114,126 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            ///Specifies the error code if applicable. The following values are possible:**mediaNotFound**
-            ////  The specified media definition cannot be found.**mediaInvalid**
-            ////  The specified media definition is invalid.
+            /// Specifies the error code if applicable. The following values are possible:
+            /// 
+            /// * ```mediaNotFound``` - The specified media definition cannot be found.
+            /// * ```mediaInvalid``` - The specified media definition is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")] 
             public ErrorCodeEnum? ErrorCode { get; private set; }
             /// <summary>
-            ///Specifies the type of media as one of the following:**generic**
-            ////  The media is a generic media, i.e. a single sheet.**passbook**
-            ////  The media is a passbook media.**multipart**
-            ////  The media is a multi part media.
+            /// Specifies the type of media as one of the following:
+            /// 
+            /// * ```generic``` - The media is a generic media, i.e. a single sheet.
+            /// * ```passbook``` - The media is a passbook media.
+            /// * ```multipart``` - The media is a multi part media.
             /// </summary>
             [DataMember(Name = "mediaType")] 
             public MediaTypeEnum? MediaType { get; private set; }
             /// <summary>
-            ///Specifies the base unit of measurement of the form and can be one of the following values:**inch**
-            ////  The base unit is inches.**mm**
-            ////  The base unit is millimeters.**rowcolumn**
-            ////  The base unit is rows and columns.
+            /// Specifies the base unit of measurement of the form and can be one of the following values:
+            /// 
+            /// * ```inch``` - The base unit is inches.
+            /// * ```mm``` - The base unit is millimeters.
+            /// * ```rowcolumn``` - The base unit is rows and columns.
             /// </summary>
             [DataMember(Name = "base")] 
             public BaseEnum? Base { get; private set; }
             /// <summary>
-            ///Specifies the horizontal resolution of the base units as a fraction of the *base* value. For example, a value of 16 applied to the base unit *inch* means that the base horizontal resolution is 1/16th inch.
+            /// Specifies the horizontal resolution of the base units as a fraction of the
+            /// [base](#printer.getquerymedia.completion.properties.base) value. For example, a value of 16 applied to
+            /// the base unit *inch* means that the base horizontal resolution is 1/16th inch.
             /// </summary>
             [DataMember(Name = "unitX")] 
             public int? UnitX { get; private set; }
             /// <summary>
-            ///Specifies the vertical resolution of the base units as a fraction of the *base* value. For example, a value of 10 applied to the base unit *mm* means that the base vertical resolution is 0.1 mm.
+            /// Specifies the vertical resolution of the base units as a fraction of the *base* value. For example, a
+            /// value of 10 applied to the base unit *mm* means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")] 
             public int? UnitY { get; private set; }
             /// <summary>
-            ///Specifies the width of the media in terms of the base horizontal resolution.
+            /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "sizeWidth")] 
             public int? SizeWidth { get; private set; }
             /// <summary>
-            ///Specifies the height of the media in terms of the base vertical resolution.
+            /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "sizeHeight")] 
             public int? SizeHeight { get; private set; }
             /// <summary>
-            ///Specifies the number of pages in a media of type *passbook*.
+            /// Specifies the number of pages in a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "pageCount")] 
             public int? PageCount { get; private set; }
             /// <summary>
-            ///Specifies the number of lines on a page for a media of type *passbook*.
+            /// Specifies the number of lines on a page for a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "lineCount")] 
             public int? LineCount { get; private set; }
             /// <summary>
-            ///Specifies the horizontal offset of the printable area relative to the top left corner of the media in terms of the base horizontal resolution.
+            /// Specifies the horizontal offset of the printable area relative to the top left corner of the media in
+            /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaX")] 
             public int? PrintAreaX { get; private set; }
             /// <summary>
-            ///Specifies the vertical offset of the printable area relative to the top left corner of the media in terms of the base vertical resolution.
+            /// Specifies the vertical offset of the printable area relative to the top left corner of the media in
+            /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaY")] 
             public int? PrintAreaY { get; private set; }
             /// <summary>
-            ///Specifies the printable area width of the media in terms of the base horizontal resolution.
+            /// Specifies the printable area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaWidth")] 
             public int? PrintAreaWidth { get; private set; }
             /// <summary>
-            ///Specifies the printable area height of the media in terms of the base vertical resolution.
+            /// Specifies the printable area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaHeight")] 
             public int? PrintAreaHeight { get; private set; }
             /// <summary>
-            ///Specifies the horizontal offset of the restricted area relative to the top left corner of the media in terms of the base horizontal resolution.
+            /// Specifies the horizontal offset of the restricted area relative to the top left corner of the media in
+            /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaX")] 
             public int? RestrictedAreaX { get; private set; }
             /// <summary>
-            ///Specifies the vertical offset of the restricted area relative to the top left corner of the media in terms of the base vertical resolution.
+            /// Specifies the vertical offset of the restricted area relative to the top left corner of the media in
+            /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaY")] 
             public int? RestrictedAreaY { get; private set; }
             /// <summary>
-            ///Specifies the restricted area width of the media in terms of the base horizontal resolution.
+            /// Specifies the restricted area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaWidth")] 
             public int? RestrictedAreaWidth { get; private set; }
             /// <summary>
-            ///Specifies the restricted area height of the media in terms of the base vertical resolution.
+            /// Specifies the restricted area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaHeight")] 
             public int? RestrictedAreaHeight { get; private set; }
             /// <summary>
-            ///Specifies the staggering from the top in terms of the base vertical resolution for a media of type *passbook*.
+            /// Specifies the staggering from the top in terms of the base vertical resolution for a media of type
+            /// *passbook*.
             /// </summary>
             [DataMember(Name = "stagger")] 
             public int? Stagger { get; private set; }
             /// <summary>
-            ///Specified the type of fold for a media of type *passbook* as one of the following:**none**
-            ////  Passbook has no fold.**horizontal**
-            ////  Passbook has a horizontal fold.**vertical**
-            ////  Passbook has a vertical fold.
+            /// Specified the type of fold for a media of type *passbook* as one of the following:
+            /// 
+            /// * ```none``` - Passbook has no fold.
+            /// * ```horizontal``` - Passbook has a horizontal fold.
+            /// * ```vertical``` - Passbook has a vertical fold.
             /// </summary>
             [DataMember(Name = "foldType")] 
             public FoldTypeEnum? FoldType { get; private set; }
             /// <summary>
-            ///Specifies the Paper sources to use when printing forms using this media as a combination of the following flags
+            /// Specifies the Paper sources to use when printing forms using this media as a combination of the
+            /// following flags
             /// </summary>
             [DataMember(Name = "paperSources")] 
             public PaperSourcesClass PaperSources { get; private set; }

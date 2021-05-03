@@ -18,5 +18,17 @@ namespace XFS4IoTServer
         Uri Uri { get; }
 
         Uri WSUri { get; }
+
+        /// <summary>
+        /// The device class the integrates this service with real hardware. 
+        /// </summary>
+        IDevice Device { get; }
+
+        /// <summary>
+        /// Broadcast an unsolicited event to all connections.
+        /// </summary>
+        /// <param name="payload">The XFS payload for the message</param>
+        Task BroadcastEvent(object payload);
+
     }
 }

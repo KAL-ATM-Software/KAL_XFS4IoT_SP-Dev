@@ -190,5 +190,11 @@ namespace XFS4IoT
         [Contract]
         public static T Ignore<T>(this T v) => v;
 
+        /// <summary>
+        /// Assert object is specified type.
+        /// </summary>
+        [Contract]
+        public static T IsA<T>(this object o, string message = "Value is incorrect type") where T : class => (o as T).Is(x => x != null, message);
+
     }
 }

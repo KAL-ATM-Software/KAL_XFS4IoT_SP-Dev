@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CardReader interface.
- * EMVClessIssuerUpdate_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * EMVClessIssuerUpdate_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -35,7 +34,14 @@ namespace XFS4IoT.CardReader.Commands
             }
 
             /// <summary>
-            ///Base64 encoded representation of the EMV data elements in a BER-TLV format received from the authorization response that are required to complete the transaction processing. The types of object that could be listed in lpData are:* Authorization Code (if present)* Issuer Authentication Data (if present)* Issuer Scripts or proprietary payment system's data elements (if present) and any other data elements if required.
+            /// Base64 encoded representation of the EMV data elements in a BER-TLV format received from the
+            /// authorization response that are required to complete the transaction processing. The types of object
+            /// that could be listed in lpData are:
+            /// 
+            /// * Authorization Code (if present)
+            /// * Issuer Authentication Data (if present)
+            /// * Issuer Scripts or proprietary payment system's data elements (if present) and any other data
+            ///   elements if required.
             /// </summary>
             [DataMember(Name = "data")] 
             public string Data { get; private set; }

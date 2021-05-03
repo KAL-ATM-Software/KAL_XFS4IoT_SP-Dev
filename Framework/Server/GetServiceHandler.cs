@@ -15,7 +15,7 @@ using XFS4IoT.Common.Completions;
 
 namespace Server
 {
-    [CommandHandler(typeof(ServicePublisher), typeof(XFS4IoT.Common.Commands.GetServiceCommand))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(XFS4IoT.Common.Commands.GetServiceCommand))]
     public class GetServiceHandler : ICommandHandler
     {
 
@@ -42,11 +42,11 @@ namespace Server
             getServiceCommand.IsNotNull($"Unexpected command received in the {nameof(Handle)} method. {nameof(command)}");
 
             // For now just return good result and fixed services available
-            GetServiceCompletion.PayloadData payLoad = new GetServiceCompletion.PayloadData(GetServiceCompletion.PayloadData.CompletionCodeEnum.Success,
-                                                                                                                "ok",
-                                                                                                                "KAL",
-                                                                                                                from service in ServicePublisher.Services
-                                                                                                                select new GetServiceCompletion.PayloadData.ServiceUriDetails(service.WSUri.AbsoluteUri));
+            GetServiceCompletion.PayloadData payLoad = new(GetServiceCompletion.PayloadData.CompletionCodeEnum.Success,
+                                                            "ok",
+                                                            "KAL",
+                                                            from service in ServicePublisher.Services
+                                                            select new GetServiceCompletion.PayloadData.ServiceUriDetails(service.WSUri.AbsoluteUri));
 
             await Connection.SendMessageAsync(new GetServiceCompletion(getServiceCommand.Headers.RequestId, payLoad));
         }
@@ -64,7 +64,7 @@ namespace Server
             if (commandErrorException.GetType() == typeof(InvalidDataException))
                 errorCode = GetServiceCompletion.PayloadData.CompletionCodeEnum.InvalidData;
 
-            GetServiceCompletion.PayloadData payLoad = new GetServiceCompletion.PayloadData(errorCode, commandErrorException.Message);
+            GetServiceCompletion.PayloadData payLoad = new(errorCode, commandErrorException.Message);
   
             await Connection.SendMessageAsync(new GetServiceCompletion(getServiceCommand.Headers.RequestId, payLoad));
         }

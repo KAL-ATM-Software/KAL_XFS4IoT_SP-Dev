@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>XFS4IoT.SP.Framework.Common</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Server\Server.csproj" />
+    <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Handlers\*_g.cs">
+      <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+    <Compile Update="*ServiceClass_g.cs">
+        <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+</Project>

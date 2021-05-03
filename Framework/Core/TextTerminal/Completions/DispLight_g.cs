@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * DispLight_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * DispLight_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,13 +29,11 @@ namespace XFS4IoT.TextTerminal.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, bool? Mode = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(DispLightCompletion.PayloadData)}");
-
                 this.Mode = Mode;
             }
 
             /// <summary>
-            ///Specifies whether the lighting of the text terminal unit is switched on (TRUE) or off (FALSE).
+            /// Specifies whether the lighting of the text terminal unit is switched on (TRUE) or off (FALSE).
             /// </summary>
             [DataMember(Name = "mode")] 
             public bool? Mode { get; private set; }

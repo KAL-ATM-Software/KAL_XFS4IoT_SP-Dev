@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * PowerSaveChangeEvent_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * PowerSaveChangeEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -18,11 +17,11 @@ namespace XFS4IoT.Common.Events
 
     [DataContract]
     [Event(Name = "Common.PowerSaveChangeEvent")]
-    public sealed class PowerSaveChangeEvent : Event<PowerSaveChangeEvent.PayloadData>
+    public sealed class PowerSaveChangeEvent : UnsolicitedEvent<PowerSaveChangeEvent.PayloadData>
     {
 
-        public PowerSaveChangeEvent(string RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public PowerSaveChangeEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 
@@ -38,7 +37,7 @@ namespace XFS4IoT.Common.Events
             }
 
             /// <summary>
-            ///Specifies the actual number of seconds required by the device to resume its normal operational state. This value is zero if the device exited the power saving mode
+            /// Specifies the actual number of seconds required by the device to resume its normal operational state. This value is zero if the device exited the power saving mode
             /// </summary>
             [DataMember(Name = "powerSaveRecoveryTime")] 
             public int? PowerSaveRecoveryTime { get; private set; }

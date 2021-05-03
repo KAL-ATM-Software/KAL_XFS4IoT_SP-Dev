@@ -56,7 +56,7 @@ namespace XFS4IoT
         public MessageHeader(string Name, string RequestId, TypeEnum Type)
         {
             Contracts.IsNotNullOrWhitespace(Name, $"Null or an empty value for {nameof(Name)} in the headers.");
-            Contracts.IsNotNullOrWhitespace(RequestId, $"Null or an empty value for {nameof(RequestId)} in the headers.");
+            // RequestionId may be null for unsolicited events
 
             this.Name = Name;
             this.RequestId = RequestId;

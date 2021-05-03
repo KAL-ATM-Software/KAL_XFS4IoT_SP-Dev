@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * Write_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * Write_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -34,7 +33,8 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            ///Specifies the text attributes used for displaying the text. If none of the following attribute flags are selected then the text will be displayed as normal text.
+            /// Specifies the text attributes used for displaying the text. If none of the following attribute flags 
+            /// are selected then the text will be displayed as normal text.
             /// </summary>
             public class TextAttrClass
             {
@@ -67,27 +67,30 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            ///Specifies whether the position of the output is absolute or relative to the current cursor position.
+            /// Specifies whether the position of the output is absolute or relative to the current cursor position.
             /// </summary>
             [DataMember(Name = "mode")] 
             public ModeEnum? Mode { get; private set; }
             /// <summary>
-            ///If mode is set to absolute, this specifies the absolute horizontal position. If mode is set to relative this specifies a horizontal offset relative to the current cursor position as a zero (0) based value.
+            /// If mode is set to absolute, this specifies the absolute horizontal position. If mode is set to relative 
+            /// this specifies a horizontal offset relative to the current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posX")] 
             public int? PosX { get; private set; }
             /// <summary>
-            ///If mode is set to absolute, this specifies the absolute vertical position. If mode is set to relative this specifies a vertical offset relative to the current cursor position as a zero (0) based value.
+            /// If mode is set to absolute, this specifies the absolute vertical position. If mode is set to relative 
+            /// this specifies a vertical offset relative to the current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posY")] 
             public int? PosY { get; private set; }
             /// <summary>
-            ///Specifies the text attributes used for displaying the text. If none of the following attribute flags are selected then the text will be displayed as normal text.
+            /// Specifies the text attributes used for displaying the text. If none of the following attribute flags 
+            /// are selected then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "textAttr")] 
             public object TextAttr { get; private set; }
             /// <summary>
-            ///Specifies the text that will be displayed.
+            /// Specifies the text that will be displayed.
             /// </summary>
             [DataMember(Name = "text")] 
             public string Text { get; private set; }

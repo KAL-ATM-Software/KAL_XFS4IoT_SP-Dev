@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CardReader interface.
- * InvalidTrackDataEvent_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * InvalidTrackDataEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -48,21 +47,22 @@ namespace XFS4IoT.CardReader.Events
             }
 
             /// <summary>
-            ///Status of reading the track as one of the following:**missing**
-            ////The track is blank.**invalid**
-            ////The data contained on the track is invalid.**tooLong**
-            ////The data contained on the track is too long.**tooShort**
-            ////The data contained on the track is too short.
+            /// Status of reading the track as one of the following:
+            /// 
+            /// * ```missing``` - The track is blank.
+            /// * ```invalid``` - The data contained on the track is invalid.
+            /// * ```tooLong``` - The data contained on the track is too long.
+            /// * ```tooShort``` - The data contained on the track is too short.
             /// </summary>
             [DataMember(Name = "status")] 
             public StatusEnum? Status { get; private set; }
             /// <summary>
-            ///The keyword of the track on which the error occurred.
+            /// The keyword of the track on which the error occurred.
             /// </summary>
             [DataMember(Name = "track")] 
             public string Track { get; private set; }
             /// <summary>
-            ///Any data from the track that could be read.
+            /// Any data from the track that could be read.
             /// </summary>
             [DataMember(Name = "data")] 
             public string Data { get; private set; }

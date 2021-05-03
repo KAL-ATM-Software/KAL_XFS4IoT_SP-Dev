@@ -2,56 +2,60 @@
  * (C) KAL ATM Software GmbH, 2021
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
+ *
+ * CardReaderServiceProvider.cs.cs uses automatically generated parts. 
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+
 using XFS4IoT;
-using XFS4IoTServer;
-using XFS4IoTFramework.CardReader;
+using XFS4IoT.CardReader.Events;
+using XFS4IoT.Common.Events;
 
-namespace XFS4IoTCardReader
+namespace XFS4IoTServer
 {
-    public partial class CardReaderServiceProvider : CommandDispatcher, XFS4IoTServer.IServiceProvider
+    /// <summary>
+    /// Default implimentation of a card reader service provider. 
+    /// </summary>
+    /// <remarks> 
+    /// This represents a typical card reader, which only implements the CardReader and Common interfaces. 
+    /// It's possible to create other service provider types by combining multiple service classes in the 
+    /// same way. 
+    /// </remarks>
+    public class CardReaderServiceProvider : ServiceProvider, ICardReaderServiceClass, ICommonServiceClass
     {
-        public CardReaderServiceProvider(XFS4IoTServer.EndpointDetails EndpointDetails, ICardReaderDevice Device, ILogger Logger)
-            : base(typeof(CardReaderServiceProvider), Logger)
+        public CardReaderServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
+            :
+            base(endpointDetails,
+                 ServiceName,
+                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CardReader },
+                 device,
+                 logger)
         {
-            EndpointDetails.IsNotNull($"The endpoint details are invalid. {nameof(EndpointDetails)}");
-            Device.IsNotNull($"The device interface is an invalid. {nameof(Device)}");
-
-            this.Device = Device;
-
-            (Uri, WSUri) = EndpointDetails.ServiceUri(ServiceClass);
-
-            Logger.Log(Constants.Framework, $"Listening on {Uri}");
-
-            this.EndPoint = new EndPoint(Uri,
-                                         CommandDecoder,
-                                         this,
-                                         Logger);
+            CardReader = new CardReaderServiceClass(this, logger);
+            Common = new CommonServiceClass(this, logger);
         }
 
-        public async Task RunAsync() => await EndPoint.RunAsync();
+        private readonly CardReaderServiceClass CardReader;
+        private readonly CommonServiceClass Common;
 
-        public string Name { get; } = Constants.DeviceName;
-        private readonly XFS4IoTServer.EndPoint EndPoint;
+        #region CardReader unsolicited events
+        public Task MediaRemovedEvent() => CardReader.MediaRemovedEvent();
 
-        private MessageDecoder CommandDecoder { get; } = new MessageDecoder(MessageDecoder.AutoPopulateType.Command);
-        public Uri Uri { get; }
-        public Uri WSUri { get; }
-        public XFSConstants.ServiceClass ServiceClass { get; } = XFSConstants.ServiceClass.CardReader;
-        public ICardReaderDevice Device { get; internal set; }
+        public Task RetainBinThresholdEvent(RetainBinThresholdEvent.PayloadData Payload) => CardReader.RetainBinThresholdEvent(Payload);
 
-    }
+        public Task CardActionEvent(CardActionEvent.PayloadData Payload) => CardReader.CardActionEvent(Payload);
+        #endregion
 
-    /// <summary>
-    /// Constants for only CardReader framework assembly
-    /// </summary>
-    internal static class Constants
-    {
-        public const string Framework = "Framework";
-        public const string DeviceName = "CardReader";
-        public const string DeviceClass = "DevClass";
+        #region Common unsolicited events
+        public Task PowerSaveChangeEvent(PowerSaveChangeEvent.PayloadData Payload) => Common.PowerSaveChangeEvent(Payload);
+
+        public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => Common.DevicePositionEvent(Payload);
+        #endregion
+
     }
 }

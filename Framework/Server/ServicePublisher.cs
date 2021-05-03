@@ -33,7 +33,7 @@ namespace XFS4IoTServer
         /// <param name="Logger">To use for all logging</param>
         /// <param name="CommandDispatcher">For dispatching incomming command messages</param>
         public ServicePublisher(ILogger Logger)
-            : base(typeof(ServicePublisher), Logger)
+            : base(new[] { XFSConstants.ServiceClass.Publisher }, Logger)
         {
             Logger.IsNotNull($"Invalid parameter received in the {nameof(ServicePublisher)} constructor. {nameof(Logger)}");
 
@@ -100,6 +100,12 @@ namespace XFS4IoTServer
         public void Dispose() => EndPoint.Dispose();
         
         public void Add(IServiceProvider Service) => _Services.Add(Service);
+
+        public Task BroadcastEvent(object payload)
+        {
+            throw Contracts.Fail<Exception>("No broadcast events defined for the service publisher. Do not call BroadcastEvent on this class.");
+        }
+
         public IEnumerable<IServiceProvider> Services { get => _Services; } 
         private readonly List<IServiceProvider> _Services = new List<IServiceProvider>(); 
 
@@ -120,6 +126,7 @@ namespace XFS4IoTServer
         public string Name { get; } = String.Empty;
         public Uri Uri { get; }
         public Uri WSUri { get; }
+        public IDevice Device { get => Contracts.Fail<IDevice>("A device object was requested from the Publisher service, but the publisher service does not have a device class"); }
     }
 
     /// <summary>
@@ -128,5 +135,6 @@ namespace XFS4IoTServer
     internal static class Constants
     {
         public const string Component = "Server";
+        public const string Framework = "Framework";
     }
 }

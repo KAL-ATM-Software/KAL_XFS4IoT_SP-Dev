@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * PrintForm_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * PrintForm_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -45,7 +44,14 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            ///Specifies the manner in which the media should be handled after the printing is done, as a combination of the following flags. If no flags are set, it means do none of these actions, as when printing multiple forms on a single page. When no flags are set and the device does not support the flush capability, the data will be printed immediately. If the device supports flush, the data may be buffered and the [Printer.ControlMedia](#command-Printer.ControlMedia) command should be used to synchronize the application with the device to ensure that all data has been physically printed. The clearBuffer flag is not applicable to this command. If set, the command will fail with error *invalidData*.
+            /// Specifies the manner in which the media should be handled after the printing is done, as a combination
+            /// of the following flags. If no flags are set, it means do none of these actions, as when printing
+            /// multiple forms on a single page. When no flags are set and the device does not support the flush
+            /// capability, the data will be printed immediately. If the device supports flush, the data may be
+            /// buffered and the [Printer.ControlMedia](#printer.controlmedia) command should be used to synchronize
+            /// the application with the device to ensure that all data has been physically printed. The
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) flag is not
+            /// applicable to this command. If set, the command will fail with error *invalidData*.
             /// </summary>
             public class MediaControlClass
             {
@@ -112,7 +118,10 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            ///An object containing one or more key/value pairs where the key is a field name and the value is the field value. If the field is an index field, the key must be specified as **fieldname[index]** where index specifies the zero-based element of the index field. The field names and values can contain UNICODE if supported by the service.
+            /// An object containing one or more key/value pairs where the key is a field name and the value is the
+            /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
+            /// index specifies the zero-based element of the index field. The field names and values can contain
+            /// UNICODE if supported by the service.
             /// </summary>
             public class FieldsClass
             {
@@ -151,63 +160,86 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            ///The form name.
+            /// The form name.
             /// </summary>
             [DataMember(Name = "formName")] 
             public string FormName { get; private set; }
             /// <summary>
-            ///The media name. If no media definition applies, this should be empty or omitted.
+            /// The media name. If no media definition applies, this should be empty or omitted.
             /// </summary>
             [DataMember(Name = "mediaName")] 
             public string MediaName { get; private set; }
             /// <summary>
-            ///Specifies the alignment of the form on the physical media, as one of the following values:**formDefinition**
-            ////  Use the alignment specified in the form definition.**topLeft**
-            ////  Align form to top left of physical media.**topRight**
-            ////  Align form to top right of physical media.**bottomLeft**
-            ////  Align form to bottom left of physical media.**bottomRight**
-            ////  Align form to bottom right of physical media.
+            /// Specifies the alignment of the form on the physical media, as one of the following values:
+            /// 
+            /// * ```formDefinition``` - Use the alignment specified in the form definition.
+            /// * ```topLeft``` - Align form to top left of physical media.
+            /// * ```topRight``` - Align form to top right of physical media.
+            /// * ```bottomLeft``` - Align form to bottom left of physical media.
+            /// * ```bottomRight``` - Align form to bottom right of physical media.
             /// </summary>
             [DataMember(Name = "alignment")] 
             public AlignmentEnum? Alignment { get; private set; }
             /// <summary>
-            ///Specifies the horizontal offset of the form, relative to the horizontal alignment specified in _alignment_, in horizontal resolution units (from form definition); always a positive number (i.e. if aligned to the right side of the media, means offset the form to the left). A value of formDefinition indicates that the *xoffset* value from the form definition should be used.
+            /// Specifies the horizontal offset of the form, relative to the horizontal alignment specified in
+            /// [alignment](#printer.printform.command.properties.alignment), in horizontal resolution units (from
+            /// form definition); always a positive number (i.e. if aligned to the right side of the media, means
+            /// offset the form to the left). A value of *formDefinition* indicates that the *xoffset* value from the
+            /// form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetX")] 
             public int? OffsetX { get; private set; }
             /// <summary>
-            ///Specifies the vertical offset of the form, relative to the vertical alignment specified in _alignment_, in vertical resolution units (from form definition); always a positive number (i.e. if aligned to the bottom of the media, means offset the form upward). A value of formDefinition indicates that the yoffset value from the form definition should be used.
+            /// Specifies the vertical offset of the form, relative to the vertical alignment specified in
+            /// *alignment*, in vertical resolution units (from form definition); always a positive number (i.e. if
+            /// aligned to the bottom of the media, means offset the form upward). A value of *formDefinition*
+            /// indicates that the *yoffset* value from the form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetY")] 
             public int? OffsetY { get; private set; }
             /// <summary>
-            ///Specifies the resolution in which to print the form. Possible values are:  **low**
-            ////  Print form with low resolution.**medium**
-            ////  Print form with medium resolution.**high**
-            ////  Print form with high resolution.**veryHigh**
-            ////  Print form with very high resolution.
+            /// Specifies the resolution in which to print the form. Possible values are:
+            /// 
+            /// * ```low``` - Print form with low resolution.
+            /// * ```medium``` - Print form with medium resolution.
+            /// * ```high``` - Print form with high resolution.
+            /// * ```veryHigh``` - Print form with very high resolution.
             /// </summary>
             [DataMember(Name = "resolution")] 
             public ResolutionEnum? Resolution { get; private set; }
             /// <summary>
-            ///Specifies the manner in which the media should be handled after the printing is done, as a combination of the following flags. If no flags are set, it means do none of these actions, as when printing multiple forms on a single page. When no flags are set and the device does not support the flush capability, the data will be printed immediately. If the device supports flush, the data may be buffered and the [Printer.ControlMedia](#command-Printer.ControlMedia) command should be used to synchronize the application with the device to ensure that all data has been physically printed. The clearBuffer flag is not applicable to this command. If set, the command will fail with error *invalidData*.
+            /// Specifies the manner in which the media should be handled after the printing is done, as a combination
+            /// of the following flags. If no flags are set, it means do none of these actions, as when printing
+            /// multiple forms on a single page. When no flags are set and the device does not support the flush
+            /// capability, the data will be printed immediately. If the device supports flush, the data may be
+            /// buffered and the [Printer.ControlMedia](#printer.controlmedia) command should be used to synchronize
+            /// the application with the device to ensure that all data has been physically printed. The
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) flag is not
+            /// applicable to this command. If set, the command will fail with error *invalidData*.
             /// </summary>
             [DataMember(Name = "mediaControl")] 
             public object MediaControl { get; private set; }
             /// <summary>
-            ///An object containing one or more key/value pairs where the key is a field name and the value is the field value. If the field is an index field, the key must be specified as **fieldname[index]** where index specifies the zero-based element of the index field. The field names and values can contain UNICODE if supported by the service.
+            /// An object containing one or more key/value pairs where the key is a field name and the value is the
+            /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
+            /// index specifies the zero-based element of the index field. The field names and values can contain
+            /// UNICODE if supported by the service.
             /// </summary>
             [DataMember(Name = "fields")] 
             public object Fields { get; private set; }
             /// <summary>
-            ///Specifies the Paper source to use when printing this form. When the value is zero, then the paper source is determined from the media definition. This parameter is ignored if there is already paper in the print position. Possible values are:**any**
-            ////  Any paper source can be used; it is determined by the service.**upper**
-            ////  Use the only paper source or the upper paper source, if there is more than one paper supply.**lower**
-            ////  Use the lower paper source.**external**
-            ////  Use the external paper source (such as envelope tray or single sheet feed).**aux**
-            ////  Use the auxiliary paper source.**aux2**
-            ////  Use the second auxiliary paper source.**park**
-            ////  Use the parking station.
+            /// Specifies the Paper source to use when printing this form. When the value is zero, then the paper
+            /// source is determined from the media definition. This parameter is ignored if there is already paper in
+            /// the print position. Possible values are:
+            /// 
+            /// * ```any``` - Any paper source can be used; it is determined by the service.
+            /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
+            ///   supply.
+            /// * ```lower``` - Use the lower paper source.
+            /// * ```external``` - Use the external paper source (such as envelope tray or single sheet feed).
+            /// * ```aux``` - Use the auxiliary paper source.
+            /// * ```aux2``` - Use the second auxiliary paper source.
+            /// * ```park``` - Use the parking station.
             /// </summary>
             [DataMember(Name = "paperSource")] 
             public PaperSourceEnum? PaperSource { get; private set; }

@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * WriteForm_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * WriteForm_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -37,17 +36,19 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            ///Form name.
+            /// Form name.
             /// </summary>
             [DataMember(Name = "formName")] 
             public string FormName { get; private set; }
             /// <summary>
-            ///Specifies whether the screen is cleared before displaying the form (TRUE) or not (FALSE).
+            /// Specifies whether the screen is cleared before displaying the form (TRUE) or not (FALSE).
             /// </summary>
             [DataMember(Name = "clearScreen")] 
             public bool? ClearScreen { get; private set; }
             /// <summary>
-            ///Specifies \"<fieldName>=<fieldValue>\" string. e.g. Field1=123. The <fieldValue> stands for a string containing all the printable characters (numeric and alphanumeric) to display on the text terminal unit key pad for this field.
+            /// Specifies \"<fieldName>=<fieldValue>\" string. e.g. Field1=123. 
+            /// The <fieldValue> stands for a string containing all the printable characters (numeric and alphanumeric) 
+            /// to display on the text terminal unit key pad for this field.
             /// </summary>
             [DataMember(Name = "fields")] 
             public List<string> Fields{ get; private set; }

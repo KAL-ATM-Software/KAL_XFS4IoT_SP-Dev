@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * GetQueryField_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetQueryField_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,7 +29,7 @@ namespace XFS4IoT.TextTerminal.Completions
             public sealed class FieldsClass
             {
                 /// <summary>
-                ///Specifies the type of field.
+                /// Specifies the type of field.
                 /// </summary>
                 public enum TypeEnum
                 {
@@ -40,7 +39,7 @@ namespace XFS4IoT.TextTerminal.Completions
                 }
 
                 /// <summary>
-                ///Specifies the class of the field.
+                /// Specifies the class of the field.
                 /// </summary>
                 public enum ClassEnum
                 {
@@ -50,7 +49,7 @@ namespace XFS4IoT.TextTerminal.Completions
                 }
 
                 /// <summary>
-                ///Specifies how an overflow of field data should be handled.
+                /// Specifies how an overflow of field data should be handled.
                 /// </summary>
                 public enum OverflowEnum
                 {
@@ -72,43 +71,43 @@ namespace XFS4IoT.TextTerminal.Completions
                 }
 
                 /// <summary>
-                ///Specifies the field name.
+                /// Specifies the field name.
                 /// </summary>
                 [DataMember(Name = "fieldName")] 
                 public string FieldName { get; private set; }
 
                 /// <summary>
-                ///Specifies the type of field.
+                /// Specifies the type of field.
                 /// </summary>
                 [DataMember(Name = "type")] 
                 public TypeEnum? Type { get; private set; }
 
                 /// <summary>
-                ///Specifies the class of the field.
+                /// Specifies the class of the field.
                 /// </summary>
                 [DataMember(Name = "class")] 
                 public ClassEnum? Class { get; private set; }
 
                 /// <summary>
-                ///Specifies whether the field is to be used for input, output or both.
+                /// Specifies whether the field is to be used for input, output or both.
                 /// </summary>
                 [DataMember(Name = "access")] 
                 public string Access { get; private set; }
 
                 /// <summary>
-                ///Specifies how an overflow of field data should be handled.
+                /// Specifies how an overflow of field data should be handled.
                 /// </summary>
                 [DataMember(Name = "overflow")] 
                 public OverflowEnum? Overflow { get; private set; }
 
                 /// <summary>
-                ///Format string as defined in the form for this field.
+                /// Format string as defined in the form for this field.
                 /// </summary>
                 [DataMember(Name = "format")] 
                 public string Format { get; private set; }
 
                 /// <summary>
-                ///Specifies the language identifier for the field.
+                /// Specifies the language identifier for the field.
                 /// </summary>
                 [DataMember(Name = "languageId")] 
                 public string LanguageId { get; private set; }
@@ -119,13 +118,11 @@ namespace XFS4IoT.TextTerminal.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<FieldsClass> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetQueryFieldCompletion.PayloadData)}");
-
                 this.Fields = Fields;
             }
 
             /// <summary>
-            ///Array of Fields.
+            /// Array of Fields.
             /// </summary>
             [DataMember(Name = "fields")] 
             public List<FieldsClass> Fields{ get; private set; }

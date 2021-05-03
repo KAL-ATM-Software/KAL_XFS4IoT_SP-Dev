@@ -43,7 +43,7 @@ namespace TestClientForms
             }
 
             var readRawDataCmd = new ReadRawDataCommand(
-                Guid.NewGuid().ToString(), 
+                Guid.NewGuid().ToString(),
                 new ReadRawDataCommand.PayloadData(
                     Timeout: CommandTimeout,
                     Track1: true,
@@ -71,22 +71,26 @@ namespace TestClientForms
             for (; ; )
             {
                 object cmdResponse = await cardReader.ReceiveMessageAsync();
-                if (cmdResponse is ReadRawDataCompletion response )
+                if (cmdResponse is ReadRawDataCompletion response)
                 {
                     textBoxResponse.Text = response.Serialise();
                     break;
                 }
-                else if (cmdResponse is XFS4IoT.CardReader.Events.MediaInsertedEvent insertedEv)
+                else if (cmdResponse is XFS4IoT.CardReader.Events.MediaInsertedEvent cardInsertedEv)
                 {
-                    textBoxEvent.Text = insertedEv.Serialise();
+                    textBoxEvent.Text = cardInsertedEv.Serialise();
+                }
+                else if (cmdResponse is XFS4IoT.CardReader.Events.InsertCardEvent insertCardEv)
+                {
+                    textBoxEvent.Text = insertCardEv.Serialise();
                 }
                 else
                 {
-                    break;
+                    textBoxEvent.Text += "<Unknown Event>";
                 }
             }
         }
-   
+
         private async void EjectCard_Click(object sender, EventArgs e)
         {
             var cardReader = new XFS4IoTClient.ClientConnection(new Uri($"{textBoxCardReader.Text}"));
@@ -112,18 +116,23 @@ namespace TestClientForms
             textBoxResponse.Text = string.Empty;
             textBoxEvent.Text = string.Empty;
 
-            object cmdResponse = await cardReader.ReceiveMessageAsync();
-            if (cmdResponse is  EjectCardCompletion response)
+            while (true)
             {
-                textBoxResponse.Text = response.Serialise();
-
-                if (response.Payload.CompletionCode == EjectCardCompletion.PayloadData.CompletionCodeEnum.Success)
+                switch (await cardReader.ReceiveMessageAsync())
                 {
-                    object unsolicEvent = await cardReader.ReceiveMessageAsync();
-                    if (unsolicEvent is XFS4IoT.CardReader.Events.MediaRemovedEvent removedEv) 
-                    { 
-                        textBoxEvent.Text = removedEv.Serialise();
-                    }
+                    case EjectCardCompletion response:
+                        textBoxResponse.Text = response.Serialise();
+                        if (response.Payload.CompletionCode != XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
+                            return;
+                        break;
+
+                    case XFS4IoT.CardReader.Events.MediaRemovedEvent removedEv:
+                        textBoxEvent.Text += removedEv.Serialise();
+                        return;
+
+                    default:
+                        textBoxEvent.Text += "<Unknown Event>";
+                        break;
                 }
             }
         }
@@ -153,8 +162,8 @@ namespace TestClientForms
             if (cmdResponse is StatusCompletion response)
             {
                 textBoxResponse.Text = response.Serialise();
-                textBoxStDevice.Text = response.Payload.Common.Device.ToString();
-                textBoxStMedia.Text = response.Payload.CardReader.Media.ToString();
+                textBoxStDevice.Text = response.Payload?.Common?.Device?.ToString();
+                textBoxStMedia.Text = response.Payload?.CardReader?.Media?.ToString();
             }
         }
 
@@ -217,7 +226,7 @@ namespace TestClientForms
 
             ServicePort = null;
 
-            
+
             foreach (int port in PortRanges)
             {
                 try
@@ -226,11 +235,11 @@ namespace TestClientForms
                     using (var socket = new ClientWebSocket())
                     {
                         var cancels = new CancellationTokenSource();
-                        cancels.CancelAfter(400);
+                        cancels.CancelAfter(40_000);
                         await socket.ConnectAsync(new Uri($"{textBoxServiceURI.Text}:{port}/xfs4iot/v1.0"), cancels.Token);
                         state = socket.State;
                     }
-                    
+
                     if (state == WebSocketState.Open)
                     {
                         ServicePort = port;
@@ -255,8 +264,8 @@ namespace TestClientForms
                             responseString = response.Serialise();
                             var service =
                                 (from ep in response.Payload.Services
-                                         where ep.ServiceUri.Contains("CardReader")
-                                         select ep
+                                 where ep.ServiceUri.Contains("CardReader")
+                                 select ep
                                 ).FirstOrDefault()
                                 ?.ServiceUri;
 
@@ -281,7 +290,7 @@ namespace TestClientForms
             }
             else
                 textBoxPort.Text = ServicePort.ToString();
-            
+
             textBoxCommand.Text = commandString;
             textBoxResponse.Text = responseString;
             textBoxCardReader.Text = cardServiceURI;

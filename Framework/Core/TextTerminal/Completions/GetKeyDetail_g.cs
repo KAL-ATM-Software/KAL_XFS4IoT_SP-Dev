@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * GetKeyDetail_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetKeyDetail_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,19 +29,19 @@ namespace XFS4IoT.TextTerminal.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string Keys = null, List<string> CommandKeys = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetKeyDetailCompletion.PayloadData)}");
-
                 this.Keys = Keys;
                 this.CommandKeys = CommandKeys;
             }
 
             /// <summary>
-            ///String which holds the printable characters (numeric and alphanumeric keys) on the Text Terminal Unit, e.g. “0123456789ABCabc” if those text terminal input keys are present. This field is not set if no keys of this type are present on the device.
+            /// String which holds the printable characters (numeric and alphanumeric keys) on the Text Terminal Unit, 
+            /// e.g. “0123456789ABCabc” if those text terminal input keys are present. This field is not set if no keys 
+            /// of this type are present on the device.
             /// </summary>
             [DataMember(Name = "keys")] 
             public string Keys { get; private set; }
             /// <summary>
-            ///Array of command keys on the Text Terminal Unit.
+            /// Array of command keys on the Text Terminal Unit.
             /// </summary>
             [DataMember(Name = "commandKeys")] 
             public List<string> CommandKeys{ get; private set; }

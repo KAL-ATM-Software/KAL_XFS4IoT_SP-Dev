@@ -16,13 +16,10 @@ namespace XFS4IoTServer
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        public CommandDispatcher(Type ServiceProviderType, ILogger Logger, AssemblyName AssemblyName = null)
+        public CommandDispatcher(IEnumerable<XFSConstants.ServiceClass> Services, ILogger Logger, AssemblyName AssemblyName = null)
         {
-            ServiceProviderType.IsNotNull($"Invalid parameter in the {nameof(CommandDispatcher)} constructor. {nameof(ServiceProviderType)}");
-            Logger.IsNotNull($"Invalid parameter in the {nameof(CommandDispatcher)} constructor. {nameof(Logger)}");
-
-            this.Logger = Logger;
-            this.ServiceProviderType = ServiceProviderType;
+            this.Logger = Logger.IsNotNull();
+            this.ServiceClasses = Services.IsNotNull();
 
             // Find all the classes (in the named assembly if a name is give,) which 
             // have the CommandHandlerAttribute, and match them with the 'Type' value on 
@@ -36,13 +33,13 @@ namespace XFS4IoTServer
                 from CustomAttributeData attrib in type.CustomAttributes
                 where attrib.AttributeType == typeof(CommandHandlerAttribute)
                 where attrib.ConstructorArguments.Count == 2
-                where attrib.ConstructorArguments[0].ArgumentType == typeof(Type) && attrib.ConstructorArguments[0].Value as Type == ServiceProviderType
+                where attrib.ConstructorArguments[0].ArgumentType == typeof(XFSConstants.ServiceClass) && ServiceClasses.Contains((XFSConstants.ServiceClass)attrib.ConstructorArguments[0].Value)
                 where attrib.ConstructorArguments[1].ArgumentType == typeof(Type)
                 let namedArg = attrib.ConstructorArguments[1].Value
                 select (message: namedArg as Type, handler: type)
                 );
 
-            var handlers = string.Join("\n", from next in MessageHandlers select $"{next.Key.ToString()} => {next.Value.ToString()}");
+            var handlers = string.Join("\n", from next in MessageHandlers select $"{next.Key} => {next.Value}");
             Logger.Log(Constants.Component, $"Dispatch, found Command Handler classes:\n{handlers}");
 
             // Double check that command handler classes were declared with the right constructor so that we'll be able to use them. 
@@ -116,11 +113,11 @@ namespace XFS4IoTServer
                 MessageHandlers.Add(Message, Handler);
         }
 
-        private readonly Dictionary<Type, Type> MessageHandlers = new Dictionary<Type, Type>();
+        private readonly Dictionary<Type, Type> MessageHandlers = new();
 
         private readonly ILogger Logger;
 
         public IEnumerable<Type> Commands { get => MessageHandlers.Keys; }
-        public Type ServiceProviderType { get; }
+        public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; }
     }
 }

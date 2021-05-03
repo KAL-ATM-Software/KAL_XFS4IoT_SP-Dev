@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * MediaExtents_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * MediaExtents_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -44,20 +43,23 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            ///Specifies the base unit of measurement of the media and can be one of the following values:**inches**
-            ////  The base unit is inches.**mm**
-            ////  The base unit is millimeters.**rowColumn**
-            ////  The base unit is rows and columns.
+            /// Specifies the base unit of measurement of the media and can be one of the following values:
+            /// 
+            /// * ```inches``` - The base unit is inches.
+            /// * ```mm``` - The base unit is millimeters.
+            /// * ```rowColumn``` - The base unit is rows and columns.
             /// </summary>
             [DataMember(Name = "base")] 
             public BaseEnum? Base { get; private set; }
             /// <summary>
-            ///Specifies the horizontal resolution of the base units as a fraction of the base value. For example, a value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
+            /// Specifies the horizontal resolution of the base units as a fraction of the base value. For example, a
+            /// value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
             /// </summary>
             [DataMember(Name = "unitX")] 
             public int? UnitX { get; private set; }
             /// <summary>
-            ///Specifies the vertical resolution of the base units as a fraction of the base value. For example, a value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
+            /// Specifies the vertical resolution of the base units as a fraction of the base value. For example, a
+            /// value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")] 
             public int? UnitY { get; private set; }

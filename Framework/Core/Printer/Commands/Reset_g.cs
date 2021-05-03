@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * Reset_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * Reset_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -43,15 +42,19 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            ///Specifies the manner in which the media should be handled, as one of the following:**eject**
-            ////  Eject the media.**retract**
-            ////  Retract the media to retract bin number specified.**expel**
-            ////  Throw the media out of the exit slot.
+            /// Specifies the manner in which the media should be handled, as one of the following:
+            /// 
+            /// * ```eject``` - Eject the media.
+            /// * ```retract``` - Retract the media to retract bin number specified.
+            /// * ```expel``` - Throw the media out of the exit slot.
             /// </summary>
             [DataMember(Name = "mediaControl")] 
             public MediaControlEnum? MediaControl { get; private set; }
             /// <summary>
-            ///Number of the retract bin the media is retracted to. This number has to be between one and the [number of bins](#printer-capability-retractbins) supported by this device. It is only relevant if *mediaControl* is *retract*.
+            /// Number of the retract bin the media is retracted to. This number has to be between one and the
+            /// [number of bins](#common.capabilities.completion.properties.printer.retractbins) supported by this
+            /// device. It is only relevant if [mediaControl](#printer.reset.command.properties.mediacontrol) is
+            /// *retract*.
             /// </summary>
             [DataMember(Name = "retractBinNumber")] 
             public int? RetractBinNumber { get; private set; }

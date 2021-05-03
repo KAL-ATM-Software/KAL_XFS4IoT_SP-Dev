@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * Capabilities_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * Capabilities_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;

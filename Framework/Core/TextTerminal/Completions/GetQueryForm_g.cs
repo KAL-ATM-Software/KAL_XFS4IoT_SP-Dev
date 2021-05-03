@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * GetQueryForm_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetQueryForm_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -27,7 +26,7 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
             /// <summary>
-            ///Specifies the null-terminated name of the form.
+            /// Specifies the null-terminated name of the form.
             /// </summary>
             public class FormNameClass
             {
@@ -49,8 +48,6 @@ namespace XFS4IoT.TextTerminal.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, FormNameClass FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, CharSupportEnum? CharSupport = null, List<string> Fields = null, string LanguageId = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetQueryFormCompletion.PayloadData)}");
-
                 this.FormName = FormName;
                 this.Width = Width;
                 this.Height = Height;
@@ -62,42 +59,43 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            ///Specifies the null-terminated name of the form.
+            /// Specifies the null-terminated name of the form.
             /// </summary>
             [DataMember(Name = "formName")] 
             public FormNameClass FormName { get; private set; }
             /// <summary>
-            ///Specifies the width of the form in columns.
+            /// Specifies the width of the form in columns.
             /// </summary>
             [DataMember(Name = "width")] 
             public string Width { get; private set; }
             /// <summary>
-            ///Specifies the height of the form in rows. 
+            /// Specifies the height of the form in rows. 
             /// </summary>
             [DataMember(Name = "height")] 
             public string Height { get; private set; }
             /// <summary>
-            ///Specifies the major version.If version is not specifies in the form then zero is returned.
+            /// Specifies the major version.If version is not specifies in the form then zero is returned.
             /// </summary>
             [DataMember(Name = "versionMajor")] 
             public string VersionMajor { get; private set; }
             /// <summary>
-            ///Specifies the minor version. If the version is not specified in the form then zero is returned.
+            /// Specifies the minor version. 
+            /// If the version is not specified in the form then zero is returned.
             /// </summary>
             [DataMember(Name = "versionMinor")] 
             public string VersionMinor { get; private set; }
             /// <summary>
-            ///A single flag indicating whether the form is encoded in ascii or unicode.
+            /// A single flag indicating whether the form is encoded in ascii or unicode.
             /// </summary>
             [DataMember(Name = "charSupport")] 
             public CharSupportEnum? CharSupport { get; private set; }
             /// <summary>
-            ///Object to a list of the field names.
+            /// Object to a list of the field names.
             /// </summary>
             [DataMember(Name = "fields")] 
             public List<string> Fields{ get; private set; }
             /// <summary>
-            ///Specifies the language identifier for the form.
+            /// Specifies the language identifier for the form.
             /// </summary>
             [DataMember(Name = "languageId")] 
             public string LanguageId { get; private set; }

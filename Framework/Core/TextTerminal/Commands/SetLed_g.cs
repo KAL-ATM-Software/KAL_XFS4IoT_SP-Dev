@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * SetLed_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * SetLed_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -28,7 +27,8 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
             /// <summary>
-            ///Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
+            /// Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. 
+            /// If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
             /// </summary>
             public class CommandClass
             {
@@ -85,12 +85,14 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            ///Specifies the index array as reported in Capabilities) of the LED to set as one of the values defined within the capabilities section.
+            /// Specifies the index array as reported in Capabilities of the LED to set as one of the values defined 
+            /// within the capabilities section [TextTerminal.Capabilities](#common.capabilities.completion.properties.textterminal.leds)
             /// </summary>
             [DataMember(Name = "led")] 
             public int? Led { get; private set; }
             /// <summary>
-            ///Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
+            /// Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. 
+            /// If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
             /// </summary>
             [DataMember(Name = "command")] 
             public object Command { get; private set; }

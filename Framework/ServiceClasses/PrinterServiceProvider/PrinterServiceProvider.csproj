@@ -29,4 +29,10 @@
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Handlers\*_g.cs">
+      <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

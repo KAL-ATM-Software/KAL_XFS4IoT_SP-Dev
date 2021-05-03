@@ -44,8 +44,6 @@ namespace XFS4IoT
         /// <param name="Type">Type of the message, Command, Response, Events</param>
         public MessageBase(string RequestId, MessageHeader.TypeEnum Type)
         {
-            Contracts.IsNotNullOrWhitespace(RequestId, $"Invalid received in the {nameof(MessageBase)} constructor. { RequestId }");
-
             string attribNameValue = LookupMessageName(GetType());
             Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Type }");
             this.Headers = new MessageHeader(attribNameValue, RequestId, Type);
@@ -59,7 +57,6 @@ namespace XFS4IoT
         internal MessageBase(MessageHeader Headers)
         {
             Headers.IsNotNull($"Invalid header received in the {nameof(MessageBase)} constructor.");
-            Contracts.IsNotNullOrWhitespace(Headers.RequestId, $"Invalid received in the {nameof(MessageBase)} constructor. { Headers.RequestId }");
             Contracts.IsNotNullOrWhitespace(Headers.Name, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Headers.Type }");
             this.Headers = Headers;
         }

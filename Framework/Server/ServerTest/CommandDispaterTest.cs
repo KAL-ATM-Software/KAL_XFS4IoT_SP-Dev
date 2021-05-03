@@ -21,7 +21,7 @@ namespace XFS4IoTServer.Test
         [TestMethod]
         public async Task NewMessageDispatcherTest()
         {
-            var dispatcher = new CommandDispatcher( typeof(TestServiceProvider), new TestLogger() );
+            var dispatcher = new CommandDispatcher( new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger() );
 
 
             await dispatcher.Dispatch(new TestConnection(), new TestMessage1(), new CancellationToken());
@@ -36,10 +36,15 @@ namespace XFS4IoTServer.Test
         public Uri Uri { get; } = new Uri(string.Empty);
         public Uri WSUri { get; } = new Uri(string.Empty);
         public XFSConstants.ServiceClass ServiceClass { get => throw new Exception("Not implemented"); }
+        public IDevice Device { get => throw new NotImplementedException(); }
+
+        public Task BroadcastEvent(object payload) => throw new NotImplementedException();
 
         public Task Dispatch(IConnection Connection, object Command, CancellationToken Cancel) => throw new NotImplementedException();
         public Task DispatchError(IConnection Connection, object Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync() => throw new NotImplementedException();
+
+
     }
 
     internal class TestLogger : ILogger
@@ -83,7 +88,7 @@ namespace XFS4IoTServer.Test
         { }
     }
 
-    [CommandHandler(typeof(TestServiceProvider), typeof(TestMessage1))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(TestMessage1))]
     public class TestMessageHandler1 : ICommandHandler
     {
         public TestMessageHandler1(ICommandDispatcher _, ILogger _1 ){}
@@ -102,8 +107,8 @@ namespace XFS4IoTServer.Test
             await Task.CompletedTask;
         }
     }
-    [CommandHandler(typeof(TestServiceProvider), typeof(TestMessage2))]
-    [CommandHandler(typeof(TestServiceProvider), typeof(TestMessage3))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(TestMessage2))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(TestMessage3))]
     //[CommandHandler(typeof(Int32))] // Non-CommandMessage types will FE on process startup. 
     public class TestMessageHandler2 : ICommandHandler
     {

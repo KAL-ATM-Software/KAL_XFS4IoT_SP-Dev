@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * Read_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * Read_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -37,19 +36,22 @@ namespace XFS4IoT.TextTerminal.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Input = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(ReadCompletion.PayloadData)}");
-
                 this.ErrorCode = ErrorCode;
                 this.Input = Input;
             }
 
             /// <summary>
-            ///Specifies the error code if applicable. The following values are possible:\"keyInvalid\": At least one of the specified keys is invalid.\"keyNotSupported\": At least one of the specified keys is not supported by the Service Provider.\"noActiveKeys\": There are no active keys specified.
+            /// Specifies the error code if applicable. The following values are possible:
+            /// 
+            /// * ```keyInvalid``` - At least one of the specified keys is invalid.
+            /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service Provider.
+            /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
             [DataMember(Name = "errorCode")] 
             public ErrorCodeEnum? ErrorCode { get; private set; }
             /// <summary>
-            ///Specifies a zero terminated string containing all the printable characters (numeric and alphanumeric) read from the text terminal unit key pad.
+            /// Specifies a zero terminated string containing all the printable characters (numeric and alphanumeric) 
+            /// read from the text terminal unit key pad.
             /// </summary>
             [DataMember(Name = "input")] 
             public string Input { get; private set; }

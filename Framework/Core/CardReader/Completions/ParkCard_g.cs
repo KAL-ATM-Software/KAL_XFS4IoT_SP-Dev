@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CardReader interface.
- * ParkCard_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * ParkCard_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -38,17 +37,19 @@ namespace XFS4IoT.CardReader.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(ParkCardCompletion.PayloadData)}");
-
                 this.ErrorCode = ErrorCode;
             }
 
             /// <summary>
-            ///Specifies the error code if applicable. The following values are possible:**mediaJam**
-            ////The card is jammed. Operator intervention is required.**noMedia**
-            ////No card is present at the read/write, chip I/O or transport position and the **in** option has been selected. Or no card is in the parking station and the **out** option has been selected.**cardPresent**
-            ////Another card is present and is preventing successful movement of the card specified by *parkingStation*.**positionInvalid**
-            ////The specified parking station is invalid.
+            /// Specifies the error code if applicable. The following values are possible:
+            /// 
+            /// * ```mediaJam``` - The card is jammed. Operator intervention is required.
+            /// * ```noMedia``` - No card is present at the read/write, chip I/O or transport position and the *in*
+            ///   option has been selected. Or no card is in the parking station and the *out* option has been
+            ///   selected.
+            /// * ```cardPresent``` - Another card is present and is preventing successful movement of the card
+            ///   specified by [parkingStation](#cardreader.parkcard.command.properties.parkingstation).
+            /// * ```positionInvalid``` - The specified parking station is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")] 
             public ErrorCodeEnum? ErrorCode { get; private set; }

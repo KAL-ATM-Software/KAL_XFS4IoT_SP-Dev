@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Printer interface.
- * GetFormList_g.cs uses automatically generated parts. 
- * created at 3/18/2021 2:05:35 PM
+ * GetFormList_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -30,13 +29,11 @@ namespace XFS4IoT.Printer.Completions
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<string> FormList = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GetFormListCompletion.PayloadData)}");
-
                 this.FormList = FormList;
             }
 
             /// <summary>
-            ///The list of form names.
+            /// The list of form names.
             /// </summary>
             [DataMember(Name = "formList")] 
             public List<string> FormList{ get; private set; }
