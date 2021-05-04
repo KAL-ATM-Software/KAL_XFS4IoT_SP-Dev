@@ -15,14 +15,14 @@ Find out more about this exciting new project and how you can get involved in sh
 3. Open the solution `Devices/SPs.sln` in Visual Studio 2019.
 4. Select Solution SPs in the solution explorer and execute Clean Solution.
 5. Select Solution SPs in the solution explorer and execute Rebuild Solution.
-6. Build complete all 8 projects without errors.
-7. Binaries are created under `Devices/bin/Debug/net5.0-windows` or `Release/net5.0-windows`.
-8. The SP executable **XFS4IoT.SP.SimulatedServerHost.exe** is created. The executable has dependencies with other DLLs created in the same folder.
+6. Build complete all 7 projects without errors.
+7. Binaries are created under `Devices/bin/Debug/net5.0-windows7.0` or `Release/net5.0-windows7.0`.
+8. The SP executable **XFS4IoT.SP.ServerHostSample.exe** is created. The executable has dependencies with other DLLs created in the same folder.
 9. The default IP address is the local host 127.0.0.0. If the SP and client application run on the same machine, no configuration changes are required. If the IP address needs to be changed it can be done so remotely with the client application from different machine as follows: 
-    1. Open the configuration file of the SP, ***XFS4IoT.SP.SimulatedServerHost.dll.config***, in the test file editor, for example VS Code.
+    1. Open the configuration file of the SP, ***XFS4IoT.SP.ServerHostSample.dll.config***, in the test file editor, for example VS Code.
     2. Change value of the `ServerAddress` key.  
         `<add key="ServerAddressUri" value="**http://xxx.xxx.xxx.xxx**" />`
-10. Run SimulatedServerHost.exe.
+10. Run XFS4IoT.SP.ServerHostSample.exe.
 
 ## Building the sample client application
 
