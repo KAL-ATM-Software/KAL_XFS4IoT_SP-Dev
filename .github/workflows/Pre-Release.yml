@@ -1,0 +1,42 @@
+name: Pre-Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version Number (0.0.1 Format)'
+        required: true
+        default: '0.0.1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore Dependencies
+      run: dotnet restore Framework
+
+    - name: Build 
+      run: dotnet build Framework --no-restore
+    
+    - name: Run Tests
+      run: dotnet test Framework --no-build --verbosity normal
+    
+    - name: Create release
+      run: |
+        set -x
+        
+        dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build
+        assets=()
+        for asset in ./nuget/*.nupkg; do
+          assets+=("-a" "$asset")
+        done
+        hub release create -p "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
