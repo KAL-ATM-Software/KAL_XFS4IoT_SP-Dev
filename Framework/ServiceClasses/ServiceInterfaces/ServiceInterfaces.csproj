@@ -12,6 +12,14 @@
     <AssemblyName>XFS4IoT.SP.Framework.ServiceInterfaces</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>KAL.XFS4IoT.SP-Dev.Framework.ServiceInterfaces</PackageId>
+    <Copyright>Copyright (C) KAL ATM Software GmbH, 2021</Copyright>
+    <Description>KAL.XFS4IoT.SP-Dev.Framework.ServiceInterfaces Pre-Release</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev</RepositoryUrl>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
   </PropertyGroup>
