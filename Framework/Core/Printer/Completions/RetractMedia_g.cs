@@ -18,26 +18,26 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCompletion : Completion<RetractMediaCompletion.PayloadData>
     {
-        public RetractMediaCompletion(string RequestId, RetractMediaCompletion.PayloadData Payload)
+        public RetractMediaCompletion(int RequestId, RetractMediaCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                NoMediaPresent,
-                RetractBinFull,
-                MediaJammed,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? BinNumber = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
                 this.BinNumber = BinNumber;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                NoMediaPresent,
+                RetractBinFull,
+                MediaJammed
             }
 
             /// <summary>
@@ -49,12 +49,13 @@ namespace XFS4IoT.Printer.Completions
             ///   still in the device.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// The number of the retract bin where the media has actually been deposited.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
 
         }

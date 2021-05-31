@@ -18,7 +18,7 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetFormList")]
     public sealed class GetFormListCompletion : Completion<GetFormListCompletion.PayloadData>
     {
-        public GetFormListCompletion(string RequestId, GetFormListCompletion.PayloadData Payload)
+        public GetFormListCompletion(int RequestId, GetFormListCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -35,8 +35,8 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// The list of form names.
             /// </summary>
-            [DataMember(Name = "formList")] 
-            public List<string> FormList{ get; private set; }
+            [DataMember(Name = "formList")]
+            public List<string> FormList { get; private set; }
 
         }
     }

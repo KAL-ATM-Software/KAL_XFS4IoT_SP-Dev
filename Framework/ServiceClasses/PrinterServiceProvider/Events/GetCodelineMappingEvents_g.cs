@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class GetCodelineMappingEvents : PrinterEvents, IGetCodelineMappingEvents
     {
 
-        public GetCodelineMappingEvents(IConnection connection, string requestId)
+        public GetCodelineMappingEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

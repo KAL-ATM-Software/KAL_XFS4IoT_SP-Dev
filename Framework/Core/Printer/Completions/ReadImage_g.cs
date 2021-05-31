@@ -18,13 +18,21 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ReadImage")]
     public sealed class ReadImageCompletion : Completion<ReadImageCompletion.PayloadData>
     {
-        public ReadImageCompletion(string RequestId, ReadImageCompletion.PayloadData Payload)
+        public ReadImageCompletion(int RequestId, ReadImageCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, ImagesClass Images = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.Images = Images;
+            }
+
             public enum ErrorCodeEnum
             {
                 ShutterFail,
@@ -32,106 +40,7 @@ namespace XFS4IoT.Printer.Completions
                 FileIOError,
                 LampInoperative,
                 MediaSize,
-                MediaRejected,
-            }
-
-            /// <summary>
-            /// The status and data for each of the requested images.
-            /// </summary>
-            public class ImagesClass
-            {
-                
-                /// <summary>
-                /// The front image status and data.
-                /// </summary>
-                public class FrontClass 
-                {
-                    public enum StatusEnum
-                    {
-                        Ok,
-                        NotSupp,
-                        Missing,
-                    }
-                    [DataMember(Name = "status")] 
-                    public StatusEnum? Status { get; private set; }
-                    [DataMember(Name = "data")] 
-                    public string Data { get; private set; }
-
-                    public FrontClass (StatusEnum? Status, string Data)
-                    {
-                        this.Status = Status;
-                        this.Data = Data;
-                    }
-                }
-                [DataMember(Name = "front")] 
-                public FrontClass Front { get; private set; }
-                
-                /// <summary>
-                /// The back image status and data.
-                /// </summary>
-                public class BackClass 
-                {
-                    public enum StatusEnum
-                    {
-                        Ok,
-                        NotSupp,
-                        Missing,
-                    }
-                    [DataMember(Name = "status")] 
-                    public StatusEnum? Status { get; private set; }
-                    [DataMember(Name = "data")] 
-                    public string Data { get; private set; }
-
-                    public BackClass (StatusEnum? Status, string Data)
-                    {
-                        this.Status = Status;
-                        this.Data = Data;
-                    }
-                }
-                [DataMember(Name = "back")] 
-                public BackClass Back { get; private set; }
-                
-                /// <summary>
-                /// The codeline status and data.
-                /// </summary>
-                public class CodelineClass 
-                {
-                    public enum StatusEnum
-                    {
-                        Ok,
-                        NotSupp,
-                        Missing,
-                    }
-                    [DataMember(Name = "status")] 
-                    public StatusEnum? Status { get; private set; }
-                    [DataMember(Name = "data")] 
-                    public string Data { get; private set; }
-
-                    public CodelineClass (StatusEnum? Status, string Data)
-                    {
-                        this.Status = Status;
-                        this.Data = Data;
-                    }
-                }
-                [DataMember(Name = "codeline")] 
-                public CodelineClass Codeline { get; private set; }
-
-                public ImagesClass (FrontClass Front, BackClass Back, CodelineClass Codeline)
-                {
-                    this.Front = Front;
-                    this.Back = Back;
-                    this.Codeline = Codeline;
-                }
-
-
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, ImagesClass Images = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.Images = Images;
+                MediaRejected
             }
 
             /// <summary>
@@ -147,12 +56,169 @@ namespace XFS4IoT.Printer.Completions
             ///   [Printer.MediaRejectedEvent](#printer.mediarejectedevent) event is posted with the details. The
             ///   device is still operational.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
+            [DataContract]
+            public sealed class ImagesClass
+            {
+                public ImagesClass(FrontClass Front = null, BackClass Back = null, CodelineClass Codeline = null)
+                {
+                    this.Front = Front;
+                    this.Back = Back;
+                    this.Codeline = Codeline;
+                }
+
+                [DataContract]
+                public sealed class FrontClass
+                {
+                    public FrontClass(StatusEnum? Status = null, string Data = null)
+                    {
+                        this.Status = Status;
+                        this.Data = Data;
+                    }
+
+                    public enum StatusEnum
+                    {
+                        Ok,
+                        NotSupp,
+                        Missing
+                    }
+
+                    /// <summary>
+                    /// Status of data source. Possible values are:
+                    /// 
+                    /// * ```ok``` - The data is OK.
+                    /// * ```notSupp``` - The data source is not supported.
+                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
+                    /// </summary>
+                    [DataMember(Name = "status")]
+                    public StatusEnum? Status { get; private set; }
+
+                    /// <summary>
+                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
+                    /// provided), this will contain the Base64 encoded image.
+                    /// 
+                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
+                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
+                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
+                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
+                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
+                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// </summary>
+                    [DataMember(Name = "data")]
+                    public string Data { get; private set; }
+
+                }
+
+                /// <summary>
+                /// The front image status and data.
+                /// </summary>
+                [DataMember(Name = "front")]
+                public FrontClass Front { get; private set; }
+
+                [DataContract]
+                public sealed class BackClass
+                {
+                    public BackClass(StatusEnum? Status = null, string Data = null)
+                    {
+                        this.Status = Status;
+                        this.Data = Data;
+                    }
+
+                    public enum StatusEnum
+                    {
+                        Ok,
+                        NotSupp,
+                        Missing
+                    }
+
+                    /// <summary>
+                    /// Status of data source. Possible values are:
+                    /// 
+                    /// * ```ok``` - The data is OK.
+                    /// * ```notSupp``` - The data source is not supported.
+                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
+                    /// </summary>
+                    [DataMember(Name = "status")]
+                    public StatusEnum? Status { get; private set; }
+
+                    /// <summary>
+                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
+                    /// provided), this will contain the Base64 encoded image.
+                    /// 
+                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
+                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
+                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
+                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
+                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
+                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// </summary>
+                    [DataMember(Name = "data")]
+                    public string Data { get; private set; }
+
+                }
+
+                /// <summary>
+                /// The back image status and data.
+                /// </summary>
+                [DataMember(Name = "back")]
+                public BackClass Back { get; private set; }
+
+                [DataContract]
+                public sealed class CodelineClass
+                {
+                    public CodelineClass(StatusEnum? Status = null, string Data = null)
+                    {
+                        this.Status = Status;
+                        this.Data = Data;
+                    }
+
+                    public enum StatusEnum
+                    {
+                        Ok,
+                        NotSupp,
+                        Missing
+                    }
+
+                    /// <summary>
+                    /// Status of data source. Possible values are:
+                    /// 
+                    /// * ```ok``` - The data is OK.
+                    /// * ```notSupp``` - The data source is not supported.
+                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
+                    /// </summary>
+                    [DataMember(Name = "status")]
+                    public StatusEnum? Status { get; private set; }
+
+                    /// <summary>
+                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
+                    /// provided), this will contain the Base64 encoded image.
+                    /// 
+                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
+                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
+                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
+                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
+                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
+                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// </summary>
+                    [DataMember(Name = "data")]
+                    public string Data { get; private set; }
+
+                }
+
+                /// <summary>
+                /// The codeline status and data.
+                /// </summary>
+                [DataMember(Name = "codeline")]
+                public CodelineClass Codeline { get; private set; }
+
+            }
+
             /// <summary>
             /// The status and data for each of the requested images.
             /// </summary>
-            [DataMember(Name = "images")] 
+            [DataMember(Name = "images")]
             public ImagesClass Images { get; private set; }
 
         }

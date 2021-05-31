@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var statusCmd = command.IsA<StatusCommand>($"Invalid parameter in the Status Handle method. {nameof(StatusCommand)}");
-            
-            IStatusEvents events = new StatusEvents(Connection, statusCmd.Headers.RequestId);
+            statusCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IStatusEvents events = new StatusEvents(Connection, statusCmd.Headers.RequestId.Value);
 
             var result = await HandleStatus(events, statusCmd, cancel);
-            await Connection.SendMessageAsync(new StatusCompletion(statusCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new StatusCompletion(statusCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var statuscommand = command.IsA<StatusCommand>();
+            statuscommand.Headers.RequestId.HasValue.IsTrue();
 
             StatusCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => StatusCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new StatusCompletion(statuscommand.Headers.RequestId, new StatusCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new StatusCompletion(statuscommand.Headers.RequestId.Value, new StatusCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

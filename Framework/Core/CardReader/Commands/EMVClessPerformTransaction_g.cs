@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCommand : Command<EMVClessPerformTransactionCommand.PayloadData>
     {
-        public EMVClessPerformTransactionCommand(string RequestId, EMVClessPerformTransactionCommand.PayloadData Payload)
+        public EMVClessPerformTransactionCommand(int RequestId, EMVClessPerformTransactionCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -51,7 +51,7 @@ namespace XFS4IoT.CardReader.Commands
             /// be used from the configuration sent previously in the
             /// [CardReader.EMVClessConfigure](#cardreader.emvclessconfigure) command.
             /// </summary>
-            [DataMember(Name = "data")] 
+            [DataMember(Name = "data")]
             public string Data { get; private set; }
 
         }

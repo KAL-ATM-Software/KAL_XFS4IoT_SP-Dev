@@ -42,7 +42,7 @@ namespace XFS4IoT
         /// </summary>
         /// <param name="RequestId">Request ID</param>
         /// <param name="Type">Type of the message, Command, Response, Events</param>
-        public MessageBase(string RequestId, MessageHeader.TypeEnum Type)
+        public MessageBase(int? RequestId, MessageHeader.TypeEnum Type)
         {
             string attribNameValue = LookupMessageName(GetType());
             Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Type }");

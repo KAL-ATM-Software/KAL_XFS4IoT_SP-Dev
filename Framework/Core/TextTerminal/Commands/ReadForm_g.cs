@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.ReadForm")]
     public sealed class ReadFormCommand : Command<ReadFormCommand.PayloadData>
     {
-        public ReadFormCommand(string RequestId, ReadFormCommand.PayloadData Payload)
+        public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -37,8 +37,9 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Specifies the null-terminated name of the form
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
+
             /// <summary>
             /// Specifies the field names from which to read input data. The fields 
             /// are edited by the user in the order that the fields are specified 
@@ -46,8 +47,8 @@ namespace XFS4IoT.TextTerminal.Commands
             /// from all input fields on the form in the order they appear in the 
             /// form file (independent of the field screen position).
             /// </summary>
-            [DataMember(Name = "fieldNames")] 
-            public List<string> FieldNames{ get; private set; }
+            [DataMember(Name = "fieldNames")]
+            public List<string> FieldNames { get; private set; }
 
         }
     }

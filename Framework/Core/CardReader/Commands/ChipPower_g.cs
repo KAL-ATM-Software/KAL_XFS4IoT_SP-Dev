@@ -19,25 +19,25 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCommand : Command<ChipPowerCommand.PayloadData>
     {
-        public ChipPowerCommand(string RequestId, ChipPowerCommand.PayloadData Payload)
+        public ChipPowerCommand(int RequestId, ChipPowerCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ChipPowerEnum
-            {
-                Cold,
-                Warm,
-                Off,
-            }
-
 
             public PayloadData(int Timeout, ChipPowerEnum? ChipPower = null)
                 : base(Timeout)
             {
                 this.ChipPower = ChipPower;
+            }
+
+            public enum ChipPowerEnum
+            {
+                Cold,
+                Warm,
+                Off
             }
 
             /// <summary>
@@ -47,7 +47,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```warm``` - The chip is reset.
             /// * ```off``` - The chip is powered off.
             /// </summary>
-            [DataMember(Name = "chipPower")] 
+            [DataMember(Name = "chipPower")]
             public ChipPowerEnum? ChipPower { get; private set; }
 
         }

@@ -18,18 +18,13 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.SetLed")]
     public sealed class SetLedCompletion : Completion<SetLedCompletion.PayloadData>
     {
-        public SetLedCompletion(string RequestId, SetLedCompletion.PayloadData Payload)
+        public SetLedCompletion(int RequestId, SetLedCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                InvalidLed,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
@@ -37,12 +32,17 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.ErrorCode = ErrorCode;
             }
 
+            public enum ErrorCodeEnum
+            {
+                InvalidLed
+            }
+
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```invalidLed``` - An attempt to set a LED to a new value was invalid because the LED does not exist.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

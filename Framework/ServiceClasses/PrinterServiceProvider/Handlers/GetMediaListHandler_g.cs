@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getMediaListCmd = command.IsA<GetMediaListCommand>($"Invalid parameter in the GetMediaList Handle method. {nameof(GetMediaListCommand)}");
-            
-            IGetMediaListEvents events = new GetMediaListEvents(Connection, getMediaListCmd.Headers.RequestId);
+            getMediaListCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IGetMediaListEvents events = new GetMediaListEvents(Connection, getMediaListCmd.Headers.RequestId.Value);
 
             var result = await HandleGetMediaList(events, getMediaListCmd, cancel);
-            await Connection.SendMessageAsync(new GetMediaListCompletion(getMediaListCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new GetMediaListCompletion(getMediaListCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getMediaListcommand = command.IsA<GetMediaListCommand>();
+            getMediaListcommand.Headers.RequestId.HasValue.IsTrue();
 
             GetMediaListCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => GetMediaListCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetMediaListCompletion(getMediaListcommand.Headers.RequestId, new GetMediaListCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetMediaListCompletion(getMediaListcommand.Headers.RequestId.Value, new GetMediaListCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

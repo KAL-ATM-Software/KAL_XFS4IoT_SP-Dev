@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class WriteEvents : TextTerminalEvents, IWriteEvents
     {
 
-        public WriteEvents(IConnection connection, string requestId)
+        public WriteEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

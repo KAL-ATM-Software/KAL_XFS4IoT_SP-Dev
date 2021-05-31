@@ -18,22 +18,13 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCompletion : Completion<MediaExtentsCompletion.PayloadData>
     {
-        public MediaExtentsCompletion(string RequestId, MediaExtentsCompletion.PayloadData Payload)
+        public MediaExtentsCompletion(int RequestId, MediaExtentsCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                ExtentNotSupported,
-                MediaJammed,
-                LampInoperative,
-                MediaSize,
-                MediaRejected,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? SizeX = null, int? SizeY = null)
                 : base(CompletionCode, ErrorDescription)
@@ -41,6 +32,15 @@ namespace XFS4IoT.Printer.Completions
                 this.ErrorCode = ErrorCode;
                 this.SizeX = SizeX;
                 this.SizeY = SizeY;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                ExtentNotSupported,
+                MediaJammed,
+                LampInoperative,
+                MediaSize,
+                MediaRejected
             }
 
             /// <summary>
@@ -54,17 +54,19 @@ namespace XFS4IoT.Printer.Completions
             ///   [Printer.MediaRejectedEvent](#printer.mediarejectedevent) event is posted with the details. The
             ///   device is still operational.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
-            [DataMember(Name = "sizeX")] 
+            [DataMember(Name = "sizeX")]
             public int? SizeX { get; private set; }
+
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
-            [DataMember(Name = "sizeY")] 
+            [DataMember(Name = "sizeY")]
             public int? SizeY { get; private set; }
 
         }

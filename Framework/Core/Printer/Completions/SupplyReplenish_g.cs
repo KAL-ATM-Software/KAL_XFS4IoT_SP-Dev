@@ -18,7 +18,7 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.SupplyReplenish")]
     public sealed class SupplyReplenishCompletion : Completion<SupplyReplenishCompletion.PayloadData>
     {
-        public SupplyReplenishCompletion(string RequestId, SupplyReplenishCompletion.PayloadData Payload)
+        public SupplyReplenishCompletion(int RequestId, SupplyReplenishCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.Printer.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

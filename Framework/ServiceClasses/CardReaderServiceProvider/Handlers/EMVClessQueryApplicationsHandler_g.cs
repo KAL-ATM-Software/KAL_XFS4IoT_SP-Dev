@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var eMVClessQueryApplicationsCmd = command.IsA<EMVClessQueryApplicationsCommand>($"Invalid parameter in the EMVClessQueryApplications Handle method. {nameof(EMVClessQueryApplicationsCommand)}");
-            
-            IEMVClessQueryApplicationsEvents events = new EMVClessQueryApplicationsEvents(Connection, eMVClessQueryApplicationsCmd.Headers.RequestId);
+            eMVClessQueryApplicationsCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IEMVClessQueryApplicationsEvents events = new EMVClessQueryApplicationsEvents(Connection, eMVClessQueryApplicationsCmd.Headers.RequestId.Value);
 
             var result = await HandleEMVClessQueryApplications(events, eMVClessQueryApplicationsCmd, cancel);
-            await Connection.SendMessageAsync(new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationsCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationsCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var eMVClessQueryApplicationscommand = command.IsA<EMVClessQueryApplicationsCommand>();
+            eMVClessQueryApplicationscommand.Headers.RequestId.HasValue.IsTrue();
 
             EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationscommand.Headers.RequestId, new EMVClessQueryApplicationsCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationscommand.Headers.RequestId.Value, new EMVClessQueryApplicationsCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

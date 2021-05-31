@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.RetainCard")]
     public sealed class RetainCardCommand : Command<RetainCardCommand.PayloadData>
     {
-        public RetainCardCommand(string RequestId, RetainCardCommand.PayloadData Payload)
+        public RetainCardCommand(int RequestId, RetainCardCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.CardReader.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

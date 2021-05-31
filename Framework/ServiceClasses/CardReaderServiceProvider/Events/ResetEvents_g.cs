@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class ResetEvents : CardReaderEvents, IResetEvents
     {
 
-        public ResetEvents(IConnection connection, string requestId)
+        public ResetEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

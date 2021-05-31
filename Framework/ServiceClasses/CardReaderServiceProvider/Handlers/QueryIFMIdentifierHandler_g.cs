@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var queryIFMIdentifierCmd = command.IsA<QueryIFMIdentifierCommand>($"Invalid parameter in the QueryIFMIdentifier Handle method. {nameof(QueryIFMIdentifierCommand)}");
-            
-            IQueryIFMIdentifierEvents events = new QueryIFMIdentifierEvents(Connection, queryIFMIdentifierCmd.Headers.RequestId);
+            queryIFMIdentifierCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IQueryIFMIdentifierEvents events = new QueryIFMIdentifierEvents(Connection, queryIFMIdentifierCmd.Headers.RequestId.Value);
 
             var result = await HandleQueryIFMIdentifier(events, queryIFMIdentifierCmd, cancel);
-            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var queryIFMIdentifiercommand = command.IsA<QueryIFMIdentifierCommand>();
+            queryIFMIdentifiercommand.Headers.RequestId.HasValue.IsTrue();
 
             QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifiercommand.Headers.RequestId, new QueryIFMIdentifierCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifiercommand.Headers.RequestId.Value, new QueryIFMIdentifierCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class QueryIFMIdentifierEvents : CardReaderEvents, IQueryIFMIdentifierEvents
     {
 
-        public QueryIFMIdentifierEvents(IConnection connection, string requestId)
+        public QueryIFMIdentifierEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

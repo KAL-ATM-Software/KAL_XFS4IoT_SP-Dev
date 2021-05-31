@@ -12,7 +12,6 @@ namespace XFS4IoTServer
 {
     public interface IServiceProvider : ICommandDispatcher
     {
-        Task RunAsync();
         string Name { get; }
 
         Uri Uri { get; }

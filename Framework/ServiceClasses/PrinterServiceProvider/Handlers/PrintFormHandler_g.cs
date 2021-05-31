@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var printFormCmd = command.IsA<PrintFormCommand>($"Invalid parameter in the PrintForm Handle method. {nameof(PrintFormCommand)}");
-            
-            IPrintFormEvents events = new PrintFormEvents(Connection, printFormCmd.Headers.RequestId);
+            printFormCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IPrintFormEvents events = new PrintFormEvents(Connection, printFormCmd.Headers.RequestId.Value);
 
             var result = await HandlePrintForm(events, printFormCmd, cancel);
-            await Connection.SendMessageAsync(new PrintFormCompletion(printFormCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new PrintFormCompletion(printFormCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var printFormcommand = command.IsA<PrintFormCommand>();
+            printFormcommand.Headers.RequestId.HasValue.IsTrue();
 
             PrintFormCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => PrintFormCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new PrintFormCompletion(printFormcommand.Headers.RequestId, new PrintFormCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PrintFormCompletion(printFormcommand.Headers.RequestId.Value, new PrintFormCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

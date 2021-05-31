@@ -29,18 +29,17 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StateEnum
-            {
-                Ok,
-                Fading,
-                Inop,
-            }
-
-
             public PayloadData(StateEnum? State = null)
                 : base()
             {
                 this.State = State;
+            }
+
+            public enum StateEnum
+            {
+                Ok,
+                Fading,
+                Inop
             }
 
             /// <summary>
@@ -50,8 +49,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```fading``` - The imaging lamp is fading and should be changed.
             /// * ```inop``` - The imaging lamp is inoperative.
             /// </summary>
-            [DataMember(Name = "state")] 
+            [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
+
         }
 
     }

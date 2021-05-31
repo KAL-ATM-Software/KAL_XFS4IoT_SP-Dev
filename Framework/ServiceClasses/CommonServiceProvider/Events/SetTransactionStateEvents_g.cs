@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class SetTransactionStateEvents : CommonEvents, ISetTransactionStateEvents
     {
 
-        public SetTransactionStateEvents(IConnection connection, string requestId)
+        public SetTransactionStateEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

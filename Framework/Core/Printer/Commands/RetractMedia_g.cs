@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCommand : Command<RetractMediaCommand.PayloadData>
     {
-        public RetractMediaCommand(string RequestId, RetractMediaCommand.PayloadData Payload)
+        public RetractMediaCommand(int RequestId, RetractMediaCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -38,7 +38,7 @@ namespace XFS4IoT.Printer.Commands
             /// media will be retracted to the transport. After it has been retracted to the transport, in a
             /// subsequent operation the media can be ejected again, or retracted to one of the retract bins.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
 
         }

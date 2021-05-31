@@ -16,12 +16,11 @@ namespace XFS4IoTFramework.CardReader
     internal abstract class CardReaderEvents
     {
         protected readonly IConnection connection;
-        protected readonly string requestId;
+        protected readonly int requestId;
 
-        public CardReaderEvents(IConnection connection, string requestId)
+        public CardReaderEvents(IConnection connection, int requestId)
         {
             this.connection = connection;
-            Contracts.IsNotNullOrWhitespace(requestId, $"Unexpected request ID is received. {requestId}");
             this.requestId = requestId;
         }
 

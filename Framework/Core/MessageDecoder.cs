@@ -171,14 +171,14 @@ namespace XFS4IoT
             public object CreateMessage(Type messageType)
             {
                 //Get constructor (RequestId, payloadType)
-                ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(string), typeof(T) });
-                if (ci != null)
-                    return ci.Invoke(new object[] { Headers.RequestId, Payload });
+                ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T) });
+                if (ci != null && Headers.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Headers.RequestId.Value, Payload });
                 
                 //Try to get constructor (RequestId) for events
-                ci = messageType.GetConstructor(new Type[] { typeof(string) });
-                if (ci != null)
-                    return ci.Invoke(new object[] { Headers.RequestId });
+                ci = messageType.GetConstructor(new Type[] { typeof(int) });
+                if (ci != null && Headers.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Headers.RequestId.Value });
 
                 //Try to get constructor (payloadType) for events
                 ci = messageType.GetConstructor(new Type[] { typeof(T) });
@@ -186,9 +186,9 @@ namespace XFS4IoT
                     return ci.Invoke(new object[] { Payload });
 
                 //Try to get constructor () for unsolic events (no request ID.) 
-                ci = messageType.GetConstructor(new Type[] {});
+                ci = messageType.GetConstructor(Array.Empty<Type>());
                 if (ci != null)
-                    return ci.Invoke(new object[] {});
+                    return ci.Invoke(Array.Empty<object>());
 
                 return Contracts.Fail<object>($"Unable to find constructor for type {nameof(messageType)} with parameters (RequestId, Payload) or (RequestId).");
             }

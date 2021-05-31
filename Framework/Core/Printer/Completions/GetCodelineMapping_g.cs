@@ -18,19 +18,13 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetCodelineMapping")]
     public sealed class GetCodelineMappingCompletion : Completion<GetCodelineMappingCompletion.PayloadData>
     {
-        public GetCodelineMappingCompletion(string RequestId, GetCodelineMappingCompletion.PayloadData Payload)
+        public GetCodelineMappingCompletion(int RequestId, GetCodelineMappingCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum CodelineFormatEnum
-            {
-                Cmc7,
-                E13b,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, CodelineFormatEnum? CodelineFormat = null, string CharMapping = null)
                 : base(CompletionCode, ErrorDescription)
@@ -39,14 +33,21 @@ namespace XFS4IoT.Printer.Completions
                 this.CharMapping = CharMapping;
             }
 
+            public enum CodelineFormatEnum
+            {
+                Cmc7,
+                E13b
+            }
+
             /// <summary>
             /// Specifies the code-line format that is being reported as one of the following:
             /// 
             /// * ```cmc7``` - CMC7 mapping.
             /// * ```e13b``` - E13B mapping.
             /// </summary>
-            [DataMember(Name = "codelineFormat")] 
+            [DataMember(Name = "codelineFormat")]
             public CodelineFormatEnum? CodelineFormat { get; private set; }
+
             /// <summary>
             /// Defines the mapping of the font specific symbols to byte values. These byte values are used to
             /// represent the font specific characters when the code line is read through the Printer.ReadImage
@@ -74,7 +75,7 @@ namespace XFS4IoT.Printer.Completions
             /// | 5 | N/A | Reject / Unreadable |
             /// 
             /// </summary>
-            [DataMember(Name = "charMapping")] 
+            [DataMember(Name = "charMapping")]
             public string CharMapping { get; private set; }
 
         }

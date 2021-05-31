@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class EjectCardEvents : CardReaderEvents, IEjectCardEvents
     {
 
-        public EjectCardEvents(IConnection connection, string requestId)
+        public EjectCardEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

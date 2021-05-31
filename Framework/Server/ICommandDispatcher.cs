@@ -14,8 +14,10 @@ namespace XFS4IoTServer
 {
     public interface ICommandDispatcher
     {
-        Task Dispatch(IConnection Connection, object Command, CancellationToken Cancel);
+        Task Dispatch(IConnection Connection, MessageBase Command);
 
-        Task DispatchError(IConnection Connection, object Command, Exception CommandException);
+        Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException);
+
+        Task RunAsync(); 
     }
 }

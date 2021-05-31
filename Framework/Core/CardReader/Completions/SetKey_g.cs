@@ -18,18 +18,13 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.SetKey")]
     public sealed class SetKeyCompletion : Completion<SetKeyCompletion.PayloadData>
     {
-        public SetKeyCompletion(string RequestId, SetKeyCompletion.PayloadData Payload)
+        public SetKeyCompletion(int RequestId, SetKeyCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                InvalidKey,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
@@ -37,12 +32,17 @@ namespace XFS4IoT.CardReader.Completions
                 this.ErrorCode = ErrorCode;
             }
 
+            public enum ErrorCodeEnum
+            {
+                InvalidKey
+            }
+
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```invalidKey``` - The key does not fit to the security module.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

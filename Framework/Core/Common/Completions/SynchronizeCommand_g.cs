@@ -18,7 +18,7 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.SynchronizeCommand")]
     public sealed class SynchronizeCommandCompletion : Completion<SynchronizeCommandCompletion.PayloadData>
     {
-        public SynchronizeCommandCompletion(string RequestId, SynchronizeCommandCompletion.PayloadData Payload)
+        public SynchronizeCommandCompletion(int RequestId, SynchronizeCommandCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.Common.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

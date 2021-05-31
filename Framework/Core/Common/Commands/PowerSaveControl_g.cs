@@ -19,7 +19,7 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.PowerSaveControl")]
     public sealed class PowerSaveControlCommand : Command<PowerSaveControlCommand.PayloadData>
     {
-        public PowerSaveControlCommand(string RequestId, PowerSaveControlCommand.PayloadData Payload)
+        public PowerSaveControlCommand(int RequestId, PowerSaveControlCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -36,7 +36,7 @@ namespace XFS4IoT.Common.Commands
             /// <summary>
             /// Specifies the maximum number of seconds in which the device must be able to return to its normal operating state when exiting power save mode. The device will be set to the highest possible power save mode within this constraint. If usMaxPowerSaveRecoveryTime is set to zero then the device will exit the power saving mode. 
             /// </summary>
-            [DataMember(Name = "maxPowerSaveRecoveryTime")] 
+            [DataMember(Name = "maxPowerSaveRecoveryTime")]
             public int? MaxPowerSaveRecoveryTime { get; private set; }
 
         }

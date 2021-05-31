@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class RetractMediaEvents : PrinterEvents, IRetractMediaEvents
     {
 
-        public RetractMediaEvents(IConnection connection, string requestId)
+        public RetractMediaEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

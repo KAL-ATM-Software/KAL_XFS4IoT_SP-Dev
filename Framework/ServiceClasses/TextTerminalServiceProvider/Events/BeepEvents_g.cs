@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class BeepEvents : TextTerminalEvents, IBeepEvents
     {
 
-        public BeepEvents(IConnection connection, string requestId)
+        public BeepEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

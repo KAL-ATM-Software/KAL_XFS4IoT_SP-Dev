@@ -19,27 +19,27 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ControlPassbook")]
     public sealed class ControlPassbookCommand : Command<ControlPassbookCommand.PayloadData>
     {
-        public ControlPassbookCommand(string RequestId, ControlPassbookCommand.PayloadData Payload)
+        public ControlPassbookCommand(int RequestId, ControlPassbookCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ActionEnum
-            {
-                Forward,
-                Backward,
-                CloseForward,
-                CloseBackward,
-            }
-
 
             public PayloadData(int Timeout, ActionEnum? Action = null, int? Count = null)
                 : base(Timeout)
             {
                 this.Action = Action;
                 this.Count = Count;
+            }
+
+            public enum ActionEnum
+            {
+                Forward,
+                Backward,
+                CloseForward,
+                CloseBackward
             }
 
             /// <summary>
@@ -50,14 +50,15 @@ namespace XFS4IoT.Printer.Commands
             /// * ```closeForward``` - Close the passbook forward.
             /// * ```closeBackward``` - Close the passbook backward.
             /// </summary>
-            [DataMember(Name = "action")] 
+            [DataMember(Name = "action")]
             public ActionEnum? Action { get; private set; }
+
             /// <summary>
             /// Specifies the number of pages to be turned. In the case where
             /// [action](#printer.controlpassbook.command.properties.action) is *closeForward* or closeBackward*, this
             /// field will be ignored.
             /// </summary>
-            [DataMember(Name = "count")] 
+            [DataMember(Name = "count")]
             public int? Count { get; private set; }
 
         }

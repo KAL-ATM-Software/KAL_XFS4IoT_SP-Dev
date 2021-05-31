@@ -18,18 +18,24 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.EMVClessQueryApplications")]
     public sealed class EMVClessQueryApplicationsCompletion : Completion<EMVClessQueryApplicationsCompletion.PayloadData>
     {
-        public EMVClessQueryApplicationsCompletion(string RequestId, EMVClessQueryApplicationsCompletion.PayloadData Payload)
+        public EMVClessQueryApplicationsCompletion(int RequestId, EMVClessQueryApplicationsCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<AppDataClass> AppData = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.AppData = AppData;
+            }
+
             [DataContract]
             public sealed class AppDataClass
             {
                 public AppDataClass(string Aid = null, string KernelIdentifier = null)
-                    : base()
                 {
                     this.Aid = Aid;
                     this.KernelIdentifier = KernelIdentifier;
@@ -39,7 +45,7 @@ namespace XFS4IoT.CardReader.Completions
                 /// Contains the Base64 encoded payment system application identifier (AID) supported by the
                 /// intelligent contactless card unit.
                 /// </summary>
-                [DataMember(Name = "aid")] 
+                [DataMember(Name = "aid")]
                 public string Aid { get; private set; }
 
                 /// <summary>
@@ -47,24 +53,17 @@ namespace XFS4IoT.CardReader.Completions
                 /// if the reader does not support Kernel Identifiers for example in the case of legacy approved
                 /// contactless readers.
                 /// </summary>
-                [DataMember(Name = "kernelIdentifier")] 
+                [DataMember(Name = "kernelIdentifier")]
                 public string KernelIdentifier { get; private set; }
 
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<AppDataClass> AppData = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.AppData = AppData;
             }
 
             /// <summary>
             /// An array of application data objects which specifies a supported identifier (AID) and associated
             /// Kernel Identifier.
             /// </summary>
-            [DataMember(Name = "appData")] 
-            public List<AppDataClass> AppData{ get; private set; }
+            [DataMember(Name = "appData")]
+            public List<AppDataClass> AppData { get; private set; }
 
         }
     }

@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class GetKeyDetailEvents : TextTerminalEvents, IGetKeyDetailEvents
     {
 
-        public GetKeyDetailEvents(IConnection connection, string requestId)
+        public GetKeyDetailEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

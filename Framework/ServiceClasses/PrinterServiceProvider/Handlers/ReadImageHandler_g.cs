@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var readImageCmd = command.IsA<ReadImageCommand>($"Invalid parameter in the ReadImage Handle method. {nameof(ReadImageCommand)}");
-            
-            IReadImageEvents events = new ReadImageEvents(Connection, readImageCmd.Headers.RequestId);
+            readImageCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IReadImageEvents events = new ReadImageEvents(Connection, readImageCmd.Headers.RequestId.Value);
 
             var result = await HandleReadImage(events, readImageCmd, cancel);
-            await Connection.SendMessageAsync(new ReadImageCompletion(readImageCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ReadImageCompletion(readImageCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var readImagecommand = command.IsA<ReadImageCommand>();
+            readImagecommand.Headers.RequestId.HasValue.IsTrue();
 
             ReadImageCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => ReadImageCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadImageCompletion(readImagecommand.Headers.RequestId, new ReadImageCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadImageCompletion(readImagecommand.Headers.RequestId.Value, new ReadImageCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

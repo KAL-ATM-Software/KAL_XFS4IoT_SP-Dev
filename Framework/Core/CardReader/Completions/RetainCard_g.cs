@@ -18,28 +18,13 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.RetainCard")]
     public sealed class RetainCardCompletion : Completion<RetainCardCompletion.PayloadData>
     {
-        public RetainCardCompletion(string RequestId, RetainCardCompletion.PayloadData Payload)
+        public RetainCardCompletion(int RequestId, RetainCardCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                MediaJam,
-                NoMedia,
-                RetainBinFull,
-                ShutterFail,
-            }
-
-            public enum PositionEnum
-            {
-                Unknown,
-                Present,
-                Entering,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Count = null, PositionEnum? Position = null)
                 : base(CompletionCode, ErrorDescription)
@@ -47,6 +32,14 @@ namespace XFS4IoT.CardReader.Completions
                 this.ErrorCode = ErrorCode;
                 this.Count = Count;
                 this.Position = Position;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                MediaJam,
+                NoMedia,
+                RetainBinFull,
+                ShutterFail
             }
 
             /// <summary>
@@ -60,14 +53,23 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```shutterFail``` - The open of the shutter failed due to manipulation or hardware error. Operator
             ///   intervention is required.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Total number of ID cards retained up to and including this operation, since the last
             /// [CardReader.ResetCount](#cardreader.resetcount) command was executed.
             /// </summary>
-            [DataMember(Name = "count")] 
+            [DataMember(Name = "count")]
             public int? Count { get; private set; }
+
+            public enum PositionEnum
+            {
+                Unknown,
+                Present,
+                Entering
+            }
+
             /// <summary>
             /// Position of card; only relevant if card could not be retained. Possible positions:
             /// 
@@ -75,7 +77,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```present``` - The card is present in the reader.
             /// * ```entering``` - The card is in the entering position (shutter).
             /// </summary>
-            [DataMember(Name = "position")] 
+            [DataMember(Name = "position")]
             public PositionEnum? Position { get; private set; }
 
         }

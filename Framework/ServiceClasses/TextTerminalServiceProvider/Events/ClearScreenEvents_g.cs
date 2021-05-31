@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class ClearScreenEvents : TextTerminalEvents, IClearScreenEvents
     {
 
-        public ClearScreenEvents(IConnection connection, string requestId)
+        public ClearScreenEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

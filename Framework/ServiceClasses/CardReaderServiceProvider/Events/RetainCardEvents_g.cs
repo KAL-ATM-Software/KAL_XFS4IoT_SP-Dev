@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class RetainCardEvents : CardReaderEvents, IRetainCardEvents
     {
 
-        public RetainCardEvents(IConnection connection, string requestId)
+        public RetainCardEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

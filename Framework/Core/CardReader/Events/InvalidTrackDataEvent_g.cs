@@ -20,7 +20,7 @@ namespace XFS4IoT.CardReader.Events
     public sealed class InvalidTrackDataEvent : Event<InvalidTrackDataEvent.PayloadData>
     {
 
-        public InvalidTrackDataEvent(string RequestId, PayloadData Payload)
+        public InvalidTrackDataEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -29,21 +29,20 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StatusEnum
-            {
-                Missing,
-                Invalid,
-                TooLong,
-                TooShort,
-            }
-
-
             public PayloadData(StatusEnum? Status = null, string Track = null, string Data = null)
                 : base()
             {
                 this.Status = Status;
                 this.Track = Track;
                 this.Data = Data;
+            }
+
+            public enum StatusEnum
+            {
+                Missing,
+                Invalid,
+                TooLong,
+                TooShort
             }
 
             /// <summary>
@@ -54,18 +53,21 @@ namespace XFS4IoT.CardReader.Events
             /// * ```tooLong``` - The data contained on the track is too long.
             /// * ```tooShort``` - The data contained on the track is too short.
             /// </summary>
-            [DataMember(Name = "status")] 
+            [DataMember(Name = "status")]
             public StatusEnum? Status { get; private set; }
+
             /// <summary>
             /// The keyword of the track on which the error occurred.
             /// </summary>
-            [DataMember(Name = "track")] 
+            [DataMember(Name = "track")]
             public string Track { get; private set; }
+
             /// <summary>
             /// Any data from the track that could be read.
             /// </summary>
-            [DataMember(Name = "data")] 
+            [DataMember(Name = "data")]
             public string Data { get; private set; }
+
         }
 
     }

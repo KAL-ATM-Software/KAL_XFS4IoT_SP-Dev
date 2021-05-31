@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class WriteFormEvents : TextTerminalEvents, IWriteFormEvents
     {
 
-        public WriteFormEvents(IConnection connection, string requestId)
+        public WriteFormEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

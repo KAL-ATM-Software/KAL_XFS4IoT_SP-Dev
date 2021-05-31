@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.GetQueryForm")]
     public sealed class GetQueryFormCommand : Command<GetQueryFormCommand.PayloadData>
     {
-        public GetQueryFormCommand(string RequestId, GetQueryFormCommand.PayloadData Payload)
+        public GetQueryFormCommand(int RequestId, GetQueryFormCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -36,7 +36,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Contains the form name on which to retrieve details.
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
 
         }

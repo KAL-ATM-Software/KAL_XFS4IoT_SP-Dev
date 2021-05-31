@@ -85,9 +85,9 @@ namespace XFS4IoTServer
             Contracts.Fail($"Can't find an XFS4IoT port to listen on");
         }
 
-        public async Task RunAsync()
+        public async override Task RunAsync()
         {
-            var thisTask = EndPoint.RunAsync();
+            var thisTask = Task.WhenAll( EndPoint.RunAsync(), base.RunAsync() );
             var otherTasks = from service in _Services
                              where service != this
                              select service.RunAsync();
@@ -107,7 +107,7 @@ namespace XFS4IoTServer
         }
 
         public IEnumerable<IServiceProvider> Services { get => _Services; } 
-        private readonly List<IServiceProvider> _Services = new List<IServiceProvider>(); 
+        private readonly List<IServiceProvider> _Services = new(); 
 
         private readonly XFS4IoTServer.EndPoint EndPoint;
 

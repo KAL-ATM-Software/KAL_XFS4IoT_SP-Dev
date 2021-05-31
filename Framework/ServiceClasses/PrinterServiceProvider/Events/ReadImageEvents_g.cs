@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class ReadImageEvents : PrinterEvents, IReadImageEvents
     {
 
-        public ReadImageEvents(IConnection connection, string requestId)
+        public ReadImageEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var retainCardCmd = command.IsA<RetainCardCommand>($"Invalid parameter in the RetainCard Handle method. {nameof(RetainCardCommand)}");
-            
-            IRetainCardEvents events = new RetainCardEvents(Connection, retainCardCmd.Headers.RequestId);
+            retainCardCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IRetainCardEvents events = new RetainCardEvents(Connection, retainCardCmd.Headers.RequestId.Value);
 
             var result = await HandleRetainCard(events, retainCardCmd, cancel);
-            await Connection.SendMessageAsync(new RetainCardCompletion(retainCardCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new RetainCardCompletion(retainCardCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var retainCardcommand = command.IsA<RetainCardCommand>();
+            retainCardcommand.Headers.RequestId.HasValue.IsTrue();
 
             RetainCardCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => RetainCardCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new RetainCardCompletion(retainCardcommand.Headers.RequestId, new RetainCardCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new RetainCardCompletion(retainCardcommand.Headers.RequestId.Value, new RetainCardCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

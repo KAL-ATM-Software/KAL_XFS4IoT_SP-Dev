@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var beepCmd = command.IsA<BeepCommand>($"Invalid parameter in the Beep Handle method. {nameof(BeepCommand)}");
-            
-            IBeepEvents events = new BeepEvents(Connection, beepCmd.Headers.RequestId);
+            beepCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IBeepEvents events = new BeepEvents(Connection, beepCmd.Headers.RequestId.Value);
 
             var result = await HandleBeep(events, beepCmd, cancel);
-            await Connection.SendMessageAsync(new BeepCompletion(beepCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new BeepCompletion(beepCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var beepcommand = command.IsA<BeepCommand>();
+            beepcommand.Headers.RequestId.HasValue.IsTrue();
 
             BeepCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => BeepCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new BeepCompletion(beepcommand.Headers.RequestId, new BeepCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new BeepCompletion(beepcommand.Headers.RequestId.Value, new BeepCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

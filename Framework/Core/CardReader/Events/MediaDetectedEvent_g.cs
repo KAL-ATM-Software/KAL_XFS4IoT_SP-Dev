@@ -20,7 +20,7 @@ namespace XFS4IoT.CardReader.Events
     public sealed class MediaDetectedEvent : Event<MediaDetectedEvent.PayloadData>
     {
 
-        public MediaDetectedEvent(string RequestId, PayloadData Payload)
+        public MediaDetectedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -29,19 +29,18 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
+            public PayloadData(ResetOutEnum? ResetOut = null)
+                : base()
+            {
+                this.ResetOut = ResetOut;
+            }
+
             public enum ResetOutEnum
             {
                 Ejected,
                 Retained,
                 ReadPosition,
-                Jammed,
-            }
-
-
-            public PayloadData(ResetOutEnum? ResetOut = null)
-                : base()
-            {
-                this.ResetOut = ResetOut;
+                Jammed
             }
 
             /// <summary>
@@ -52,8 +51,9 @@ namespace XFS4IoT.CardReader.Events
             /// * ```readPosition``` - The card is in read position.
             /// * ```jammed``` - The card is jammed in the device.
             /// </summary>
-            [DataMember(Name = "resetOut")] 
+            [DataMember(Name = "resetOut")]
             public ResetOutEnum? ResetOut { get; private set; }
+
         }
 
     }

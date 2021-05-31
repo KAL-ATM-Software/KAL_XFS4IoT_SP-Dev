@@ -18,26 +18,26 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {
-        public ResetCompletion(string RequestId, ResetCompletion.PayloadData Payload)
+        public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                ShutterFail,
-                RetractBinFull,
-                MediaJammed,
-                PaperJammed,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                ShutterFail,
+                RetractBinFull,
+                MediaJammed,
+                PaperJammed
             }
 
             /// <summary>
@@ -49,7 +49,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
             /// * ```paperJammed``` - The paper is jammed.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.LoadDefinition")]
     public sealed class LoadDefinitionCommand : Command<LoadDefinitionCommand.PayloadData>
     {
-        public LoadDefinitionCommand(string RequestId, LoadDefinitionCommand.PayloadData Payload)
+        public LoadDefinitionCommand(int RequestId, LoadDefinitionCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -41,15 +41,16 @@ namespace XFS4IoT.Printer.Commands
             /// [Form, Sub-Form, Field, Frame, Table and Media Definitions](#printer.generalinformation.formandmediadefinitions).
             /// Only one form or media definition can be defined in the file.
             /// </summary>
-            [DataMember(Name = "fileName")] 
+            [DataMember(Name = "fileName")]
             public string FileName { get; private set; }
+
             /// <summary>
             /// Specifies if an existing form or media definition with the same name is to be replaced. If this flag
             /// is true then an existing form or media definition with the same name will be replaced, unless the
             /// command fails with an error, where the definition will remain unchanged. If this flag is false this
             /// command will fail with an error if the form or media definition already exists.
             /// </summary>
-            [DataMember(Name = "overwrite")] 
+            [DataMember(Name = "overwrite")]
             public bool? Overwrite { get; private set; }
 
         }

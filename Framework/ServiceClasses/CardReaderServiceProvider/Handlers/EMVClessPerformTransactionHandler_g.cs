@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var eMVClessPerformTransactionCmd = command.IsA<EMVClessPerformTransactionCommand>($"Invalid parameter in the EMVClessPerformTransaction Handle method. {nameof(EMVClessPerformTransactionCommand)}");
-            
-            IEMVClessPerformTransactionEvents events = new EMVClessPerformTransactionEvents(Connection, eMVClessPerformTransactionCmd.Headers.RequestId);
+            eMVClessPerformTransactionCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IEMVClessPerformTransactionEvents events = new EMVClessPerformTransactionEvents(Connection, eMVClessPerformTransactionCmd.Headers.RequestId.Value);
 
             var result = await HandleEMVClessPerformTransaction(events, eMVClessPerformTransactionCmd, cancel);
-            await Connection.SendMessageAsync(new EMVClessPerformTransactionCompletion(eMVClessPerformTransactionCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new EMVClessPerformTransactionCompletion(eMVClessPerformTransactionCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var eMVClessPerformTransactioncommand = command.IsA<EMVClessPerformTransactionCommand>();
+            eMVClessPerformTransactioncommand.Headers.RequestId.HasValue.IsTrue();
 
             EMVClessPerformTransactionCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => EMVClessPerformTransactionCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new EMVClessPerformTransactionCompletion(eMVClessPerformTransactioncommand.Headers.RequestId, new EMVClessPerformTransactionCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new EMVClessPerformTransactionCompletion(eMVClessPerformTransactioncommand.Headers.RequestId.Value, new EMVClessPerformTransactionCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

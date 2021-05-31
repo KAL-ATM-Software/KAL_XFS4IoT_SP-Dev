@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class EMVClessConfigureEvents : CardReaderEvents, IEMVClessConfigureEvents
     {
 
-        public EMVClessConfigureEvents(IConnection connection, string requestId)
+        public EMVClessConfigureEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

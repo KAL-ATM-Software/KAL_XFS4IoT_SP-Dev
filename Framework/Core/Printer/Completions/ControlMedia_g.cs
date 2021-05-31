@@ -18,13 +18,20 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ControlMedia")]
     public sealed class ControlMediaCompletion : Completion<ControlMediaCompletion.PayloadData>
     {
-        public ControlMediaCompletion(string RequestId, ControlMediaCompletion.PayloadData Payload)
+        public ControlMediaCompletion(int RequestId, ControlMediaCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 NoMediaPresent,
@@ -42,14 +49,7 @@ namespace XFS4IoT.Printer.Completions
                 SequenceInvalid,
                 MediaRetained,
                 BlackMark,
-                MediaRetracted,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                MediaRetracted
             }
 
             /// <summary>
@@ -78,7 +78,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaRetracted``` - Presented media was automatically retracted before all wads could be
             ///   presented and before the command could complete successfully.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

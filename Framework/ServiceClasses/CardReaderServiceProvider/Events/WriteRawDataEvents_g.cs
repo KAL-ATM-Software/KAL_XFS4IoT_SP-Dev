@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class WriteRawDataEvents : CardReaderEvents, IWriteRawDataEvents
     {
 
-        public WriteRawDataEvents(IConnection connection, string requestId)
+        public WriteRawDataEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

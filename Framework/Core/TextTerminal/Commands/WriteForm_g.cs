@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.WriteForm")]
     public sealed class WriteFormCommand : Command<WriteFormCommand.PayloadData>
     {
-        public WriteFormCommand(string RequestId, WriteFormCommand.PayloadData Payload)
+        public WriteFormCommand(int RequestId, WriteFormCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -38,20 +38,22 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Form name.
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
+
             /// <summary>
             /// Specifies whether the screen is cleared before displaying the form (TRUE) or not (FALSE).
             /// </summary>
-            [DataMember(Name = "clearScreen")] 
+            [DataMember(Name = "clearScreen")]
             public bool? ClearScreen { get; private set; }
+
             /// <summary>
             /// Specifies \"<fieldName>=<fieldValue>\" string. e.g. Field1=123. 
             /// The <fieldValue> stands for a string containing all the printable characters (numeric and alphanumeric) 
             /// to display on the text terminal unit key pad for this field.
             /// </summary>
-            [DataMember(Name = "fields")] 
-            public List<string> Fields{ get; private set; }
+            [DataMember(Name = "fields")]
+            public List<string> Fields { get; private set; }
 
         }
     }

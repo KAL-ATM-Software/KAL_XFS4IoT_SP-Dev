@@ -29,18 +29,17 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StateEnum
-            {
-                Ok,
-                Full,
-                High,
-            }
-
-
             public PayloadData(StateEnum? State = null)
                 : base()
             {
                 this.State = State;
+            }
+
+            public enum StateEnum
+            {
+                Ok,
+                Full,
+                High
             }
 
             /// <summary>
@@ -50,8 +49,9 @@ namespace XFS4IoT.CardReader.Events
             /// * ```full``` - The retain bin of the ID card unit is full.
             /// * ```high``` - The retain bin of the ID card unit is nearly full.
             /// </summary>
-            [DataMember(Name = "state")] 
+            [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
+
         }
 
     }

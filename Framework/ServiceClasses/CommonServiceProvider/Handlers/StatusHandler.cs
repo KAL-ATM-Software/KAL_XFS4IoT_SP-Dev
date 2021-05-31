@@ -15,9 +15,9 @@ using XFS4IoT.Common.Completions;
 
 namespace XFS4IoTFramework.Common
 {
+    [CommandHandlerAsync]
     public partial class StatusHandler
     {
-
         private Task<StatusCompletion.PayloadData> HandleStatus(IStatusEvents events, StatusCommand status, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CommonDev.Status()");

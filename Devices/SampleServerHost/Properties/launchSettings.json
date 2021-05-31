@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Server": {
-      "commandName": "Project",
-      "commandLineArgs": "http://localhost:8088"
-    }
-  }
-}

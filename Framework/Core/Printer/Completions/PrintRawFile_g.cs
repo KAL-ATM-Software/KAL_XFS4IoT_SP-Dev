@@ -18,13 +18,20 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.PrintRawFile")]
     public sealed class PrintRawFileCompletion : Completion<PrintRawFileCompletion.PayloadData>
     {
-        public PrintRawFileCompletion(string RequestId, PrintRawFileCompletion.PayloadData Payload)
+        public PrintRawFileCompletion(int RequestId, PrintRawFileCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 FileNotFound,
@@ -47,14 +54,7 @@ namespace XFS4IoT.Printer.Completions
                 BlackMark,
                 SourceInvalid,
                 MediaRejected,
-                MediaRetracted,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                MediaRetracted
             }
 
             /// <summary>
@@ -89,7 +89,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaRetracted``` - Presented media was automatically retracted before all wads could be
             ///   presented and before the command could complete successfully.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

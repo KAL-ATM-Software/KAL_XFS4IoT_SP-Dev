@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class ControlMediaEvents : PrinterEvents, IControlMediaEvents
     {
 
-        public ControlMediaEvents(IConnection connection, string requestId)
+        public ControlMediaEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

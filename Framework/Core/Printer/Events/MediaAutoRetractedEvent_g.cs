@@ -29,18 +29,17 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum RetractResultEnum
-            {
-                Ok,
-                Jammed,
-            }
-
-
             public PayloadData(RetractResultEnum? RetractResult = null, int? BinNumber = null)
                 : base()
             {
                 this.RetractResult = RetractResult;
                 this.BinNumber = BinNumber;
+            }
+
+            public enum RetractResultEnum
+            {
+                Ok,
+                Jammed
             }
 
             /// <summary>
@@ -49,15 +48,17 @@ namespace XFS4IoT.Printer.Events
             /// * ```ok``` - The media was retracted successfully.
             /// * ```jammed``` - The media is jammed.
             /// </summary>
-            [DataMember(Name = "retractResult")] 
+            [DataMember(Name = "retractResult")]
             public RetractResultEnum? RetractResult { get; private set; }
+
             /// <summary>
             /// Number of the retract bin the media was retracted to or zero if the media is retracted to the transport.
             /// This number has to be between zero and the number of bins supported by this device. This value is also
             /// zero if [retractResult](#printer.mediaautoretractedevent.event.properties.retractresult) is *jammed*.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
+
         }
 
     }

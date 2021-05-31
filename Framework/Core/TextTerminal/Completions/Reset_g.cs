@@ -18,7 +18,7 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {
-        public ResetCompletion(string RequestId, ResetCompletion.PayloadData Payload)
+        public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.TextTerminal.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

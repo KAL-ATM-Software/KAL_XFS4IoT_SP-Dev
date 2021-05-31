@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class DispensePaperEvents : PrinterEvents, IDispensePaperEvents
     {
 
-        public DispensePaperEvents(IConnection connection, string requestId)
+        public DispensePaperEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

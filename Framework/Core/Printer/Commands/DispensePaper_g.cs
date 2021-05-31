@@ -19,13 +19,20 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.DispensePaper")]
     public sealed class DispensePaperCommand : Command<DispensePaperCommand.PayloadData>
     {
-        public DispensePaperCommand(string RequestId, DispensePaperCommand.PayloadData Payload)
+        public DispensePaperCommand(int RequestId, DispensePaperCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(int Timeout, PaperSourceEnum? PaperSource = null)
+                : base(Timeout)
+            {
+                this.PaperSource = PaperSource;
+            }
+
             public enum PaperSourceEnum
             {
                 Any,
@@ -34,14 +41,7 @@ namespace XFS4IoT.Printer.Commands
                 External,
                 Aux,
                 Aux2,
-                Park,
-            }
-
-
-            public PayloadData(int Timeout, PaperSourceEnum? PaperSource = null)
-                : base(Timeout)
-            {
-                this.PaperSource = PaperSource;
+                Park
             }
 
             /// <summary>
@@ -56,7 +56,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
             /// </summary>
-            [DataMember(Name = "paperSource")] 
+            [DataMember(Name = "paperSource")]
             public PaperSourceEnum? PaperSource { get; private set; }
 
         }

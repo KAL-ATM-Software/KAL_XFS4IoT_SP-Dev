@@ -28,13 +28,13 @@ namespace XFS4IoTFramework.CardReader
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                   "No destination specified to write track data.");
                 }
-                if (string.IsNullOrEmpty(data.data))
+                if (string.IsNullOrEmpty(data.Data))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                   "No data specified to write track.");
                 }
 
-                List<byte> writeData = new (Convert.FromBase64String(data.data));
+                List<byte> writeData = new (Convert.FromBase64String(data.Data));
                 if (!ValidateData((WriteRawDataCommand.PayloadData.DataClass.DestinationEnum)data.Destination, writeData))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,

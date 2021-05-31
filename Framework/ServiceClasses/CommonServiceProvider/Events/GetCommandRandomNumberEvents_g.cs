@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class GetCommandRandomNumberEvents : CommonEvents, IGetCommandRandomNumberEvents
     {
 
-        public GetCommandRandomNumberEvents(IConnection connection, string requestId)
+        public GetCommandRandomNumberEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

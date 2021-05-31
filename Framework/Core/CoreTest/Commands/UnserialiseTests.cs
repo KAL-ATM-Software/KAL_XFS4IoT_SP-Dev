@@ -34,7 +34,7 @@ namespace XFS4IoTCoreTest.Command
             var ReadCardJSON = @"{
                 ""headers"":{
                     ""name"":""CardReader.ReadRawData"",
-                    ""requestId"":""b34800d0-9dd2-4d50-89ea-92d1b13df54b"",
+                    ""requestId"":123456,
                     ""type"":""command""
                 },
                 ""payload"":{
@@ -88,7 +88,7 @@ namespace XFS4IoTCoreTest.Command
             var MediaInsertedJSON = @"{
                 ""headers"":{
                     ""name"":""CardReader.MediaInsertedEvent"",
-                    ""requestId"":""b34800d0-9dd2-4d50-89ea-92d1b13df54b"",
+                    ""requestId"":123456,
                     ""type"":""event""
                 },
                 ""payload"":{}
@@ -175,22 +175,22 @@ namespace XFS4IoTCoreTest.Command
         [Command(Name = "Common.TestCommand1")]
         public class TestCommand1 : Command<XFS4IoT.Commands.MessagePayload>
         {
-            public TestCommand1() : base(Guid.NewGuid().ToString(), new XFS4IoT.Commands.MessagePayload(10000)) { }
+            public TestCommand1() : base(123456, new XFS4IoT.Commands.MessagePayload(10000)) { }
         }
         [Command(Name = "Common.TestCommand2")]
         public class TestCommand2 : Command<XFS4IoT.Commands.MessagePayload>
         {
-            public TestCommand2() : base(Guid.NewGuid().ToString(), new XFS4IoT.Commands.MessagePayload(20000)) { }
+            public TestCommand2() : base(123456, new XFS4IoT.Commands.MessagePayload(20000)) { }
         }
         [Completion(Name = "Common.TestResponse1")]
         public class TestResponse1 : Completion<XFS4IoT.Completions.MessagePayload>
         {
-            public TestResponse1() : base(Guid.NewGuid().ToString(), new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "good")) { }
+            public TestResponse1() : base(123456, new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "good")) { }
         }
         [Completion(Name = "Common.TestResponse2")]
         public class TestResponse2 : Completion<XFS4IoT.Completions.MessagePayload>
         {
-            public TestResponse2() : base(Guid.NewGuid().ToString(), new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "error")) { }
+            public TestResponse2() : base(123456, new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "error")) { }
         }
 
         [TestMethod]

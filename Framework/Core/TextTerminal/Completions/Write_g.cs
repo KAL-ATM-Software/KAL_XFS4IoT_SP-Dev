@@ -18,18 +18,13 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Write")]
     public sealed class WriteCompletion : Completion<WriteCompletion.PayloadData>
     {
-        public WriteCompletion(string RequestId, WriteCompletion.PayloadData Payload)
+        public WriteCompletion(int RequestId, WriteCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                CharacterSetsData,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
@@ -37,12 +32,17 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.ErrorCode = ErrorCode;
             }
 
+            public enum ErrorCodeEnum
+            {
+                CharacterSetsData
+            }
+
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```characterSetsData``` - Character set(s) supported by Service Provider is inconsistent with use of text value.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

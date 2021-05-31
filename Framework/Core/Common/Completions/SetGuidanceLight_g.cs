@@ -18,7 +18,7 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.SetGuidanceLight")]
     public sealed class SetGuidanceLightCompletion : Completion<SetGuidanceLightCompletion.PayloadData>
     {
-        public SetGuidanceLightCompletion(string RequestId, SetGuidanceLightCompletion.PayloadData Payload)
+        public SetGuidanceLightCompletion(int RequestId, SetGuidanceLightCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.Common.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

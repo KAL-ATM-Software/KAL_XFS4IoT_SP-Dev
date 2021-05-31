@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(string RequestId, ResetCommand.PayloadData Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.TextTerminal.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

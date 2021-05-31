@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class SetBlackMarkModeEvents : PrinterEvents, ISetBlackMarkModeEvents
     {
 
-        public SetBlackMarkModeEvents(IConnection connection, string requestId)
+        public SetBlackMarkModeEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

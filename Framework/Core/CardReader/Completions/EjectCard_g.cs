@@ -18,26 +18,26 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.EjectCard")]
     public sealed class EjectCardCompletion : Completion<EjectCardCompletion.PayloadData>
     {
-        public EjectCardCompletion(string RequestId, EjectCardCompletion.PayloadData Payload)
+        public EjectCardCompletion(int RequestId, EjectCardCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                MediaJam,
-                ShutterFail,
-                NoMedia,
-                MediaRetained,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                MediaJam,
+                ShutterFail,
+                NoMedia,
+                MediaRetained
             }
 
             /// <summary>
@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```mediaRetained``` - The card has been retained during attempts to eject it. The device is clear
             ///   and can be used.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

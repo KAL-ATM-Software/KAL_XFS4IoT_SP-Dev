@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class GetQueryFormEvents : TextTerminalEvents, IGetQueryFormEvents
     {
 
-        public GetQueryFormEvents(IConnection connection, string requestId)
+        public GetQueryFormEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

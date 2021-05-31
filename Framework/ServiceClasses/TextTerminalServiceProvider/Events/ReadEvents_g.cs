@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class ReadEvents : TextTerminalEvents, IReadEvents
     {
 
-        public ReadEvents(IConnection connection, string requestId)
+        public ReadEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

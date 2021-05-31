@@ -19,51 +19,15 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Read")]
     public sealed class ReadCommand : Command<ReadCommand.PayloadData>
     {
-        public ReadCommand(string RequestId, ReadCommand.PayloadData Payload)
+        public ReadCommand(int RequestId, ReadCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ModeEnum
-            {
-                Relative,
-                Absolute,
-            }
 
-            public enum EchoModeEnum
-            {
-                Text,
-                Invisible,
-                Password,
-            }
-
-            /// <summary>
-            /// Specifies the text attributes with which the user input is echoed to the screen. 
-            /// If none of the following attribute flags are selected then the text will be displayed as normal text.
-            /// </summary>
-            public class EchoAttrClass
-            {
-                [DataMember(Name = "underline")] 
-                public bool? Underline { get; private set; }
-                [DataMember(Name = "inverted")] 
-                public bool? Inverted { get; private set; }
-                [DataMember(Name = "flash")] 
-                public bool? Flash { get; private set; }
-
-                public EchoAttrClass (bool? Underline, bool? Inverted, bool? Flash)
-                {
-                    this.Underline = Underline;
-                    this.Inverted = Inverted;
-                    this.Flash = Flash;
-                }
-
-
-            }
-
-
-            public PayloadData(int Timeout, int? NumOfChars = null, ModeEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, object EchoAttr = null, bool? Echo = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, List<string> ActiveCommandKeys = null, List<string> TerminateCommandKeys = null)
+            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Echo = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, List<string> ActiveCommandKeys = null, List<string> TerminateCommandKeys = null)
                 : base(Timeout)
             {
                 this.NumOfChars = NumOfChars;
@@ -84,54 +48,100 @@ namespace XFS4IoT.TextTerminal.Commands
             /// Specifies the number of printable characters (numeric and alphanumeric keys) that will be read from the 
             /// text terminal unit key pad. All command keys like ckEnter, ckFDK01 will not be counted.
             /// </summary>
-            [DataMember(Name = "numOfChars")] 
+            [DataMember(Name = "numOfChars")]
             public int? NumOfChars { get; private set; }
+
             /// <summary>
             /// Specifies where the cursor is positioned for the read operation.
             /// </summary>
-            [DataMember(Name = "mode")] 
-            public ModeEnum? Mode { get; private set; }
+            [DataMember(Name = "mode")]
+            public ModesEnum? Mode { get; private set; }
+
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute horizontal position. 
             /// If mode is set to relative this specifies a horizontal offset relative to the 
             /// current cursor position as a zero (0) based value.
             /// </summary>
-            [DataMember(Name = "posX")] 
+            [DataMember(Name = "posX")]
             public int? PosX { get; private set; }
+
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute vertical position. 
             /// If mode is set to relative this specifies a vertical offset relative to the 
             /// current cursor position as a zero (0) based value.
             /// </summary>
-            [DataMember(Name = "posY")] 
+            [DataMember(Name = "posY")]
             public int? PosY { get; private set; }
+
+            public enum EchoModeEnum
+            {
+                Text,
+                Invisible,
+                Password
+            }
+
             /// <summary>
             /// Specifies how the user input is echoed to the screen.
             /// </summary>
-            [DataMember(Name = "echoMode")] 
+            [DataMember(Name = "echoMode")]
             public EchoModeEnum? EchoMode { get; private set; }
+
+            [DataContract]
+            public sealed class EchoAttrClass
+            {
+                public EchoAttrClass(bool? Underline = null, bool? Inverted = null, bool? Flash = null)
+                {
+                    this.Underline = Underline;
+                    this.Inverted = Inverted;
+                    this.Flash = Flash;
+                }
+
+                /// <summary>
+                /// The displayed text will be underlined.
+                /// </summary>
+                [DataMember(Name = "underline")]
+                public bool? Underline { get; private set; }
+
+                /// <summary>
+                /// The displayed text will be inverted.
+                /// </summary>
+                [DataMember(Name = "inverted")]
+                public bool? Inverted { get; private set; }
+
+                /// <summary>
+                /// The displayed text will be flashing.
+                /// </summary>
+                [DataMember(Name = "flash")]
+                public bool? Flash { get; private set; }
+
+            }
+
             /// <summary>
             /// Specifies the text attributes with which the user input is echoed to the screen. 
             /// If none of the following attribute flags are selected then the text will be displayed as normal text.
             /// </summary>
-            [DataMember(Name = "echoAttr")] 
-            public object EchoAttr { get; private set; }
+            [DataMember(Name = "echoAttr")]
+            public EchoAttrClass EchoAttr { get; private set; }
+
             /// <summary>
             /// Specifies whether the cursor is visible(TRUE) or invisible(FALSE).
             /// </summary>
-            [DataMember(Name = "echo")] 
+            [DataMember(Name = "echo")]
             public bool? Echo { get; private set; }
+
             /// <summary>
             /// Specifies whether the keyboard input buffer is cleared before allowing for user input(TRUE) or not (FALSE).
             /// </summary>
-            [DataMember(Name = "flush")] 
+            [DataMember(Name = "flush")]
             public bool? Flush { get; private set; }
+
             /// <summary>
             /// Specifies whether the command input is automatically ended by Service Provider if the maximum number 
             /// of printable characters as specified with numOfChars is entered.
             /// </summary>
-            [DataMember(Name = "autoEnd")] 
+            [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; private set; }
+
             /// <summary>
             /// String which specifies the numeric and alphanumeric keys on the Text Terminal Unit,
             /// e.g. \"12ABab\", to be active during the execution of the command. Devices having a shift key interpret 
@@ -146,20 +156,22 @@ namespace XFS4IoT.TextTerminal.Commands
             /// This parameter is a NULL if no keys of this type are active keys. activeKeys and activeUnicodeKeys are 
             /// mutually exclusive, so activeKeys field must not be set  if activeUnicodeKeys field is not set.
             /// </summary>
-            [DataMember(Name = "activeKeys")] 
+            [DataMember(Name = "activeKeys")]
             public string ActiveKeys { get; private set; }
+
             /// <summary>
             /// Array specifying the command keys which are active during the execution of the command. 
             /// The array is terminated with a zero value and this array is not set if no keys of this type are active keys.                      
             /// </summary>
-            [DataMember(Name = "activeCommandKeys")] 
-            public List<string> ActiveCommandKeys{ get; private set; }
+            [DataMember(Name = "activeCommandKeys")]
+            public List<string> ActiveCommandKeys { get; private set; }
+
             /// <summary>
             /// Array specifying the command keys which must terminate the execution of the command. 
             /// The array is terminated with a zero value and this array is not set if no keys of this type are terminate keys.
             /// </summary>
-            [DataMember(Name = "terminateCommandKeys")] 
-            public List<string> TerminateCommandKeys{ get; private set; }
+            [DataMember(Name = "terminateCommandKeys")]
+            public List<string> TerminateCommandKeys { get; private set; }
 
         }
     }

@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCommand : Command<ReadRawDataCommand.PayloadData>
     {
-        public ReadRawDataCommand(string RequestId, ReadRawDataCommand.PayloadData Payload)
+        public ReadRawDataCommand(int RequestId, ReadRawDataCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -49,76 +49,89 @@ namespace XFS4IoT.CardReader.Commands
             /// <summary>
             /// Track 1 of the magnetic stripe will be read.
             /// </summary>
-            [DataMember(Name = "track1")] 
+            [DataMember(Name = "track1")]
             public bool? Track1 { get; private set; }
+
             /// <summary>
             /// Track 2 of the magnetic stripe will be read.
             /// </summary>
-            [DataMember(Name = "track2")] 
+            [DataMember(Name = "track2")]
             public bool? Track2 { get; private set; }
+
             /// <summary>
             /// Track 3 of the magnetic stripe will be read.
             /// </summary>
-            [DataMember(Name = "track3")] 
+            [DataMember(Name = "track3")]
             public bool? Track3 { get; private set; }
+
             /// <summary>
             /// The chip will be read.
             /// </summary>
-            [DataMember(Name = "chip")] 
+            [DataMember(Name = "chip")]
             public bool? Chip { get; private set; }
+
             /// <summary>
             /// A security check will be performed.
             /// </summary>
-            [DataMember(Name = "security")] 
+            [DataMember(Name = "security")]
             public bool? Security { get; private set; }
+
             /// <summary>
             /// If the Flux Sensor is programmable it will be disabled in order to allow chip data to be read on cards
             /// which have no magnetic stripes.
             /// </summary>
-            [DataMember(Name = "fluxInactive")] 
+            [DataMember(Name = "fluxInactive")]
             public bool? FluxInactive { get; private set; }
+
             /// <summary>
             /// The Swedish Watermark track will be read.
             /// </summary>
-            [DataMember(Name = "watermark")] 
+            [DataMember(Name = "watermark")]
             public bool? Watermark { get; private set; }
+
             /// <summary>
             /// The memory chip will be read.
             /// </summary>
-            [DataMember(Name = "memoryChip")] 
+            [DataMember(Name = "memoryChip")]
             public bool? MemoryChip { get; private set; }
+
             /// <summary>
             /// Track 1 data is read from the magnetic stripe located on the front of the card. In some countries this
             /// track is known as JIS II track.
             /// </summary>
-            [DataMember(Name = "track1Front")] 
+            [DataMember(Name = "track1Front")]
             public bool? Track1Front { get; private set; }
+
             /// <summary>
             /// The front image of the card will be read in Base64 PNG format.
             /// </summary>
-            [DataMember(Name = "frontImage")] 
+            [DataMember(Name = "frontImage")]
             public bool? FrontImage { get; private set; }
+
             /// <summary>
             /// The back image of the card will be read in Base64 PNG format.
             /// </summary>
-            [DataMember(Name = "backImage")] 
+            [DataMember(Name = "backImage")]
             public bool? BackImage { get; private set; }
+
             /// <summary>
             /// Track 1 of Japanese cash transfer card will be read. In some countries this track is known as JIS I
             /// track 1 (8bits/char).
             /// </summary>
-            [DataMember(Name = "track1JIS")] 
+            [DataMember(Name = "track1JIS")]
             public bool? Track1JIS { get; private set; }
+
             /// <summary>
             /// Track 3 of Japanese cash transfer card will be read. In some countries this track is known as JIS I
             /// track 1 (8bits/char).
             /// </summary>
-            [DataMember(Name = "track3JIS")] 
+            [DataMember(Name = "track3JIS")]
             public bool? Track3JIS { get; private set; }
+
             /// <summary>
             /// Dynamic Digital Identification data of the magnetic stripe will be read.
             /// </summary>
-            [DataMember(Name = "ddi")] 
+            [DataMember(Name = "ddi")]
             public bool? Ddi { get; private set; }
 
         }

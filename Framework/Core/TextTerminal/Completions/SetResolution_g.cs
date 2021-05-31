@@ -18,18 +18,13 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.SetResolution")]
     public sealed class SetResolutionCompletion : Completion<SetResolutionCompletion.PayloadData>
     {
-        public SetResolutionCompletion(string RequestId, SetResolutionCompletion.PayloadData Payload)
+        public SetResolutionCompletion(int RequestId, SetResolutionCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                ResolutionNotSupported,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
@@ -37,12 +32,17 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.ErrorCode = ErrorCode;
             }
 
+            public enum ErrorCodeEnum
+            {
+                ResolutionNotSupported
+            }
+
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```resolutionNotSupported``` - The specified resolution is not supported by the display.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

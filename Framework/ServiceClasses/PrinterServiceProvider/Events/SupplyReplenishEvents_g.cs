@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class SupplyReplenishEvents : PrinterEvents, ISupplyReplenishEvents
     {
 
-        public SupplyReplenishEvents(IConnection connection, string requestId)
+        public SupplyReplenishEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

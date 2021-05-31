@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class ControlPassbookEvents : PrinterEvents, IControlPassbookEvents
     {
 
-        public ControlPassbookEvents(IConnection connection, string requestId)
+        public ControlPassbookEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

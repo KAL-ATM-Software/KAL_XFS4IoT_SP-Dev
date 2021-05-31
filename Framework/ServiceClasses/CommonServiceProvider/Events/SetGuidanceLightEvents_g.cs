@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class SetGuidanceLightEvents : CommonEvents, ISetGuidanceLightEvents
     {
 
-        public SetGuidanceLightEvents(IConnection connection, string requestId)
+        public SetGuidanceLightEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

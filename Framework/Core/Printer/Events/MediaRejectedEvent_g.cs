@@ -20,7 +20,7 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaRejectedEvent : Event<MediaRejectedEvent.PayloadData>
     {
 
-        public MediaRejectedEvent(string RequestId, PayloadData Payload)
+        public MediaRejectedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -28,6 +28,12 @@ namespace XFS4IoT.Printer.Events
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
+
+            public PayloadData(ReasonEnum? Reason = null)
+                : base()
+            {
+                this.Reason = Reason;
+            }
 
             public enum ReasonEnum
             {
@@ -39,14 +45,7 @@ namespace XFS4IoT.Printer.Events
                 Shutter,
                 Escrow,
                 Thick,
-                Other,
-            }
-
-
-            public PayloadData(ReasonEnum? Reason = null)
-                : base()
-            {
-                this.Reason = Reason;
+                Other
             }
 
             /// <summary>
@@ -62,8 +61,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```thick``` - The rejected media was too thick.
             /// * ```other``` - The media was rejected due to a reason other than those listed above.
             /// </summary>
-            [DataMember(Name = "reason")] 
+            [DataMember(Name = "reason")]
             public ReasonEnum? Reason { get; private set; }
+
         }
 
     }

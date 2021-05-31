@@ -18,7 +18,7 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.PowerSaveControl")]
     public sealed class PowerSaveControlCompletion : Completion<PowerSaveControlCompletion.PayloadData>
     {
-        public PowerSaveControlCompletion(string RequestId, PowerSaveControlCompletion.PayloadData Payload)
+        public PowerSaveControlCompletion(int RequestId, PowerSaveControlCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.Common.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

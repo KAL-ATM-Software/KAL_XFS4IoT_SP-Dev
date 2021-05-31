@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class ResetEvents : PrinterEvents, IResetEvents
     {
 
-        public ResetEvents(IConnection connection, string requestId)
+        public ResetEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

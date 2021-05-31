@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.QueryIFMIdentifier")]
     public sealed class QueryIFMIdentifierCommand : Command<QueryIFMIdentifierCommand.PayloadData>
     {
-        public QueryIFMIdentifierCommand(string RequestId, QueryIFMIdentifierCommand.PayloadData Payload)
+        public QueryIFMIdentifierCommand(int RequestId, QueryIFMIdentifierCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.CardReader.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

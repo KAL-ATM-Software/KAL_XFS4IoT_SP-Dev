@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var resetCountCmd = command.IsA<ResetCountCommand>($"Invalid parameter in the ResetCount Handle method. {nameof(ResetCountCommand)}");
-            
-            IResetCountEvents events = new ResetCountEvents(Connection, resetCountCmd.Headers.RequestId);
+            resetCountCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IResetCountEvents events = new ResetCountEvents(Connection, resetCountCmd.Headers.RequestId.Value);
 
             var result = await HandleResetCount(events, resetCountCmd, cancel);
-            await Connection.SendMessageAsync(new ResetCountCompletion(resetCountCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ResetCountCompletion(resetCountCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var resetCountcommand = command.IsA<ResetCountCommand>();
+            resetCountcommand.Headers.RequestId.HasValue.IsTrue();
 
             ResetCountCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => ResetCountCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ResetCountCompletion(resetCountcommand.Headers.RequestId, new ResetCountCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ResetCountCompletion(resetCountcommand.Headers.RequestId.Value, new ResetCountCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

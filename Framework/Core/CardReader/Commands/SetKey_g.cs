@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.SetKey")]
     public sealed class SetKeyCommand : Command<SetKeyCommand.PayloadData>
     {
-        public SetKeyCommand(string RequestId, SetKeyCommand.PayloadData Payload)
+        public SetKeyCommand(int RequestId, SetKeyCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -37,7 +37,7 @@ namespace XFS4IoT.CardReader.Commands
             /// Contains the Base64 encoded payment containing the CIM86 DES key. This key is supplied by the vendor
             /// of the CIM86 module.
             /// </summary>
-            [DataMember(Name = "keyValue")] 
+            [DataMember(Name = "keyValue")]
             public string KeyValue { get; private set; }
 
         }

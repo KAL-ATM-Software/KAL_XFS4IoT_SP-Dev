@@ -19,25 +19,25 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(string RequestId, ResetCommand.PayloadData Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ResetInEnum
-            {
-                Eject,
-                Retain,
-                NoAction,
-            }
-
 
             public PayloadData(int Timeout, ResetInEnum? ResetIn = null)
                 : base(Timeout)
             {
                 this.ResetIn = ResetIn;
+            }
+
+            public enum ResetInEnum
+            {
+                Eject,
+                Retain,
+                NoAction
             }
 
             /// <summary>
@@ -48,7 +48,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```retain``` - Retain any card found.
             /// * ```noAction``` - No action should be performed on any card found.
             /// </summary>
-            [DataMember(Name = "resetIn")] 
+            [DataMember(Name = "resetIn")]
             public ResetInEnum? ResetIn { get; private set; }
 
         }

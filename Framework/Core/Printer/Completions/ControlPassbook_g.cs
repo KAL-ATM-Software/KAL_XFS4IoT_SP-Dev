@@ -18,13 +18,20 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ControlPassbook")]
     public sealed class ControlPassbookCompletion : Completion<ControlPassbookCompletion.PayloadData>
     {
-        public ControlPassbookCompletion(string RequestId, ControlPassbookCompletion.PayloadData Payload)
+        public ControlPassbookCompletion(int RequestId, ControlPassbookCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 NoMediaPresent,
@@ -32,14 +39,7 @@ namespace XFS4IoT.Printer.Completions
                 MediaJammed,
                 PassbookClosed,
                 LastOrFirstPageReached,
-                MediaSize,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                MediaSize
             }
 
             /// <summary>
@@ -56,7 +56,7 @@ namespace XFS4IoT.Printer.Completions
             ///   reached and is open.
             /// * ```mediaSize``` - The media has an incorrect size.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

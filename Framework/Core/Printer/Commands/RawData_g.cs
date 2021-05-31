@@ -19,25 +19,25 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.RawData")]
     public sealed class RawDataCommand : Command<RawDataCommand.PayloadData>
     {
-        public RawDataCommand(string RequestId, RawDataCommand.PayloadData Payload)
+        public RawDataCommand(int RequestId, RawDataCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum InputDataEnum
-            {
-                No,
-                Yes,
-            }
-
 
             public PayloadData(int Timeout, InputDataEnum? InputData = null, string Data = null)
                 : base(Timeout)
             {
                 this.InputData = InputData;
                 this.Data = Data;
+            }
+
+            public enum InputDataEnum
+            {
+                No,
+                Yes
             }
 
             /// <summary>
@@ -47,12 +47,13 @@ namespace XFS4IoT.Printer.Commands
             /// * ```no``` - No input data is expected.
             /// * ```yes``` - Input data is expected.
             /// </summary>
-            [DataMember(Name = "inputData")] 
+            [DataMember(Name = "inputData")]
             public InputDataEnum? InputData { get; private set; }
+
             /// <summary>
             /// BASE64 encoded device dependent data to be sent to the device.
             /// </summary>
-            [DataMember(Name = "data")] 
+            [DataMember(Name = "data")]
             public string Data { get; private set; }
 
         }

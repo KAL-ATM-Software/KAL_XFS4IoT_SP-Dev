@@ -29,18 +29,6 @@ namespace XFS4IoT.TextTerminal.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum FailureEnum
-            {
-                Required,
-                StaticOvwr,
-                Overflow,
-                NotRead,
-                NotWrite,
-                TypeNotSupported,
-                CharSetForm,
-            }
-
-
             public PayloadData(string FormName = null, string FieldName = null, FailureEnum? Failure = null)
                 : base()
             {
@@ -52,18 +40,32 @@ namespace XFS4IoT.TextTerminal.Events
             /// <summary>
             /// Specifies the form name.
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
+
             /// <summary>
             /// Specifies the field name.
             /// </summary>
-            [DataMember(Name = "fieldName")] 
+            [DataMember(Name = "fieldName")]
             public string FieldName { get; private set; }
+
+            public enum FailureEnum
+            {
+                Required,
+                StaticOvwr,
+                Overflow,
+                NotRead,
+                NotWrite,
+                TypeNotSupported,
+                CharSetForm
+            }
+
             /// <summary>
             /// Specifies the type of failure.
             /// </summary>
-            [DataMember(Name = "failure")] 
+            [DataMember(Name = "failure")]
             public FailureEnum? Failure { get; private set; }
+
         }
 
     }

@@ -55,7 +55,7 @@ namespace XFS4IoT
         /// <param name="Name"></param>
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>
-        public Message(string RequestId, MessageHeader.TypeEnum Type, T Payload) :
+        public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload) :
             base(RequestId, Type)
         {
             this.Payload = Payload.Ignore();

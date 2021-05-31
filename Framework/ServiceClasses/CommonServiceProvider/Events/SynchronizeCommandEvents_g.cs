@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class SynchronizeCommandEvents : CommonEvents, ISynchronizeCommandEvents
     {
 
-        public SynchronizeCommandEvents(IConnection connection, string requestId)
+        public SynchronizeCommandEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

@@ -18,7 +18,7 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ResetCount")]
     public sealed class ResetCountCompletion : Completion<ResetCountCompletion.PayloadData>
     {
-        public ResetCountCompletion(string RequestId, ResetCountCompletion.PayloadData Payload)
+        public ResetCountCompletion(int RequestId, ResetCountCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.CardReader.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

@@ -19,34 +19,15 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.SetResolution")]
     public sealed class SetResolutionCommand : Command<SetResolutionCommand.PayloadData>
     {
-        public SetResolutionCommand(string RequestId, SetResolutionCommand.PayloadData Payload)
+        public SetResolutionCommand(int RequestId, SetResolutionCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            /// <summary>
-            /// Specifies the horizontal size of the display of the text terminal unit.
-            /// </summary>
-            public class ResolutionClass
-            {
-                [DataMember(Name = "sizeX")] 
-                public int? SizeX { get; private set; }
-                [DataMember(Name = "sizeY")] 
-                public int? SizeY { get; private set; }
 
-                public ResolutionClass (int? SizeX, int? SizeY)
-                {
-                    this.SizeX = SizeX;
-                    this.SizeY = SizeY;
-                }
-
-
-            }
-
-
-            public PayloadData(int Timeout, object Resolution = null)
+            public PayloadData(int Timeout, ResolutionClass Resolution = null)
                 : base(Timeout)
             {
                 this.Resolution = Resolution;
@@ -55,8 +36,8 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Specifies the horizontal size of the display of the text terminal unit.
             /// </summary>
-            [DataMember(Name = "resolution")] 
-            public object Resolution { get; private set; }
+            [DataMember(Name = "resolution")]
+            public ResolutionClass Resolution { get; private set; }
 
         }
     }

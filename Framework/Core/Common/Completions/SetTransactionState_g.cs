@@ -18,7 +18,7 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.SetTransactionState")]
     public sealed class SetTransactionStateCompletion : Completion<SetTransactionStateCompletion.PayloadData>
     {
-        public SetTransactionStateCompletion(string RequestId, SetTransactionStateCompletion.PayloadData Payload)
+        public SetTransactionStateCompletion(int RequestId, SetTransactionStateCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.Common.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

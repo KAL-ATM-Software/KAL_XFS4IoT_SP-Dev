@@ -20,7 +20,7 @@ namespace XFS4IoT.Printer.Events
     public sealed class NoMediaEvent : Event<NoMediaEvent.PayloadData>
     {
 
-        public NoMediaEvent(string RequestId, PayloadData Payload)
+        public NoMediaEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -28,7 +28,6 @@ namespace XFS4IoT.Printer.Events
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
-
 
             public PayloadData(string UserPrompt = null)
                 : base()
@@ -43,8 +42,9 @@ namespace XFS4IoT.Printer.Events
             /// The application may use the this in any manner it sees fit, for example it might display the string to the
             /// operator, along with a message that the media should be inserted.
             /// </summary>
-            [DataMember(Name = "userPrompt")] 
+            [DataMember(Name = "userPrompt")]
             public string UserPrompt { get; private set; }
+
         }
 
     }

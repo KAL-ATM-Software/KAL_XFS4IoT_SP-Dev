@@ -18,13 +18,20 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.WriteForm")]
     public sealed class WriteFormCompletion : Completion<WriteFormCompletion.PayloadData>
     {
-        public WriteFormCompletion(string RequestId, WriteFormCompletion.PayloadData Payload)
+        public WriteFormCompletion(int RequestId, WriteFormCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 FormNotFound,
@@ -32,14 +39,7 @@ namespace XFS4IoT.TextTerminal.Completions
                 MediaOverflow,
                 FieldSpecFailure,
                 CharacterSetsData,
-                FieldError,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                FieldError
             }
 
             /// <summary>
@@ -51,7 +51,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```characterSetsData``` - Character set(s) supported by Service Provider is inconsistent with use of fields value.
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

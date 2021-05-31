@@ -15,7 +15,7 @@ using XFS4IoT.Common.Completions;
 
 namespace Server
 {
-    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(XFS4IoT.Common.Commands.GetServiceCommand))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(XFS4IoT.Common.Commands.GetServicesCommand))]
     public class GetServiceHandler : ICommandHandler
     {
 
@@ -38,17 +38,17 @@ namespace Server
             command.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(command)}");
             Contracts.IsNotNull(cancel, $"Invalid parameter received in the {nameof(Handle)} method. {nameof(cancel)}");
 
-            XFS4IoT.Common.Commands.GetServiceCommand getServiceCommand = command as XFS4IoT.Common.Commands.GetServiceCommand;
+            XFS4IoT.Common.Commands.GetServicesCommand getServiceCommand = command as XFS4IoT.Common.Commands.GetServicesCommand;
             getServiceCommand.IsNotNull($"Unexpected command received in the {nameof(Handle)} method. {nameof(command)}");
+            getServiceCommand.Headers.RequestId.HasValue.IsTrue();
 
             // For now just return good result and fixed services available
-            GetServiceCompletion.PayloadData payLoad = new(GetServiceCompletion.PayloadData.CompletionCodeEnum.Success,
+            GetServicesCompletion.PayloadData payLoad = new(GetServicesCompletion.PayloadData.CompletionCodeEnum.Success,
                                                             "ok",
                                                             "KAL",
-                                                            from service in ServicePublisher.Services
-                                                            select new GetServiceCompletion.PayloadData.ServiceUriDetails(service.WSUri.AbsoluteUri));
+                                                            ServicePublisher.Services.Select(c => new GetServicesCompletion.PayloadData.ServicesClass(c.WSUri.AbsoluteUri)).ToList());
 
-            await Connection.SendMessageAsync(new GetServiceCompletion(getServiceCommand.Headers.RequestId, payLoad));
+            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Headers.RequestId.Value, payLoad));
         }
 
         public async Task HandleError(IConnection Connection, object command, Exception commandErrorException)
@@ -57,16 +57,17 @@ namespace Server
             command.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(command)}");
             commandErrorException.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(commandErrorException)}");
 
-            GetServiceCommand getServiceCommand = command as GetServiceCommand;
+            GetServicesCommand getServiceCommand = command as GetServicesCommand;
             getServiceCommand.IsNotNull($"Unexpected command received in the {nameof(Handle)} method. {nameof(command)}");
+            getServiceCommand.Headers.RequestId.HasValue.IsTrue();
 
-            GetServiceCompletion.PayloadData.CompletionCodeEnum errorCode = GetServiceCompletion.PayloadData.CompletionCodeEnum.InternalError;
+            GetServicesCompletion.PayloadData.CompletionCodeEnum errorCode = GetServicesCompletion.PayloadData.CompletionCodeEnum.InternalError;
             if (commandErrorException.GetType() == typeof(InvalidDataException))
-                errorCode = GetServiceCompletion.PayloadData.CompletionCodeEnum.InvalidData;
+                errorCode = GetServicesCompletion.PayloadData.CompletionCodeEnum.InvalidData;
 
-            GetServiceCompletion.PayloadData payLoad = new(errorCode, commandErrorException.Message);
+            GetServicesCompletion.PayloadData payLoad = new(errorCode, commandErrorException.Message);
   
-            await Connection.SendMessageAsync(new GetServiceCompletion(getServiceCommand.Headers.RequestId, payLoad));
+            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Headers.RequestId.Value, payLoad));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.GetFormList")]
     public sealed class GetFormListCompletion : Completion<GetFormListCompletion.PayloadData>
     {
-        public GetFormListCompletion(string RequestId, GetFormListCompletion.PayloadData Payload)
+        public GetFormListCompletion(int RequestId, GetFormListCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -35,8 +35,8 @@ namespace XFS4IoT.TextTerminal.Completions
             /// <summary>
             /// Array of the form names.
             /// </summary>
-            [DataMember(Name = "formList")] 
-            public List<string> FormList{ get; private set; }
+            [DataMember(Name = "formList")]
+            public List<string> FormList { get; private set; }
 
         }
     }

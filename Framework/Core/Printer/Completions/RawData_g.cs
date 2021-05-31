@@ -18,13 +18,21 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.RawData")]
     public sealed class RawDataCompletion : Completion<RawDataCompletion.PayloadData>
     {
-        public RawDataCompletion(string RequestId, RawDataCompletion.PayloadData Payload)
+        public RawDataCompletion(int RequestId, RawDataCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Data = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.Data = Data;
+            }
+
             public enum ErrorCodeEnum
             {
                 ShutterFail,
@@ -34,15 +42,7 @@ namespace XFS4IoT.Printer.Completions
                 TonerOut,
                 MediaRetained,
                 BlackMark,
-                MediaRetracted,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Data = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.Data = Data;
+                MediaRetracted
             }
 
             /// <summary>
@@ -59,12 +59,13 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaRetracted``` - Presented media was automatically retracted before all wads could be
             ///   presented and before the command could complete successfully.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// BASE64 encoded device dependent data received from the device.
             /// </summary>
-            [DataMember(Name = "data")] 
+            [DataMember(Name = "data")]
             public string Data { get; private set; }
 
         }

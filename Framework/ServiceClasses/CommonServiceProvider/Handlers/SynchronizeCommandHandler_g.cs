@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var synchronizeCommandCmd = command.IsA<SynchronizeCommandCommand>($"Invalid parameter in the SynchronizeCommand Handle method. {nameof(SynchronizeCommandCommand)}");
-            
-            ISynchronizeCommandEvents events = new SynchronizeCommandEvents(Connection, synchronizeCommandCmd.Headers.RequestId);
+            synchronizeCommandCmd.Headers.RequestId.HasValue.IsTrue();
+
+            ISynchronizeCommandEvents events = new SynchronizeCommandEvents(Connection, synchronizeCommandCmd.Headers.RequestId.Value);
 
             var result = await HandleSynchronizeCommand(events, synchronizeCommandCmd, cancel);
-            await Connection.SendMessageAsync(new SynchronizeCommandCompletion(synchronizeCommandCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new SynchronizeCommandCompletion(synchronizeCommandCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var synchronizeCommandcommand = command.IsA<SynchronizeCommandCommand>();
+            synchronizeCommandcommand.Headers.RequestId.HasValue.IsTrue();
 
             SynchronizeCommandCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => SynchronizeCommandCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SynchronizeCommandCompletion(synchronizeCommandcommand.Headers.RequestId, new SynchronizeCommandCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SynchronizeCommandCompletion(synchronizeCommandcommand.Headers.RequestId.Value, new SynchronizeCommandCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

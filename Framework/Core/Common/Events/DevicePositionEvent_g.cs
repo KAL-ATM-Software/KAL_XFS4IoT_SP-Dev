@@ -29,25 +29,18 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum PositionEnum
-            {
-                Inposition,
-                Notinposition,
-                Posunknown,
-            }
-
-
-            public PayloadData(PositionEnum? Position = null)
+            public PayloadData(PositionStatusEnum? Position = null)
                 : base()
             {
                 this.Position = Position;
             }
 
             /// <summary>
-            /// Position of the device.
+            /// Position of the device
             /// </summary>
-            [DataMember(Name = "position")] 
-            public PositionEnum? Position { get; private set; }
+            [DataMember(Name = "Position")]
+            public PositionStatusEnum? Position { get; private set; }
+
         }
 
     }

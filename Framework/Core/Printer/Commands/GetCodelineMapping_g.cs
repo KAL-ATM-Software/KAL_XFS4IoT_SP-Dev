@@ -19,24 +19,24 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetCodelineMapping")]
     public sealed class GetCodelineMappingCommand : Command<GetCodelineMappingCommand.PayloadData>
     {
-        public GetCodelineMappingCommand(string RequestId, GetCodelineMappingCommand.PayloadData Payload)
+        public GetCodelineMappingCommand(int RequestId, GetCodelineMappingCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum CodelineFormatEnum
-            {
-                Cmc7,
-                E13b,
-            }
-
 
             public PayloadData(int Timeout, CodelineFormatEnum? CodelineFormat = null)
                 : base(Timeout)
             {
                 this.CodelineFormat = CodelineFormat;
+            }
+
+            public enum CodelineFormatEnum
+            {
+                Cmc7,
+                E13b
             }
 
             /// <summary>
@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```cmc7``` - Report the CMC7 mapping.
             /// * ```e13b``` - Report the E13B mapping.
             /// </summary>
-            [DataMember(Name = "codelineFormat")] 
+            [DataMember(Name = "codelineFormat")]
             public CodelineFormatEnum? CodelineFormat { get; private set; }
 
         }

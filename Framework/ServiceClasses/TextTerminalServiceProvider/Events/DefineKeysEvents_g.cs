@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class DefineKeysEvents : TextTerminalEvents, IDefineKeysEvents
     {
 
-        public DefineKeysEvents(IConnection connection, string requestId)
+        public DefineKeysEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

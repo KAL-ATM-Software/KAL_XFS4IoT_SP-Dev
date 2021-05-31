@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.ClearScreen")]
     public sealed class ClearScreenCommand : Command<ClearScreenCommand.PayloadData>
     {
-        public ClearScreenCommand(string RequestId, ClearScreenCommand.PayloadData Payload)
+        public ClearScreenCommand(int RequestId, ClearScreenCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -39,22 +39,25 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Specifies the horizontal position of the area to be cleared.
             /// </summary>
-            [DataMember(Name = "positionX")] 
+            [DataMember(Name = "positionX")]
             public int? PositionX { get; private set; }
+
             /// <summary>
             /// Specifies the vertical position of the area to be cleared.
             /// </summary>
-            [DataMember(Name = "positionY")] 
+            [DataMember(Name = "positionY")]
             public int? PositionY { get; private set; }
+
             /// <summary>
             /// Specifies the width position of the area to be cleared.
             /// </summary>
-            [DataMember(Name = "width")] 
+            [DataMember(Name = "width")]
             public int? Width { get; private set; }
+
             /// <summary>
             /// Specifies the height position of the area to be cleared.
             /// </summary>
-            [DataMember(Name = "height")] 
+            [DataMember(Name = "height")]
             public int? Height { get; private set; }
 
         }

@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
- * GenerateRandom_g.cs uses automatically generated parts. 
- * created at 4/20/2021 12:28:05 PM
+ * GenerateRandom_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -19,27 +18,25 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.GenerateRandom")]
     public sealed class GenerateRandomCompletion : Completion<GenerateRandomCompletion.PayloadData>
     {
-        public GenerateRandomCompletion(string RequestId, GenerateRandomCompletion.PayloadData Payload)
+        public GenerateRandomCompletion(int RequestId, GenerateRandomCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                ModeNotSupported,
-                AccessDenied,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string RandomNumber = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(GenerateRandomCompletion.PayloadData)}");
-
                 this.ErrorCode = ErrorCode;
                 this.RandomNumber = RandomNumber;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                ModeNotSupported,
+                AccessDenied
             }
 
             /// <summary>
@@ -47,12 +44,13 @@ namespace XFS4IoT.Crypto.Completions
             /// * ```modeNotSupported``` - The mode specified by modeOfUse is not supported.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// The generated random number.
             /// </summary>
-            [DataMember(Name = "randomNumber")] 
+            [DataMember(Name = "randomNumber")]
             public string RandomNumber { get; private set; }
 
         }

@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
- * IllegalKeyAccessEvent_g.cs uses automatically generated parts. 
- * created at 4/20/2021 12:28:05 PM
+ * IllegalKeyAccessEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -18,26 +17,17 @@ namespace XFS4IoT.Crypto.Events
 
     [DataContract]
     [Event(Name = "Crypto.IllegalKeyAccessEvent")]
-    public sealed class IllegalKeyAccessEvent : Event<IllegalKeyAccessEvent.PayloadData>
+    public sealed class IllegalKeyAccessEvent : UnsolicitedEvent<IllegalKeyAccessEvent.PayloadData>
     {
 
-        public IllegalKeyAccessEvent(string RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public IllegalKeyAccessEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
-
-            public enum ErrorCodeEnum
-            {
-                Keynotfound,
-                Keynovalue,
-                Useviolation,
-                Algorithmnotsupp,
-            }
-
 
             public PayloadData(string KeyName = null, ErrorCodeEnum? ErrorCode = null)
                 : base()
@@ -49,13 +39,23 @@ namespace XFS4IoT.Crypto.Events
             /// <summary>
             /// Specifies the name of the key that caused the error. 
             /// </summary>
-            [DataMember(Name = "keyName")] 
+            [DataMember(Name = "keyName")]
             public string KeyName { get; private set; }
+
+            public enum ErrorCodeEnum
+            {
+                Keynotfound,
+                Keynovalue,
+                Useviolation,
+                Algorithmnotsupp
+            }
+
             /// <summary>
             /// Specifies the type of illegal key access that occurred
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
         }
 
     }

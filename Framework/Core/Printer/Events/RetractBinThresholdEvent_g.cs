@@ -29,14 +29,6 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StateEnum
-            {
-                Ok,
-                Full,
-                High,
-            }
-
-
             public PayloadData(int? BinNumber = null, StateEnum? State = null)
                 : base()
             {
@@ -47,8 +39,16 @@ namespace XFS4IoT.Printer.Events
             /// <summary>
             /// Number of the retract bin for which the status has changed.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
+
+            public enum StateEnum
+            {
+                Ok,
+                Full,
+                High
+            }
+
             /// <summary>
             /// Specifies the current state of the retract bin as one of the following:
             /// 
@@ -56,8 +56,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```full``` - The retract bin of the printer is full.
             /// * ```high``` - The retract bin of the printer is high.
             /// </summary>
-            [DataMember(Name = "state")] 
+            [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
+
         }
 
     }

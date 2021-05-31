@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ResetCount")]
     public sealed class ResetCountCommand : Command<ResetCountCommand.PayloadData>
     {
-        public ResetCountCommand(string RequestId, ResetCountCommand.PayloadData Payload)
+        public ResetCountCommand(int RequestId, ResetCountCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.CardReader.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

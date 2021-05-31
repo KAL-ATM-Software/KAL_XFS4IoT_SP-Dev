@@ -18,26 +18,26 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
-        public ReadCompletion(string RequestId, ReadCompletion.PayloadData Payload)
+        public ReadCompletion(int RequestId, ReadCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                KeyInvalid,
-                KeyNotSupported,
-                NoActiveKeys,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Input = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
                 this.Input = Input;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                KeyInvalid,
+                KeyNotSupported,
+                NoActiveKeys
             }
 
             /// <summary>
@@ -47,13 +47,14 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service Provider.
             /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Specifies a zero terminated string containing all the printable characters (numeric and alphanumeric) 
             /// read from the text terminal unit key pad.
             /// </summary>
-            [DataMember(Name = "input")] 
+            [DataMember(Name = "input")]
             public string Input { get; private set; }
 
         }

@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ResetCount")]
     public sealed class ResetCountCommand : Command<ResetCountCommand.PayloadData>
     {
-        public ResetCountCommand(string RequestId, ResetCountCommand.PayloadData Payload)
+        public ResetCountCommand(int RequestId, ResetCountCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
 
         }

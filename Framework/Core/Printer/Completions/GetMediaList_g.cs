@@ -18,7 +18,7 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetMediaList")]
     public sealed class GetMediaListCompletion : Completion<GetMediaListCompletion.PayloadData>
     {
-        public GetMediaListCompletion(string RequestId, GetMediaListCompletion.PayloadData Payload)
+        public GetMediaListCompletion(int RequestId, GetMediaListCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -35,8 +35,8 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// The list of media names.
             /// </summary>
-            [DataMember(Name = "mediaList")] 
-            public List<string> MediaList{ get; private set; }
+            [DataMember(Name = "mediaList")]
+            public List<string> MediaList { get; private set; }
 
         }
     }

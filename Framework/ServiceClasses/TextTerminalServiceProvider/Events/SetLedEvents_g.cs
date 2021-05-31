@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class SetLedEvents : TextTerminalEvents, ISetLedEvents
     {
 
-        public SetLedEvents(IConnection connection, string requestId)
+        public SetLedEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

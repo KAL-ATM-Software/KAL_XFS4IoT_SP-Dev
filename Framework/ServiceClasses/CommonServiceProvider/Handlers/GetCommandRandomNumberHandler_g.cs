@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getCommandRandomNumberCmd = command.IsA<GetCommandRandomNumberCommand>($"Invalid parameter in the GetCommandRandomNumber Handle method. {nameof(GetCommandRandomNumberCommand)}");
-            
-            IGetCommandRandomNumberEvents events = new GetCommandRandomNumberEvents(Connection, getCommandRandomNumberCmd.Headers.RequestId);
+            getCommandRandomNumberCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IGetCommandRandomNumberEvents events = new GetCommandRandomNumberEvents(Connection, getCommandRandomNumberCmd.Headers.RequestId.Value);
 
             var result = await HandleGetCommandRandomNumber(events, getCommandRandomNumberCmd, cancel);
-            await Connection.SendMessageAsync(new GetCommandRandomNumberCompletion(getCommandRandomNumberCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new GetCommandRandomNumberCompletion(getCommandRandomNumberCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getCommandRandomNumbercommand = command.IsA<GetCommandRandomNumberCommand>();
+            getCommandRandomNumbercommand.Headers.RequestId.HasValue.IsTrue();
 
             GetCommandRandomNumberCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => GetCommandRandomNumberCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetCommandRandomNumberCompletion(getCommandRandomNumbercommand.Headers.RequestId, new GetCommandRandomNumberCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetCommandRandomNumberCompletion(getCommandRandomNumbercommand.Headers.RequestId.Value, new GetCommandRandomNumberCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

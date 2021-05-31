@@ -18,26 +18,26 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.LoadDefinition")]
     public sealed class LoadDefinitionCompletion : Completion<LoadDefinitionCompletion.PayloadData>
     {
-        public LoadDefinitionCompletion(string RequestId, LoadDefinitionCompletion.PayloadData Payload)
+        public LoadDefinitionCompletion(int RequestId, LoadDefinitionCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                FileNotFound,
-                FormInvalid,
-                MediaInvalid,
-                DefinitionExists,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                FileNotFound,
+                FormInvalid,
+                MediaInvalid,
+                DefinitionExists
             }
 
             /// <summary>
@@ -49,7 +49,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```definitionExists``` - The specified form or media definition already exists and the *overwrite*
             ///   flag was false.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

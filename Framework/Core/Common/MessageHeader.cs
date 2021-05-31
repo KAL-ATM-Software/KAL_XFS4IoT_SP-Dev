@@ -26,7 +26,7 @@ namespace XFS4IoT
         /// example: "b34800d0-9dd2-4d50-89ea-92d1b13df54b"
         /// </summary>
         [DataMember(IsRequired = true, Name = "requestId")]
-        public string RequestId { get; private set; }
+        public int? RequestId { get; private set; }
 
         /// <summary>
         /// Possible type of message 
@@ -53,7 +53,7 @@ namespace XFS4IoT
         /// <param name="Name"></param>
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>
-        public MessageHeader(string Name, string RequestId, TypeEnum Type)
+        public MessageHeader(string Name, int? RequestId, TypeEnum Type)
         {
             Contracts.IsNotNullOrWhitespace(Name, $"Null or an empty value for {nameof(Name)} in the headers.");
             // RequestionId may be null for unsolicited events

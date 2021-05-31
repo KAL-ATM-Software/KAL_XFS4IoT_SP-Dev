@@ -19,26 +19,13 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.SynchronizeCommand")]
     public sealed class SynchronizeCommandCommand : Command<SynchronizeCommandCommand.PayloadData>
     {
-        public SynchronizeCommandCommand(string RequestId, SynchronizeCommandCommand.PayloadData Payload)
+        public SynchronizeCommandCommand(int RequestId, SynchronizeCommandCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            /// <summary>
-            /// A payload that represents the parameter that is normally associated with the command.
-            /// </summary>
-            public class CmdDataClass
-            {
-
-                public CmdDataClass ()
-                {
-                }
-
-
-            }
-
 
             public PayloadData(int Timeout, string Command = null, object CmdData = null)
                 : base(Timeout)
@@ -50,12 +37,13 @@ namespace XFS4IoT.Common.Commands
             /// <summary>
             /// The command name to be synchronized and executed next. 
             /// </summary>
-            [DataMember(Name = "command")] 
+            [DataMember(Name = "command")]
             public string Command { get; private set; }
+
             /// <summary>
             /// A payload that represents the parameter that is normally associated with the command.
             /// </summary>
-            [DataMember(Name = "cmdData")] 
+            [DataMember(Name = "cmdData")]
             public object CmdData { get; private set; }
 
         }

@@ -18,25 +18,25 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.DefineKeys")]
     public sealed class DefineKeysCompletion : Completion<DefineKeysCompletion.PayloadData>
     {
-        public DefineKeysCompletion(string RequestId, DefineKeysCompletion.PayloadData Payload)
+        public DefineKeysCompletion(int RequestId, DefineKeysCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                KeyInvalid,
-                KeyNotSupported,
-                NoActiveKeys,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                KeyInvalid,
+                KeyNotSupported,
+                NoActiveKeys
             }
 
             /// <summary>
@@ -46,7 +46,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service Provider.
             /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

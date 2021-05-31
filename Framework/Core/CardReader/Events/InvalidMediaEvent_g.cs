@@ -20,7 +20,7 @@ namespace XFS4IoT.CardReader.Events
     public sealed class InvalidMediaEvent : Event<MessagePayloadBase>
     {
 
-        public InvalidMediaEvent(string RequestId)
+        public InvalidMediaEvent(int RequestId)
             : base(RequestId)
         { }
 

@@ -19,7 +19,7 @@ namespace XFS4IoTCoreTest.Command
         [TestMethod]
         public void Constructor()
         {
-            var command = new ReadRawDataCommand(Guid.NewGuid().ToString(), new ReadRawDataCommand.PayloadData(1000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
+            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(1000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
 
             Assert.AreEqual(1000, command.Payload.Timeout);
         }
@@ -27,21 +27,21 @@ namespace XFS4IoTCoreTest.Command
         [TestMethod]
         public void SerialiseString()
         {
-            var command = new ReadRawDataCommand("ee6d592b-483c-4c22-98ef-1070e290bf4f", new ReadRawDataCommand.PayloadData(5000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
+            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(5000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
 
             string result = command.Serialise();
 
-            AreEqual(@"{""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000},""headers"":{""name"":""CardReader.ReadRawData"",""requestId"":""ee6d592b-483c-4c22-98ef-1070e290bf4f"",""type"":""command""}}", result);
+            AreEqual(@"{""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000},""headers"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""}}", result);
 
         }
 
         [TestMethod]
         public void SerialiseEvent()
         {
-            var mediaInserted = new MediaInsertedEvent("ee6d592b-483c-4c22-99ef-1070e290bf4f");
+            var mediaInserted = new MediaInsertedEvent(123456);
 
             string result = mediaInserted.Serialise();
-            AreEqual(@"{""payload"":{},""headers"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":""ee6d592b-483c-4c22-99ef-1070e290bf4f"",""type"":""event""}}", result);
+            AreEqual(@"{""payload"":{},""headers"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""}}", result);
         }
     }
 }

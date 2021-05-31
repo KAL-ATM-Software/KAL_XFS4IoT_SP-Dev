@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EMVClessIssuerUpdate")]
     public sealed class EMVClessIssuerUpdateCommand : Command<EMVClessIssuerUpdateCommand.PayloadData>
     {
-        public EMVClessIssuerUpdateCommand(string RequestId, EMVClessIssuerUpdateCommand.PayloadData Payload)
+        public EMVClessIssuerUpdateCommand(int RequestId, EMVClessIssuerUpdateCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -43,7 +43,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * Issuer Scripts or proprietary payment system's data elements (if present) and any other data
             ///   elements if required.
             /// </summary>
-            [DataMember(Name = "data")] 
+            [DataMember(Name = "data")]
             public string Data { get; private set; }
 
         }

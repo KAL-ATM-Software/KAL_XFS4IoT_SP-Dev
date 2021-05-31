@@ -29,6 +29,13 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
+            public PayloadData(PositionEnum? Position = null, int? RetractBinNumber = null)
+                : base()
+            {
+                this.Position = Position;
+                this.RetractBinNumber = RetractBinNumber;
+            }
+
             public enum PositionEnum
             {
                 Retracted,
@@ -36,15 +43,7 @@ namespace XFS4IoT.Printer.Events
                 Entering,
                 Jammed,
                 Unknown,
-                Expelled,
-            }
-
-
-            public PayloadData(PositionEnum? Position = null, int? RetractBinNumber = null)
-                : base()
-            {
-                this.Position = Position;
-                this.RetractBinNumber = RetractBinNumber;
+                Expelled
             }
 
             /// <summary>
@@ -57,15 +56,17 @@ namespace XFS4IoT.Printer.Events
             /// * ```unknown``` - The media is in an unknown position.
             /// * ```expelled``` - The media was expelled during the reset operation.
             /// </summary>
-            [DataMember(Name = "position")] 
+            [DataMember(Name = "position")]
             public PositionEnum? Position { get; private set; }
+
             /// <summary>
             /// Number of the retract bin the media was retracted to. This number has to be between one and the 
             /// [number of bins](#common.capabilities.completion.properties.printer.retractbins) supported by this device.
             /// It is only relevant if [position](#printer.mediadetectedevent.event.properties.position) is *retracted*.
             /// </summary>
-            [DataMember(Name = "retractBinNumber")] 
+            [DataMember(Name = "retractBinNumber")]
             public int? RetractBinNumber { get; private set; }
+
         }
 
     }

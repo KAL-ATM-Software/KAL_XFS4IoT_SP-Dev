@@ -18,7 +18,7 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.GetCommandRandomNumber")]
     public sealed class GetCommandRandomNumberCompletion : Completion<GetCommandRandomNumberCompletion.PayloadData>
     {
-        public GetCommandRandomNumberCompletion(string RequestId, GetCommandRandomNumberCompletion.PayloadData Payload)
+        public GetCommandRandomNumberCompletion(int RequestId, GetCommandRandomNumberCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -38,7 +38,7 @@ namespace XFS4IoT.Common.Completions
             /// 
             /// The nonce will be given as HEX (upper case.)
             /// </summary>
-            [DataMember(Name = "commandRandomNumber")] 
+            [DataMember(Name = "CommandRandomNumber")]
             public string CommandRandomNumber { get; private set; }
 
         }

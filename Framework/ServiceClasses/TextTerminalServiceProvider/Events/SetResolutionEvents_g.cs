@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class SetResolutionEvents : TextTerminalEvents, ISetResolutionEvents
     {
 
-        public SetResolutionEvents(IConnection connection, string requestId)
+        public SetResolutionEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

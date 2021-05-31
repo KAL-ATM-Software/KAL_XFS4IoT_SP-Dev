@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class ChipIOEvents : CardReaderEvents, IChipIOEvents
     {
 
-        public ChipIOEvents(IConnection connection, string requestId)
+        public ChipIOEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

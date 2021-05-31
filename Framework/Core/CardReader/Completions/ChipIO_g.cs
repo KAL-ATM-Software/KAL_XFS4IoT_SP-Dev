@@ -18,13 +18,22 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ChipIO")]
     public sealed class ChipIOCompletion : Completion<ChipIOCompletion.PayloadData>
     {
-        public ChipIOCompletion(string RequestId, ChipIOCompletion.PayloadData Payload)
+        public ChipIOCompletion(int RequestId, ChipIOCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, string ChipData = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.ChipProtocol = ChipProtocol;
+                this.ChipData = ChipData;
+            }
+
             public enum ErrorCodeEnum
             {
                 MediaJam,
@@ -33,16 +42,7 @@ namespace XFS4IoT.CardReader.Completions
                 InvalidData,
                 ProtocolNotSupported,
                 AtrNotObtained,
-                CardCollision,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, string ChipData = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.ChipProtocol = ChipProtocol;
-                this.ChipData = ChipData;
+                CardCollision
             }
 
             /// <summary>
@@ -56,19 +56,21 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```atrNotObtained``` - The ATR has not been obtained.
             /// * ```cardCollision``` - There was an unresolved collision of two or more contactless card signals.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Identifies the protocol that is used to communicate with the chip. This field contains the same value
             /// as the corresponding field in the payload. This field should be ignored in Memory Card dialogs and
             /// will contain *notSupported* when returned for any Memory Card dialog.
             /// </summary>
-            [DataMember(Name = "chipProtocol")] 
+            [DataMember(Name = "chipProtocol")]
             public string ChipProtocol { get; private set; }
+
             /// <summary>
             /// The Base64 encoded data received from the chip.
             /// </summary>
-            [DataMember(Name = "chipData")] 
+            [DataMember(Name = "chipData")]
             public string ChipData { get; private set; }
 
         }

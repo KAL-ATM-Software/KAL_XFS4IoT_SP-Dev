@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class RawDataEvents : PrinterEvents, IRawDataEvents
     {
 
-        public RawDataEvents(IConnection connection, string requestId)
+        public RawDataEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

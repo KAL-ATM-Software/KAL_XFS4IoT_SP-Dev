@@ -81,9 +81,11 @@ namespace XFS4IoTServerTest
 
         private class TestCommandDispatcher : ICommandDispatcher
         {
-            public Task Dispatch(IConnection Connection, object Command, CancellationToken Cancel) => throw new System.NotImplementedException();
-            public Task DispatchError(IConnection Connection, object Command, Exception CommandException) => throw new System.NotImplementedException();
+            public Task Dispatch(IConnection Connection, MessageBase Command) => throw new System.NotImplementedException();
+            public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new System.NotImplementedException();
+            public Task RunAsync() => throw new System.NotImplementedException();
             public IEnumerator GetEnumerator() => throw new System.NotImplementedException();
+
             public IEnumerable<Type> Commands { get => throw new NotImplementedException(); }
         }
     }

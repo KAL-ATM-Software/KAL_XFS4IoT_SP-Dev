@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ChipIO")]
     public sealed class ChipIOCommand : Command<ChipIOCommand.PayloadData>
     {
-        public ChipIOCommand(string RequestId, ChipIOCommand.PayloadData Payload)
+        public ChipIOCommand(int RequestId, ChipIOCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -40,12 +40,13 @@ namespace XFS4IoT.CardReader.Commands
             /// Provider knows which memory card type is currently inserted and therefore there is no need for the
             /// application to manage this.
             /// </summary>
-            [DataMember(Name = "chipProtocol")] 
+            [DataMember(Name = "chipProtocol")]
             public string ChipProtocol { get; private set; }
+
             /// <summary>
             /// The Base64 encoded data to be sent to the chip.
             /// </summary>
-            [DataMember(Name = "chipData")] 
+            [DataMember(Name = "chipData")]
             public string ChipData { get; private set; }
 
         }

@@ -20,7 +20,7 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaInsertedEvent : Event<MessagePayloadBase>
     {
 
-        public MediaInsertedEvent(string RequestId)
+        public MediaInsertedEvent(int RequestId)
             : base(RequestId)
         { }
 

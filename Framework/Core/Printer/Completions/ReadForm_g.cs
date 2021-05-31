@@ -18,13 +18,21 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
-        public ReadFormCompletion(string RequestId, ReadFormCompletion.PayloadData Payload)
+        public ReadFormCompletion(int RequestId, ReadFormCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, object Fields = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.Fields = Fields;
+            }
+
             public enum ErrorCodeEnum
             {
                 FormNotFound,
@@ -44,31 +52,7 @@ namespace XFS4IoT.Printer.Completions
                 MediaSize,
                 MediaRejected,
                 MsfError,
-                NoMSF,
-            }
-
-            /// <summary>
-            /// An object containing one or more key/value pairs where the key is a field name and the value is the
-            /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
-            /// index specifies the zero-based element of the index field. The field names and values can contain
-            /// UNICODE if supported by the service.
-            /// </summary>
-            public class FieldsClass
-            {
-
-                public FieldsClass ()
-                {
-                }
-
-
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, FieldsClass Fields = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.Fields = Fields;
+                NoMSF
             }
 
             /// <summary>
@@ -101,16 +85,17 @@ namespace XFS4IoT.Printer.Completions
             /// * ```noMSF``` -  No magnetic stripe found; media may have been inserted or pulled through the wrong
             ///   way.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// An object containing one or more key/value pairs where the key is a field name and the value is the
             /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
             /// index specifies the zero-based element of the index field. The field names and values can contain
             /// UNICODE if supported by the service.
             /// </summary>
-            [DataMember(Name = "fields")] 
-            public FieldsClass Fields { get; private set; }
+            [DataMember(Name = "fields")]
+            public object Fields { get; private set; }
 
         }
     }

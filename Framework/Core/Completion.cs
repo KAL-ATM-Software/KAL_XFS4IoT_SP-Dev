@@ -18,7 +18,7 @@ namespace XFS4IoT.Completions
         /// <param name="Name">Name of the response of the command required</param>
         /// <param name="RequestId">request id</param>
         /// <param name="Payload">payload contents</param>
-        public Completion(string RequestId, T Payload) :
+        public Completion(int RequestId, T Payload) :
             base(RequestId, MessageHeader.TypeEnum.Completion, Payload)
         { }
     }

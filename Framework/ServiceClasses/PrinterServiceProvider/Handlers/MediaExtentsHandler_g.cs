@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var mediaExtentsCmd = command.IsA<MediaExtentsCommand>($"Invalid parameter in the MediaExtents Handle method. {nameof(MediaExtentsCommand)}");
-            
-            IMediaExtentsEvents events = new MediaExtentsEvents(Connection, mediaExtentsCmd.Headers.RequestId);
+            mediaExtentsCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IMediaExtentsEvents events = new MediaExtentsEvents(Connection, mediaExtentsCmd.Headers.RequestId.Value);
 
             var result = await HandleMediaExtents(events, mediaExtentsCmd, cancel);
-            await Connection.SendMessageAsync(new MediaExtentsCompletion(mediaExtentsCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new MediaExtentsCompletion(mediaExtentsCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var mediaExtentscommand = command.IsA<MediaExtentsCommand>();
+            mediaExtentscommand.Headers.RequestId.HasValue.IsTrue();
 
             MediaExtentsCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new MediaExtentsCompletion(mediaExtentscommand.Headers.RequestId, new MediaExtentsCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new MediaExtentsCompletion(mediaExtentscommand.Headers.RequestId.Value, new MediaExtentsCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

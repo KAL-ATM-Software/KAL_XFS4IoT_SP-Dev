@@ -20,7 +20,7 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaPresentedEvent : Event<MediaPresentedEvent.PayloadData>
     {
 
-        public MediaPresentedEvent(string RequestId, PayloadData Payload)
+        public MediaPresentedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -28,7 +28,6 @@ namespace XFS4IoT.Printer.Events
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
-
 
             public PayloadData(int? WadIndex = null, int? TotalWads = null)
                 : base()
@@ -41,13 +40,15 @@ namespace XFS4IoT.Printer.Events
             /// Specifies the index (starting from one) of the presented wad, where a Wad is a bunch of one or more pages
             /// presented as a bunch.
             /// </summary>
-            [DataMember(Name = "wadIndex")] 
+            [DataMember(Name = "wadIndex")]
             public int? WadIndex { get; private set; }
+
             /// <summary>
             /// Specifies the total number of wads in the print job, zero if the total number of wads is not known.
             /// </summary>
-            [DataMember(Name = "totalWads")] 
+            [DataMember(Name = "totalWads")]
             public int? TotalWads { get; private set; }
+
         }
 
     }

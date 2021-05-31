@@ -18,7 +18,7 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.DispLight")]
     public sealed class DispLightCompletion : Completion<DispLightCompletion.PayloadData>
     {
-        public DispLightCompletion(string RequestId, DispLightCompletion.PayloadData Payload)
+        public DispLightCompletion(int RequestId, DispLightCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -35,7 +35,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// <summary>
             /// Specifies whether the lighting of the text terminal unit is switched on (TRUE) or off (FALSE).
             /// </summary>
-            [DataMember(Name = "mode")] 
+            [DataMember(Name = "mode")]
             public bool? Mode { get; private set; }
 
         }

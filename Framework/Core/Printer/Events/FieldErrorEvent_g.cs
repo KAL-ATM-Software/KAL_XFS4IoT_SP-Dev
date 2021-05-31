@@ -20,7 +20,7 @@ namespace XFS4IoT.Printer.Events
     public sealed class FieldErrorEvent : Event<FieldErrorEvent.PayloadData>
     {
 
-        public FieldErrorEvent(string RequestId, PayloadData Payload)
+        public FieldErrorEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -28,20 +28,6 @@ namespace XFS4IoT.Printer.Events
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
-
-            public enum FailureEnum
-            {
-                Required,
-                StaticOverwrite,
-                Overflow,
-                NotFound,
-                NotRead,
-                NotWrite,
-                Hwerror,
-                NotSupported,
-                Graphic,
-            }
-
 
             public PayloadData(string FormName = null, string FieldName = null, FailureEnum? Failure = null)
                 : base()
@@ -54,13 +40,28 @@ namespace XFS4IoT.Printer.Events
             /// <summary>
             /// The form name.
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
+
             /// <summary>
             /// The field name.
             /// </summary>
-            [DataMember(Name = "fieldName")] 
+            [DataMember(Name = "fieldName")]
             public string FieldName { get; private set; }
+
+            public enum FailureEnum
+            {
+                Required,
+                StaticOverwrite,
+                Overflow,
+                NotFound,
+                NotRead,
+                NotWrite,
+                Hwerror,
+                NotSupported,
+                Graphic
+            }
+
             /// <summary>
             /// Specifies the type of failure as one of the following:
             /// 
@@ -74,8 +75,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```notSupported``` - The form field type is not supported with device.
             /// * ```graphic``` - The specified graphic image could not be printed.
             /// </summary>
-            [DataMember(Name = "failure")] 
+            [DataMember(Name = "failure")]
             public FailureEnum? Failure { get; private set; }
+
         }
 
     }

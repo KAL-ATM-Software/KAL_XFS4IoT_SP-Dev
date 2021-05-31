@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
- * VerifyAuthentication_g.cs uses automatically generated parts. 
- * created at 4/20/2021 12:28:05 PM
+ * VerifyAuthentication_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -19,13 +18,20 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.VerifyAuthentication")]
     public sealed class VerifyAuthenticationCompletion : Completion<VerifyAuthenticationCompletion.PayloadData>
     {
-        public VerifyAuthenticationCompletion(string RequestId, VerifyAuthenticationCompletion.PayloadData Payload)
+        public VerifyAuthenticationCompletion(int RequestId, VerifyAuthenticationCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 KeyNotFound,
@@ -38,16 +44,7 @@ namespace XFS4IoT.Crypto.Completions
                 AlgorithmNotSupported,
                 MacInvalid,
                 SignatureInvalid,
-                CryptoMethodNotSupported,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(VerifyAuthenticationCompletion.PayloadData)}");
-
-                this.ErrorCode = ErrorCode;
+                CryptoMethodNotSupported
             }
 
             /// <summary>
@@ -69,7 +66,7 @@ namespace XFS4IoT.Crypto.Completions
             /// * ```signatureInvalid``` - The signature verification failed.
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

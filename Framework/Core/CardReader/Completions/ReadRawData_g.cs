@@ -18,464 +18,15 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCompletion : Completion<ReadRawDataCompletion.PayloadData>
     {
-        public ReadRawDataCompletion(string RequestId, ReadRawDataCompletion.PayloadData Payload)
+        public ReadRawDataCompletion(int RequestId, ReadRawDataCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                MediaJam,
-                ShutterFail,
-                NoMedia,
-                InvalidMedia,
-                CardTooShort,
-                CardTooLong,
-                SecurityFail,
-                CardCollision,
-            }
 
-            /// <summary>
-            /// Contains the data read from track 1.
-            /// </summary>
-            public class Track1Class
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track1Class (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the data read from track 2.
-            /// </summary>
-            public class Track2Class
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track2Class (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the data read from track 3.
-            /// </summary>
-            public class Track3Class
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track3Class (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            [DataContract]
-            public sealed class ChipClass
-            {
-                /// <summary>
-                /// The status values applicable to all data sources. Possible values are:
-                /// 
-                /// * ```ok``` - The data is OK.
-                /// * ```dataMissing``` - The track/chip/memory chip is blank.
-                /// * ```dataInvalid``` - The data contained on the track/chip/memory chip is invalid. This will typically be
-                ///   returned when [data](#cardreader.readrawdata.completion.properties.security.data) reports *badReadLevel* or
-                ///   *dataInvalid*.
-                /// * ```dataTooLong``` - The data contained on the track/chip/memory chip is too long.
-                /// * ```dataTooShort``` - The data contained on the track/chip/memory chip is too short.
-                /// * ```dataSourceNotSupported``` - The data source to read from is not supported by the Service Provider.
-                /// * ```dataSourceMissing``` - The data source to read from is missing on the card, or is unable to be read due to
-                ///   a hardware problem, or the module has not been initialized. For example, this will be returned on a request to
-                ///   read a Memory Card and the customer has entered a magnetic card without associated memory chip. This will also
-                ///   be reported when *data* reports *noData*, *notInitialized* or *hardwareError*. This will also be reported when
-                ///   the image reader could not create a BMP file due to the state of the image reader or due to a failure.
-                /// </summary>
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-
-                public ChipClass(StatusEnum? Status = null, string Data = null)
-                    : base()
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-                /// <summary>
-                /// The status values applicable to all data sources. Possible values are:
-                /// 
-                /// * ```ok``` - The data is OK.
-                /// * ```dataMissing``` - The track/chip/memory chip is blank.
-                /// * ```dataInvalid``` - The data contained on the track/chip/memory chip is invalid. This will typically be
-                ///   returned when [data](#cardreader.readrawdata.completion.properties.security.data) reports *badReadLevel* or
-                ///   *dataInvalid*.
-                /// * ```dataTooLong``` - The data contained on the track/chip/memory chip is too long.
-                /// * ```dataTooShort``` - The data contained on the track/chip/memory chip is too short.
-                /// * ```dataSourceNotSupported``` - The data source to read from is not supported by the Service Provider.
-                /// * ```dataSourceMissing``` - The data source to read from is missing on the card, or is unable to be read due to
-                ///   a hardware problem, or the module has not been initialized. For example, this will be returned on a request to
-                ///   read a Memory Card and the customer has entered a magnetic card without associated memory chip. This will also
-                ///   be reported when *data* reports *noData*, *notInitialized* or *hardwareError*. This will also be reported when
-                ///   the image reader could not create a BMP file due to the state of the image reader or due to a failure.
-                /// </summary>
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-
-                /// <summary>
-                /// Base64 encoded representation of the data
-                /// </summary>
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-            }
-
-            /// <summary>
-            /// Contains the data returned by the security module.
-            /// </summary>
-            public class SecurityClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                public enum DataEnum
-                {
-                    ReadLevel1,
-                    ReadLevel2,
-                    ReadLevel3,
-                    ReadLevel4,
-                    ReadLevel5,
-                    BadReadLevel,
-                    NoData,
-                    DataInvalid,
-                    HardwareError,
-                    NotInitialized,
-                }
-                [DataMember(Name = "data")] 
-                public DataEnum? Data { get; private set; }
-
-                public SecurityClass (StatusEnum? Status, DataEnum? Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the data read from the Swedish Watermark track.
-            /// </summary>
-            public class WatermarkClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public WatermarkClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Memory Card Identification data read from the memory chip.
-            /// </summary>
-            public class MemoryChipClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                public enum DataEnum
-                {
-                    ChipT0,
-                    ChipT1,
-                    ChipProtocolNotRequired,
-                    ChipTypeAPart3,
-                    ChipTypeAPart4,
-                    ChipTypeB,
-                    ChipTypeNFC,
-                }
-                [DataMember(Name = "data")] 
-                public DataEnum? Data { get; private set; }
-
-                public MemoryChipClass (StatusEnum? Status, DataEnum? Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the data read from the front track 1. In some countries this track is known as JIS II track.
-            /// </summary>
-            public class Track1FrontClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track1FrontClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the full path and file name of the BMP image file for the front of the card.
-            /// </summary>
-            public class FrontImageClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public FrontImageClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the the full path and file name of the BMP image file for the back of the card.
-            /// </summary>
-            public class BackImageClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public BackImageClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the data read from JIS I track 1 (8bits/char).
-            /// </summary>
-            public class Track1JISClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track1JISClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// data read from JIS I track 3 (8bits/char).
-            /// </summary>
-            public class Track3JISClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public Track3JISClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-            /// <summary>
-            /// Contains the dynamic digital identification data read from magnetic stripe.
-            /// </summary>
-            public class DdiClass
-            {
-                public enum StatusEnum
-                {
-                    Ok,
-                    DataMissing,
-                    DataInvalid,
-                    DataTooLong,
-                    DataTooShort,
-                    DataSourceNotSupported,
-                    DataSourceMissing,
-                }
-                [DataMember(Name = "status")] 
-                public StatusEnum? Status { get; private set; }
-                [DataMember(Name = "data")] 
-                public string Data { get; private set; }
-
-                public DdiClass (StatusEnum? Status, string Data)
-                {
-                    this.Status = Status;
-                    this.Data = Data;
-                }
-
-
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Track1Class Track1 = null, Track2Class Track2 = null, Track3Class Track3 = null, List<ChipClass> Chip = null, SecurityClass Security = null, WatermarkClass Watermark = null, MemoryChipClass MemoryChip = null, Track1FrontClass Track1Front = null, FrontImageClass FrontImage = null, BackImageClass BackImage = null, Track1JISClass Track1JIS = null, Track3JISClass Track3JIS = null, DdiClass Ddi = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CardDataClass Track1 = null, CardDataClass Track2 = null, CardDataClass Track3 = null, List<CardDataClass> Chip = null, SecurityClass Security = null, CardDataClass Watermark = null, MemoryChipClass MemoryChip = null, CardDataClass Track1Front = null, CardDataClass FrontImage = null, CardDataClass BackImage = null, CardDataClass Track1JIS = null, CardDataClass Track3JIS = null, CardDataClass Ddi = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -492,6 +43,18 @@ namespace XFS4IoT.CardReader.Completions
                 this.Track1JIS = Track1JIS;
                 this.Track3JIS = Track3JIS;
                 this.Ddi = Ddi;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                MediaJam,
+                ShutterFail,
+                NoMedia,
+                InvalidMedia,
+                CardTooShort,
+                CardTooLong,
+                SecurityFail,
+                CardCollision
             }
 
             /// <summary>
@@ -513,75 +76,182 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```securityFail``` - The security module failed reading the cards security sign.
             /// * ```cardCollision``` - There was an unresolved collision of two or more contactless card signals.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Contains the data read from track 1.
             /// </summary>
-            [DataMember(Name = "track1")] 
-            public Track1Class Track1 { get; private set; }
+            [DataMember(Name = "track1")]
+            public CardDataClass Track1 { get; private set; }
+
             /// <summary>
             /// Contains the data read from track 2.
             /// </summary>
-            [DataMember(Name = "track2")] 
-            public Track2Class Track2 { get; private set; }
+            [DataMember(Name = "track2")]
+            public CardDataClass Track2 { get; private set; }
+
             /// <summary>
             /// Contains the data read from track 3.
             /// </summary>
-            [DataMember(Name = "track3")] 
-            public Track3Class Track3 { get; private set; }
+            [DataMember(Name = "track3")]
+            public CardDataClass Track3 { get; private set; }
+
             /// <summary>
             /// Contains the ATR data read from the chip. For contactless chip card readers, multiple identification
             /// information can be returned if the card reader detects more than one chip. Each chip identification
             /// information is returned as an individual *data* array element.
             /// </summary>
-            [DataMember(Name = "chip")] 
-            public List<ChipClass> Chip{ get; private set; }
+            [DataMember(Name = "chip")]
+            public List<CardDataClass> Chip { get; private set; }
+
+            [DataContract]
+            public sealed class SecurityClass
+            {
+                public SecurityClass(CardDataStatusEnum? Status = null, DataEnum? Data = null)
+                {
+                    this.Status = Status;
+                    this.Data = Data;
+                }
+
+
+                [DataMember(Name = "status")]
+                public CardDataStatusEnum? Status { get; private set; }
+
+                public enum DataEnum
+                {
+                    ReadLevel1,
+                    ReadLevel2,
+                    ReadLevel3,
+                    ReadLevel4,
+                    ReadLevel5,
+                    BadReadLevel,
+                    NoData,
+                    DataInvalid,
+                    HardwareError,
+                    NotInitialized
+                }
+
+                /// <summary>
+                /// The security data can be one of the following:
+                /// 
+                /// * ```readLevel1``` - The security data readability level is 1.
+                /// * ```readLevel2``` - The security data readability level is 2.
+                /// * ```readLevel3``` - The security data readability level is 3.
+                /// * ```readLevel4``` - The security data readability level is 4.
+                /// * ```readLevel5``` - The security data readability level is 5.
+                /// * ```badReadLevel``` - The security data reading quality is not acceptable.
+                /// * ```noData``` - There are no security data on the card.
+                /// * ```dataInvalid``` - The validation of the security data with the specific data on the magnetic
+                ///   stripe was not successful.
+                /// * ```hardwareError``` - The security module could not be used because of a hardware error.
+                /// * ```notInitialized``` - The security module could not be used because it was not initialized
+                ///   (e.g. CIM key is not loaded).
+                /// </summary>
+                [DataMember(Name = "data")]
+                public DataEnum? Data { get; private set; }
+
+            }
+
             /// <summary>
             /// Contains the data returned by the security module.
             /// </summary>
-            [DataMember(Name = "security")] 
+            [DataMember(Name = "security")]
             public SecurityClass Security { get; private set; }
+
             /// <summary>
             /// Contains the data read from the Swedish Watermark track.
             /// </summary>
-            [DataMember(Name = "watermark")] 
-            public WatermarkClass Watermark { get; private set; }
+            [DataMember(Name = "watermark")]
+            public CardDataClass Watermark { get; private set; }
+
+            [DataContract]
+            public sealed class MemoryChipClass
+            {
+                public MemoryChipClass(CardDataStatusEnum? Status = null, DataEnum? Data = null)
+                {
+                    this.Status = Status;
+                    this.Data = Data;
+                }
+
+
+                [DataMember(Name = "status")]
+                public CardDataStatusEnum? Status { get; private set; }
+
+                public enum DataEnum
+                {
+                    ChipT0,
+                    ChipT1,
+                    ChipProtocolNotRequired,
+                    ChipTypeAPart3,
+                    ChipTypeAPart4,
+                    ChipTypeB,
+                    ChipTypeNFC
+                }
+
+                /// <summary>
+                /// The memory card protocol used to communicate with the card followed by the data. The memory card
+                /// protocol can be one of the following:
+                /// 
+                /// * ```chipT0``` - The card reader can handle the T=0 protocol.
+                /// * ```chipT1``` - The card reader can handle the T=0 protocol.
+                /// * ```chipProtocolNotRequired``` - The carder is capable of communicating with the chip without
+                ///   requiring the application to specify any protocol.
+                /// * ```chipTypeAPart3``` - The card reader can handle the ISO 14443 (Part3) Type A contactless chip
+                ///   card protocol.
+                /// * ```chipTypeAPart4``` - The card reader can handle the ISO 14443 (Part4) Type A contactless chip
+                ///   card protocol.
+                /// * ```chipTypeB``` - The card reader can handle the ISO 14443 Type B contactless chip card
+                ///   protocol.
+                /// * ```chipTypeNFC``` - The card reader can handle the ISO 18092 (106/212/424kbps) contactless chip
+                ///   card protocol.
+                /// </summary>
+                [DataMember(Name = "data")]
+                public DataEnum? Data { get; private set; }
+
+            }
+
             /// <summary>
             /// Memory Card Identification data read from the memory chip.
             /// </summary>
-            [DataMember(Name = "memoryChip")] 
+            [DataMember(Name = "memoryChip")]
             public MemoryChipClass MemoryChip { get; private set; }
+
             /// <summary>
             /// Contains the data read from the front track 1. In some countries this track is known as JIS II track.
             /// </summary>
-            [DataMember(Name = "track1Front")] 
-            public Track1FrontClass Track1Front { get; private set; }
+            [DataMember(Name = "track1Front")]
+            public CardDataClass Track1Front { get; private set; }
+
             /// <summary>
             /// Contains the full path and file name of the BMP image file for the front of the card.
             /// </summary>
-            [DataMember(Name = "frontImage")] 
-            public FrontImageClass FrontImage { get; private set; }
+            [DataMember(Name = "frontImage")]
+            public CardDataClass FrontImage { get; private set; }
+
             /// <summary>
             /// Contains the the full path and file name of the BMP image file for the back of the card.
             /// </summary>
-            [DataMember(Name = "backImage")] 
-            public BackImageClass BackImage { get; private set; }
+            [DataMember(Name = "backImage")]
+            public CardDataClass BackImage { get; private set; }
+
             /// <summary>
             /// Contains the data read from JIS I track 1 (8bits/char).
             /// </summary>
-            [DataMember(Name = "track1JIS")] 
-            public Track1JISClass Track1JIS { get; private set; }
+            [DataMember(Name = "track1JIS")]
+            public CardDataClass Track1JIS { get; private set; }
+
             /// <summary>
             /// data read from JIS I track 3 (8bits/char).
             /// </summary>
-            [DataMember(Name = "track3JIS")] 
-            public Track3JISClass Track3JIS { get; private set; }
+            [DataMember(Name = "track3JIS")]
+            public CardDataClass Track3JIS { get; private set; }
+
             /// <summary>
             /// Contains the dynamic digital identification data read from magnetic stripe.
             /// </summary>
-            [DataMember(Name = "ddi")] 
-            public DdiClass Ddi { get; private set; }
+            [DataMember(Name = "ddi")]
+            public CardDataClass Ddi { get; private set; }
 
         }
     }

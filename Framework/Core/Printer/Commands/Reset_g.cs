@@ -19,26 +19,26 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(string RequestId, ResetCommand.PayloadData Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum MediaControlEnum
-            {
-                Eject,
-                Retract,
-                Expel,
-            }
-
 
             public PayloadData(int Timeout, MediaControlEnum? MediaControl = null, int? RetractBinNumber = null)
                 : base(Timeout)
             {
                 this.MediaControl = MediaControl;
                 this.RetractBinNumber = RetractBinNumber;
+            }
+
+            public enum MediaControlEnum
+            {
+                Eject,
+                Retract,
+                Expel
             }
 
             /// <summary>
@@ -48,15 +48,16 @@ namespace XFS4IoT.Printer.Commands
             /// * ```retract``` - Retract the media to retract bin number specified.
             /// * ```expel``` - Throw the media out of the exit slot.
             /// </summary>
-            [DataMember(Name = "mediaControl")] 
+            [DataMember(Name = "mediaControl")]
             public MediaControlEnum? MediaControl { get; private set; }
+
             /// <summary>
             /// Number of the retract bin the media is retracted to. This number has to be between one and the
             /// [number of bins](#common.capabilities.completion.properties.printer.retractbins) supported by this
             /// device. It is only relevant if [mediaControl](#printer.reset.command.properties.mediacontrol) is
             /// *retract*.
             /// </summary>
-            [DataMember(Name = "retractBinNumber")] 
+            [DataMember(Name = "retractBinNumber")]
             public int? RetractBinNumber { get; private set; }
 
         }

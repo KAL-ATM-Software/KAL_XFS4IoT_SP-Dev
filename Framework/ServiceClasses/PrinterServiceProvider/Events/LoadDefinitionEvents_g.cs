@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class LoadDefinitionEvents : PrinterEvents, ILoadDefinitionEvents
     {
 
-        public LoadDefinitionEvents(IConnection connection, string requestId)
+        public LoadDefinitionEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

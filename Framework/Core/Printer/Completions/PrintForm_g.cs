@@ -18,13 +18,20 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.PrintForm")]
     public sealed class PrintFormCompletion : Completion<PrintFormCompletion.PayloadData>
     {
-        public PrintFormCompletion(string RequestId, PrintFormCompletion.PayloadData Payload)
+        public PrintFormCompletion(int RequestId, PrintFormCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 FormNotFound,
@@ -55,14 +62,7 @@ namespace XFS4IoT.Printer.Completions
                 MediaRejected,
                 MediaRetracted,
                 MsfError,
-                NoMSF,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                NoMSF
             }
 
             /// <summary>
@@ -109,7 +109,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```noMSF``` - No magnetic stripe found; media may have been inserted or pulled through the wrong
             ///   way.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

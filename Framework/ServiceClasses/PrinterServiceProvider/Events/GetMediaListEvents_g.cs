@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class GetMediaListEvents : PrinterEvents, IGetMediaListEvents
     {
 
-        public GetMediaListEvents(IConnection connection, string requestId)
+        public GetMediaListEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

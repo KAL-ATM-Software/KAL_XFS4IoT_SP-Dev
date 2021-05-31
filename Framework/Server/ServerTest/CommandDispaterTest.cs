@@ -24,9 +24,9 @@ namespace XFS4IoTServer.Test
             var dispatcher = new CommandDispatcher( new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger() );
 
 
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage1(), new CancellationToken());
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage2(), new CancellationToken());
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage3(), new CancellationToken());
+            await dispatcher.Dispatch(new TestConnection(), new TestMessage1());
+            await dispatcher.Dispatch(new TestConnection(), new TestMessage2());
+            await dispatcher.Dispatch(new TestConnection(), new TestMessage3());
         }
     }
 
@@ -35,21 +35,16 @@ namespace XFS4IoTServer.Test
         public string Name { get; } = String.Empty;
         public Uri Uri { get; } = new Uri(string.Empty);
         public Uri WSUri { get; } = new Uri(string.Empty);
-        public XFSConstants.ServiceClass ServiceClass { get => throw new Exception("Not implemented"); }
         public IDevice Device { get => throw new NotImplementedException(); }
-
         public Task BroadcastEvent(object payload) => throw new NotImplementedException();
-
-        public Task Dispatch(IConnection Connection, object Command, CancellationToken Cancel) => throw new NotImplementedException();
-        public Task DispatchError(IConnection Connection, object Command, Exception CommandException) => throw new NotImplementedException();
+        public Task Dispatch(IConnection Connection, MessageBase Command) => throw new NotImplementedException();
+        public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync() => throw new NotImplementedException();
-
-
     }
 
     internal class TestLogger : ILogger
     {
-        public void WriteLine(string v) => System.Diagnostics.Debug.Write(v);
+        private static void WriteLine(string v) => System.Diagnostics.Debug.Write(v);
 
         public void Trace(string SubSystem, string Operation, string Message) => WriteLine($"SubSystem:{SubSystem},Operation:{Operation},Event:{Message}");
 
@@ -72,19 +67,19 @@ namespace XFS4IoTServer.Test
     [Command(Name = "Common.TestMessage1")]
     public class TestMessage1 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage1() : base(Guid.NewGuid().ToString(), null)
+        public TestMessage1() : base(new Random().Next(), null)
         { }
     }
     [Command(Name = "Common.TestMessage2")]
     public class TestMessage2 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage2() : base(Guid.NewGuid().ToString(), null)
+        public TestMessage2() : base(new Random().Next(), null)
         { }
     }
     [Command(Name = "Common.TestMessage3")]
     public class TestMessage3 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage3() : base(Guid.NewGuid().ToString(), null)
+        public TestMessage3() : base(new Random().Next(), null)
         { }
     }
 

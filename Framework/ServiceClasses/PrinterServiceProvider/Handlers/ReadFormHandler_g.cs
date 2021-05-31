@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var readFormCmd = command.IsA<ReadFormCommand>($"Invalid parameter in the ReadForm Handle method. {nameof(ReadFormCommand)}");
-            
-            IReadFormEvents events = new ReadFormEvents(Connection, readFormCmd.Headers.RequestId);
+            readFormCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IReadFormEvents events = new ReadFormEvents(Connection, readFormCmd.Headers.RequestId.Value);
 
             var result = await HandleReadForm(events, readFormCmd, cancel);
-            await Connection.SendMessageAsync(new ReadFormCompletion(readFormCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ReadFormCompletion(readFormCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var readFormcommand = command.IsA<ReadFormCommand>();
+            readFormcommand.Headers.RequestId.HasValue.IsTrue();
 
             ReadFormCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => ReadFormCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadFormCompletion(readFormcommand.Headers.RequestId, new ReadFormCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadFormCompletion(readFormcommand.Headers.RequestId.Value, new ReadFormCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

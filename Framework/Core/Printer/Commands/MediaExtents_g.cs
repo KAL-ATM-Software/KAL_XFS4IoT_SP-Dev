@@ -19,20 +19,13 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCommand : Command<MediaExtentsCommand.PayloadData>
     {
-        public MediaExtentsCommand(string RequestId, MediaExtentsCommand.PayloadData Payload)
+        public MediaExtentsCommand(int RequestId, MediaExtentsCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum BaseEnum
-            {
-                Inches,
-                Mm,
-                RowColumn,
-            }
-
 
             public PayloadData(int Timeout, BaseEnum? Base = null, int? UnitX = null, int? UnitY = null)
                 : base(Timeout)
@@ -42,6 +35,13 @@ namespace XFS4IoT.Printer.Commands
                 this.UnitY = UnitY;
             }
 
+            public enum BaseEnum
+            {
+                Inches,
+                Mm,
+                RowColumn
+            }
+
             /// <summary>
             /// Specifies the base unit of measurement of the media and can be one of the following values:
             /// 
@@ -49,19 +49,21 @@ namespace XFS4IoT.Printer.Commands
             /// * ```mm``` - The base unit is millimeters.
             /// * ```rowColumn``` - The base unit is rows and columns.
             /// </summary>
-            [DataMember(Name = "base")] 
+            [DataMember(Name = "base")]
             public BaseEnum? Base { get; private set; }
+
             /// <summary>
             /// Specifies the horizontal resolution of the base units as a fraction of the base value. For example, a
             /// value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
             /// </summary>
-            [DataMember(Name = "unitX")] 
+            [DataMember(Name = "unitX")]
             public int? UnitX { get; private set; }
+
             /// <summary>
             /// Specifies the vertical resolution of the base units as a fraction of the base value. For example, a
             /// value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
             /// </summary>
-            [DataMember(Name = "unitY")] 
+            [DataMember(Name = "unitY")]
             public int? UnitY { get; private set; }
 
         }

@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetQueryForm")]
     public sealed class GetQueryFormCommand : Command<GetQueryFormCommand.PayloadData>
     {
-        public GetQueryFormCommand(string RequestId, GetQueryFormCommand.PayloadData Payload)
+        public GetQueryFormCommand(int RequestId, GetQueryFormCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// The form name for which to retrieve details.
             /// </summary>
-            [DataMember(Name = "formName")] 
+            [DataMember(Name = "formName")]
             public string FormName { get; private set; }
 
         }

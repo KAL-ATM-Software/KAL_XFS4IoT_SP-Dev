@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class ParkCardEvents : CardReaderEvents, IParkCardEvents
     {
 
-        public ParkCardEvents(IConnection connection, string requestId)
+        public ParkCardEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

@@ -18,26 +18,26 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ParkCard")]
     public sealed class ParkCardCompletion : Completion<ParkCardCompletion.PayloadData>
     {
-        public ParkCardCompletion(string RequestId, ParkCardCompletion.PayloadData Payload)
+        public ParkCardCompletion(int RequestId, ParkCardCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                MediaJam,
-                NoMedia,
-                CardPresent,
-                PositionInvalid,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                MediaJam,
+                NoMedia,
+                CardPresent,
+                PositionInvalid
             }
 
             /// <summary>
@@ -51,7 +51,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   specified by [parkingStation](#cardreader.parkcard.command.properties.parkingstation).
             /// * ```positionInvalid``` - The specified parking station is invalid.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

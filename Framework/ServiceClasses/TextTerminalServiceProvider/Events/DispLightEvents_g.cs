@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     internal class DispLightEvents : TextTerminalEvents, IDispLightEvents
     {
 
-        public DispLightEvents(IConnection connection, string requestId)
+        public DispLightEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

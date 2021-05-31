@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var printRawFileCmd = command.IsA<PrintRawFileCommand>($"Invalid parameter in the PrintRawFile Handle method. {nameof(PrintRawFileCommand)}");
-            
-            IPrintRawFileEvents events = new PrintRawFileEvents(Connection, printRawFileCmd.Headers.RequestId);
+            printRawFileCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IPrintRawFileEvents events = new PrintRawFileEvents(Connection, printRawFileCmd.Headers.RequestId.Value);
 
             var result = await HandlePrintRawFile(events, printRawFileCmd, cancel);
-            await Connection.SendMessageAsync(new PrintRawFileCompletion(printRawFileCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new PrintRawFileCompletion(printRawFileCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var printRawFilecommand = command.IsA<PrintRawFileCommand>();
+            printRawFilecommand.Headers.RequestId.HasValue.IsTrue();
 
             PrintRawFileCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => PrintRawFileCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new PrintRawFileCompletion(printRawFilecommand.Headers.RequestId, new PrintRawFileCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PrintRawFileCompletion(printRawFilecommand.Headers.RequestId.Value, new PrintRawFileCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

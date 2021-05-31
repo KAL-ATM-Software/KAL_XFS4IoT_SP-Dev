@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetQueryMedia")]
     public sealed class GetQueryMediaCommand : Command<GetQueryMediaCommand.PayloadData>
     {
-        public GetQueryMediaCommand(string RequestId, GetQueryMediaCommand.PayloadData Payload)
+        public GetQueryMediaCommand(int RequestId, GetQueryMediaCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// The media name for which to retrieve details.
             /// </summary>
-            [DataMember(Name = "mediaName")] 
+            [DataMember(Name = "mediaName")]
             public string MediaName { get; private set; }
 
         }

@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var clearScreenCmd = command.IsA<ClearScreenCommand>($"Invalid parameter in the ClearScreen Handle method. {nameof(ClearScreenCommand)}");
-            
-            IClearScreenEvents events = new ClearScreenEvents(Connection, clearScreenCmd.Headers.RequestId);
+            clearScreenCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IClearScreenEvents events = new ClearScreenEvents(Connection, clearScreenCmd.Headers.RequestId.Value);
 
             var result = await HandleClearScreen(events, clearScreenCmd, cancel);
-            await Connection.SendMessageAsync(new ClearScreenCompletion(clearScreenCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ClearScreenCompletion(clearScreenCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var clearScreencommand = command.IsA<ClearScreenCommand>();
+            clearScreencommand.Headers.RequestId.HasValue.IsTrue();
 
             ClearScreenCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => ClearScreenCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ClearScreenCompletion(clearScreencommand.Headers.RequestId, new ClearScreenCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ClearScreenCompletion(clearScreencommand.Headers.RequestId.Value, new ClearScreenCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

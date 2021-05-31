@@ -18,27 +18,27 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.QueryIFMIdentifier")]
     public sealed class QueryIFMIdentifierCompletion : Completion<QueryIFMIdentifierCompletion.PayloadData>
     {
-        public QueryIFMIdentifierCompletion(string RequestId, QueryIFMIdentifierCompletion.PayloadData Payload)
+        public QueryIFMIdentifierCompletion(int RequestId, QueryIFMIdentifierCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum IfmAuthorityEnum
-            {
-                Emv,
-                Europay,
-                Visa,
-                Giecb,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, IfmAuthorityEnum? IfmAuthority = null, string IfmIdentifier = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.IfmAuthority = IfmAuthority;
                 this.IfmIdentifier = IfmIdentifier;
+            }
+
+            public enum IfmAuthorityEnum
+            {
+                Emv,
+                Europay,
+                Visa,
+                Giecb
             }
 
             /// <summary>
@@ -49,12 +49,13 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```visa``` - The Level 1 Type Approval IFM identifier assigned by VISA.
             /// * ```giecb``` - The IFM identifier assigned by GIE Cartes Bancaires.
             /// </summary>
-            [DataMember(Name = "ifmAuthority")] 
+            [DataMember(Name = "ifmAuthority")]
             public IfmAuthorityEnum? IfmAuthority { get; private set; }
+
             /// <summary>
             /// The IFM Identifier of the chip card reader (or IFM) as assigned by the specified authority.
             /// </summary>
-            [DataMember(Name = "ifmIdentifier")] 
+            [DataMember(Name = "ifmIdentifier")]
             public string IfmIdentifier { get; private set; }
 
         }

@@ -2,21 +2,26 @@
  * (C) KAL ATM Software GmbH, 2021
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
+ *
+ * This file was created automatically as part of the XFS4IoT Common interface.
+ * GetServices_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using XFS4IoT.Commands;
 
 namespace XFS4IoT.Common.Commands
 {
+    //Original name = GetServices
     [DataContract]
-    [Command(Name = "Common.GetService")]
-    public sealed class GetServiceCommand : Command<GetServiceCommand.PayloadData>
+    [Command(Name = "Common.GetServices")]
+    public sealed class GetServicesCommand : Command<GetServicesCommand.PayloadData>
     {
-        public GetServiceCommand(string RequestId, GetServiceCommand.PayloadData Payload)
+        public GetServicesCommand(int RequestId, GetServicesCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
-
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
@@ -26,7 +31,6 @@ namespace XFS4IoT.Common.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

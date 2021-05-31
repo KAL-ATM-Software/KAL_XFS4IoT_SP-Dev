@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getQueryFieldCmd = command.IsA<GetQueryFieldCommand>($"Invalid parameter in the GetQueryField Handle method. {nameof(GetQueryFieldCommand)}");
-            
-            IGetQueryFieldEvents events = new GetQueryFieldEvents(Connection, getQueryFieldCmd.Headers.RequestId);
+            getQueryFieldCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IGetQueryFieldEvents events = new GetQueryFieldEvents(Connection, getQueryFieldCmd.Headers.RequestId.Value);
 
             var result = await HandleGetQueryField(events, getQueryFieldCmd, cancel);
-            await Connection.SendMessageAsync(new GetQueryFieldCompletion(getQueryFieldCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new GetQueryFieldCompletion(getQueryFieldCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getQueryFieldcommand = command.IsA<GetQueryFieldCommand>();
+            getQueryFieldcommand.Headers.RequestId.HasValue.IsTrue();
 
             GetQueryFieldCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetQueryFieldCompletion(getQueryFieldcommand.Headers.RequestId, new GetQueryFieldCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetQueryFieldCompletion(getQueryFieldcommand.Headers.RequestId.Value, new GetQueryFieldCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

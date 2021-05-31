@@ -18,13 +18,21 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCompletion : Completion<ChipPowerCompletion.PayloadData>
     {
-        public ChipPowerCompletion(string RequestId, ChipPowerCompletion.PayloadData Payload)
+        public ChipPowerCompletion(int RequestId, ChipPowerCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipData = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.ChipData = ChipData;
+            }
+
             public enum ErrorCodeEnum
             {
                 ChipPowerNotSupported,
@@ -32,15 +40,7 @@ namespace XFS4IoT.CardReader.Completions
                 NoMedia,
                 InvalidMedia,
                 InvalidData,
-                AtrNotObtained,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipData = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.ChipData = ChipData;
+                AtrNotObtained
             }
 
             /// <summary>
@@ -53,12 +53,13 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```invalidData``` - An error occurred while communicating with the chip.
             /// * ```atrNotObtained``` - The ATR has not been obtained (only applies to user chips).
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// The Base64 encoded data received from the chip.
             /// </summary>
-            [DataMember(Name = "chipData")] 
+            [DataMember(Name = "chipData")]
             public string ChipData { get; private set; }
 
         }

@@ -18,7 +18,7 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.ClearScreen")]
     public sealed class ClearScreenCompletion : Completion<ClearScreenCompletion.PayloadData>
     {
-        public ClearScreenCompletion(string RequestId, ClearScreenCompletion.PayloadData Payload)
+        public ClearScreenCompletion(int RequestId, ClearScreenCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.TextTerminal.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

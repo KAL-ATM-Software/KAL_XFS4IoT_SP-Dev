@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class StatusEvents : CommonEvents, IStatusEvents
     {
 
-        public StatusEvents(IConnection connection, string requestId)
+        public StatusEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

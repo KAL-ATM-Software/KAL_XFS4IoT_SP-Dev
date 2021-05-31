@@ -100,7 +100,7 @@ namespace XFS4IoTServer
             }
             catch (InvalidDataException ex)
             {
-                await CommandDispatcher.DispatchError(this, command, ex);
+                await CommandDispatcher.DispatchError(this, commandBase, ex);
                 return;
             }
             catch (Exception ex)
@@ -108,22 +108,19 @@ namespace XFS4IoTServer
                 Contracts.Fail($"Exception caught while in serialising JSON on receiving incomming message. {ex.Message}");
             }
 
-            CancellationTokenSource cts = new CancellationTokenSource();
 
             try
             {
-                await CommandDispatcher.Dispatch(this, command, cts.Token);
+                await CommandDispatcher.Dispatch(this, commandBase);
             }
             catch (NotImplementedException ex) // Add more exception can be thrown by the device specific class
             {
-                await CommandDispatcher.DispatchError(this, command, ex);
+                await CommandDispatcher.DispatchError(this, commandBase, ex);
             }
             catch (Exception ex)
             {
                 Contracts.Fail($"Exception caught while in processing command. {ex.Message}");
             }
-
-            cts.Dispose();
         }
 
         public async Task SendMessageAsync(object messsage)
@@ -159,14 +156,15 @@ namespace XFS4IoTServer
 
         /// <summary>
         /// Process properties in the given message object to check the custom attribute 'DataTypes' are set. The 'DataTypes' customer attributes are converted from the YAML.
-        /// 
+        /// </summary>
+        /// <remarks>
         /// The keyword Pattern, MaxLength, MinLength are applies to the type string object.
         /// The pattern keyword lets you define a regular expression template for the string value. Only the values that match this template will be accepted.
         /// String length can be restricted using MinLength and MaxLength.
         /// The keyword Maximum, Minimum are applied to the type int and specify the range of possible values.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// </remarks>
+        /// <param name="message">Object to be processed</param>
+        /// <returns>Process YAML value</returns>
         private string ProcessDataTypes(object message)
         {
             Contracts.IsTrue(message.GetType().IsSubclassOf(typeof(MessageBase)), $"Unexpected type of message in the {nameof(ProcessDataTypes)}. {message.GetType()}");
@@ -177,22 +175,22 @@ namespace XFS4IoTServer
         /// Data validation to ensure data follow rules specified in the custom attrbute "DataTypes" of the message properties.
         /// </summary>
         /// <param name="type">Data type of the message object</param>
-        /// <param name="message">Message objec to access variables</param>
+        /// <param name="message">Message object to access variables</param>
         /// <param name="JSON">Process received JSON message to handle customer sensitive data</param>
-        /// <returns></returns>
+        /// <returns>Processed YAML</returns>
         private string DataTypesValidation(Type type, object message, string JSON)
         {
-            string processedJson = JSON;
             if (message is null)
-                return processedJson;
+                return JSON;
 
+            string processedJson = JSON;
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
-                var value = message;
+                // Process each value in this object
+                object value = !type.IsPrimitive && type != typeof(string)
+                                ? propertyInfo.GetValue(message)
+                                : message;
 
-                if (!type.IsPrimitive && type != typeof(string))
-                    value = propertyInfo.GetValue(message);
-            
                 if (value is null)
                     continue;
 
@@ -202,8 +200,7 @@ namespace XFS4IoTServer
                         processedJson = DataTypesValidation(c.GetType(), c, processedJson);
                     continue;
                 }
-                else if (propertyInfo.PropertyType.IsGenericType ||
-                         value.GetType() == typeof(ArrayList))
+                else if (propertyInfo.PropertyType.IsGenericType || value is ArrayList)
                 {
                     if (propertyInfo.PropertyType.GetGenericArguments().Length > 1)
                         continue; // Dictionary is not supported yet
@@ -215,91 +212,64 @@ namespace XFS4IoTServer
                     }
                     continue;
                 }
-                else if (propertyInfo.PropertyType.IsClass &&
-                        Type.GetTypeCode(propertyInfo.PropertyType) == TypeCode.Object)
+                else if (propertyInfo.PropertyType.IsClass && propertyInfo.PropertyType is Object)
                 {
                     processedJson = DataTypesValidation(propertyInfo.PropertyType, value, processedJson);
                     continue;
                 }
 
-                foreach (Attribute attrib in propertyInfo.GetCustomAttributes())
+                // Process each DataTypeAttribute attached to this value, which tells us how 
+                // to handle this value. 
+                foreach (DataTypesAttribute dataTypeAttrib in from a in propertyInfo.GetCustomAttributes()
+                                                              where a is DataTypesAttribute
+                                                              select a as DataTypesAttribute )
                 {
-                    if (attrib.GetType() != typeof(DataTypesAttribute))
-                        continue;
-
-                    DataTypesAttribute dataTypeAttrib = (DataTypesAttribute)attrib;
-                    if (value.GetType() == typeof(string))
+                    // Check value matches the rules set by the DataTypeAttribute
+                    switch (value)
                     {
-                        if (!string.IsNullOrEmpty(dataTypeAttrib.Pattern))
-                        {
-                            if (!Regex.IsMatch((string)value, dataTypeAttrib.Pattern))
+                        case string stringValue:
+                            if (!string.IsNullOrEmpty(dataTypeAttrib.Pattern) && !Regex.IsMatch(stringValue, dataTypeAttrib.Pattern))
                                 throw new InvalidDataException($"{nameof(type)} doesn't match with the specified regilar expression. {dataTypeAttrib.Pattern}. Property:{propertyInfo.Name}");
-                        }
-                        if (dataTypeAttrib.MaxLength is not null)
-                        {
-                            if (((string)value).Length > dataTypeAttrib.MaxLength)
+
+                            if (dataTypeAttrib.MaxLength is not null && stringValue.Length > dataTypeAttrib.MaxLength)
                                 throw new InvalidDataException($"{nameof(type)} has longer length than the Maximum={dataTypeAttrib.MaxLength}. Property:{propertyInfo.Name}");
-                        }
-                        if (dataTypeAttrib.MinLength is not null)
-                        {
-                            if (((string)value).Length < dataTypeAttrib.MinLength)
+
+                            if (dataTypeAttrib.MinLength is not null && stringValue.Length < dataTypeAttrib.MinLength)
                                 throw new InvalidDataException($"{nameof(type)} has shorter length than the MinLength={dataTypeAttrib.MinLength}. Property:{propertyInfo.Name}");
-                        }
-                    }
-                    else if (value.GetType() == typeof(int))
-                    {
-                        if (dataTypeAttrib.Minimum is not null)
-                        {
-                            if ((int)value < dataTypeAttrib.Minimum)
+                            break;
+                        case int intValue:
+                            if (dataTypeAttrib.Minimum is not null && intValue < dataTypeAttrib.Minimum)
                                 throw new InvalidDataException($"{nameof(type)} is smaller than the Minimum={dataTypeAttrib.Minimum}. Property:{propertyInfo.Name}");
-                        }
-                        if (dataTypeAttrib.Maximum is not null)
-                        {
-                            if ((int)value > dataTypeAttrib.Maximum)
+
+                            if (dataTypeAttrib.Maximum is not null && intValue > dataTypeAttrib.Maximum)
                                 throw new InvalidDataException($"{nameof(type)} is greater than the Maximum={dataTypeAttrib.Maximum}. Property:{propertyInfo.Name}");
-                        }
+                            break;
                     }
 
+                    // If the this is tagged as sensitive, mask out the sensitive parts. 
                     if (!dataTypeAttrib.Sensitive)
                         continue;
 
-                    string camelCaseName = propertyInfo.Name;
-                    if (camelCaseName.Length > 1)
-                        camelCaseName = Char.ToLowerInvariant(camelCaseName[0]) + camelCaseName.Substring(1);
-                    else
-                        camelCaseName = camelCaseName.ToLower();
+                    string camelCaseName = propertyInfo.Name.Length > 1 
+                                            ? $"{char.ToLowerInvariant(propertyInfo.Name[0])}{propertyInfo.Name[1..]}" 
+                                            : propertyInfo.Name.ToLower();
 
                     // Replacing all sensitive data matching with key name
-                    string pattern = string.Empty;
-                    string replace = string.Empty;
-                    switch (Type.GetTypeCode(value.GetType()))
+                    (string pattern, string replace) = value switch
                     {
-                        case TypeCode.String:
-                            pattern = $"\"{camelCaseName}\":\"(.+?)\"";
-                            replace = $"\"{camelCaseName}\"<:\"$1\">";
-                            break;
-                        case TypeCode.Int64:
-                        case TypeCode.Int32:
-                        case TypeCode.Int16:
-                        case TypeCode.UInt16:
-                        case TypeCode.UInt32:
-                        case TypeCode.UInt64:
-                        case TypeCode.Char:
-                        case TypeCode.Byte:
-                        case TypeCode.Decimal:
-                            pattern = $"\"{camelCaseName}\":([0-9]+)";
-                            replace = $"\"{camelCaseName}\"<:$1>";
-                            break;
-                        default:
-                            Logger.Log(Constants.Component, $"Logging sensitive data is not supporting data type {Type.GetTypeCode(value.GetType())}");
-                            break;
-                    }
+                        string      => ($"\"{camelCaseName}\":\"(.+?)\"", $"\"{camelCaseName}\"<:\"$1\">"),
+                        Int16  or Int32  or Int64  or
+                        UInt16 or UInt32 or UInt64 or
+                        Char or Byte or Decimal     
+                                    => ($"\"{camelCaseName}\":([0-9]+)", $"\"{camelCaseName}\"<:$1>"),
 
-                    if (!string.IsNullOrEmpty(pattern) &&
-                        !string.IsNullOrEmpty(replace))
-                    {
+                        _ =>(null, null)
+                    };
+
+                    if (pattern == null || replace == null )
+                        Logger.Log(Constants.Component, $"Logging sensitive data is not supporting data type {Type.GetTypeCode(value.GetType())}");
+                    else                    
                         processedJson = Regex.Replace(processedJson, pattern, replace, RegexOptions.Multiline);
-                    }
                 }
             }
 

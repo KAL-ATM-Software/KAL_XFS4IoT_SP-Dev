@@ -16,12 +16,11 @@ namespace XFS4IoTFramework.Common
     internal abstract class CommonEvents
     {
         protected readonly IConnection connection;
-        protected readonly string requestId;
+        protected readonly int requestId;
 
-        public CommonEvents(IConnection connection, string requestId)
+        public CommonEvents(IConnection connection, int requestId)
         {
             this.connection = connection;
-            Contracts.IsNotNullOrWhitespace(requestId, $"Unexpected request ID is received. {requestId}");
             this.requestId = requestId;
         }
 

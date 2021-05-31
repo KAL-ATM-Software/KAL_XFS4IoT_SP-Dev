@@ -18,28 +18,28 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
-        public ReadFormCompletion(string RequestId, ReadFormCompletion.PayloadData Payload)
+        public ReadFormCompletion(int RequestId, ReadFormCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                FormNotFound,
-                FormInvalid,
-                FieldSpecFailure,
-                KeyCanceled,
-                FieldError,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<string> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
                 this.Fields = Fields;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                FormNotFound,
+                FormInvalid,
+                FieldSpecFailure,
+                KeyCanceled,
+                FieldError
             }
 
             /// <summary>
@@ -50,15 +50,16 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```keyCanceled``` - The read operation was terminated by pressing the <CANCEL> key.
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Specifies \"<fieldName>=<fieldValue>\" string. e.g. Field1=123. The <fieldValue> 
             /// stands for a string containing all the printable characters (numeric and alphanumeric) 
             /// read from the text terminal unit key pad for this field.
             /// </summary>
-            [DataMember(Name = "fields")] 
-            public List<string> Fields{ get; private set; }
+            [DataMember(Name = "fields")]
+            public List<string> Fields { get; private set; }
 
         }
     }

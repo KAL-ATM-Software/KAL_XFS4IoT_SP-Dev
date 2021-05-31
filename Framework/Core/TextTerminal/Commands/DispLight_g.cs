@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.DispLight")]
     public sealed class DispLightCommand : Command<DispLightCommand.PayloadData>
     {
-        public DispLightCommand(string RequestId, DispLightCommand.PayloadData Payload)
+        public DispLightCommand(int RequestId, DispLightCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.TextTerminal.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

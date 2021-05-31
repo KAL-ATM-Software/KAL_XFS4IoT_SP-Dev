@@ -29,18 +29,17 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StateEnum
-            {
-                Full,
-                Low,
-                Out,
-            }
-
-
             public PayloadData(StateEnum? State = null)
                 : base()
             {
                 this.State = State;
+            }
+
+            public enum StateEnum
+            {
+                Full,
+                Low,
+                Out
             }
 
             /// <summary>
@@ -50,8 +49,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```low``` - The stamping ink in the printer is low.
             /// * ```out``` - The stamping ink in the printer is out.
             /// </summary>
-            [DataMember(Name = "state")] 
+            [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
+
         }
 
     }

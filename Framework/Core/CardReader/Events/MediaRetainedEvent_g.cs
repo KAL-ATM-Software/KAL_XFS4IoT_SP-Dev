@@ -20,7 +20,7 @@ namespace XFS4IoT.CardReader.Events
     public sealed class MediaRetainedEvent : Event<MessagePayloadBase>
     {
 
-        public MediaRetainedEvent(string RequestId)
+        public MediaRetainedEvent(int RequestId)
             : base(RequestId)
         { }
 

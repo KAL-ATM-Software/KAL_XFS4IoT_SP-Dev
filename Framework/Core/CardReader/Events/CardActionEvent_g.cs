@@ -29,26 +29,18 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum ActionEnum
-            {
-                Retained,
-                Ejected,
-                ReadPosition,
-            }
-
-            public enum PositionEnum
-            {
-                Unknown,
-                Present,
-                Entering,
-            }
-
-
             public PayloadData(ActionEnum? Action = null, PositionEnum? Position = null)
                 : base()
             {
                 this.Action = Action;
                 this.Position = Position;
+            }
+
+            public enum ActionEnum
+            {
+                Retained,
+                Ejected,
+                ReadPosition
             }
 
             /// <summary>
@@ -58,8 +50,16 @@ namespace XFS4IoT.CardReader.Events
             /// * ```ejected``` - The card has been ejected.
             /// * ```readPosition``` - The card has been moved to the read position.
             /// </summary>
-            [DataMember(Name = "action")] 
+            [DataMember(Name = "action")]
             public ActionEnum? Action { get; private set; }
+
+            public enum PositionEnum
+            {
+                Unknown,
+                Present,
+                Entering
+            }
+
             /// <summary>
             /// Position of card before being retained or ejected. Possible values are:
             /// 
@@ -67,8 +67,9 @@ namespace XFS4IoT.CardReader.Events
             /// * ```present``` - The card was present in the reader.
             /// * ```entering``` - The card was entering the reader.
             /// </summary>
-            [DataMember(Name = "position")] 
+            [DataMember(Name = "position")]
             public PositionEnum? Position { get; private set; }
+
         }
 
     }

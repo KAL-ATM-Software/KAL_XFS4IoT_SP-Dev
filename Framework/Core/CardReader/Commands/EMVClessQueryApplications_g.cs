@@ -19,7 +19,7 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EMVClessQueryApplications")]
     public sealed class EMVClessQueryApplicationsCommand : Command<EMVClessQueryApplicationsCommand.PayloadData>
     {
-        public EMVClessQueryApplicationsCommand(string RequestId, EMVClessQueryApplicationsCommand.PayloadData Payload)
+        public EMVClessQueryApplicationsCommand(int RequestId, EMVClessQueryApplicationsCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.CardReader.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

@@ -20,7 +20,7 @@ namespace XFS4IoT.CardReader.Events
     public sealed class EMVClessReadStatusEvent : Event<EMVClessReadStatusEvent.PayloadData>
     {
 
-        public EMVClessReadStatusEvent(string RequestId, PayloadData Payload)
+        public EMVClessReadStatusEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -28,24 +28,6 @@ namespace XFS4IoT.CardReader.Events
         [DataContract]
         public sealed class PayloadData : MessagePayloadBase
         {
-
-            public enum StatusEnum
-            {
-                NotReady,
-                Idle,
-                ReadyToRead,
-                Processing,
-                CardReadOk,
-                ProcessingError,
-            }
-
-            public enum ValueQualifierEnum
-            {
-                Amount,
-                Balance,
-                NotApplicable,
-            }
-
 
             public PayloadData(int? MessageId = null, StatusEnum? Status = null, int? HoldTime = null, ValueQualifierEnum? ValueQualifier = null, string Value = null, string CurrencyCode = null, string LanguagePreferenceData = null)
                 : base()
@@ -64,8 +46,19 @@ namespace XFS4IoT.CardReader.Events
             /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A,
             /// Section 9.4).
             /// </summary>
-            [DataMember(Name = "messageId")] 
+            [DataMember(Name = "messageId")]
             public int? MessageId { get; private set; }
+
+            public enum StatusEnum
+            {
+                NotReady,
+                Idle,
+                ReadyToRead,
+                Processing,
+                CardReadOk,
+                ProcessingError
+            }
+
             /// <summary>
             /// Represents the EMVCo defined transaction status value to be indicated through the Beep/LEDs as one of the
             /// following:
@@ -80,14 +73,23 @@ namespace XFS4IoT.CardReader.Events
             /// * ```cardReadOk``` - Contactless card reader was able to read a card successfully.
             /// * ```processingError``` - Contactless card reader was not able to process the card successfully.
             /// </summary>
-            [DataMember(Name = "status")] 
+            [DataMember(Name = "status")]
             public StatusEnum? Status { get; private set; }
+
             /// <summary>
             /// Represents the hold time in units of 100 milliseconds for which the application should display the message
             /// before processing the next user interface data.
             /// </summary>
-            [DataMember(Name = "holdTime")] 
+            [DataMember(Name = "holdTime")]
             public int? HoldTime { get; private set; }
+
+            public enum ValueQualifierEnum
+            {
+                Amount,
+                Balance,
+                NotApplicable
+            }
+
             /// <summary>
             /// Qualifies
             /// [value](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.value).
@@ -97,26 +99,30 @@ namespace XFS4IoT.CardReader.Events
             /// * ```balance``` - *value* is a Balance.
             /// * ```notApplicable``` - *value* is neither of the above.
             /// </summary>
-            [DataMember(Name = "valueQualifier")] 
+            [DataMember(Name = "valueQualifier")]
             public ValueQualifierEnum? ValueQualifier { get; private set; }
+
             /// <summary>
             /// Represents the value of the amount or balance (as specified by
             /// [valueQualifier](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.valuequalifier))
             /// to be displayed where appropriate.
             /// </summary>
-            [DataMember(Name = "value")] 
+            [DataMember(Name = "value")]
             public string Value { get; private set; }
+
             /// <summary>
             /// Represents the numeric value of currency code as per ISO 4217.
             /// </summary>
-            [DataMember(Name = "currencyCode")] 
+            [DataMember(Name = "currencyCode")]
             public string CurrencyCode { get; private set; }
+
             /// <summary>
             /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
             /// data to display all messages in the specified language until the transaction concludes.
             /// </summary>
-            [DataMember(Name = "languagePreferenceData")] 
+            [DataMember(Name = "languagePreferenceData")]
             public string LanguagePreferenceData { get; private set; }
+
         }
 
     }

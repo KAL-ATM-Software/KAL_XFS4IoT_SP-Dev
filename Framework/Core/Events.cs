@@ -16,7 +16,7 @@ namespace XFS4IoT.Events
         /// </summary>
         /// <param name="RequestId">Request id of the command this even relates to</param>
         /// <param name="Payload">Data for the event</param>
-        public Event(string RequestId, T Payload = null) :
+        public Event(int RequestId, T Payload = null) :
             base(RequestId, MessageHeader.TypeEnum.Event, Payload)
         {
             if (Payload is null)
@@ -51,7 +51,7 @@ namespace XFS4IoT.Events
         /// </summary>
         /// <param name="RequestId">Request id of the command this even relates to. May be null in some error cases.</param>
         /// <param name="Payload">Data for the event</param>
-        public Acknowledgement(string RequestId, T Payload = null) :
+        public Acknowledgement(int RequestId, T Payload = null) :
             base(RequestId, MessageHeader.TypeEnum.Acknowledgement, Payload)
         {
             if (Payload is null)

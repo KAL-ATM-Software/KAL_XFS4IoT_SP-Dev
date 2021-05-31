@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var parkCardCmd = command.IsA<ParkCardCommand>($"Invalid parameter in the ParkCard Handle method. {nameof(ParkCardCommand)}");
-            
-            IParkCardEvents events = new ParkCardEvents(Connection, parkCardCmd.Headers.RequestId);
+            parkCardCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IParkCardEvents events = new ParkCardEvents(Connection, parkCardCmd.Headers.RequestId.Value);
 
             var result = await HandleParkCard(events, parkCardCmd, cancel);
-            await Connection.SendMessageAsync(new ParkCardCompletion(parkCardCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ParkCardCompletion(parkCardCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var parkCardcommand = command.IsA<ParkCardCommand>();
+            parkCardcommand.Headers.RequestId.HasValue.IsTrue();
 
             ParkCardCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => ParkCardCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ParkCardCompletion(parkCardcommand.Headers.RequestId, new ParkCardCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ParkCardCompletion(parkCardcommand.Headers.RequestId.Value, new ParkCardCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

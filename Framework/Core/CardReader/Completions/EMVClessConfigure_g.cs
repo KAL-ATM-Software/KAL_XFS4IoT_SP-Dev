@@ -18,25 +18,25 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.EMVClessConfigure")]
     public sealed class EMVClessConfigureCompletion : Completion<EMVClessConfigureCompletion.PayloadData>
     {
-        public EMVClessConfigureCompletion(string RequestId, EMVClessConfigureCompletion.PayloadData Payload)
+        public EMVClessConfigureCompletion(int RequestId, EMVClessConfigureCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum ErrorCodeEnum
-            {
-                InvalidTerminalData,
-                InvalidAidData,
-                InvalidKeyData,
-            }
-
 
             public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+            }
+
+            public enum ErrorCodeEnum
+            {
+                InvalidTerminalData,
+                InvalidAidData,
+                InvalidKeyData
             }
 
             /// <summary>
@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   [keyData](#cardreader.emvclessconfigure.command.properties.keydata) was invalid. Contactless chip
             ///   card reader could not be configured successfully.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

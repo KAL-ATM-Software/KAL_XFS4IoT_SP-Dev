@@ -15,6 +15,7 @@ using XFS4IoT.Common.Completions;
 
 namespace XFS4IoTFramework.Common
 {
+    [CommandHandlerAsync]
     public partial class CapabilitiesHandler
     {
 

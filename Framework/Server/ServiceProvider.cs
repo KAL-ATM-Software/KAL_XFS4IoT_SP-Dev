@@ -35,7 +35,7 @@ namespace XFS4IoTServer
                                          Logger);
         }
 
-        public async Task RunAsync() => await Task.WhenAll(EndPoint.RunAsync(), Device.RunAsync());
+        public async override Task RunAsync() => await Task.WhenAll(EndPoint.RunAsync(), Device.RunAsync(), base.RunAsync());
 
         public string Name { get; internal set; }
         private readonly EndPoint EndPoint;

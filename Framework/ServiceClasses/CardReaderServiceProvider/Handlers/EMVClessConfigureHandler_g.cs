@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var eMVClessConfigureCmd = command.IsA<EMVClessConfigureCommand>($"Invalid parameter in the EMVClessConfigure Handle method. {nameof(EMVClessConfigureCommand)}");
-            
-            IEMVClessConfigureEvents events = new EMVClessConfigureEvents(Connection, eMVClessConfigureCmd.Headers.RequestId);
+            eMVClessConfigureCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IEMVClessConfigureEvents events = new EMVClessConfigureEvents(Connection, eMVClessConfigureCmd.Headers.RequestId.Value);
 
             var result = await HandleEMVClessConfigure(events, eMVClessConfigureCmd, cancel);
-            await Connection.SendMessageAsync(new EMVClessConfigureCompletion(eMVClessConfigureCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new EMVClessConfigureCompletion(eMVClessConfigureCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var eMVClessConfigurecommand = command.IsA<EMVClessConfigureCommand>();
+            eMVClessConfigurecommand.Headers.RequestId.HasValue.IsTrue();
 
             EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new EMVClessConfigureCompletion(eMVClessConfigurecommand.Headers.RequestId, new EMVClessConfigureCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new EMVClessConfigureCompletion(eMVClessConfigurecommand.Headers.RequestId.Value, new EMVClessConfigureCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

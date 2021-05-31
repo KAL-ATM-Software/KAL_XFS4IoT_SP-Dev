@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class PowerSaveControlEvents : CommonEvents, IPowerSaveControlEvents
     {
 
-        public PowerSaveControlEvents(IConnection connection, string requestId)
+        public PowerSaveControlEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

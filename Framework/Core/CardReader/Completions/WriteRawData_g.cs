@@ -18,13 +18,20 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCompletion : Completion<WriteRawDataCompletion.PayloadData>
     {
-        public WriteRawDataCompletion(string RequestId, WriteRawDataCompletion.PayloadData Payload)
+        public WriteRawDataCompletion(int RequestId, WriteRawDataCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 MediaJam,
@@ -33,14 +40,7 @@ namespace XFS4IoT.CardReader.Completions
                 InvalidMedia,
                 WriteMethod,
                 CardTooShort,
-                CardTooLong,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                CardTooLong
             }
 
             /// <summary>
@@ -61,7 +61,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```cardTooLong``` - The card that was inserted is too long. When this error occurs the card remains
             ///   at the exit slot.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

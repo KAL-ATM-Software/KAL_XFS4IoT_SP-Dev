@@ -29,13 +29,6 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum StateEnum
-            {
-                Inserted,
-                Removed,
-            }
-
-
             public PayloadData(int? BinNumber = null, StateEnum? State = null)
                 : base()
             {
@@ -46,16 +39,24 @@ namespace XFS4IoT.Printer.Events
             /// <summary>
             /// Number of the retract bin for which the status has changed.
             /// </summary>
-            [DataMember(Name = "binNumber")] 
+            [DataMember(Name = "binNumber")]
             public int? BinNumber { get; private set; }
+
+            public enum StateEnum
+            {
+                Inserted,
+                Removed
+            }
+
             /// <summary>
             /// Specifies the current state of the retract bin as one of the following values:
             /// 
             /// * ```inserted``` - The retract bin has been inserted.
             /// * ```removed``` - The retract bin has been removed.
             /// </summary>
-            [DataMember(Name = "state")] 
+            [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
+
         }
 
     }

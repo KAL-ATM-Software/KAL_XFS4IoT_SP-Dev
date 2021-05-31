@@ -19,7 +19,7 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.DefineKeys")]
     public sealed class DefineKeysCommand : Command<DefineKeysCommand.PayloadData>
     {
-        public DefineKeysCommand(string RequestId, DefineKeysCommand.PayloadData Payload)
+        public DefineKeysCommand(int RequestId, DefineKeysCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -46,18 +46,20 @@ namespace XFS4IoT.TextTerminal.Commands
             /// case of the letter in the output parameter. For both types of device, specifying only lower case letters (e.g. \"12ab\") produces a 
             /// key invalid error.
             /// </summary>
-            [DataMember(Name = "activeKeys")] 
+            [DataMember(Name = "activeKeys")]
             public string ActiveKeys { get; private set; }
+
             /// <summary>
             /// Array specifying the command keys which are active during the execution of the next [TextTerminal.ReadForm](#textterminal.readform) command.                       
             /// </summary>
-            [DataMember(Name = "activeCommandKeys")] 
-            public List<string> ActiveCommandKeys{ get; private set; }
+            [DataMember(Name = "activeCommandKeys")]
+            public List<string> ActiveCommandKeys { get; private set; }
+
             /// <summary>
             /// Array specifying the command keys which must terminate the execution of the next [TextTerminal.ReadForm](#textterminal.readform) command.
             /// </summary>
-            [DataMember(Name = "terminateCommandKeys")] 
-            public List<string> TerminateCommandKeys{ get; private set; }
+            [DataMember(Name = "terminateCommandKeys")]
+            public List<string> TerminateCommandKeys { get; private set; }
 
         }
     }

@@ -18,7 +18,7 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Beep")]
     public sealed class BeepCompletion : Completion<BeepCompletion.PayloadData>
     {
-        public BeepCompletion(string RequestId, BeepCompletion.PayloadData Payload)
+        public BeepCompletion(int RequestId, BeepCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -30,7 +30,6 @@ namespace XFS4IoT.TextTerminal.Completions
                 : base(CompletionCode, ErrorDescription)
             {
             }
-
 
         }
     }

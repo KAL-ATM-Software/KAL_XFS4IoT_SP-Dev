@@ -19,25 +19,25 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ParkCard")]
     public sealed class ParkCardCommand : Command<ParkCardCommand.PayloadData>
     {
-        public ParkCardCommand(string RequestId, ParkCardCommand.PayloadData Payload)
+        public ParkCardCommand(int RequestId, ParkCardCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum DirectionEnum
-            {
-                In,
-                Out,
-            }
-
 
             public PayloadData(int Timeout, DirectionEnum? Direction = null, int? ParkingStation = null)
                 : base(Timeout)
             {
                 this.Direction = Direction;
                 this.ParkingStation = ParkingStation;
+            }
+
+            public enum DirectionEnum
+            {
+                In,
+                Out
             }
 
             /// <summary>
@@ -49,15 +49,16 @@ namespace XFS4IoT.CardReader.Commands
             ///   position. Once the card has been moved any command can be executed e.g.
             ///   [CardReader.EjectCard](#cardreader.ejectcard) or [CardReader.ReadRawData](#cardreader.readrawdata).
             /// </summary>
-            [DataMember(Name = "direction")] 
+            [DataMember(Name = "direction")]
             public DirectionEnum? Direction { get; private set; }
+
             /// <summary>
             /// Specifies which which parking station should be used for this command. This value is the same index as
             /// is identified in the
             /// [parkingStationMedia](#common.status.completion.properties.cardreader.parkingstationmedia) array of
             /// [Common.Status](#common.status).
             /// </summary>
-            [DataMember(Name = "parkingStation")] 
+            [DataMember(Name = "parkingStation")]
             public int? ParkingStation { get; private set; }
 
         }

@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.CardReader
     internal class SetKeyEvents : CardReaderEvents, ISetKeyEvents
     {
 
-        public SetKeyEvents(IConnection connection, string requestId)
+        public SetKeyEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

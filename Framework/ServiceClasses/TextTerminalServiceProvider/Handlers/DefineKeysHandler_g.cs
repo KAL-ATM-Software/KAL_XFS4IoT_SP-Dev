@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var defineKeysCmd = command.IsA<DefineKeysCommand>($"Invalid parameter in the DefineKeys Handle method. {nameof(DefineKeysCommand)}");
-            
-            IDefineKeysEvents events = new DefineKeysEvents(Connection, defineKeysCmd.Headers.RequestId);
+            defineKeysCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IDefineKeysEvents events = new DefineKeysEvents(Connection, defineKeysCmd.Headers.RequestId.Value);
 
             var result = await HandleDefineKeys(events, defineKeysCmd, cancel);
-            await Connection.SendMessageAsync(new DefineKeysCompletion(defineKeysCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new DefineKeysCompletion(defineKeysCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var defineKeyscommand = command.IsA<DefineKeysCommand>();
+            defineKeyscommand.Headers.RequestId.HasValue.IsTrue();
 
             DefineKeysCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => DefineKeysCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new DefineKeysCompletion(defineKeyscommand.Headers.RequestId, new DefineKeysCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DefineKeysCompletion(defineKeyscommand.Headers.RequestId.Value, new DefineKeysCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

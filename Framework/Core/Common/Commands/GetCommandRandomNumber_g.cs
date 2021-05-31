@@ -19,7 +19,7 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.GetCommandRandomNumber")]
     public sealed class GetCommandRandomNumberCommand : Command<GetCommandRandomNumberCommand.PayloadData>
     {
-        public GetCommandRandomNumberCommand(string RequestId, GetCommandRandomNumberCommand.PayloadData Payload)
+        public GetCommandRandomNumberCommand(int RequestId, GetCommandRandomNumberCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.Common.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

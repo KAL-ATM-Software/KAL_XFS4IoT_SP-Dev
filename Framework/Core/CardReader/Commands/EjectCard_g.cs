@@ -19,24 +19,24 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EjectCard")]
     public sealed class EjectCardCommand : Command<EjectCardCommand.PayloadData>
     {
-        public EjectCardCommand(string RequestId, EjectCardCommand.PayloadData Payload)
+        public EjectCardCommand(int RequestId, EjectCardCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum EjectPositionEnum
-            {
-                ExitPosition,
-                TransportPosition,
-            }
-
 
             public PayloadData(int Timeout, EjectPositionEnum? EjectPosition = null)
                 : base(Timeout)
             {
                 this.EjectPosition = EjectPosition;
+            }
+
+            public enum EjectPositionEnum
+            {
+                ExitPosition,
+                TransportPosition
             }
 
             /// <summary>
@@ -50,7 +50,7 @@ namespace XFS4IoT.CardReader.Commands
             ///   *CardReader.EjectCard* command is required with the *ejectPosition* set to *exitPosition* in order
             ///   to present the card to the user for removal.
             /// </summary>
-            [DataMember(Name = "ejectPosition")] 
+            [DataMember(Name = "ejectPosition")]
             public EjectPositionEnum? EjectPosition { get; private set; }
 
         }

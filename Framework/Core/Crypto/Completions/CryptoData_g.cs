@@ -4,8 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
- * CryptoData_g.cs uses automatically generated parts. 
- * created at 4/20/2021 12:28:05 PM
+ * CryptoData_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -19,13 +18,21 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCompletion : Completion<CryptoDataCompletion.PayloadData>
     {
-        public CryptoDataCompletion(string RequestId, CryptoDataCompletion.PayloadData Payload)
+        public CryptoDataCompletion(int RequestId, CryptoDataCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string CryptData = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.CryptData = CryptData;
+            }
+
             public enum ErrorCodeEnum
             {
                 KeyNotFound,
@@ -36,17 +43,7 @@ namespace XFS4IoT.Crypto.Completions
                 InvalidKeyLength,
                 NoChipTransactionActive,
                 AlgorithmNotSupported,
-                CryptoMethodNotSupported,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string CryptData = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                ErrorDescription.IsNotNullOrWhitespace($"Null or an empty value for {nameof(ErrorDescription)} in received {nameof(CryptoDataCompletion.PayloadData)}");
-
-                this.ErrorCode = ErrorCode;
-                this.CryptData = CryptData;
+                CryptoMethodNotSupported
             }
 
             /// <summary>
@@ -66,12 +63,13 @@ namespace XFS4IoT.Crypto.Completions
             /// * ```algorithmNotSupported``` - The algorithm specified by bAlgorithm is not supported. 
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// The encrypted or decrypted data formatted in Base64.
             /// </summary>
-            [DataMember(Name = "cryptData")] 
+            [DataMember(Name = "cryptData")]
             public string CryptData { get; private set; }
 
         }

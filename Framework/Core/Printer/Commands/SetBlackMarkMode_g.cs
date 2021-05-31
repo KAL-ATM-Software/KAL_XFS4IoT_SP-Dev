@@ -19,24 +19,24 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.SetBlackMarkMode")]
     public sealed class SetBlackMarkModeCommand : Command<SetBlackMarkModeCommand.PayloadData>
     {
-        public SetBlackMarkModeCommand(string RequestId, SetBlackMarkModeCommand.PayloadData Payload)
+        public SetBlackMarkModeCommand(int RequestId, SetBlackMarkModeCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            public enum BlackMarkModeEnum
-            {
-                On,
-                Off,
-            }
-
 
             public PayloadData(int Timeout, BlackMarkModeEnum? BlackMarkMode = null)
                 : base(Timeout)
             {
                 this.BlackMarkMode = BlackMarkMode;
+            }
+
+            public enum BlackMarkModeEnum
+            {
+                On,
+                Off
             }
 
             /// <summary>
@@ -45,7 +45,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```on``` - Turns the black mark detection and associated functionality on.
             /// * ```off``` - Turns the black mark detection and associated functionality off.
             /// </summary>
-            [DataMember(Name = "blackMarkMode")] 
+            [DataMember(Name = "blackMarkMode")]
             public BlackMarkModeEnum? BlackMarkMode { get; private set; }
 
         }

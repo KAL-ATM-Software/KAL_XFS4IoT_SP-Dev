@@ -19,34 +19,24 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Beep")]
     public sealed class BeepCommand : Command<BeepCommand.PayloadData>
     {
-        public BeepCommand(string RequestId, BeepCommand.PayloadData Payload)
+        public BeepCommand(int RequestId, BeepCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            /// <summary>
-            /// Specifies whether the beeper should be turned on or off.
-            /// </summary>
-            public class BeepClass
-            {
-                [DataMember(Name = "off")] 
-                public bool? Off { get; private set; }
-                [DataMember(Name = "keyPress")] 
-                public bool? KeyPress { get; private set; }
-                [DataMember(Name = "exclamation")] 
-                public bool? Exclamation { get; private set; }
-                [DataMember(Name = "warning")] 
-                public bool? Warning { get; private set; }
-                [DataMember(Name = "error")] 
-                public bool? Error { get; private set; }
-                [DataMember(Name = "critical")] 
-                public bool? Critical { get; private set; }
-                [DataMember(Name = "continuous")] 
-                public bool? Continuous { get; private set; }
 
-                public BeepClass (bool? Off, bool? KeyPress, bool? Exclamation, bool? Warning, bool? Error, bool? Critical, bool? Continuous)
+            public PayloadData(int Timeout, BeepClass Beep = null)
+                : base(Timeout)
+            {
+                this.Beep = Beep;
+            }
+
+            [DataContract]
+            public sealed class BeepClass
+            {
+                public BeepClass(bool? Off = null, bool? KeyPress = null, bool? Exclamation = null, bool? Warning = null, bool? Error = null, bool? Critical = null, bool? Continuous = null)
                 {
                     this.Off = Off;
                     this.KeyPress = KeyPress;
@@ -57,21 +47,55 @@ namespace XFS4IoT.TextTerminal.Commands
                     this.Continuous = Continuous;
                 }
 
+                /// <summary>
+                /// The beeper is turned off.
+                /// </summary>
+                [DataMember(Name = "off")]
+                public bool? Off { get; private set; }
 
-            }
+                /// <summary>
+                /// The beeper sounds a key click signal.
+                /// </summary>
+                [DataMember(Name = "keyPress")]
+                public bool? KeyPress { get; private set; }
 
+                /// <summary>
+                /// The beeper sounds an exclamation signal.
+                /// </summary>
+                [DataMember(Name = "exclamation")]
+                public bool? Exclamation { get; private set; }
 
-            public PayloadData(int Timeout, object Beep = null)
-                : base(Timeout)
-            {
-                this.Beep = Beep;
+                /// <summary>
+                /// The beeper sounds a warning signal.
+                /// </summary>
+                [DataMember(Name = "warning")]
+                public bool? Warning { get; private set; }
+
+                /// <summary>
+                /// The beeper sounds a error signal.
+                /// </summary>
+                [DataMember(Name = "error")]
+                public bool? Error { get; private set; }
+
+                /// <summary>
+                /// The beeper sounds a critical error signal.
+                /// </summary>
+                [DataMember(Name = "critical")]
+                public bool? Critical { get; private set; }
+
+                /// <summary>
+                /// The beeper sound is turned on continuously.
+                /// </summary>
+                [DataMember(Name = "continuous")]
+                public bool? Continuous { get; private set; }
+
             }
 
             /// <summary>
             /// Specifies whether the beeper should be turned on or off.
             /// </summary>
-            [DataMember(Name = "beep")] 
-            public object Beep { get; private set; }
+            [DataMember(Name = "beep")]
+            public BeepClass Beep { get; private set; }
 
         }
     }

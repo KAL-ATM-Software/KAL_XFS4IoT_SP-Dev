@@ -19,7 +19,7 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.SupplyReplenish")]
     public sealed class SupplyReplenishCommand : Command<SupplyReplenishCommand.PayloadData>
     {
-        public SupplyReplenishCommand(string RequestId, SupplyReplenishCommand.PayloadData Payload)
+        public SupplyReplenishCommand(int RequestId, SupplyReplenishCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -42,37 +42,43 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// The only paper supply or the upper paper supply was replenished.
             /// </summary>
-            [DataMember(Name = "upper")] 
+            [DataMember(Name = "upper")]
             public bool? Upper { get; private set; }
+
             /// <summary>
             /// The lower paper supply was replenished.
             /// </summary>
-            [DataMember(Name = "lower")] 
+            [DataMember(Name = "lower")]
             public bool? Lower { get; private set; }
+
             /// <summary>
             /// The auxiliary paper supply was replenished.
             /// </summary>
-            [DataMember(Name = "aux")] 
+            [DataMember(Name = "aux")]
             public bool? Aux { get; private set; }
+
             /// <summary>
             /// The second auxiliary paper supply was replenished.
             /// </summary>
-            [DataMember(Name = "aux2")] 
+            [DataMember(Name = "aux2")]
             public bool? Aux2 { get; private set; }
+
             /// <summary>
             /// The toner supply was replenished.
             /// </summary>
-            [DataMember(Name = "toner")] 
+            [DataMember(Name = "toner")]
             public bool? Toner { get; private set; }
+
             /// <summary>
             /// The ink supply was replenished.
             /// </summary>
-            [DataMember(Name = "ink")] 
+            [DataMember(Name = "ink")]
             public bool? Ink { get; private set; }
+
             /// <summary>
             /// The imaging lamp was replaced.
             /// </summary>
-            [DataMember(Name = "lamp")] 
+            [DataMember(Name = "lamp")]
             public bool? Lamp { get; private set; }
 
         }

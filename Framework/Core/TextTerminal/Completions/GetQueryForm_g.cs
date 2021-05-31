@@ -18,34 +18,15 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.GetQueryForm")]
     public sealed class GetQueryFormCompletion : Completion<GetQueryFormCompletion.PayloadData>
     {
-        public GetQueryFormCompletion(string RequestId, GetQueryFormCompletion.PayloadData Payload)
+        public GetQueryFormCompletion(int RequestId, GetQueryFormCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            /// <summary>
-            /// Specifies the null-terminated name of the form.
-            /// </summary>
-            public class FormNameClass
-            {
 
-                public FormNameClass ()
-                {
-                }
-
-
-            }
-
-            public enum CharSupportEnum
-            {
-                Ascii,
-                Unicode,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, FormNameClass FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, CharSupportEnum? CharSupport = null, List<string> Fields = null, string LanguageId = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, CharSupportEnum? CharSupport = null, List<string> Fields = null, string LanguageId = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.FormName = FormName;
@@ -61,43 +42,56 @@ namespace XFS4IoT.TextTerminal.Completions
             /// <summary>
             /// Specifies the null-terminated name of the form.
             /// </summary>
-            [DataMember(Name = "formName")] 
-            public FormNameClass FormName { get; private set; }
+            [DataMember(Name = "formName")]
+            public string FormName { get; private set; }
+
             /// <summary>
             /// Specifies the width of the form in columns.
             /// </summary>
-            [DataMember(Name = "width")] 
+            [DataMember(Name = "width")]
             public string Width { get; private set; }
+
             /// <summary>
             /// Specifies the height of the form in rows. 
             /// </summary>
-            [DataMember(Name = "height")] 
+            [DataMember(Name = "height")]
             public string Height { get; private set; }
+
             /// <summary>
             /// Specifies the major version.If version is not specifies in the form then zero is returned.
             /// </summary>
-            [DataMember(Name = "versionMajor")] 
+            [DataMember(Name = "versionMajor")]
             public string VersionMajor { get; private set; }
+
             /// <summary>
             /// Specifies the minor version. 
             /// If the version is not specified in the form then zero is returned.
             /// </summary>
-            [DataMember(Name = "versionMinor")] 
+            [DataMember(Name = "versionMinor")]
             public string VersionMinor { get; private set; }
+
+            public enum CharSupportEnum
+            {
+                Ascii,
+                Unicode
+            }
+
             /// <summary>
             /// A single flag indicating whether the form is encoded in ascii or unicode.
             /// </summary>
-            [DataMember(Name = "charSupport")] 
+            [DataMember(Name = "charSupport")]
             public CharSupportEnum? CharSupport { get; private set; }
+
             /// <summary>
             /// Object to a list of the field names.
             /// </summary>
-            [DataMember(Name = "fields")] 
-            public List<string> Fields{ get; private set; }
+            [DataMember(Name = "fields")]
+            public List<string> Fields { get; private set; }
+
             /// <summary>
             /// Specifies the language identifier for the form.
             /// </summary>
-            [DataMember(Name = "languageId")] 
+            [DataMember(Name = "languageId")]
             public string LanguageId { get; private set; }
 
         }

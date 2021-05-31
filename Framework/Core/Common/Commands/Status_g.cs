@@ -19,7 +19,7 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.Status")]
     public sealed class StatusCommand : Command<StatusCommand.PayloadData>
     {
-        public StatusCommand(string RequestId, StatusCommand.PayloadData Payload)
+        public StatusCommand(int RequestId, StatusCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -31,7 +31,6 @@ namespace XFS4IoT.Common.Commands
                 : base(Timeout)
             {
             }
-
 
         }
     }

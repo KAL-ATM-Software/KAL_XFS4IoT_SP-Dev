@@ -19,45 +19,32 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.SetLed")]
     public sealed class SetLedCommand : Command<SetLedCommand.PayloadData>
     {
-        public SetLedCommand(string RequestId, SetLedCommand.PayloadData Payload)
+        public SetLedCommand(int RequestId, SetLedCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
-            /// <summary>
-            /// Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. 
-            /// If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
-            /// </summary>
-            public class CommandClass
-            {
-                [DataMember(Name = "off")] 
-                public bool? Off { get; private set; }
-                [DataMember(Name = "slowFlash")] 
-                public bool? SlowFlash { get; private set; }
-                [DataMember(Name = "mediumFlash")] 
-                public bool? MediumFlash { get; private set; }
-                [DataMember(Name = "quickFlash")] 
-                public bool? QuickFlash { get; private set; }
-                [DataMember(Name = "continuous")] 
-                public bool? Continuous { get; private set; }
-                [DataMember(Name = "red")] 
-                public bool? Red { get; private set; }
-                [DataMember(Name = "green")] 
-                public bool? Green { get; private set; }
-                [DataMember(Name = "yellow")] 
-                public bool? Yellow { get; private set; }
-                [DataMember(Name = "blue")] 
-                public bool? Blue { get; private set; }
-                [DataMember(Name = "cyan")] 
-                public bool? Cyan { get; private set; }
-                [DataMember(Name = "magenta")] 
-                public bool? Magenta { get; private set; }
-                [DataMember(Name = "white")] 
-                public bool? White { get; private set; }
 
-                public CommandClass (bool? Off, bool? SlowFlash, bool? MediumFlash, bool? QuickFlash, bool? Continuous, bool? Red, bool? Green, bool? Yellow, bool? Blue, bool? Cyan, bool? Magenta, bool? White)
+            public PayloadData(int Timeout, int? Led = null, CommandClass Command = null)
+                : base(Timeout)
+            {
+                this.Led = Led;
+                this.Command = Command;
+            }
+
+            /// <summary>
+            /// Specifies the index array as reported in Capabilities of the LED to set as one of the values defined 
+            /// within the capabilities section [TextTerminal.Capabilities](#common.capabilities.completion.properties.textterminal.leds)
+            /// </summary>
+            [DataMember(Name = "led")]
+            public int? Led { get; private set; }
+
+            [DataContract]
+            public sealed class CommandClass
+            {
+                public CommandClass(bool? Off = null, bool? SlowFlash = null, bool? MediumFlash = null, bool? QuickFlash = null, bool? Continuous = null, bool? Red = null, bool? Green = null, bool? Yellow = null, bool? Blue = null, bool? Cyan = null, bool? Magenta = null, bool? White = null)
                 {
                     this.Off = Off;
                     this.SlowFlash = SlowFlash;
@@ -73,29 +60,98 @@ namespace XFS4IoT.TextTerminal.Commands
                     this.White = White;
                 }
 
+                /// <summary>
+                /// The LED is turned off.
+                /// Type A
+                /// </summary>
+                [DataMember(Name = "off")]
+                public bool? Off { get; private set; }
+
+                /// <summary>
+                /// The LED is set to flash slowly.
+                /// Type B
+                /// </summary>
+                [DataMember(Name = "slowFlash")]
+                public bool? SlowFlash { get; private set; }
+
+                /// <summary>
+                /// The LED is set to flash medium frequency.
+                /// Type B
+                /// </summary>
+                [DataMember(Name = "mediumFlash")]
+                public bool? MediumFlash { get; private set; }
+
+                /// <summary>
+                /// The LED is set to flash quickly.
+                /// Type B
+                /// </summary>
+                [DataMember(Name = "quickFlash")]
+                public bool? QuickFlash { get; private set; }
+
+                /// <summary>
+                /// The LED is turned on continuously(steady).
+                /// Type B
+                /// </summary>
+                [DataMember(Name = "continuous")]
+                public bool? Continuous { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to red.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "red")]
+                public bool? Red { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to green.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "green")]
+                public bool? Green { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to yellow.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "yellow")]
+                public bool? Yellow { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to blue.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "blue")]
+                public bool? Blue { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to cyan.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "cyan")]
+                public bool? Cyan { get; private set; }
+
+                /// <summary>
+                /// The LED color is set to magenta.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "magenta")]
+                public bool? Magenta { get; private set; }
+
+                /// <summary>
+                /// The LED is set to white.
+                /// Type C
+                /// </summary>
+                [DataMember(Name = "white")]
+                public bool? White { get; private set; }
 
             }
 
-
-            public PayloadData(int Timeout, int? Led = null, object Command = null)
-                : base(Timeout)
-            {
-                this.Led = Led;
-                this.Command = Command;
-            }
-
-            /// <summary>
-            /// Specifies the index array as reported in Capabilities of the LED to set as one of the values defined 
-            /// within the capabilities section [TextTerminal.Capabilities](#common.capabilities.completion.properties.textterminal.leds)
-            /// </summary>
-            [DataMember(Name = "led")] 
-            public int? Led { get; private set; }
             /// <summary>
             /// Specifies off type A or a combination of the following flags consisting of one type B, and optionally one type C. 
             /// If no value of type C is specified then the default color is used. The Service Provider determines which color is used as the default color.
             /// </summary>
-            [DataMember(Name = "command")] 
-            public object Command { get; private set; }
+            [DataMember(Name = "command")]
+            public CommandClass Command { get; private set; }
 
         }
     }

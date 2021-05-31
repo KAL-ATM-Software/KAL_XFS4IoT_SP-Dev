@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     internal class CapabilitiesEvents : CommonEvents, ICapabilitiesEvents
     {
 
-        public CapabilitiesEvents(IConnection connection, string requestId)
+        public CapabilitiesEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

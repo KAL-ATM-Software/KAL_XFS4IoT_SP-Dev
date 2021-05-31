@@ -18,40 +18,27 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetQueryField")]
     public sealed class GetQueryFieldCompletion : Completion<GetQueryFieldCompletion.PayloadData>
     {
-        public GetQueryFieldCompletion(string RequestId, GetQueryFieldCompletion.PayloadData Payload)
+        public GetQueryFieldCompletion(int RequestId, GetQueryFieldCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, object Fields = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+                this.Fields = Fields;
+            }
+
             public enum ErrorCodeEnum
             {
                 FormNotFound,
                 FieldNotFound,
                 FormInvalid,
-                FieldInvalid,
-            }
-
-            /// <summary>
-            /// Details of the field(s) requested. For each object, the key is the field name.
-            /// </summary>
-            public class FieldsClass
-            {
-
-                public FieldsClass ()
-                {
-                }
-
-
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, FieldsClass Fields = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
-                this.Fields = Fields;
+                FieldInvalid
             }
 
             /// <summary>
@@ -62,13 +49,14 @@ namespace XFS4IoT.Printer.Completions
             /// * ```formInvalid``` - The specified form is invalid.
             /// * ```fieldInvalid``` - The specified field is invalid.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
+
             /// <summary>
             /// Details of the field(s) requested. For each object, the key is the field name.
             /// </summary>
-            [DataMember(Name = "fields")] 
-            public FieldsClass Fields { get; private set; }
+            [DataMember(Name = "fields")]
+            public object Fields { get; private set; }
 
         }
     }

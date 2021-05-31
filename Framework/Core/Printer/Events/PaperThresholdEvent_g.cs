@@ -29,28 +29,20 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
+            public PayloadData(PaperSourceEnum? PaperSource = null, ThresholdEnum? Threshold = null)
+                : base()
+            {
+                this.PaperSource = PaperSource;
+                this.Threshold = Threshold;
+            }
+
             public enum PaperSourceEnum
             {
                 Upper,
                 Lower,
                 External,
                 Aux,
-                Aux2,
-            }
-
-            public enum ThresholdEnum
-            {
-                Full,
-                Low,
-                Out,
-            }
-
-
-            public PayloadData(PaperSourceEnum? PaperSource = null, ThresholdEnum? Threshold = null)
-                : base()
-            {
-                this.PaperSource = PaperSource;
-                this.Threshold = Threshold;
+                Aux2
             }
 
             /// <summary>
@@ -62,8 +54,16 @@ namespace XFS4IoT.Printer.Events
             /// * ```aux``` - The auxiliary paper source.
             /// * ```aux2``` - The second auxiliary paper source.
             /// </summary>
-            [DataMember(Name = "paperSource")] 
+            [DataMember(Name = "paperSource")]
             public PaperSourceEnum? PaperSource { get; private set; }
+
+            public enum ThresholdEnum
+            {
+                Full,
+                Low,
+                Out
+            }
+
             /// <summary>
             /// Specifies the current state of the paper source as one of the following:
             /// 
@@ -71,8 +71,9 @@ namespace XFS4IoT.Printer.Events
             /// * ```low``` - The paper in the paper source is low.
             /// * ```out``` - The paper in the paper source is out.
             /// </summary>
-            [DataMember(Name = "threshold")] 
+            [DataMember(Name = "threshold")]
             public ThresholdEnum? Threshold { get; private set; }
+
         }
 
     }

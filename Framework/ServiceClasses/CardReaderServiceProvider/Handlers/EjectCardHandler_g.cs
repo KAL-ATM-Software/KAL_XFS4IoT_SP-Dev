@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var ejectCardCmd = command.IsA<EjectCardCommand>($"Invalid parameter in the EjectCard Handle method. {nameof(EjectCardCommand)}");
-            
-            IEjectCardEvents events = new EjectCardEvents(Connection, ejectCardCmd.Headers.RequestId);
+            ejectCardCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IEjectCardEvents events = new EjectCardEvents(Connection, ejectCardCmd.Headers.RequestId.Value);
 
             var result = await HandleEjectCard(events, ejectCardCmd, cancel);
-            await Connection.SendMessageAsync(new EjectCardCompletion(ejectCardCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new EjectCardCompletion(ejectCardCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var ejectCardcommand = command.IsA<EjectCardCommand>();
+            ejectCardcommand.Headers.RequestId.HasValue.IsTrue();
 
             EjectCardCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => EjectCardCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new EjectCardCompletion(ejectCardcommand.Headers.RequestId, new EjectCardCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new EjectCardCompletion(ejectCardcommand.Headers.RequestId.Value, new EjectCardCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

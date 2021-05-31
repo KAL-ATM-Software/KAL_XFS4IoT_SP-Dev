@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Printer
     internal class GetFormListEvents : PrinterEvents, IGetFormListEvents
     {
 
-        public GetFormListEvents(IConnection connection, string requestId)
+        public GetFormListEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

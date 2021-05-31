@@ -29,13 +29,6 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public enum TypeEnum
-            {
-                Form,
-                Name,
-            }
-
-
             public PayloadData(string Name = null, TypeEnum? Type = null)
                 : base()
             {
@@ -46,8 +39,15 @@ namespace XFS4IoT.Printer.Events
             /// <summary>
             /// Specifies the name of the form or media just loaded.
             /// </summary>
-            [DataMember(Name = "name")] 
+            [DataMember(Name = "name")]
             public string Name { get; private set; }
+
+            public enum TypeEnum
+            {
+                Form,
+                Name
+            }
+
             /// <summary>
             /// Specifies the type of definition loaded. This field can be one of the following values:
             /// 
@@ -55,8 +55,9 @@ namespace XFS4IoT.Printer.Events
             ///   been loaded.
             /// * ```media``` - The media identified by *name* has been loaded.
             /// </summary>
-            [DataMember(Name = "type")] 
+            [DataMember(Name = "type")]
             public TypeEnum? Type { get; private set; }
+
         }
 
     }

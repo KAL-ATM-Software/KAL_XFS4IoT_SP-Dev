@@ -18,27 +18,27 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.DispensePaper")]
     public sealed class DispensePaperCompletion : Completion<DispensePaperCompletion.PayloadData>
     {
-        public DispensePaperCompletion(string RequestId, DispensePaperCompletion.PayloadData Payload)
+        public DispensePaperCompletion(int RequestId, DispensePaperCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
+
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+                : base(CompletionCode, ErrorDescription)
+            {
+                this.ErrorCode = ErrorCode;
+            }
+
             public enum ErrorCodeEnum
             {
                 PaperJammed,
                 PaperOut,
                 SequenceInvalid,
                 SourceInvalid,
-                MediaRetracted,
-            }
-
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
-            {
-                this.ErrorCode = ErrorCode;
+                MediaRetracted
             }
 
             /// <summary>
@@ -52,7 +52,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaRetracted``` - Presented media was automatically retracted before all wads could be
             ///   presented and before the command could complete successfully.
             /// </summary>
-            [DataMember(Name = "errorCode")] 
+            [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; private set; }
 
         }

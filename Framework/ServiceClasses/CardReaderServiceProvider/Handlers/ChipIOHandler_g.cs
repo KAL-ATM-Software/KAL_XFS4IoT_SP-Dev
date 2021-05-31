@@ -38,16 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var chipIOCmd = command.IsA<ChipIOCommand>($"Invalid parameter in the ChipIO Handle method. {nameof(ChipIOCommand)}");
-            
-            IChipIOEvents events = new ChipIOEvents(Connection, chipIOCmd.Headers.RequestId);
+            chipIOCmd.Headers.RequestId.HasValue.IsTrue();
+
+            IChipIOEvents events = new ChipIOEvents(Connection, chipIOCmd.Headers.RequestId.Value);
 
             var result = await HandleChipIO(events, chipIOCmd, cancel);
-            await Connection.SendMessageAsync(new ChipIOCompletion(chipIOCmd.Headers.RequestId, result));
+            await Connection.SendMessageAsync(new ChipIOCompletion(chipIOCmd.Headers.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var chipIOcommand = command.IsA<ChipIOCommand>();
+            chipIOcommand.Headers.RequestId.HasValue.IsTrue();
 
             ChipIOCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -56,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => ChipIOCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ChipIOCompletion(chipIOcommand.Headers.RequestId, new ChipIOCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ChipIOCompletion(chipIOcommand.Headers.RequestId.Value, new ChipIOCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }
