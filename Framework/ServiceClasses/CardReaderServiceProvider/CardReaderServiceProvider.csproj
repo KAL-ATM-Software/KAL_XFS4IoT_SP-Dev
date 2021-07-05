@@ -1,50 +1,59 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-        <SccProjectName>SAK</SccProjectName>
-        <SccProvider>SAK</SccProvider>
-        <SccAuxPath>SAK</SccAuxPath>
-        <SccLocalPath>SAK</SccLocalPath>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>XFS4IoT.SP.Framework.CardReader</AssemblyName>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <AssemblyName>XFS4IoT.SP.Framework.CardReader</AssemblyName>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>KAL.XFS4IoT.SP-Dev.Framework.CardReader</PackageId>
+    <Copyright>Copyright (C) KAL ATM Software GmbH, 2021</Copyright>
+    <Description>KAL.XFS4IoT.SP-Dev.Framework.CardReader Pre-Release</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-    <PropertyGroup>
-        <PackageId>KAL.XFS4IoT.SP-Dev.Framework.CardReader</PackageId>
-        <Copyright>Copyright (C) KAL ATM Software GmbH, 2021</Copyright>
-        <Description>KAL.XFS4IoT.SP-Dev.Framework.CardReader Pre-Release</Description>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev</RepositoryUrl>
-    </PropertyGroup>
+    <!--Include Repository URL in package. -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <OutputPath>..\..\bin\Debug\</OutputPath>
-    </PropertyGroup>
+    <!--Generate XML documentation. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!--Ignore warning for missing comment CS1591 -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <OutputPath>..\..\bin\Release\</OutputPath>
-    </PropertyGroup>
+    <!--Generate Symbol package. -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Remove="CardReaderServiceProvider.csproj.vspscc" />
-    </ItemGroup>
+  <!--Link to Github when SourceLink is enabled and "JustMyCode" is disabled. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\Server\Server.csproj" />
-      <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
-      <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
-    </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <Compile Update="Handlers\*_g.cs">
-        <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
-      </Compile>
-      <Compile Update="*ServiceClass_g.cs">
-        <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
-      </Compile>
-    </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CardReaderServiceProvider.csproj.vspscc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Server\Server.csproj" />
+    <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
+    <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Handlers\*_g.cs">
+      <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+    <Compile Update="*ServiceClass_g.cs">
+      <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 </Project>
