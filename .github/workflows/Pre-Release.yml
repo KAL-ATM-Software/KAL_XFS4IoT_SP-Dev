@@ -37,6 +37,9 @@ jobs:
         for asset in ./nuget/*.nupkg; do
           assets+=("-a" "$asset")
         done
+        for asset in ./nuget/*.snupkg; do
+          assets+=("-a" "$asset")
+        done
         hub release create -p "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
