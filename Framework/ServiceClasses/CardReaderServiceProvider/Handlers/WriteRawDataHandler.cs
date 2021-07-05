@@ -12,6 +12,7 @@ using XFS4IoT;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -28,6 +29,38 @@ namespace XFS4IoTFramework.CardReader
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                   "No destination specified to write track data.");
                 }
+                
+                if (data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1 &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1) ||
+                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track2 &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2) ||
+                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3 &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3) ||
+                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1Front &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front) ||
+                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1JIS &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS) ||
+                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3JIS &&
+                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS))
+                {
+                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                  $"Specified destination is not supported. {data.Destination}");
+                }
+
+                if (data.WriteMethod is not null)
+                {
+                    if (data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Auto &&
+                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto) ||
+                        data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Loco &&
+                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco) ||
+                        data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Hico &&
+                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
+                    {
+                        return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                      $"Specified write methods is not supported. {data.WriteMethod}");
+                    }
+                }
+
                 if (string.IsNullOrEmpty(data.Data))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
@@ -88,8 +121,8 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.WriteCardDataAsync()");
             var writeCardDataResult = await Device.WriteCardAsync(events,
-                                                                      new WriteCardRequest(dataToWrite),
-                                                                      cancel);
+                                                                  new WriteCardRequest(dataToWrite),
+                                                                  cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.WriteCardDataAsync() -> {writeCardDataResult.CompletionCode}, {writeCardDataResult.ErrorCode}");
 
             return new WriteRawDataCompletion.PayloadData(writeCardDataResult.CompletionCode,

@@ -11,6 +11,7 @@ using System.Threading;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -18,7 +19,13 @@ namespace XFS4IoTFramework.CardReader
     { 
         private async Task<EMVClessConfigureCompletion.PayloadData> HandleEMVClessConfigure(IEMVClessConfigureEvents events, EMVClessConfigureCommand eMVClessConfigure, CancellationToken cancel)
         {
-            /// Data check
+            if (CardReader.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
+            {
+                return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
+                                                                   $"This device is not an intelligent contactless CardReader. {CardReader.CardReaderCapabilities.Type}");
+            }
+
+            // Data check
             if ((eMVClessConfigure.Payload.AidData is null || eMVClessConfigure.Payload.AidData.Count == 0) &&
                 eMVClessConfigure.Payload.TerminalData is null &&
                 (eMVClessConfigure.Payload.KeyData is null || eMVClessConfigure.Payload.KeyData.Count == 0))
@@ -66,7 +73,7 @@ namespace XFS4IoTFramework.CardReader
                                                                        "No CA Public Key is supplied.");
                 }
 
-                /// MISSING PKs.CaPublicKey structure
+                // MISSING PKs.CaPublicKey structure
                 PublicKeys.Add(new PublicKeyInfo(new List<byte>(Convert.FromBase64String(PKs.Rid)),
                                                  null));
             }

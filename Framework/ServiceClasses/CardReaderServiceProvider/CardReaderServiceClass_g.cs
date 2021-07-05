@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using XFS4IoT;
+using XFS4IoTFramework.CardReader;
 
 namespace XFS4IoTServer
 {
@@ -19,6 +20,8 @@ namespace XFS4IoTServer
         public CardReaderServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
             this.ServiceProvider = ServiceProvider.IsNotNull();
+            this.Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CardReaderServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICardReaderDevice>();
         }
         public async Task MediaRemovedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.MediaRemovedEvent());
@@ -30,5 +33,7 @@ namespace XFS4IoTServer
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.CardActionEvent(Payload));
 
         private readonly IServiceProvider ServiceProvider;
+        private readonly ILogger Logger;
+        private ICardReaderDevice Device { get => ServiceProvider.Device.IsA<ICardReaderDevice>(); }
     }
 }

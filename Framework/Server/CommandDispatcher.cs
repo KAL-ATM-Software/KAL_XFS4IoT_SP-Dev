@@ -125,9 +125,17 @@ namespace XFS4IoTServer
             while( true )
             {
                 var (handler, connection, command, cts) = await CommandQueue.ReceiveAsync();
-                Logger.Log("Dispatcher", $"Running {command.Headers.Name} id:{command.Headers.RequestId}");
-                await handler.Handle(connection, command, cts.Token);
-                Logger.Log("Dispatcher", $"Completed {command.Headers.Name} id:{command.Headers.RequestId}");
+                try
+                {
+                    Logger.Log("Dispatcher", $"Running {command.Headers.Name} id:{command.Headers.RequestId}");
+                    await handler.Handle(connection, command, cts.Token);
+                    Logger.Log("Dispatcher", $"Completed {command.Headers.Name} id:{command.Headers.RequestId}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Dispatcher", $"Caught exception running {command.Headers.Name} id:{command.Headers.RequestId}");
+                    await handler.HandleError(connection, command, ex);
+                }
                 cts.Dispose();
             }
         }

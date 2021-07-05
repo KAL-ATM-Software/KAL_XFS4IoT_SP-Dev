@@ -39,7 +39,6 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// 
             /// * ```resolutionNotSupported``` - The specified resolution is not supported by the display.
             /// </summary>
             [DataMember(Name = "errorCode")]

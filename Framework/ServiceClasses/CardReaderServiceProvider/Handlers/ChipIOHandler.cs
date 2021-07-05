@@ -11,6 +11,7 @@ using System.Threading;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -39,10 +40,29 @@ namespace XFS4IoTFramework.CardReader
             if (chipProtocol is null)
             {
                 return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                        $"Unsupported chip protocol supplied. {chipIO.Payload.ChipProtocol}",
+                                                        $"No chip protocol supplied.",
                                                         ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
             }
 
+            // check capability for the protocol
+            if (chipProtocol == ChipIORequest.ChipProtocolEnum.chipT0 &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T0) ||
+                chipProtocol == ChipIORequest.ChipProtocolEnum.chipT1 &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T1) ||
+                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeAPart3 &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart3) ||
+                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeAPart4 &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart4) ||
+                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeB &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeB) ||
+                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeNFC &&
+                !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeNFC))
+            {
+                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                        $"Unsupported chip protocol supplied. {chipIO.Payload.ChipProtocol}",
+                                                        ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
+            }
+            
             List<byte> chipData = new(Convert.FromBase64String(chipIO.Payload.ChipData));
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ChipIOAsync()");

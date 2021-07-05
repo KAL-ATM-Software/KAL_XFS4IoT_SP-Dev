@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using XFS4IoT;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
@@ -19,6 +20,8 @@ namespace XFS4IoTServer
         public CommonServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
             this.ServiceProvider = ServiceProvider.IsNotNull();
+            this.Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CommonServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICommonDevice>();
         }
         public async Task PowerSaveChangeEvent(XFS4IoT.Common.Events.PowerSaveChangeEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.PowerSaveChangeEvent(Payload));
@@ -27,5 +30,7 @@ namespace XFS4IoTServer
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.DevicePositionEvent(Payload));
 
         private readonly IServiceProvider ServiceProvider;
+        private readonly ILogger Logger;
+        private ICommonDevice Device { get => ServiceProvider.Device.IsA<ICommonDevice>(); }
     }
 }

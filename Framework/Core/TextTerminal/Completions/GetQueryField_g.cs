@@ -26,119 +26,17 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<FieldsClass> Fields = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, Dictionary<string, FieldDetailsClass> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Fields = Fields;
             }
 
-            [DataContract]
-            public sealed class FieldsClass
-            {
-                public FieldsClass(string FieldName = null, TypeEnum? Type = null, ClassEnum? Class = null, AccessClass Access = null, OverflowEnum? Overflow = null, string Format = null, string LanguageId = null)
-                {
-                    this.FieldName = FieldName;
-                    this.Type = Type;
-                    this.Class = Class;
-                    this.Access = Access;
-                    this.Overflow = Overflow;
-                    this.Format = Format;
-                    this.LanguageId = LanguageId;
-                }
-
-                /// <summary>
-                /// Specifies the field name.
-                /// </summary>
-                [DataMember(Name = "fieldName")]
-                public string FieldName { get; private set; }
-
-                public enum TypeEnum
-                {
-                    Text,
-                    Invisible,
-                    Password
-                }
-
-                /// <summary>
-                /// Specifies the type of field.
-                /// </summary>
-                [DataMember(Name = "type")]
-                public TypeEnum? Type { get; private set; }
-
-                public enum ClassEnum
-                {
-                    Static,
-                    Optional,
-                    Required
-                }
-
-                /// <summary>
-                /// Specifies the class of the field.
-                /// </summary>
-                [DataMember(Name = "class")]
-                public ClassEnum? Class { get; private set; }
-
-                [DataContract]
-                public sealed class AccessClass
-                {
-                    public AccessClass(string Read = null, string Write = null)
-                    {
-                        this.Read = Read;
-                        this.Write = Write;
-                    }
-
-                    /// <summary>
-                    /// The Field is used for input from the physical device.
-                    /// </summary>
-                    [DataMember(Name = "read")]
-                    public string Read { get; private set; }
-
-                    /// <summary>
-                    /// The Field is used for output to the physical device.
-                    /// </summary>
-                    [DataMember(Name = "write")]
-                    public string Write { get; private set; }
-
-                }
-
-                /// <summary>
-                /// Specifies whether the field is to be used for input, output or both.
-                /// </summary>
-                [DataMember(Name = "access")]
-                public AccessClass Access { get; private set; }
-
-                public enum OverflowEnum
-                {
-                    Terminate,
-                    Truncate,
-                    Overwrite
-                }
-
-                /// <summary>
-                /// Specifies how an overflow of field data should be handled.
-                /// </summary>
-                [DataMember(Name = "overflow")]
-                public OverflowEnum? Overflow { get; private set; }
-
-                /// <summary>
-                /// Format string as defined in the form for this field.
-                /// </summary>
-                [DataMember(Name = "format")]
-                public string Format { get; private set; }
-
-                /// <summary>
-                /// Specifies the language identifier for the field.
-                /// </summary>
-                [DataMember(Name = "languageId")]
-                public string LanguageId { get; private set; }
-
-            }
-
             /// <summary>
-            /// Array of Fields.
+            /// Details of the field(s) requested. The key is the field name and the value contains the details of the fields.
             /// </summary>
             [DataMember(Name = "fields")]
-            public List<FieldsClass> Fields { get; private set; }
+            public Dictionary<string, FieldDetailsClass> Fields { get; private set; }
 
         }
     }

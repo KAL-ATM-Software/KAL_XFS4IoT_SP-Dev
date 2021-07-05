@@ -46,7 +46,7 @@ namespace XFS4IoTServer
 
                     var receivedBuffer = new ArraySegment<byte>(new byte[MAX_BUFFER]);
 
-                    /// Wait for data from the client
+                    // Wait for data from the client
                     var res = await socket.ReceiveAsync(receivedBuffer, CancellationToken.None);
 
                     if (res.MessageType == WebSocketMessageType.Text ||

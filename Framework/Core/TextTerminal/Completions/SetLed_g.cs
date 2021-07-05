@@ -39,7 +39,6 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// 
             /// * ```invalidLed``` - An attempt to set a LED to a new value was invalid because the LED does not exist.
             /// </summary>
             [DataMember(Name = "errorCode")]

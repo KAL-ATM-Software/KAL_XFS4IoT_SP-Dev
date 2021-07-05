@@ -27,7 +27,7 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, bool? ClearScreen = null, List<string> Fields = null)
+            public PayloadData(int Timeout, string FormName = null, bool? ClearScreen = null, Dictionary<string, string> Fields = null)
                 : base(Timeout)
             {
                 this.FormName = FormName;
@@ -36,24 +36,23 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Form name.
+            /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; private set; }
 
             /// <summary>
-            /// Specifies whether the screen is cleared before displaying the form (TRUE) or not (FALSE).
+            /// Specifies whether the screen is cleared before displaying the form (true) or not (false).
             /// </summary>
             [DataMember(Name = "clearScreen")]
             public bool? ClearScreen { get; private set; }
 
             /// <summary>
-            /// Specifies \"<fieldName>=<fieldValue>\" string. e.g. Field1=123. 
-            /// The <fieldValue> stands for a string containing all the printable characters (numeric and alphanumeric) 
+            /// Details of the field(s) to write. The key is the field name and value is file value containing all the printable characters (numeric and alphanumeric) 
             /// to display on the text terminal unit key pad for this field.
             /// </summary>
             [DataMember(Name = "fields")]
-            public List<string> Fields { get; private set; }
+            public Dictionary<string, string> Fields { get; private set; }
 
         }
     }

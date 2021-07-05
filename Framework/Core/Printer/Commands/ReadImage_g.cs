@@ -175,7 +175,7 @@ namespace XFS4IoT.Printer.Commands
             public ImageSourceClass ImageSource { get; private set; }
 
             /// <summary>
-            /// File specifying where to store the front image, e.g. \"C:\\\\Temp\\\\FrontImage.bmp\". If omitted or empty,
+            /// File specifying where to store the front image, e.g. "C:\\\\Temp\\\\FrontImage.bmp". If omitted or empty,
             /// the front image data will be returned in the output parameter. This value must not contain UNICODE
             /// characters.
             /// 
@@ -186,7 +186,7 @@ namespace XFS4IoT.Printer.Commands
             public string FrontImageFile { get; private set; }
 
             /// <summary>
-            /// File specifying where to store the back image, e.g. \"C:\\\\Temp\\\\BackImage.bmp\". If omitted or empty,
+            /// File specifying where to store the back image, e.g. "C:\\\\Temp\\\\BackImage.bmp". If omitted or empty,
             /// the back image data will be returned in the output parameter. This value must not contain UNICODE
             /// characters.
             /// 

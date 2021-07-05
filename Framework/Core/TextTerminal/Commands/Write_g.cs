@@ -37,9 +37,7 @@ namespace XFS4IoT.TextTerminal.Commands
                 this.Text = Text;
             }
 
-            /// <summary>
-            /// Specifies whether the position of the output is absolute or relative to the current cursor position.
-            /// </summary>
+
             [DataMember(Name = "mode")]
             public ModesEnum? Mode { get; private set; }
 

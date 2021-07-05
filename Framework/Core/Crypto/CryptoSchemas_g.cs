@@ -469,7 +469,7 @@ namespace XFS4IoT.Crypto
 
             /// <summary>
             /// Last Block Triple DES MAC as defined in ISO/IEC 9797-1:1999 [Ref. 32], using: 
-            /// block length n=64, padding Method 1 (when padding=0), MAC Algorithm 3, MAC length m where 32<=m<=64.
+            /// block length n=64, padding Method 1 (when padding=0), MAC Algorithm 3, MAC length m where 32&lt;=m&lt;=64.
             /// </summary>
             [DataMember(Name = "triDesMac")]
             public bool? TriDesMac { get; private set; }

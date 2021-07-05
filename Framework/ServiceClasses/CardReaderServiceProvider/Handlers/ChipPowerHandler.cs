@@ -9,6 +9,7 @@ using System.Threading;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -20,6 +21,18 @@ namespace XFS4IoTFramework.CardReader
             {
                 return new ChipPowerCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            "No chip power action supplied.");
+            }
+
+            // check capability
+            if (chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Cold &&
+                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold) ||
+                chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Warm &&
+                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm) ||
+                chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Off &&
+                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off))
+            {
+                return new ChipPowerCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                           $"Supplied chip power action supported. {chipPower.Payload.ChipPower}");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ChipPowerAsync()");

@@ -42,8 +42,8 @@ namespace XFS4IoT
         /// </summary>
         /// <param name="Headers">header contents</param>
         /// <param name="Payload">payload contents</param>
-        internal Message(MessageHeader headers, T Payload) :
-            base(headers)
+        internal Message(MessageHeader Headers, T Payload) :
+            base(Headers)
         {
             this.Payload = Payload.Ignore();
         }
@@ -52,9 +52,9 @@ namespace XFS4IoT
         /// Constructor of the message object for response
         /// The Payload property must be set by the derived class and passing paramters for the headers to the base class
         /// </summary>
-        /// <param name="Name"></param>
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>
+        /// <param name="Payload"></param>
         public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload) :
             base(RequestId, Type)
         {

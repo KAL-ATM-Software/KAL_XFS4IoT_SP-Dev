@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using XFS4IoT;
+using XFS4IoTFramework.Printer;
 
 namespace XFS4IoTServer
 {
@@ -19,6 +20,8 @@ namespace XFS4IoTServer
         public PrinterServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
             this.ServiceProvider = ServiceProvider.IsNotNull();
+            this.Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(PrinterServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IPrinterDevice>();
         }
         public async Task RetractBinThresholdEvent(XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinThresholdEvent(Payload));
@@ -57,5 +60,7 @@ namespace XFS4IoTServer
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinStatusEvent(Payload));
 
         private readonly IServiceProvider ServiceProvider;
+        private readonly ILogger Logger;
+        private IPrinterDevice Device { get => ServiceProvider.Device.IsA<IPrinterDevice>(); }
     }
 }

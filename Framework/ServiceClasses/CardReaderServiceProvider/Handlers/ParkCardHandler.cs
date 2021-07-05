@@ -9,6 +9,7 @@ using System.Threading;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -20,6 +21,19 @@ namespace XFS4IoTFramework.CardReader
             {
                 return new ParkCardCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                           "No chip IO data supplied.");
+            }
+
+            if (CardReader.CardReaderCapabilities.NumberParkingStations == 0)
+            {
+                return new ParkCardCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                          "No parking station supported.");
+            }
+
+            if (parkCard.Payload.ParkingStation is not null &&
+                parkCard.Payload.ParkingStation >= CardReader.CardReaderCapabilities.NumberParkingStations)
+            {
+                return new ParkCardCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                          $"Specified index of the parking station is not supported. {parkCard.Payload.ParkingStation}");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ParkCardAsync()");

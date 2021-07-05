@@ -57,21 +57,21 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// | Index | Symbol | Meaning |
             /// | :-- | :-- |:-- |
-            /// | 0 | ![Transit](../../Assets/e13b-transit.png \"Transit\") | Transit |
-            /// | 1 | ![Amount](../../Assets/e13b-amount.png \"Amount\") | Amount |
-            /// | 2 | ![On Us](../../Assets/e13b-onus.png \"On Us\") | On Us |
-            /// | 3 | ![Dash](../../Assets/e13b-dash.png \"Dash\") | Dash |
+            /// | 0 | ![Transit](../../Assets/e13b-transit.png "Transit") | Transit |
+            /// | 1 | ![Amount](../../Assets/e13b-amount.png "Amount") | Amount |
+            /// | 2 | ![On Us](../../Assets/e13b-onus.png "On Us") | On Us |
+            /// | 3 | ![Dash](../../Assets/e13b-dash.png "Dash") | Dash |
             /// | 4 | N/A | Reject / Unreadable |
             /// 
             /// *CMC7* 
             /// 
             /// | Index | Symbol | Meaning |
             /// | :-- | :-- |:-- |
-            /// | 0 | ![S1](../../Assets/cmc7-s1.png \"S1\") | S1 - Start of Bank Account |
-            /// | 1 | ![S2](../../Assets/cmc7-s2.png \"S2\") | S2 - Start of the Amount field |
-            /// | 2 | ![S3](../../Assets/cmc7-s3.png \"S3\") | S3 - Terminate Routing |
-            /// | 3 | ![S4](../../Assets/cmc7-s4.png \"S4\") | S4 - Unused |
-            /// | 4 | ![S5](../../Assets/cmc7-s5.png \"S5\") | S5 - Transit / Routing |
+            /// | 0 | ![S1](../../Assets/cmc7-s1.png "S1") | S1 - Start of Bank Account |
+            /// | 1 | ![S2](../../Assets/cmc7-s2.png "S2") | S2 - Start of the Amount field |
+            /// | 2 | ![S3](../../Assets/cmc7-s3.png "S3") | S3 - Terminate Routing |
+            /// | 3 | ![S4](../../Assets/cmc7-s4.png "S4") | S4 - Unused |
+            /// | 4 | ![S5](../../Assets/cmc7-s5.png "S5") | S5 - Transit / Routing |
             /// | 5 | N/A | Reject / Unreadable |
             /// 
             /// </summary>

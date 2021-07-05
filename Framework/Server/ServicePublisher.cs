@@ -31,7 +31,6 @@ namespace XFS4IoTServer
         /// (as defined by XFS4IoT.) 
         /// </remarks>
         /// <param name="Logger">To use for all logging</param>
-        /// <param name="CommandDispatcher">For dispatching incomming command messages</param>
         public ServicePublisher(ILogger Logger)
             : base(new[] { XFSConstants.ServiceClass.Publisher }, Logger)
         {

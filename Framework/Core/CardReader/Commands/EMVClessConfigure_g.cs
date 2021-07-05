@@ -37,7 +37,7 @@ namespace XFS4IoT.CardReader.Commands
 
             /// <summary>
             /// Base64 encoded representation of the BER-TLV formatted data for the terminal e.g. Terminal Type,
-            /// Transaction Category Code, Merchant Name & Location etc. Any terminal based data elements referenced
+            /// Transaction Category Code, Merchant Name &amp; Location etc. Any terminal based data elements referenced
             /// in the Payment Systems Specifications or EMVCo Contactless Payment Systems Specifications Books may be
             /// included (see References [2] to [14] section for more details).
             /// </summary>

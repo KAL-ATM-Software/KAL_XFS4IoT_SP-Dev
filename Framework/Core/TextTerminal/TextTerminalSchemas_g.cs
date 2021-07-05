@@ -34,7 +34,10 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies the state of the keyboard.
+        /// Specifies the state of the keyboard in the text terminal unit as one of the following flags:
+        /// * ```on``` - The keyboard is activated.
+        /// * ```off``` - The keyboard is not activated.
+        /// * ```na``` - The keyboard is not available.
         /// </summary>
         [DataMember(Name = "keyboard")]
         public KeyboardEnum? Keyboard { get; private set; }
@@ -47,7 +50,10 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies the state of the keyboard lock.
+        /// Specifies the state of the keyboard lock of the text terminal unit as one of the following flags:
+        /// * ```on``` - The keyboard lock switch is activated.
+        /// * ```off``` - The keyboard lock switch is not activated.
+        /// * ```na``` - The keyboard lock switch is not available.
         /// </summary>
         [DataMember(Name = "keyLock")]
         public KeyLockEnum? KeyLock { get; private set; }
@@ -215,7 +221,7 @@ namespace XFS4IoT.TextTerminal
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeEnum? Type = null, List<ResolutionClass> Resolutions = null, bool? KeyLock = null, bool? DisplayLight = null, bool? Cursor = null, bool? Forms = null, CharSupportClass CharSupport = null, List<LedsClass> Leds = null)
+        public CapabilitiesClass(TypeEnum? Type = null, List<ResolutionClass> Resolutions = null, bool? KeyLock = null, bool? DisplayLight = null, bool? Cursor = null, bool? Forms = null, List<LedsClass> Leds = null)
         {
             this.Type = Type;
             this.Resolutions = Resolutions;
@@ -223,7 +229,6 @@ namespace XFS4IoT.TextTerminal
             this.DisplayLight = DisplayLight;
             this.Cursor = Cursor;
             this.Forms = Forms;
-            this.CharSupport = CharSupport;
             this.Leds = Leds;
         }
 
@@ -234,7 +239,9 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies the type of the text terminal unit.
+        /// Specifies the type of the text terminal unit as one of the following flags:
+        /// * ```fixed``` - The text terminal unit is a fixed device.
+        /// * ```removable``` - The text terminal unit is a removable device.
         /// </summary>
         [DataMember(Name = "type")]
         public TypeEnum? Type { get; private set; }
@@ -272,36 +279,6 @@ namespace XFS4IoT.TextTerminal
         /// </summary>
         [DataMember(Name = "forms")]
         public bool? Forms { get; private set; }
-
-        [DataContract]
-        public sealed class CharSupportClass
-        {
-            public CharSupportClass(bool? Ascii = null, bool? Unicode = null)
-            {
-                this.Ascii = Ascii;
-                this.Unicode = Unicode;
-            }
-
-            /// <summary>
-            /// Ascii is supported for forms.
-            /// </summary>
-            [DataMember(Name = "ascii")]
-            public bool? Ascii { get; private set; }
-
-            /// <summary>
-            /// Unicode is supported for forms.
-            /// </summary>
-            [DataMember(Name = "unicode")]
-            public bool? Unicode { get; private set; }
-
-        }
-
-        /// <summary>
-        /// For charSupport, a Service Provider can support ONLY ascii forms or can support BOTH ascii and unicode forms.
-        ///  A Service Provider can not support UNICODE forms without also supporting ASCII forms.\
-        /// </summary>
-        [DataMember(Name = "charSupport")]
-        public CharSupportClass CharSupport { get; private set; }
 
         [DataContract]
         public sealed class LedsClass
@@ -416,6 +393,111 @@ namespace XFS4IoT.TextTerminal
         /// </summary>
         [DataMember(Name = "leds")]
         public List<LedsClass> Leds { get; private set; }
+
+    }
+
+
+    [DataContract]
+    public sealed class FieldDetailsClass
+    {
+        public FieldDetailsClass(TypeEnum? Type = null, ClassEnum? Class = null, AccessClass Access = null, OverflowEnum? Overflow = null, string Format = null, string LanguageId = null)
+        {
+            this.Type = Type;
+            this.Class = Class;
+            this.Access = Access;
+            this.Overflow = Overflow;
+            this.Format = Format;
+            this.LanguageId = LanguageId;
+        }
+
+        public enum TypeEnum
+        {
+            Text,
+            Invisible,
+            Password
+        }
+
+        /// <summary>
+        /// Specifies the type of field and can be one of the following:
+        ///   * ```text``` - A text field.
+        ///   * ```invisible``` - An invisible text field.
+        ///   * ```password``` - A password field, input is echoed as '*'.  
+        /// </summary>
+        [DataMember(Name = "type")]
+        public TypeEnum? Type { get; private set; }
+
+        public enum ClassEnum
+        {
+            Static,
+            Optional,
+            Required
+        }
+
+        /// <summary>
+        /// Specifies the class of the field and can be one of the following:
+        /// * ```static``` - The field data cannot be set by the application.
+        /// * ```optional``` - The field data can be set by the application.
+        /// * ```required``` - The field data must be set by the application.
+        /// </summary>
+        [DataMember(Name = "class")]
+        public ClassEnum? Class { get; private set; }
+
+        [DataContract]
+        public sealed class AccessClass
+        {
+            public AccessClass(string Read = null, string Write = null)
+            {
+                this.Read = Read;
+                this.Write = Write;
+            }
+
+            /// <summary>
+            /// The Field is used for input from the physical device.
+            /// </summary>
+            [DataMember(Name = "read")]
+            public string Read { get; private set; }
+
+            /// <summary>
+            /// The Field is used for output to the physical device.
+            /// </summary>
+            [DataMember(Name = "write")]
+            public string Write { get; private set; }
+
+        }
+
+        /// <summary>
+        /// Specifies whether the field is to be used for input, output or both.
+        /// </summary>
+        [DataMember(Name = "access")]
+        public AccessClass Access { get; private set; }
+
+        public enum OverflowEnum
+        {
+            Terminate,
+            Truncate,
+            Overwrite
+        }
+
+        /// <summary>
+        /// Specifies how an overflow of field data should be handle and can be one of the following:
+        /// * ```terminate``` - Return an error and terminate display of the form.
+        /// * ```truncate``` - Truncate the field data to fit in the field.
+        /// * ```overwrite``` - Print the field data beyond the extents of the field boundary.
+        /// </summary>
+        [DataMember(Name = "overflow")]
+        public OverflowEnum? Overflow { get; private set; }
+
+        /// <summary>
+        /// Format string as defined in the form for this field.
+        /// </summary>
+        [DataMember(Name = "format")]
+        public string Format { get; private set; }
+
+        /// <summary>
+        /// Specifies the language identifier for the field.
+        /// </summary>
+        [DataMember(Name = "languageId")]
+        public string LanguageId { get; private set; }
 
     }
 

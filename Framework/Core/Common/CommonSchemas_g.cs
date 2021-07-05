@@ -56,7 +56,7 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies a list of vendor-specific, or any other extended, information. 
-        /// The information is returned as a series of \"key=value\" strings so that it is easily extendable by Service Providers.
+        /// The information is returned as a series of "key=value" strings so that it is easily extendable by Service Providers.
         /// 
         /// </summary>
         [DataMember(Name = "extra")]
@@ -402,7 +402,7 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies a list of vendor-specific, or any other extended, information. 
-        /// The information is returned as a series of \"key=value\" strings so that it is easily extendable by Service Providers
+        /// The information is returned as a series of "key=value" strings so that it is easily extendable by Service Providers
         /// 
         /// </summary>
         [DataMember(Name = "extra")]

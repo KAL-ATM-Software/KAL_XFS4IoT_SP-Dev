@@ -14,8 +14,6 @@ namespace XFS4IoT.Completions
         /// <summary>
         /// Initialise any response object
         /// </summary>
-        /// <param name="ID">Unique ID each message class for serialize/deserialize object</param>
-        /// <param name="Name">Name of the response of the command required</param>
         /// <param name="RequestId">request id</param>
         /// <param name="Payload">payload contents</param>
         public Completion(int RequestId, T Payload) :

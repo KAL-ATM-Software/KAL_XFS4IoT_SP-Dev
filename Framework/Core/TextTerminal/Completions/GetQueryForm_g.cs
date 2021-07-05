@@ -26,7 +26,7 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, CharSupportEnum? CharSupport = null, List<string> Fields = null, string LanguageId = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, List<string> Fields = null, string LanguageId = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.FormName = FormName;
@@ -34,13 +34,12 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.Height = Height;
                 this.VersionMajor = VersionMajor;
                 this.VersionMinor = VersionMinor;
-                this.CharSupport = CharSupport;
                 this.Fields = Fields;
                 this.LanguageId = LanguageId;
             }
 
             /// <summary>
-            /// Specifies the null-terminated name of the form.
+            /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; private set; }
@@ -69,18 +68,6 @@ namespace XFS4IoT.TextTerminal.Completions
             /// </summary>
             [DataMember(Name = "versionMinor")]
             public string VersionMinor { get; private set; }
-
-            public enum CharSupportEnum
-            {
-                Ascii,
-                Unicode
-            }
-
-            /// <summary>
-            /// A single flag indicating whether the form is encoded in ascii or unicode.
-            /// </summary>
-            [DataMember(Name = "charSupport")]
-            public CharSupportEnum? CharSupport { get; private set; }
 
             /// <summary>
             /// Object to a list of the field names.

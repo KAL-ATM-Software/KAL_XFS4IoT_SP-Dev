@@ -13,6 +13,7 @@ using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoT.CardReader;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -53,6 +54,52 @@ namespace XFS4IoTFramework.CardReader
             if (readRawData.Payload.FluxInactive is not null)
                 fluxInactive = (bool)readRawData.Payload.FluxInactive;
 
+            if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track1) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track2) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track2) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track3) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track1Front) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1Front) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track1JIS) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1JIS) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track3JIS) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3JIS) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Watermark) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Watermark) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Ddi) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Ddi) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.BackImage) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.BackImage) ||
+                dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.FrontImage) &&
+                !CardReader.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.FrontImage))
+            {
+                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                             $"Specified data to read is not supported.");
+            }
+
+            if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.MemoryChip) &&
+                CardReader.CardReaderCapabilities.MemoryChipProtocols == CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.NotSupported)
+            {
+                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                             $"Memmory chip is not supported.");
+            }
+
+            if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Chip) &&
+                CardReader.CardReaderCapabilities.ChipProtocols == CardReaderCapabilitiesClass.ChipProtocolsEnum.NotSupported)
+            {
+                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                             $"Chip is not supported.");
+            }
+
+            if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Security) &&
+                CardReader.CardReaderCapabilities.SecurityType == CardReaderCapabilitiesClass.SecurityTypeEnum.NotSupported)
+            {
+                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                             $"Security module is not supported.");
+            }
+
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
             IAcceptCardEvents newEvents = new AcceptCardEvents((ReadRawDataEvents)events);
@@ -85,7 +132,7 @@ namespace XFS4IoTFramework.CardReader
 
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader
             // Latch Dip can latch a card and possibly report Lached or Present status, but if the application asks to read tracks, card won't be latched and the media status is not reliable 
-            if (Device.DeviceType == DeviceTypeEnum.Motor &&
+            if (CardReader.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Motor &&
                 (Device.MediaStatus != MediaStatusEnum.Present &&
                  Device.MediaStatus != MediaStatusEnum.NotSupported))
             {

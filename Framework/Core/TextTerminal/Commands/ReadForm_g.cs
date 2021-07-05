@@ -35,7 +35,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the null-terminated name of the form
+            /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; private set; }

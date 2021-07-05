@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoT.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -15,6 +17,19 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<EjectCardCompletion.PayloadData> HandleEjectCard(IEjectCardEvents events, EjectCardCommand ejectCard, CancellationToken cancel)
         {
+            if (ejectCard.Payload.EjectPosition is not null)
+            {
+                // check capability
+                if (ejectCard.Payload.EjectPosition == EjectCardCommand.PayloadData.EjectPositionEnum.ExitPosition &&
+                    !CardReader.CardReaderCapabilities.EjectPosition.HasFlag(CardReaderCapabilitiesClass.EjectPositionsEnum.Exit) ||
+                    ejectCard.Payload.EjectPosition == EjectCardCommand.PayloadData.EjectPositionEnum.TransportPosition &&
+                    !CardReader.CardReaderCapabilities.EjectPosition.HasFlag(CardReaderCapabilitiesClass.EjectPositionsEnum.Transport))
+                {
+                    return new EjectCardCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                               $"Supplied eject position is not supported. {ejectCard.Payload.EjectPosition}");
+                }
+            }
+
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EjectCardAsync()");
             var result = await Device.EjectCardAsync(new EjectCardRequest(ejectCard.Payload.EjectPosition),
                                                      cancel);

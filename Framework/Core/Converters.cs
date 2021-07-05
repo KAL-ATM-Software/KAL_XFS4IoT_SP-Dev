@@ -13,7 +13,7 @@ using System.Text.Json;
 namespace XFS4IoT
 {
     /// <summary>
-    /// Converter for base64 string <-> byte array
+    /// Converter for base64 string &lt;-&gt; byte array
     /// Adding attribute [JsonConverter(typeof(Base64Converter))] in the message property for target field to be converted
     /// </summary>
     internal class Base64Converter : JsonConverter<List<byte>>

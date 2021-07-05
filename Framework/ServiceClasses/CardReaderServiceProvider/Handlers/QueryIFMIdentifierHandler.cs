@@ -20,7 +20,7 @@ namespace XFS4IoTFramework.CardReader
             var result = Device.QueryIFMIdentifier();
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.QueryIFMIdentifier() -> {result.CompletionCode}");
 
-            /// XFS4IoT spec has a BUG, only one output structure allows for the IFM information and should be array. April 2021 preview
+            // XFS4IoT spec has a BUG, only one output structure allows for the IFM information and should be array. April 2021 preview
             if (result.IFMIdentifiers is not null && 
                 result.IFMIdentifiers.Count > 0 &&
                 result.IFMIdentifiers[0].IFMIdentifier.Count > 0)

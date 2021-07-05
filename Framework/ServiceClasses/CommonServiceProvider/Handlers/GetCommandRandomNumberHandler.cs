@@ -19,7 +19,7 @@ namespace XFS4IoTFramework.Common
             var result = await Device.GetCommandRandomNumber();
             Logger.Log(Constants.DeviceClass, $"CommonDev.GetCommandRandomNumber() -> {result.CompletionCode}");
 
-            /// TODO: validate returned token
+            // TODO: validate returned token
 
             return new GetCommandRandomNumberCompletion.PayloadData(result.CompletionCode,
                                                                     result.ErrorDescription,

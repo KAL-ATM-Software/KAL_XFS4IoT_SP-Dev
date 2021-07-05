@@ -54,6 +54,7 @@ namespace XFS4IoT.TextTerminal.Events
                 Required,
                 StaticOvwr,
                 Overflow,
+                NotFound,
                 NotRead,
                 NotWrite,
                 TypeNotSupported,
@@ -61,7 +62,15 @@ namespace XFS4IoT.TextTerminal.Events
             }
 
             /// <summary>
-            /// Specifies the type of failure.
+            /// Specifies the type of failure and can be one of the following:
+            /// * ```required``` - The specified field must be supplied by the application.
+            /// * ```staticOvwr``` - The specified field is static and thus cannot be overwritten by the application.
+            /// * ```overflow``` - The value supplied for the specified fields is too long.
+            /// * ```notFound``` - The specified field does not exist.
+            /// * ```notRead``` - The specified field is not an input field.
+            /// * ```notWrite``` - An attempt was made to write to an input field.
+            /// * ```typeNotSupported``` - The form field type is not supported with device.
+            /// * ```charSetForm``` - Service Provider does not support character set specified in form.
             /// </summary>
             [DataMember(Name = "failure")]
             public FailureEnum? Failure { get; private set; }

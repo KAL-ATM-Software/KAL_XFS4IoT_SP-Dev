@@ -33,7 +33,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies whether the lighting of the text terminal unit is switched on (TRUE) or off (FALSE).
+            /// Specifies whether the lighting of the text terminal unit is switched on (true) or off (false).
             /// </summary>
             [DataMember(Name = "mode")]
             public bool? Mode { get; private set; }

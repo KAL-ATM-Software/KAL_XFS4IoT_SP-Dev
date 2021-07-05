@@ -6,8 +6,10 @@
 
 using System.Threading.Tasks;
 using System.Threading;
+using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -15,6 +17,12 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<RetainCardCompletion.PayloadData> HandleRetainCard(IRetainCardEvents events, RetainCardCommand retainCard, CancellationToken cancel)
         {
+            if (CardReader.CardReaderCapabilities.MaxCardCount == 0)
+            {
+                return new RetainCardCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
+                                                            $"This device doesn't have a capability to retain card. {CardReader.CardReaderCapabilities.MaxCardCount}");
+            }
+
             Logger.Log(Constants.DeviceClass, "CardReaderDev.CaptureCardAsync()");
             var result = await Device.CaptureCardAsync(events,
                                                        cancel);

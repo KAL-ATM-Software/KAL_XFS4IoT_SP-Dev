@@ -1,31 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-      <SccProjectName>SAK</SccProjectName>
-      <SccProvider>SAK</SccProvider>
-      <SccAuxPath>SAK</SccAuxPath>
-      <SccLocalPath>SAK</SccLocalPath>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>XFS4IoT.SP.Framework.CoreTest</AssemblyName>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <IsPackable>false</IsPackable>
-        <AssemblyName>XFS4IoT.SP.Framework.CoreTest</AssemblyName>
-    </PropertyGroup>
+  <ItemGroup>
+    <None Remove="CoreTest.csproj.vspscc" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="CoreTest.csproj.vspscc" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
-        <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
-        <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\UnitTestCore\UnitTestCore.csproj" />
-      <ProjectReference Include="..\Core.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnitTestCore\UnitTestCore.csproj" />
+    <ProjectReference Include="..\Core.csproj" />
+  </ItemGroup>
 
 </Project>

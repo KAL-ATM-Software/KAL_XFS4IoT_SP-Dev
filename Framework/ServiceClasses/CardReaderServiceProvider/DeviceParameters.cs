@@ -455,6 +455,7 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// ChipIORequest
         /// </summary>
+        /// <param name="ChipProtocol"></param>
         /// <param name="ChipData">Binary data to be sent to the chip</param>
         public ChipIORequest(ChipProtocolEnum ChipProtocol, List<byte> ChipData)
         {
@@ -774,7 +775,7 @@ namespace XFS4IoTFramework.CardReader
 
         /// <summary>
         /// The BER-TLV formatted data for the terminal e.g. Terminal Type,
-        /// Transaction Category Code, Merchant Name & Location etc. Any terminal based data elements referenced
+        /// Transaction Category Code, Merchant Name &amp; Location etc. Any terminal based data elements referenced
         /// in the Payment Systems Specifications or EMVCo Contactless Payment Systems Specifications Books may be
         /// included.
         /// </summary>

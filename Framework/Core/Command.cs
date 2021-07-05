@@ -14,7 +14,6 @@ namespace XFS4IoT.Commands
         /// <summary>
         /// Initialise any command objects
         /// </summary>
-        /// <param name="Name">Name of the command to request operation to the device.</param>
         /// <param name="RequestId">request id</param>
         /// <param name="Payload">payload contents</param>
         public Command(int RequestId, T Payload) :

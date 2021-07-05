@@ -36,14 +36,14 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// String which specifies the alphanumeric keys on the Text Terminal Unit, e.g. \"12ABab\", to be active during the execution 
+            /// String which specifies the alphanumeric keys on the Text Terminal Unit, e.g. "12ABab", to be active during the execution 
             /// of the next [TextTerminal.ReadForm](#textterminal.readform) command. Devices having a shift key interpret this parameter differently from those that 
             /// do not have a shift key. For devices having a shift key, specifying only the upper case of a particular letter enables both 
             /// upper and lower case of that key, but the device converts lower case letters to upper case in the output parameter. To enable 
             /// both upper and lower case keys, and have both upper and lower case letters returned, specify both the upper and lower case of 
-            /// the letter (e.g. \"12AaBb\"). For devices not having a shift key, specifying either the upper case only (e.g. \"12AB\"), or specifying 
-            /// both the upper and lower case of a particular letter (e.g. \"12AaBb\"), enables that key and causes the device to return the upper 
-            /// case of the letter in the output parameter. For both types of device, specifying only lower case letters (e.g. \"12ab\") produces a 
+            /// the letter (e.g. "12AaBb"). For devices not having a shift key, specifying either the upper case only (e.g. "12AB"), or specifying 
+            /// both the upper and lower case of a particular letter (e.g. "12AaBb"), enables that key and causes the device to return the upper 
+            /// case of the letter in the output parameter. For both types of device, specifying only lower case letters (e.g. "12ab") produces a 
             /// key invalid error.
             /// </summary>
             [DataMember(Name = "activeKeys")]

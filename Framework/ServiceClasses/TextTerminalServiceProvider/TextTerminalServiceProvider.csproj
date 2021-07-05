@@ -1,15 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
+      <SccProjectName>SAK</SccProjectName>
+      <SccProvider>SAK</SccProvider>
+      <SccAuxPath>SAK</SccAuxPath>
+      <SccLocalPath>SAK</SccLocalPath>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>XFS4IoT.SP.Framework.TextTerminal</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>KAL.XFS4IoT.SP-Dev.Framework.TextTerminal</PackageId>
+    <Copyright>Copyright (C) KAL ATM Software GmbH, 2021</Copyright>
+    <Description>KAL.XFS4IoT.SP-Dev.Framework.TextTerminal Pre-Release</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,16 +29,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="TextTerminalServiceProvider.csproj.vspscc" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Server\Server.csproj" />
+    <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Handlers\*_g.cs">
+      <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
+    </Compile>
+    <Compile Update="*ServiceClass_g.cs">
       <DependentUpon>$([System.String]::Copy(%(Filename)).Replace('_g', '.cs'))</DependentUpon>
     </Compile>
   </ItemGroup>

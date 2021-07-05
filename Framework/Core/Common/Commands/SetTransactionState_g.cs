@@ -44,9 +44,9 @@ namespace XFS4IoT.Common.Commands
             /// <summary>
             /// Specifies the transaction state. Following values are possible:
             /// 
-            /// \"active\": A customer transaction is in progress.
+            /// "active": A customer transaction is in progress.
             /// 
-            /// \"inactive\": No customer transaction is in progress.
+            /// "inactive": No customer transaction is in progress.
             /// </summary>
             [DataMember(Name = "state")]
             public StateEnum? State { get; private set; }
@@ -60,7 +60,7 @@ namespace XFS4IoT.Common.Commands
 
             /// <summary>
             /// A list of vendor-specific, or any other extended, transaction information. The information is set as a series 
-            /// of \"key=value\" strings. Each string is null-terminated, with the final string terminating with two null characters. 
+            /// of "key=value" strings. Each string is null-terminated, with the final string terminating with two null characters. 
             /// An empty list may be indicated by either a NULL pointer or a pointer to two consecutive null characters
             /// </summary>
             [DataMember(Name = "extra")]
