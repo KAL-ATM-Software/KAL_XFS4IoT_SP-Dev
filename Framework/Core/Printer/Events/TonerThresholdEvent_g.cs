@@ -50,7 +50,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```out``` - The toner (or ink) in the printer is out.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
         }
 

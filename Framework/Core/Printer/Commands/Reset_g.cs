@@ -49,7 +49,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```expel``` - Throw the media out of the exit slot.
             /// </summary>
             [DataMember(Name = "mediaControl")]
-            public MediaControlEnum? MediaControl { get; private set; }
+            public MediaControlEnum? MediaControl { get; init; }
 
             /// <summary>
             /// Number of the retract bin the media is retracted to. This number has to be between one and the
@@ -58,7 +58,7 @@ namespace XFS4IoT.Printer.Commands
             /// *retract*.
             /// </summary>
             [DataMember(Name = "retractBinNumber")]
-            public int? RetractBinNumber { get; private set; }
+            public int? RetractBinNumber { get; init; }
 
         }
     }

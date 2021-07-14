@@ -39,7 +39,7 @@ namespace XFS4IoT.Dispenser.Events
             /// The number of sub-dispense operations into which the dispense operation has been divided.
             /// </summary>
             [DataMember(Name = "dispNum")]
-            public int? DispNum { get; private set; }
+            public int? DispNum { get; init; }
 
         }
 

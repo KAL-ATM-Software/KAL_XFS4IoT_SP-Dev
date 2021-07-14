@@ -45,7 +45,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// command) that can be used as a source.
                 /// </summary>
                 [DataMember(Name = "cashunitSource")]
-                public string CashunitSource { get; private set; }
+                public string CashunitSource { get; init; }
 
             }
 
@@ -53,7 +53,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Array of all suitable deplete sources. Empty if no suitable source was found.
             /// </summary>
             [DataMember(Name = "depleteSources")]
-            public List<DepleteSourcesClass> DepleteSources { get; private set; }
+            public List<DepleteSourcesClass> DepleteSources { get; init; }
 
         }
     }

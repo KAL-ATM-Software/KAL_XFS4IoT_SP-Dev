@@ -40,7 +40,7 @@ namespace XFS4IoT.Printer.Events
             /// Number of the retract bin for which the status has changed.
             /// </summary>
             [DataMember(Name = "binNumber")]
-            public int? BinNumber { get; private set; }
+            public int? BinNumber { get; init; }
 
             public enum StateEnum
             {
@@ -55,7 +55,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```removed``` - The retract bin has been removed.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
         }
 

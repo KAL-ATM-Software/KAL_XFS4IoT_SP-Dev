@@ -41,13 +41,13 @@ namespace XFS4IoT.CardReader.Commands
             /// application to manage this.
             /// </summary>
             [DataMember(Name = "chipProtocol")]
-            public string ChipProtocol { get; private set; }
+            public string ChipProtocol { get; init; }
 
             /// <summary>
             /// The Base64 encoded data to be sent to the chip.
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; private set; }
+            public string ChipData { get; init; }
 
         }
     }

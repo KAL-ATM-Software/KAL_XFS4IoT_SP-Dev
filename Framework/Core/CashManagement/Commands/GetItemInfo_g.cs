@@ -57,7 +57,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// parameter.
             /// </summary>
             [DataMember(Name = "level")]
-            public LevelEnum? Level { get; private set; }
+            public LevelEnum? Level { get; init; }
 
             /// <summary>
             /// Specifies the index for the item information required. If no index is provided, all items of the specified 
@@ -65,7 +65,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// ```levelAll```, this property will be ignored.
             /// </summary>
             [DataMember(Name = "index")]
-            public int? Index { get; private set; }
+            public int? Index { get; init; }
 
             [DataContract]
             public sealed class ItemInfoTypeClass
@@ -81,19 +81,19 @@ namespace XFS4IoT.CashManagement.Commands
                 /// Serial number of the item.
                 /// </summary>
                 [DataMember(Name = "serialNumber")]
-                public bool? SerialNumber { get; private set; }
+                public bool? SerialNumber { get; init; }
 
                 /// <summary>
                 /// Signature of the item.
                 /// </summary>
                 [DataMember(Name = "signature")]
-                public bool? Signature { get; private set; }
+                public bool? Signature { get; init; }
 
                 /// <summary>
                 /// Image file of the item.
                 /// </summary>
                 [DataMember(Name = "imageFile")]
-                public bool? ImageFile { get; private set; }
+                public bool? ImageFile { get; init; }
 
             }
 
@@ -102,7 +102,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// all available information will be returned.
             /// </summary>
             [DataMember(Name = "itemInfoType")]
-            public ItemInfoTypeClass ItemInfoType { get; private set; }
+            public ItemInfoTypeClass ItemInfoType { get; init; }
 
         }
     }

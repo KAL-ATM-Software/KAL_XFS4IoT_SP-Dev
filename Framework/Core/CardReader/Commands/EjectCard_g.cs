@@ -51,7 +51,7 @@ namespace XFS4IoT.CardReader.Commands
             ///   to present the card to the user for removal.
             /// </summary>
             [DataMember(Name = "ejectPosition")]
-            public EjectPositionEnum? EjectPosition { get; private set; }
+            public EjectPositionEnum? EjectPosition { get; init; }
 
         }
     }

@@ -42,7 +42,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```resolutionNotSupported``` - The specified resolution is not supported by the display.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

@@ -40,7 +40,7 @@ namespace XFS4IoT.TextTerminal
         /// * ```na``` - The keyboard is not available.
         /// </summary>
         [DataMember(Name = "keyboard")]
-        public KeyboardEnum? Keyboard { get; private set; }
+        public KeyboardEnum? Keyboard { get; init; }
 
         public enum KeyLockEnum
         {
@@ -56,19 +56,21 @@ namespace XFS4IoT.TextTerminal
         /// * ```na``` - The keyboard lock switch is not available.
         /// </summary>
         [DataMember(Name = "keyLock")]
-        public KeyLockEnum? KeyLock { get; private set; }
+        public KeyLockEnum? KeyLock { get; init; }
 
         /// <summary>
         /// Specifies the horizontal size of the display of the text terminal unit.
         /// </summary>
         [DataMember(Name = "displaySizeX")]
-        public int? DisplaySizeX { get; private set; }
+        [DataTypes(Minimum = 0)]
+        public int? DisplaySizeX { get; init; }
 
         /// <summary>
         /// Specifies the vertical size of the display of the text terminal unit.
         /// </summary>
         [DataMember(Name = "displaySizeY")]
-        public int? DisplaySizeY { get; private set; }
+        [DataTypes(Minimum = 0)]
+        public int? DisplaySizeY { get; init; }
 
         [DataContract]
         public sealed class LedsClass
@@ -95,91 +97,91 @@ namespace XFS4IoT.TextTerminal
             /// Type A
             /// </summary>
             [DataMember(Name = "na")]
-            public bool? Na { get; private set; }
+            public bool? Na { get; init; }
 
             /// <summary>
             /// The LED is turned off.
             /// Type A
             /// </summary>
             [DataMember(Name = "off")]
-            public bool? Off { get; private set; }
+            public bool? Off { get; init; }
 
             /// <summary>
             /// The LED is blinking.
             /// Type B
             /// </summary>
             [DataMember(Name = "slowFlash")]
-            public bool? SlowFlash { get; private set; }
+            public bool? SlowFlash { get; init; }
 
             /// <summary>
             /// The LED is blinking medium frequency.
             /// Type B
             /// </summary>
             [DataMember(Name = "mediumFlash")]
-            public bool? MediumFlash { get; private set; }
+            public bool? MediumFlash { get; init; }
 
             /// <summary>
             /// The LED is blinking quickly.
             /// Type B
             /// </summary>
             [DataMember(Name = "quickFlash")]
-            public bool? QuickFlash { get; private set; }
+            public bool? QuickFlash { get; init; }
 
             /// <summary>
             /// The LED is turned on continuous(steady).
             /// Type B
             /// </summary>
             [DataMember(Name = "continuous")]
-            public bool? Continuous { get; private set; }
+            public bool? Continuous { get; init; }
 
             /// <summary>
             /// The LED is red.
             /// Type C
             /// </summary>
             [DataMember(Name = "red")]
-            public bool? Red { get; private set; }
+            public bool? Red { get; init; }
 
             /// <summary>
             /// The LED is green.
             /// Type C
             /// </summary>
             [DataMember(Name = "green")]
-            public bool? Green { get; private set; }
+            public bool? Green { get; init; }
 
             /// <summary>
             /// The LED is yellow.
             /// Type C
             /// </summary>
             [DataMember(Name = "yellow")]
-            public bool? Yellow { get; private set; }
+            public bool? Yellow { get; init; }
 
             /// <summary>
             /// The LED is blue.
             /// Type C
             /// </summary>
             [DataMember(Name = "blue")]
-            public bool? Blue { get; private set; }
+            public bool? Blue { get; init; }
 
             /// <summary>
             /// The LED is cyan.
             /// Type C
             /// </summary>
             [DataMember(Name = "cyan")]
-            public bool? Cyan { get; private set; }
+            public bool? Cyan { get; init; }
 
             /// <summary>
             /// The LED is magenta.
             /// Type C
             /// </summary>
             [DataMember(Name = "magenta")]
-            public bool? Magenta { get; private set; }
+            public bool? Magenta { get; init; }
 
             /// <summary>
             /// The LED is white.
             /// Type C
             /// </summary>
             [DataMember(Name = "white")]
-            public bool? White { get; private set; }
+            public bool? White { get; init; }
 
         }
 
@@ -189,7 +191,7 @@ namespace XFS4IoT.TextTerminal
         /// and optionally one type C
         /// </summary>
         [DataMember(Name = "leds")]
-        public List<LedsClass> Leds { get; private set; }
+        public List<LedsClass> Leds { get; init; }
 
     }
 
@@ -207,13 +209,15 @@ namespace XFS4IoT.TextTerminal
         /// TSpecifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
         /// </summary>
         [DataMember(Name = "sizeX")]
-        public int? SizeX { get; private set; }
+        [DataTypes(Minimum = 0)]
+        public int? SizeX { get; init; }
 
         /// <summary>
         /// Specifies the vertical size of the display of the text terminal unit (the number of rows that can be displayed).
         /// </summary>
         [DataMember(Name = "sizeY")]
-        public int? SizeY { get; private set; }
+        [DataTypes(Minimum = 0)]
+        public int? SizeY { get; init; }
 
     }
 
@@ -244,7 +248,7 @@ namespace XFS4IoT.TextTerminal
         /// * ```removable``` - The text terminal unit is a removable device.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeEnum? Type { get; private set; }
+        public TypeEnum? Type { get; init; }
 
         /// <summary>
         /// Array specifies the resolutions supported by the physical display device. (For the definition of Resolution see 
@@ -253,32 +257,32 @@ namespace XFS4IoT.TextTerminal
         /// is initialized or reset through the [TextTerminal.Reset](#textterminal.reset) command.
         /// </summary>
         [DataMember(Name = "resolutions")]
-        public List<ResolutionClass> Resolutions { get; private set; }
+        public List<ResolutionClass> Resolutions { get; init; }
 
         /// <summary>
         /// Specifies whether the text terminal unit has a key lock switch.
         /// </summary>
         [DataMember(Name = "keyLock")]
-        public bool? KeyLock { get; private set; }
+        public bool? KeyLock { get; init; }
 
         /// <summary>
         /// Specifies whether the text terminal unit has a display light that can be switched ON and OFF with the 
         /// [TextTerminal.DispLight](#textterminal.displight) command.
         /// </summary>
         [DataMember(Name = "displayLight")]
-        public bool? DisplayLight { get; private set; }
+        public bool? DisplayLight { get; init; }
 
         /// <summary>
         /// Specifies whether the text terminal unit display supports a cursor.
         /// </summary>
         [DataMember(Name = "cursor")]
-        public bool? Cursor { get; private set; }
+        public bool? Cursor { get; init; }
 
         /// <summary>
         /// Specifies whether the text terminal unit service supports forms oriented input and output.
         /// </summary>
         [DataMember(Name = "forms")]
-        public bool? Forms { get; private set; }
+        public bool? Forms { get; init; }
 
         [DataContract]
         public sealed class LedsClass
@@ -304,84 +308,84 @@ namespace XFS4IoT.TextTerminal
             /// Type:(A)
             /// </summary>
             [DataMember(Name = "off")]
-            public bool? Off { get; private set; }
+            public bool? Off { get; init; }
 
             /// <summary>
             /// The LED can be blinking. 
             /// Type:(B)
             /// </summary>
             [DataMember(Name = "slowFlash")]
-            public bool? SlowFlash { get; private set; }
+            public bool? SlowFlash { get; init; }
 
             /// <summary>
             /// The LED can be blinking medium frequency. 
             /// Type:(B)
             /// </summary>
             [DataMember(Name = "mediumFlash")]
-            public bool? MediumFlash { get; private set; }
+            public bool? MediumFlash { get; init; }
 
             /// <summary>
             /// The LED can be blinking quickly. 
             /// Type:(B)
             /// </summary>
             [DataMember(Name = "quickFlash")]
-            public bool? QuickFlash { get; private set; }
+            public bool? QuickFlash { get; init; }
 
             /// <summary>
             /// The LED can be turned on continuous(steady). 
             /// Type:(B)
             /// </summary>
             [DataMember(Name = "continuous")]
-            public bool? Continuous { get; private set; }
+            public bool? Continuous { get; init; }
 
             /// <summary>
             /// The LED can be red. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "red")]
-            public bool? Red { get; private set; }
+            public bool? Red { get; init; }
 
             /// <summary>
             /// The LED can be green. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "green")]
-            public bool? Green { get; private set; }
+            public bool? Green { get; init; }
 
             /// <summary>
             /// The LED can be yellow. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "yellow")]
-            public bool? Yellow { get; private set; }
+            public bool? Yellow { get; init; }
 
             /// <summary>
             /// The LED can be blue. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "blue")]
-            public bool? Blue { get; private set; }
+            public bool? Blue { get; init; }
 
             /// <summary>
             /// The LED can be cyan. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "cyan")]
-            public bool? Cyan { get; private set; }
+            public bool? Cyan { get; init; }
 
             /// <summary>
             /// The LED can be magenta. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "magenta")]
-            public bool? Magenta { get; private set; }
+            public bool? Magenta { get; init; }
 
             /// <summary>
             /// The LED can be white. 
             /// Type:(C)
             /// </summary>
             [DataMember(Name = "white")]
-            public bool? White { get; private set; }
+            public bool? White { get; init; }
 
         }
 
@@ -392,7 +396,7 @@ namespace XFS4IoT.TextTerminal
         /// If the LED only supports one color then no value of type C is returned.
         /// </summary>
         [DataMember(Name = "leds")]
-        public List<LedsClass> Leds { get; private set; }
+        public List<LedsClass> Leds { get; init; }
 
     }
 
@@ -424,7 +428,7 @@ namespace XFS4IoT.TextTerminal
         ///   * ```password``` - A password field, input is echoed as '*'.  
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeEnum? Type { get; private set; }
+        public TypeEnum? Type { get; init; }
 
         public enum ClassEnum
         {
@@ -440,7 +444,7 @@ namespace XFS4IoT.TextTerminal
         /// * ```required``` - The field data must be set by the application.
         /// </summary>
         [DataMember(Name = "class")]
-        public ClassEnum? Class { get; private set; }
+        public ClassEnum? Class { get; init; }
 
         [DataContract]
         public sealed class AccessClass
@@ -455,13 +459,13 @@ namespace XFS4IoT.TextTerminal
             /// The Field is used for input from the physical device.
             /// </summary>
             [DataMember(Name = "read")]
-            public string Read { get; private set; }
+            public string Read { get; init; }
 
             /// <summary>
             /// The Field is used for output to the physical device.
             /// </summary>
             [DataMember(Name = "write")]
-            public string Write { get; private set; }
+            public string Write { get; init; }
 
         }
 
@@ -469,7 +473,7 @@ namespace XFS4IoT.TextTerminal
         /// Specifies whether the field is to be used for input, output or both.
         /// </summary>
         [DataMember(Name = "access")]
-        public AccessClass Access { get; private set; }
+        public AccessClass Access { get; init; }
 
         public enum OverflowEnum
         {
@@ -485,19 +489,19 @@ namespace XFS4IoT.TextTerminal
         /// * ```overwrite``` - Print the field data beyond the extents of the field boundary.
         /// </summary>
         [DataMember(Name = "overflow")]
-        public OverflowEnum? Overflow { get; private set; }
+        public OverflowEnum? Overflow { get; init; }
 
         /// <summary>
         /// Format string as defined in the form for this field.
         /// </summary>
         [DataMember(Name = "format")]
-        public string Format { get; private set; }
+        public string Format { get; init; }
 
         /// <summary>
         /// Specifies the language identifier for the field.
         /// </summary>
         [DataMember(Name = "languageId")]
-        public string LanguageId { get; private set; }
+        public string LanguageId { get; init; }
 
     }
 

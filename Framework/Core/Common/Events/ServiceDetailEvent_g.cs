@@ -29,18 +29,18 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(string Vendorname = null, List<ServicesClass> Services = null)
+            public PayloadData(string VendorName = null, List<ServicesClass> Services = null)
                 : base()
             {
-                this.Vendorname = Vendorname;
+                this.VendorName = VendorName;
                 this.Services = Services;
             }
 
             /// <summary>
             /// Freeform string naming the hardware vendor
             /// </summary>
-            [DataMember(Name = "vendorname")]
-            public string Vendorname { get; private set; }
+            [DataMember(Name = "vendorName")]
+            public string VendorName { get; init; }
 
             [DataContract]
             public sealed class ServicesClass
@@ -54,13 +54,13 @@ namespace XFS4IoT.Common.Events
                 /// The URI which can be used to contact this individual service
                 /// </summary>
                 [DataMember(Name = "serviceURI")]
-                public string ServiceURI { get; private set; }
+                public string ServiceURI { get; init; }
 
             }
 
 
             [DataMember(Name = "services")]
-            public List<ServicesClass> Services { get; private set; }
+            public List<ServicesClass> Services { get; init; }
 
         }
 

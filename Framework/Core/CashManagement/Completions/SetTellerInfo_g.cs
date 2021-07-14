@@ -49,7 +49,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// * ```exchangeActive``` - The target teller is currently in the middle of an exchange operation.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

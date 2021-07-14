@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var capabilitiesCmd = command.IsA<CapabilitiesCommand>($"Invalid parameter in the Capabilities Handle method. {nameof(CapabilitiesCommand)}");
-            capabilitiesCmd.Headers.RequestId.HasValue.IsTrue();
+            capabilitiesCmd.Header.RequestId.HasValue.IsTrue();
 
-            ICapabilitiesEvents events = new CapabilitiesEvents(Connection, capabilitiesCmd.Headers.RequestId.Value);
+            ICapabilitiesEvents events = new CapabilitiesEvents(Connection, capabilitiesCmd.Header.RequestId.Value);
 
             var result = await HandleCapabilities(events, capabilitiesCmd, cancel);
-            await Connection.SendMessageAsync(new CapabilitiesCompletion(capabilitiesCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CapabilitiesCompletion(capabilitiesCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var capabilitiescommand = command.IsA<CapabilitiesCommand>();
-            capabilitiescommand.Headers.RequestId.HasValue.IsTrue();
+            capabilitiescommand.Header.RequestId.HasValue.IsTrue();
 
             CapabilitiesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => CapabilitiesCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new CapabilitiesCompletion(capabilitiescommand.Headers.RequestId.Value, new CapabilitiesCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CapabilitiesCompletion(capabilitiescommand.Header.RequestId.Value, new CapabilitiesCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

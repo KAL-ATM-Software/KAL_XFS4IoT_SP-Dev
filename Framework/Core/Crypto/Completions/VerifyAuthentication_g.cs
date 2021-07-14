@@ -61,13 +61,13 @@ namespace XFS4IoT.Crypto.Completions
             /// not compatible with the encryption operation required.
             /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip transaction
             /// active. 
-            /// * ```algorithmNotSupported``` - The algorithm specified by bAlgorithm is not supported.
+            /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported.
             /// * ```macInvalid``` - The MAC verification failed.
             /// * ```signatureInvalid``` - The signature verification failed.
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

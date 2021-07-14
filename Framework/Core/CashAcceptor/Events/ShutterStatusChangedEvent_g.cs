@@ -57,36 +57,36 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies one of the input or output positions whose shutter status has changed. Following values are possible:
             /// 
-            /// \"inLeft\": Left input position.
+            /// "inLeft": Left input position.
             /// 
-            /// \"inRight\": Right input position.
+            /// "inRight": Right input position.
             /// 
-            /// \"inCenter\": Center input position.
+            /// "inCenter": Center input position.
             /// 
-            /// \"inTop\": Top input position.
+            /// "inTop": Top input position.
             /// 
-            /// \"inBottom\": Bottom input position.
+            /// "inBottom": Bottom input position.
             /// 
-            /// \"inFront\": Front input position.
+            /// "inFront": Front input position.
             /// 
-            /// \"inRear\": Rear input position.
+            /// "inRear": Rear input position.
             /// 
-            /// \"outLeft\": Left output position.
+            /// "outLeft": Left output position.
             /// 
-            /// \"outRight\": Right output position.
+            /// "outRight": Right output position.
             /// 
-            /// \"outCenter\": Center output position.
+            /// "outCenter": Center output position.
             /// 
-            /// \"outTop\": Top output position.
+            /// "outTop": Top output position.
             /// 
-            /// \"outBottom\": Bottom output position.
+            /// "outBottom": Bottom output position.
             /// 
-            /// \"outFront\": Front output position.
+            /// "outFront": Front output position.
             /// 
-            /// \"outRear\": Rear output position.
+            /// "outRear": Rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             public enum ShutterEnum
             {
@@ -99,16 +99,16 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies the new state of the shutter. Following values are possible:
             /// 
-            /// \"closed\": The shutter is closed.
+            /// "closed": The shutter is closed.
             /// 
-            /// \"open\": The shutter is opened.
+            /// "open": The shutter is opened.
             /// 
-            /// \"jammed\": The shutter is jammed.
+            /// "jammed": The shutter is jammed.
             /// 
-            /// \"unknown\": Due to a hardware error or other condition, the state of the shutter cannot be determined.
+            /// "unknown": Due to a hardware error or other condition, the state of the shutter cannot be determined.
             /// </summary>
             [DataMember(Name = "shutter")]
-            public ShutterEnum? Shutter { get; private set; }
+            public ShutterEnum? Shutter { get; init; }
 
         }
 

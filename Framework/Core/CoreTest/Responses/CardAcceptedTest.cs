@@ -45,7 +45,7 @@ namespace XFS4IoTCoreTest.Response
 
             string res = response.Serialise();
 
-            AreEqual(@"{""payload"":{""track1"":{""status"":""ok"",""data"":""123456789""},""track2"":{""status"":""dataMissing"",""data"":""123456789""},""track3"":{""status"":""dataInvalid"",""data"":""123456789""},""completionCode"":""success"",""errorDescription"":""OK""},""headers"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}", res);
+            AreEqual(@"{""payload"":{""track1"":{""status"":""ok"",""data"":""123456789""},""track2"":{""status"":""dataMissing"",""data"":""123456789""},""track3"":{""status"":""dataInvalid"",""data"":""123456789""},""completionCode"":""success"",""errorDescription"":""OK""},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}", res);
         }
     }
 }

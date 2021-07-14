@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getFormListCmd = command.IsA<GetFormListCommand>($"Invalid parameter in the GetFormList Handle method. {nameof(GetFormListCommand)}");
-            getFormListCmd.Headers.RequestId.HasValue.IsTrue();
+            getFormListCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetFormListEvents events = new GetFormListEvents(Connection, getFormListCmd.Headers.RequestId.Value);
+            IGetFormListEvents events = new GetFormListEvents(Connection, getFormListCmd.Header.RequestId.Value);
 
             var result = await HandleGetFormList(events, getFormListCmd, cancel);
-            await Connection.SendMessageAsync(new GetFormListCompletion(getFormListCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetFormListCompletion(getFormListCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getFormListcommand = command.IsA<GetFormListCommand>();
-            getFormListcommand.Headers.RequestId.HasValue.IsTrue();
+            getFormListcommand.Header.RequestId.HasValue.IsTrue();
 
             GetFormListCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => GetFormListCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetFormListCompletion(getFormListcommand.Headers.RequestId.Value, new GetFormListCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetFormListCompletion(getFormListcommand.Header.RequestId.Value, new GetFormListCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

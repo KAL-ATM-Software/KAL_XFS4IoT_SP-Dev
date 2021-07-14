@@ -32,5 +32,10 @@ namespace XFS4IoTServer
         /// Stores CardReader interface capabilites internally
         /// </summary>
         public CardReaderCapabilitiesClass CardReaderCapabilities { get; set; }
+
+        /// <summary>
+        /// Stores TextTerminal interface capabilites internally
+        /// </summary>
+        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get; set; }
     }
 }

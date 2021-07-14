@@ -47,7 +47,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```unsupportedPosition``` - The specified output position is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataContract]
             public sealed class DenominationClass
@@ -60,11 +60,11 @@ namespace XFS4IoT.Dispenser.Completions
                 }
 
                 /// <summary>
-                /// \"List of currency and amount combinations for denomination. There will be one entry for each currency
-                /// in the denomination. The property name is the currency name in ISO format (e.g. \"EUR\").
+                /// "List of currency and amount combinations for denomination. There will be one entry for each currency
+                /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
                 /// </summary>
                 [DataMember(Name = "currencies")]
-                public Dictionary<string, double> Currencies { get; private set; }
+                public Dictionary<string, double> Currencies { get; init; }
 
                 /// <summary>
                 /// This list specifies the number of items to take from the cash units. 
@@ -74,13 +74,13 @@ namespace XFS4IoT.Dispenser.Completions
                 /// If the application does not wish to specify a denomination, it should omit the values property.
                 /// </summary>
                 [DataMember(Name = "values")]
-                public Dictionary<string, int> Values { get; private set; }
+                public Dictionary<string, int> Values { get; init; }
 
                 /// <summary>
                 /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
                 /// </summary>
                 [DataMember(Name = "cashBox")]
-                public int? CashBox { get; private set; }
+                public int? CashBox { get; init; }
 
             }
 
@@ -93,7 +93,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// zero and the *currencyID* field will be omitted.
             /// </summary>
             [DataMember(Name = "denomination")]
-            public DenominationClass Denomination { get; private set; }
+            public DenominationClass Denomination { get; init; }
 
             public enum PresentStateEnum
             {
@@ -110,20 +110,20 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```unknown``` - It is not known if the customer had access to the items.
             /// </summary>
             [DataMember(Name = "presentState")]
-            public PresentStateEnum? PresentState { get; private set; }
+            public PresentStateEnum? PresentState { get; init; }
 
             /// <summary>
             /// Pointer to a list of vendor-specific, or any other extended, information. 
             /// The information is returned as a series of “key=value” strings so that it is easily extensible by Service Providers.
             /// </summary>
             [DataMember(Name = "extra")]
-            public List<string> Extra { get; private set; }
+            public List<string> Extra { get; init; }
 
             /// <summary>
             /// $ref: ../Docs/PresentStatusToken.md
             /// </summary>
             [DataMember(Name = "token")]
-            public string Token { get; private set; }
+            public string Token { get; init; }
 
         }
     }

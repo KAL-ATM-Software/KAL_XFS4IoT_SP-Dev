@@ -53,35 +53,35 @@ namespace XFS4IoT.CardReader.Completions
             ///   [CardReader.EMVClessConfigure](#cardreader.emvclessconfigure) command.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Contains the chip returned data formatted in as track 1. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track1")]
-            public EMVClessTxOutputDataClass Track1 { get; private set; }
+            public EMVClessTxOutputDataClass Track1 { get; init; }
 
             /// <summary>
             /// Contains the chip returned data formatted in as track 2. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track2")]
-            public EMVClessTxOutputDataClass Track2 { get; private set; }
+            public EMVClessTxOutputDataClass Track2 { get; init; }
 
             /// <summary>
             /// Contains the chip returned data formatted in as track 3. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track3")]
-            public EMVClessTxOutputDataClass Track3 { get; private set; }
+            public EMVClessTxOutputDataClass Track3 { get; init; }
 
             /// <summary>
             /// Contains the BER-TLV formatted data read from the chip. This value is set after the contactless
             /// transaction has been completed with EMV mode or mag-stripe mode.
             /// </summary>
             [DataMember(Name = "chip")]
-            public EMVClessTxOutputDataClass Chip { get; private set; }
+            public EMVClessTxOutputDataClass Chip { get; init; }
 
         }
     }

@@ -62,7 +62,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```other``` - The media was rejected due to a reason other than those listed above.
             /// </summary>
             [DataMember(Name = "reason")]
-            public ReasonEnum? Reason { get; private set; }
+            public ReasonEnum? Reason { get; init; }
 
         }
 

@@ -50,13 +50,13 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// The number of the retract bin where the media has actually been deposited.
             /// </summary>
             [DataMember(Name = "binNumber")]
-            public int? BinNumber { get; private set; }
+            public int? BinNumber { get; init; }
 
         }
     }

@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(MediaEnum? Media = null, PaperClass Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, List<RetractBinsClass> RetractBins = null, int? MediaOnStacker = null, PaperTypeClass PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
+        public StatusClass(MediaEnum? Media = null, Dictionary<string, PaperSupplyEnum> Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, List<RetractBinsClass> RetractBins = null, int? MediaOnStacker = null, Dictionary<string, PaperTypeEnum> PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
         {
             this.Media = Media;
             this.Paper = Paper;
@@ -76,58 +76,7 @@ namespace XFS4IoT.Printer
         /// * ```retracted``` - Media was retracted during the last command which controlled media.
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaEnum? Media { get; private set; }
-
-        [DataContract]
-        public sealed class PaperClass
-        {
-            public PaperClass(PaperSupplyEnum? Upper = null, PaperSupplyEnum? Lower = null, PaperSupplyEnum? External = null, PaperSupplyEnum? Aux = null, PaperSupplyEnum? Aux2 = null, PaperSupplyEnum? Park = null)
-            {
-                this.Upper = Upper;
-                this.Lower = Lower;
-                this.External = External;
-                this.Aux = Aux;
-                this.Aux2 = Aux2;
-                this.Park = Park;
-            }
-
-            /// <summary>
-            /// The state of the upper paper supply.
-            /// </summary>
-            [DataMember(Name = "upper")]
-            public PaperSupplyEnum? Upper { get; private set; }
-
-            /// <summary>
-            /// The state of the lower paper supply.
-            /// </summary>
-            [DataMember(Name = "lower")]
-            public PaperSupplyEnum? Lower { get; private set; }
-
-            /// <summary>
-            /// The state of the external paper supply.
-            /// </summary>
-            [DataMember(Name = "external")]
-            public PaperSupplyEnum? External { get; private set; }
-
-            /// <summary>
-            /// The state of the auxiliary paper supply.
-            /// </summary>
-            [DataMember(Name = "aux")]
-            public PaperSupplyEnum? Aux { get; private set; }
-
-            /// <summary>
-            /// The state of the second auxiliary paper supply.
-            /// </summary>
-            [DataMember(Name = "aux2")]
-            public PaperSupplyEnum? Aux2 { get; private set; }
-
-            /// <summary>
-            /// The state of the parking station paper supply.
-            /// </summary>
-            [DataMember(Name = "park")]
-            public PaperSupplyEnum? Park { get; private set; }
-
-        }
+        public MediaEnum? Media { get; init; }
 
         /// <summary>
         /// Specifies the state of paper supplies as one of the following values:
@@ -140,7 +89,7 @@ namespace XFS4IoT.Printer
         /// * ```jammed``` - The paper supply is jammed.
         /// </summary>
         [DataMember(Name = "paper")]
-        public PaperClass Paper { get; private set; }
+        public Dictionary<string, PaperSupplyEnum> Paper { get; init; }
 
         public enum TonerEnum
         {
@@ -163,7 +112,7 @@ namespace XFS4IoT.Printer
         ///   more.
         /// </summary>
         [DataMember(Name = "toner")]
-        public TonerEnum? Toner { get; private set; }
+        public TonerEnum? Toner { get; init; }
 
         public enum InkEnum
         {
@@ -184,7 +133,7 @@ namespace XFS4IoT.Printer
         /// * ```out``` - Ink supply in device is empty.
         /// </summary>
         [DataMember(Name = "ink")]
-        public InkEnum? Ink { get; private set; }
+        public InkEnum? Ink { get; init; }
 
         public enum LampEnum
         {
@@ -205,7 +154,7 @@ namespace XFS4IoT.Printer
         /// * ```inop``` - The lamp is inoperative.
         /// </summary>
         [DataMember(Name = "lamp")]
-        public LampEnum? Lamp { get; private set; }
+        public LampEnum? Lamp { get; init; }
 
         [DataContract]
         public sealed class RetractBinsClass
@@ -235,14 +184,14 @@ namespace XFS4IoT.Printer
             /// * ```missing``` - The retract bin is missing.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
             /// <summary>
             /// The number of media retracted to this bin. This value is persistent; it may be reset to zero by the
             /// [Printer.ResetCount](#printer.resetcount) command.
             /// </summary>
             [DataMember(Name = "count")]
-            public int? Count { get; private set; }
+            public int? Count { get; init; }
 
         }
 
@@ -250,64 +199,13 @@ namespace XFS4IoT.Printer
         /// An array of bin state objects. If no retain bins are supported, the array will be empty.
         /// </summary>
         [DataMember(Name = "retractBins")]
-        public List<RetractBinsClass> RetractBins { get; private set; }
+        public List<RetractBinsClass> RetractBins { get; init; }
 
         /// <summary>
         /// The number of media on stacker; applicable only to printers with stacking capability.
         /// </summary>
         [DataMember(Name = "mediaOnStacker")]
-        public int? MediaOnStacker { get; private set; }
-
-        [DataContract]
-        public sealed class PaperTypeClass
-        {
-            public PaperTypeClass(PaperTypeEnum? Upper = null, PaperTypeEnum? Lower = null, PaperTypeEnum? External = null, PaperTypeEnum? Aux = null, PaperTypeEnum? Aux2 = null, PaperTypeEnum? Park = null)
-            {
-                this.Upper = Upper;
-                this.Lower = Lower;
-                this.External = External;
-                this.Aux = Aux;
-                this.Aux2 = Aux2;
-                this.Park = Park;
-            }
-
-            /// <summary>
-            /// The upper paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "upper")]
-            public PaperTypeEnum? Upper { get; private set; }
-
-            /// <summary>
-            /// The lower paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "lower")]
-            public PaperTypeEnum? Lower { get; private set; }
-
-            /// <summary>
-            /// The external paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "external")]
-            public PaperTypeEnum? External { get; private set; }
-
-            /// <summary>
-            /// The auxililliary paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "aux")]
-            public PaperTypeEnum? Aux { get; private set; }
-
-            /// <summary>
-            /// The second auxililliary paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "aux2")]
-            public PaperTypeEnum? Aux2 { get; private set; }
-
-            /// <summary>
-            /// The parking station paper supply paper type.
-            /// </summary>
-            [DataMember(Name = "park")]
-            public PaperTypeEnum? Park { get; private set; }
-
-        }
+        public int? MediaOnStacker { get; init; }
 
         /// <summary>
         /// Specifies the type of paper loaded as one of the following:
@@ -318,7 +216,7 @@ namespace XFS4IoT.Printer
         /// * ```dual``` - The paper can be printed on both sides.
         /// </summary>
         [DataMember(Name = "paperType")]
-        public PaperTypeClass PaperType { get; private set; }
+        public Dictionary<string, PaperTypeEnum> PaperType { get; init; }
 
         public enum BlackMarkModeEnum
         {
@@ -337,7 +235,7 @@ namespace XFS4IoT.Printer
         /// * ```off``` - Black mark detection and associated functionality is switched off.
         /// </summary>
         [DataMember(Name = "blackMarkMode")]
-        public BlackMarkModeEnum? BlackMarkMode { get; private set; }
+        public BlackMarkModeEnum? BlackMarkMode { get; init; }
 
     }
 
@@ -391,31 +289,31 @@ namespace XFS4IoT.Printer
             /// The device is a receipt printer.
             /// </summary>
             [DataMember(Name = "receipt")]
-            public bool? Receipt { get; private set; }
+            public bool? Receipt { get; init; }
 
             /// <summary>
             /// The device is a passbook printer.
             /// </summary>
             [DataMember(Name = "passbook")]
-            public bool? Passbook { get; private set; }
+            public bool? Passbook { get; init; }
 
             /// <summary>
             /// The device is a journal printer.
             /// </summary>
             [DataMember(Name = "journal")]
-            public bool? Journal { get; private set; }
+            public bool? Journal { get; init; }
 
             /// <summary>
             /// The device is a document printer.
             /// </summary>
             [DataMember(Name = "document")]
-            public bool? Document { get; private set; }
+            public bool? Document { get; init; }
 
             /// <summary>
             /// The device is a scanner that may have printing capabilities.
             /// </summary>
             [DataMember(Name = "scanner")]
-            public bool? Scanner { get; private set; }
+            public bool? Scanner { get; init; }
 
         }
 
@@ -423,7 +321,7 @@ namespace XFS4IoT.Printer
         /// Specifies the type(s) of the physical device driven by the logical service.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; private set; }
+        public TypeClass Type { get; init; }
 
         [DataContract]
         public sealed class ResolutionClass
@@ -440,25 +338,25 @@ namespace XFS4IoT.Printer
             /// The device can print low resolution.
             /// </summary>
             [DataMember(Name = "low")]
-            public bool? Low { get; private set; }
+            public bool? Low { get; init; }
 
             /// <summary>
             /// The device can print medium resolution.
             /// </summary>
             [DataMember(Name = "medium")]
-            public bool? Medium { get; private set; }
+            public bool? Medium { get; init; }
 
             /// <summary>
             /// The device can print high resolution.
             /// </summary>
             [DataMember(Name = "high")]
-            public bool? High { get; private set; }
+            public bool? High { get; init; }
 
             /// <summary>
             /// The device can print very high resolution.
             /// </summary>
             [DataMember(Name = "veryHigh")]
-            public bool? VeryHigh { get; private set; }
+            public bool? VeryHigh { get; init; }
 
         }
 
@@ -467,7 +365,7 @@ namespace XFS4IoT.Printer
         /// of print quality desired; does not imply any absolute level of resolution, only relative.
         /// </summary>
         [DataMember(Name = "resolution")]
-        public ResolutionClass Resolution { get; private set; }
+        public ResolutionClass Resolution { get; init; }
 
         [DataContract]
         public sealed class ReadFormClass
@@ -487,43 +385,43 @@ namespace XFS4IoT.Printer
             /// Device has OCR capability.
             /// </summary>
             [DataMember(Name = "ocr")]
-            public bool? Ocr { get; private set; }
+            public bool? Ocr { get; init; }
 
             /// <summary>
             /// Device has MICR capability.
             /// </summary>
             [DataMember(Name = "micr")]
-            public bool? Micr { get; private set; }
+            public bool? Micr { get; init; }
 
             /// <summary>
             /// Device has MSF capability.
             /// </summary>
             [DataMember(Name = "msf")]
-            public bool? Msf { get; private set; }
+            public bool? Msf { get; init; }
 
             /// <summary>
             /// Device has Barcode capability.
             /// </summary>
             [DataMember(Name = "barcode")]
-            public bool? Barcode { get; private set; }
+            public bool? Barcode { get; init; }
 
             /// <summary>
             /// Device has Page Mark capability.
             /// </summary>
             [DataMember(Name = "pageMark")]
-            public bool? PageMark { get; private set; }
+            public bool? PageMark { get; init; }
 
             /// <summary>
             /// Device has imaging capability.
             /// </summary>
             [DataMember(Name = "readImage")]
-            public bool? ReadImage { get; private set; }
+            public bool? ReadImage { get; init; }
 
             /// <summary>
             /// Device has capability to detect empty print lines for passbook printing.
             /// </summary>
             [DataMember(Name = "readEmptyLine")]
-            public bool? ReadEmptyLine { get; private set; }
+            public bool? ReadEmptyLine { get; init; }
 
         }
 
@@ -531,7 +429,7 @@ namespace XFS4IoT.Printer
         /// Specifies whether the device can read data from media, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "readForm")]
-        public ReadFormClass ReadForm { get; private set; }
+        public ReadFormClass ReadForm { get; init; }
 
         [DataContract]
         public sealed class WriteFormClass
@@ -551,43 +449,43 @@ namespace XFS4IoT.Printer
             /// Device has Text capability.
             /// </summary>
             [DataMember(Name = "text")]
-            public bool? Text { get; private set; }
+            public bool? Text { get; init; }
 
             /// <summary>
             /// Device has Graphics capability.
             /// </summary>
             [DataMember(Name = "graphics")]
-            public bool? Graphics { get; private set; }
+            public bool? Graphics { get; init; }
 
             /// <summary>
             /// Device has OCR capability.
             /// </summary>
             [DataMember(Name = "ocr")]
-            public bool? Ocr { get; private set; }
+            public bool? Ocr { get; init; }
 
             /// <summary>
             /// Device has MICR capability.
             /// </summary>
             [DataMember(Name = "micr")]
-            public bool? Micr { get; private set; }
+            public bool? Micr { get; init; }
 
             /// <summary>
             /// Device has MSF capability.
             /// </summary>
             [DataMember(Name = "msf")]
-            public bool? Msf { get; private set; }
+            public bool? Msf { get; init; }
 
             /// <summary>
             /// Device has Barcode capability.
             /// </summary>
             [DataMember(Name = "barcode")]
-            public bool? Barcode { get; private set; }
+            public bool? Barcode { get; init; }
 
             /// <summary>
             /// Device has stamping capability.
             /// </summary>
             [DataMember(Name = "stamp")]
-            public bool? Stamp { get; private set; }
+            public bool? Stamp { get; init; }
 
         }
 
@@ -595,7 +493,7 @@ namespace XFS4IoT.Printer
         /// Specifies whether the device can write data to the media, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "writeForm")]
-        public WriteFormClass WriteForm { get; private set; }
+        public WriteFormClass WriteForm { get; init; }
 
         [DataContract]
         public sealed class ExtentsClass
@@ -610,13 +508,13 @@ namespace XFS4IoT.Printer
             /// Device has horizontal size detection capability.
             /// </summary>
             [DataMember(Name = "horizontal")]
-            public bool? Horizontal { get; private set; }
+            public bool? Horizontal { get; init; }
 
             /// <summary>
             /// Device has vertical size detection capability.
             /// </summary>
             [DataMember(Name = "vertical")]
-            public bool? Vertical { get; private set; }
+            public bool? Vertical { get; init; }
 
         }
 
@@ -624,7 +522,7 @@ namespace XFS4IoT.Printer
         /// Specifies whether the device is able to measure the inserted media, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "extents")]
-        public ExtentsClass Extents { get; private set; }
+        public ExtentsClass Extents { get; init; }
 
         [DataContract]
         public sealed class ControlClass
@@ -655,109 +553,109 @@ namespace XFS4IoT.Printer
             /// Device can eject media.
             /// </summary>
             [DataMember(Name = "eject")]
-            public bool? Eject { get; private set; }
+            public bool? Eject { get; init; }
 
             /// <summary>
             /// Device can perforate media.
             /// </summary>
             [DataMember(Name = "perforate")]
-            public bool? Perforate { get; private set; }
+            public bool? Perforate { get; init; }
 
             /// <summary>
             /// Device can cut media.
             /// </summary>
             [DataMember(Name = "cut")]
-            public bool? Cut { get; private set; }
+            public bool? Cut { get; init; }
 
             /// <summary>
             /// Device can skip to mark.
             /// </summary>
             [DataMember(Name = "skip")]
-            public bool? Skip { get; private set; }
+            public bool? Skip { get; init; }
 
             /// <summary>
             /// Device can be sent data that is buffered internally, and flushed to the printer on request.
             /// </summary>
             [DataMember(Name = "flush")]
-            public bool? Flush { get; private set; }
+            public bool? Flush { get; init; }
 
             /// <summary>
             /// Device can retract media under application control.
             /// </summary>
             [DataMember(Name = "retract")]
-            public bool? Retract { get; private set; }
+            public bool? Retract { get; init; }
 
             /// <summary>
             /// Device can stack media items before ejecting as a bundle.
             /// </summary>
             [DataMember(Name = "stack")]
-            public bool? Stack { get; private set; }
+            public bool? Stack { get; init; }
 
             /// <summary>
             /// Device can partially cut the media.
             /// </summary>
             [DataMember(Name = "partialCut")]
-            public bool? PartialCut { get; private set; }
+            public bool? PartialCut { get; init; }
 
             /// <summary>
             /// Device can ring a bell, beep or otherwise sound an audible alarm.
             /// </summary>
             [DataMember(Name = "alarm")]
-            public bool? Alarm { get; private set; }
+            public bool? Alarm { get; init; }
 
             /// <summary>
             /// Capability to turn one page forward.
             /// </summary>
             [DataMember(Name = "pageForward")]
-            public bool? PageForward { get; private set; }
+            public bool? PageForward { get; init; }
 
             /// <summary>
             /// Capability to turn one page backward.
             /// </summary>
             [DataMember(Name = "pageBackward")]
-            public bool? PageBackward { get; private set; }
+            public bool? PageBackward { get; init; }
 
             /// <summary>
             /// Device can turn inserted media.
             /// </summary>
             [DataMember(Name = "turnMedia")]
-            public bool? TurnMedia { get; private set; }
+            public bool? TurnMedia { get; init; }
 
             /// <summary>
             /// Device can stamp on media.
             /// </summary>
             [DataMember(Name = "stamp")]
-            public bool? Stamp { get; private set; }
+            public bool? Stamp { get; init; }
 
             /// <summary>
             /// Device can park a document into the parking station.
             /// </summary>
             [DataMember(Name = "park")]
-            public bool? Park { get; private set; }
+            public bool? Park { get; init; }
 
             /// <summary>
             /// Device can expel media out of the exit slot.
             /// </summary>
             [DataMember(Name = "expel")]
-            public bool? Expel { get; private set; }
+            public bool? Expel { get; init; }
 
             /// <summary>
             /// Device can move media to a position on the transport just behind the exit slot.
             /// </summary>
             [DataMember(Name = "ejectToTransport")]
-            public bool? EjectToTransport { get; private set; }
+            public bool? EjectToTransport { get; init; }
 
             /// <summary>
             /// Device can rotate media 180 degrees in the printing plane.
             /// </summary>
             [DataMember(Name = "rotate180")]
-            public bool? Rotate180 { get; private set; }
+            public bool? Rotate180 { get; init; }
 
             /// <summary>
             /// The Service Provider can clear buffered data.
             /// </summary>
             [DataMember(Name = "clearBuffer")]
-            public bool? ClearBuffer { get; private set; }
+            public bool? ClearBuffer { get; init; }
 
         }
 
@@ -765,26 +663,26 @@ namespace XFS4IoT.Printer
         /// Specifies the manner in which media can be controlled, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "control")]
-        public ControlClass Control { get; private set; }
+        public ControlClass Control { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of media items that the stacker can hold (zero if not available).
         /// </summary>
         [DataMember(Name = "maxMediaOnStacker")]
-        public int? MaxMediaOnStacker { get; private set; }
+        public int? MaxMediaOnStacker { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to accept media while no execute command is running that is waiting
         /// explicitly for media to be inserted.
         /// </summary>
         [DataMember(Name = "acceptMedia")]
-        public bool? AcceptMedia { get; private set; }
+        public bool? AcceptMedia { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to support multiple page print jobs.
         /// </summary>
         [DataMember(Name = "multiPage")]
-        public bool? MultiPage { get; private set; }
+        public bool? MultiPage { get; init; }
 
         [DataContract]
         public sealed class PaperSourcesClass
@@ -804,37 +702,37 @@ namespace XFS4IoT.Printer
             /// being available.
             /// </summary>
             [DataMember(Name = "upper")]
-            public bool? Upper { get; private set; }
+            public bool? Upper { get; init; }
 
             /// <summary>
             /// Indicates a lower paper source is available.
             /// </summary>
             [DataMember(Name = "lower")]
-            public bool? Lower { get; private set; }
+            public bool? Lower { get; init; }
 
             /// <summary>
             /// Indicates an external paper source (such as envelope tray or single sheet feed) is available.
             /// </summary>
             [DataMember(Name = "external")]
-            public bool? External { get; private set; }
+            public bool? External { get; init; }
 
             /// <summary>
             /// An auxiliary paper source is available.
             /// </summary>
             [DataMember(Name = "aux")]
-            public bool? Aux { get; private set; }
+            public bool? Aux { get; init; }
 
             /// <summary>
             /// A second auxiliary paper source is available.
             /// </summary>
             [DataMember(Name = "aux2")]
-            public bool? Aux2 { get; private set; }
+            public bool? Aux2 { get; init; }
 
             /// <summary>
             /// A parking station is available.
             /// </summary>
             [DataMember(Name = "park")]
-            public bool? Park { get; private set; }
+            public bool? Park { get; init; }
 
         }
 
@@ -842,20 +740,20 @@ namespace XFS4IoT.Printer
         /// Specifies the Paper sources available for this printer as a combination of the following flags
         /// </summary>
         [DataMember(Name = "paperSources")]
-        public PaperSourcesClass PaperSources { get; private set; }
+        public PaperSourcesClass PaperSources { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to detect when the media is taken from the exit slot. If false, the
         /// [Printer.MediaTakenEvent](#printer.mediatakenevent) event is not fired.
         /// </summary>
         [DataMember(Name = "mediaTaken")]
-        public bool? MediaTaken { get; private set; }
+        public bool? MediaTaken { get; init; }
 
         /// <summary>
         /// Specifies the number of retract bins (zero if not supported).
         /// </summary>
         [DataMember(Name = "retractBins")]
-        public int? RetractBins { get; private set; }
+        public int? RetractBins { get; init; }
 
         /// <summary>
         /// An array of the length [retractBins](#common.capabilities.completion.properties.printer.retractbins) with
@@ -864,7 +762,7 @@ namespace XFS4IoT.Printer
         /// are no retract bins.
         /// </summary>
         [DataMember(Name = "maxRetract")]
-        public List<int> MaxRetract { get; private set; }
+        public List<int> MaxRetract { get; init; }
 
         [DataContract]
         public sealed class ImageTypeClass
@@ -881,25 +779,25 @@ namespace XFS4IoT.Printer
             /// The device can return scanned images in TIFF 6.0 format.
             /// </summary>
             [DataMember(Name = "tif")]
-            public bool? Tif { get; private set; }
+            public bool? Tif { get; init; }
 
             /// <summary>
             /// The device can return scanned images in WMF (Windows Metafile) format.
             /// </summary>
             [DataMember(Name = "wmf")]
-            public bool? Wmf { get; private set; }
+            public bool? Wmf { get; init; }
 
             /// <summary>
             /// The device can return scanned images in Windows BMP format.
             /// </summary>
             [DataMember(Name = "bmp")]
-            public bool? Bmp { get; private set; }
+            public bool? Bmp { get; init; }
 
             /// <summary>
             /// The device can return scanned images in JPG format.
             /// </summary>
             [DataMember(Name = "jpg")]
-            public bool? Jpg { get; private set; }
+            public bool? Jpg { get; init; }
 
         }
 
@@ -907,7 +805,7 @@ namespace XFS4IoT.Printer
         /// Specifies the image format supported by this device, as a combination of following flags.
         /// </summary>
         [DataMember(Name = "imageType")]
-        public ImageTypeClass ImageType { get; private set; }
+        public ImageTypeClass ImageType { get; init; }
 
         [DataContract]
         public sealed class FrontImageColorFormatClass
@@ -924,19 +822,19 @@ namespace XFS4IoT.Printer
             /// white).
             /// </summary>
             [DataMember(Name = "binary")]
-            public bool? Binary { get; private set; }
+            public bool? Binary { get; init; }
 
             /// <summary>
             /// The device can return scanned images in gray scale (image contains multiple gray colors).
             /// </summary>
             [DataMember(Name = "grayscale")]
-            public bool? Grayscale { get; private set; }
+            public bool? Grayscale { get; init; }
 
             /// <summary>
             /// The device can return scanned images in full color (image contains colors like red, green, blue etc.).
             /// </summary>
             [DataMember(Name = "full")]
-            public bool? Full { get; private set; }
+            public bool? Full { get; init; }
 
         }
 
@@ -944,7 +842,7 @@ namespace XFS4IoT.Printer
         /// Specifies the front image color formats supported by this device, as a combination of following flags.
         /// </summary>
         [DataMember(Name = "frontImageColorFormat")]
-        public FrontImageColorFormatClass FrontImageColorFormat { get; private set; }
+        public FrontImageColorFormatClass FrontImageColorFormat { get; init; }
 
         [DataContract]
         public sealed class BackImageColorFormatClass
@@ -961,19 +859,19 @@ namespace XFS4IoT.Printer
             /// white).
             /// </summary>
             [DataMember(Name = "binary")]
-            public bool? Binary { get; private set; }
+            public bool? Binary { get; init; }
 
             /// <summary>
             /// The device can return scanned images in gray scale (image contains multiple gray colors).
             /// </summary>
             [DataMember(Name = "grayScale")]
-            public bool? GrayScale { get; private set; }
+            public bool? GrayScale { get; init; }
 
             /// <summary>
             /// The device can return scanned images in full color (image contains colors like red, green, blue etc.).
             /// </summary>
             [DataMember(Name = "full")]
-            public bool? Full { get; private set; }
+            public bool? Full { get; init; }
 
         }
 
@@ -981,7 +879,7 @@ namespace XFS4IoT.Printer
         /// Specifies the back image color formats supported by this device, as a combination of following flags.
         /// </summary>
         [DataMember(Name = "backImageColorFormat")]
-        public BackImageColorFormatClass BackImageColorFormat { get; private set; }
+        public BackImageColorFormatClass BackImageColorFormat { get; init; }
 
         [DataContract]
         public sealed class CodelineFormatClass
@@ -997,19 +895,19 @@ namespace XFS4IoT.Printer
             /// The device can read CMC7 code lines.
             /// </summary>
             [DataMember(Name = "cmc7")]
-            public bool? Cmc7 { get; private set; }
+            public bool? Cmc7 { get; init; }
 
             /// <summary>
             /// The device can read E13B code lines.
             /// </summary>
             [DataMember(Name = "e13b")]
-            public bool? E13b { get; private set; }
+            public bool? E13b { get; init; }
 
             /// <summary>
             /// The device can read code lines using Optical Character Recognition.
             /// </summary>
             [DataMember(Name = "ocr")]
-            public bool? Ocr { get; private set; }
+            public bool? Ocr { get; init; }
 
         }
 
@@ -1017,7 +915,7 @@ namespace XFS4IoT.Printer
         /// Specifies the code line (MICR data) formats supported by this device, as a combination of following flags.
         /// </summary>
         [DataMember(Name = "codelineFormat")]
-        public CodelineFormatClass CodelineFormat { get; private set; }
+        public CodelineFormatClass CodelineFormat { get; init; }
 
         [DataContract]
         public sealed class ImageSourceClass
@@ -1033,19 +931,19 @@ namespace XFS4IoT.Printer
             /// The device can scan the front image of the document.
             /// </summary>
             [DataMember(Name = "imageFront")]
-            public bool? ImageFront { get; private set; }
+            public bool? ImageFront { get; init; }
 
             /// <summary>
             /// The device can scan the back image of the document.
             /// </summary>
             [DataMember(Name = "imageBack")]
-            public bool? ImageBack { get; private set; }
+            public bool? ImageBack { get; init; }
 
             /// <summary>
             /// The device can recognize the code line.
             /// </summary>
             [DataMember(Name = "codeLine")]
-            public bool? CodeLine { get; private set; }
+            public bool? CodeLine { get; init; }
 
         }
 
@@ -1054,13 +952,13 @@ namespace XFS4IoT.Printer
         /// flags.
         /// </summary>
         [DataMember(Name = "imageSource")]
-        public ImageSourceClass ImageSource { get; private set; }
+        public ImageSourceClass ImageSource { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to dispense paper.
         /// </summary>
         [DataMember(Name = "dispensePaper")]
-        public bool? DispensePaper { get; private set; }
+        public bool? DispensePaper { get; init; }
 
         /// <summary>
         /// Specifies the name of the default logical operating system printer that is associated with this Service
@@ -1069,7 +967,7 @@ namespace XFS4IoT.Printer
         /// Provider does not support the *Printer.PrintRawFile* command.
         /// </summary>
         [DataMember(Name = "osPrinter")]
-        public string OsPrinter { get; private set; }
+        public string OsPrinter { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to detect when the media is presented to the user for removal. If true,
@@ -1077,7 +975,7 @@ namespace XFS4IoT.Printer
         /// Printer.MediaPresentedEvent event is not fired.
         /// </summary>
         [DataMember(Name = "mediaPresented")]
-        public bool? MediaPresented { get; private set; }
+        public bool? MediaPresented { get; init; }
 
         /// <summary>
         /// Specifies the number of seconds before the device will automatically retract the presented media. If the
@@ -1085,13 +983,13 @@ namespace XFS4IoT.Printer
         /// complete with an error. If the device does not retract media automatically this value will be zero.
         /// </summary>
         [DataMember(Name = "autoRetractPeriod")]
-        public int? AutoRetractPeriod { get; private set; }
+        public int? AutoRetractPeriod { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to retract the previously ejected media to the transport.
         /// </summary>
         [DataMember(Name = "retractToTransport")]
-        public bool? RetractToTransport { get; private set; }
+        public bool? RetractToTransport { get; init; }
 
         [DataContract]
         public sealed class CoercivityTypeClass
@@ -1107,20 +1005,20 @@ namespace XFS4IoT.Printer
             /// This device can write the magnetic stripe by low coercivity mode.
             /// </summary>
             [DataMember(Name = "low")]
-            public bool? Low { get; private set; }
+            public bool? Low { get; init; }
 
             /// <summary>
             /// This device can write the magnetic stripe by high coercivity mode.
             /// </summary>
             [DataMember(Name = "high")]
-            public bool? High { get; private set; }
+            public bool? High { get; init; }
 
             /// <summary>
             /// The Service Provider or the device is capable of automatically determining whether low or high
             /// coercivity magnetic stripe should be written.
             /// </summary>
             [DataMember(Name = "auto")]
-            public bool? Auto { get; private set; }
+            public bool? Auto { get; init; }
 
         }
 
@@ -1128,7 +1026,7 @@ namespace XFS4IoT.Printer
         /// Specifies the form write modes supported by this device, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "coercivityType")]
-        public CoercivityTypeClass CoercivityType { get; private set; }
+        public CoercivityTypeClass CoercivityType { get; init; }
 
         [DataContract]
         public sealed class ControlPassbookClass
@@ -1145,25 +1043,25 @@ namespace XFS4IoT.Printer
             /// The device can turn forward multiple pages of the passbook.
             /// </summary>
             [DataMember(Name = "turnForward")]
-            public bool? TurnForward { get; private set; }
+            public bool? TurnForward { get; init; }
 
             /// <summary>
             /// The device can turn backward multiple pages of the passbook.
             /// </summary>
             [DataMember(Name = "turnBackward")]
-            public bool? TurnBackward { get; private set; }
+            public bool? TurnBackward { get; init; }
 
             /// <summary>
             /// The device can close the passbook forward.
             /// </summary>
             [DataMember(Name = "closeForward")]
-            public bool? CloseForward { get; private set; }
+            public bool? CloseForward { get; init; }
 
             /// <summary>
             /// The device can close the passbook backward.
             /// </summary>
             [DataMember(Name = "closeBackward")]
-            public bool? CloseBackward { get; private set; }
+            public bool? CloseBackward { get; init; }
 
         }
 
@@ -1172,7 +1070,7 @@ namespace XFS4IoT.Printer
         /// command, as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "controlPassbook")]
-        public ControlPassbookClass ControlPassbook { get; private set; }
+        public ControlPassbookClass ControlPassbook { get; init; }
 
         public enum PrintSidesEnum
         {
@@ -1189,7 +1087,7 @@ namespace XFS4IoT.Printer
         /// * ```dual``` - The device is capable of printing on two sides of the media.
         /// </summary>
         [DataMember(Name = "printSides")]
-        public PrintSidesEnum? PrintSides { get; private set; }
+        public PrintSidesEnum? PrintSides { get; init; }
 
     }
 

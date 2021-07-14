@@ -47,25 +47,25 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```invalidMixNumber``` - The *mixNumber* parameter does not correspond to a defined mix table.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Number identifying the house mix table.
             /// </summary>
             [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; private set; }
+            public int? MixNumber { get; init; }
 
             /// <summary>
             /// Name of the house mix table.
             /// </summary>
             [DataMember(Name = "name")]
-            public string Name { get; private set; }
+            public string Name { get; init; }
 
             /// <summary>
             /// Array of floating point numbers; each element defines the value of the item corresponding to its respective column.
             /// </summary>
             [DataMember(Name = "mixHeader")]
-            public List<double> MixHeader { get; private set; }
+            public List<double> MixHeader { get; init; }
 
             [DataContract]
             public sealed class MixRowsClass
@@ -80,14 +80,14 @@ namespace XFS4IoT.Dispenser.Completions
                 /// Amount denominated by this mix row.
                 /// </summary>
                 [DataMember(Name = "amount")]
-                public double? Amount { get; private set; }
+                public double? Amount { get; init; }
 
                 /// <summary>
                 /// A mix row, an array of integers; each element defines the quantity of each item denomination in the mix used in the denomination of *amount*. 
                 /// The value of each array element is defined by the *mixHeader*.
                 /// </summary>
                 [DataMember(Name = "mixture")]
-                public List<int> Mixture { get; private set; }
+                public List<int> Mixture { get; init; }
 
             }
 
@@ -95,7 +95,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// Array of rows of the mix table.
             /// </summary>
             [DataMember(Name = "mixRows")]
-            public List<MixRowsClass> MixRows { get; private set; }
+            public List<MixRowsClass> MixRows { get; init; }
 
         }
     }

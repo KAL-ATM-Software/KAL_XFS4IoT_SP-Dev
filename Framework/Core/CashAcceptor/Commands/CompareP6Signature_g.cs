@@ -48,7 +48,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// Identification of note type.
                 /// </summary>
                 [DataMember(Name = "noteId")]
-                public int? NoteId { get; private set; }
+                public int? NoteId { get; init; }
 
                 [DataContract]
                 public sealed class OrientationClass
@@ -69,7 +69,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// as the leading edge, the note was inserted with the front image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontTop")]
-                    public bool? FrontTop { get; private set; }
+                    public bool? FrontTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the front image 
@@ -77,7 +77,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// as the leading edge, the note was inserted with the front image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontBottom")]
-                    public bool? FrontBottom { get; private set; }
+                    public bool? FrontBottom { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and 
@@ -85,7 +85,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// was inserted with the back image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backTop")]
-                    public bool? BackTop { get; private set; }
+                    public bool? BackTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and the 
@@ -93,19 +93,19 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// inserted with the back image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backBottom")]
-                    public bool? BackBottom { get; private set; }
+                    public bool? BackBottom { get; init; }
 
                     /// <summary>
                     /// The orientation for the inserted note can not be determined.
                     /// </summary>
                     [DataMember(Name = "unknown")]
-                    public bool? Unknown { get; private set; }
+                    public bool? Unknown { get; init; }
 
                     /// <summary>
                     /// The hardware is not capable to determine the orientation.
                     /// </summary>
                     [DataMember(Name = "notSupported")]
-                    public bool? NotSupported { get; private set; }
+                    public bool? NotSupported { get; init; }
 
                 }
 
@@ -113,13 +113,13 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// Orientation of the entered banknote.
                 /// </summary>
                 [DataMember(Name = "orientation")]
-                public OrientationClass Orientation { get; private set; }
+                public OrientationClass Orientation { get; init; }
 
                 /// <summary>
                 /// Base64 encoded signature data.
                 /// </summary>
                 [DataMember(Name = "signature")]
-                public string Signature { get; private set; }
+                public string Signature { get; init; }
 
             }
 
@@ -130,7 +130,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// the command returns an invalidData error.
             /// </summary>
             [DataMember(Name = "p6ReferenceSignatures")]
-            public List<P6ReferenceSignaturesClass> P6ReferenceSignatures { get; private set; }
+            public List<P6ReferenceSignaturesClass> P6ReferenceSignatures { get; init; }
 
             [DataContract]
             public sealed class P6SignaturesClass
@@ -146,7 +146,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// Identification of note type.
                 /// </summary>
                 [DataMember(Name = "noteId")]
-                public int? NoteId { get; private set; }
+                public int? NoteId { get; init; }
 
                 [DataContract]
                 public sealed class OrientationClass
@@ -167,7 +167,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// as the leading edge, the note was inserted with the front image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontTop")]
-                    public bool? FrontTop { get; private set; }
+                    public bool? FrontTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the front image 
@@ -175,7 +175,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// as the leading edge, the note was inserted with the front image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontBottom")]
-                    public bool? FrontBottom { get; private set; }
+                    public bool? FrontBottom { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and 
@@ -183,7 +183,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// was inserted with the back image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backTop")]
-                    public bool? BackTop { get; private set; }
+                    public bool? BackTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and the 
@@ -191,19 +191,19 @@ namespace XFS4IoT.CashAcceptor.Commands
                     /// inserted with the back image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backBottom")]
-                    public bool? BackBottom { get; private set; }
+                    public bool? BackBottom { get; init; }
 
                     /// <summary>
                     /// The orientation for the inserted note can not be determined.
                     /// </summary>
                     [DataMember(Name = "unknown")]
-                    public bool? Unknown { get; private set; }
+                    public bool? Unknown { get; init; }
 
                     /// <summary>
                     /// The hardware is not capable to determine the orientation.
                     /// </summary>
                     [DataMember(Name = "notSupported")]
-                    public bool? NotSupported { get; private set; }
+                    public bool? NotSupported { get; init; }
 
                 }
 
@@ -211,13 +211,13 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// Orientation of the entered banknote.
                 /// </summary>
                 [DataMember(Name = "orientation")]
-                public OrientationClass Orientation { get; private set; }
+                public OrientationClass Orientation { get; init; }
 
                 /// <summary>
                 /// Base64 encoded signature data.
                 /// </summary>
                 [DataMember(Name = "signature")]
-                public string Signature { get; private set; }
+                public string Signature { get; init; }
 
             }
 
@@ -226,7 +226,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// At least one signature must be provided. If there are no signatures provided (this array is missing or emtpy) the command returns an invalidData error.
             /// </summary>
             [DataMember(Name = "p6Signatures")]
-            public List<P6SignaturesClass> P6Signatures { get; private set; }
+            public List<P6SignaturesClass> P6Signatures { get; init; }
 
         }
     }

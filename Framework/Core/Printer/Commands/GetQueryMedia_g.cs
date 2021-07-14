@@ -37,7 +37,7 @@ namespace XFS4IoT.Printer.Commands
             /// The media name for which to retrieve details.
             /// </summary>
             [DataMember(Name = "mediaName")]
-            public string MediaName { get; private set; }
+            public string MediaName { get; init; }
 
         }
     }

@@ -57,7 +57,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```park``` - Use the parking station paper source.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; private set; }
+            public PaperSourceEnum? PaperSource { get; init; }
 
         }
     }

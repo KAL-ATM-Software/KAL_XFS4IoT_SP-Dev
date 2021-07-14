@@ -36,7 +36,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Details of the field(s) requested. The key is the field name and the value contains the details of the fields.
             /// </summary>
             [DataMember(Name = "fields")]
-            public Dictionary<string, FieldDetailsClass> Fields { get; private set; }
+            public Dictionary<string, FieldDetailsClass> Fields { get; init; }
 
         }
     }

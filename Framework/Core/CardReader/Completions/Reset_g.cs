@@ -48,7 +48,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   still in the device.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

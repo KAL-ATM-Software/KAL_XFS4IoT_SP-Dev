@@ -41,7 +41,7 @@ namespace XFS4IoT.CashManagement
         /// * ```doorUnknown``` - Due to a hardware error or other condition, the state of the safe door cannot be determined.
         /// </summary>
         [DataMember(Name = "safeDoor")]
-        public SafeDoorEnum? SafeDoor { get; private set; }
+        public SafeDoorEnum? SafeDoor { get; init; }
 
         public enum DispenserEnum
         {
@@ -64,7 +64,7 @@ namespace XFS4IoT.CashManagement
         /// * ```cashUnitUnknown``` - Due to a hardware error or other condition, the state of the cash units cannot be determined.
         /// </summary>
         [DataMember(Name = "dispenser")]
-        public DispenserEnum? Dispenser { get; private set; }
+        public DispenserEnum? Dispenser { get; init; }
 
         public enum AcceptorEnum
         {
@@ -86,7 +86,7 @@ namespace XFS4IoT.CashManagement
         /// * ```cashUnitUnknown``` - Due to a hardware error or other condition, the state of the cash units cannot be determined.
         /// </summary>
         [DataMember(Name = "acceptor")]
-        public AcceptorEnum? Acceptor { get; private set; }
+        public AcceptorEnum? Acceptor { get; init; }
 
     }
 
@@ -108,14 +108,14 @@ namespace XFS4IoT.CashManagement
         /// Specifies whether or not the  CashManagement.OpenSafeDoor command is supported.
         /// </summary>
         [DataMember(Name = "safeDoor")]
-        public bool? SafeDoor { get; private set; }
+        public bool? SafeDoor { get; init; }
 
         /// <summary>
         /// This field is only applicable to teller type devices. 
         /// It specifies whether or not tellers have been assigned a cash box.
         /// </summary>
         [DataMember(Name = "cashBox")]
-        public bool? CashBox { get; private set; }
+        public bool? CashBox { get; init; }
 
         [DataContract]
         public sealed class ExchangeTypeClass
@@ -132,25 +132,25 @@ namespace XFS4IoT.CashManagement
             /// The device supports manual replenishment either by filling the cash unit by hand or by replacing the cash unit.
             /// </summary>
             [DataMember(Name = "byHand")]
-            public bool? ByHand { get; private set; }
+            public bool? ByHand { get; init; }
 
             /// <summary>
             /// The device supports moving items from the replenishment cash unit to another cash unit.
             /// </summary>
             [DataMember(Name = "toCassettes")]
-            public bool? ToCassettes { get; private set; }
+            public bool? ToCassettes { get; init; }
 
             /// <summary>
             /// The device supports the emptying of recycle cash units.
             /// </summary>
             [DataMember(Name = "clearRecycler")]
-            public bool? ClearRecycler { get; private set; }
+            public bool? ClearRecycler { get; init; }
 
             /// <summary>
             /// The device supports moving items from the deposit entrance to the bill cash units.
             /// </summary>
             [DataMember(Name = "depositInto")]
-            public bool? DepositInto { get; private set; }
+            public bool? DepositInto { get; init; }
 
         }
 
@@ -158,7 +158,7 @@ namespace XFS4IoT.CashManagement
         /// Specifies the type of cash unit exchange operations supported by the device.
         /// </summary>
         [DataMember(Name = "exchangeType")]
-        public ExchangeTypeClass ExchangeType { get; private set; }
+        public ExchangeTypeClass ExchangeType { get; init; }
 
         [DataContract]
         public sealed class ItemInfoTypesClass
@@ -174,19 +174,19 @@ namespace XFS4IoT.CashManagement
             /// Serial Number of the item.
             /// </summary>
             [DataMember(Name = "serialNumber")]
-            public bool? SerialNumber { get; private set; }
+            public bool? SerialNumber { get; init; }
 
             /// <summary>
             /// Signature of the item.
             /// </summary>
             [DataMember(Name = "signature")]
-            public bool? Signature { get; private set; }
+            public bool? Signature { get; init; }
 
             /// <summary>
             /// Image file of the item.
             /// </summary>
             [DataMember(Name = "imageFile")]
-            public bool? ImageFile { get; private set; }
+            public bool? ImageFile { get; init; }
 
         }
 
@@ -194,21 +194,21 @@ namespace XFS4IoT.CashManagement
         /// Specifies the types of information that can be retrieved through the CashManagement.GetItemInfo command.
         /// </summary>
         [DataMember(Name = "itemInfoTypes")]
-        public ItemInfoTypesClass ItemInfoTypes { get; private set; }
+        public ItemInfoTypesClass ItemInfoTypes { get; init; }
 
         /// <summary>
         /// Specifies whether the device has the capability to maintain a classification list of serial numbers as well as
         /// supporting the associated operations. This can either be TRUE if the device has the capability or FALSE if it does not.
         /// </summary>
         [DataMember(Name = "classificationList")]
-        public bool? ClassificationList { get; private set; }
+        public bool? ClassificationList { get; init; }
 
         /// <summary>
         /// Specifies whether the Service supports note number lists on physical cash units.
         /// This can either be TRUE if the Service has the capability or FALSE if it does not.
         /// </summary>
         [DataMember(Name = "physicalNoteList")]
-        public bool? PhysicalNoteList { get; private set; }
+        public bool? PhysicalNoteList { get; init; }
 
     }
 

@@ -40,13 +40,13 @@ namespace XFS4IoT.CashManagement.Commands
             /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command.
             /// </summary>
             [DataMember(Name = "cashunit")]
-            public string Cashunit { get; private set; }
+            public string Cashunit { get; init; }
 
             /// <summary>
             /// The number of bills to be dispensed during the calibration process.
             /// </summary>
             [DataMember(Name = "numOfBills")]
-            public int? NumOfBills { get; private set; }
+            public int? NumOfBills { get; init; }
 
             [DataContract]
             public sealed class PositionClass
@@ -64,7 +64,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// be used for the storage of any items found.
                 /// </summary>
                 [DataMember(Name = "cashunit")]
-                public string Cashunit { get; private set; }
+                public string Cashunit { get; init; }
 
                 [DataContract]
                 public sealed class RetractAreaClass
@@ -101,7 +101,7 @@ namespace XFS4IoT.CashManagement.Commands
                     /// * ```rear``` - Retract items from the rear output position.
                     /// </summary>
                     [DataMember(Name = "outputPosition")]
-                    public OutputPositionEnum? OutputPosition { get; private set; }
+                    public OutputPositionEnum? OutputPosition { get; init; }
 
                     public enum RetractAreaEnum
                     {
@@ -122,19 +122,19 @@ namespace XFS4IoT.CashManagement.Commands
                     /// * ```itemCassette``` - Retract the items to the item cassettes, i.e. cassettes that can be dispensed from.
                     /// </summary>
                     [DataMember(Name = "retractArea")]
-                    public RetractAreaEnum? RetractArea { get; private set; }
+                    public RetractAreaEnum? RetractArea { get; init; }
 
                     /// <summary>
-                    /// If *retractArea* is set to \"retract\" this field defines the position inside the retract cash units into 
+                    /// If *retractArea* is set to "retract" this field defines the position inside the retract cash units into 
                     /// which the cash is to be retracted. *index* starts with a value of one (1) for the first retract position 
                     /// and increments by one for each subsequent position. If there are several retract cash units 
-                    /// (of type \"retractCassette\" in command CashManagement.CashUnitInfo), *index* would be incremented from the 
+                    /// (of type "retractCassette" in command CashManagement.CashUnitInfo), *index* would be incremented from the 
                     /// first position of the first retract cash unit to the last position of the last retract cash unit. 
                     /// The maximum value of *index* is the sum of *maximum* of each retract cash unit. If *retractArea* is not 
-                    /// set to \"retract\" the value of this field is ignored.
+                    /// set to "retract" the value of this field is ignored.
                     /// </summary>
                     [DataMember(Name = "index")]
-                    public int? Index { get; private set; }
+                    public int? Index { get; init; }
 
                 }
 
@@ -142,7 +142,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// This field is used if items are to be moved to internal areas of the device, including cash units, the intermediate stacker, or the transport.
                 /// </summary>
                 [DataMember(Name = "retractArea")]
-                public RetractAreaClass RetractArea { get; private set; }
+                public RetractAreaClass RetractArea { get; init; }
 
                 public enum OutputPositionEnum
                 {
@@ -170,7 +170,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// * ```rear``` - The rear output position.
                 /// </summary>
                 [DataMember(Name = "outputPosition")]
-                public OutputPositionEnum? OutputPosition { get; private set; }
+                public OutputPositionEnum? OutputPosition { get; init; }
 
             }
 
@@ -178,7 +178,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// Specifies where the dispensed items should be moved to.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionClass Position { get; private set; }
+            public PositionClass Position { get; init; }
 
         }
     }

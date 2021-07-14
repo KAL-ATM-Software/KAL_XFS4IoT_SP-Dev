@@ -50,13 +50,13 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```giecb``` - The IFM identifier assigned by GIE Cartes Bancaires.
             /// </summary>
             [DataMember(Name = "ifmAuthority")]
-            public IfmAuthorityEnum? IfmAuthority { get; private set; }
+            public IfmAuthorityEnum? IfmAuthority { get; init; }
 
             /// <summary>
             /// The IFM Identifier of the chip card reader (or IFM) as assigned by the specified authority.
             /// </summary>
             [DataMember(Name = "ifmIdentifier")]
-            public string IfmIdentifier { get; private set; }
+            public string IfmIdentifier { get; init; }
 
         }
     }

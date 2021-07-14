@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getQueryFormCmd = command.IsA<GetQueryFormCommand>($"Invalid parameter in the GetQueryForm Handle method. {nameof(GetQueryFormCommand)}");
-            getQueryFormCmd.Headers.RequestId.HasValue.IsTrue();
+            getQueryFormCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetQueryFormEvents events = new GetQueryFormEvents(Connection, getQueryFormCmd.Headers.RequestId.Value);
+            IGetQueryFormEvents events = new GetQueryFormEvents(Connection, getQueryFormCmd.Header.RequestId.Value);
 
             var result = await HandleGetQueryForm(events, getQueryFormCmd, cancel);
-            await Connection.SendMessageAsync(new GetQueryFormCompletion(getQueryFormCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetQueryFormCompletion(getQueryFormCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getQueryFormcommand = command.IsA<GetQueryFormCommand>();
-            getQueryFormcommand.Headers.RequestId.HasValue.IsTrue();
+            getQueryFormcommand.Header.RequestId.HasValue.IsTrue();
 
             GetQueryFormCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => GetQueryFormCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetQueryFormCompletion(getQueryFormcommand.Headers.RequestId.Value, new GetQueryFormCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetQueryFormCompletion(getQueryFormcommand.Header.RequestId.Value, new GetQueryFormCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

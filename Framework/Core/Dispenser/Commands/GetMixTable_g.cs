@@ -37,7 +37,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// Number of the requested house mix table.
             /// </summary>
             [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; private set; }
+            public int? MixNumber { get; init; }
 
         }
     }

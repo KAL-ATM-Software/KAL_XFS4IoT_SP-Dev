@@ -46,7 +46,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

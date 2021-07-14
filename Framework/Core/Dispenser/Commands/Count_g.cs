@@ -39,7 +39,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// Specifies whether all cash units are to be emptied. If this value is TRUE then physicalPositionName is ignored.
             /// </summary>
             [DataMember(Name = "emptyAll")]
-            public bool? EmptyAll { get; private set; }
+            public bool? EmptyAll { get; init; }
 
             public enum PositionEnum
             {
@@ -68,14 +68,14 @@ namespace XFS4IoT.Dispenser.Commands
             /// * ```reject``` - Reject bin is used as output location.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             /// <summary>
             /// Specifies which cash unit to empty and count. This name is the same as the 
             /// *physicalPositionName* in the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) completion message.
             /// </summary>
             [DataMember(Name = "physicalPositionName")]
-            public string PhysicalPositionName { get; private set; }
+            public string PhysicalPositionName { get; init; }
 
         }
     }

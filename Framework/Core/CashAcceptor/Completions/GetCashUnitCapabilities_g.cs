@@ -48,7 +48,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// A name identifying the physical location of the cash unit.
                 /// </summary>
                 [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; private set; }
+                public string PhysicalPositionName { get; init; }
 
                 /// <summary>
                 /// The maximum number of items the cash unit can hold.
@@ -56,7 +56,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// This value is persistent.
                 /// </summary>
                 [DataMember(Name = "maximumCapacity")]
-                public int? MaximumCapacity { get; private set; }
+                public int? MaximumCapacity { get; init; }
 
                 /// <summary>
                 /// Specifies whether or not threshold events can be generated based on hardware sensors in the device. 
@@ -64,10 +64,10 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// events may be generated based on hardware sensors as opposed to counts.
                 /// </summary>
                 [DataMember(Name = "hardwareSensors")]
-                public bool? HardwareSensors { get; private set; }
+                public bool? HardwareSensors { get; init; }
 
                 /// <summary>
-                /// This field is only valid for cash units of type \"retractCassette\". It specifies whether the CashAcceptor 
+                /// This field is only valid for cash units of type "retractCassette". It specifies whether the CashAcceptor 
                 /// retract cassette capacity is based on the number of notes, and therefore whether threshold events are 
                 /// generated based on note counts or the number of retract operations. If this value is set to TRUE, threshold 
                 /// events for retract cassettes are generated based on the number of notes, when *cashInCount* reaches the 
@@ -75,7 +75,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// on the number of retract operations, when *count* reaches the *maximum* value.
                 /// </summary>
                 [DataMember(Name = "retractNoteCountThresholds")]
-                public bool? RetractNoteCountThresholds { get; private set; }
+                public bool? RetractNoteCountThresholds { get; init; }
 
                 [DataContract]
                 public sealed class PossibleItemTypesClass
@@ -96,49 +96,49 @@ namespace XFS4IoT.CashAcceptor.Completions
                     /// The cash unit takes all fit banknote types. These are level 4 notes which are fit for recycling.
                     /// </summary>
                     [DataMember(Name = "all")]
-                    public bool? All { get; private set; }
+                    public bool? All { get; init; }
 
                     /// <summary>
                     /// The cash unit takes all unfit banknotes. These are level 4 notes which are unfit for recycling.
                     /// </summary>
                     [DataMember(Name = "unfit")]
-                    public bool? Unfit { get; private set; }
+                    public bool? Unfit { get; init; }
 
                     /// <summary>
                     /// The cash unit takes all types of fit banknotes specified in an individual list. These are level 4 notes which are fit for recycling.
                     /// </summary>
                     [DataMember(Name = "individual")]
-                    public bool? Individual { get; private set; }
+                    public bool? Individual { get; init; }
 
                     /// <summary>
                     /// Level 1 note types are stored in this cash unit.
                     /// </summary>
                     [DataMember(Name = "level1")]
-                    public bool? Level1 { get; private set; }
+                    public bool? Level1 { get; init; }
 
                     /// <summary>
                     /// If notes can be classified as level 2, then level 2 note types are stored in this cash unit.
                     /// </summary>
                     [DataMember(Name = "level2")]
-                    public bool? Level2 { get; private set; }
+                    public bool? Level2 { get; init; }
 
                     /// <summary>
                     /// If notes can be classified as level 3, then level 3 note types are stored in this cash unit.
                     /// </summary>
                     [DataMember(Name = "level3")]
-                    public bool? Level3 { get; private set; }
+                    public bool? Level3 { get; init; }
 
                     /// <summary>
                     /// The cash unit can accept items on the ItemProcessor interface.
                     /// </summary>
                     [DataMember(Name = "itemProcessor")]
-                    public bool? ItemProcessor { get; private set; }
+                    public bool? ItemProcessor { get; init; }
 
                     /// <summary>
                     /// The cash unit takes all types of unfit banknotes specified in an individual list. These are level 4 notes which are unfit for recycling.
                     /// </summary>
                     [DataMember(Name = "unfitIndividual")]
-                    public bool? UnfitIndividual { get; private set; }
+                    public bool? UnfitIndividual { get; init; }
 
                 }
 
@@ -150,7 +150,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// CashManagement.SetCashUnitInfo command.
                 /// </summary>
                 [DataMember(Name = "possibleItemTypes")]
-                public PossibleItemTypesClass PossibleItemTypes { get; private set; }
+                public PossibleItemTypesClass PossibleItemTypes { get; init; }
 
             }
 
@@ -159,7 +159,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// as used in [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo).
             /// </summary>
             [DataMember(Name = "cashUnitCaps")]
-            public Dictionary<string, CashUnitCapsClass> CashUnitCaps { get; private set; }
+            public Dictionary<string, CashUnitCapsClass> CashUnitCaps { get; init; }
 
         }
     }

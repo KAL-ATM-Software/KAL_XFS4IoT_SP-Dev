@@ -49,13 +49,13 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// Total number of items received in the target cash unit during execution of this command.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsReceived")]
-                public int? NumberOfItemsReceived { get; private set; }
+                public int? NumberOfItemsReceived { get; init; }
 
                 /// <summary>
                 /// Total number of items rejected during execution of this command.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRejected")]
-                public int? NumberOfItemsRejected { get; private set; }
+                public int? NumberOfItemsRejected { get; init; }
 
                 [DataContract]
                 public sealed class DepleteSourceResultsClass
@@ -72,20 +72,20 @@ namespace XFS4IoT.CashAcceptor.Events
                     /// command) from which items have been removed.
                     /// </summary>
                     [DataMember(Name = "cashunitSource")]
-                    public string CashunitSource { get; private set; }
+                    public string CashunitSource { get; init; }
 
                     /// <summary>
                     /// Identification of item type. The note ID represents the item identifiers reported by the CashAcceptor.BanknoteTypes command.
                     /// </summary>
                     [DataMember(Name = "noteID")]
-                    public int? NoteID { get; private set; }
+                    public int? NoteID { get; init; }
 
                     /// <summary>
                     /// Total number of items removed from this source cash unit of the *noteID* item type. 
                     /// A zero value will be returned if this source cash unit did not move any items of this item type, for example due to a cash unit or transport jam.
                     /// </summary>
                     [DataMember(Name = "numberOfItemsRemoved")]
-                    public int? NumberOfItemsRemoved { get; private set; }
+                    public int? NumberOfItemsRemoved { get; init; }
 
                 }
 
@@ -98,7 +98,7 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// first source moved two different *noteID* item types and the second source moved three different *noteID* item types, then the *depleteSourceResults* array will have five elements.
                 /// </summary>
                 [DataMember(Name = "depleteSourceResults")]
-                public List<DepleteSourceResultsClass> DepleteSourceResults { get; private set; }
+                public List<DepleteSourceResultsClass> DepleteSourceResults { get; init; }
 
             }
 
@@ -106,7 +106,7 @@ namespace XFS4IoT.CashAcceptor.Events
             /// Note that in this case the values in this structure report the amount and number of each denomination that have actually been moved during the depletion command.
             /// </summary>
             [DataMember(Name = "deplete")]
-            public DepleteClass Deplete { get; private set; }
+            public DepleteClass Deplete { get; init; }
 
         }
 

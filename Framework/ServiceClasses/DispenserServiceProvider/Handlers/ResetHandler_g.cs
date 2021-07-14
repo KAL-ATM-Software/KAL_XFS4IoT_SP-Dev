@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var resetCmd = command.IsA<ResetCommand>($"Invalid parameter in the Reset Handle method. {nameof(ResetCommand)}");
-            resetCmd.Headers.RequestId.HasValue.IsTrue();
+            resetCmd.Header.RequestId.HasValue.IsTrue();
 
-            IResetEvents events = new ResetEvents(Connection, resetCmd.Headers.RequestId.Value);
+            IResetEvents events = new ResetEvents(Connection, resetCmd.Header.RequestId.Value);
 
             var result = await HandleReset(events, resetCmd, cancel);
-            await Connection.SendMessageAsync(new ResetCompletion(resetCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ResetCompletion(resetCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var resetcommand = command.IsA<ResetCommand>();
-            resetcommand.Headers.RequestId.HasValue.IsTrue();
+            resetcommand.Header.RequestId.HasValue.IsTrue();
 
             ResetCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => ResetCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ResetCompletion(resetcommand.Headers.RequestId.Value, new ResetCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ResetCompletion(resetcommand.Header.RequestId.Value, new ResetCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

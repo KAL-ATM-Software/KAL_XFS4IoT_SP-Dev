@@ -49,14 +49,14 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// If this value is zero then the note type is unknown.
                 /// </summary>
                 [DataMember(Name = "noteID")]
-                public int? NoteID { get; private set; }
+                public int? NoteID { get; init; }
 
                 /// <summary>
                 /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
                 /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
                 /// </summary>
                 [DataMember(Name = "count")]
-                public int? Count { get; private set; }
+                public int? Count { get; init; }
 
             }
 
@@ -64,7 +64,7 @@ namespace XFS4IoT.CashAcceptor.Events
             /// Array of banknote numbers the cash unit contains.
             /// </summary>
             [DataMember(Name = "noteNumber")]
-            public List<NoteNumberClass> NoteNumber { get; private set; }
+            public List<NoteNumberClass> NoteNumber { get; init; }
 
         }
 

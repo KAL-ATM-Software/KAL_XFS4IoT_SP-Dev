@@ -48,14 +48,14 @@ namespace XFS4IoT.Common.Completions
             /// "inactive": No customer transaction is in progress.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
             /// <summary>
             /// Specifies a string which identifies the transaction ID. The value returned in this 
             /// parameter is an application defined customer transaction identifier, which was previously set in the Common.SetTransactionState command
             /// </summary>
             [DataMember(Name = "transactionID")]
-            public string TransactionID { get; private set; }
+            public string TransactionID { get; init; }
 
             /// <summary>
             /// A list of vendor-specific, or any other extended, transaction information. The information is set as a series 
@@ -63,7 +63,7 @@ namespace XFS4IoT.Common.Completions
             /// An empty list may be indicated by either a NULL pointer or a pointer to two consecutive null characters
             /// </summary>
             [DataMember(Name = "extra")]
-            public List<string> Extra { get; private set; }
+            public List<string> Extra { get; init; }
 
         }
     }

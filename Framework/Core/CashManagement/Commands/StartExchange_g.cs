@@ -55,20 +55,20 @@ namespace XFS4IoT.CashManagement.Commands
             /// (TODO) for an example flow.
             /// </summary>
             [DataMember(Name = "exchangeType")]
-            public ExchangeTypeEnum? ExchangeType { get; private set; }
+            public ExchangeTypeEnum? ExchangeType { get; init; }
 
             /// <summary>
             /// Identifies the teller. If the device is a Self-Service ATM this field is ignored.
             /// </summary>
             [DataMember(Name = "tellerID")]
-            public int? TellerID { get; private set; }
+            public int? TellerID { get; init; }
 
             /// <summary>
             /// Array of strings containing the object names of the cash units to be exchanged as stated by the 
             /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command.
             /// </summary>
             [DataMember(Name = "cashunitList")]
-            public List<string> CashunitList { get; private set; }
+            public List<string> CashunitList { get; init; }
 
             [DataContract]
             public sealed class OutputClass
@@ -85,7 +85,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command.
                 /// </summary>
                 [DataMember(Name = "cashunit")]
-                public string Cashunit { get; private set; }
+                public string Cashunit { get; init; }
 
                 [DataContract]
                 public sealed class PositionClass
@@ -107,49 +107,49 @@ namespace XFS4IoT.CashManagement.Commands
                     /// position.
                     /// </summary>
                     [DataMember(Name = "default")]
-                    public bool? Default { get; private set; }
+                    public bool? Default { get; init; }
 
                     /// <summary>
                     /// Move items to the left output position.
                     /// </summary>
                     [DataMember(Name = "left")]
-                    public bool? Left { get; private set; }
+                    public bool? Left { get; init; }
 
                     /// <summary>
                     /// Move items to the right output position.
                     /// </summary>
                     [DataMember(Name = "right")]
-                    public bool? Right { get; private set; }
+                    public bool? Right { get; init; }
 
                     /// <summary>
                     /// Move items to the center output position.
                     /// </summary>
                     [DataMember(Name = "center")]
-                    public bool? Center { get; private set; }
+                    public bool? Center { get; init; }
 
                     /// <summary>
                     /// Move items to the top output position.
                     /// </summary>
                     [DataMember(Name = "top")]
-                    public bool? Top { get; private set; }
+                    public bool? Top { get; init; }
 
                     /// <summary>
                     /// Move items to the bottom output position.
                     /// </summary>
                     [DataMember(Name = "bottom")]
-                    public bool? Bottom { get; private set; }
+                    public bool? Bottom { get; init; }
 
                     /// <summary>
                     /// Move items to the front output position.
                     /// </summary>
                     [DataMember(Name = "front")]
-                    public bool? Front { get; private set; }
+                    public bool? Front { get; init; }
 
                     /// <summary>
                     /// Move items to the rear output position.
                     /// </summary>
                     [DataMember(Name = "rear")]
-                    public bool? Rear { get; private set; }
+                    public bool? Rear { get; init; }
 
                 }
 
@@ -157,14 +157,14 @@ namespace XFS4IoT.CashManagement.Commands
                 /// Determines to which position the cash should be moved as a combination of the following flags:
                 /// </summary>
                 [DataMember(Name = "position")]
-                public PositionClass Position { get; private set; }
+                public PositionClass Position { get; init; }
 
                 /// <summary>
                 /// Object name of the cash unit the items are to be moved to as stated by the 
                 /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command.
                 /// </summary>
                 [DataMember(Name = "targetCashunit")]
-                public string TargetCashunit { get; private set; }
+                public string TargetCashunit { get; init; }
 
             }
 
@@ -173,7 +173,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// is ```clearRecycler```, i.e. a recycle cash unit is to be emptied.
             /// </summary>
             [DataMember(Name = "output")]
-            public OutputClass Output { get; private set; }
+            public OutputClass Output { get; init; }
 
         }
     }

@@ -60,7 +60,7 @@ namespace XFS4IoT.CardReader
         ///   for chip card dialog.
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaEnum? Media { get; private set; }
+        public MediaEnum? Media { get; init; }
 
         public enum RetainBinEnum
         {
@@ -75,7 +75,7 @@ namespace XFS4IoT.CardReader
         /// Specifies the state of the retain bin.
         /// </summary>
         [DataMember(Name = "retainBin")]
-        public RetainBinEnum? RetainBin { get; private set; }
+        public RetainBinEnum? RetainBin { get; init; }
 
         public enum SecurityEnum
         {
@@ -92,7 +92,7 @@ namespace XFS4IoT.CardReader
         /// * ```notPresent``` - The security module is open and ready to process cards.
         /// </summary>
         [DataMember(Name = "security")]
-        public SecurityEnum? Security { get; private set; }
+        public SecurityEnum? Security { get; init; }
 
         /// <summary>
         /// The number of cards retained; applicable only to motor driven card units, for non-motorized card units this
@@ -100,7 +100,7 @@ namespace XFS4IoT.CardReader
         /// [CardReader.ResetCount](#cardreader.resetcount) command.
         /// </summary>
         [DataMember(Name = "numberCards")]
-        public int? NumberCards { get; private set; }
+        public int? NumberCards { get; init; }
 
         public enum ChipPowerEnum
         {
@@ -132,7 +132,7 @@ namespace XFS4IoT.CardReader
         /// * ```noCard``` - There is no card in the device.
         /// </summary>
         [DataMember(Name = "chipPower")]
-        public ChipPowerEnum? ChipPower { get; private set; }
+        public ChipPowerEnum? ChipPower { get; init; }
 
         public enum ChipModuleEnum
         {
@@ -151,7 +151,7 @@ namespace XFS4IoT.CardReader
         /// * ```notSupported``` - Reporting the chip card module status is not supported.
         /// </summary>
         [DataMember(Name = "chipModule")]
-        public ChipModuleEnum? ChipModule { get; private set; }
+        public ChipModuleEnum? ChipModule { get; init; }
 
         public enum MagWriteModuleEnum
         {
@@ -170,7 +170,7 @@ namespace XFS4IoT.CardReader
         /// * ```notSupported``` - Reporting the magnetic card writing module status is not supported.
         /// </summary>
         [DataMember(Name = "magWriteModule")]
-        public MagWriteModuleEnum? MagWriteModule { get; private set; }
+        public MagWriteModuleEnum? MagWriteModule { get; init; }
 
         public enum FrontImageModuleEnum
         {
@@ -189,7 +189,7 @@ namespace XFS4IoT.CardReader
         /// * ```notSupported``` - Reporting the front image reading module status is not supported.
         /// </summary>
         [DataMember(Name = "frontImageModule")]
-        public FrontImageModuleEnum? FrontImageModule { get; private set; }
+        public FrontImageModuleEnum? FrontImageModule { get; init; }
 
         public enum BackImageModuleEnum
         {
@@ -208,7 +208,7 @@ namespace XFS4IoT.CardReader
         /// * ```notSupported``` - Reporting the back image reading module status is not supported.
         /// </summary>
         [DataMember(Name = "backImageModule")]
-        public BackImageModuleEnum? BackImageModule { get; private set; }
+        public BackImageModuleEnum? BackImageModule { get; init; }
 
         public enum ParkingStationMediaEnum
         {
@@ -230,7 +230,7 @@ namespace XFS4IoT.CardReader
         /// * ```unknown``` - The media state cannot be determined.
         /// </summary>
         [DataMember(Name = "parkingStationMedia")]
-        public List<ParkingStationMediaEnum> ParkingStationMedia { get; private set; }
+        public List<ParkingStationMediaEnum> ParkingStationMedia { get; init; }
 
     }
 
@@ -288,7 +288,7 @@ namespace XFS4IoT.CardReader
         /// available with this type of card).
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeEnum? Type { get; private set; }
+        public TypeEnum? Type { get; init; }
 
         [DataContract]
         public sealed class ReadTracksClass
@@ -311,61 +311,61 @@ namespace XFS4IoT.CardReader
             /// The card reader can access track 1.
             /// </summary>
             [DataMember(Name = "track1")]
-            public bool? Track1 { get; private set; }
+            public bool? Track1 { get; init; }
 
             /// <summary>
             /// The card reader can access track 2.
             /// </summary>
             [DataMember(Name = "track2")]
-            public bool? Track2 { get; private set; }
+            public bool? Track2 { get; init; }
 
             /// <summary>
             /// The card reader can access track 3.
             /// </summary>
             [DataMember(Name = "track3")]
-            public bool? Track3 { get; private set; }
+            public bool? Track3 { get; init; }
 
             /// <summary>
             /// The card reader can access the Swedish watermark track.
             /// </summary>
             [DataMember(Name = "watermark")]
-            public bool? Watermark { get; private set; }
+            public bool? Watermark { get; init; }
 
             /// <summary>
             /// The card reader can access front track 1.
             /// </summary>
             [DataMember(Name = "frontTrack1")]
-            public bool? FrontTrack1 { get; private set; }
+            public bool? FrontTrack1 { get; init; }
 
             /// <summary>
             /// The card reader can read the front image of the card.
             /// </summary>
             [DataMember(Name = "frontImage")]
-            public bool? FrontImage { get; private set; }
+            public bool? FrontImage { get; init; }
 
             /// <summary>
             /// The card reader can read the back image of the card.
             /// </summary>
             [DataMember(Name = "backImage")]
-            public bool? BackImage { get; private set; }
+            public bool? BackImage { get; init; }
 
             /// <summary>
             /// The card reader can access JIS I track 1.
             /// </summary>
             [DataMember(Name = "track1JIS")]
-            public bool? Track1JIS { get; private set; }
+            public bool? Track1JIS { get; init; }
 
             /// <summary>
             /// The card reader can access JIS I track 3.
             /// </summary>
             [DataMember(Name = "track3JIS")]
-            public bool? Track3JIS { get; private set; }
+            public bool? Track3JIS { get; init; }
 
             /// <summary>
             /// The card reader can provide dynamic digital identification of the magnetic strip.
             /// </summary>
             [DataMember(Name = "ddi")]
-            public bool? Ddi { get; private set; }
+            public bool? Ddi { get; init; }
 
         }
 
@@ -373,7 +373,7 @@ namespace XFS4IoT.CardReader
         /// Specifies the tracks that can be read by the card reader.
         /// </summary>
         [DataMember(Name = "readTracks")]
-        public ReadTracksClass ReadTracks { get; private set; }
+        public ReadTracksClass ReadTracks { get; init; }
 
         [DataContract]
         public sealed class WriteTracksClass
@@ -392,37 +392,37 @@ namespace XFS4IoT.CardReader
             /// The card reader can access track 1.
             /// </summary>
             [DataMember(Name = "track1")]
-            public bool? Track1 { get; private set; }
+            public bool? Track1 { get; init; }
 
             /// <summary>
             /// The card reader can access track 2.
             /// </summary>
             [DataMember(Name = "track2")]
-            public bool? Track2 { get; private set; }
+            public bool? Track2 { get; init; }
 
             /// <summary>
             /// The card reader can access track 3.
             /// </summary>
             [DataMember(Name = "track3")]
-            public bool? Track3 { get; private set; }
+            public bool? Track3 { get; init; }
 
             /// <summary>
             /// The card reader can access front track 1.
             /// </summary>
             [DataMember(Name = "frontTrack1")]
-            public bool? FrontTrack1 { get; private set; }
+            public bool? FrontTrack1 { get; init; }
 
             /// <summary>
             /// The card reader can access JIS I track 1.
             /// </summary>
             [DataMember(Name = "track1JIS")]
-            public bool? Track1JIS { get; private set; }
+            public bool? Track1JIS { get; init; }
 
             /// <summary>
             /// The card reader can access JIS I track 3.
             /// </summary>
             [DataMember(Name = "track3JIS")]
-            public bool? Track3JIS { get; private set; }
+            public bool? Track3JIS { get; init; }
 
         }
 
@@ -430,7 +430,7 @@ namespace XFS4IoT.CardReader
         /// Specifies the tracks that can be read by the card reader.
         /// </summary>
         [DataMember(Name = "writeTracks")]
-        public WriteTracksClass WriteTracks { get; private set; }
+        public WriteTracksClass WriteTracks { get; init; }
 
         [DataContract]
         public sealed class ChipProtocolsClass
@@ -450,44 +450,44 @@ namespace XFS4IoT.CardReader
             /// The card reader can handle the T=0 protocol.
             /// </summary>
             [DataMember(Name = "chipT0")]
-            public bool? ChipT0 { get; private set; }
+            public bool? ChipT0 { get; init; }
 
             /// <summary>
             /// The card reader can handle the T=0 protocol.
             /// </summary>
             [DataMember(Name = "chipT1")]
-            public bool? ChipT1 { get; private set; }
+            public bool? ChipT1 { get; init; }
 
             /// <summary>
             /// The carder is capable of communicating with the chip without requiring the application to specify any
             /// protocol.
             /// </summary>
             [DataMember(Name = "chipProtocolNotRequired")]
-            public bool? ChipProtocolNotRequired { get; private set; }
+            public bool? ChipProtocolNotRequired { get; init; }
 
             /// <summary>
             /// The card reader can handle the ISO 14443 (Part3) Type A contactless chip card protocol.
             /// </summary>
             [DataMember(Name = "chipTypeAPart3")]
-            public bool? ChipTypeAPart3 { get; private set; }
+            public bool? ChipTypeAPart3 { get; init; }
 
             /// <summary>
             /// The card reader can handle the ISO 14443 (Part4) Type A contactless chip card protocol.
             /// </summary>
             [DataMember(Name = "chipTypeAPart4")]
-            public bool? ChipTypeAPart4 { get; private set; }
+            public bool? ChipTypeAPart4 { get; init; }
 
             /// <summary>
             /// The card reader can handle the ISO 14443 Type B contactless chip card protocol.
             /// </summary>
             [DataMember(Name = "chipTypeB")]
-            public bool? ChipTypeB { get; private set; }
+            public bool? ChipTypeB { get; init; }
 
             /// <summary>
             /// The card reader can handle the ISO 18092 (106/212/424kbps) contactless chip card protocol.
             /// </summary>
             [DataMember(Name = "chipTypeNFC")]
-            public bool? ChipTypeNFC { get; private set; }
+            public bool? ChipTypeNFC { get; init; }
 
         }
 
@@ -495,14 +495,14 @@ namespace XFS4IoT.CardReader
         /// Specifies the chip card protocols that are supported by the card reader.
         /// </summary>
         [DataMember(Name = "chipProtocols")]
-        public ChipProtocolsClass ChipProtocols { get; private set; }
+        public ChipProtocolsClass ChipProtocols { get; init; }
 
         /// <summary>
         /// Specifies the maximum numbers of cards that the retain bin and card stacker module bin can hold (zero if not
         /// available).
         /// </summary>
         [DataMember(Name = "maxCardCount")]
-        public int? MaxCardCount { get; private set; }
+        public int? MaxCardCount { get; init; }
 
         public enum SecurityTypeEnum
         {
@@ -519,7 +519,7 @@ namespace XFS4IoT.CardReader
         /// * ```cim86```` - The security module is a CIM86.
         /// </summary>
         [DataMember(Name = "securityType")]
-        public SecurityTypeEnum? SecurityType { get; private set; }
+        public SecurityTypeEnum? SecurityType { get; init; }
 
         public enum PowerOnOptionEnum
         {
@@ -542,7 +542,7 @@ namespace XFS4IoT.CardReader
         /// * ```readPosition``` - The card will be moved to the read position.
         /// </summary>
         [DataMember(Name = "powerOnOption")]
-        public PowerOnOptionEnum? PowerOnOption { get; private set; }
+        public PowerOnOptionEnum? PowerOnOption { get; init; }
 
         public enum PowerOffOptionEnum
         {
@@ -558,20 +558,20 @@ namespace XFS4IoT.CardReader
         /// [powerOnOption](#common.capabilities.completion.properties.cardreader.poweronoption).
         /// </summary>
         [DataMember(Name = "powerOffOption")]
-        public PowerOffOptionEnum? PowerOffOption { get; private set; }
+        public PowerOffOptionEnum? PowerOffOption { get; init; }
 
         /// <summary>
         /// Specifies whether the Flux Sensor on the card unit is programmable.
         /// </summary>
         [DataMember(Name = "fluxSensorProgrammable")]
-        public bool? FluxSensorProgrammable { get; private set; }
+        public bool? FluxSensorProgrammable { get; init; }
 
         /// <summary>
         /// Specifies whether a card may be read or written after having been pushed to the exit slot with a
         /// [CardReader.EjectCard](#cardreader.ejectcard)  command. The card will be retracted back into the card reader.
         /// </summary>
         [DataMember(Name = "readWriteAccessFollowingEject")]
-        public bool? ReadWriteAccessFollowingEject { get; private set; }
+        public bool? ReadWriteAccessFollowingEject { get; init; }
 
         [DataContract]
         public sealed class WriteModeClass
@@ -588,26 +588,26 @@ namespace XFS4IoT.CardReader
             /// Does not support writing of magnetic stripes.
             /// </summary>
             [DataMember(Name = "notSupported")]
-            public bool? NotSupported { get; private set; }
+            public bool? NotSupported { get; init; }
 
             /// <summary>
             /// Supports writing of loco magnetic stripes.
             /// </summary>
             [DataMember(Name = "loco")]
-            public bool? Loco { get; private set; }
+            public bool? Loco { get; init; }
 
             /// <summary>
             /// Supports writing of hico magnetic stripes.
             /// </summary>
             [DataMember(Name = "hico")]
-            public bool? Hico { get; private set; }
+            public bool? Hico { get; init; }
 
             /// <summary>
             /// Service Provider is capable of automatically determining whether loco or hico magnetic stripes should be
             /// written.
             /// </summary>
             [DataMember(Name = "auto")]
-            public bool? Auto { get; private set; }
+            public bool? Auto { get; init; }
 
         }
 
@@ -616,7 +616,7 @@ namespace XFS4IoT.CardReader
         /// coercivity (hico) magnetic stripes as a combination of the following:
         /// </summary>
         [DataMember(Name = "writeMode")]
-        public WriteModeClass WriteMode { get; private set; }
+        public WriteModeClass WriteMode { get; init; }
 
         [DataContract]
         public sealed class ChipPowerClass
@@ -633,25 +633,25 @@ namespace XFS4IoT.CardReader
             /// The card reader cannot handle chip power management.
             /// </summary>
             [DataMember(Name = "notSupported")]
-            public bool? NotSupported { get; private set; }
+            public bool? NotSupported { get; init; }
 
             /// <summary>
             /// The card reader can power on the chip and reset it (Cold Reset).
             /// </summary>
             [DataMember(Name = "cold")]
-            public bool? Cold { get; private set; }
+            public bool? Cold { get; init; }
 
             /// <summary>
             /// The card reader can reset the chip (Warm Reset).
             /// </summary>
             [DataMember(Name = "warm")]
-            public bool? Warm { get; private set; }
+            public bool? Warm { get; init; }
 
             /// <summary>
             /// The card reader can power off the chip.
             /// </summary>
             [DataMember(Name = "off")]
-            public bool? Off { get; private set; }
+            public bool? Off { get; init; }
 
         }
 
@@ -660,7 +660,7 @@ namespace XFS4IoT.CardReader
         /// service, as a combination of the following:
         /// </summary>
         [DataMember(Name = "chipPower")]
-        public ChipPowerClass ChipPower { get; private set; }
+        public ChipPowerClass ChipPower { get; init; }
 
         [DataContract]
         public sealed class MemoryChipProtocolsClass
@@ -675,13 +675,13 @@ namespace XFS4IoT.CardReader
             /// The device supports the Siemens 4442 Card Protocol (also supported by the Gemplus GPM2K card).
             /// </summary>
             [DataMember(Name = "siemens4442")]
-            public bool? Siemens4442 { get; private set; }
+            public bool? Siemens4442 { get; init; }
 
             /// <summary>
             /// The device supports the Gemplus GPM 896 Card Protocol.
             /// </summary>
             [DataMember(Name = "gpm896")]
-            public bool? Gpm896 { get; private set; }
+            public bool? Gpm896 { get; init; }
 
         }
 
@@ -689,7 +689,7 @@ namespace XFS4IoT.CardReader
         /// The memory card protocols that are supported, as a combination of the following:
         /// </summary>
         [DataMember(Name = "memoryChipProtocols")]
-        public MemoryChipProtocolsClass MemoryChipProtocols { get; private set; }
+        public MemoryChipProtocolsClass MemoryChipProtocols { get; init; }
 
         [DataContract]
         public sealed class EjectPositionClass
@@ -704,7 +704,7 @@ namespace XFS4IoT.CardReader
             /// The device can eject a card to the exit position, from which the user can remove it.
             /// </summary>
             [DataMember(Name = "exit")]
-            public bool? Exit { get; private set; }
+            public bool? Exit { get; init; }
 
             /// <summary>
             /// The device can eject a card to the transport just behind the exit position, from which the user cannot
@@ -712,7 +712,7 @@ namespace XFS4IoT.CardReader
             /// [exit](#common.capabilities.completion.properties.cardreader.ejectposition.exit) position.
             /// </summary>
             [DataMember(Name = "transport")]
-            public bool? Transport { get; private set; }
+            public bool? Transport { get; init; }
 
         }
 
@@ -720,14 +720,14 @@ namespace XFS4IoT.CardReader
         /// Specifies the target position that is supported for the eject operation, as a combination of the following:
         /// </summary>
         [DataMember(Name = "ejectPosition")]
-        public EjectPositionClass EjectPosition { get; private set; }
+        public EjectPositionClass EjectPosition { get; init; }
 
         /// <summary>
         /// Specifies the number of supported parking stations or card stackers. If a zero value is specified there is
         /// no parking station and no card stacker module supported.
         /// </summary>
         [DataMember(Name = "numberParkingStations")]
-        public int? NumberParkingStations { get; private set; }
+        public int? NumberParkingStations { get; init; }
 
     }
 
@@ -755,13 +755,13 @@ namespace XFS4IoT.CardReader
 
 
         [DataMember(Name = "status")]
-        public CardDataStatusEnum? Status { get; private set; }
+        public CardDataStatusEnum? Status { get; init; }
 
         /// <summary>
         /// Base64 encoded representation of the data
         /// </summary>
         [DataMember(Name = "data")]
-        public string Data { get; private set; }
+        public string Data { get; init; }
 
     }
 
@@ -786,7 +786,7 @@ namespace XFS4IoT.CardReader
         /// Section 9.4).
         /// </summary>
         [DataMember(Name = "messageId")]
-        public int? MessageId { get; private set; }
+        public int? MessageId { get; init; }
 
         public enum StatusEnum
         {
@@ -813,14 +813,14 @@ namespace XFS4IoT.CardReader
         /// * ```processingError``` - Contactless card reader was not able to process the card successfully.
         /// </summary>
         [DataMember(Name = "status")]
-        public StatusEnum? Status { get; private set; }
+        public StatusEnum? Status { get; init; }
 
         /// <summary>
         /// Represents the hold time in units of 100 milliseconds for which the application should display the message
         /// before processing the next user interface data.
         /// </summary>
         [DataMember(Name = "holdTime")]
-        public int? HoldTime { get; private set; }
+        public int? HoldTime { get; init; }
 
         public enum ValueQualifierEnum
         {
@@ -839,7 +839,7 @@ namespace XFS4IoT.CardReader
         /// * ```notApplicable``` - *value* is neither of the above.
         /// </summary>
         [DataMember(Name = "valueQualifier")]
-        public ValueQualifierEnum? ValueQualifier { get; private set; }
+        public ValueQualifierEnum? ValueQualifier { get; init; }
 
         /// <summary>
         /// Represents the value of the amount or balance (as specified by
@@ -847,20 +847,20 @@ namespace XFS4IoT.CardReader
         /// to be displayed where appropriate.
         /// </summary>
         [DataMember(Name = "value")]
-        public string Value { get; private set; }
+        public string Value { get; init; }
 
         /// <summary>
         /// Represents the numeric value of currency code as per ISO 4217.
         /// </summary>
         [DataMember(Name = "currencyCode")]
-        public string CurrencyCode { get; private set; }
+        public string CurrencyCode { get; init; }
 
         /// <summary>
         /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
         /// data to display all messages in the specified language until the transaction concludes.
         /// </summary>
         [DataMember(Name = "languagePreferenceData")]
-        public string LanguagePreferenceData { get; private set; }
+        public string LanguagePreferenceData { get; init; }
 
     }
 
@@ -916,7 +916,7 @@ namespace XFS4IoT.CardReader
         /// in the EMVCo Specifications for Contactless Payment Systems (Book A and B).
         /// </summary>
         [DataMember(Name = "txOutcome")]
-        public TxOutcomeEnum? TxOutcome { get; private set; }
+        public TxOutcomeEnum? TxOutcome { get; init; }
 
         public enum CardholderActionEnum
         {
@@ -936,7 +936,7 @@ namespace XFS4IoT.CardReader
         ///   completed.
         /// </summary>
         [DataMember(Name = "cardholderAction")]
-        public CardholderActionEnum? CardholderAction { get; private set; }
+        public CardholderActionEnum? CardholderAction { get; init; }
 
         /// <summary>
         /// The Base64 encoded representation of the data read from the chip after a contactless transaction has been
@@ -950,7 +950,7 @@ namespace XFS4IoT.CardReader
         /// terminated with a single null character and cannot contain UNICODE characters.
         /// </summary>
         [DataMember(Name = "dataRead")]
-        public string DataRead { get; private set; }
+        public string DataRead { get; init; }
 
         [DataContract]
         public sealed class ClessOutcomeClass
@@ -988,7 +988,7 @@ namespace XFS4IoT.CardReader
             ///   rules to process the transaction.
             /// </summary>
             [DataMember(Name = "cvm")]
-            public CvmEnum? Cvm { get; private set; }
+            public CvmEnum? Cvm { get; init; }
 
             public enum AlternateInterfaceEnum
             {
@@ -1005,13 +1005,13 @@ namespace XFS4IoT.CardReader
             /// * ```magneticStripe``` - Magnetic stripe interface should be used to complete a transaction.
             /// </summary>
             [DataMember(Name = "alternateInterface")]
-            public AlternateInterfaceEnum? AlternateInterface { get; private set; }
+            public AlternateInterfaceEnum? AlternateInterface { get; init; }
 
             /// <summary>
             /// Specifies whether a receipt should be printed. True indicates that a receipt is required.
             /// </summary>
             [DataMember(Name = "receipt")]
-            public bool? Receipt { get; private set; }
+            public bool? Receipt { get; init; }
 
             /// <summary>
             /// The user interface details required to be displayed to the cardholder after processing the outcome of a
@@ -1020,14 +1020,14 @@ namespace XFS4IoT.CardReader
             /// within this object.
             /// </summary>
             [DataMember(Name = "uiOutcome")]
-            public EMVClessUIClass UiOutcome { get; private set; }
+            public EMVClessUIClass UiOutcome { get; init; }
 
             /// <summary>
             /// The user interface details required to be displayed to the cardholder when a transaction needs to be
             /// completed with a re-tap. If no user interface details are required, this will be omitted.
             /// </summary>
             [DataMember(Name = "uiRestart")]
-            public EMVClessUIClass UiRestart { get; private set; }
+            public EMVClessUIClass UiRestart { get; init; }
 
             /// <summary>
             /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
@@ -1040,13 +1040,13 @@ namespace XFS4IoT.CardReader
             /// field.
             /// </summary>
             [DataMember(Name = "fieldOffHoldTime")]
-            public int? FieldOffHoldTime { get; private set; }
+            public int? FieldOffHoldTime { get; init; }
 
             /// <summary>
             /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
             /// </summary>
             [DataMember(Name = "cardRemovalTimeout")]
-            public int? CardRemovalTimeout { get; private set; }
+            public int? CardRemovalTimeout { get; init; }
 
             /// <summary>
             /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
@@ -1054,7 +1054,7 @@ namespace XFS4IoT.CardReader
             /// present, this will be omitted.
             /// </summary>
             [DataMember(Name = "discretionaryData")]
-            public string DiscretionaryData { get; private set; }
+            public string DiscretionaryData { get; init; }
 
         }
 
@@ -1063,7 +1063,7 @@ namespace XFS4IoT.CardReader
         /// This can be omitted for contactless chip card readers that do not follow EMVCo Entry Point Specifications.
         /// </summary>
         [DataMember(Name = "clessOutcome")]
-        public ClessOutcomeClass ClessOutcome { get; private set; }
+        public ClessOutcomeClass ClessOutcome { get; init; }
 
     }
 

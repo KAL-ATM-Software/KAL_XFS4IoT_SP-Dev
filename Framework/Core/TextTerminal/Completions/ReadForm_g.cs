@@ -51,14 +51,14 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Details of the field(s) requested. The key is the field name and value is file value containing all the printable characters (numeric and alphanumeric) 
             /// read from the text terminal unit key pad for this field.
             /// </summary>
             [DataMember(Name = "fields")]
-            public Dictionary<string, string> Fields { get; private set; }
+            public Dictionary<string, string> Fields { get; init; }
 
         }
     }

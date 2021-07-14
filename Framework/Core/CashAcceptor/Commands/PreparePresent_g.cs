@@ -48,24 +48,24 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Describes the position where the items are to be moved. Following values are possible:
             /// 
-            /// \"null\": The default configuration information should be used.
+            /// "null": The default configuration information should be used.
             /// 
-            /// \"outLeft\": Move items to the left output position.
+            /// "outLeft": Move items to the left output position.
             /// 
-            /// \"outRight\": Move items to the right output position.
+            /// "outRight": Move items to the right output position.
             /// 
-            /// \"outCenter\": Move items to the center output position.
+            /// "outCenter": Move items to the center output position.
             /// 
-            /// \"outTop\": Move items to the top output position.
+            /// "outTop": Move items to the top output position.
             /// 
-            /// \"outBottom\": Move items to the bottom output position.
+            /// "outBottom": Move items to the bottom output position.
             /// 
-            /// \"outFront\": Move items to the front output position.
+            /// "outFront": Move items to the front output position.
             /// 
-            /// \"outRear\": Move items to the rear output position.
+            /// "outRear": Move items to the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

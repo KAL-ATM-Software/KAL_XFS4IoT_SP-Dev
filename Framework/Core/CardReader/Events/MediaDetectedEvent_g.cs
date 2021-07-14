@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```jammed``` - The card is jammed in the device.
             /// </summary>
             [DataMember(Name = "resetOut")]
-            public ResetOutEnum? ResetOut { get; private set; }
+            public ResetOutEnum? ResetOut { get; init; }
 
         }
 

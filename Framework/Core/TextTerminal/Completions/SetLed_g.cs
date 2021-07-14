@@ -42,7 +42,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```invalidLed``` - An attempt to set a LED to a new value was invalid because the LED does not exist.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

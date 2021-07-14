@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer.Completions
             /// The list of form names.
             /// </summary>
             [DataMember(Name = "formList")]
-            public List<string> FormList { get; private set; }
+            public List<string> FormList { get; init; }
 
         }
     }

@@ -38,7 +38,7 @@ namespace XFS4IoT.Common.Commands
             /// Specifies the index of the guidance light to set as one of the values defined within the capabilities section: 
             /// </summary>
             [DataMember(Name = "guidLight")]
-            public int? GuidLight { get; private set; }
+            public int? GuidLight { get; init; }
 
             [DataContract]
             public sealed class CommandClass
@@ -63,7 +63,7 @@ namespace XFS4IoT.Common.Commands
                 /// Indicates which flash rates are supported by the guidelight.
                 /// </summary>
                 [DataMember(Name = "flashRate")]
-                public FlashRateEnum? FlashRate { get; private set; }
+                public FlashRateEnum? FlashRate { get; init; }
 
                 public enum ColorEnum
                 {
@@ -81,7 +81,7 @@ namespace XFS4IoT.Common.Commands
                 /// Indicates which colors are supported by the guidelight.
                 /// </summary>
                 [DataMember(Name = "color")]
-                public ColorEnum? Color { get; private set; }
+                public ColorEnum? Color { get; init; }
 
                 public enum DirectionEnum
                 {
@@ -93,13 +93,13 @@ namespace XFS4IoT.Common.Commands
                 /// Indicates which directions are supported by the guidelight. and it'an optional field
                 /// </summary>
                 [DataMember(Name = "direction")]
-                public DirectionEnum? Direction { get; private set; }
+                public DirectionEnum? Direction { get; init; }
 
             }
 
 
             [DataMember(Name = "command")]
-            public CommandClass Command { get; private set; }
+            public CommandClass Command { get; init; }
 
         }
     }

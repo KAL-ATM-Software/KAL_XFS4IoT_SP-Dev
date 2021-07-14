@@ -45,28 +45,28 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Specifies to lock or unlock the device in its normal operating position. Following values are possible:
             /// 
-            /// \"lock\": Locks the device so that it cannot be removed from its normal operating position.
+            /// "lock": Locks the device so that it cannot be removed from its normal operating position.
             /// 
-            /// \"unlock\": Unlocks the device so that it can be removed from its normal operating position.
+            /// "unlock": Unlocks the device so that it can be removed from its normal operating position.
             /// 
-            /// \"noLockAction\": No lock/unlock action will be performed on the device.
+            /// "noLockAction": No lock/unlock action will be performed on the device.
             /// </summary>
             [DataMember(Name = "deviceAction")]
-            public DeviceActionEnum? DeviceAction { get; private set; }
+            public DeviceActionEnum? DeviceAction { get; init; }
 
             /// <summary>
             /// Specifies the type of lock/unlock action on cash units. Following values are possible:
             /// 
-            /// \"lockAll\": Locks all cash units supported.
+            /// "lockAll": Locks all cash units supported.
             /// 
-            /// \"unlockAll\": Unlocks all cash units supported.
+            /// "unlockAll": Unlocks all cash units supported.
             /// 
-            /// \"lockIndividual\": Locks/unlocks cash units individually as specified in the *unitLockControl* parameter.
+            /// "lockIndividual": Locks/unlocks cash units individually as specified in the *unitLockControl* parameter.
             /// 
-            /// \"noLockAction\": 
+            /// "noLockAction": 
             /// </summary>
             [DataMember(Name = "cashUnitAction")]
-            public int? CashUnitAction { get; private set; }
+            public int? CashUnitAction { get; init; }
 
             [DataContract]
             public sealed class UnitLockControlClass
@@ -82,7 +82,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// 
                 /// </summary>
                 [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; private set; }
+                public string PhysicalPositionName { get; init; }
 
                 public enum UnitActionEnum
                 {
@@ -92,21 +92,21 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// Specifies whether to lock or unlock the cash unit indicated in the *physicalPositionName* parameter. Following values are possible:
-                /// \"lock\": Locks the specified cash unit so that it cannot be removed from the device.
-                /// \"unlock\": Unlocks the specified cash unit so that it can be removed from the device.
+                /// "lock": Locks the specified cash unit so that it cannot be removed from the device.
+                /// "unlock": Unlocks the specified cash unit so that it can be removed from the device.
                 /// 
                 /// </summary>
                 [DataMember(Name = "unitAction")]
-                public UnitActionEnum? UnitAction { get; private set; }
+                public UnitActionEnum? UnitAction { get; init; }
 
             }
 
             /// <summary>
-            /// Array of UnitLockControl structures; only valid in the case where \"lockIndividual\" is specified in the *cashUnitAction* field. 
+            /// Array of UnitLockControl structures; only valid in the case where "lockIndividual" is specified in the *cashUnitAction* field. 
             /// Otherwise this field will be ignored. Each element specifies one cash unit to be locked/unlocked.
             /// </summary>
             [DataMember(Name = "unitLockControl")]
-            public List<UnitLockControlClass> UnitLockControl { get; private set; }
+            public List<UnitLockControlClass> UnitLockControl { get; init; }
 
         }
     }

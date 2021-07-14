@@ -53,7 +53,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   card reader could not be configured successfully.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

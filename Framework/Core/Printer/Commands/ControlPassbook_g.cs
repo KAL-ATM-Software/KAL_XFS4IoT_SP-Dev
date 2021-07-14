@@ -51,7 +51,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```closeBackward``` - Close the passbook backward.
             /// </summary>
             [DataMember(Name = "action")]
-            public ActionEnum? Action { get; private set; }
+            public ActionEnum? Action { get; init; }
 
             /// <summary>
             /// Specifies the number of pages to be turned. In the case where
@@ -59,7 +59,7 @@ namespace XFS4IoT.Printer.Commands
             /// field will be ignored.
             /// </summary>
             [DataMember(Name = "count")]
-            public int? Count { get; private set; }
+            public int? Count { get; init; }
 
         }
     }

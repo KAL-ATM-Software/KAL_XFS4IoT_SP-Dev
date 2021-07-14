@@ -50,89 +50,89 @@ namespace XFS4IoT.CardReader.Commands
             /// Track 1 of the magnetic stripe will be read.
             /// </summary>
             [DataMember(Name = "track1")]
-            public bool? Track1 { get; private set; }
+            public bool? Track1 { get; init; }
 
             /// <summary>
             /// Track 2 of the magnetic stripe will be read.
             /// </summary>
             [DataMember(Name = "track2")]
-            public bool? Track2 { get; private set; }
+            public bool? Track2 { get; init; }
 
             /// <summary>
             /// Track 3 of the magnetic stripe will be read.
             /// </summary>
             [DataMember(Name = "track3")]
-            public bool? Track3 { get; private set; }
+            public bool? Track3 { get; init; }
 
             /// <summary>
             /// The chip will be read.
             /// </summary>
             [DataMember(Name = "chip")]
-            public bool? Chip { get; private set; }
+            public bool? Chip { get; init; }
 
             /// <summary>
             /// A security check will be performed.
             /// </summary>
             [DataMember(Name = "security")]
-            public bool? Security { get; private set; }
+            public bool? Security { get; init; }
 
             /// <summary>
             /// If the Flux Sensor is programmable it will be disabled in order to allow chip data to be read on cards
             /// which have no magnetic stripes.
             /// </summary>
             [DataMember(Name = "fluxInactive")]
-            public bool? FluxInactive { get; private set; }
+            public bool? FluxInactive { get; init; }
 
             /// <summary>
             /// The Swedish Watermark track will be read.
             /// </summary>
             [DataMember(Name = "watermark")]
-            public bool? Watermark { get; private set; }
+            public bool? Watermark { get; init; }
 
             /// <summary>
             /// The memory chip will be read.
             /// </summary>
             [DataMember(Name = "memoryChip")]
-            public bool? MemoryChip { get; private set; }
+            public bool? MemoryChip { get; init; }
 
             /// <summary>
             /// Track 1 data is read from the magnetic stripe located on the front of the card. In some countries this
             /// track is known as JIS II track.
             /// </summary>
             [DataMember(Name = "track1Front")]
-            public bool? Track1Front { get; private set; }
+            public bool? Track1Front { get; init; }
 
             /// <summary>
             /// The front image of the card will be read in Base64 PNG format.
             /// </summary>
             [DataMember(Name = "frontImage")]
-            public bool? FrontImage { get; private set; }
+            public bool? FrontImage { get; init; }
 
             /// <summary>
             /// The back image of the card will be read in Base64 PNG format.
             /// </summary>
             [DataMember(Name = "backImage")]
-            public bool? BackImage { get; private set; }
+            public bool? BackImage { get; init; }
 
             /// <summary>
             /// Track 1 of Japanese cash transfer card will be read. In some countries this track is known as JIS I
             /// track 1 (8bits/char).
             /// </summary>
             [DataMember(Name = "track1JIS")]
-            public bool? Track1JIS { get; private set; }
+            public bool? Track1JIS { get; init; }
 
             /// <summary>
             /// Track 3 of Japanese cash transfer card will be read. In some countries this track is known as JIS I
             /// track 1 (8bits/char).
             /// </summary>
             [DataMember(Name = "track3JIS")]
-            public bool? Track3JIS { get; private set; }
+            public bool? Track3JIS { get; init; }
 
             /// <summary>
             /// Dynamic Digital Identification data of the magnetic stripe will be read.
             /// </summary>
             [DataMember(Name = "ddi")]
-            public bool? Ddi { get; private set; }
+            public bool? Ddi { get; init; }
 
         }
     }

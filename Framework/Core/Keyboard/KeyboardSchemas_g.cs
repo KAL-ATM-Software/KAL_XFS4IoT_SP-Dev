@@ -31,10 +31,13 @@ namespace XFS4IoT.Keyboard
         /// <summary>
         /// Specifies whether automatic beep tone on key press is active or not. Active and in-active key beeping is reported 
         /// independently. autoBeepMode can take a combination of the following values, if the flag is not set auto beeping 
-        /// is not activated (or not supported) for that key type (i.e. active or in-active keys)
+        /// is not activated (or not supported) for that key type (i.e. active or in-active keys).
+        /// The following values are possible:
+        /// * ```active``` - An automatic tone will be generated for all active keys.
+        /// * ```inActive``` - An automatic tone will be generated for all in-active keys.
         /// </summary>
         [DataMember(Name = "autoBeepMode")]
-        public AutoBeepModeEnum? AutoBeepMode { get; private set; }
+        public AutoBeepModeEnum? AutoBeepMode { get; init; }
 
     }
 
@@ -64,28 +67,28 @@ namespace XFS4IoT.Keyboard
             /// If this flag is not set then automatic beeping for active keys is not supported.
             /// </summary>
             [DataMember(Name = "activeAvailable")]
-            public bool? ActiveAvailable { get; private set; }
+            public bool? ActiveAvailable { get; init; }
 
             /// <summary>
             /// Automatic beeping for active keys can be controlled turned on and off by the application.
             /// If this flag is not set then automatic beeping for active keys cannot be controlled by an application.
             /// </summary>
             [DataMember(Name = "activeSelectable")]
-            public bool? ActiveSelectable { get; private set; }
+            public bool? ActiveSelectable { get; init; }
 
             /// <summary>
             /// Automatic beep tone on in-active key keypress is supported.
             /// If this flag is not set then automatic beeping for in-active keys is not supported.
             /// </summary>
             [DataMember(Name = "inactiveAvailable")]
-            public bool? InactiveAvailable { get; private set; }
+            public bool? InactiveAvailable { get; init; }
 
             /// <summary>
             /// Automatic beeping for in-active keys can be controlled turned on and off by the application.
             /// If this flag is not set then automatic beeping for in-active keys cannot be controlled by an application.
             /// </summary>
             [DataMember(Name = "inactiveSelectable")]
-            public bool? InactiveSelectable { get; private set; }
+            public bool? InactiveSelectable { get; init; }
 
         }
 
@@ -93,7 +96,7 @@ namespace XFS4IoT.Keyboard
         /// Specifies whether the device will emit a key beep tone on key presses of active keys or inactive keys, and if so, which mode it supports
         /// </summary>
         [DataMember(Name = "autoBeep")]
-        public AutoBeepClass AutoBeep { get; private set; }
+        public AutoBeepClass AutoBeep { get; init; }
 
         [DataContract]
         public sealed class EtsCapsClass
@@ -114,38 +117,38 @@ namespace XFS4IoT.Keyboard
             /// This value may be negative because the of the monitor position on the virtual desktop.
             /// </summary>
             [DataMember(Name = "xPos")]
-            public int? XPos { get; private set; }
+            public int? XPos { get; init; }
 
             /// <summary>
             /// Specifies the position of the right edge of the ets in Windows virtual screen coordinates.
             /// This value may be negative because the of the monitor position on the virtual desktop.
             /// </summary>
             [DataMember(Name = "yPos")]
-            public int? YPos { get; private set; }
+            public int? YPos { get; init; }
 
             /// <summary>
             /// Specifies the width of the ets in Windows virtual screen coordinates.
             /// </summary>
             [DataMember(Name = "xSize")]
-            public int? XSize { get; private set; }
+            public int? XSize { get; init; }
 
             /// <summary>
             /// Specifies the height of the ets in Windows virtual screen coordinates.
             /// </summary>
             [DataMember(Name = "ySize")]
-            public int? YSize { get; private set; }
+            public int? YSize { get; init; }
 
             /// <summary>
             /// Specifies the maximum number of Touch-Frames that the device can support in a touch keyboard definition.
             /// </summary>
             [DataMember(Name = "maximumTouchFrames")]
-            public int? MaximumTouchFrames { get; private set; }
+            public int? MaximumTouchFrames { get; init; }
 
             /// <summary>
             /// Specifies the maximum number of Touch-Keys that the device can support within any a touchframe.
             /// </summary>
             [DataMember(Name = "maximumTouchKeys")]
-            public int? MaximumTouchKeys { get; private set; }
+            public int? MaximumTouchKeys { get; init; }
 
             [DataContract]
             public sealed class FloatFlagsClass
@@ -157,24 +160,24 @@ namespace XFS4IoT.Keyboard
                 }
 
                 /// <summary>
-                /// Specifies that the PIN device will randomly shift the layout in a horizontal direction
+                /// Specifies that the Keyboard device will randomly shift the layout in a horizontal direction
                 /// </summary>
                 [DataMember(Name = "x")]
-                public bool? X { get; private set; }
+                public bool? X { get; init; }
 
                 /// <summary>
-                /// Specifies that the PIN device will randomly shift the layout in a vertical direction. 
+                /// Specifies that the Keyboard device will randomly shift the layout in a vertical direction. 
                 /// </summary>
                 [DataMember(Name = "y")]
-                public bool? Y { get; private set; }
+                public bool? Y { get; init; }
 
             }
 
             /// <summary>
-            /// Specifies if the device can float the touch keyboards. FloatNone if the PIN device cannot randomly shift the layout.
+            /// Specifies if the device can float the touch keyboards. FloatNone if the Keyboard device cannot randomly shift the layout.
             /// </summary>
             [DataMember(Name = "floatFlags")]
-            public FloatFlagsClass FloatFlags { get; private set; }
+            public FloatFlagsClass FloatFlags { get; init; }
 
         }
 
@@ -182,7 +185,7 @@ namespace XFS4IoT.Keyboard
         /// Specifies the capabilities of the ets device.
         /// </summary>
         [DataMember(Name = "etsCaps")]
-        public List<EtsCapsClass> EtsCaps { get; private set; }
+        public List<EtsCapsClass> EtsCaps { get; init; }
 
     }
 
@@ -235,236 +238,160 @@ namespace XFS4IoT.Keyboard
 
 
         [DataMember(Name = "fk0")]
-        public bool? Fk0 { get; private set; }
+        public bool? Fk0 { get; init; }
 
 
         [DataMember(Name = "fk1")]
-        public bool? Fk1 { get; private set; }
+        public bool? Fk1 { get; init; }
 
 
         [DataMember(Name = "fk2")]
-        public bool? Fk2 { get; private set; }
+        public bool? Fk2 { get; init; }
 
 
         [DataMember(Name = "fk3")]
-        public bool? Fk3 { get; private set; }
+        public bool? Fk3 { get; init; }
 
 
         [DataMember(Name = "fk4")]
-        public bool? Fk4 { get; private set; }
+        public bool? Fk4 { get; init; }
 
 
         [DataMember(Name = "fk5")]
-        public bool? Fk5 { get; private set; }
+        public bool? Fk5 { get; init; }
 
 
         [DataMember(Name = "fk6")]
-        public bool? Fk6 { get; private set; }
+        public bool? Fk6 { get; init; }
 
 
         [DataMember(Name = "fk7")]
-        public bool? Fk7 { get; private set; }
+        public bool? Fk7 { get; init; }
 
 
         [DataMember(Name = "fk8")]
-        public bool? Fk8 { get; private set; }
+        public bool? Fk8 { get; init; }
 
 
         [DataMember(Name = "fk9")]
-        public bool? Fk9 { get; private set; }
+        public bool? Fk9 { get; init; }
 
 
         [DataMember(Name = "fkA")]
-        public bool? FkA { get; private set; }
+        public bool? FkA { get; init; }
 
 
         [DataMember(Name = "fkB")]
-        public bool? FkB { get; private set; }
+        public bool? FkB { get; init; }
 
 
         [DataMember(Name = "fkC")]
-        public bool? FkC { get; private set; }
+        public bool? FkC { get; init; }
 
 
         [DataMember(Name = "fkD")]
-        public bool? FkD { get; private set; }
+        public bool? FkD { get; init; }
 
 
         [DataMember(Name = "fkE")]
-        public bool? FkE { get; private set; }
+        public bool? FkE { get; init; }
 
 
         [DataMember(Name = "fkF")]
-        public bool? FkF { get; private set; }
+        public bool? FkF { get; init; }
 
 
         [DataMember(Name = "fkEnter")]
-        public bool? FkEnter { get; private set; }
+        public bool? FkEnter { get; init; }
 
 
         [DataMember(Name = "fkCancel")]
-        public bool? FkCancel { get; private set; }
+        public bool? FkCancel { get; init; }
 
 
         [DataMember(Name = "fkClear")]
-        public bool? FkClear { get; private set; }
+        public bool? FkClear { get; init; }
 
 
         [DataMember(Name = "fkBackspace")]
-        public bool? FkBackspace { get; private set; }
+        public bool? FkBackspace { get; init; }
 
 
         [DataMember(Name = "fkHelp")]
-        public bool? FkHelp { get; private set; }
+        public bool? FkHelp { get; init; }
 
 
         [DataMember(Name = "fkDecPoint")]
-        public bool? FkDecPoint { get; private set; }
+        public bool? FkDecPoint { get; init; }
 
 
         [DataMember(Name = "fk00")]
-        public bool? Fk00 { get; private set; }
+        public bool? Fk00 { get; init; }
 
 
         [DataMember(Name = "fk000")]
-        public bool? Fk000 { get; private set; }
+        public bool? Fk000 { get; init; }
 
 
         [DataMember(Name = "fkShift")]
-        public bool? FkShift { get; private set; }
+        public bool? FkShift { get; init; }
 
 
         [DataMember(Name = "fkRES01")]
-        public bool? FkRES01 { get; private set; }
+        public bool? FkRES01 { get; init; }
 
 
         [DataMember(Name = "fkRES02")]
-        public bool? FkRES02 { get; private set; }
+        public bool? FkRES02 { get; init; }
 
 
         [DataMember(Name = "fkRES03")]
-        public bool? FkRES03 { get; private set; }
+        public bool? FkRES03 { get; init; }
 
 
         [DataMember(Name = "fkRES04")]
-        public bool? FkRES04 { get; private set; }
+        public bool? FkRES04 { get; init; }
 
 
         [DataMember(Name = "fkRES05")]
-        public bool? FkRES05 { get; private set; }
+        public bool? FkRES05 { get; init; }
 
 
         [DataMember(Name = "fkRES06")]
-        public bool? FkRES06 { get; private set; }
+        public bool? FkRES06 { get; init; }
 
 
         [DataMember(Name = "fkRES07")]
-        public bool? FkRES07 { get; private set; }
+        public bool? FkRES07 { get; init; }
 
 
         [DataMember(Name = "fkRES08")]
-        public bool? FkRES08 { get; private set; }
+        public bool? FkRES08 { get; init; }
 
 
         [DataMember(Name = "fkOEM01")]
-        public bool? FkOEM01 { get; private set; }
+        public bool? FkOEM01 { get; init; }
 
 
         [DataMember(Name = "fkOEM02")]
-        public bool? FkOEM02 { get; private set; }
+        public bool? FkOEM02 { get; init; }
 
 
         [DataMember(Name = "fkOEM03")]
-        public bool? FkOEM03 { get; private set; }
+        public bool? FkOEM03 { get; init; }
 
 
         [DataMember(Name = "fkOEM04")]
-        public bool? FkOEM04 { get; private set; }
+        public bool? FkOEM04 { get; init; }
 
 
         [DataMember(Name = "fkOEM05")]
-        public bool? FkOEM05 { get; private set; }
+        public bool? FkOEM05 { get; init; }
 
 
         [DataMember(Name = "fkOEM06")]
-        public bool? FkOEM06 { get; private set; }
+        public bool? FkOEM06 { get; init; }
 
-    }
-
-
-    public enum AllKeysEnumEnum
-    {
-        Fk0,
-        Fk1,
-        Fk2,
-        Fk3,
-        Fk4,
-        Fk5,
-        Fk6,
-        Fk7,
-        Fk8,
-        Fk9,
-        FkA,
-        FkB,
-        FkC,
-        FkD,
-        FkE,
-        FkF,
-        FkEnter,
-        FkCancel,
-        FkClear,
-        FkBackspace,
-        FkHelp,
-        FkDecPoint,
-        Fk00,
-        Fk000,
-        FkShift,
-        FkRES01,
-        FkRES02,
-        FkRES03,
-        FkRES04,
-        FkRES05,
-        FkRES06,
-        FkRES07,
-        FkRES08,
-        FkOEM01,
-        FkOEM02,
-        FkOEM03,
-        FkOEM04,
-        FkOEM05,
-        FkOEM06,
-        Fdk01,
-        Fdk02,
-        Fdk03,
-        Fdk04,
-        Fdk05,
-        Fdk06,
-        Fdk07,
-        Fdk08,
-        Fdk09,
-        Fdk10,
-        Fdk11,
-        Fdk12,
-        Fdk13,
-        Fdk14,
-        Fdk15,
-        Fdk16,
-        Fdk17,
-        Fdk18,
-        Fdk19,
-        Fdk20,
-        Fdk21,
-        Fdk22,
-        Fdk23,
-        Fdk24,
-        Fdk25,
-        Fdk26,
-        Fdk27,
-        Fdk28,
-        Fdk29,
-        Fdk30,
-        Fdk31,
-        Fdk32
     }
 
 
@@ -509,131 +436,131 @@ namespace XFS4IoT.Keyboard
 
 
         [DataMember(Name = "fdk01")]
-        public bool? Fdk01 { get; private set; }
+        public bool? Fdk01 { get; init; }
 
 
         [DataMember(Name = "fdk02")]
-        public bool? Fdk02 { get; private set; }
+        public bool? Fdk02 { get; init; }
 
 
         [DataMember(Name = "fdk03")]
-        public bool? Fdk03 { get; private set; }
+        public bool? Fdk03 { get; init; }
 
 
         [DataMember(Name = "fdk04")]
-        public bool? Fdk04 { get; private set; }
+        public bool? Fdk04 { get; init; }
 
 
         [DataMember(Name = "fdk05")]
-        public bool? Fdk05 { get; private set; }
+        public bool? Fdk05 { get; init; }
 
 
         [DataMember(Name = "fdk06")]
-        public bool? Fdk06 { get; private set; }
+        public bool? Fdk06 { get; init; }
 
 
         [DataMember(Name = "fdk07")]
-        public bool? Fdk07 { get; private set; }
+        public bool? Fdk07 { get; init; }
 
 
         [DataMember(Name = "fdk08")]
-        public bool? Fdk08 { get; private set; }
+        public bool? Fdk08 { get; init; }
 
 
         [DataMember(Name = "fdk09")]
-        public bool? Fdk09 { get; private set; }
+        public bool? Fdk09 { get; init; }
 
 
         [DataMember(Name = "fdk10")]
-        public bool? Fdk10 { get; private set; }
+        public bool? Fdk10 { get; init; }
 
 
         [DataMember(Name = "fdk11")]
-        public bool? Fdk11 { get; private set; }
+        public bool? Fdk11 { get; init; }
 
 
         [DataMember(Name = "fdk12")]
-        public bool? Fdk12 { get; private set; }
+        public bool? Fdk12 { get; init; }
 
 
         [DataMember(Name = "fdk13")]
-        public bool? Fdk13 { get; private set; }
+        public bool? Fdk13 { get; init; }
 
 
         [DataMember(Name = "fdk14")]
-        public bool? Fdk14 { get; private set; }
+        public bool? Fdk14 { get; init; }
 
 
         [DataMember(Name = "fdk15")]
-        public bool? Fdk15 { get; private set; }
+        public bool? Fdk15 { get; init; }
 
 
         [DataMember(Name = "fdk16")]
-        public bool? Fdk16 { get; private set; }
+        public bool? Fdk16 { get; init; }
 
 
         [DataMember(Name = "fdk17")]
-        public bool? Fdk17 { get; private set; }
+        public bool? Fdk17 { get; init; }
 
 
         [DataMember(Name = "fdk18")]
-        public bool? Fdk18 { get; private set; }
+        public bool? Fdk18 { get; init; }
 
 
         [DataMember(Name = "fdk19")]
-        public bool? Fdk19 { get; private set; }
+        public bool? Fdk19 { get; init; }
 
 
         [DataMember(Name = "fdk20")]
-        public bool? Fdk20 { get; private set; }
+        public bool? Fdk20 { get; init; }
 
 
         [DataMember(Name = "fdk21")]
-        public bool? Fdk21 { get; private set; }
+        public bool? Fdk21 { get; init; }
 
 
         [DataMember(Name = "fdk22")]
-        public bool? Fdk22 { get; private set; }
+        public bool? Fdk22 { get; init; }
 
 
         [DataMember(Name = "fdk23")]
-        public bool? Fdk23 { get; private set; }
+        public bool? Fdk23 { get; init; }
 
 
         [DataMember(Name = "fdk24")]
-        public bool? Fdk24 { get; private set; }
+        public bool? Fdk24 { get; init; }
 
 
         [DataMember(Name = "fdk25")]
-        public bool? Fdk25 { get; private set; }
+        public bool? Fdk25 { get; init; }
 
 
         [DataMember(Name = "fdk26")]
-        public bool? Fdk26 { get; private set; }
+        public bool? Fdk26 { get; init; }
 
 
         [DataMember(Name = "fdk27")]
-        public bool? Fdk27 { get; private set; }
+        public bool? Fdk27 { get; init; }
 
 
         [DataMember(Name = "fdk28")]
-        public bool? Fdk28 { get; private set; }
+        public bool? Fdk28 { get; init; }
 
 
         [DataMember(Name = "fdk29")]
-        public bool? Fdk29 { get; private set; }
+        public bool? Fdk29 { get; init; }
 
 
         [DataMember(Name = "fdk30")]
-        public bool? Fdk30 { get; private set; }
+        public bool? Fdk30 { get; init; }
 
 
         [DataMember(Name = "fdk31")]
-        public bool? Fdk31 { get; private set; }
+        public bool? Fdk31 { get; init; }
 
 
         [DataMember(Name = "fdk32")]
-        public bool? Fdk32 { get; private set; }
+        public bool? Fdk32 { get; init; }
 
     }
 

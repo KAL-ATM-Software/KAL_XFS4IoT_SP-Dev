@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XFS4IoTFramework.Common;
 using XFS4IoT.Common.Events;
 
 namespace XFS4IoTFramework.Common
@@ -30,6 +29,11 @@ namespace XFS4IoTFramework.Common
         /// Stores CardReader interface capabilites internally
         /// </summary>
         CardReaderCapabilitiesClass CardReaderCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores TextTerminal interface capabilites internally
+        /// </summary>
+        TextTerminalCapabilitiesClass TextTerminalCapabilities { get => null; set { } }
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

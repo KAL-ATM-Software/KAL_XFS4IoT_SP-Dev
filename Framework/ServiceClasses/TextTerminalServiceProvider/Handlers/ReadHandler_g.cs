@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var readCmd = command.IsA<ReadCommand>($"Invalid parameter in the Read Handle method. {nameof(ReadCommand)}");
-            readCmd.Headers.RequestId.HasValue.IsTrue();
+            readCmd.Header.RequestId.HasValue.IsTrue();
 
-            IReadEvents events = new ReadEvents(Connection, readCmd.Headers.RequestId.Value);
+            IReadEvents events = new ReadEvents(Connection, readCmd.Header.RequestId.Value);
 
             var result = await HandleRead(events, readCmd, cancel);
-            await Connection.SendMessageAsync(new ReadCompletion(readCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ReadCompletion(readCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var readcommand = command.IsA<ReadCommand>();
-            readcommand.Headers.RequestId.HasValue.IsTrue();
+            readcommand.Header.RequestId.HasValue.IsTrue();
 
             ReadCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => ReadCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadCompletion(readcommand.Headers.RequestId.Value, new ReadCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadCompletion(readcommand.Header.RequestId.Value, new ReadCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

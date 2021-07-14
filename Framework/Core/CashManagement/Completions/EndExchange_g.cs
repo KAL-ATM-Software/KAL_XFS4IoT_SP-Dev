@@ -45,7 +45,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// * ```noExchangeActive``` - There is no exchange active.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

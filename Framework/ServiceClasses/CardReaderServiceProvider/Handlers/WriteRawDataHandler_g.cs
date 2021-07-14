@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var writeRawDataCmd = command.IsA<WriteRawDataCommand>($"Invalid parameter in the WriteRawData Handle method. {nameof(WriteRawDataCommand)}");
-            writeRawDataCmd.Headers.RequestId.HasValue.IsTrue();
+            writeRawDataCmd.Header.RequestId.HasValue.IsTrue();
 
-            IWriteRawDataEvents events = new WriteRawDataEvents(Connection, writeRawDataCmd.Headers.RequestId.Value);
+            IWriteRawDataEvents events = new WriteRawDataEvents(Connection, writeRawDataCmd.Header.RequestId.Value);
 
             var result = await HandleWriteRawData(events, writeRawDataCmd, cancel);
-            await Connection.SendMessageAsync(new WriteRawDataCompletion(writeRawDataCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new WriteRawDataCompletion(writeRawDataCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var writeRawDatacommand = command.IsA<WriteRawDataCommand>();
-            writeRawDatacommand.Headers.RequestId.HasValue.IsTrue();
+            writeRawDatacommand.Header.RequestId.HasValue.IsTrue();
 
             WriteRawDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new WriteRawDataCompletion(writeRawDatacommand.Headers.RequestId.Value, new WriteRawDataCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new WriteRawDataCompletion(writeRawDatacommand.Header.RequestId.Value, new WriteRawDataCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

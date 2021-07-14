@@ -26,21 +26,21 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string Vendorname = null, List<ServicesClass> Services = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string VendorName = null, List<ServicesClass> Services = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                this.Vendorname = Vendorname;
+                this.VendorName = VendorName;
                 this.Services = Services;
             }
 
             /// <summary>
             /// Freeform string naming the hardware vendor
             /// </summary>
-            [DataMember(Name = "vendorname")]
-            public string Vendorname { get; private set; }
+            [DataMember(Name = "vendorName")]
+            public string VendorName { get; init; }
 
             [DataContract]
-            public class ServicesClass
+            public sealed class ServicesClass
             {
                 public ServicesClass(string ServiceURI = null)
                 {
@@ -51,13 +51,13 @@ namespace XFS4IoT.Common.Completions
                 /// The URI which can be used to contact this individual service
                 /// </summary>
                 [DataMember(Name = "serviceURI")]
-                public string ServiceURI { get; private set; }
+                public string ServiceURI { get; init; }
 
             }
 
 
             [DataMember(Name = "services")]
-            public List<ServicesClass> Services { get; private set; }
+            public List<ServicesClass> Services { get; init; }
 
         }
     }

@@ -50,7 +50,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```paperJammed``` - The paper is jammed.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

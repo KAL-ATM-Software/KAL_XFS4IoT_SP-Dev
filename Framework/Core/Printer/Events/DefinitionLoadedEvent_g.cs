@@ -40,7 +40,7 @@ namespace XFS4IoT.Printer.Events
             /// Specifies the name of the form or media just loaded.
             /// </summary>
             [DataMember(Name = "name")]
-            public string Name { get; private set; }
+            public string Name { get; init; }
 
             public enum TypeEnum
             {
@@ -56,7 +56,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```media``` - The media identified by *name* has been loaded.
             /// </summary>
             [DataMember(Name = "type")]
-            public TypeEnum? Type { get; private set; }
+            public TypeEnum? Type { get; init; }
 
         }
 

@@ -30,14 +30,14 @@ namespace XFS4IoT.Biometric
         /// [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset) commands.
         /// </summary>
         [DataMember(Name = "persist")]
-        public bool? Persist { get; private set; }
+        public bool? Persist { get; init; }
 
         /// <summary>
         /// Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
         /// command or used by the [Biometric.Match](#biometric.match) command, then the data is cleared from the device.
         /// </summary>
         [DataMember(Name = "clear")]
-        public bool? Clear { get; private set; }
+        public bool? Clear { get; init; }
 
     }
 
@@ -71,7 +71,7 @@ namespace XFS4IoT.Biometric
         /// * ```subjectNotSupported``` - The physical device does not support the ability to report whether or not a subject is on the scanning position.
         /// </summary>
         [DataMember(Name = "subject")]
-        public SubjectEnum? Subject { get; private set; }
+        public SubjectEnum? Subject { get; init; }
 
         /// <summary>
         /// Indicates whether or not scanned biometric data has been captured using the [Biometric.Read](#biometric.read) command 
@@ -79,21 +79,21 @@ namespace XFS4IoT.Biometric
         /// This will be set to false when scanned data is cleared using the [Biometric.Clear](#biometric.clear) command.
         /// </summary>
         [DataMember(Name = "capture")]
-        public bool? Capture { get; private set; }
+        public bool? Capture { get; init; }
 
         /// <summary>
         /// Specifies the current data persistence mode. The data persistence mode controls how biometric data that has been captured using the 
         /// [Biometric.Read](#biometric.read) command will be handled.
         /// </summary>
         [DataMember(Name = "dataPersistence")]
-        public PersistanceModeClass DataPersistence { get; private set; }
+        public PersistanceModeClass DataPersistence { get; init; }
 
         /// <summary>
         /// Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes. 
         /// This will be zero if not reported.
         /// </summary>
         [DataMember(Name = "remainingStorage")]
-        public string RemainingStorage { get; private set; }
+        public string RemainingStorage { get; init; }
 
     }
 
@@ -121,73 +121,73 @@ namespace XFS4IoT.Biometric
         /// Raw ISO FID format
         /// </summary>
         [DataMember(Name = "isoFid")]
-        public bool? IsoFid { get; private set; }
+        public bool? IsoFid { get; init; }
 
         /// <summary>
         /// ISO FMD template format
         /// </summary>
         [DataMember(Name = "isoFmd")]
-        public bool? IsoFmd { get; private set; }
+        public bool? IsoFmd { get; init; }
 
         /// <summary>
         /// Raw ANSI FID format
         /// </summary>
         [DataMember(Name = "ansiFid")]
-        public bool? AnsiFid { get; private set; }
+        public bool? AnsiFid { get; init; }
 
         /// <summary>
         /// ANSI FMD template format 
         /// </summary>
         [DataMember(Name = "ansiFmd")]
-        public bool? AnsiFmd { get; private set; }
+        public bool? AnsiFmd { get; init; }
 
         /// <summary>
         /// Raw QSO image format
         /// </summary>
         [DataMember(Name = "qso")]
-        public bool? Qso { get; private set; }
+        public bool? Qso { get; init; }
 
         /// <summary>
         /// WSQ image format
         /// </summary>
         [DataMember(Name = "wso")]
-        public bool? Wso { get; private set; }
+        public bool? Wso { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Raw format.
         /// </summary>
         [DataMember(Name = "reservedRaw1")]
-        public bool? ReservedRaw1 { get; private set; }
+        public bool? ReservedRaw1 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Template format.
         /// </summary>
         [DataMember(Name = "reservedTemplate1")]
-        public bool? ReservedTemplate1 { get; private set; }
+        public bool? ReservedTemplate1 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Raw format.
         /// </summary>
         [DataMember(Name = "reservedRaw2")]
-        public bool? ReservedRaw2 { get; private set; }
+        public bool? ReservedRaw2 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Template format.
         /// </summary>
         [DataMember(Name = "reservedTemplate2")]
-        public bool? ReservedTemplate2 { get; private set; }
+        public bool? ReservedTemplate2 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Raw format.
         /// </summary>
         [DataMember(Name = "reservedRaw3")]
-        public bool? ReservedRaw3 { get; private set; }
+        public bool? ReservedRaw3 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined Template format.
         /// </summary>
         [DataMember(Name = "reservedTemplate3")]
-        public bool? ReservedTemplate3 { get; private set; }
+        public bool? ReservedTemplate3 { get; init; }
 
     }
 
@@ -207,25 +207,25 @@ namespace XFS4IoT.Biometric
         /// Triple DES with Electronic Code Book.
         /// </summary>
         [DataMember(Name = "ecb")]
-        public bool? Ecb { get; private set; }
+        public bool? Ecb { get; init; }
 
         /// <summary>
         /// Triple DES with Cipher Block Chaining
         /// </summary>
         [DataMember(Name = "cbc")]
-        public bool? Cbc { get; private set; }
+        public bool? Cbc { get; init; }
 
         /// <summary>
         /// Triple DES with Cipher Feed Back.
         /// </summary>
         [DataMember(Name = "cfb")]
-        public bool? Cfb { get; private set; }
+        public bool? Cfb { get; init; }
 
         /// <summary>
         /// RSA Encryption.
         /// </summary>
         [DataMember(Name = "rsa")]
-        public bool? Rsa { get; private set; }
+        public bool? Rsa { get; init; }
 
     }
 
@@ -244,14 +244,14 @@ namespace XFS4IoT.Biometric
         /// user or collect data for matching in an external biometric system.
         /// </summary>
         [DataMember(Name = "scan")]
-        public bool? Scan { get; private set; }
+        public bool? Scan { get; init; }
 
         /// <summary>
         /// The [Biometric.Read](#biometric.read) command can be used to scan data for a match operation using 
         /// the [Biometric.Match](#biometric.match) command.
         /// </summary>
         [DataMember(Name = "match")]
-        public bool? Match { get; private set; }
+        public bool? Match { get; init; }
 
     }
 
@@ -269,13 +269,13 @@ namespace XFS4IoT.Biometric
         /// The biometric data can be compared as a one to one verification operation.
         /// </summary>
         [DataMember(Name = "verify")]
-        public bool? Verify { get; private set; }
+        public bool? Verify { get; init; }
 
         /// <summary>
         /// The biometric data can be compared as a one to many identification operation
         /// </summary>
         [DataMember(Name = "identity")]
-        public bool? Identity { get; private set; }
+        public bool? Identity { get; init; }
 
     }
 
@@ -294,19 +294,19 @@ namespace XFS4IoT.Biometric
         /// Raw image data that has been scanned using the [Biometric.Read](#biometric.read) command can be cleared
         /// </summary>
         [DataMember(Name = "scannedData")]
-        public bool? ScannedData { get; private set; }
+        public bool? ScannedData { get; init; }
 
         /// <summary>
         /// Template data that was imported using the [Biometric.Import](#biometric.import) command can be cleared.
         /// </summary>
         [DataMember(Name = "importedData")]
-        public bool? ImportedData { get; private set; }
+        public bool? ImportedData { get; init; }
 
         /// <summary>
         /// Match criteria data that was set using the [Biometric.Match](#biometric.match) command can be cleared.
         /// </summary>
         [DataMember(Name = "setMatchedData")]
-        public bool? SetMatchedData { get; private set; }
+        public bool? SetMatchedData { get; init; }
 
     }
 
@@ -352,67 +352,67 @@ namespace XFS4IoT.Biometric
             /// The biometric device supports facial recognition scanning.
             /// </summary>
             [DataMember(Name = "facialFeatures")]
-            public bool? FacialFeatures { get; private set; }
+            public bool? FacialFeatures { get; init; }
 
             /// <summary>
             /// The biometric device supports voice recognition.
             /// </summary>
             [DataMember(Name = "voice")]
-            public bool? Voice { get; private set; }
+            public bool? Voice { get; init; }
 
             /// <summary>
             /// The biometric device supports fingerprint scanning.
             /// </summary>
             [DataMember(Name = "fingerprint")]
-            public bool? Fingerprint { get; private set; }
+            public bool? Fingerprint { get; init; }
 
             /// <summary>
             /// The biometric device supports finger vein scanning.
             /// </summary>
             [DataMember(Name = "fingerVein")]
-            public bool? FingerVein { get; private set; }
+            public bool? FingerVein { get; init; }
 
             /// <summary>
             /// The biometric device supports iris scanning.
             /// </summary>
             [DataMember(Name = "iris")]
-            public bool? Iris { get; private set; }
+            public bool? Iris { get; init; }
 
             /// <summary>
             /// The biometric device supports retina scanning.
             /// </summary>
             [DataMember(Name = "retina")]
-            public bool? Retina { get; private set; }
+            public bool? Retina { get; init; }
 
             /// <summary>
             /// The biometric device supports hand geometry scanning.
             /// </summary>
             [DataMember(Name = "handGeometry")]
-            public bool? HandGeometry { get; private set; }
+            public bool? HandGeometry { get; init; }
 
             /// <summary>
             /// The biometric device supports thermal face image scanning.
             /// </summary>
             [DataMember(Name = "thermalFace")]
-            public bool? ThermalFace { get; private set; }
+            public bool? ThermalFace { get; init; }
 
             /// <summary>
             /// The biometric device supports thermal hand image scanning.
             /// </summary>
             [DataMember(Name = "thermalHand")]
-            public bool? ThermalHand { get; private set; }
+            public bool? ThermalHand { get; init; }
 
             /// <summary>
             /// The biometric device supports palm vein scanning. 
             /// </summary>
             [DataMember(Name = "palmVein")]
-            public bool? PalmVein { get; private set; }
+            public bool? PalmVein { get; init; }
 
             /// <summary>
             /// The biometric device supports signature scanning.
             /// </summary>
             [DataMember(Name = "signature")]
-            public bool? Signature { get; private set; }
+            public bool? Signature { get; init; }
 
         }
 
@@ -420,13 +420,13 @@ namespace XFS4IoT.Biometric
         /// Specifies the type of biometric device as a combination.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; private set; }
+        public TypeClass Type { get; init; }
 
         /// <summary>
         /// Specifies whether the biometric device is part of a compound device
         /// </summary>
         [DataMember(Name = "compound")]
-        public bool? Compound { get; private set; }
+        public bool? Compound { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of times that the device can attempt to capture biometric data during a 
@@ -434,25 +434,25 @@ namespace XFS4IoT.Biometric
         /// how many captures will be attempted.
         /// </summary>
         [DataMember(Name = "maxCapture")]
-        public int? MaxCapture { get; private set; }
+        public int? MaxCapture { get; init; }
 
         /// <summary>
         /// Specifies the storage space that is reserved on the device for the storage of templates in bytes. This will be set to zero if not reported or unknown.
         /// </summary>
         [DataMember(Name = "templateStorage")]
-        public string TemplateStorage { get; private set; }
+        public string TemplateStorage { get; init; }
 
         /// <summary>
         /// Specifies the supported biometric raw data and template data formats reported 
         /// </summary>
         [DataMember(Name = "dataFormats")]
-        public DataFormatsClass DataFormats { get; private set; }
+        public DataFormatsClass DataFormats { get; init; }
 
         /// <summary>
         /// Supported encryption algorithms or cryptNone if no encryption algorithms
         /// </summary>
         [DataMember(Name = "encryptionalAlgorithm")]
-        public EncryptionAlgorithmClass EncryptionalAlgorithm { get; private set; }
+        public EncryptionAlgorithmClass EncryptionalAlgorithm { get; init; }
 
         [DataContract]
         public sealed class StorageClass
@@ -467,13 +467,13 @@ namespace XFS4IoT.Biometric
             /// Biometric template data is securely stored as encrypted data.
             /// </summary>
             [DataMember(Name = "secure")]
-            public bool? Secure { get; private set; }
+            public bool? Secure { get; init; }
 
             /// <summary>
             /// Biometric template data is stored unencrypted in the device.
             /// </summary>
             [DataMember(Name = "clear")]
-            public bool? Clear { get; private set; }
+            public bool? Clear { get; init; }
 
         }
 
@@ -481,7 +481,7 @@ namespace XFS4IoT.Biometric
         /// Indicates whether or not biometric template data can be stored securely or none if Biometric template data is not stored in the device
         /// </summary>
         [DataMember(Name = "storage")]
-        public StorageClass Storage { get; private set; }
+        public StorageClass Storage { get; init; }
 
         /// <summary>
         /// Specifies which data persistence modes can be set using the [Biometric.SetDataPersistence](#biometric.setdatapersistence) command. 
@@ -489,7 +489,7 @@ namespace XFS4IoT.Biometric
         /// A value of none indicates that persistence is entirely under device control and cannot be set.
         /// </summary>
         [DataMember(Name = "persistenceModes")]
-        public PersistanceModeClass PersistenceModes { get; private set; }
+        public PersistanceModeClass PersistenceModes { get; init; }
 
         public enum MatchSupportedEnum
         {
@@ -514,26 +514,26 @@ namespace XFS4IoT.Biometric
         ///                           called to return the result 
         /// </summary>
         [DataMember(Name = "matchSupported")]
-        public MatchSupportedEnum? MatchSupported { get; private set; }
+        public MatchSupportedEnum? MatchSupported { get; init; }
 
         /// <summary>
         /// Specifies the modes that the [Biometric.Read](#biometric.read) command.
         /// </summary>
         [DataMember(Name = "scanModes")]
-        public ScanModesClass ScanModes { get; private set; }
+        public ScanModesClass ScanModes { get; init; }
 
         /// <summary>
         /// Specifies the type of match operations. A value of none indicates that matching is not supported
         /// </summary>
         [DataMember(Name = "compareModes")]
-        public CompareModeClass CompareModes { get; private set; }
+        public CompareModeClass CompareModes { get; init; }
 
         /// <summary>
         /// Specifies the type of data that can be cleared from storage using the [Biometric.Clear](#biometric.clear) 
         /// or [Biometric.Reset](#biometric.reset) command as either none. 
         /// </summary>
         [DataMember(Name = "clearData")]
-        public ClearDataClass ClearData { get; private set; }
+        public ClearDataClass ClearData { get; init; }
 
     }
 
@@ -552,20 +552,20 @@ namespace XFS4IoT.Biometric
         /// Specifies the format of the template data.
         /// </summary>
         [DataMember(Name = "format")]
-        public DataFormatsClass Format { get; private set; }
+        public DataFormatsClass Format { get; init; }
 
         /// <summary>
         /// Specifies the encryption algorithm.
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public EncryptionAlgorithmClass Algorithm { get; private set; }
+        public EncryptionAlgorithmClass Algorithm { get; init; }
 
         /// <summary>
         /// Specifies the name of the key that is used to encrypt the biometric data. This value is omitted if the biometric data is not encrypted.
         /// The detailed key information is available through the [KeyManagement.GetKeyDetail](#keymanagement.getkeydetail).
         /// </summary>
         [DataMember(Name = "keyName")]
-        public string KeyName { get; private set; }
+        public string KeyName { get; init; }
 
     }
 
@@ -583,13 +583,13 @@ namespace XFS4IoT.Biometric
         /// A unique number which identifies the template.
         /// </summary>
         [DataMember(Name = "identifier")]
-        public int? Identifier { get; private set; }
+        public int? Identifier { get; init; }
 
         /// <summary>
         /// Specifies the biometric data type of the template data.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; private set; }
+        public TypeClass Type { get; init; }
 
     }
 
@@ -607,12 +607,12 @@ namespace XFS4IoT.Biometric
         /// This field is used to indicate the biometric data type of the template data contained in Data.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; private set; }
+        public TypeClass Type { get; init; }
 
         [DataContract]
         public sealed class DataClass
         {
-            public DataClass(int? Length = null, string Data = null)
+            public DataClass(int? Length = null, object Data = null)
             {
                 this.Length = Length;
                 this.Data = Data;
@@ -622,13 +622,13 @@ namespace XFS4IoT.Biometric
             /// Length of the byte stream. 
             /// </summary>
             [DataMember(Name = "length")]
-            public int? Length { get; private set; }
+            public int? Length { get; init; }
 
             /// <summary>
             /// It contains the individual binary data stream
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public object Data { get; init; }
 
         }
 
@@ -636,7 +636,7 @@ namespace XFS4IoT.Biometric
         /// It contains the binary data stream.
         /// </summary>
         [DataMember(Name = "data")]
-        public DataClass Data { get; private set; }
+        public DataClass Data { get; init; }
 
     }
 

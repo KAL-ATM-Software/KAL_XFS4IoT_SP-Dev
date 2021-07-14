@@ -44,16 +44,16 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"unsupportedPosition\": The position specified is not supported or is not a valid position for this command.
+            /// "unsupportedPosition": The position specified is not supported or is not a valid position for this command.
             /// 
-            /// \"positionNotEmpty\": The input or output position is not empty.
+            /// "positionNotEmpty": The input or output position is not empty.
             /// 
-            /// \"noItems\": There were no items to present at the specified position.
+            /// "noItems": There were no items to present at the specified position.
             /// 
-            /// \"cashUnitError\": A cash unit caused a problem. A CashManagement.CashUnitErrorEvent will be posted with the details.
+            /// "cashUnitError": A cash unit caused a problem. A CashManagement.CashUnitErrorEvent will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             public enum PositionEnum
             {
@@ -70,24 +70,24 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Describes the position where the items are to be moved. Following values are possible:
             /// 
-            /// \"null\": The default configuration information should be used.
+            /// "null": The default configuration information should be used.
             /// 
-            /// \"outLeft\": Move items to the left output position.
+            /// "outLeft": Move items to the left output position.
             /// 
-            /// \"outRight\": Move items to the right output position.
+            /// "outRight": Move items to the right output position.
             /// 
-            /// \"outCenter\": Move items to the center output position.
+            /// "outCenter": Move items to the center output position.
             /// 
-            /// \"outTop\": Move items to the top output position.
+            /// "outTop": Move items to the top output position.
             /// 
-            /// \"outBottom\": Move items to the bottom output position.
+            /// "outBottom": Move items to the bottom output position.
             /// 
-            /// \"outFront\": Move items to the front output position.
+            /// "outFront": Move items to the front output position.
             /// 
-            /// \"outRear\": Move items to the rear output position.
+            /// "outRear": Move items to the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

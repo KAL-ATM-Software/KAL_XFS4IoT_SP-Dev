@@ -50,7 +50,7 @@ namespace XFS4IoT.Dispenser
         /// * ```rear``` - Rear output position.
         /// </summary>
         [DataMember(Name = "position")]
-        public PositionEnum? Position { get; private set; }
+        public PositionEnum? Position { get; init; }
 
         public enum ShutterEnum
         {
@@ -71,7 +71,7 @@ namespace XFS4IoT.Dispenser
         /// * ```notSupported``` - The physical device has no shutter or shutter state reporting is not supported.
         /// </summary>
         [DataMember(Name = "shutter")]
-        public ShutterEnum? Shutter { get; private set; }
+        public ShutterEnum? Shutter { get; init; }
 
         public enum PositionStatusEnum
         {
@@ -92,7 +92,7 @@ namespace XFS4IoT.Dispenser
         /// * ```notSupported``` - The device is not capable of reporting whether or not items are at the output position.
         /// </summary>
         [DataMember(Name = "positionStatus")]
-        public PositionStatusEnum? PositionStatus { get; private set; }
+        public PositionStatusEnum? PositionStatus { get; init; }
 
         public enum TransportEnum
         {
@@ -112,7 +112,7 @@ namespace XFS4IoT.Dispenser
         /// * ```notSupported``` - The physical device has no transport or transport state reporting is not supported.
         /// </summary>
         [DataMember(Name = "transport")]
-        public TransportEnum? Transport { get; private set; }
+        public TransportEnum? Transport { get; init; }
 
         public enum TransportStatusEnum
         {
@@ -135,7 +135,7 @@ namespace XFS4IoT.Dispenser
         /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
         /// </summary>
         [DataMember(Name = "transportStatus")]
-        public TransportStatusEnum? TransportStatus { get; private set; }
+        public TransportStatusEnum? TransportStatus { get; init; }
 
         public enum JammedShutterPositionEnum
         {
@@ -159,7 +159,7 @@ namespace XFS4IoT.Dispenser
         /// * ```unknown``` - The position of the shutter is unknown.
         /// </summary>
         [DataMember(Name = "jammedShutterPosition")]
-        public JammedShutterPositionEnum? JammedShutterPosition { get; private set; }
+        public JammedShutterPositionEnum? JammedShutterPosition { get; init; }
 
     }
 
@@ -197,13 +197,13 @@ namespace XFS4IoT.Dispenser
         /// * ```notSupported``` - The physical device has no intermediate stacker.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
-        public IntermediateStackerEnum? IntermediateStacker { get; private set; }
+        public IntermediateStackerEnum? IntermediateStacker { get; init; }
 
         /// <summary>
         /// Array of structures for each position to which items can be dispensed or presented.
         /// </summary>
         [DataMember(Name = "positions")]
-        public List<OutposClass> Positions { get; private set; }
+        public List<OutposClass> Positions { get; init; }
 
     }
 
@@ -244,7 +244,7 @@ namespace XFS4IoT.Dispenser
         /// * ```selfServiceCoin``` - The Dispenser is a Self-Service Coin Dispenser.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeEnum? Type { get; private set; }
+        public TypeEnum? Type { get; init; }
 
         /// <summary>
         /// Supplies the maximum number of items that can be dispensed in a single dispense operation. 
@@ -253,13 +253,13 @@ namespace XFS4IoT.Dispenser
         /// of sub-dispense operations (see section Sub-Dispensing Command Flow).
         /// </summary>
         [DataMember(Name = "maxDispenseItems")]
-        public int? MaxDispenseItems { get; private set; }
+        public int? MaxDispenseItems { get; init; }
 
         /// <summary>
         /// Specifies whether or not the commands Dispenser.OpenShutter and Dispenser.CloseShutter are supported.
         /// </summary>
         [DataMember(Name = "shutter")]
-        public bool? Shutter { get; private set; }
+        public bool? Shutter { get; init; }
 
         /// <summary>
         /// If set to TRUE the shutter is controlled implicitly by the Service. 
@@ -269,7 +269,7 @@ namespace XFS4IoT.Dispenser
         /// This field applies to all shutters and all output positions.
         /// </summary>
         [DataMember(Name = "shutterControl")]
-        public bool? ShutterControl { get; private set; }
+        public bool? ShutterControl { get; init; }
 
         [DataContract]
         public sealed class RetractAreasClass
@@ -287,31 +287,31 @@ namespace XFS4IoT.Dispenser
             /// The items may be retracted to a retract cash unit.
             /// </summary>
             [DataMember(Name = "retract")]
-            public bool? Retract { get; private set; }
+            public bool? Retract { get; init; }
 
             /// <summary>
             /// The items may be retracted to the transport.
             /// </summary>
             [DataMember(Name = "transport")]
-            public bool? Transport { get; private set; }
+            public bool? Transport { get; init; }
 
             /// <summary>
             /// The items may be retracted to the intermediate stacker.
             /// </summary>
             [DataMember(Name = "stacker")]
-            public bool? Stacker { get; private set; }
+            public bool? Stacker { get; init; }
 
             /// <summary>
             /// The items may be retracted to a reject cash unit.
             /// </summary>
             [DataMember(Name = "reject")]
-            public bool? Reject { get; private set; }
+            public bool? Reject { get; init; }
 
             /// <summary>
             /// The items may be retracted to the item cassettes, i.e. cassettes that can be dispensed from.
             /// </summary>
             [DataMember(Name = "itemCassette")]
-            public bool? ItemCassette { get; private set; }
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -320,7 +320,7 @@ namespace XFS4IoT.Dispenser
         /// If the device does not have a retract capability all flags will be set to false.
         /// </summary>
         [DataMember(Name = "retractAreas")]
-        public RetractAreasClass RetractAreas { get; private set; }
+        public RetractAreasClass RetractAreas { get; init; }
 
         [DataContract]
         public sealed class RetractTransportActionsClass
@@ -337,25 +337,25 @@ namespace XFS4IoT.Dispenser
             /// The items may be presented.
             /// </summary>
             [DataMember(Name = "present")]
-            public bool? Present { get; private set; }
+            public bool? Present { get; init; }
 
             /// <summary>
             /// The items may be moved to a retract cash unit.
             /// </summary>
             [DataMember(Name = "retract")]
-            public bool? Retract { get; private set; }
+            public bool? Retract { get; init; }
 
             /// <summary>
             /// The items may be moved to a reject bin.
             /// </summary>
             [DataMember(Name = "reject")]
-            public bool? Reject { get; private set; }
+            public bool? Reject { get; init; }
 
             /// <summary>
             /// The items may be moved to the item cassettes, i.e. cassettes that can be dispensed from.
             /// </summary>
             [DataMember(Name = "itemCassette")]
-            public bool? ItemCassette { get; private set; }
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -365,7 +365,7 @@ namespace XFS4IoT.Dispenser
         /// transport all flags will be set to false.
         /// </summary>
         [DataMember(Name = "retractTransportActions")]
-        public RetractTransportActionsClass RetractTransportActions { get; private set; }
+        public RetractTransportActionsClass RetractTransportActions { get; init; }
 
         [DataContract]
         public sealed class RetractStackerActionsClass
@@ -382,25 +382,25 @@ namespace XFS4IoT.Dispenser
             /// The items may be presented.
             /// </summary>
             [DataMember(Name = "present")]
-            public bool? Present { get; private set; }
+            public bool? Present { get; init; }
 
             /// <summary>
             /// The items may be moved to a retract cash unit.
             /// </summary>
             [DataMember(Name = "retract")]
-            public bool? Retract { get; private set; }
+            public bool? Retract { get; init; }
 
             /// <summary>
             /// The items may be moved to a reject bin.
             /// </summary>
             [DataMember(Name = "reject")]
-            public bool? Reject { get; private set; }
+            public bool? Reject { get; init; }
 
             /// <summary>
             /// The items may be moved to the item cassettes, i.e. cassettes that can be dispensed from.
             /// </summary>
             [DataMember(Name = "itemCassette")]
-            public bool? ItemCassette { get; private set; }
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -410,15 +410,15 @@ namespace XFS4IoT.Dispenser
         /// all flags will be set to false.
         /// </summary>
         [DataMember(Name = "retractStackerActions")]
-        public RetractStackerActionsClass RetractStackerActions { get; private set; }
+        public RetractStackerActionsClass RetractStackerActions { get; init; }
 
         /// <summary>
         /// Specifies whether or not the Dispenser supports stacking items to an intermediate position before 
-        /// the items are moved to the exit position. If this value is TRUE, the field \"present\" 
+        /// the items are moved to the exit position. If this value is TRUE, the field "present" 
         /// of the Dispenser.Dispense command can be set to FALSE.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
-        public bool? IntermediateStacker { get; private set; }
+        public bool? IntermediateStacker { get; init; }
 
         /// <summary>
         /// Specifies whether the Dispenser can detect when items at the exit position are taken by the user. 
@@ -426,7 +426,7 @@ namespace XFS4IoT.Dispenser
         /// If set to FALSE this event is not generated. This field applies to all output positions.
         /// </summary>
         [DataMember(Name = "itemsTakenSensor")]
-        public bool? ItemsTakenSensor { get; private set; }
+        public bool? ItemsTakenSensor { get; init; }
 
         [DataContract]
         public sealed class PositionsClass
@@ -446,43 +446,43 @@ namespace XFS4IoT.Dispenser
             /// The Dispenser has a left output position.
             /// </summary>
             [DataMember(Name = "left")]
-            public bool? Left { get; private set; }
+            public bool? Left { get; init; }
 
             /// <summary>
             /// The Dispenser has a right output position.
             /// </summary>
             [DataMember(Name = "right")]
-            public bool? Right { get; private set; }
+            public bool? Right { get; init; }
 
             /// <summary>
             /// The Dispenser has a center output position.
             /// </summary>
             [DataMember(Name = "center")]
-            public bool? Center { get; private set; }
+            public bool? Center { get; init; }
 
             /// <summary>
             /// The Dispenser has a top output position.
             /// </summary>
             [DataMember(Name = "top")]
-            public bool? Top { get; private set; }
+            public bool? Top { get; init; }
 
             /// <summary>
             /// The Dispenser has a bottom output position.
             /// </summary>
             [DataMember(Name = "bottom")]
-            public bool? Bottom { get; private set; }
+            public bool? Bottom { get; init; }
 
             /// <summary>
             /// The Dispenser has a front output position.
             /// </summary>
             [DataMember(Name = "front")]
-            public bool? Front { get; private set; }
+            public bool? Front { get; init; }
 
             /// <summary>
             /// The Dispenser has a rear output position.
             /// </summary>
             [DataMember(Name = "rear")]
-            public bool? Rear { get; private set; }
+            public bool? Rear { get; init; }
 
         }
 
@@ -490,7 +490,7 @@ namespace XFS4IoT.Dispenser
         /// Specifies the Dispenser output positions which are available.
         /// </summary>
         [DataMember(Name = "positions")]
-        public PositionsClass Positions { get; private set; }
+        public PositionsClass Positions { get; init; }
 
         [DataContract]
         public sealed class MoveItemsClass
@@ -508,19 +508,19 @@ namespace XFS4IoT.Dispenser
             /// on the transport.
             /// </summary>
             [DataMember(Name = "fromCashUnit")]
-            public bool? FromCashUnit { get; private set; }
+            public bool? FromCashUnit { get; init; }
 
             /// <summary>
             /// The Dispenser can retract items to the cash units while there are items on the intermediate stacker.
             /// </summary>
             [DataMember(Name = "toCashUnit")]
-            public bool? ToCashUnit { get; private set; }
+            public bool? ToCashUnit { get; init; }
 
             /// <summary>
             /// The Dispenser can retract items to the transport while there are items on the intermediate stacker.
             /// </summary>
             [DataMember(Name = "toTransport")]
-            public bool? ToTransport { get; private set; }
+            public bool? ToTransport { get; init; }
 
             /// <summary>
             /// The Dispenser can dispense items from the cash units to the intermediate stacker while there are already items on the 
@@ -528,7 +528,7 @@ namespace XFS4IoT.Dispenser
             /// may first need to be rejected explicitly by the application if they are not to be presented.
             /// </summary>
             [DataMember(Name = "toStacker")]
-            public bool? ToStacker { get; private set; }
+            public bool? ToStacker { get; init; }
 
         }
 
@@ -536,7 +536,7 @@ namespace XFS4IoT.Dispenser
         /// Specifies the Dispenser move item options which are available.
         /// </summary>
         [DataMember(Name = "moveItems")]
-        public MoveItemsClass MoveItems { get; private set; }
+        public MoveItemsClass MoveItems { get; init; }
 
         /// <summary>
         /// On some hardware it can take a significant amount of time for the dispenser to get ready to dispense media. 
@@ -547,7 +547,7 @@ namespace XFS4IoT.Dispenser
         /// If this flag is FALSE then the Dispenser.PrepareDispense command is not supported.
         /// </summary>
         [DataMember(Name = "prepareDispense")]
-        public bool? PrepareDispense { get; private set; }
+        public bool? PrepareDispense { get; init; }
 
     }
 

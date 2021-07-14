@@ -44,7 +44,7 @@ namespace XFS4IoT.CardReader.Commands
             ///   elements if required.
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public string Data { get; init; }
 
         }
     }

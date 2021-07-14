@@ -49,21 +49,21 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// command) from which items are to be removed.
                 /// </summary>
                 [DataMember(Name = "cashunitSource")]
-                public string CashunitSource { get; private set; }
+                public string CashunitSource { get; init; }
 
                 /// <summary>
                 /// The number of items to be moved from the source cash unit. 
                 /// This must be equal to or less than the count of items reported for the cash unit specified by *numberSource*. This field will be ignored if the *removeAll* parameter is set to TRUE.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsToMove")]
-                public int? NumberOfItemsToMove { get; private set; }
+                public int? NumberOfItemsToMove { get; init; }
 
                 /// <summary>
                 /// Specifies if all items are to be moved from the source cash unit. 
                 /// If TRUE all items in the source will be moved, regardless of the *numberOfItemsToMove* field value. If FALSE the number of items specified with *numberOfItemsToMove* will be moved.
                 /// </summary>
                 [DataMember(Name = "removeAll")]
-                public bool? RemoveAll { get; private set; }
+                public bool? RemoveAll { get; init; }
 
             }
 
@@ -71,14 +71,14 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// Array of DepleteSource structures. There must be at least one element in this array.
             /// </summary>
             [DataMember(Name = "depleteSources")]
-            public List<DepleteSourcesClass> DepleteSources { get; private set; }
+            public List<DepleteSourcesClass> DepleteSources { get; init; }
 
             /// <summary>
             /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
             /// command) to which items are to be moved.
             /// </summary>
             [DataMember(Name = "cashunitTarget")]
-            public string CashunitTarget { get; private set; }
+            public string CashunitTarget { get; init; }
 
         }
     }

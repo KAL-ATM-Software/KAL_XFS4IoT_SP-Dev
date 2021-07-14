@@ -45,20 +45,20 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"cashUnitError\": A cash unit caused an error. A CashManagement.CashUnitErrorEvent will be sent with the details.
+            /// "cashUnitError": A cash unit caused an error. A CashManagement.CashUnitErrorEvent will be sent with the details.
             /// 
-            /// \"unsupportedPosition\": The position specified is not supported.
+            /// "unsupportedPosition": The position specified is not supported.
             /// 
-            /// \"invalidCashUnit\": The cash unit number specified is not valid.
+            /// "invalidCashUnit": The cash unit number specified is not valid.
             /// 
-            /// \"invalidRetractPosition\": The *index* is not supported.
+            /// "invalidRetractPosition": The *index* is not supported.
             /// 
-            /// \"notRetractArea\": The retract area specified in *retractArea* is not supported.
+            /// "notRetractArea": The retract area specified in *retractArea* is not supported.
             /// 
-            /// \"foreignItemsDetected\": Foreign items have been detected in the input position.
+            /// "foreignItemsDetected": Foreign items have been detected in the input position.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

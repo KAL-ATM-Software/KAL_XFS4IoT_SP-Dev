@@ -32,10 +32,10 @@ namespace XFS4IoT
         };
 
         /// <summary>
-        /// Headers of the message for command
+        /// Header of the message for command
         /// </summary>
-        [DataMember(IsRequired = true, Name = "headers")]
-        public MessageHeader Headers { get; private set; }
+        [DataMember(IsRequired = true, Name = "header")]
+        public MessageHeader Header { get; private set; }
 
         /// <summary>
         /// Constructor of the base message object
@@ -46,19 +46,19 @@ namespace XFS4IoT
         {
             string attribNameValue = LookupMessageName(GetType());
             Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Type }");
-            this.Headers = new MessageHeader(attribNameValue, RequestId, Type);
+            this.Header = new MessageHeader(attribNameValue, RequestId, Type);
         }
 
         /// <summary>
         /// Internal constructor of the base message object
         /// For use by JsonSerializer.
         /// </summary>
-        /// <param name="Headers">header contents</param>
-        internal MessageBase(MessageHeader Headers)
+        /// <param name="Header">header contents</param>
+        internal MessageBase(MessageHeader Header)
         {
-            Headers.IsNotNull($"Invalid header received in the {nameof(MessageBase)} constructor.");
-            Contracts.IsNotNullOrWhitespace(Headers.Name, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Headers.Type }");
-            this.Headers = Headers;
+            Header.IsNotNull($"Invalid header received in the {nameof(MessageBase)} constructor.");
+            Contracts.IsNotNullOrWhitespace(Header.Name, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Header.Type }");
+            this.Header = Header;
         }
 
         /// <summary>

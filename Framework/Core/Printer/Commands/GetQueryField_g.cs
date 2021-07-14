@@ -38,14 +38,14 @@ namespace XFS4IoT.Printer.Commands
             /// The form name.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// The name of the field about which to retrieve details. If omitted, then details are retrieved for all
             /// fields on the form.
             /// </summary>
             [DataMember(Name = "fieldName")]
-            public string FieldName { get; private set; }
+            public string FieldName { get; init; }
 
         }
     }

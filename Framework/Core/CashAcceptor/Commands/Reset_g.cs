@@ -48,7 +48,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// where items are to be moved to or stored.
             /// </summary>
             [DataMember(Name = "cashunit")]
-            public string Cashunit { get; private set; }
+            public string Cashunit { get; init; }
 
             [DataContract]
             public sealed class RetractAreaClass
@@ -75,24 +75,24 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// <summary>
                 /// Specifies the output position from which to retract the bills. Following values are possible:
                 /// 
-                /// \"null\": The default configuration information should be used. This value is also used to retract items from internal device locations.
+                /// "null": The default configuration information should be used. This value is also used to retract items from internal device locations.
                 /// 
-                /// \"left\": Retract items from the left output position.
+                /// "left": Retract items from the left output position.
                 /// 
-                /// \"right\": Retract items from the right output position.
+                /// "right": Retract items from the right output position.
                 /// 
-                /// \"center\": Retract items from the center output position.
+                /// "center": Retract items from the center output position.
                 /// 
-                /// \"top\": Retract items from the top output position.
+                /// "top": Retract items from the top output position.
                 /// 
-                /// \"bottom\": Retract items from the bottom output position.
+                /// "bottom": Retract items from the bottom output position.
                 /// 
-                /// \"front\": Retract items from the front output position.
+                /// "front": Retract items from the front output position.
                 /// 
-                /// \"rear\": Retract items from the rear output position.
+                /// "rear": Retract items from the rear output position.
                 /// </summary>
                 [DataMember(Name = "outputPosition")]
-                public OutputPositionEnum? OutputPosition { get; private set; }
+                public OutputPositionEnum? OutputPosition { get; init; }
 
                 public enum RetractAreaEnum
                 {
@@ -107,35 +107,35 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// <summary>
                 /// This value specifies the area to which the items are to be retracted. Following values are possible:
                 /// 
-                /// \"retract\": Retract the items to a retract cash unit.
+                /// "retract": Retract the items to a retract cash unit.
                 /// 
-                /// \"reject\": Retract the items to a reject cash unit.
+                /// "reject": Retract the items to a reject cash unit.
                 /// 
-                /// \"transport\": Retract the items to the transport.
+                /// "transport": Retract the items to the transport.
                 /// 
-                /// \"stacker\": Retract the items to the intermediate stacker area.
+                /// "stacker": Retract the items to the intermediate stacker area.
                 /// 
-                /// \"billCassettes\": Retract the items to item cassettes, i.e. cash-in and recycle cash units.
+                /// "billCassettes": Retract the items to item cassettes, i.e. cash-in and recycle cash units.
                 /// 
-                /// \"cashIn\": Retract the items to a cash-in cash unit. The *itemType* of the cash-in cash unit defined in 
-                /// CashManagement.CashUnitInfo must include \"all\" and \"unfit\".
+                /// "cashIn": Retract the items to a cash-in cash unit. The *itemType* of the cash-in cash unit defined in 
+                /// CashManagement.CashUnitInfo must include "all" and "unfit".
                 /// </summary>
                 [DataMember(Name = "retractArea")]
-                public RetractAreaEnum? RetractArea { get; private set; }
+                public RetractAreaEnum? RetractArea { get; init; }
 
                 /// <summary>
-                /// If *retractArea* is set to \"retract\" this field defines the position inside the retract cash units into which the cash is to be retracted. 
+                /// If *retractArea* is set to "retract" this field defines the position inside the retract cash units into which the cash is to be retracted. 
                 /// *index* starts with a value of one (1) for the first retract position and increments by one for each subsequent position. The maximum value of *index* is the sum of 
                 /// the *maximum* of each retract cash unit.
                 /// 
-                /// If *retractArea* is set to \"cashIn\" this field defines the cash unit under the \"cashIn\" 
+                /// If *retractArea* is set to "cashIn" this field defines the cash unit under the "cashIn" 
                 /// cash units into which the cash is to be retracted. *index* corresponds to the cash unit *number* 
                 /// defined in CashManagement.CashUnitInfo.
                 /// 
-                /// If *retractArea* is not set to \"retract\" or \"cashIn\" then the value of this field is ignored.
+                /// If *retractArea* is not set to "retract" or "cashIn" then the value of this field is ignored.
                 /// </summary>
                 [DataMember(Name = "index")]
-                public int? Index { get; private set; }
+                public int? Index { get; init; }
 
             }
 
@@ -144,7 +144,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// The field is only relevant if [cashunit](#cashacceptor.reset.command.properties.cashunit) is not defined.
             /// </summary>
             [DataMember(Name = "retractArea")]
-            public RetractAreaClass RetractArea { get; private set; }
+            public RetractAreaClass RetractArea { get; init; }
 
             public enum OutputPositionEnum
             {
@@ -161,24 +161,24 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// The output position to which items are to be moved. This field is only used if *number* is zero and *netractArea* is omitted. Following values are possible:
             /// 
-            /// \"null\": Take the default configuration.
+            /// "null": Take the default configuration.
             /// 
-            /// \"left\": Move items to the left output position.
+            /// "left": Move items to the left output position.
             /// 
-            /// \"right\": Move items to the right output position.
+            /// "right": Move items to the right output position.
             /// 
-            /// \"center\": Move items to the center output position.
+            /// "center": Move items to the center output position.
             /// 
-            /// \"top\": Move items to the top output position.
+            /// "top": Move items to the top output position.
             /// 
-            /// \"bottom\": Move items to the bottom output position.
+            /// "bottom": Move items to the bottom output position.
             /// 
-            /// \"front\": Move items to the front output position.
+            /// "front": Move items to the front output position.
             /// 
-            /// \"rear\": Move items to the rear output position.
+            /// "rear": Move items to the rear output position.
             /// </summary>
             [DataMember(Name = "outputPosition")]
-            public OutputPositionEnum? OutputPosition { get; private set; }
+            public OutputPositionEnum? OutputPosition { get; init; }
 
         }
     }

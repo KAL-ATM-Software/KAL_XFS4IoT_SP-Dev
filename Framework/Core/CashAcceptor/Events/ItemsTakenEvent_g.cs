@@ -56,36 +56,36 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies the position where the items have been inserted. Following values are possible:
             /// 
-            /// \"inLeft\": Items taken from the left input position.
+            /// "inLeft": Items taken from the left input position.
             /// 
-            /// \"inRight\": Items taken from the right input position.
+            /// "inRight": Items taken from the right input position.
             /// 
-            /// \"inCenter\": Items taken from the center input position.
+            /// "inCenter": Items taken from the center input position.
             /// 
-            /// \"inTop\": Items taken from the top input position.
+            /// "inTop": Items taken from the top input position.
             /// 
-            /// \"inBottom\": Items taken from the bottom input position.
+            /// "inBottom": Items taken from the bottom input position.
             /// 
-            /// \"inFront\": Items taken from the front input position.
+            /// "inFront": Items taken from the front input position.
             /// 
-            /// \"inRear\": Items taken from the rear input position.
+            /// "inRear": Items taken from the rear input position.
             /// 
-            /// \"outLeft\": Items taken from the left output position.
+            /// "outLeft": Items taken from the left output position.
             /// 
-            /// \"outRight\": Items taken from the right output position.
+            /// "outRight": Items taken from the right output position.
             /// 
-            /// \"outCenter\": Items taken from the center output position.
+            /// "outCenter": Items taken from the center output position.
             /// 
-            /// \"outTop\": Items taken from the top output position.
+            /// "outTop": Items taken from the top output position.
             /// 
-            /// \"outBottom\": Items taken from the bottom output position.
+            /// "outBottom": Items taken from the bottom output position.
             /// 
-            /// \"outFront\": Items taken from the front output position.
+            /// "outFront": Items taken from the front output position.
             /// 
-            /// \"outRear\": Items taken from the rear output position.
+            /// "outRear": Items taken from the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
 

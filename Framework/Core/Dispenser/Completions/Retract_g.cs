@@ -62,7 +62,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by other error codes. The detail will be reported with the Dispenser.IncompleteRetractEvent.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataContract]
             public sealed class ItemNumberClass
@@ -80,13 +80,13 @@ namespace XFS4IoT.Dispenser.Completions
                 /// A three character array storing the ISO format [Ref. 2] Currency ID; if the currency of the item is not known this is omitted.
                 /// </summary>
                 [DataMember(Name = "currencyID")]
-                public string CurrencyID { get; private set; }
+                public string CurrencyID { get; init; }
 
                 /// <summary>
                 /// The value of a single item expressed as floating point value; or a zero value if the value of the item is not known.
                 /// </summary>
                 [DataMember(Name = "values")]
-                public double? Values { get; private set; }
+                public double? Values { get; init; }
 
                 /// <summary>
                 /// The release of the item. The higher this number is, the newer the release. Zero means that there is 
@@ -94,13 +94,13 @@ namespace XFS4IoT.Dispenser.Completions
                 /// and therefore a release number of the same item will not necessarily have the same value in different systems.
                 /// </summary>
                 [DataMember(Name = "release")]
-                public int? Release { get; private set; }
+                public int? Release { get; init; }
 
                 /// <summary>
                 /// The count of items of the same type moved to the same destination during the execution of this command.
                 /// </summary>
                 [DataMember(Name = "count")]
-                public int? Count { get; private set; }
+                public int? Count { get; init; }
 
                 /// <summary>
                 /// The object name of the cash unit which received items during the execution of this command as stated by the 
@@ -109,7 +109,7 @@ namespace XFS4IoT.Dispenser.Completions
                 /// [retractArea](#dispenser.retract.command.properties.retractarea) ```transport``` or ```stacker```.
                 /// </summary>
                 [DataMember(Name = "cashunit")]
-                public string Cashunit { get; private set; }
+                public string Cashunit { get; init; }
 
             }
 
@@ -117,7 +117,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// Array of item number objects.
             /// </summary>
             [DataMember(Name = "itemNumber")]
-            public List<ItemNumberClass> ItemNumber { get; private set; }
+            public List<ItemNumberClass> ItemNumber { get; init; }
 
         }
     }

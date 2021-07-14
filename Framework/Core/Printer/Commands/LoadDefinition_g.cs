@@ -42,7 +42,7 @@ namespace XFS4IoT.Printer.Commands
             /// Only one form or media definition can be defined in the file.
             /// </summary>
             [DataMember(Name = "fileName")]
-            public string FileName { get; private set; }
+            public string FileName { get; init; }
 
             /// <summary>
             /// Specifies if an existing form or media definition with the same name is to be replaced. If this flag
@@ -51,7 +51,7 @@ namespace XFS4IoT.Printer.Commands
             /// command will fail with an error if the form or media definition already exists.
             /// </summary>
             [DataMember(Name = "overwrite")]
-            public bool? Overwrite { get; private set; }
+            public bool? Overwrite { get; init; }
 
         }
     }

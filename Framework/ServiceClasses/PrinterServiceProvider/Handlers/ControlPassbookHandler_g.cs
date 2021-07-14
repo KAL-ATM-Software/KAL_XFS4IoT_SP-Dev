@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var controlPassbookCmd = command.IsA<ControlPassbookCommand>($"Invalid parameter in the ControlPassbook Handle method. {nameof(ControlPassbookCommand)}");
-            controlPassbookCmd.Headers.RequestId.HasValue.IsTrue();
+            controlPassbookCmd.Header.RequestId.HasValue.IsTrue();
 
-            IControlPassbookEvents events = new ControlPassbookEvents(Connection, controlPassbookCmd.Headers.RequestId.Value);
+            IControlPassbookEvents events = new ControlPassbookEvents(Connection, controlPassbookCmd.Header.RequestId.Value);
 
             var result = await HandleControlPassbook(events, controlPassbookCmd, cancel);
-            await Connection.SendMessageAsync(new ControlPassbookCompletion(controlPassbookCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ControlPassbookCompletion(controlPassbookCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var controlPassbookcommand = command.IsA<ControlPassbookCommand>();
-            controlPassbookcommand.Headers.RequestId.HasValue.IsTrue();
+            controlPassbookcommand.Header.RequestId.HasValue.IsTrue();
 
             ControlPassbookCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => ControlPassbookCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ControlPassbookCompletion(controlPassbookcommand.Headers.RequestId.Value, new ControlPassbookCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ControlPassbookCompletion(controlPassbookcommand.Header.RequestId.Value, new ControlPassbookCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

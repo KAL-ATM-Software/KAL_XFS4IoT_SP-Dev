@@ -49,7 +49,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```jammed``` - The media is jammed.
             /// </summary>
             [DataMember(Name = "retractResult")]
-            public RetractResultEnum? RetractResult { get; private set; }
+            public RetractResultEnum? RetractResult { get; init; }
 
             /// <summary>
             /// Number of the retract bin the media was retracted to or zero if the media is retracted to the transport.
@@ -57,7 +57,7 @@ namespace XFS4IoT.Printer.Events
             /// zero if [retractResult](#printer.mediaautoretractedevent.event.properties.retractresult) is *jammed*.
             /// </summary>
             [DataMember(Name = "binNumber")]
-            public int? BinNumber { get; private set; }
+            public int? BinNumber { get; init; }
 
         }
 

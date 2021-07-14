@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var supplyReplenishCmd = command.IsA<SupplyReplenishCommand>($"Invalid parameter in the SupplyReplenish Handle method. {nameof(SupplyReplenishCommand)}");
-            supplyReplenishCmd.Headers.RequestId.HasValue.IsTrue();
+            supplyReplenishCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISupplyReplenishEvents events = new SupplyReplenishEvents(Connection, supplyReplenishCmd.Headers.RequestId.Value);
+            ISupplyReplenishEvents events = new SupplyReplenishEvents(Connection, supplyReplenishCmd.Header.RequestId.Value);
 
             var result = await HandleSupplyReplenish(events, supplyReplenishCmd, cancel);
-            await Connection.SendMessageAsync(new SupplyReplenishCompletion(supplyReplenishCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SupplyReplenishCompletion(supplyReplenishCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var supplyReplenishcommand = command.IsA<SupplyReplenishCommand>();
-            supplyReplenishcommand.Headers.RequestId.HasValue.IsTrue();
+            supplyReplenishcommand.Header.RequestId.HasValue.IsTrue();
 
             SupplyReplenishCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => SupplyReplenishCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SupplyReplenishCompletion(supplyReplenishcommand.Headers.RequestId.Value, new SupplyReplenishCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SupplyReplenishCompletion(supplyReplenishcommand.Header.RequestId.Value, new SupplyReplenishCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

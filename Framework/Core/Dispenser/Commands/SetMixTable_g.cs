@@ -40,19 +40,19 @@ namespace XFS4IoT.Dispenser.Commands
             /// Number identifying the house mix table.
             /// </summary>
             [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; private set; }
+            public int? MixNumber { get; init; }
 
             /// <summary>
             /// Name of the house mix table.
             /// </summary>
             [DataMember(Name = "name")]
-            public string Name { get; private set; }
+            public string Name { get; init; }
 
             /// <summary>
             /// Array of floating point numbers; each element defines the value of the item corresponding to its respective column.
             /// </summary>
             [DataMember(Name = "mixHeader")]
-            public List<double> MixHeader { get; private set; }
+            public List<double> MixHeader { get; init; }
 
             [DataContract]
             public sealed class MixRowsClass
@@ -67,14 +67,14 @@ namespace XFS4IoT.Dispenser.Commands
                 /// Amount denominated by this mix row.
                 /// </summary>
                 [DataMember(Name = "amount")]
-                public double? Amount { get; private set; }
+                public double? Amount { get; init; }
 
                 /// <summary>
                 /// A mix row, an array of integers; each element defines the quantity of each item denomination in the mix used in the denomination of *amount*. 
                 /// The value of each array element is defined by the *mixHeader*.
                 /// </summary>
                 [DataMember(Name = "mixture")]
-                public List<int> Mixture { get; private set; }
+                public List<int> Mixture { get; init; }
 
             }
 
@@ -82,7 +82,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// Array of rows of the mix table.
             /// </summary>
             [DataMember(Name = "mixRows")]
-            public List<MixRowsClass> MixRows { get; private set; }
+            public List<MixRowsClass> MixRows { get; init; }
 
         }
     }

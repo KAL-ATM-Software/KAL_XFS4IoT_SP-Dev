@@ -54,41 +54,41 @@ namespace XFS4IoT.CashAcceptor.Commands
 
             /// <summary>
             /// Position where the shutter is to be opened. 
-            /// If the application does not need to specify the shutter, this field can be omitted or set to \"null\". 
+            /// If the application does not need to specify the shutter, this field can be omitted or set to "null". 
             /// Otherwise this field should be set to one of the following values:
             /// 
-            /// \"null\": The default configuration information should be used.
+            /// "null": The default configuration information should be used.
             /// 
-            /// \"inLeft\": Open the shutter of the left input position.
+            /// "inLeft": Open the shutter of the left input position.
             /// 
-            /// \"inRight\": Open the shutter of the right input position.
+            /// "inRight": Open the shutter of the right input position.
             /// 
-            /// \"inCenter\": Open the shutter of the center input position.
+            /// "inCenter": Open the shutter of the center input position.
             /// 
-            /// \"inTop\": Open the shutter of the top input position.
+            /// "inTop": Open the shutter of the top input position.
             /// 
-            /// \"inBottom\": Open the shutter of the bottom input position.
+            /// "inBottom": Open the shutter of the bottom input position.
             /// 
-            /// \"inFront\": Open the shutter of the front input position.
+            /// "inFront": Open the shutter of the front input position.
             /// 
-            /// \"inRear\": Open the shutter of the rear input position.
+            /// "inRear": Open the shutter of the rear input position.
             /// 
-            /// \"outLeft\": Open the shutter of the left output position.
+            /// "outLeft": Open the shutter of the left output position.
             /// 
-            /// \"outRight\": Open the shutter of the right output position.
+            /// "outRight": Open the shutter of the right output position.
             /// 
-            /// \"outCenter\": Open the shutter of the center output position.
+            /// "outCenter": Open the shutter of the center output position.
             /// 
-            /// \"outTop\": Open the shutter of the top output position.
+            /// "outTop": Open the shutter of the top output position.
             /// 
-            /// \"outBottom\": Open the shutter of the bottom output position.
+            /// "outBottom": Open the shutter of the bottom output position.
             /// 
-            /// \"outFront\": Open the shutter of the front output position.
+            /// "outFront": Open the shutter of the front output position.
             /// 
-            /// \"outRear\": Open the shutter of the rear output position.
+            /// "outRear": Open the shutter of the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

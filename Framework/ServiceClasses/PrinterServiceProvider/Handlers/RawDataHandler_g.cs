@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var rawDataCmd = command.IsA<RawDataCommand>($"Invalid parameter in the RawData Handle method. {nameof(RawDataCommand)}");
-            rawDataCmd.Headers.RequestId.HasValue.IsTrue();
+            rawDataCmd.Header.RequestId.HasValue.IsTrue();
 
-            IRawDataEvents events = new RawDataEvents(Connection, rawDataCmd.Headers.RequestId.Value);
+            IRawDataEvents events = new RawDataEvents(Connection, rawDataCmd.Header.RequestId.Value);
 
             var result = await HandleRawData(events, rawDataCmd, cancel);
-            await Connection.SendMessageAsync(new RawDataCompletion(rawDataCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new RawDataCompletion(rawDataCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var rawDatacommand = command.IsA<RawDataCommand>();
-            rawDatacommand.Headers.RequestId.HasValue.IsTrue();
+            rawDatacommand.Header.RequestId.HasValue.IsTrue();
 
             RawDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => RawDataCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new RawDataCompletion(rawDatacommand.Headers.RequestId.Value, new RawDataCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new RawDataCompletion(rawDatacommand.Header.RequestId.Value, new RawDataCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

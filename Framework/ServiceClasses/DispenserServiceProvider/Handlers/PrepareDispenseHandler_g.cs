@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var prepareDispenseCmd = command.IsA<PrepareDispenseCommand>($"Invalid parameter in the PrepareDispense Handle method. {nameof(PrepareDispenseCommand)}");
-            prepareDispenseCmd.Headers.RequestId.HasValue.IsTrue();
+            prepareDispenseCmd.Header.RequestId.HasValue.IsTrue();
 
-            IPrepareDispenseEvents events = new PrepareDispenseEvents(Connection, prepareDispenseCmd.Headers.RequestId.Value);
+            IPrepareDispenseEvents events = new PrepareDispenseEvents(Connection, prepareDispenseCmd.Header.RequestId.Value);
 
             var result = await HandlePrepareDispense(events, prepareDispenseCmd, cancel);
-            await Connection.SendMessageAsync(new PrepareDispenseCompletion(prepareDispenseCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new PrepareDispenseCompletion(prepareDispenseCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var prepareDispensecommand = command.IsA<PrepareDispenseCommand>();
-            prepareDispensecommand.Headers.RequestId.HasValue.IsTrue();
+            prepareDispensecommand.Header.RequestId.HasValue.IsTrue();
 
             PrepareDispenseCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => PrepareDispenseCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new PrepareDispenseCompletion(prepareDispensecommand.Headers.RequestId.Value, new PrepareDispenseCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PrepareDispenseCompletion(prepareDispensecommand.Header.RequestId.Value, new PrepareDispenseCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

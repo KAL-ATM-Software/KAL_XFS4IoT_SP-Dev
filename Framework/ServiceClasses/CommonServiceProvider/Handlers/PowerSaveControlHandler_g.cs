@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var powerSaveControlCmd = command.IsA<PowerSaveControlCommand>($"Invalid parameter in the PowerSaveControl Handle method. {nameof(PowerSaveControlCommand)}");
-            powerSaveControlCmd.Headers.RequestId.HasValue.IsTrue();
+            powerSaveControlCmd.Header.RequestId.HasValue.IsTrue();
 
-            IPowerSaveControlEvents events = new PowerSaveControlEvents(Connection, powerSaveControlCmd.Headers.RequestId.Value);
+            IPowerSaveControlEvents events = new PowerSaveControlEvents(Connection, powerSaveControlCmd.Header.RequestId.Value);
 
             var result = await HandlePowerSaveControl(events, powerSaveControlCmd, cancel);
-            await Connection.SendMessageAsync(new PowerSaveControlCompletion(powerSaveControlCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new PowerSaveControlCompletion(powerSaveControlCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var powerSaveControlcommand = command.IsA<PowerSaveControlCommand>();
-            powerSaveControlcommand.Headers.RequestId.HasValue.IsTrue();
+            powerSaveControlcommand.Header.RequestId.HasValue.IsTrue();
 
             PowerSaveControlCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => PowerSaveControlCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new PowerSaveControlCompletion(powerSaveControlcommand.Headers.RequestId.Value, new PowerSaveControlCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PowerSaveControlCompletion(powerSaveControlcommand.Header.RequestId.Value, new PowerSaveControlCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

@@ -47,7 +47,7 @@ namespace XFS4IoT.CardReader.Events
             /// Section 9.4).
             /// </summary>
             [DataMember(Name = "messageId")]
-            public int? MessageId { get; private set; }
+            public int? MessageId { get; init; }
 
             public enum StatusEnum
             {
@@ -74,14 +74,14 @@ namespace XFS4IoT.CardReader.Events
             /// * ```processingError``` - Contactless card reader was not able to process the card successfully.
             /// </summary>
             [DataMember(Name = "status")]
-            public StatusEnum? Status { get; private set; }
+            public StatusEnum? Status { get; init; }
 
             /// <summary>
             /// Represents the hold time in units of 100 milliseconds for which the application should display the message
             /// before processing the next user interface data.
             /// </summary>
             [DataMember(Name = "holdTime")]
-            public int? HoldTime { get; private set; }
+            public int? HoldTime { get; init; }
 
             public enum ValueQualifierEnum
             {
@@ -100,7 +100,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```notApplicable``` - *value* is neither of the above.
             /// </summary>
             [DataMember(Name = "valueQualifier")]
-            public ValueQualifierEnum? ValueQualifier { get; private set; }
+            public ValueQualifierEnum? ValueQualifier { get; init; }
 
             /// <summary>
             /// Represents the value of the amount or balance (as specified by
@@ -108,20 +108,20 @@ namespace XFS4IoT.CardReader.Events
             /// to be displayed where appropriate.
             /// </summary>
             [DataMember(Name = "value")]
-            public string Value { get; private set; }
+            public string Value { get; init; }
 
             /// <summary>
             /// Represents the numeric value of currency code as per ISO 4217.
             /// </summary>
             [DataMember(Name = "currencyCode")]
-            public string CurrencyCode { get; private set; }
+            public string CurrencyCode { get; init; }
 
             /// <summary>
             /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
             /// data to display all messages in the specified language until the transaction concludes.
             /// </summary>
             [DataMember(Name = "languagePreferenceData")]
-            public string LanguagePreferenceData { get; private set; }
+            public string LanguagePreferenceData { get; init; }
 
         }
 

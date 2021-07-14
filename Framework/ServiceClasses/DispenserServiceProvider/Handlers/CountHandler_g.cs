@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var countCmd = command.IsA<CountCommand>($"Invalid parameter in the Count Handle method. {nameof(CountCommand)}");
-            countCmd.Headers.RequestId.HasValue.IsTrue();
+            countCmd.Header.RequestId.HasValue.IsTrue();
 
-            ICountEvents events = new CountEvents(Connection, countCmd.Headers.RequestId.Value);
+            ICountEvents events = new CountEvents(Connection, countCmd.Header.RequestId.Value);
 
             var result = await HandleCount(events, countCmd, cancel);
-            await Connection.SendMessageAsync(new CountCompletion(countCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CountCompletion(countCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var countcommand = command.IsA<CountCommand>();
-            countcommand.Headers.RequestId.HasValue.IsTrue();
+            countcommand.Header.RequestId.HasValue.IsTrue();
 
             CountCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => CountCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new CountCompletion(countcommand.Headers.RequestId.Value, new CountCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CountCompletion(countcommand.Header.RequestId.Value, new CountCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

@@ -38,7 +38,7 @@ namespace XFS4IoT.CardReader.Commands
             /// of the CIM86 module.
             /// </summary>
             [DataMember(Name = "keyValue")]
-            public string KeyValue { get; private set; }
+            public string KeyValue { get; init; }
 
         }
     }

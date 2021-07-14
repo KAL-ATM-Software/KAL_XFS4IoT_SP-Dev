@@ -38,7 +38,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// the classification list. This property can be omitted if it has no version identifier.
             /// </summary>
             [DataMember(Name = "version")]
-            public string Version { get; private set; }
+            public string Version { get; init; }
 
             [DataContract]
             public sealed class ClassificationElementsClass
@@ -56,19 +56,19 @@ namespace XFS4IoT.CashManagement.Completions
                 /// defined currency and value. For a definition of the mask see Section Note Classification.
                 /// </summary>
                 [DataMember(Name = "serialNumber")]
-                public string SerialNumber { get; private set; }
+                public string SerialNumber { get; init; }
 
                 /// <summary>
                 /// The three character ISO 4217 format currency identifier [Ref. 2] of the element.
                 /// </summary>
                 [DataMember(Name = "currencyID")]
-                public string CurrencyID { get; private set; }
+                public string CurrencyID { get; init; }
 
                 /// <summary>
                 /// The value of the element. This field can be zero to represent all values.
                 /// </summary>
                 [DataMember(Name = "value")]
-                public double? Value { get; private set; }
+                public double? Value { get; init; }
 
                 public enum LevelEnum
                 {
@@ -89,7 +89,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// * ```level4Unfit``` - The element specifies notes to be treated as unfit level 4 notes.
                 /// </summary>
                 [DataMember(Name = "level")]
-                public LevelEnum? Level { get; private set; }
+                public LevelEnum? Level { get; init; }
 
             }
 
@@ -97,7 +97,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// Array of classification objects.
             /// </summary>
             [DataMember(Name = "classificationElements")]
-            public List<ClassificationElementsClass> ClassificationElements { get; private set; }
+            public List<ClassificationElementsClass> ClassificationElements { get; init; }
 
         }
     }

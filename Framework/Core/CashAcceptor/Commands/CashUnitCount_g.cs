@@ -39,7 +39,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// 
             /// </summary>
             [DataMember(Name = "cUNumList")]
-            public List<int> CUNumList { get; private set; }
+            public List<int> CUNumList { get; init; }
 
         }
     }

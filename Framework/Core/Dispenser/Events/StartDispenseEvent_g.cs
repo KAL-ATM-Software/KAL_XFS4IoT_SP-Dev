@@ -39,7 +39,7 @@ namespace XFS4IoT.Dispenser.Events
             /// The requestId of the original dispense command.
             /// </summary>
             [DataMember(Name = "reqID")]
-            public int? ReqID { get; private set; }
+            public int? ReqID { get; init; }
 
         }
 

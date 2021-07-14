@@ -45,13 +45,13 @@ namespace XFS4IoT.Crypto.Completions
             ///                        any vendor specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains the length and the data containing the calculated has.
+            /// Contains the Base64 encoded length and the data containing the calculated hash.
             /// </summary>
             [DataMember(Name = "digestOutput")]
-            public string DigestOutput { get; private set; }
+            public string DigestOutput { get; init; }
 
         }
     }

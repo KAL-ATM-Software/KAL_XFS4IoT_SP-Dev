@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getKeyDetailCmd = command.IsA<GetKeyDetailCommand>($"Invalid parameter in the GetKeyDetail Handle method. {nameof(GetKeyDetailCommand)}");
-            getKeyDetailCmd.Headers.RequestId.HasValue.IsTrue();
+            getKeyDetailCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetKeyDetailEvents events = new GetKeyDetailEvents(Connection, getKeyDetailCmd.Headers.RequestId.Value);
+            IGetKeyDetailEvents events = new GetKeyDetailEvents(Connection, getKeyDetailCmd.Header.RequestId.Value);
 
             var result = await HandleGetKeyDetail(events, getKeyDetailCmd, cancel);
-            await Connection.SendMessageAsync(new GetKeyDetailCompletion(getKeyDetailCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetKeyDetailCompletion(getKeyDetailCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getKeyDetailcommand = command.IsA<GetKeyDetailCommand>();
-            getKeyDetailcommand.Headers.RequestId.HasValue.IsTrue();
+            getKeyDetailcommand.Header.RequestId.HasValue.IsTrue();
 
             GetKeyDetailCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => GetKeyDetailCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetKeyDetailCompletion(getKeyDetailcommand.Headers.RequestId.Value, new GetKeyDetailCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetKeyDetailCompletion(getKeyDetailcommand.Header.RequestId.Value, new GetKeyDetailCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

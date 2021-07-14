@@ -50,7 +50,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```inop``` - The imaging lamp is inoperative.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
         }
 

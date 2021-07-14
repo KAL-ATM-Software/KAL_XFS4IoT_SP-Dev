@@ -54,14 +54,14 @@ namespace XFS4IoT.CardReader.Completions
             ///   intervention is required.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Total number of ID cards retained up to and including this operation, since the last
             /// [CardReader.ResetCount](#cardreader.resetcount) command was executed.
             /// </summary>
             [DataMember(Name = "count")]
-            public int? Count { get; private set; }
+            public int? Count { get; init; }
 
             public enum PositionEnum
             {
@@ -78,7 +78,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```entering``` - The card is in the entering position (shutter).
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

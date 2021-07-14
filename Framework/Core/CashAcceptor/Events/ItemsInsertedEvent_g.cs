@@ -56,36 +56,36 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies the position where the items have been inserted. Following values are possible:
             /// 
-            /// \"inLeft\": Items detected in the left input position.
+            /// "inLeft": Items detected in the left input position.
             /// 
-            /// \"inRight\": Items detected in the right input position.
+            /// "inRight": Items detected in the right input position.
             /// 
-            /// \"inCenter\": Items detected in the center input position.
+            /// "inCenter": Items detected in the center input position.
             /// 
-            /// \"inTop\": Items detected in the top input position.
+            /// "inTop": Items detected in the top input position.
             /// 
-            /// \"inBottom\": Items detected in the bottom input position.
+            /// "inBottom": Items detected in the bottom input position.
             /// 
-            /// \"inFront\": Items detected in the front input position.
+            /// "inFront": Items detected in the front input position.
             /// 
-            /// \"inRear\": Items detected in the rear input position.
+            /// "inRear": Items detected in the rear input position.
             /// 
-            /// \"outLeft\": Items detected in the left output position.
+            /// "outLeft": Items detected in the left output position.
             /// 
-            /// \"outRight\": Items detected in the right output position.
+            /// "outRight": Items detected in the right output position.
             /// 
-            /// \"outCenter\": Items detected in the center output position.
+            /// "outCenter": Items detected in the center output position.
             /// 
-            /// \"outTop\": Items detected in the top output position.
+            /// "outTop": Items detected in the top output position.
             /// 
-            /// \"outBottom\": Items detected in the bottom output position.
+            /// "outBottom": Items detected in the bottom output position.
             /// 
-            /// \"outFront\": Items detected in the front output position.
+            /// "outFront": Items detected in the front output position.
             /// 
-            /// \"outRear\": Items detected in the rear output position.
+            /// "outRear": Items detected in the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
 

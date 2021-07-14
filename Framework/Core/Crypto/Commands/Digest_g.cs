@@ -42,16 +42,20 @@ namespace XFS4IoT.Crypto.Commands
 
             /// <summary>
             /// Specifies which hash algorithm should be used to calculate the hash. 
-            /// See the [Crypto.Capabilities](#common.capabilities.completion.properties.crypto) section for valid algorithms.
+            /// See the [algorithm](#common.capabilities.completion.properties.crypto) section for valid algorithms.
+            /// The following values are possible:
+            /// 
+            /// * ```sha1``` - The SHA-1 digest algorithm.
+            /// * ```sha256``` - The SHA-256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
-            public HashAlgorithmEnum? HashAlgorithm { get; private set; }
+            public HashAlgorithmEnum? HashAlgorithm { get; init; }
 
             /// <summary>
-            /// Contains the length and the data to be hashed formatted in base64.
+            /// Contains Base64 encoded the length and the data to be hashed.
             /// </summary>
             [DataMember(Name = "digestInput")]
-            public string DigestInput { get; private set; }
+            public string DigestInput { get; init; }
 
         }
     }

@@ -39,7 +39,7 @@ namespace XFS4IoT.Dispenser.Events
             /// The time in milliseconds by which the dispense operation will be delayed.
             /// </summary>
             [DataMember(Name = "delay")]
-            public int? Delay { get; private set; }
+            public int? Delay { get; init; }
 
         }
 

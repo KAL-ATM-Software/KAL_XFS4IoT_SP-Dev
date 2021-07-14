@@ -43,21 +43,21 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"exchangeActive\": The device is in the exchange state.
+            /// "exchangeActive": The device is in the exchange state.
             /// 
-            /// \"cashInActive\": A cash-in transaction is active.
+            /// "cashInActive": A cash-in transaction is active.
             /// 
-            /// \"loadFailed\": The load failed because the device is in a state that will not allow the configuration data to be loaded 
+            /// "loadFailed": The load failed because the device is in a state that will not allow the configuration data to be loaded 
             /// at this time, for example on some devices there may be notes present in the cash units when they should not be.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// If set to TRUE, the machine needs a reboot before the note reader can be accessed again.
             /// </summary>
             [DataMember(Name = "rebootNecessary")]
-            public bool? RebootNecessary { get; private set; }
+            public bool? RebootNecessary { get; init; }
 
         }
     }

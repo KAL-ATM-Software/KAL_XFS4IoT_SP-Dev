@@ -46,7 +46,7 @@ namespace XFS4IoT.CardReader.Completions
                 /// intelligent contactless card unit.
                 /// </summary>
                 [DataMember(Name = "aid")]
-                public string Aid { get; private set; }
+                public string Aid { get; init; }
 
                 /// <summary>
                 /// Contains the Base64 encoded Kernel Identifier associated with the *aid*. This data may be empty
@@ -54,7 +54,7 @@ namespace XFS4IoT.CardReader.Completions
                 /// contactless readers.
                 /// </summary>
                 [DataMember(Name = "kernelIdentifier")]
-                public string KernelIdentifier { get; private set; }
+                public string KernelIdentifier { get; init; }
 
             }
 
@@ -63,7 +63,7 @@ namespace XFS4IoT.CardReader.Completions
             /// Kernel Identifier.
             /// </summary>
             [DataMember(Name = "appData")]
-            public List<AppDataClass> AppData { get; private set; }
+            public List<AppDataClass> AppData { get; init; }
 
         }
     }

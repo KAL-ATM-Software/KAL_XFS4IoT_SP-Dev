@@ -59,7 +59,7 @@ namespace XFS4IoT.Dispenser.Events
             /// * ```rear``` - Rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             public enum ShutterEnum
             {
@@ -78,7 +78,7 @@ namespace XFS4IoT.Dispenser.Events
             /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
             /// </summary>
             [DataMember(Name = "shutter")]
-            public ShutterEnum? Shutter { get; private set; }
+            public ShutterEnum? Shutter { get; init; }
 
         }
 

@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var setGuidanceLightCmd = command.IsA<SetGuidanceLightCommand>($"Invalid parameter in the SetGuidanceLight Handle method. {nameof(SetGuidanceLightCommand)}");
-            setGuidanceLightCmd.Headers.RequestId.HasValue.IsTrue();
+            setGuidanceLightCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetGuidanceLightEvents events = new SetGuidanceLightEvents(Connection, setGuidanceLightCmd.Headers.RequestId.Value);
+            ISetGuidanceLightEvents events = new SetGuidanceLightEvents(Connection, setGuidanceLightCmd.Header.RequestId.Value);
 
             var result = await HandleSetGuidanceLight(events, setGuidanceLightCmd, cancel);
-            await Connection.SendMessageAsync(new SetGuidanceLightCompletion(setGuidanceLightCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetGuidanceLightCompletion(setGuidanceLightCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var setGuidanceLightcommand = command.IsA<SetGuidanceLightCommand>();
-            setGuidanceLightcommand.Headers.RequestId.HasValue.IsTrue();
+            setGuidanceLightcommand.Header.RequestId.HasValue.IsTrue();
 
             SetGuidanceLightCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => SetGuidanceLightCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetGuidanceLightCompletion(setGuidanceLightcommand.Headers.RequestId.Value, new SetGuidanceLightCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetGuidanceLightCompletion(setGuidanceLightcommand.Header.RequestId.Value, new SetGuidanceLightCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

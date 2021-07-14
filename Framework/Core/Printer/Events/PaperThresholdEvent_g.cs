@@ -55,7 +55,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```aux2``` - The second auxiliary paper source.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; private set; }
+            public PaperSourceEnum? PaperSource { get; init; }
 
             public enum ThresholdEnum
             {
@@ -72,7 +72,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```out``` - The paper in the paper source is out.
             /// </summary>
             [DataMember(Name = "threshold")]
-            public ThresholdEnum? Threshold { get; private set; }
+            public ThresholdEnum? Threshold { get; init; }
 
         }
 

@@ -54,41 +54,41 @@ namespace XFS4IoT.CashAcceptor.Commands
 
             /// <summary>
             /// Position where the shutter is to be closed. 
-            /// If the application does not need to specify the shutter, this field can be omitted or set to \"null\". 
+            /// If the application does not need to specify the shutter, this field can be omitted or set to "null". 
             /// Otherwise this field should be set to one of the following values:
             /// 
-            /// \"null\": The default configuration information should be used.
+            /// "null": The default configuration information should be used.
             /// 
-            /// \"inLeft\": Close the shutter of the left input position.
+            /// "inLeft": Close the shutter of the left input position.
             /// 
-            /// \"inRight\": Close the shutter of the right input position.
+            /// "inRight": Close the shutter of the right input position.
             /// 
-            /// \"inCenter\": Close the shutter of the center input position.
+            /// "inCenter": Close the shutter of the center input position.
             /// 
-            /// \"inTop\": Close the shutter of the top input position.
+            /// "inTop": Close the shutter of the top input position.
             /// 
-            /// \"inBottom\": Close the shutter of the bottom input position.
+            /// "inBottom": Close the shutter of the bottom input position.
             /// 
-            /// \"inFront\": Close the shutter of the front input position.
+            /// "inFront": Close the shutter of the front input position.
             /// 
-            /// \"inRear\": Close the shutter of the rear input position.
+            /// "inRear": Close the shutter of the rear input position.
             /// 
-            /// \"outLeft\": Close the shutter of the left output position.
+            /// "outLeft": Close the shutter of the left output position.
             /// 
-            /// \"outRight\": Close the shutter of the right output position.
+            /// "outRight": Close the shutter of the right output position.
             /// 
-            /// \"outCenter\": Close the shutter of the center output position.
+            /// "outCenter": Close the shutter of the center output position.
             /// 
-            /// \"outTop\": Close the shutter of the top output position.
+            /// "outTop": Close the shutter of the top output position.
             /// 
-            /// \"outBottom\": Close the shutter of the bottom output position.
+            /// "outBottom": Close the shutter of the bottom output position.
             /// 
-            /// \"outFront\": Close the shutter of the front output position.
+            /// "outFront": Close the shutter of the front output position.
             /// 
-            /// \"outRear\": Close the shutter of the rear output position.
+            /// "outRear": Close the shutter of the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

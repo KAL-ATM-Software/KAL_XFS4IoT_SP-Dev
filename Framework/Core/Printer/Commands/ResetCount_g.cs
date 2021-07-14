@@ -37,7 +37,7 @@ namespace XFS4IoT.Printer.Commands
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "binNumber")]
-            public int? BinNumber { get; private set; }
+            public int? BinNumber { get; init; }
 
         }
     }

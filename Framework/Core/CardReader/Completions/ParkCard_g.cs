@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```positionInvalid``` - The specified parking station is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

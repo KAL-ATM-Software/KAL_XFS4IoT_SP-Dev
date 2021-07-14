@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getCodelineMappingCmd = command.IsA<GetCodelineMappingCommand>($"Invalid parameter in the GetCodelineMapping Handle method. {nameof(GetCodelineMappingCommand)}");
-            getCodelineMappingCmd.Headers.RequestId.HasValue.IsTrue();
+            getCodelineMappingCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetCodelineMappingEvents events = new GetCodelineMappingEvents(Connection, getCodelineMappingCmd.Headers.RequestId.Value);
+            IGetCodelineMappingEvents events = new GetCodelineMappingEvents(Connection, getCodelineMappingCmd.Header.RequestId.Value);
 
             var result = await HandleGetCodelineMapping(events, getCodelineMappingCmd, cancel);
-            await Connection.SendMessageAsync(new GetCodelineMappingCompletion(getCodelineMappingCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetCodelineMappingCompletion(getCodelineMappingCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getCodelineMappingcommand = command.IsA<GetCodelineMappingCommand>();
-            getCodelineMappingcommand.Headers.RequestId.HasValue.IsTrue();
+            getCodelineMappingcommand.Header.RequestId.HasValue.IsTrue();
 
             GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetCodelineMappingCompletion(getCodelineMappingcommand.Headers.RequestId.Value, new GetCodelineMappingCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetCodelineMappingCompletion(getCodelineMappingcommand.Header.RequestId.Value, new GetCodelineMappingCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

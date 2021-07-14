@@ -39,21 +39,23 @@ namespace XFS4IoT.TextTerminal.Commands
 
 
             [DataMember(Name = "mode")]
-            public ModesEnum? Mode { get; private set; }
+            public ModesEnum? Mode { get; init; }
 
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute horizontal position. If mode is set to relative 
             /// this specifies a horizontal offset relative to the current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posX")]
-            public int? PosX { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? PosX { get; init; }
 
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute vertical position. If mode is set to relative 
             /// this specifies a vertical offset relative to the current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posY")]
-            public int? PosY { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? PosY { get; init; }
 
             [DataContract]
             public sealed class TextAttrClass
@@ -69,19 +71,19 @@ namespace XFS4IoT.TextTerminal.Commands
                 /// The displayed text will be unerlined.
                 /// </summary>
                 [DataMember(Name = "underline")]
-                public bool? Underline { get; private set; }
+                public bool? Underline { get; init; }
 
                 /// <summary>
                 /// The displayed text will be inverted.
                 /// </summary>
                 [DataMember(Name = "inverted")]
-                public bool? Inverted { get; private set; }
+                public bool? Inverted { get; init; }
 
                 /// <summary>
                 /// The displayed text will be flashing.
                 /// </summary>
                 [DataMember(Name = "flash")]
-                public bool? Flash { get; private set; }
+                public bool? Flash { get; init; }
 
             }
 
@@ -90,13 +92,13 @@ namespace XFS4IoT.TextTerminal.Commands
             /// are selected then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "textAttr")]
-            public TextAttrClass TextAttr { get; private set; }
+            public TextAttrClass TextAttr { get; init; }
 
             /// <summary>
             /// Specifies the text that will be displayed.
             /// </summary>
             [DataMember(Name = "text")]
-            public string Text { get; private set; }
+            public string Text { get; init; }
 
         }
     }

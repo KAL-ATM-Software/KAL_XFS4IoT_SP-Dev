@@ -110,7 +110,7 @@ namespace XFS4IoT.Printer.Completions
             ///   way.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

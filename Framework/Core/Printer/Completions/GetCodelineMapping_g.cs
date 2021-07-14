@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```e13b``` - E13B mapping.
             /// </summary>
             [DataMember(Name = "codelineFormat")]
-            public CodelineFormatEnum? CodelineFormat { get; private set; }
+            public CodelineFormatEnum? CodelineFormat { get; init; }
 
             /// <summary>
             /// Defines the mapping of the font specific symbols to byte values. These byte values are used to
@@ -76,7 +76,7 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// </summary>
             [DataMember(Name = "charMapping")]
-            public string CharMapping { get; private set; }
+            public string CharMapping { get; init; }
 
         }
     }

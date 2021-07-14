@@ -38,13 +38,13 @@ namespace XFS4IoT.Common.Commands
             /// The command name to be synchronized and executed next. 
             /// </summary>
             [DataMember(Name = "command")]
-            public string Command { get; private set; }
+            public string Command { get; init; }
 
             /// <summary>
             /// A payload that represents the parameter that is normally associated with the command.
             /// </summary>
             [DataMember(Name = "cmdData")]
-            public object CmdData { get; private set; }
+            public object CmdData { get; init; }
 
         }
     }

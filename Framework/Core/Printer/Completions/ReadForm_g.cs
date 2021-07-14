@@ -26,7 +26,7 @@ namespace XFS4IoT.Printer.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, object Fields = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, string> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -86,7 +86,7 @@ namespace XFS4IoT.Printer.Completions
             ///   way.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// An object containing one or more key/value pairs where the key is a field name and the value is the
@@ -95,7 +95,7 @@ namespace XFS4IoT.Printer.Completions
             /// UNICODE if supported by the service.
             /// </summary>
             [DataMember(Name = "fields")]
-            public object Fields { get; private set; }
+            public Dictionary<string, string> Fields { get; init; }
 
         }
     }

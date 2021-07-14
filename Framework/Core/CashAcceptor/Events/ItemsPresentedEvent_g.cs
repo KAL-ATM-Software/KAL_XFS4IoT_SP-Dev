@@ -58,36 +58,36 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies the position where the items have been inserted. Following values are possible:
             /// 
-            /// \"inLeft\": Items presented at the left input position.
+            /// "inLeft": Items presented at the left input position.
             /// 
-            /// \"inRight\": Items presented at the right input position.
+            /// "inRight": Items presented at the right input position.
             /// 
-            /// \"inCenter\": Items presented at the center input position.
+            /// "inCenter": Items presented at the center input position.
             /// 
-            /// \"inTop\": Items presented at the top input position.
+            /// "inTop": Items presented at the top input position.
             /// 
-            /// \"inBottom\": Items presented at the bottom input position.
+            /// "inBottom": Items presented at the bottom input position.
             /// 
-            /// \"inFront\": Items presented at the front input position.
+            /// "inFront": Items presented at the front input position.
             /// 
-            /// \"inRear\": Items presented at the rear input position.
+            /// "inRear": Items presented at the rear input position.
             /// 
-            /// \"outLeft\": Items presented at the left output position.
+            /// "outLeft": Items presented at the left output position.
             /// 
-            /// \"outRight\": Items presented at the right output position.
+            /// "outRight": Items presented at the right output position.
             /// 
-            /// \"outCenter\": Items presented at the center output position.
+            /// "outCenter": Items presented at the center output position.
             /// 
-            /// \"outTop\": Items presented at the top output position.
+            /// "outTop": Items presented at the top output position.
             /// 
-            /// \"outBottom\": Items presented at the bottom output position.
+            /// "outBottom": Items presented at the bottom output position.
             /// 
-            /// \"outFront\": Items presented at the front output position.
+            /// "outFront": Items presented at the front output position.
             /// 
-            /// \"outRear\": Items presented at the rear output position.
+            /// "outRear": Items presented at the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             public enum AdditionalBunchesEnum
             {
@@ -99,22 +99,22 @@ namespace XFS4IoT.CashAcceptor.Events
             /// <summary>
             /// Specifies whether or not additional bunches of items are remaining to be presented as a result of the current operation. Following values are possible:
             /// 
-            /// \"none\": No additional bunches remain.
+            /// "none": No additional bunches remain.
             /// 
-            /// \"oneMore\": At least one additional bunch remains.
+            /// "oneMore": At least one additional bunch remains.
             /// 
-            /// \"unknown\": It is unknown whether additional bunches remain.
+            /// "unknown": It is unknown whether additional bunches remain.
             /// </summary>
             [DataMember(Name = "additionalBunches")]
-            public AdditionalBunchesEnum? AdditionalBunches { get; private set; }
+            public AdditionalBunchesEnum? AdditionalBunches { get; init; }
 
             /// <summary>
-            /// If *additionalBunches* is \"oneMore\", specifies the number of additional bunches of items remaining to be presented as a result of the current operation. 
+            /// If *additionalBunches* is "oneMore", specifies the number of additional bunches of items remaining to be presented as a result of the current operation. 
             /// If the number of additional bunches is at least one, but the precise number is unknown, *bunchesRemaining* will be 255 (TODO: Check if there is a better way to represent this state). 
             /// For any other value of *additionalBunches*, *bunchesRemaining* will be zero.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
-            public int? BunchesRemaining { get; private set; }
+            public int? BunchesRemaining { get; init; }
 
         }
 

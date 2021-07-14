@@ -50,7 +50,7 @@ namespace XFS4IoT.CardReader.Commands
             ///   [CardReader.EjectCard](#cardreader.ejectcard) or [CardReader.ReadRawData](#cardreader.readrawdata).
             /// </summary>
             [DataMember(Name = "direction")]
-            public DirectionEnum? Direction { get; private set; }
+            public DirectionEnum? Direction { get; init; }
 
             /// <summary>
             /// Specifies which which parking station should be used for this command. This value is the same index as
@@ -59,7 +59,7 @@ namespace XFS4IoT.CardReader.Commands
             /// [Common.Status](#common.status).
             /// </summary>
             [DataMember(Name = "parkingStation")]
-            public int? ParkingStation { get; private set; }
+            public int? ParkingStation { get; init; }
 
         }
     }

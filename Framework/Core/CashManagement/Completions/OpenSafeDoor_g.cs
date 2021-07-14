@@ -43,7 +43,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

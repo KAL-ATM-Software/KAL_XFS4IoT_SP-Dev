@@ -48,13 +48,13 @@ namespace XFS4IoT.Printer.Commands
             /// * ```yes``` - Input data is expected.
             /// </summary>
             [DataMember(Name = "inputData")]
-            public InputDataEnum? InputData { get; private set; }
+            public InputDataEnum? InputData { get; init; }
 
             /// <summary>
             /// BASE64 encoded device dependent data to be sent to the device.
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public string Data { get; init; }
 
         }
     }

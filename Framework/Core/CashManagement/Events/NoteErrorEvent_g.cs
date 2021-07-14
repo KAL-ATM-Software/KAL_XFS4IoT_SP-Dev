@@ -58,7 +58,7 @@ namespace XFS4IoT.CashManagement.Events
             /// * ```shortNote``` - Short notes have been detected.
             /// </summary>
             [DataMember(Name = "reason")]
-            public ReasonEnum? Reason { get; private set; }
+            public ReasonEnum? Reason { get; init; }
 
         }
 

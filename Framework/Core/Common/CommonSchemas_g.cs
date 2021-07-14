@@ -52,7 +52,7 @@ namespace XFS4IoT.Common
         /// Specifies the state of the device.
         /// </summary>
         [DataMember(Name = "device")]
-        public DeviceEnum? Device { get; private set; }
+        public DeviceEnum? Device { get; init; }
 
         /// <summary>
         /// Specifies a list of vendor-specific, or any other extended, information. 
@@ -60,7 +60,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "extra")]
-        public List<string> Extra { get; private set; }
+        public List<string> Extra { get; init; }
 
         [DataContract]
         public sealed class GuideLightsClass
@@ -86,7 +86,7 @@ namespace XFS4IoT.Common
             /// Indicates the current flash rate of the guidelight.
             /// </summary>
             [DataMember(Name = "flashRate")]
-            public FlashRateEnum? FlashRate { get; private set; }
+            public FlashRateEnum? FlashRate { get; init; }
 
             public enum ColorEnum
             {
@@ -105,7 +105,7 @@ namespace XFS4IoT.Common
             /// Indicates the current color of the guidelight.
             /// </summary>
             [DataMember(Name = "color")]
-            public ColorEnum? Color { get; private set; }
+            public ColorEnum? Color { get; init; }
 
             public enum DirectionEnum
             {
@@ -119,7 +119,7 @@ namespace XFS4IoT.Common
             /// Indicates the current direction of the guidelight.
             /// </summary>
             [DataMember(Name = "direction")]
-            public DirectionEnum? Direction { get; private set; }
+            public DirectionEnum? Direction { get; init; }
 
         }
 
@@ -127,19 +127,19 @@ namespace XFS4IoT.Common
         /// Specifies the state of the guidance light indicators. A number of guidance light types are defined below. Vendor specific guidance lights are defined starting from the end of the array.
         /// </summary>
         [DataMember(Name = "guideLights")]
-        public List<GuideLightsClass> GuideLights { get; private set; }
+        public List<GuideLightsClass> GuideLights { get; init; }
 
         /// <summary>
         /// Position of the device.
         /// </summary>
         [DataMember(Name = "devicePosition")]
-        public PositionStatusEnum? DevicePosition { get; private set; }
+        public PositionStatusEnum? DevicePosition { get; init; }
 
         /// <summary>
         /// Specifies the actual number of seconds required by the device to resume its normal operational state from the current power saving mode. This value is zero if either the power saving mode has not been activated or no power save control is supported
         /// </summary>
         [DataMember(Name = "powerSaveRecoveryTime")]
-        public int? PowerSaveRecoveryTime { get; private set; }
+        public int? PowerSaveRecoveryTime { get; init; }
 
         public enum AntiFraudModuleEnum
         {
@@ -154,7 +154,7 @@ namespace XFS4IoT.Common
         /// Specifies the state of the anti-fraud module
         /// </summary>
         [DataMember(Name = "antiFraudModule")]
-        public AntiFraudModuleEnum? AntiFraudModule { get; private set; }
+        public AntiFraudModuleEnum? AntiFraudModule { get; init; }
 
     }
 
@@ -193,19 +193,19 @@ namespace XFS4IoT.Common
         /// Name of supported XFS4IoT interface.
         /// </summary>
         [DataMember(Name = "name")]
-        public NameEnum? Name { get; private set; }
+        public NameEnum? Name { get; init; }
 
         /// <summary>
         /// Full array of commands supported by this XFS4IoT interface.
         /// </summary>
         [DataMember(Name = "commands")]
-        public List<string> Commands { get; private set; }
+        public List<string> Commands { get; init; }
 
         /// <summary>
         /// Full array of events supported by this XFS4IoT interface.
         /// </summary>
         [DataMember(Name = "events")]
-        public List<string> Events { get; private set; }
+        public List<string> Events { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of requests which can be queued by the Service. This will be omitted if not reported. 
@@ -213,13 +213,13 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "maximumRequests")]
-        public int? MaximumRequests { get; private set; }
+        public int? MaximumRequests { get; init; }
 
         /// <summary>
         /// Array of commands, which need to be authenticated using the security interface.
         /// </summary>
         [DataMember(Name = "authenticationRequired")]
-        public List<string> AuthenticationRequired { get; private set; }
+        public List<string> AuthenticationRequired { get; init; }
 
     }
 
@@ -238,19 +238,19 @@ namespace XFS4IoT.Common
         /// Specifies the firmware name. The property is omitted, if the firmware name is unknown.
         /// </summary>
         [DataMember(Name = "firmwareName")]
-        public string FirmwareName { get; private set; }
+        public string FirmwareName { get; init; }
 
         /// <summary>
         /// Specifies the firmware version. The property is omitted, if the firmware version is unknown.
         /// </summary>
         [DataMember(Name = "firmwareVersion")]
-        public string FirmwareVersion { get; private set; }
+        public string FirmwareVersion { get; init; }
 
         /// <summary>
         /// Specifies the hardware revision. The property is omitted, if the hardware revision is unknown.
         /// </summary>
         [DataMember(Name = "hardwareRevision")]
-        public string HardwareRevision { get; private set; }
+        public string HardwareRevision { get; init; }
 
     }
 
@@ -268,13 +268,13 @@ namespace XFS4IoT.Common
         /// Specifies the software name. The property is omitted, if the software name is unknown.
         /// </summary>
         [DataMember(Name = "softwareName")]
-        public string SoftwareName { get; private set; }
+        public string SoftwareName { get; init; }
 
         /// <summary>
         /// Specifies the software version. The property is omitted, if the software version is unknown.
         /// </summary>
         [DataMember(Name = "softwareVersion")]
-        public string SoftwareVersion { get; private set; }
+        public string SoftwareVersion { get; init; }
 
     }
 
@@ -296,25 +296,25 @@ namespace XFS4IoT.Common
         /// Specifies the device model name. The property is omitted, if the device model name is unknown.
         /// </summary>
         [DataMember(Name = "modelName")]
-        public string ModelName { get; private set; }
+        public string ModelName { get; init; }
 
         /// <summary>
         /// Specifies the unique serial number of the device. The property is omitted, if the serial number is unknown.
         /// </summary>
         [DataMember(Name = "serialNumber")]
-        public string SerialNumber { get; private set; }
+        public string SerialNumber { get; init; }
 
         /// <summary>
         /// Specifies the device revision number. The property is omitted, if the device revision number is unknown.
         /// </summary>
         [DataMember(Name = "revisionNumber")]
-        public string RevisionNumber { get; private set; }
+        public string RevisionNumber { get; init; }
 
         /// <summary>
         /// Contains a description of the device. The property is omitted, if the model description is unknown.
         /// </summary>
         [DataMember(Name = "modelDescription")]
-        public string ModelDescription { get; private set; }
+        public string ModelDescription { get; init; }
 
         /// <summary>
         /// Array of firmware structures specifying the names and version numbers of the firmware that is present.
@@ -322,7 +322,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "firmware")]
-        public List<FirmwareClass> Firmware { get; private set; }
+        public List<FirmwareClass> Firmware { get; init; }
 
         /// <summary>
         /// Array of software structures specifying the names and version numbers of the software components that are present.
@@ -330,7 +330,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "software")]
-        public List<SoftwareClass> Software { get; private set; }
+        public List<SoftwareClass> Software { get; init; }
 
     }
 
@@ -350,7 +350,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "allowOpenSessions")]
-        public bool? AllowOpenSessions { get; private set; }
+        public bool? AllowOpenSessions { get; init; }
 
         /// <summary>
         /// Array of commands which can be accepted while in Vendor Dependent Mode.
@@ -359,7 +359,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "allowedExecuteCommands")]
-        public List<string> AllowedExecuteCommands { get; private set; }
+        public List<string> AllowedExecuteCommands { get; init; }
 
     }
 
@@ -386,19 +386,19 @@ namespace XFS4IoT.Common
         /// Specifies the Service Version.
         /// </summary>
         [DataMember(Name = "serviceVersion")]
-        public string ServiceVersion { get; private set; }
+        public string ServiceVersion { get; init; }
 
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array element for each device.
         /// </summary>
         [DataMember(Name = "deviceInformation")]
-        public List<DeviceInformationClass> DeviceInformation { get; private set; }
+        public List<DeviceInformationClass> DeviceInformation { get; init; }
 
         /// <summary>
         /// Specifies additional information about the Service while in Vendor Dependent Mode. If omitted, all sessions must be closed before entry to VDM.
         /// </summary>
         [DataMember(Name = "vendorModeIformation")]
-        public VendorModeInfoClass VendorModeIformation { get; private set; }
+        public VendorModeInfoClass VendorModeIformation { get; init; }
 
         /// <summary>
         /// Specifies a list of vendor-specific, or any other extended, information. 
@@ -406,7 +406,7 @@ namespace XFS4IoT.Common
         /// 
         /// </summary>
         [DataMember(Name = "extra")]
-        public List<string> Extra { get; private set; }
+        public List<string> Extra { get; init; }
 
         [DataContract]
         public sealed class GuideLightsClass
@@ -433,25 +433,25 @@ namespace XFS4IoT.Common
                 /// The light can blink slowly.
                 /// </summary>
                 [DataMember(Name = "slow")]
-                public bool? Slow { get; private set; }
+                public bool? Slow { get; init; }
 
                 /// <summary>
                 /// The light can blink medium frequency.
                 /// </summary>
                 [DataMember(Name = "medium")]
-                public bool? Medium { get; private set; }
+                public bool? Medium { get; init; }
 
                 /// <summary>
                 /// The light can blink quickly.
                 /// </summary>
                 [DataMember(Name = "quick")]
-                public bool? Quick { get; private set; }
+                public bool? Quick { get; init; }
 
                 /// <summary>
                 /// The light can be continuous (steady).
                 /// </summary>
                 [DataMember(Name = "continuous")]
-                public bool? Continuous { get; private set; }
+                public bool? Continuous { get; init; }
 
             }
 
@@ -459,7 +459,7 @@ namespace XFS4IoT.Common
             /// Indicates which flash rates are supported by the guidelight.
             /// </summary>
             [DataMember(Name = "flashRate")]
-            public FlashRateClass FlashRate { get; private set; }
+            public FlashRateClass FlashRate { get; init; }
 
             [DataContract]
             public sealed class ColorClass
@@ -479,43 +479,43 @@ namespace XFS4IoT.Common
                 /// The light can be red.
                 /// </summary>
                 [DataMember(Name = "red")]
-                public bool? Red { get; private set; }
+                public bool? Red { get; init; }
 
                 /// <summary>
                 /// The light can be green.
                 /// </summary>
                 [DataMember(Name = "green")]
-                public bool? Green { get; private set; }
+                public bool? Green { get; init; }
 
                 /// <summary>
                 /// The light can be yellow.
                 /// </summary>
                 [DataMember(Name = "yellow")]
-                public bool? Yellow { get; private set; }
+                public bool? Yellow { get; init; }
 
                 /// <summary>
                 /// The light can be blue.
                 /// </summary>
                 [DataMember(Name = "blue")]
-                public bool? Blue { get; private set; }
+                public bool? Blue { get; init; }
 
                 /// <summary>
                 /// The light can be cyan.
                 /// </summary>
                 [DataMember(Name = "cyan")]
-                public bool? Cyan { get; private set; }
+                public bool? Cyan { get; init; }
 
                 /// <summary>
                 /// The light can be magenta.
                 /// </summary>
                 [DataMember(Name = "magenta")]
-                public bool? Magenta { get; private set; }
+                public bool? Magenta { get; init; }
 
                 /// <summary>
                 /// The light can be white.
                 /// </summary>
                 [DataMember(Name = "white")]
-                public bool? White { get; private set; }
+                public bool? White { get; init; }
 
             }
 
@@ -523,7 +523,7 @@ namespace XFS4IoT.Common
             /// Indicates which colors are supported by the guidelight.
             /// </summary>
             [DataMember(Name = "color")]
-            public ColorClass Color { get; private set; }
+            public ColorClass Color { get; init; }
 
             [DataContract]
             public sealed class DirectionClass
@@ -538,13 +538,13 @@ namespace XFS4IoT.Common
                 /// The light can indicate entry.
                 /// </summary>
                 [DataMember(Name = "entry")]
-                public bool? Entry { get; private set; }
+                public bool? Entry { get; init; }
 
                 /// <summary>
                 /// The light can indicate exit.
                 /// </summary>
                 [DataMember(Name = "exit")]
-                public bool? Exit { get; private set; }
+                public bool? Exit { get; init; }
 
             }
 
@@ -552,7 +552,7 @@ namespace XFS4IoT.Common
             /// Indicates which directions are supported by the guidelight.
             /// </summary>
             [DataMember(Name = "direction")]
-            public DirectionClass Direction { get; private set; }
+            public DirectionClass Direction { get; init; }
 
         }
 
@@ -560,25 +560,25 @@ namespace XFS4IoT.Common
         /// Specifies which guidance lights are available
         /// </summary>
         [DataMember(Name = "guideLights")]
-        public List<GuideLightsClass> GuideLights { get; private set; }
+        public List<GuideLightsClass> GuideLights { get; init; }
 
         /// <summary>
         /// Specifies whether power saving control is available
         /// </summary>
         [DataMember(Name = "powerSaveControl")]
-        public bool? PowerSaveControl { get; private set; }
+        public bool? PowerSaveControl { get; init; }
 
         /// <summary>
         /// Specifies whether the anti-fraud module is available
         /// </summary>
         [DataMember(Name = "antiFraudModule")]
-        public bool? AntiFraudModule { get; private set; }
+        public bool? AntiFraudModule { get; init; }
 
         /// <summary>
         /// List of commands that support synchronization.
         /// </summary>
         [DataMember(Name = "synchronizableCommands")]
-        public List<string> SynchronizableCommands { get; private set; }
+        public List<string> SynchronizableCommands { get; init; }
 
         /// <summary>
         /// True if this hardware supports End to End security, and requires security tokens as part of the 
@@ -588,7 +588,7 @@ namespace XFS4IoT.Common
         /// If false then all operations can be performed without a security token.
         /// </summary>
         [DataMember(Name = "endToEndSecurity")]
-        public bool? EndToEndSecurity { get; private set; }
+        public bool? EndToEndSecurity { get; init; }
 
         /// <summary>
         /// True if this hardware supports End to End security and has a Hardware Security Element which 
@@ -597,14 +597,14 @@ namespace XFS4IoT.Common
         /// device doesn't support End to End security.
         /// </summary>
         [DataMember(Name = "hardwareSecurityElement")]
-        public bool? HardwareSecurityElement { get; private set; }
+        public bool? HardwareSecurityElement { get; init; }
 
         /// <summary>
         /// True if this device will return a security token as part of the response data to commands that 
         /// support End to End security, for example, to validate the result of a dispense operation.
         /// </summary>
         [DataMember(Name = "responseSecurityEnabled")]
-        public bool? ResponseSecurityEnabled { get; private set; }
+        public bool? ResponseSecurityEnabled { get; init; }
 
     }
 

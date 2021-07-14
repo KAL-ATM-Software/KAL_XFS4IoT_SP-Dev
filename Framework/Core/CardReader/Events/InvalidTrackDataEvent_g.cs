@@ -54,19 +54,19 @@ namespace XFS4IoT.CardReader.Events
             /// * ```tooShort``` - The data contained on the track is too short.
             /// </summary>
             [DataMember(Name = "status")]
-            public StatusEnum? Status { get; private set; }
+            public StatusEnum? Status { get; init; }
 
             /// <summary>
             /// The keyword of the track on which the error occurred.
             /// </summary>
             [DataMember(Name = "track")]
-            public string Track { get; private set; }
+            public string Track { get; init; }
 
             /// <summary>
             /// Any data from the track that could be read.
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public string Data { get; init; }
 
         }
 

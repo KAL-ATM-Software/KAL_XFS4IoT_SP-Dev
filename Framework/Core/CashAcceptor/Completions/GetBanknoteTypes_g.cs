@@ -48,31 +48,31 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// Identification of note type.
                 /// </summary>
                 [DataMember(Name = "noteID")]
-                public int? NoteID { get; private set; }
+                public int? NoteID { get; init; }
 
                 /// <summary>
                 /// Currency ID in ISO 4217 format [Ref. 2].
                 /// </summary>
                 [DataMember(Name = "currencyID")]
-                public string CurrencyID { get; private set; }
+                public string CurrencyID { get; init; }
 
                 /// <summary>
                 /// The value of a single item expressed as floating point value.
                 /// </summary>
                 [DataMember(Name = "values")]
-                public double? Values { get; private set; }
+                public double? Values { get; init; }
 
                 /// <summary>
                 /// The release of the banknote type. The higher this number is, the newer the release. Zero means that there is only one release of that banknote type. This value has not been standardized and therefore a release number of the same banknote will not necessarily have the same value in different systems.
                 /// </summary>
                 [DataMember(Name = "release")]
-                public int? Release { get; private set; }
+                public int? Release { get; init; }
 
                 /// <summary>
                 /// If TRUE the banknote reader will accept this note type during a cash-in operation, if FALSE the banknote reader will refuse this note type unless it must be retained by note classification rules.
                 /// </summary>
                 [DataMember(Name = "configured")]
-                public bool? Configured { get; private set; }
+                public bool? Configured { get; init; }
 
             }
 
@@ -80,7 +80,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// List of banknote types the banknote reader supports.
             /// </summary>
             [DataMember(Name = "noteTypes")]
-            public List<NoteTypesClass> NoteTypes { get; private set; }
+            public List<NoteTypesClass> NoteTypes { get; init; }
 
         }
     }

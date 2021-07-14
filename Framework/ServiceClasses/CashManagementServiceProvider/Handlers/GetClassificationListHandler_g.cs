@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CashManagement
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getClassificationListCmd = command.IsA<GetClassificationListCommand>($"Invalid parameter in the GetClassificationList Handle method. {nameof(GetClassificationListCommand)}");
-            getClassificationListCmd.Headers.RequestId.HasValue.IsTrue();
+            getClassificationListCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetClassificationListEvents events = new GetClassificationListEvents(Connection, getClassificationListCmd.Headers.RequestId.Value);
+            IGetClassificationListEvents events = new GetClassificationListEvents(Connection, getClassificationListCmd.Header.RequestId.Value);
 
             var result = await HandleGetClassificationList(events, getClassificationListCmd, cancel);
-            await Connection.SendMessageAsync(new GetClassificationListCompletion(getClassificationListCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetClassificationListCompletion(getClassificationListCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getClassificationListcommand = command.IsA<GetClassificationListCommand>();
-            getClassificationListcommand.Headers.RequestId.HasValue.IsTrue();
+            getClassificationListcommand.Header.RequestId.HasValue.IsTrue();
 
             GetClassificationListCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CashManagement
                 _ => GetClassificationListCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetClassificationListCompletion(getClassificationListcommand.Headers.RequestId.Value, new GetClassificationListCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetClassificationListCompletion(getClassificationListcommand.Header.RequestId.Value, new GetClassificationListCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

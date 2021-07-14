@@ -56,13 +56,13 @@ namespace XFS4IoT.CashManagement.Completions
                 /// Currency ID in ISO 4217 format [Ref. 2]. This value will be omitted for level 1 items.
                 /// </summary>
                 [DataMember(Name = "currencyID")]
-                public string CurrencyID { get; private set; }
+                public string CurrencyID { get; init; }
 
                 /// <summary>
                 /// The value of a single item expressed as floating point value. This value will be zero for level 1 items.
                 /// </summary>
                 [DataMember(Name = "value")]
-                public double? Value { get; private set; }
+                public double? Value { get; init; }
 
                 /// <summary>
                 /// The release of the banknote type. The higher this number is, the newer the release. 
@@ -71,13 +71,13 @@ namespace XFS4IoT.CashManagement.Completions
                 /// the same value in different systems. This value will be zero for level 1 items.
                 /// </summary>
                 [DataMember(Name = "release")]
-                public int? Release { get; private set; }
+                public int? Release { get; init; }
 
                 /// <summary>
                 /// Identification of note type. This value will be zero for level 1 items.
                 /// </summary>
                 [DataMember(Name = "noteID")]
-                public int? NoteID { get; private set; }
+                public int? NoteID { get; init; }
 
                 public enum LevelEnum
                 {
@@ -98,7 +98,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// * ```level4Unfit``` - An unfit level 4 banknote.
                 /// </summary>
                 [DataMember(Name = "level")]
-                public LevelEnum? Level { get; private set; }
+                public LevelEnum? Level { get; init; }
 
                 /// <summary>
                 /// This field contains the serial number of the item as a string. A '?' character (0x003F) is used 
@@ -106,7 +106,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// has not been requested then *serialNumber* is omitted.
                 /// </summary>
                 [DataMember(Name = "serialNumber")]
-                public string SerialNumber { get; private set; }
+                public string SerialNumber { get; init; }
 
                 [DataContract]
                 public sealed class OrientationClass
@@ -127,7 +127,7 @@ namespace XFS4IoT.CashManagement.Completions
                     /// as the leading edge, the note was inserted with the front image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontTop")]
-                    public bool? FrontTop { get; private set; }
+                    public bool? FrontTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the front image 
@@ -135,7 +135,7 @@ namespace XFS4IoT.CashManagement.Completions
                     /// as the leading edge, the note was inserted with the front image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "frontBottom")]
-                    public bool? FrontBottom { get; private set; }
+                    public bool? FrontBottom { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and 
@@ -143,7 +143,7 @@ namespace XFS4IoT.CashManagement.Completions
                     /// was inserted with the back image face up and the left edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backTop")]
-                    public bool? BackTop { get; private set; }
+                    public bool? BackTop { get; init; }
 
                     /// <summary>
                     /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and the 
@@ -151,19 +151,19 @@ namespace XFS4IoT.CashManagement.Completions
                     /// inserted with the back image face up and the right edge was inserted first.
                     /// </summary>
                     [DataMember(Name = "backBottom")]
-                    public bool? BackBottom { get; private set; }
+                    public bool? BackBottom { get; init; }
 
                     /// <summary>
                     /// The orientation for the inserted note can not be determined.
                     /// </summary>
                     [DataMember(Name = "unknown")]
-                    public bool? Unknown { get; private set; }
+                    public bool? Unknown { get; init; }
 
                     /// <summary>
                     /// The hardware is not capable to determine the orientation.
                     /// </summary>
                     [DataMember(Name = "notSupported")]
-                    public bool? NotSupported { get; private set; }
+                    public bool? NotSupported { get; init; }
 
                 }
 
@@ -171,21 +171,21 @@ namespace XFS4IoT.CashManagement.Completions
                 /// Orientation of the entered banknote.
                 /// </summary>
                 [DataMember(Name = "orientation")]
-                public OrientationClass Orientation { get; private set; }
+                public OrientationClass Orientation { get; init; }
 
                 /// <summary>
                 /// Base64 encoded binary file containing only the vendor specific P6 signature data. 
                 /// If no P6 signature is available then this field is omitted.
                 /// </summary>
                 [DataMember(Name = "p6Signature")]
-                public string P6Signature { get; private set; }
+                public string P6Signature { get; init; }
 
                 /// <summary>
                 /// Base64 encoded binary image data. If the Service does not support this function or the image file has 
                 /// not been requested then imageFile is omitted.
                 /// </summary>
                 [DataMember(Name = "imageFile")]
-                public string ImageFile { get; private set; }
+                public string ImageFile { get; init; }
 
                 public enum OnClassificationListEnum
                 {
@@ -204,7 +204,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// * ```classificationListUnknown``` - It is unknown if the serial number of the item is on the classification list.
                 /// </summary>
                 [DataMember(Name = "onClassificationList")]
-                public OnClassificationListEnum? OnClassificationList { get; private set; }
+                public OnClassificationListEnum? OnClassificationList { get; init; }
 
                 public enum ItemLocationEnum
                 {
@@ -224,7 +224,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// * ```unknown``` - The item location is unknown.
                 /// </summary>
                 [DataMember(Name = "itemLocation")]
-                public ItemLocationEnum? ItemLocation { get; private set; }
+                public ItemLocationEnum? ItemLocation { get; init; }
 
                 /// <summary>
                 /// If [itemLocation](#cashmanagement.getiteminfo.completion.properties.itemslist.itemlocation) is 
@@ -234,7 +234,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// If *itemLocation* is not ```cashUnit``` *cashunit* will be omitted.
                 /// </summary>
                 [DataMember(Name = "cashunit")]
-                public string Cashunit { get; private set; }
+                public string Cashunit { get; init; }
 
                 public enum ItemDeviceLocationEnum
                 {
@@ -256,7 +256,7 @@ namespace XFS4IoT.CashManagement.Completions
                 /// * ```unknown``` - The item is in the device but its location is unknown.
                 /// </summary>
                 [DataMember(Name = "itemDeviceLocation")]
-                public ItemDeviceLocationEnum? ItemDeviceLocation { get; private set; }
+                public ItemDeviceLocationEnum? ItemDeviceLocation { get; init; }
 
             }
 
@@ -264,7 +264,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// Array of "item info" objects.
             /// </summary>
             [DataMember(Name = "itemsList")]
-            public List<ItemsListClass> ItemsList { get; private set; }
+            public List<ItemsListClass> ItemsList { get; init; }
 
         }
     }

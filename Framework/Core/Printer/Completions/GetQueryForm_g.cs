@@ -59,13 +59,13 @@ namespace XFS4IoT.Printer.Completions
             /// * ```formInvalid``` - The specified form is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             public enum BaseEnum
             {
@@ -82,7 +82,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```rowColumn``` - The base unit is rows and columns.
             /// </summary>
             [DataMember(Name = "base")]
-            public BaseEnum? Base { get; private set; }
+            public BaseEnum? Base { get; init; }
 
             /// <summary>
             /// Specifies the horizontal resolution of the base units as a fraction of the
@@ -90,26 +90,26 @@ namespace XFS4IoT.Printer.Completions
             /// the base unit *inch* means that the base horizontal resolution is 1/16 inch.
             /// </summary>
             [DataMember(Name = "unitX")]
-            public int? UnitX { get; private set; }
+            public int? UnitX { get; init; }
 
             /// <summary>
             /// Specifies the vertical resolution of the base units as a fraction of the *base* value. For example, a
             /// value of 10 applied to the base unit *mm* means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")]
-            public int? UnitY { get; private set; }
+            public int? UnitY { get; init; }
 
             /// <summary>
             /// Specifies the width of the form in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "width")]
-            public int? Width { get; private set; }
+            public int? Width { get; init; }
 
             /// <summary>
             /// Specifies the height of the form in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "height")]
-            public int? Height { get; private set; }
+            public int? Height { get; init; }
 
             public enum AlignmentEnum
             {
@@ -128,7 +128,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```bottomRight``` - The form is aligned relative to the bottom and right edges of the media.
             /// </summary>
             [DataMember(Name = "alignment")]
-            public AlignmentEnum? Alignment { get; private set; }
+            public AlignmentEnum? Alignment { get; init; }
 
             public enum OrientationEnum
             {
@@ -143,7 +143,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```landscape``` - The orientation of the form is landscape.
             /// </summary>
             [DataMember(Name = "orientation")]
-            public OrientationEnum? Orientation { get; private set; }
+            public OrientationEnum? Orientation { get; init; }
 
             /// <summary>
             /// Specifies the horizontal offset of the position of the top-left corner of the form, relative to the
@@ -151,7 +151,7 @@ namespace XFS4IoT.Printer.Completions
             /// This value is specified in terms of the base horizontal resolution and is always positive.
             /// </summary>
             [DataMember(Name = "offsetX")]
-            public int? OffsetX { get; private set; }
+            public int? OffsetX { get; init; }
 
             /// <summary>
             /// Specifies the vertical offset of the position of the top-left corner of the form, relative to the top
@@ -159,33 +159,33 @@ namespace XFS4IoT.Printer.Completions
             /// resolution and is always positive.
             /// </summary>
             [DataMember(Name = "offsetY")]
-            public int? OffsetY { get; private set; }
+            public int? OffsetY { get; init; }
 
             /// <summary>
             /// Specifies the major version of the form. If the version is not specified in the form, then zero is
             /// returned.
             /// </summary>
             [DataMember(Name = "versionMajor")]
-            public int? VersionMajor { get; private set; }
+            public int? VersionMajor { get; init; }
 
             /// <summary>
             /// Specifies the minor version of the form. If the version is not specified in the form, then zero is
             /// returned.
             /// </summary>
             [DataMember(Name = "versionMinor")]
-            public int? VersionMinor { get; private set; }
+            public int? VersionMinor { get; init; }
 
             /// <summary>
             /// The user prompt string. This will be omitted if the form does not define a value for the user prompt.
             /// </summary>
             [DataMember(Name = "userPrompt")]
-            public string UserPrompt { get; private set; }
+            public string UserPrompt { get; init; }
 
             /// <summary>
             /// The field names.
             /// </summary>
             [DataMember(Name = "fields")]
-            public List<string> Fields { get; private set; }
+            public List<string> Fields { get; init; }
 
         }
     }

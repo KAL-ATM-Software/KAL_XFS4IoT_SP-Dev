@@ -50,30 +50,30 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"tooManyItems\": There was more than one banknote inserted for creating a signature.
+            /// "tooManyItems": There was more than one banknote inserted for creating a signature.
             /// 
-            /// \"noItems\": There was no banknote to create a signature.
+            /// "noItems": There was no banknote to create a signature.
             /// 
-            /// \"cashInActive\": A cash-in transaction is active.
+            /// "cashInActive": A cash-in transaction is active.
             /// 
-            /// \"exchangeActive\": The device is in the exchange state.
+            /// "exchangeActive": The device is in the exchange state.
             /// 
-            /// \"positionNotEmpty\": The output position is not empty so a banknote cannot be inserted.
+            /// "positionNotEmpty": The output position is not empty so a banknote cannot be inserted.
             /// 
-            /// \"shutterNotOpen\": Shutter failed to open.
+            /// "shutterNotOpen": Shutter failed to open.
             /// 
-            /// \"shutterNotClosed\": Shutter failed to close.
+            /// "shutterNotClosed": Shutter failed to close.
             /// 
-            /// \"foreignItemsDetected\": Foreign items have been detected in the input position.
+            /// "foreignItemsDetected": Foreign items have been detected in the input position.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Identification of note type.
             /// </summary>
             [DataMember(Name = "noteId")]
-            public int? NoteId { get; private set; }
+            public int? NoteId { get; init; }
 
             [DataContract]
             public sealed class OrientationClass
@@ -94,7 +94,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// as the leading edge, the note was inserted with the front image face up and the left edge was inserted first.
                 /// </summary>
                 [DataMember(Name = "frontTop")]
-                public bool? FrontTop { get; private set; }
+                public bool? FrontTop { get; init; }
 
                 /// <summary>
                 /// If note is inserted wide side as the leading edge, the note was inserted with the front image 
@@ -102,7 +102,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// as the leading edge, the note was inserted with the front image face up and the right edge was inserted first.
                 /// </summary>
                 [DataMember(Name = "frontBottom")]
-                public bool? FrontBottom { get; private set; }
+                public bool? FrontBottom { get; init; }
 
                 /// <summary>
                 /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and 
@@ -110,7 +110,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// was inserted with the back image face up and the left edge was inserted first.
                 /// </summary>
                 [DataMember(Name = "backTop")]
-                public bool? BackTop { get; private set; }
+                public bool? BackTop { get; init; }
 
                 /// <summary>
                 /// If note is inserted wide side as the leading edge, the note was inserted with the back image facing up and the 
@@ -118,19 +118,19 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// inserted with the back image face up and the right edge was inserted first.
                 /// </summary>
                 [DataMember(Name = "backBottom")]
-                public bool? BackBottom { get; private set; }
+                public bool? BackBottom { get; init; }
 
                 /// <summary>
                 /// The orientation for the inserted note can not be determined.
                 /// </summary>
                 [DataMember(Name = "unknown")]
-                public bool? Unknown { get; private set; }
+                public bool? Unknown { get; init; }
 
                 /// <summary>
                 /// The hardware is not capable to determine the orientation.
                 /// </summary>
                 [DataMember(Name = "notSupported")]
-                public bool? NotSupported { get; private set; }
+                public bool? NotSupported { get; init; }
 
             }
 
@@ -138,13 +138,13 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Orientation of the entered banknote.
             /// </summary>
             [DataMember(Name = "orientation")]
-            public OrientationClass Orientation { get; private set; }
+            public OrientationClass Orientation { get; init; }
 
             /// <summary>
             /// Base64 encoded signature data.
             /// </summary>
             [DataMember(Name = "signature")]
-            public string Signature { get; private set; }
+            public string Signature { get; init; }
 
         }
     }

@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var closeShutterCmd = command.IsA<CloseShutterCommand>($"Invalid parameter in the CloseShutter Handle method. {nameof(CloseShutterCommand)}");
-            closeShutterCmd.Headers.RequestId.HasValue.IsTrue();
+            closeShutterCmd.Header.RequestId.HasValue.IsTrue();
 
-            ICloseShutterEvents events = new CloseShutterEvents(Connection, closeShutterCmd.Headers.RequestId.Value);
+            ICloseShutterEvents events = new CloseShutterEvents(Connection, closeShutterCmd.Header.RequestId.Value);
 
             var result = await HandleCloseShutter(events, closeShutterCmd, cancel);
-            await Connection.SendMessageAsync(new CloseShutterCompletion(closeShutterCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CloseShutterCompletion(closeShutterCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var closeShuttercommand = command.IsA<CloseShutterCommand>();
-            closeShuttercommand.Headers.RequestId.HasValue.IsTrue();
+            closeShuttercommand.Header.RequestId.HasValue.IsTrue();
 
             CloseShutterCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => CloseShutterCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new CloseShutterCompletion(closeShuttercommand.Headers.RequestId.Value, new CloseShutterCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CloseShutterCompletion(closeShuttercommand.Header.RequestId.Value, new CloseShutterCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

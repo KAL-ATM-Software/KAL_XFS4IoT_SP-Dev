@@ -47,7 +47,7 @@ namespace XFS4IoT.Dispenser.Commands
 
             /// <summary>
             /// The output position where the shutter is to be closed. 
-            /// If the application does not need to specify a shutter, this field can be omitted or its contents set to \"default\".
+            /// If the application does not need to specify a shutter, this field can be omitted or its contents set to "default".
             /// Following values are possible:
             /// 
             /// * ```default``` - The default configuration information should be used.
@@ -60,7 +60,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// * ```rear``` - Close the shutter at the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

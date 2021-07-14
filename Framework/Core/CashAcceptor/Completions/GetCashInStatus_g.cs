@@ -48,26 +48,26 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Status of the currently active or most recently ended cash-in transaction. Following values are possible:
             /// 
-            /// \"ok\": The cash-in transaction is complete and has ended with a CashAcceptor.CashInEnd command call.
+            /// "ok": The cash-in transaction is complete and has ended with a CashAcceptor.CashInEnd command call.
             /// 
-            /// \"rollback\": The cash-in transaction was has ended with a CashAcceptor.CashInRollback command call.
+            /// "rollback": The cash-in transaction was has ended with a CashAcceptor.CashInRollback command call.
             /// 
-            /// \"active\": There is a cash-in transaction active. See the CashAcceptor.CashInStart command description for a definition of an active cash-in transaction.
+            /// "active": There is a cash-in transaction active. See the CashAcceptor.CashInStart command description for a definition of an active cash-in transaction.
             /// 
-            /// \"retract\": The cash-in transaction ended with a Retract command call.
+            /// "retract": The cash-in transaction ended with a Retract command call.
             /// 
-            /// \"unknown\": The state of the cash-in transaction is unknown. This status is also set if the noteNumberList details are not known or are not reliable.
+            /// "unknown": The state of the cash-in transaction is unknown. This status is also set if the noteNumberList details are not known or are not reliable.
             /// 
-            /// \"reset\": The cash-in transaction ended with a Reset command call.
+            /// "reset": The cash-in transaction ended with a Reset command call.
             /// </summary>
             [DataMember(Name = "status")]
-            public StatusEnum? Status { get; private set; }
+            public StatusEnum? Status { get; init; }
 
             /// <summary>
             /// Specifies the number of items refused during the currently active or most recently ended cash-in transaction period.
             /// </summary>
             [DataMember(Name = "numOfRefused")]
-            public int? NumOfRefused { get; private set; }
+            public int? NumOfRefused { get; init; }
 
             [DataContract]
             public sealed class NoteNumberListClass
@@ -91,14 +91,14 @@ namespace XFS4IoT.CashAcceptor.Completions
                     /// If this value is zero then the note type is unknown.
                     /// </summary>
                     [DataMember(Name = "noteID")]
-                    public int? NoteID { get; private set; }
+                    public int? NoteID { get; init; }
 
                     /// <summary>
                     /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
                     /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
                     /// </summary>
                     [DataMember(Name = "count")]
-                    public int? Count { get; private set; }
+                    public int? Count { get; init; }
 
                 }
 
@@ -106,18 +106,18 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// Array of banknote numbers the cash unit contains.
                 /// </summary>
                 [DataMember(Name = "noteNumber")]
-                public List<NoteNumberClass> NoteNumber { get; private set; }
+                public List<NoteNumberClass> NoteNumber { get; init; }
 
             }
 
             /// <summary>
             /// List of banknote types that were inserted, identified and accepted during the currently active or most recently ended cash-in transaction period. 
-            /// If items have been rolled back (status is \"rollback\") they will be included in this list. If status is \"retract\" or \"reset\" 
+            /// If items have been rolled back (status is "rollback") they will be included in this list. If status is "retract" or "reset" 
             /// then identified and accepted items moved to Cash-In or Recycle cash units are included in this list, but items moved to the Retract or Reject cash units 
             /// are not included. noteNumberList includes any level 2 or level 3 notes, and all level 4 fit and unfit notes.
             /// </summary>
             [DataMember(Name = "noteNumberList")]
-            public NoteNumberListClass NoteNumberList { get; private set; }
+            public NoteNumberListClass NoteNumberList { get; init; }
 
             [DataContract]
             public sealed class UnfitNoteNumberListClass
@@ -141,14 +141,14 @@ namespace XFS4IoT.CashAcceptor.Completions
                     /// If this value is zero then the note type is unknown.
                     /// </summary>
                     [DataMember(Name = "noteID")]
-                    public int? NoteID { get; private set; }
+                    public int? NoteID { get; init; }
 
                     /// <summary>
                     /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
                     /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
                     /// </summary>
                     [DataMember(Name = "count")]
-                    public int? Count { get; private set; }
+                    public int? Count { get; init; }
 
                 }
 
@@ -156,17 +156,17 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// Array of banknote numbers the cash unit contains.
                 /// </summary>
                 [DataMember(Name = "noteNumber")]
-                public List<NoteNumberClass> NoteNumber { get; private set; }
+                public List<NoteNumberClass> NoteNumber { get; init; }
 
             }
 
             /// <summary>
             /// List of level 4 unfit banknote types that were inserted, identified and accepted during the currently active or most recently ended cash-in transaction period.  
-            /// If items have been rolled back (status is \"rollback\") they will be included in this list. If status is \"retract\" or \"reset\" then identified 
+            /// If items have been rolled back (status is "rollback") they will be included in this list. If status is "retract" or "reset" then identified 
             /// and accepted items moved to Cash-In units are included in this list, but items moved to the Retract or Reject cash units are not included. 
             /// </summary>
             [DataMember(Name = "unfitNoteNumberList")]
-            public UnfitNoteNumberListClass UnfitNoteNumberList { get; private set; }
+            public UnfitNoteNumberListClass UnfitNoteNumberList { get; init; }
 
         }
     }

@@ -42,44 +42,44 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// Specifies the width of the form in columns.
             /// </summary>
             [DataMember(Name = "width")]
-            public string Width { get; private set; }
+            public string Width { get; init; }
 
             /// <summary>
             /// Specifies the height of the form in rows. 
             /// </summary>
             [DataMember(Name = "height")]
-            public string Height { get; private set; }
+            public string Height { get; init; }
 
             /// <summary>
             /// Specifies the major version.If version is not specifies in the form then zero is returned.
             /// </summary>
             [DataMember(Name = "versionMajor")]
-            public string VersionMajor { get; private set; }
+            public string VersionMajor { get; init; }
 
             /// <summary>
             /// Specifies the minor version. 
             /// If the version is not specified in the form then zero is returned.
             /// </summary>
             [DataMember(Name = "versionMinor")]
-            public string VersionMinor { get; private set; }
+            public string VersionMinor { get; init; }
 
             /// <summary>
             /// Object to a list of the field names.
             /// </summary>
             [DataMember(Name = "fields")]
-            public List<string> Fields { get; private set; }
+            public List<string> Fields { get; init; }
 
             /// <summary>
             /// Specifies the language identifier for the form.
             /// </summary>
             [DataMember(Name = "languageId")]
-            public string LanguageId { get; private set; }
+            public string LanguageId { get; init; }
 
         }
     }

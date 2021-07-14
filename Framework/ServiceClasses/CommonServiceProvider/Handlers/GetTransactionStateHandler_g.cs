@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getTransactionStateCmd = command.IsA<GetTransactionStateCommand>($"Invalid parameter in the GetTransactionState Handle method. {nameof(GetTransactionStateCommand)}");
-            getTransactionStateCmd.Headers.RequestId.HasValue.IsTrue();
+            getTransactionStateCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetTransactionStateEvents events = new GetTransactionStateEvents(Connection, getTransactionStateCmd.Headers.RequestId.Value);
+            IGetTransactionStateEvents events = new GetTransactionStateEvents(Connection, getTransactionStateCmd.Header.RequestId.Value);
 
             var result = await HandleGetTransactionState(events, getTransactionStateCmd, cancel);
-            await Connection.SendMessageAsync(new GetTransactionStateCompletion(getTransactionStateCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetTransactionStateCompletion(getTransactionStateCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getTransactionStatecommand = command.IsA<GetTransactionStateCommand>();
-            getTransactionStatecommand.Headers.RequestId.HasValue.IsTrue();
+            getTransactionStatecommand.Header.RequestId.HasValue.IsTrue();
 
             GetTransactionStateCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetTransactionStateCompletion(getTransactionStatecommand.Headers.RequestId.Value, new GetTransactionStateCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetTransactionStateCompletion(getTransactionStatecommand.Header.RequestId.Value, new GetTransactionStateCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

@@ -49,13 +49,13 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// Total number of items removed from the source cash unit including rejected items during execution of this command.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRemoved")]
-                public int? NumberOfItemsRemoved { get; private set; }
+                public int? NumberOfItemsRemoved { get; init; }
 
                 /// <summary>
                 /// Total number of items rejected during execution of this command.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRejected")]
-                public int? NumberOfItemsRejected { get; private set; }
+                public int? NumberOfItemsRejected { get; init; }
 
                 [DataContract]
                 public sealed class ReplenishTargetResultsClass
@@ -72,19 +72,19 @@ namespace XFS4IoT.CashAcceptor.Events
                     /// command) to which items have been moved.
                     /// </summary>
                     [DataMember(Name = "cashunitTarget")]
-                    public string CashunitTarget { get; private set; }
+                    public string CashunitTarget { get; init; }
 
                     /// <summary>
                     /// Identification of note type. The note ID represents the note identifiers reported by the CashAcceptor.BanknoteTypes command.
                     /// </summary>
                     [DataMember(Name = "noteID")]
-                    public int? NoteID { get; private set; }
+                    public int? NoteID { get; init; }
 
                     /// <summary>
                     /// Total number of items received in this target cash unit of the *noteID* note type. A zero value will be returned if this target cash unit did not receive any items of this note type, for example due to a cash unit or transport jam.
                     /// </summary>
                     [DataMember(Name = "numberOfItemsReceived")]
-                    public int? NumberOfItemsReceived { get; private set; }
+                    public int? NumberOfItemsReceived { get; init; }
 
                 }
 
@@ -96,7 +96,7 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// target received two different *noteID* note types and the second target received three different *noteID* note types, then the *replenishTargetResults* array will have five elements.
                 /// </summary>
                 [DataMember(Name = "replenishTargetResults")]
-                public List<ReplenishTargetResultsClass> ReplenishTargetResults { get; private set; }
+                public List<ReplenishTargetResultsClass> ReplenishTargetResults { get; init; }
 
             }
 
@@ -104,7 +104,7 @@ namespace XFS4IoT.CashAcceptor.Events
             /// Note that in this case the values in this structure report the amount and number of each denomination that have actually been moved during the replenishment command.
             /// </summary>
             [DataMember(Name = "replenish")]
-            public ReplenishClass Replenish { get; private set; }
+            public ReplenishClass Replenish { get; init; }
 
         }
 

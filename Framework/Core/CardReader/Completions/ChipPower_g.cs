@@ -54,13 +54,13 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```atrNotObtained``` - The ATR has not been obtained (only applies to user chips).
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// The Base64 encoded data received from the chip.
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; private set; }
+            public string ChipData { get; init; }
 
         }
     }

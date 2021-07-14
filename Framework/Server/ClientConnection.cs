@@ -146,7 +146,7 @@ namespace XFS4IoTServer
             }
             catch (InvalidDataException ex)
             {
-                Contracts.Fail($"Invalid data is set by the device class.{messageBase.Headers.Name}. {ex.Message}");
+                Contracts.Fail($"Invalid data is set by the device class.{messageBase.Header.Name}. {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -238,10 +238,10 @@ namespace XFS4IoTServer
                                 throw new InvalidDataException($"{nameof(type)} has shorter length than the MinLength={dataTypeAttrib.MinLength}. Property:{propertyInfo.Name}");
                             break;
                         case int intValue:
-                            if (dataTypeAttrib.Minimum is not null && intValue < dataTypeAttrib.Minimum)
+                            if (dataTypeAttrib.Minimum > -1 && intValue < dataTypeAttrib.Minimum)
                                 throw new InvalidDataException($"{nameof(type)} is smaller than the Minimum={dataTypeAttrib.Minimum}. Property:{propertyInfo.Name}");
 
-                            if (dataTypeAttrib.Maximum is not null && intValue > dataTypeAttrib.Maximum)
+                            if (dataTypeAttrib.Maximum > -1 && intValue > dataTypeAttrib.Maximum)
                                 throw new InvalidDataException($"{nameof(type)} is greater than the Maximum={dataTypeAttrib.Maximum}. Property:{propertyInfo.Name}");
                             break;
                     }

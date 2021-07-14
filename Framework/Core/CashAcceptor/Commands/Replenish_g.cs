@@ -39,7 +39,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// command) from which items are to be removed.
             /// </summary>
             [DataMember(Name = "cashunitSource")]
-            public string CashunitSource { get; private set; }
+            public string CashunitSource { get; init; }
 
             [DataContract]
             public sealed class ReplenishTargetsClass
@@ -56,7 +56,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// command) to which items are to be moved.
                 /// </summary>
                 [DataMember(Name = "cashunitTarget")]
-                public string CashunitTarget { get; private set; }
+                public string CashunitTarget { get; init; }
 
                 /// <summary>
                 /// The number of items to be moved to the target cash unit. Any items which are removed from the 
@@ -66,7 +66,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// parameter is set to TRUE.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsToMove")]
-                public int? NumberOfItemsToMove { get; private set; }
+                public int? NumberOfItemsToMove { get; init; }
 
                 /// <summary>
                 /// Specifies if all items are to be moved to the target cash unit. Any items which are removed from the source 
@@ -77,7 +77,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// [numberOfItemsToMove](#cashacceptor.replenish.command.properties.replenishtargets.numberofitemstomove) will be moved.
                 /// </summary>
                 [DataMember(Name = "removeAll")]
-                public bool? RemoveAll { get; private set; }
+                public bool? RemoveAll { get; init; }
 
             }
 
@@ -85,7 +85,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// Array of replenish Target elements. There must be at least one array element.
             /// </summary>
             [DataMember(Name = "replenishTargets")]
-            public List<ReplenishTargetsClass> ReplenishTargets { get; private set; }
+            public List<ReplenishTargetsClass> ReplenishTargets { get; init; }
 
         }
     }

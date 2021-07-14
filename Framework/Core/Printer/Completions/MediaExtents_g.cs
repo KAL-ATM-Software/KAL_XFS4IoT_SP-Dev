@@ -55,19 +55,19 @@ namespace XFS4IoT.Printer.Completions
             ///   device is still operational.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "sizeX")]
-            public int? SizeX { get; private set; }
+            public int? SizeX { get; init; }
 
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "sizeY")]
-            public int? SizeY { get; private set; }
+            public int? SizeY { get; init; }
 
         }
     }

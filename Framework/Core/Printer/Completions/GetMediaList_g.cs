@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer.Completions
             /// The list of media names.
             /// </summary>
             [DataMember(Name = "mediaList")]
-            public List<string> MediaList { get; private set; }
+            public List<string> MediaList { get; init; }
 
         }
     }

@@ -64,7 +64,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaInvalid``` - The specified media definition is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             public enum MediaTypeEnum
             {
@@ -81,7 +81,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```multipart``` - The media is a multi part media.
             /// </summary>
             [DataMember(Name = "mediaType")]
-            public MediaTypeEnum? MediaType { get; private set; }
+            public MediaTypeEnum? MediaType { get; init; }
 
             public enum BaseEnum
             {
@@ -98,7 +98,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```rowcolumn``` - The base unit is rows and columns.
             /// </summary>
             [DataMember(Name = "base")]
-            public BaseEnum? Base { get; private set; }
+            public BaseEnum? Base { get; init; }
 
             /// <summary>
             /// Specifies the horizontal resolution of the base units as a fraction of the
@@ -106,97 +106,97 @@ namespace XFS4IoT.Printer.Completions
             /// the base unit *inch* means that the base horizontal resolution is 1/16th inch.
             /// </summary>
             [DataMember(Name = "unitX")]
-            public int? UnitX { get; private set; }
+            public int? UnitX { get; init; }
 
             /// <summary>
             /// Specifies the vertical resolution of the base units as a fraction of the *base* value. For example, a
             /// value of 10 applied to the base unit *mm* means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")]
-            public int? UnitY { get; private set; }
+            public int? UnitY { get; init; }
 
             /// <summary>
             /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "sizeWidth")]
-            public int? SizeWidth { get; private set; }
+            public int? SizeWidth { get; init; }
 
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "sizeHeight")]
-            public int? SizeHeight { get; private set; }
+            public int? SizeHeight { get; init; }
 
             /// <summary>
             /// Specifies the number of pages in a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "pageCount")]
-            public int? PageCount { get; private set; }
+            public int? PageCount { get; init; }
 
             /// <summary>
             /// Specifies the number of lines on a page for a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "lineCount")]
-            public int? LineCount { get; private set; }
+            public int? LineCount { get; init; }
 
             /// <summary>
             /// Specifies the horizontal offset of the printable area relative to the top left corner of the media in
             /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaX")]
-            public int? PrintAreaX { get; private set; }
+            public int? PrintAreaX { get; init; }
 
             /// <summary>
             /// Specifies the vertical offset of the printable area relative to the top left corner of the media in
             /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaY")]
-            public int? PrintAreaY { get; private set; }
+            public int? PrintAreaY { get; init; }
 
             /// <summary>
             /// Specifies the printable area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaWidth")]
-            public int? PrintAreaWidth { get; private set; }
+            public int? PrintAreaWidth { get; init; }
 
             /// <summary>
             /// Specifies the printable area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaHeight")]
-            public int? PrintAreaHeight { get; private set; }
+            public int? PrintAreaHeight { get; init; }
 
             /// <summary>
             /// Specifies the horizontal offset of the restricted area relative to the top left corner of the media in
             /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaX")]
-            public int? RestrictedAreaX { get; private set; }
+            public int? RestrictedAreaX { get; init; }
 
             /// <summary>
             /// Specifies the vertical offset of the restricted area relative to the top left corner of the media in
             /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaY")]
-            public int? RestrictedAreaY { get; private set; }
+            public int? RestrictedAreaY { get; init; }
 
             /// <summary>
             /// Specifies the restricted area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaWidth")]
-            public int? RestrictedAreaWidth { get; private set; }
+            public int? RestrictedAreaWidth { get; init; }
 
             /// <summary>
             /// Specifies the restricted area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaHeight")]
-            public int? RestrictedAreaHeight { get; private set; }
+            public int? RestrictedAreaHeight { get; init; }
 
             /// <summary>
             /// Specifies the staggering from the top in terms of the base vertical resolution for a media of type
             /// *passbook*.
             /// </summary>
             [DataMember(Name = "stagger")]
-            public int? Stagger { get; private set; }
+            public int? Stagger { get; init; }
 
             public enum FoldTypeEnum
             {
@@ -213,7 +213,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```vertical``` - Passbook has a vertical fold.
             /// </summary>
             [DataMember(Name = "foldType")]
-            public FoldTypeEnum? FoldType { get; private set; }
+            public FoldTypeEnum? FoldType { get; init; }
 
             [DataContract]
             public sealed class PaperSourcesClass
@@ -233,43 +233,43 @@ namespace XFS4IoT.Printer.Completions
                 /// Use any paper source.
                 /// </summary>
                 [DataMember(Name = "any")]
-                public bool? Any { get; private set; }
+                public bool? Any { get; init; }
 
                 /// <summary>
                 /// Use the only or the upper paper source.
                 /// </summary>
                 [DataMember(Name = "upper")]
-                public bool? Upper { get; private set; }
+                public bool? Upper { get; init; }
 
                 /// <summary>
                 /// Use the lower paper source.
                 /// </summary>
                 [DataMember(Name = "lower")]
-                public bool? Lower { get; private set; }
+                public bool? Lower { get; init; }
 
                 /// <summary>
                 /// Use the external paper source.
                 /// </summary>
                 [DataMember(Name = "external")]
-                public bool? External { get; private set; }
+                public bool? External { get; init; }
 
                 /// <summary>
                 /// Use the auxiliary paper source.
                 /// </summary>
                 [DataMember(Name = "aux")]
-                public bool? Aux { get; private set; }
+                public bool? Aux { get; init; }
 
                 /// <summary>
                 /// Use the second auxiliary paper source.
                 /// </summary>
                 [DataMember(Name = "aux2")]
-                public bool? Aux2 { get; private set; }
+                public bool? Aux2 { get; init; }
 
                 /// <summary>
                 /// Use the parking station.
                 /// </summary>
                 [DataMember(Name = "park")]
-                public bool? Park { get; private set; }
+                public bool? Park { get; init; }
 
             }
 
@@ -278,7 +278,7 @@ namespace XFS4IoT.Printer.Completions
             /// following flags
             /// </summary>
             [DataMember(Name = "paperSources")]
-            public PaperSourcesClass PaperSources { get; private set; }
+            public PaperSourcesClass PaperSources { get; init; }
 
         }
     }

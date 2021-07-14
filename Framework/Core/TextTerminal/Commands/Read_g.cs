@@ -49,11 +49,12 @@ namespace XFS4IoT.TextTerminal.Commands
             /// text terminal unit key pad. All command keys like ckEnter, ckFDK01 will not be counted.
             /// </summary>
             [DataMember(Name = "numOfChars")]
-            public int? NumOfChars { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? NumOfChars { get; init; }
 
 
             [DataMember(Name = "mode")]
-            public ModesEnum? Mode { get; private set; }
+            public ModesEnum? Mode { get; init; }
 
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute horizontal position. 
@@ -61,7 +62,8 @@ namespace XFS4IoT.TextTerminal.Commands
             /// current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posX")]
-            public int? PosX { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? PosX { get; init; }
 
             /// <summary>
             /// If mode is set to absolute, this specifies the absolute vertical position. 
@@ -69,7 +71,8 @@ namespace XFS4IoT.TextTerminal.Commands
             /// current cursor position as a zero (0) based value.
             /// </summary>
             [DataMember(Name = "posY")]
-            public int? PosY { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? PosY { get; init; }
 
             public enum EchoModeEnum
             {
@@ -85,7 +88,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// * ```password``` - The keys entered by the user are echoed as the replace character on the screen.
             /// </summary>
             [DataMember(Name = "echoMode")]
-            public EchoModeEnum? EchoMode { get; private set; }
+            public EchoModeEnum? EchoMode { get; init; }
 
             [DataContract]
             public sealed class EchoAttrClass
@@ -101,19 +104,19 @@ namespace XFS4IoT.TextTerminal.Commands
                 /// The displayed text will be underlined.
                 /// </summary>
                 [DataMember(Name = "underline")]
-                public bool? Underline { get; private set; }
+                public bool? Underline { get; init; }
 
                 /// <summary>
                 /// The displayed text will be inverted.
                 /// </summary>
                 [DataMember(Name = "inverted")]
-                public bool? Inverted { get; private set; }
+                public bool? Inverted { get; init; }
 
                 /// <summary>
                 /// The displayed text will be flashing.
                 /// </summary>
                 [DataMember(Name = "flash")]
-                public bool? Flash { get; private set; }
+                public bool? Flash { get; init; }
 
             }
 
@@ -122,26 +125,26 @@ namespace XFS4IoT.TextTerminal.Commands
             /// If none of the following attribute flags are selected then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "echoAttr")]
-            public EchoAttrClass EchoAttr { get; private set; }
+            public EchoAttrClass EchoAttr { get; init; }
 
             /// <summary>
             /// Specifies whether the cursor is visible(true) or invisible(false).
             /// </summary>
             [DataMember(Name = "echo")]
-            public bool? Echo { get; private set; }
+            public bool? Echo { get; init; }
 
             /// <summary>
             /// Specifies whether the keyboard input buffer is cleared before allowing for user input(true) or not (false).
             /// </summary>
             [DataMember(Name = "flush")]
-            public bool? Flush { get; private set; }
+            public bool? Flush { get; init; }
 
             /// <summary>
             /// Specifies whether the command input is automatically ended by Service Provider if the maximum number 
             /// of printable characters as specified with numOfChars is entered.
             /// </summary>
             [DataMember(Name = "autoEnd")]
-            public bool? AutoEnd { get; private set; }
+            public bool? AutoEnd { get; init; }
 
             /// <summary>
             /// String which specifies the numeric and alphanumeric keys on the Text Terminal Unit,
@@ -158,21 +161,21 @@ namespace XFS4IoT.TextTerminal.Commands
             /// mutually exclusive, so activeKeys field must not be set  if activeUnicodeKeys field is not set.
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            public string ActiveKeys { get; private set; }
+            public string ActiveKeys { get; init; }
 
             /// <summary>
             /// Array specifying the command keys which are active during the execution of the command. 
             /// The array is terminated with a zero value and this array is not set if no keys of this type are active keys.                      
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
-            public List<string> ActiveCommandKeys { get; private set; }
+            public List<string> ActiveCommandKeys { get; init; }
 
             /// <summary>
             /// Array specifying the command keys which must terminate the execution of the command. 
             /// The array is terminated with a zero value and this array is not set if no keys of this type are terminate keys.
             /// </summary>
             [DataMember(Name = "terminateCommandKeys")]
-            public List<string> TerminateCommandKeys { get; private set; }
+            public List<string> TerminateCommandKeys { get; init; }
 
         }
     }

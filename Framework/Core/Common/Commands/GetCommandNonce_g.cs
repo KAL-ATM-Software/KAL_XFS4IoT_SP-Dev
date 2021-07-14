@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * GetCommandRandomNumber_g.cs uses automatically generated parts.
+ * GetCommandNonce_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,12 +14,12 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.Common.Commands
 {
-    //Original name = GetCommandRandomNumber
+    //Original name = GetCommandNonce
     [DataContract]
-    [Command(Name = "Common.GetCommandRandomNumber")]
-    public sealed class GetCommandRandomNumberCommand : Command<GetCommandRandomNumberCommand.PayloadData>
+    [Command(Name = "Common.GetCommandNonce")]
+    public sealed class GetCommandNonceCommand : Command<GetCommandNonceCommand.PayloadData>
     {
-        public GetCommandRandomNumberCommand(int RequestId, GetCommandRandomNumberCommand.PayloadData Payload)
+        public GetCommandNonceCommand(int RequestId, GetCommandNonceCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 

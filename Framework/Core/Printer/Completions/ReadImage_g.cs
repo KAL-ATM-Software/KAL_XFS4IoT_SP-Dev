@@ -57,7 +57,7 @@ namespace XFS4IoT.Printer.Completions
             ///   device is still operational.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataContract]
             public sealed class ImagesClass
@@ -93,7 +93,7 @@ namespace XFS4IoT.Printer.Completions
                     /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
                     /// </summary>
                     [DataMember(Name = "status")]
-                    public StatusEnum? Status { get; private set; }
+                    public StatusEnum? Status { get; init; }
 
                     /// <summary>
                     /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
@@ -107,7 +107,7 @@ namespace XFS4IoT.Printer.Completions
                     /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
-                    public string Data { get; private set; }
+                    public string Data { get; init; }
 
                 }
 
@@ -115,7 +115,7 @@ namespace XFS4IoT.Printer.Completions
                 /// The front image status and data.
                 /// </summary>
                 [DataMember(Name = "front")]
-                public FrontClass Front { get; private set; }
+                public FrontClass Front { get; init; }
 
                 [DataContract]
                 public sealed class BackClass
@@ -141,7 +141,7 @@ namespace XFS4IoT.Printer.Completions
                     /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
                     /// </summary>
                     [DataMember(Name = "status")]
-                    public StatusEnum? Status { get; private set; }
+                    public StatusEnum? Status { get; init; }
 
                     /// <summary>
                     /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
@@ -155,7 +155,7 @@ namespace XFS4IoT.Printer.Completions
                     /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
-                    public string Data { get; private set; }
+                    public string Data { get; init; }
 
                 }
 
@@ -163,7 +163,7 @@ namespace XFS4IoT.Printer.Completions
                 /// The back image status and data.
                 /// </summary>
                 [DataMember(Name = "back")]
-                public BackClass Back { get; private set; }
+                public BackClass Back { get; init; }
 
                 [DataContract]
                 public sealed class CodelineClass
@@ -189,7 +189,7 @@ namespace XFS4IoT.Printer.Completions
                     /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
                     /// </summary>
                     [DataMember(Name = "status")]
-                    public StatusEnum? Status { get; private set; }
+                    public StatusEnum? Status { get; init; }
 
                     /// <summary>
                     /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
@@ -203,7 +203,7 @@ namespace XFS4IoT.Printer.Completions
                     /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
-                    public string Data { get; private set; }
+                    public string Data { get; init; }
 
                 }
 
@@ -211,7 +211,7 @@ namespace XFS4IoT.Printer.Completions
                 /// The codeline status and data.
                 /// </summary>
                 [DataMember(Name = "codeline")]
-                public CodelineClass Codeline { get; private set; }
+                public CodelineClass Codeline { get; init; }
 
             }
 
@@ -219,7 +219,7 @@ namespace XFS4IoT.Printer.Completions
             /// The status and data for each of the requested images.
             /// </summary>
             [DataMember(Name = "images")]
-            public ImagesClass Images { get; private set; }
+            public ImagesClass Images { get; init; }
 
         }
     }

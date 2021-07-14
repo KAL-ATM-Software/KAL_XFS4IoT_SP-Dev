@@ -51,7 +51,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataContract]
             public sealed class CountedCashUnitsClass
@@ -70,25 +70,25 @@ namespace XFS4IoT.Dispenser.Completions
                 /// *physicalPositionName* in the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) completion message.
                 /// </summary>
                 [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; private set; }
+                public string PhysicalPositionName { get; init; }
 
                 /// <summary>
                 /// Cash unit ID. This is the identifier defined in the *unitID* field in the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) completion message.
                 /// </summary>
                 [DataMember(Name = "unitId")]
-                public string UnitId { get; private set; }
+                public string UnitId { get; init; }
 
                 /// <summary>
                 /// The number of items that were dispensed during the emptying of the cash unit.
                 /// </summary>
                 [DataMember(Name = "dispensed")]
-                public int? Dispensed { get; private set; }
+                public int? Dispensed { get; init; }
 
                 /// <summary>
                 /// The number of items that were counted during the emptying of the cash unit.
                 /// </summary>
                 [DataMember(Name = "counted")]
-                public int? Counted { get; private set; }
+                public int? Counted { get; init; }
 
                 public enum StatusEnum
                 {
@@ -120,7 +120,7 @@ namespace XFS4IoT.Dispenser.Completions
                 /// was not in the exchange state. This cash unit cannot be dispensed from.
                 /// </summary>
                 [DataMember(Name = "status")]
-                public StatusEnum? Status { get; private set; }
+                public StatusEnum? Status { get; init; }
 
             }
 
@@ -128,7 +128,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// List of counted cash unit objects.
             /// </summary>
             [DataMember(Name = "countedCashUnits")]
-            public Dictionary<string, CountedCashUnitsClass> CountedCashUnits { get; private set; }
+            public Dictionary<string, CountedCashUnitsClass> CountedCashUnits { get; init; }
 
         }
     }

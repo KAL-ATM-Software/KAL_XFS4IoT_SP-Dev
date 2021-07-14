@@ -47,19 +47,19 @@ namespace XFS4IoT.TextTerminal.Commands
             /// key invalid error.
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            public string ActiveKeys { get; private set; }
+            public string ActiveKeys { get; init; }
 
             /// <summary>
             /// Array specifying the command keys which are active during the execution of the next [TextTerminal.ReadForm](#textterminal.readform) command.                       
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
-            public List<string> ActiveCommandKeys { get; private set; }
+            public List<string> ActiveCommandKeys { get; init; }
 
             /// <summary>
             /// Array specifying the command keys which must terminate the execution of the next [TextTerminal.ReadForm](#textterminal.readform) command.
             /// </summary>
             [DataMember(Name = "terminateCommandKeys")]
-            public List<string> TerminateCommandKeys { get; private set; }
+            public List<string> TerminateCommandKeys { get; init; }
 
         }
     }

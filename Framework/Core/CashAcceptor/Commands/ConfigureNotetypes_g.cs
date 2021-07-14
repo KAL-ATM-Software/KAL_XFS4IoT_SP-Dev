@@ -37,7 +37,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// Array of unsigned integers which contains the note IDs of the banknotes the banknote reader can accept.
             /// </summary>
             [DataMember(Name = "noteIDs")]
-            public List<int> NoteIDs { get; private set; }
+            public List<int> NoteIDs { get; init; }
 
         }
     }

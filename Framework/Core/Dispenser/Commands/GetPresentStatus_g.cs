@@ -27,11 +27,11 @@ namespace XFS4IoT.Dispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PositionEnum? Position = null, string RandomNumber = null)
+            public PayloadData(int Timeout, PositionEnum? Position = null, string Nonce = null)
                 : base(Timeout)
             {
                 this.Position = Position;
-                this.RandomNumber = RandomNumber;
+                this.Nonce = Nonce;
             }
 
             public enum PositionEnum
@@ -59,14 +59,15 @@ namespace XFS4IoT.Dispenser.Commands
             /// * ```rear``` - The rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             /// <summary>
-            /// A random number to be used when creating the end to end security token in the  response. See the API
-            /// documentation on end to end security for more details.
+            /// A nonce value to be used when creating the end to end security token in the 
+            /// response. See the API documentation on end to end security for more details. 
             /// </summary>
-            [DataMember(Name = "randomNumber")]
-            public string RandomNumber { get; private set; }
+            [DataMember(Name = "nonce")]
+            [DataTypes(Pattern = "^[0-9A-F]{32}$")]
+            public string Nonce { get; init; }
 
         }
     }

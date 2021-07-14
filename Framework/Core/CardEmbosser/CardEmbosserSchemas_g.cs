@@ -62,7 +62,7 @@ namespace XFS4IoT.CardEmbosser
         /// * ```retained``` - Card is positioned in retain bin.
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaEnum? Media { get; private set; }
+        public MediaEnum? Media { get; init; }
 
         public enum RetainBinEnum
         {
@@ -81,7 +81,7 @@ namespace XFS4IoT.CardEmbosser
         /// * ```notSupported``` - The retain bin state can not be reported.
         /// </summary>
         [DataMember(Name = "retainBin")]
-        public RetainBinEnum? RetainBin { get; private set; }
+        public RetainBinEnum? RetainBin { get; init; }
 
         public enum OutputBinEnum
         {
@@ -100,7 +100,7 @@ namespace XFS4IoT.CardEmbosser
         /// * ```notSupported``` - The output bin state can not be reported.
         /// </summary>
         [DataMember(Name = "outputBin")]
-        public OutputBinEnum? OutputBin { get; private set; }
+        public OutputBinEnum? OutputBin { get; init; }
 
         public enum InputBinEnum
         {
@@ -119,25 +119,25 @@ namespace XFS4IoT.CardEmbosser
         /// * ```notSupported``` - The input bin state can not be reported.
         /// </summary>
         [DataMember(Name = "inputBin")]
-        public InputBinEnum? InputBin { get; private set; }
+        public InputBinEnum? InputBin { get; init; }
 
         /// <summary>
         /// The total number of cards, including those in input bin, output bin, and retain bin.
         /// </summary>
         [DataMember(Name = "totalCards")]
-        public int? TotalCards { get; private set; }
+        public int? TotalCards { get; init; }
 
         /// <summary>
         /// The total number of output bin cards.
         /// </summary>
         [DataMember(Name = "outputCards")]
-        public int? OutputCards { get; private set; }
+        public int? OutputCards { get; init; }
 
         /// <summary>
         /// The total number of retain bin cards.
         /// </summary>
         [DataMember(Name = "retainCards")]
-        public int? RetainCards { get; private set; }
+        public int? RetainCards { get; init; }
 
         public enum TonerEnum
         {
@@ -160,7 +160,7 @@ namespace XFS4IoT.CardEmbosser
         /// current state.
         /// </summary>
         [DataMember(Name = "toner")]
-        public TonerEnum? Toner { get; private set; }
+        public TonerEnum? Toner { get; init; }
 
     }
 
@@ -184,25 +184,25 @@ namespace XFS4IoT.CardEmbosser
         /// a prerequisite for an encoding or embossing operation.
         /// </summary>
         [DataMember(Name = "compareMagneticStripe")]
-        public bool? CompareMagneticStripe { get; private set; }
+        public bool? CompareMagneticStripe { get; init; }
 
         /// <summary>
         /// Indicates whether the card embosser has magnetic stripe reading capability.
         /// </summary>
         [DataMember(Name = "magneticStripeRead")]
-        public bool? MagneticStripeRead { get; private set; }
+        public bool? MagneticStripeRead { get; init; }
 
         /// <summary>
         /// Indicates whether the card embosser has magnetic stripe writing capability.
         /// </summary>
         [DataMember(Name = "magneticStripeWrite")]
-        public bool? MagneticStripeWrite { get; private set; }
+        public bool? MagneticStripeWrite { get; init; }
 
         /// <summary>
         /// Indicates whether the card embosser has smart card updating capability.
         /// </summary>
         [DataMember(Name = "chipIO")]
-        public bool? ChipIO { get; private set; }
+        public bool? ChipIO { get; init; }
 
         [DataContract]
         public sealed class ChipProtocolClass
@@ -219,26 +219,26 @@ namespace XFS4IoT.CardEmbosser
             /// The card embosser can not handle chip cards.
             /// </summary>
             [DataMember(Name = "notSupported")]
-            public bool? NotSupported { get; private set; }
+            public bool? NotSupported { get; init; }
 
             /// <summary>
             /// The card embosser can handle the T=0 protocol.
             /// </summary>
             [DataMember(Name = "chipT0")]
-            public bool? ChipT0 { get; private set; }
+            public bool? ChipT0 { get; init; }
 
             /// <summary>
             /// The card embosser can handle the T=1 protocol.
             /// </summary>
             [DataMember(Name = "chipT1")]
-            public bool? ChipT1 { get; private set; }
+            public bool? ChipT1 { get; init; }
 
             /// <summary>
             /// The card embosser is capable of communicating with a chip card without requiring the application to
             /// specify any protocol.
             /// </summary>
             [DataMember(Name = "chipProtocolNotRequired")]
-            public bool? ChipProtocolNotRequired { get; private set; }
+            public bool? ChipProtocolNotRequired { get; init; }
 
         }
 
@@ -247,7 +247,7 @@ namespace XFS4IoT.CardEmbosser
         /// following:
         /// </summary>
         [DataMember(Name = "chipProtocol")]
-        public ChipProtocolClass ChipProtocol { get; private set; }
+        public ChipProtocolClass ChipProtocol { get; init; }
 
         [DataContract]
         public sealed class CharSupportClass
@@ -262,13 +262,13 @@ namespace XFS4IoT.CardEmbosser
             /// ASCII is supported for XFS forms.
             /// </summary>
             [DataMember(Name = "ascii")]
-            public bool? Ascii { get; private set; }
+            public bool? Ascii { get; init; }
 
             /// <summary>
             /// UNICODE is supported for XFS forms.
             /// </summary>
             [DataMember(Name = "unicode")]
-            public bool? Unicode { get; private set; }
+            public bool? Unicode { get; init; }
 
         }
 
@@ -281,7 +281,7 @@ namespace XFS4IoT.CardEmbosser
         /// This field will be set to a combination of the following:
         /// </summary>
         [DataMember(Name = "charSupport")]
-        public CharSupportClass CharSupport { get; private set; }
+        public CharSupportClass CharSupport { get; init; }
 
         [DataContract]
         public sealed class TypeClass
@@ -296,13 +296,13 @@ namespace XFS4IoT.CardEmbosser
             /// The card embosser supports embossing data on cards.
             /// </summary>
             [DataMember(Name = "emboss")]
-            public bool? Emboss { get; private set; }
+            public bool? Emboss { get; init; }
 
             /// <summary>
             /// The card embosser supports printing data on cards.
             /// </summary>
             [DataMember(Name = "print")]
-            public bool? Print { get; private set; }
+            public bool? Print { get; init; }
 
         }
 
@@ -311,7 +311,7 @@ namespace XFS4IoT.CardEmbosser
         /// field will be set to a combination of the following:
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; private set; }
+        public TypeClass Type { get; init; }
 
     }
 

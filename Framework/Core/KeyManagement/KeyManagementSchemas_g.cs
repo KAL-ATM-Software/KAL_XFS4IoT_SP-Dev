@@ -37,7 +37,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies the state of the encryption module.
         /// </summary>
         [DataMember(Name = "encryptionState")]
-        public EncryptionStateEnum? EncryptionState { get; private set; }
+        public EncryptionStateEnum? EncryptionState { get; init; }
 
         public enum CertificateStateEnum
         {
@@ -51,7 +51,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies the state of the public verification or encryption key in the PIN certificate modules.
         /// </summary>
         [DataMember(Name = "certificateState")]
-        public CertificateStateEnum? CertificateState { get; private set; }
+        public CertificateStateEnum? CertificateState { get; init; }
 
     }
 
@@ -59,9 +59,10 @@ namespace XFS4IoT.KeyManagement
     [DataContract]
     public sealed class KeyAttributeClass
     {
-        public KeyAttributeClass(string KeyUsage = null, string Algorithm = null, string ModeOfUse = null, string CryptoMethod = null)
+        public KeyAttributeClass(string KeyUsage = null, string RestrictedKeyUsage = null, string Algorithm = null, string ModeOfUse = null, string CryptoMethod = null)
         {
             this.KeyUsage = KeyUsage;
+            this.RestrictedKeyUsage = RestrictedKeyUsage;
             this.Algorithm = Algorithm;
             this.ModeOfUse = ModeOfUse;
             this.CryptoMethod = CryptoMethod;
@@ -78,86 +79,117 @@ namespace XFS4IoT.KeyManagement
         /// * ```D0``` - Symmetric Key for Data Encryption. 
         /// * ```D1``` - Asymmetric Key for Data Encryption. 
         /// * ```D2``` - Data Encryption Key for Decimalization Table. 
-        /// * ```E0``` - SMV/Chip Issuer MAster Key: Application Cryptogram. 
-        /// * ```E1``` - EMV/Chip Issuer Master Key: Secure Messaging for Confidentiality. 
-        /// * ```E2``` - EMV/chip Issuer Master Key: Secure Messaging for Integrity. 
-        /// * ```E3``` - EMV/chip Issuer Master Key: Data Authentication Code. 
-        /// * ```E4``` - EMV/chip Issuer MAster Key: Dynamic. 
-        /// * ```E5``` - EMV/Chip Issuer MAster Key: Card Personalization. 
-        /// * ```E6``` - EMV/chip Issuer MAster Key: Other Initialization Vector(IV). 
-        /// * ```I0``` - Initialization Vector(IV). 
+        /// * ```E0``` - EMV / Chip Issuer Master Key: Application Cryptogram. 
+        /// * ```E1``` - EMV / Chip Issuer Master Key: Secure Messaging for Confidentiality. 
+        /// * ```E2``` - EMV / Chip Issuer Master Key: Secure Messaging for Integrity. 
+        /// * ```E3``` - EMV / Chip Issuer Master Key: Data Authentication Code. 
+        /// * ```E4``` - EMV / Chip Issuer Master Key: Dynamic. 
+        /// * ```E5``` - EMV / Chip Issuer Master Key: Card Personalization. 
+        /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV). 
+        /// * ```I0``` - Initialization Vector (IV). 
         /// * ```K0``` - Key Encryption or wrapping. 
         /// * ```K1``` - TR-31 Key Block Protection Key. 
         /// * ```K2``` - TR-34 Asymmetric Key. 
-        /// * ```K3``` - Asymmetric Key for key agreement/key wrapping. 
-        /// * ```M0``` - ISO 16609 MAC algorithm 1(using TDEA). 
+        /// * ```K3``` - Asymmetric Key for key agreement / key wrapping. 
+        /// * ```M0``` - ISO 16609 MAC algorithm 1 (using TDEA). 
         /// * ```M1``` - ISO 9797-1 MAC Algorithm 1. 
         /// * ```M2``` - ISO 9797-1 MAC Algorithm 2. 
         /// * ```M3``` - ISO 9797-1 MAC Algorithm 3. 
         /// * ```M4``` - ISO 9797-1 MAC Algorithm 4. 
-        /// * ```M5``` - ISO 9797-1:2011 MAC Algorithm. 
-        /// * ```M6``` - ISO 9797-1:2011 MAC Algorithm 5/CMAC. 
+        /// * ```M5``` - ISO 9797-1:2011 MAC Algorithm 5. 
+        /// * ```M6``` - ISO 9797-1:2011 MAC Algorithm 5 / CMAC. 
         /// * ```M7``` - HMAC. 
-        /// * ```M8``` - ISO9797-1:2011 MAC Algorithm 6. 
+        /// * ```M8``` - ISO 9797-1:2011 MAC Algorithm 6. 
         /// * ```P0``` - PIN Encryption. 
         /// * ```S0``` - Asymmetric key pair for digital signature. 
-        /// * ```S1``` - Asymmetric key pair , CA key. 
+        /// * ```S1``` - Asymmetric key pair, CA key. 
         /// * ```S2``` - Asymmetric key pair, nonX9.24 key. 
         /// * ```V0``` - PIN verification, KPV, other algorithm. 
         /// * ```V1``` - PIN verification, IBM 3624. 
-        /// * ```V2``` - PIN verification,VISA PVV. 
-        /// * ```V3``` - PIN verification,X9-132 algorithm 1. 
+        /// * ```V2``` - PIN verification, VISA PVV. 
+        /// * ```V3``` - PIN verification, X9-132 algorithm 1. 
         /// * ```V4``` - PIN verification, X9-132 algorithm 2. 
-        /// * ```0B``` - Restricted Key Encryption Key that can only be used to load DUKPT keys. 
-        /// * ```0C``` - Restricted Key Encryption Key that can only be used to load CVKs. 
-        /// * ```0E``` - Restricted Key Encryption Key that can only be used to load EMV keys. 
-        /// * ```0I``` - Restricted Key Encryption Key that can only be used to load Initialization Vectors. 
-        /// * ```0K``` - Restricted Key Encryption Key that can be only used to load keys that can load other keys. 
-        /// * ```0M``` - Restricted Key Encryption Key that can only be used to load Initialization Vectors. 
-        /// * ```0P``` - Restricted Key Encryption Key that can only be used to load PIN encryption keys. 
-        /// * ```0S``` - Restricted Key Encryption Key that can only be used to load asymmetric key pairs. 
-        /// * ```0V``` - Restricted Key Encryption Key that can only be used to load PIN verification keys. 
-        /// * ```1B``` - Restricted Keyblock Protection Key that can only be used to load DUKPT keys. 
-        /// * ```1C``` - Restricted Key Keyblock Protection Key that can only be used to load CVKs. 
-        /// * ```1D``` - Restricted Keyblock Protection Key that can only be used to load data encryption keys. 
-        /// * ```1E``` - Restricted Keyblock Protection Key that can only be used to load EMV keys. 
-        /// * ```1I``` - Restricted Keyblock Protection Key that can only be used to load Initialization Vectors. 
-        /// * ```1K``` - Restricted Keyblock Protection Key that can only be used to load keys that can load other keys. 
-        /// * ```1M``` - Restricted Keyblock Protection Key that can only be used to load MAC keys. 
-        /// * ```1P``` - Restricted Keyblock Protection Key that can only be used to load PIN encryption keys. 
-        /// * ```1S``` - Restricted Keyblock Protection Key that can only be used to load asymmetric key pairs. 
-        /// * ```1V``` - Restricted Keyblock Protection Key that can only be used to load PIN verification keys. 
-        /// * ```\"00\" - \"99\"``` - These numeric values are reserved for proprietary use.
+        /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "keyUsage")]
-        public string KeyUsage { get; private set; }
+        [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+        public string KeyUsage { get; init; }
+
+        /// <summary>
+        /// Specifies restricted key usage of the key associated with the keyUsage property specified.
+        /// This property can be omitted if there is no restricted key usage required.
+        /// Following restricted key usage can be set if the keyUsage proeprty specifies either K0 or K1.
+        /// The following values are possible:
+        /// 
+        /// * ```B0``` - BDK Base Derivation Key. 
+        /// * ```B1``` - Initial DUKPT key. 
+        /// * ```B2``` - Base Key Variant Key. 
+        /// * ```C0``` - CVK Card Verification Key. 
+        /// * ```D0``` - Symmetric Key for Data Encryption. 
+        /// * ```D1``` - Asymmetric Key for Data Encryption. 
+        /// * ```D2``` - Data Encryption Key for Decimalization Table. 
+        /// * ```E0``` - EMV / Chip Issuer Master Key: Application Cryptogram. 
+        /// * ```E1``` - EMV / Chip Issuer Master Key: Secure Messaging for Confidentiality. 
+        /// * ```E2``` - EMV / Chip Issuer Master Key: Secure Messaging for Integrity. 
+        /// * ```E3``` - EMV / Chip Issuer Master Key: Data Authentication Code. 
+        /// * ```E4``` - EMV / Chip Issuer Master Key: Dynamic. 
+        /// * ```E5``` - EMV / Chip Issuer Master Key: Card Personalization. 
+        /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV). 
+        /// * ```I0``` - Initialization Vector (IV). 
+        /// * ```K2``` - TR-34 Asymmetric Key. 
+        /// * ```K3``` - Asymmetric Key for key agreement / key wrapping. 
+        /// * ```M0``` - ISO 16609 MAC algorithm 1 (using TDEA). 
+        /// * ```M1``` - ISO 9797-1 MAC Algorithm 1. 
+        /// * ```M2``` - ISO 9797-1 MAC Algorithm 2. 
+        /// * ```M3``` - ISO 9797-1 MAC Algorithm 3. 
+        /// * ```M4``` - ISO 9797-1 MAC Algorithm 4. 
+        /// * ```M5``` - ISO 9797-1:2011 MAC Algorithm 5. 
+        /// * ```M6``` - ISO 9797-1:2011 MAC Algorithm 5 / CMAC. 
+        /// * ```M7``` - HMAC. 
+        /// * ```M8``` - ISO 9797-1:2011 MAC Algorithm 6. 
+        /// * ```P0``` - PIN Encryption. 
+        /// * ```S0``` - Asymmetric key pair for digital signature. 
+        /// * ```S1``` - Asymmetric key pair, CA key. 
+        /// * ```S2``` - Asymmetric key pair, nonX9.24 key. 
+        /// * ```V0``` - PIN verification, KPV, other algorithm. 
+        /// * ```V1``` - PIN verification, IBM 3624. 
+        /// * ```V2``` - PIN verification, VISA PVV. 
+        /// * ```V3``` - PIN verification, X9-132 algorithm 1. 
+        /// * ```V4``` - PIN verification, X9-132 algorithm 2. 
+        /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
+        /// </summary>
+        [DataMember(Name = "restrictedKeyUsage")]
+        [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[2-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+        public string RestrictedKeyUsage { get; init; }
 
         /// <summary>
         /// Specifies the encryption algorithms supported by the import command. The following values are possible: 
-        /// * ```A``` - AES.  * ```D``` - DEA.  * ```R``` - RSA.  * ```T``` - Triple DEA (also referred to as TDEA).  * ```\"0\" - \"9\"``` - These numeric values are reserved for proprietary use.
+        /// * ```A``` - AES.  * ```D``` - DEA.  * ```R``` - RSA.  * ```T``` - Triple DEA (also referred to as TDEA).  * ```0 - 9``` - These numeric values are reserved for proprietary use.
         /// 
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public string Algorithm { get; private set; }
+        [DataTypes(Pattern = "^[0-9ADRT]$")]
+        public string Algorithm { get; init; }
 
         /// <summary>
         /// Specifies the encryption modes supported by import key.
         /// The following values are possible: 
         /// 
-        /// * ```B``` - Both Emcrypt and Decrypt/ Wrap and unwrap. 
+        /// * ```B``` - Both Encrypt and Decrypt / Wrap and unwrap. 
         /// * ```C``` - Both Generate and Verify. 
-        /// * ```D``` - Decrypt/ Unwrap Only. 
-        /// * ```E``` - Encrypt/ Wrap Only. 
+        /// * ```D``` - Decrypt / Unwrap Only. 
+        /// * ```E``` - Encrypt / Wrap Only. 
         /// * ```G``` - Generate Only. 
         /// * ```S``` - Signature Only. 
         /// * ```T``` - Both Sign and Decrypt. 
         /// * ```V``` - Verify Only. 
         /// * ```X``` - Key used to derive other keys(s). 
         /// * ```Y``` - Key used to create key variants. 
-        /// * ```\"0\" - \"9\"``` - These numeric values are reserved for proprietary use.
+        /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "modeOfUse")]
-        public string ModeOfUse { get; private set; }
+        [DataTypes(Pattern = "^[0-9BCDEGSTVXY]$")]
+        public string ModeOfUse { get; init; }
 
         /// <summary>
         /// Specifies the cryptographic methods supported by the import command. 
@@ -165,7 +197,7 @@ namespace XFS4IoT.KeyManagement
         /// to perform a cryptographic method.
         /// </summary>
         [DataMember(Name = "cryptoMethod")]
-        public string CryptoMethod { get; private set; }
+        public string CryptoMethod { get; init; }
 
     }
 
@@ -200,14 +232,15 @@ namespace XFS4IoT.KeyManagement
         /// * ```D``` - DEA. 
         /// * ```R``` - RSA. 
         /// * ```T``` - Triple DEA (also referred to as TDEA). 
-        /// * ```\"0\" - \"9\"``` - These numeric values are reserved for proprietary use.
+        /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public string Algorithm { get; private set; }
+        [DataTypes(Pattern = "^[0-9ADRT]$")]
+        public string Algorithm { get; init; }
 
 
         [DataMember(Name = "cryptoMethod")]
-        public DecryptCryptoMethodEnum? CryptoMethod { get; private set; }
+        public DecryptCryptoMethodEnum? CryptoMethod { get; init; }
 
     }
 
@@ -234,16 +267,17 @@ namespace XFS4IoT.KeyManagement
         /// * ```M3``` - ISO 9797-1 MAC Algorithm 3. 
         /// * ```M4``` - ISO 9797-1 MAC Algorithm 4. 
         /// * ```M5``` - ISO 9797-1:1999 MAC Algorithm 5. 
-        /// * ```M6``` - ISO 9797-1:2011 MAC Algorithm 5/CMAC. 
+        /// * ```M6``` - ISO 9797-1:2011 MAC Algorithm 5 / CMAC. 
         /// * ```M7``` - HMAC. 
-        /// * ```M8``` - ISO9797-1:2011 MAC Algorithm 6. 
+        /// * ```M8``` - ISO 9797-1:2011 MAC Algorithm 6. 
         /// * ```S0``` - Asymmetric key pair or digital signature. 
         /// * ```S1``` - Asymmetric key pair, CA key. 
         /// * ```S2``` - Asymmetric key pair, nonX9.24 key. 
-        /// * ```\"00\" - \"99\"``` - These numeric values are reserved for proprietary use.
+        /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "keyUsage")]
-        public string KeyUsage { get; private set; }
+        [DataTypes(Pattern = "^M[0-8]$|^S[0-2]$|^[0-9][0-9]$")]
+        public string KeyUsage { get; init; }
 
         /// <summary>
         /// Specifies the encryption algorithms supported by the import command.
@@ -253,20 +287,22 @@ namespace XFS4IoT.KeyManagement
         /// * ```D``` - DEA. 
         /// * ```R``` - RSA. 
         /// * ```T``` - Triple DEA (also referred to as TDEA). 
-        /// * ```\"0\" - \"9\"``` - These numeric values are reserved for proprietary use.
+        /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public string Algorithm { get; private set; }
+        [DataTypes(Pattern = "^[0-9ADRT]$")]
+        public string Algorithm { get; init; }
 
         /// <summary>
         /// Specifies the encryption modes supported by the import command.
         /// The following values are possible: 
         /// 
         /// * ```V``` - Verify Only. 
-        /// * ```\"0\" - \"9\"``` - These numeric values are reserved for proprietary use.
+        /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
         /// </summary>
         [DataMember(Name = "modeOfUse")]
-        public string ModeOfUse { get; private set; }
+        [DataTypes(Pattern = "^[0-9V]$")]
+        public string ModeOfUse { get; init; }
 
         public enum CryptoMethodEnum
         {
@@ -297,7 +333,7 @@ namespace XFS4IoT.KeyManagement
         /// * ```rsassaPss``` - Use the RSASSA-PSS algorithm.
         /// </summary>
         [DataMember(Name = "cryptoMethod")]
-        public CryptoMethodEnum? CryptoMethod { get; private set; }
+        public CryptoMethodEnum? CryptoMethod { get; init; }
 
         [DataContract]
         public sealed class HashAlgorithmClass
@@ -312,13 +348,13 @@ namespace XFS4IoT.KeyManagement
             /// The SHA 1 digest algorithm.
             /// </summary>
             [DataMember(Name = "sha1")]
-            public bool? Sha1 { get; private set; }
+            public bool? Sha1 { get; init; }
 
             /// <summary>
             /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
             /// </summary>
             [DataMember(Name = "sha256")]
-            public bool? Sha256 { get; private set; }
+            public bool? Sha256 { get; init; }
 
         }
 
@@ -327,7 +363,7 @@ namespace XFS4IoT.KeyManagement
         /// If keyUsage is specified as any of the MAC usages (i.e. ‘M1’), then properties should not be not set or both 'sha1' and 'sha256' are false.
         /// </summary>
         [DataMember(Name = "hashAlgorithm")]
-        public HashAlgorithmClass HashAlgorithm { get; private set; }
+        public HashAlgorithmClass HashAlgorithm { get; init; }
 
     }
 
@@ -364,7 +400,7 @@ namespace XFS4IoT.KeyManagement
         /// Number of the keys which can be stored in the encryption/decryption module.
         /// </summary>
         [DataMember(Name = "keyNum")]
-        public int? KeyNum { get; private set; }
+        public int? KeyNum { get; init; }
 
         [DataContract]
         public sealed class IdKeyClass
@@ -379,14 +415,14 @@ namespace XFS4IoT.KeyManagement
             /// ID key is returned by the [KeyManagement.Initialization](#keymanagement.initialization) command.
             /// </summary>
             [DataMember(Name = "initialization")]
-            public bool? Initialization { get; private set; }
+            public bool? Initialization { get; init; }
 
             /// <summary>
             /// ID key is required as input for the [KeyManagement.ImportKey](#keymanagement.importkey) and 
             /// [KeyManagement.DeriveKey](#keymanagement.derivekey) command.
             /// </summary>
             [DataMember(Name = "import")]
-            public bool? Import { get; private set; }
+            public bool? Import { get; init; }
 
         }
 
@@ -396,7 +432,7 @@ namespace XFS4IoT.KeyManagement
         /// support this capability.
         /// </summary>
         [DataMember(Name = "idKey")]
-        public IdKeyClass IdKey { get; private set; }
+        public IdKeyClass IdKey { get; init; }
 
         [DataContract]
         public sealed class KeyCheckModesClass
@@ -413,13 +449,13 @@ namespace XFS4IoT.KeyManagement
             /// 8 bytes of the key as the source data for the encryption.
             /// </summary>
             [DataMember(Name = "self")]
-            public bool? Self { get; private set; }
+            public bool? Self { get; init; }
 
             /// <summary>
             /// The key check value is created by encrypting a zero value with the key.
             /// </summary>
             [DataMember(Name = "zero")]
-            public bool? Zero { get; private set; }
+            public bool? Zero { get; init; }
 
         }
 
@@ -427,14 +463,14 @@ namespace XFS4IoT.KeyManagement
         /// Specifies the key check modes that are supported to check the correctness of an imported key value.
         /// </summary>
         [DataMember(Name = "keyCheckModes")]
-        public KeyCheckModesClass KeyCheckModes { get; private set; }
+        public KeyCheckModesClass KeyCheckModes { get; init; }
 
         /// <summary>
         /// Identifies the hsm Vendor. 
         /// hsmVendor is an empty string or this property is not set when the hsm Vendor is unknown or the HSM is not supported.
         /// </summary>
         [DataMember(Name = "hsmVendor")]
-        public string HsmVendor { get; private set; }
+        public string HsmVendor { get; init; }
 
         [DataContract]
         public sealed class RsaAuthenticationSchemeClass
@@ -450,19 +486,19 @@ namespace XFS4IoT.KeyManagement
             /// Two-party Signature based authentication.
             /// </summary>
             [DataMember(Name = "2partySig")]
-            public bool? Number2partySig { get; private set; }
+            public bool? Number2partySig { get; init; }
 
             /// <summary>
             /// Three-party Certificate based authentication.
             /// </summary>
             [DataMember(Name = "3partyCert")]
-            public bool? Number3partyCert { get; private set; }
+            public bool? Number3partyCert { get; init; }
 
             /// <summary>
             /// Three-party Certificate based authentication described by X9 TR34-2012.
             /// </summary>
             [DataMember(Name = "3partyCertTr34")]
-            public bool? Number3partyCertTr34 { get; private set; }
+            public bool? Number3partyCertTr34 { get; init; }
 
         }
 
@@ -470,7 +506,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies which type of Remote Key Loading/Authentication.
         /// </summary>
         [DataMember(Name = "rsaAuthenticationScheme")]
-        public RsaAuthenticationSchemeClass RsaAuthenticationScheme { get; private set; }
+        public RsaAuthenticationSchemeClass RsaAuthenticationScheme { get; init; }
 
         [DataContract]
         public sealed class RsaSignatureAlgorithmClass
@@ -485,21 +521,21 @@ namespace XFS4IoT.KeyManagement
             /// pkcs1V15 Signatures supported.
             /// </summary>
             [DataMember(Name = "pkcs1V15")]
-            public bool? Pkcs1V15 { get; private set; }
+            public bool? Pkcs1V15 { get; init; }
 
             /// <summary>
             /// pss Signatures supported.
             /// </summary>
             [DataMember(Name = "pss")]
-            public bool? Pss { get; private set; }
+            public bool? Pss { get; init; }
 
         }
 
         /// <summary>
-        /// Specifies which type of rsa Signature Algorithm.
+        /// Specifies which type of RSA Signature Algorithm.
         /// </summary>
         [DataMember(Name = "rsaSignatureAlgorithm")]
-        public RsaSignatureAlgorithmClass RsaSignatureAlgorithm { get; private set; }
+        public RsaSignatureAlgorithmClass RsaSignatureAlgorithm { get; init; }
 
         [DataContract]
         public sealed class RsaCryptAlgorithmClass
@@ -514,21 +550,21 @@ namespace XFS4IoT.KeyManagement
             /// pkcs1V15 algorithm supported.
             /// </summary>
             [DataMember(Name = "pkcs1V15")]
-            public bool? Pkcs1V15 { get; private set; }
+            public bool? Pkcs1V15 { get; init; }
 
             /// <summary>
             /// oaep algorithm supported.
             /// </summary>
             [DataMember(Name = "oaep")]
-            public bool? Oaep { get; private set; }
+            public bool? Oaep { get; init; }
 
         }
 
         /// <summary>
-        /// Specifies which type of rsa Encipherment Algorithm.
+        /// Specifies which type of RSA Encipherment Algorithm.
         /// </summary>
         [DataMember(Name = "rsaCryptAlgorithm")]
-        public RsaCryptAlgorithmClass RsaCryptAlgorithm { get; private set; }
+        public RsaCryptAlgorithmClass RsaCryptAlgorithm { get; init; }
 
         [DataContract]
         public sealed class RsaKeyCheckModeClass
@@ -543,13 +579,13 @@ namespace XFS4IoT.KeyManagement
             /// sha1 is supported as defined in Ref. 3.
             /// </summary>
             [DataMember(Name = "sha1")]
-            public bool? Sha1 { get; private set; }
+            public bool? Sha1 { get; init; }
 
             /// <summary>
             /// sha256 is supported as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
             /// </summary>
             [DataMember(Name = "sha256")]
-            public bool? Sha256 { get; private set; }
+            public bool? Sha256 { get; init; }
 
         }
 
@@ -557,7 +593,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies which algorithm/method used to generate the public key check value/thumb print.
         /// </summary>
         [DataMember(Name = "rsaKeyCheckMode")]
-        public RsaKeyCheckModeClass RsaKeyCheckMode { get; private set; }
+        public RsaKeyCheckModeClass RsaKeyCheckMode { get; init; }
 
         [DataContract]
         public sealed class SignatureSchemeClass
@@ -571,25 +607,26 @@ namespace XFS4IoT.KeyManagement
             }
 
             /// <summary>
-            /// Specifies if the Service Provider supports the rsa Signature Scheme 
+            /// Specifies if the Service Provider supports the RSA Signature Scheme 
             /// [KeyManagement.GenerateRSAKeyPair](#keymangement.generatersakeypair) 
             /// and [KeyManagement.ExportRSAEPPSignedItem](#keymangement.exportrsaeppsigneditem) commands.
             /// </summary>
             [DataMember(Name = "genRsaKeyPair")]
-            public bool? GenRsaKeyPair { get; private set; }
+            public bool? GenRsaKeyPair { get; init; }
 
             /// <summary>
             /// Specifies if the Service Provider returns a random number from the StartKeyExchange GE 
-            /// command within the rsa Signature Scheme.
+            /// command within the RSA Signature Scheme.
             /// </summary>
             [DataMember(Name = "randomNumber")]
-            public bool? RandomNumber { get; private set; }
+            public bool? RandomNumber { get; init; }
 
             /// <summary>
-            /// Specifies if the Service Provider supports exporting the EPP Security Item within the rsa Signature Scheme.
+            /// Specifies if the Service Provider supports exporting the EPP Security Item within the RSA Signature
+            /// Scheme.
             /// </summary>
             [DataMember(Name = "exportEppId")]
-            public bool? ExportEppId { get; private set; }
+            public bool? ExportEppId { get; init; }
 
             /// <summary>
             /// Specifies that the Service Provider supports the Enhanced Signature Remote Key Scheme. This scheme allows 
@@ -597,7 +634,7 @@ namespace XFS4IoT.KeyManagement
             /// then the key loaded signed with the Signature Issuer key is the host root public key PKROOT, rather than PKHOST.
             /// </summary>
             [DataMember(Name = "enhancedRkl")]
-            public bool? EnhancedRkl { get; private set; }
+            public bool? EnhancedRkl { get; init; }
 
         }
 
@@ -605,7 +642,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies which capabilities are supported by the Signature scheme.
         /// </summary>
         [DataMember(Name = "signatureScheme")]
-        public SignatureSchemeClass SignatureScheme { get; private set; }
+        public SignatureSchemeClass SignatureScheme { get; init; }
 
         [DataContract]
         public sealed class EmvImportSchemesClass
@@ -625,45 +662,45 @@ namespace XFS4IoT.KeyManagement
             /// A plain text CA public key is imported with no verification.
             /// </summary>
             [DataMember(Name = "plainCA")]
-            public bool? PlainCA { get; private set; }
+            public bool? PlainCA { get; init; }
 
             /// <summary>
             /// A plain text CA public key is imported using the EMV 2000 verification algorithm.
             /// </summary>
             [DataMember(Name = "chksumCA")]
-            public bool? ChksumCA { get; private set; }
+            public bool? ChksumCA { get; init; }
 
             /// <summary>
             /// A CA public key is imported using the selfsign scheme defined in the Europay International, epi CA Module 
             /// Technical - Interface specification.\
             /// </summary>
             [DataMember(Name = "epiCA")]
-            public bool? EpiCA { get; private set; }
+            public bool? EpiCA { get; init; }
 
             /// <summary>
             /// An Issuer public key is imported as defined in EMV 2000 Book II.
             /// </summary>
             [DataMember(Name = "issuer")]
-            public bool? Issuer { get; private set; }
+            public bool? Issuer { get; init; }
 
             /// <summary>
             /// An ICC public key is imported as defined in EMV 2000 Book II.
             /// </summary>
             [DataMember(Name = "icc")]
-            public bool? Icc { get; private set; }
+            public bool? Icc { get; init; }
 
             /// <summary>
             /// An ICC PIN public key is imported as defined in EMV 2000 Book II.
             /// </summary>
             [DataMember(Name = "iccPin")]
-            public bool? IccPin { get; private set; }
+            public bool? IccPin { get; init; }
 
             /// <summary>
             /// A CA public key is imported and verified using a signature generated with a private key for 
             /// which the public key is already loaded..
             /// </summary>
             [DataMember(Name = "pkcsv15CA")]
-            public bool? Pkcsv15CA { get; private set; }
+            public bool? Pkcsv15CA { get; init; }
 
         }
 
@@ -671,7 +708,7 @@ namespace XFS4IoT.KeyManagement
         /// Identifies the supported emv Import Scheme(s).
         /// </summary>
         [DataMember(Name = "emvImportSchemes")]
-        public EmvImportSchemesClass EmvImportSchemes { get; private set; }
+        public EmvImportSchemesClass EmvImportSchemes { get; init; }
 
         [DataContract]
         public sealed class KeyBlockImportFormatsClass
@@ -687,19 +724,19 @@ namespace XFS4IoT.KeyManagement
             /// Supports ANS TR-31A Keyblock format key import.
             /// </summary>
             [DataMember(Name = "ansTr31KeyBlock")]
-            public bool? AnsTr31KeyBlock { get; private set; }
+            public bool? AnsTr31KeyBlock { get; init; }
 
             /// <summary>
             /// Supports ANS TR-31B Keyblock format key import.
             /// </summary>
             [DataMember(Name = "ansTr31KeyBlockB")]
-            public bool? AnsTr31KeyBlockB { get; private set; }
+            public bool? AnsTr31KeyBlockB { get; init; }
 
             /// <summary>
             /// Supports ANS TR-31C Keyblock format key import.
             /// </summary>
             [DataMember(Name = "ansTr31KeyBlockC")]
-            public bool? AnsTr31KeyBlockC { get; private set; }
+            public bool? AnsTr31KeyBlockC { get; init; }
 
         }
 
@@ -707,14 +744,14 @@ namespace XFS4IoT.KeyManagement
         /// Supported key block formats.
         /// </summary>
         [DataMember(Name = "keyBlockImportFormats")]
-        public KeyBlockImportFormatsClass KeyBlockImportFormats { get; private set; }
+        public KeyBlockImportFormatsClass KeyBlockImportFormats { get; init; }
 
         /// <summary>
         /// Specifies whether the device is capable of importing keys in multiple parts. TRUE means the 
         /// device supports the key import in multiple parts.
         /// </summary>
         [DataMember(Name = "keyImportThroughParts")]
-        public bool? KeyImportThroughParts { get; private set; }
+        public bool? KeyImportThroughParts { get; init; }
 
         [DataContract]
         public sealed class DesKeyLengthClass
@@ -730,19 +767,19 @@ namespace XFS4IoT.KeyManagement
             /// 8 byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "single")]
-            public bool? Single { get; private set; }
+            public bool? Single { get; init; }
 
             /// <summary>
             /// 16 byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "double")]
-            public bool? Double { get; private set; }
+            public bool? Double { get; init; }
 
             /// <summary>
             /// 24 byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "triple")]
-            public bool? Triple { get; private set; }
+            public bool? Triple { get; init; }
 
         }
 
@@ -750,7 +787,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies which length of DES keys are supported.
         /// </summary>
         [DataMember(Name = "desKeyLength")]
-        public DesKeyLengthClass DesKeyLength { get; private set; }
+        public DesKeyLengthClass DesKeyLength { get; init; }
 
         [DataContract]
         public sealed class CertificateTypesClass
@@ -766,19 +803,19 @@ namespace XFS4IoT.KeyManagement
             /// Supports the EPP public encryption certificate.
             /// </summary>
             [DataMember(Name = "encKey")]
-            public bool? EncKey { get; private set; }
+            public bool? EncKey { get; init; }
 
             /// <summary>
             /// Supports the EPP public verification certificate.
             /// </summary>
             [DataMember(Name = "verificationKey")]
-            public bool? VerificationKey { get; private set; }
+            public bool? VerificationKey { get; init; }
 
             /// <summary>
             /// Supports the Host public certificate.
             /// </summary>
             [DataMember(Name = "hostKey")]
-            public bool? HostKey { get; private set; }
+            public bool? HostKey { get; init; }
 
         }
 
@@ -786,7 +823,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifies supported certificate types.
         /// </summary>
         [DataMember(Name = "certificateTypes")]
-        public CertificateTypesClass CertificateTypes { get; private set; }
+        public CertificateTypesClass CertificateTypes { get; init; }
 
         [DataContract]
         public sealed class LoadCertOptionsClass
@@ -820,7 +857,7 @@ namespace XFS4IoT.KeyManagement
             /// * ```hlTr34``` - A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2012.\
             /// </summary>
             [DataMember(Name = "signer")]
-            public SignerEnum? Signer { get; private set; }
+            public SignerEnum? Signer { get; init; }
 
             [DataContract]
             public sealed class OptionClass
@@ -835,13 +872,13 @@ namespace XFS4IoT.KeyManagement
                 /// Load a new Host certificate, where one has not already been loaded.
                 /// </summary>
                 [DataMember(Name = "newHost")]
-                public bool? NewHost { get; private set; }
+                public bool? NewHost { get; init; }
 
                 /// <summary>
                 /// Replace the epp to a new Host certificate, where the new Host certificate is signed by signer.
                 /// </summary>
                 [DataMember(Name = "replaceHost")]
-                public bool? ReplaceHost { get; private set; }
+                public bool? ReplaceHost { get; init; }
 
             }
 
@@ -849,7 +886,7 @@ namespace XFS4IoT.KeyManagement
             /// Specifies the load options supported by the [KeyManagement.LoadCertificate](#keymanagement.loadcertificate) command.
             /// </summary>
             [DataMember(Name = "option")]
-            public OptionClass Option { get; private set; }
+            public OptionClass Option { get; init; }
 
         }
 
@@ -857,7 +894,7 @@ namespace XFS4IoT.KeyManagement
         /// Specifying the options supported by the [KeyManagement.LoadCertificate](#keymanagement.loadcertificate) command.
         /// </summary>
         [DataMember(Name = "loadCertOptions")]
-        public List<LoadCertOptionsClass> LoadCertOptions { get; private set; }
+        public List<LoadCertOptionsClass> LoadCertOptions { get; init; }
 
         [DataContract]
         public sealed class CrklLoadOptionsClass
@@ -874,27 +911,27 @@ namespace XFS4IoT.KeyManagement
             /// Import a Key Transport Key without generating and using a random number.
             /// </summary>
             [DataMember(Name = "noRandom")]
-            public bool? NoRandom { get; private set; }
+            public bool? NoRandom { get; init; }
 
             /// <summary>
             /// Import a Key Transport Key with a Certificate Revocation List appended to the input message.
             /// A random number is not generated nor used.
             /// </summary>
             [DataMember(Name = "noRandomCrl")]
-            public bool? NoRandomCrl { get; private set; }
+            public bool? NoRandomCrl { get; init; }
 
             /// <summary>
             /// Import a Key Transport Key by generating and using a random number.
             /// </summary>
             [DataMember(Name = "random")]
-            public bool? Random { get; private set; }
+            public bool? Random { get; init; }
 
             /// <summary>
             /// Import a Key Transport Key with a Certificate Revocation List appended to the input parameter.
             /// A random number is generated and used.
             /// </summary>
             [DataMember(Name = "randomCrl")]
-            public bool? RandomCrl { get; private set; }
+            public bool? RandomCrl { get; init; }
 
         }
 
@@ -902,7 +939,7 @@ namespace XFS4IoT.KeyManagement
         /// Supported options to load the Key Transport Key using the Certificate Remote Key Loading protocol.
         /// </summary>
         [DataMember(Name = "crklLoadOptions")]
-        public CrklLoadOptionsClass CrklLoadOptions { get; private set; }
+        public CrklLoadOptionsClass CrklLoadOptions { get; init; }
 
         [DataContract]
         public sealed class RestrictedKeyEncKeySupportClass
@@ -931,7 +968,7 @@ namespace XFS4IoT.KeyManagement
             /// * ```restrictedSecurekeyentry``` - Restricted secure key entry.
             /// </summary>
             [DataMember(Name = "loadingMethod")]
-            public LoadingMethodEnum? LoadingMethod { get; private set; }
+            public LoadingMethodEnum? LoadingMethod { get; init; }
 
             [DataContract]
             public sealed class UsesClass
@@ -950,37 +987,37 @@ namespace XFS4IoT.KeyManagement
                 /// Key isused for encryption and decryption.
                 /// </summary>
                 [DataMember(Name = "crypt")]
-                public bool? Crypt { get; private set; }
+                public bool? Crypt { get; init; }
 
                 /// <summary>
                 /// Key is used for Pin block creation.
                 /// </summary>
                 [DataMember(Name = "function")]
-                public bool? Function { get; private set; }
+                public bool? Function { get; init; }
 
                 /// <summary>
                 /// Key is using for macing.
                 /// </summary>
                 [DataMember(Name = "macing")]
-                public bool? Macing { get; private set; }
+                public bool? Macing { get; init; }
 
                 /// <summary>
                 /// Key is used only for local PIN check.
                 /// </summary>
                 [DataMember(Name = "pinlocal")]
-                public bool? Pinlocal { get; private set; }
+                public bool? Pinlocal { get; init; }
 
                 /// <summary>
                 /// Key is used as cbc start Value encryption key.
                 /// </summary>
                 [DataMember(Name = "svenckey")]
-                public bool? Svenckey { get; private set; }
+                public bool? Svenckey { get; init; }
 
                 /// <summary>
                 /// Key is used only for PIN block creation.
                 /// </summary>
                 [DataMember(Name = "pinRemote")]
-                public bool? PinRemote { get; private set; }
+                public bool? PinRemote { get; init; }
 
             }
 
@@ -988,7 +1025,7 @@ namespace XFS4IoT.KeyManagement
             /// Specifies one or more usage flags that can be used in combination with the RestrictedKeyEncKey.
             /// </summary>
             [DataMember(Name = "uses")]
-            public UsesClass Uses { get; private set; }
+            public UsesClass Uses { get; init; }
 
         }
 
@@ -997,7 +1034,7 @@ namespace XFS4IoT.KeyManagement
         /// and the allowable usage flag combinations.
         /// </summary>
         [DataMember(Name = "restrictedKeyEncKeySupport")]
-        public List<RestrictedKeyEncKeySupportClass> RestrictedKeyEncKeySupport { get; private set; }
+        public List<RestrictedKeyEncKeySupportClass> RestrictedKeyEncKeySupport { get; init; }
 
         [DataContract]
         public sealed class SymmetricKeyManagementMethodsClass
@@ -1013,7 +1050,7 @@ namespace XFS4IoT.KeyManagement
             /// This method of key management uses fixed keys for transaction processing.
             /// </summary>
             [DataMember(Name = "fixedKey")]
-            public bool? FixedKey { get; private set; }
+            public bool? FixedKey { get; init; }
 
             /// <summary>
             /// This method uses a hierarchy of Key Encrypting Keys and Transaction Keys. The highest level of 
@@ -1021,13 +1058,13 @@ namespace XFS4IoT.KeyManagement
             /// Transaction Keys are distributed and replaced encrypted under a Key Encrypting Key.
             /// </summary>
             [DataMember(Name = "masterKey")]
-            public bool? MasterKey { get; private set; }
+            public bool? MasterKey { get; init; }
 
             /// <summary>
             /// This method uses TDES Derived Unique Key Per Transaction (see reference 45).
             /// </summary>
             [DataMember(Name = "tdesDukpt")]
-            public bool? TdesDukpt { get; private set; }
+            public bool? TdesDukpt { get; init; }
 
         }
 
@@ -1035,25 +1072,25 @@ namespace XFS4IoT.KeyManagement
         /// Specifies the Symmentric Key Management modes.
         /// </summary>
         [DataMember(Name = "symmetricKeyManagementMethods")]
-        public SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods { get; private set; }
+        public SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods { get; init; }
 
         /// <summary>
         /// Array of attributes supported by [KeyManagement.ImportKey](#keymanagement.importkey) command for the key to be loaded.
         /// </summary>
         [DataMember(Name = "keyAttributes")]
-        public List<KeyAttributeClass> KeyAttributes { get; private set; }
+        public List<KeyAttributeClass> KeyAttributes { get; init; }
 
         /// <summary>
         /// Array of attributes supported by the Import command for the key used to decrypt or unwrap the key being imported.
         /// </summary>
         [DataMember(Name = "decryptAttributes")]
-        public List<DecryptAttributeClass> DecryptAttributes { get; private set; }
+        public List<DecryptAttributeClass> DecryptAttributes { get; init; }
 
         /// <summary>
-        /// Array of attributes supported by Import command for the key used for verification before importing the key.\"    
+        /// Array of attributes supported by Import command for the key used for verification before importing the key."    
         /// </summary>
         [DataMember(Name = "verifyAttributes")]
-        public List<VerifyAttributeClass> VerifyAttributes { get; private set; }
+        public List<VerifyAttributeClass> VerifyAttributes { get; init; }
 
     }
 
@@ -1068,8 +1105,8 @@ namespace XFS4IoT.KeyManagement
     public enum RSASignatureAlgorithmEnum
     {
         Na,
-        Reassa_pkcs1_v1_5,
-        Rsassa_pss
+        RsassaPkcs1V15,
+        RsassaPss
     }
 
 
@@ -1095,68 +1132,68 @@ namespace XFS4IoT.KeyManagement
         /// Authentication is not required.
         /// </summary>
         [DataMember(Name = "none")]
-        public bool? None { get; private set; }
+        public bool? None { get; init; }
 
         /// <summary>
         /// The data is signed by the current Host, using the RSA certificate-based scheme.
         /// </summary>
         [DataMember(Name = "certhost")]
-        public bool? Certhost { get; private set; }
+        public bool? Certhost { get; init; }
 
         /// <summary>
         /// The data is signed by the current Host, using the RSA signature-based scheme.
         /// </summary>
         [DataMember(Name = "sighost")]
-        public bool? Sighost { get; private set; }
+        public bool? Sighost { get; init; }
 
         /// <summary>
         /// The data is signed by the Certificate Authority (CA).
         /// </summary>
         [DataMember(Name = "ca")]
-        public bool? Ca { get; private set; }
+        public bool? Ca { get; init; }
 
         /// <summary>
         /// The data is signed by the Higher Level (HL) Authority.
         /// </summary>
         [DataMember(Name = "hl")]
-        public bool? Hl { get; private set; }
+        public bool? Hl { get; init; }
 
         /// <summary>
         /// The format of the data that was signed complies with the data defined in X9 TR342012 [Ref. 42]. 
         /// This value can only be used in combination with the CERTHOST, CA or HL flags.
         /// </summary>
         [DataMember(Name = "tr34")]
-        public bool? Tr34 { get; private set; }
+        public bool? Tr34 { get; init; }
 
         /// <summary>
         /// A MAC is calculated over the data using lpsKey and the CBC MAC algorithm.
         /// </summary>
         [DataMember(Name = "cbcmac")]
-        public bool? Cbcmac { get; private set; }
+        public bool? Cbcmac { get; init; }
 
         /// <summary>
         /// A MAC is calculated over the data using lpsKey and the CMAC algorithm.
         /// </summary>
         [DataMember(Name = "cmac")]
-        public bool? Cmac { get; private set; }
+        public bool? Cmac { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined signing method.
         /// </summary>
         [DataMember(Name = "reserved_1")]
-        public bool? Reserved_1 { get; private set; }
+        public bool? Reserved_1 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined signing method.
         /// </summary>
         [DataMember(Name = "reserved_2")]
-        public bool? Reserved_2 { get; private set; }
+        public bool? Reserved_2 { get; init; }
 
         /// <summary>
         /// Reserved for a vendor-defined signing method.
         /// </summary>
         [DataMember(Name = "reserved_3")]
-        public bool? Reserved_3 { get; private set; }
+        public bool? Reserved_3 { get; init; }
 
     }
 

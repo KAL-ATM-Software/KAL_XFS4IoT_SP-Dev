@@ -39,7 +39,7 @@ namespace XFS4IoT.Common.Events
             /// Position of the device
             /// </summary>
             [DataMember(Name = "Position")]
-            public PositionStatusEnum? Position { get; private set; }
+            public PositionStatusEnum? Position { get; init; }
 
         }
 

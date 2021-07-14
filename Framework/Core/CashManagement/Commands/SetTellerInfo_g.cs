@@ -49,7 +49,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// * ```deleteTeller``` - A teller is to be removed.
             /// </summary>
             [DataMember(Name = "action")]
-            public ActionEnum? Action { get; private set; }
+            public ActionEnum? Action { get; init; }
 
             [DataContract]
             public sealed class TellerDetailsClass
@@ -66,7 +66,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// Identification of the teller.
                 /// </summary>
                 [DataMember(Name = "tellerID")]
-                public int? TellerID { get; private set; }
+                public int? TellerID { get; init; }
 
                 public enum InputPositionEnum
                 {
@@ -93,7 +93,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// * ```rear``` - Rear position is assigned to the teller.
                 /// </summary>
                 [DataMember(Name = "inputPosition")]
-                public InputPositionEnum? InputPosition { get; private set; }
+                public InputPositionEnum? InputPosition { get; init; }
 
                 public enum OutputPositionEnum
                 {
@@ -120,7 +120,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// * ```rear``` - Rear position is assigned to the teller.
                 /// </summary>
                 [DataMember(Name = "outputPosition")]
-                public OutputPositionEnum? OutputPosition { get; private set; }
+                public OutputPositionEnum? OutputPosition { get; init; }
 
                 [DataContract]
                 public sealed class TellerTotalsClass
@@ -140,42 +140,42 @@ namespace XFS4IoT.CashManagement.Commands
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "itemsReceived")]
-                    public double? ItemsReceived { get; private set; }
+                    public double? ItemsReceived { get; init; }
 
                     /// <summary>
                     /// The total amount of items (other than coins) of the specified currency dispensed. 
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "itemsDispensed")]
-                    public double? ItemsDispensed { get; private set; }
+                    public double? ItemsDispensed { get; init; }
 
                     /// <summary>
                     /// The total amount of coin currency accepted. 
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "coinsReceived")]
-                    public double? CoinsReceived { get; private set; }
+                    public double? CoinsReceived { get; init; }
 
                     /// <summary>
                     /// The total amount of coin currency dispensed. 
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "coinsDispensed")]
-                    public double? CoinsDispensed { get; private set; }
+                    public double? CoinsDispensed { get; init; }
 
                     /// <summary>
                     /// The total amount of cash box currency accepted. 
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "cashBoxReceived")]
-                    public double? CashBoxReceived { get; private set; }
+                    public double? CashBoxReceived { get; init; }
 
                     /// <summary>
                     /// The total amount of cash box currency dispensed. 
                     /// The amount is expressed as floating point value.
                     /// </summary>
                     [DataMember(Name = "cashBoxDispensed")]
-                    public double? CashBoxDispensed { get; private set; }
+                    public double? CashBoxDispensed { get; init; }
 
                 }
 
@@ -183,7 +183,7 @@ namespace XFS4IoT.CashManagement.Commands
                 /// List of teller total objects. There is one object per currency.
                 /// </summary>
                 [DataMember(Name = "tellerTotals")]
-                public Dictionary<string, TellerTotalsClass> TellerTotals { get; private set; }
+                public Dictionary<string, TellerTotalsClass> TellerTotals { get; init; }
 
             }
 
@@ -191,7 +191,7 @@ namespace XFS4IoT.CashManagement.Commands
             /// Teller details object.
             /// </summary>
             [DataMember(Name = "tellerDetails")]
-            public TellerDetailsClass TellerDetails { get; private set; }
+            public TellerDetailsClass TellerDetails { get; init; }
 
         }
     }

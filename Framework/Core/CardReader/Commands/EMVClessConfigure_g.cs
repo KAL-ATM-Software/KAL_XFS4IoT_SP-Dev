@@ -42,7 +42,7 @@ namespace XFS4IoT.CardReader.Commands
             /// included (see References [2] to [14] section for more details).
             /// </summary>
             [DataMember(Name = "terminalData")]
-            public string TerminalData { get; private set; }
+            public string TerminalData { get; init; }
 
             [DataContract]
             public sealed class AidDataClass
@@ -62,7 +62,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// return the list of supported application identifiers.
                 /// </summary>
                 [DataMember(Name = "aid")]
-                public string Aid { get; private set; }
+                public string Aid { get; init; }
 
                 /// <summary>
                 /// If *partialSelection* is *true*, partial name selection of the specified AID is enabled. If
@@ -70,21 +70,21 @@ namespace XFS4IoT.CardReader.Commands
                 /// partial name selection is given in EMV 4.3 Book 1, Section 11.3.5.
                 /// </summary>
                 [DataMember(Name = "partialSelection")]
-                public bool? PartialSelection { get; private set; }
+                public bool? PartialSelection { get; init; }
 
                 /// <summary>
                 /// The transaction type supported by the AID. This indicates the type of financial transaction
                 /// represented by the first two digits of the ISO 8583:1987 Processing Code.
                 /// </summary>
                 [DataMember(Name = "transactionType")]
-                public int? TransactionType { get; private set; }
+                public int? TransactionType { get; init; }
 
                 /// <summary>
                 /// Base64 encoded representation of the EMVCo defined kernel identifier associated with the *aid*.
                 /// This field will be ignored if the reader does not support kernel identifiers.
                 /// </summary>
                 [DataMember(Name = "kernelIdentifier")]
-                public string KernelIdentifier { get; private set; }
+                public string KernelIdentifier { get; init; }
 
                 /// <summary>
                 /// Base64 encoded representation of the list of BER-TLV formatted configuration data, applicable to
@@ -92,7 +92,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// specifications define the BER-TLV tags to be configured.
                 /// </summary>
                 [DataMember(Name = "configData")]
-                public string ConfigData { get; private set; }
+                public string ConfigData { get; init; }
 
             }
 
@@ -105,7 +105,7 @@ namespace XFS4IoT.CardReader.Commands
             /// of configuration data. See References [2] and [3] for more details.
             /// </summary>
             [DataMember(Name = "aidData")]
-            public List<AidDataClass> AidData { get; private set; }
+            public List<AidDataClass> AidData { get; init; }
 
             [DataContract]
             public sealed class KeyDataClass
@@ -121,7 +121,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// and identifies the payments system.
                 /// </summary>
                 [DataMember(Name = "rid")]
-                public string Rid { get; private set; }
+                public string Rid { get; init; }
 
                 [DataContract]
                 public sealed class CaPublicKeyClass
@@ -139,7 +139,7 @@ namespace XFS4IoT.CardReader.Commands
                     /// Specifies the CA Public Key Index for the specific RID.
                     /// </summary>
                     [DataMember(Name = "index")]
-                    public int? Index { get; private set; }
+                    public int? Index { get; init; }
 
                     /// <summary>
                     /// Specifies the algorithm used in the calculation of the CA Public Key checksum. A detailed
@@ -148,7 +148,7 @@ namespace XFS4IoT.CardReader.Commands
                     /// algorithm is coded as 0x01.
                     /// </summary>
                     [DataMember(Name = "algorithmIndicator")]
-                    public int? AlgorithmIndicator { get; private set; }
+                    public int? AlgorithmIndicator { get; init; }
 
                     /// <summary>
                     /// Base64 encoded representation of the CA Public Key Exponent for the specific RID. This value
@@ -158,19 +158,19 @@ namespace XFS4IoT.CardReader.Commands
                     /// ‘3’ is coded as 0x03.
                     /// </summary>
                     [DataMember(Name = "exponent")]
-                    public string Exponent { get; private set; }
+                    public string Exponent { get; init; }
 
                     /// <summary>
                     /// Base64 encoded representation of the CA Public Key Modulus for the specific RID.
                     /// </summary>
                     [DataMember(Name = "modulus")]
-                    public string Modulus { get; private set; }
+                    public string Modulus { get; init; }
 
                     /// <summary>
                     /// Base64 encoded representation of the 20 byte checksum value for the CA Public Key.
                     /// </summary>
                     [DataMember(Name = "checksum")]
-                    public string Checksum { get; private set; }
+                    public string Checksum { get; init; }
 
                 }
 
@@ -178,7 +178,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// CA Public Key information for the specified *rid*
                 /// </summary>
                 [DataMember(Name = "caPublicKey")]
-                public CaPublicKeyClass CaPublicKey { get; private set; }
+                public CaPublicKeyClass CaPublicKey { get; init; }
 
             }
 
@@ -187,7 +187,7 @@ namespace XFS4IoT.CardReader.Commands
             /// offline data authentication.
             /// </summary>
             [DataMember(Name = "keyData")]
-            public List<KeyDataClass> KeyData { get; private set; }
+            public List<KeyDataClass> KeyData { get; init; }
 
         }
     }

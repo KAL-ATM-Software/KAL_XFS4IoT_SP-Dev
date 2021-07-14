@@ -45,7 +45,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```invalidMixTable``` - The contents of at least one of the defined rows of the mix table is incorrect.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

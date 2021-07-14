@@ -36,7 +36,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Array of the form names.
             /// </summary>
             [DataMember(Name = "formList")]
-            public List<string> FormList { get; private set; }
+            public List<string> FormList { get; init; }
 
         }
     }

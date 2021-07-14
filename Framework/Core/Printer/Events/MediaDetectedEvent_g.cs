@@ -57,7 +57,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```expelled``` - The media was expelled during the reset operation.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             /// <summary>
             /// Number of the retract bin the media was retracted to. This number has to be between one and the 
@@ -65,7 +65,7 @@ namespace XFS4IoT.Printer.Events
             /// It is only relevant if [position](#printer.mediadetectedevent.event.properties.position) is *retracted*.
             /// </summary>
             [DataMember(Name = "retractBinNumber")]
-            public int? RetractBinNumber { get; private set; }
+            public int? RetractBinNumber { get; init; }
 
         }
 

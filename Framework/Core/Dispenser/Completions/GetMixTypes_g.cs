@@ -48,7 +48,7 @@ namespace XFS4IoT.Dispenser.Completions
                 /// This number can be passed to the Dispenser.MixTable, Dispenser.Dispense and Dispenser.Denominate commands.
                 /// </summary>
                 [DataMember(Name = "mixNumber")]
-                public int? MixNumber { get; private set; }
+                public int? MixNumber { get; init; }
 
                 public enum MixTypeEnum
                 {
@@ -61,23 +61,23 @@ namespace XFS4IoT.Dispenser.Completions
                 /// ```mixTable```.
                 /// </summary>
                 [DataMember(Name = "mixType")]
-                public MixTypeEnum? MixType { get; private set; }
+                public MixTypeEnum? MixType { get; init; }
 
                 /// <summary>
                 /// Contains a vendor-defined number that identifies the type of algorithm. 
                 /// Individual vendor-defined mix algorithms are defined above hexadecimal 7FFF. 
                 /// Mix algorithms which are provided by the Service are in the range hexadecimal 8000 - 8FFF. 
                 /// Application defined mix algorithms start at hexadecimal 9000. All numbers below 8000 hexadecimal are reserved. 
-                /// If *mixType* is \"mixTable\", this value will be zero.
+                /// If *mixType* is "mixTable", this value will be zero.
                 /// </summary>
                 [DataMember(Name = "subType")]
-                public int? SubType { get; private set; }
+                public int? SubType { get; init; }
 
                 /// <summary>
                 /// Name of the table/algorithm used.
                 /// </summary>
                 [DataMember(Name = "name")]
-                public string Name { get; private set; }
+                public string Name { get; init; }
 
             }
 
@@ -85,7 +85,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// Array of mix type objects.
             /// </summary>
             [DataMember(Name = "mixTypes")]
-            public List<MixTypesClass> MixTypes { get; private set; }
+            public List<MixTypesClass> MixTypes { get; init; }
 
         }
     }

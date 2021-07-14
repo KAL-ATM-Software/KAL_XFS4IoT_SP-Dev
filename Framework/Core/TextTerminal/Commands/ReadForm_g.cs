@@ -38,7 +38,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// Specifies the name of the form.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// Specifies the field names from which to read input data. The fields 
@@ -48,7 +48,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// form file (independent of the field screen position).
             /// </summary>
             [DataMember(Name = "fieldNames")]
-            public List<string> FieldNames { get; private set; }
+            public List<string> FieldNames { get; init; }
 
         }
     }

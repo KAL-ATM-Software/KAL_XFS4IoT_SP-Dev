@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getPresentStatusCmd = command.IsA<GetPresentStatusCommand>($"Invalid parameter in the GetPresentStatus Handle method. {nameof(GetPresentStatusCommand)}");
-            getPresentStatusCmd.Headers.RequestId.HasValue.IsTrue();
+            getPresentStatusCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetPresentStatusEvents events = new GetPresentStatusEvents(Connection, getPresentStatusCmd.Headers.RequestId.Value);
+            IGetPresentStatusEvents events = new GetPresentStatusEvents(Connection, getPresentStatusCmd.Header.RequestId.Value);
 
             var result = await HandleGetPresentStatus(events, getPresentStatusCmd, cancel);
-            await Connection.SendMessageAsync(new GetPresentStatusCompletion(getPresentStatusCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetPresentStatusCompletion(getPresentStatusCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getPresentStatuscommand = command.IsA<GetPresentStatusCommand>();
-            getPresentStatuscommand.Headers.RequestId.HasValue.IsTrue();
+            getPresentStatuscommand.Header.RequestId.HasValue.IsTrue();
 
             GetPresentStatusCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => GetPresentStatusCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetPresentStatusCompletion(getPresentStatuscommand.Headers.RequestId.Value, new GetPresentStatusCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetPresentStatusCompletion(getPresentStatuscommand.Header.RequestId.Value, new GetPresentStatusCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

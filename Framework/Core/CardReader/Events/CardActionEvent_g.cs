@@ -51,7 +51,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```readPosition``` - The card has been moved to the read position.
             /// </summary>
             [DataMember(Name = "action")]
-            public ActionEnum? Action { get; private set; }
+            public ActionEnum? Action { get; init; }
 
             public enum PositionEnum
             {
@@ -68,7 +68,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```entering``` - The card was entering the reader.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
 

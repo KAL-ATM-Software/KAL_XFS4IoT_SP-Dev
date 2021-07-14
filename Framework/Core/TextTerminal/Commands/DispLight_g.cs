@@ -27,10 +27,17 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout)
+            public PayloadData(int Timeout, bool? Mode = null)
                 : base(Timeout)
             {
+                this.Mode = Mode;
             }
+
+            /// <summary>
+            /// Specifies whether the lighting of the text terminal unit is switched on (true) or off (false).
+            /// </summary>
+            [DataMember(Name = "mode")]
+            public bool? Mode { get; init; }
 
         }
     }

@@ -62,13 +62,13 @@ namespace XFS4IoT.CashManagement.Events
                 ///  * ```level4 ``` - Information for level 4 notes.
                 /// </summary>
                 [DataMember(Name = "level")]
-                public LevelEnum? Level { get; private set; }
+                public LevelEnum? Level { get; init; }
 
                 /// <summary>
                 /// Number of items classified as *level* which have information available.
                 /// </summary>
                 [DataMember(Name = "numOfItems")]
-                public int? NumOfItems { get; private set; }
+                public int? NumOfItems { get; init; }
 
             }
 
@@ -76,7 +76,7 @@ namespace XFS4IoT.CashManagement.Events
             /// Array of itemInfoSummary objects, one object for every level.
             /// </summary>
             [DataMember(Name = "itemInfoSummary")]
-            public List<ItemInfoSummaryClass> ItemInfoSummary { get; private set; }
+            public List<ItemInfoSummaryClass> ItemInfoSummary { get; init; }
 
         }
 

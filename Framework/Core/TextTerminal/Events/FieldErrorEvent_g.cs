@@ -41,13 +41,13 @@ namespace XFS4IoT.TextTerminal.Events
             /// Specifies the form name.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// Specifies the field name.
             /// </summary>
             [DataMember(Name = "fieldName")]
-            public string FieldName { get; private set; }
+            public string FieldName { get; init; }
 
             public enum FailureEnum
             {
@@ -73,7 +73,7 @@ namespace XFS4IoT.TextTerminal.Events
             /// * ```charSetForm``` - Service Provider does not support character set specified in form.
             /// </summary>
             [DataMember(Name = "failure")]
-            public FailureEnum? Failure { get; private set; }
+            public FailureEnum? Failure { get; init; }
 
         }
 

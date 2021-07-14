@@ -51,43 +51,43 @@ namespace XFS4IoT.TextTerminal.Commands
                 /// The beeper is turned off.
                 /// </summary>
                 [DataMember(Name = "off")]
-                public bool? Off { get; private set; }
+                public bool? Off { get; init; }
 
                 /// <summary>
                 /// The beeper sounds a key click signal.
                 /// </summary>
                 [DataMember(Name = "keyPress")]
-                public bool? KeyPress { get; private set; }
+                public bool? KeyPress { get; init; }
 
                 /// <summary>
                 /// The beeper sounds an exclamation signal.
                 /// </summary>
                 [DataMember(Name = "exclamation")]
-                public bool? Exclamation { get; private set; }
+                public bool? Exclamation { get; init; }
 
                 /// <summary>
                 /// The beeper sounds a warning signal.
                 /// </summary>
                 [DataMember(Name = "warning")]
-                public bool? Warning { get; private set; }
+                public bool? Warning { get; init; }
 
                 /// <summary>
                 /// The beeper sounds a error signal.
                 /// </summary>
                 [DataMember(Name = "error")]
-                public bool? Error { get; private set; }
+                public bool? Error { get; init; }
 
                 /// <summary>
                 /// The beeper sounds a critical error signal.
                 /// </summary>
                 [DataMember(Name = "critical")]
-                public bool? Critical { get; private set; }
+                public bool? Critical { get; init; }
 
                 /// <summary>
                 /// The beeper sound is turned on continuously.
                 /// </summary>
                 [DataMember(Name = "continuous")]
-                public bool? Continuous { get; private set; }
+                public bool? Continuous { get; init; }
 
             }
 
@@ -95,7 +95,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// Specifies whether the beeper should be turned on or off.
             /// </summary>
             [DataMember(Name = "beep")]
-            public BeepClass Beep { get; private set; }
+            public BeepClass Beep { get; init; }
 
         }
     }

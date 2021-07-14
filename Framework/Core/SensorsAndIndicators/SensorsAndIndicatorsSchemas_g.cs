@@ -37,15 +37,15 @@ namespace XFS4IoT.SensorsAndIndicators
 
         /// <summary>
         /// Indicates the guidelight flash rate. The following values are possible:
-        /// \"notAvailable\": The light indicator is not available.
-        /// \"off\": The light can be turned off.
-        /// \"slow\": The light can blink slowly.
-        /// \"medium\": The light can blink medium frequency.
-        /// \"quick\": The light can blink quickly.
-        /// \"continuous\":The light can be continuous (steady).
+        /// "notAvailable": The light indicator is not available.
+        /// "off": The light can be turned off.
+        /// "slow": The light can blink slowly.
+        /// "medium": The light can blink medium frequency.
+        /// "quick": The light can blink quickly.
+        /// "continuous":The light can be continuous (steady).
         /// </summary>
         [DataMember(Name = "flashRate")]
-        public FlashRateEnum? FlashRate { get; private set; }
+        public FlashRateEnum? FlashRate { get; init; }
 
         public enum ColourEnum
         {
@@ -60,17 +60,17 @@ namespace XFS4IoT.SensorsAndIndicators
 
         /// <summary>
         /// Indicates the guidelight colour. The following values are possible:
-        /// \"defaultColor\": The light indicator is not available.
-        /// \"red\": The light can be red.
-        /// \"green\": The light can be green.
-        /// \"yellow\": The light can be yellow.
-        /// \"blue\": The light can be blue.
-        /// \"cyan\":The light can be cyan.
-        /// \"magenta\": The light can be magenta.
-        /// \"white\":The light can be white.
+        /// "defaultColor": The light indicator is not available.
+        /// "red": The light can be red.
+        /// "green": The light can be green.
+        /// "yellow": The light can be yellow.
+        /// "blue": The light can be blue.
+        /// "cyan":The light can be cyan.
+        /// "magenta": The light can be magenta.
+        /// "white":The light can be white.
         /// </summary>
         [DataMember(Name = "colour")]
-        public ColourEnum? Colour { get; private set; }
+        public ColourEnum? Colour { get; init; }
 
         public enum DirectionEnum
         {
@@ -80,11 +80,11 @@ namespace XFS4IoT.SensorsAndIndicators
 
         /// <summary>
         /// Indicates the guidelight direction. The following values are possible:
-        /// \"entry\": The light can  indicate entry.
-        /// \"exit\": The light can indicate exit.
+        /// "entry": The light can  indicate entry.
+        /// "exit": The light can indicate exit.
         /// </summary>
         [DataMember(Name = "direction")]
-        public DirectionEnum? Direction { get; private set; }
+        public DirectionEnum? Direction { get; init; }
 
         public enum PositionEnum
         {
@@ -100,17 +100,17 @@ namespace XFS4IoT.SensorsAndIndicators
 
         /// <summary>
         /// Indicates the guidelight position. The following values are possible:
-        /// \"default\": The default position.
-        /// \"left\": The left position.
-        /// \"right\": The right position.
-        /// \"center\": The center position.
-        ///  \"top\": The top position.
-        /// \"bottom\": The bottom position.
-        /// \"front\": The front position.
-        /// \"rear\": The rear position.
+        /// "default": The default position.
+        /// "left": The left position.
+        /// "right": The right position.
+        /// "center": The center position.
+        ///  "top": The top position.
+        /// "bottom": The bottom position.
+        /// "front": The front position.
+        /// "rear": The rear position.
         /// </summary>
         [DataMember(Name = "position")]
-        public PositionEnum? Position { get; private set; }
+        public PositionEnum? Position { get; init; }
 
     }
 
@@ -126,7 +126,7 @@ namespace XFS4IoT.SensorsAndIndicators
         [DataContract]
         public sealed class SensorTypeClass
         {
-            public SensorTypeClass(bool? Sensors = null, bool? Doors = null, bool? Indicators = null, bool? Auxiliary = null, bool? Guidelights = null, OperatorSwitchEnum? OperatorSwitch = null, TamperSensorEnum? TamperSensor = null, IntTamperSensorEnum? IntTamperSensor = null, SeismicSensorEnum? SeismicSensor = null, HeatSensorEnum? HeatSensor = null, ProximitySensorEnum? ProximitySensor = null, AmbientLightSensorEnum? AmbientLightSensor = null, EnhancedAudioSensorClass EnhancedAudioSensor = null, BootSwitchSensorEnum? BootSwitchSensor = null, DisplaySensorEnum? DisplaySensor = null, OperatorCallButtonSensorEnum? OperatorCallButtonSensor = null, HandsetSensorClass HandsetSensor = null, List<bool> GeneralInputPort = null, HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorEnum? FasciaMicrophoneSensor = null, CabinetDoorClass CabinetDoor = null, SafeDoorClass SafeDoor = null, VandalShieldClass VandalShield = null, FrontCabinetClass FrontCabinet = null, RearCabinetClass RearCabinet = null, LeftCabinetClass LeftCabinet = null, RightCabinetClass RightCabinet = null, OpenCloseIndicatorEnum? OpenCloseIndicator = null, FasciaLightEnum? FasciaLight = null, AudioEnum? Audio = null, HeatingEnum? Heating = null, ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight = null, SignageDisplayEnum? SignageDisplay = null, List<bool> TransactionIndicator = null, List<bool> GeneralOutputPort = null, VolumeClass Volume = null, UPSClass UPS = null, RemoteStatusMonitorEnum? RemoteStatusMonitor = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlClass EnhancedAudioControl = null, EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState = null, MicrophoneVolumeClass MicrophoneVolume = null, AutoStartupModeClass AutoStartupMode = null, GuideLightsClass GuideLights = null)
+            public SensorTypeClass(bool? Sensors = null, bool? Doors = null, bool? Indicators = null, bool? Auxiliary = null, bool? Guidelights = null, OperatorSwitchEnum? OperatorSwitch = null, TamperSensorEnum? TamperSensor = null, IntTamperSensorEnum? IntTamperSensor = null, SeismicSensorEnum? SeismicSensor = null, HeatSensorEnum? HeatSensor = null, ProximitySensorEnum? ProximitySensor = null, AmbientLightSensorEnum? AmbientLightSensor = null, EnhancedAudioSensorClass EnhancedAudioSensor = null, BootSwitchSensorEnum? BootSwitchSensor = null, DisplaySensorEnum? DisplaySensor = null, OperatorCallButtonSensorEnum? OperatorCallButtonSensor = null, HandsetSensorClass HandsetSensor = null, List<bool> GeneralInputPort = null, HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorEnum? FasciaMicrophoneSensor = null, CabinetDoorClass CabinetDoor = null, SafeDoorClass SafeDoor = null, VandalShieldClass VandalShield = null, FrontCabinetClass FrontCabinet = null, RearCabinetClass RearCabinet = null, LeftCabinetClass LeftCabinet = null, RightCabinetClass RightCabinet = null, OpenCloseIndicatorEnum? OpenCloseIndicator = null, FasciaLightEnum? FasciaLight = null, AudioEnum? Audio = null, HeatingEnum? Heating = null, ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight = null, SignageDisplayEnum? SignageDisplay = null, List<bool> TransactionIndicator = null, List<bool> GeneralOutputPort = null, VolumeClass Volume = null, UPSClass UPS = null, RemoteStatusMonitorEnum? RemoteStatusMonitor = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlClass EnhancedAudioControl = null, EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState = null, MicrophoneVolumeClass MicrophoneVolume = null, AutoStartupModeClass AutoStartupMode = null, Dictionary<string, GuideLightCapabilitiesClass> GuideLights = null)
             {
                 this.Sensors = Sensors;
                 this.Doors = Doors;
@@ -178,31 +178,31 @@ namespace XFS4IoT.SensorsAndIndicators
             /// The device supports input sensors.
             /// </summary>
             [DataMember(Name = "sensors")]
-            public bool? Sensors { get; private set; }
+            public bool? Sensors { get; init; }
 
             /// <summary>
             /// The device supports door sensors.
             /// </summary>
             [DataMember(Name = "doors")]
-            public bool? Doors { get; private set; }
+            public bool? Doors { get; init; }
 
             /// <summary>
             /// The device supports indicators.
             /// </summary>
             [DataMember(Name = "indicators")]
-            public bool? Indicators { get; private set; }
+            public bool? Indicators { get; init; }
 
             /// <summary>
             /// The device supports auxiliary indicators.
             /// </summary>
             [DataMember(Name = "auxiliary")]
-            public bool? Auxiliary { get; private set; }
+            public bool? Auxiliary { get; init; }
 
             /// <summary>
             /// The device supports guidance lights.
             /// </summary>
             [DataMember(Name = "guidelights")]
-            public bool? Guidelights { get; private set; }
+            public bool? Guidelights { get; init; }
 
             public enum OperatorSwitchEnum
             {
@@ -216,7 +216,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the Operator switch.
             /// </summary>
             [DataMember(Name = "operatorSwitch")]
-            public OperatorSwitchEnum? OperatorSwitch { get; private set; }
+            public OperatorSwitchEnum? OperatorSwitch { get; init; }
 
             public enum TamperSensorEnum
             {
@@ -228,7 +228,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the Tamper sensor.
             /// </summary>
             [DataMember(Name = "tamperSensor")]
-            public TamperSensorEnum? TamperSensor { get; private set; }
+            public TamperSensorEnum? TamperSensor { get; init; }
 
             public enum IntTamperSensorEnum
             {
@@ -240,7 +240,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the internal Tamper sensor.
             /// </summary>
             [DataMember(Name = "intTamperSensor")]
-            public IntTamperSensorEnum? IntTamperSensor { get; private set; }
+            public IntTamperSensorEnum? IntTamperSensor { get; init; }
 
             public enum SeismicSensorEnum
             {
@@ -252,7 +252,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the Seismic sensor.
             /// </summary>
             [DataMember(Name = "seismicSensor")]
-            public SeismicSensorEnum? SeismicSensor { get; private set; }
+            public SeismicSensorEnum? SeismicSensor { get; init; }
 
             public enum HeatSensorEnum
             {
@@ -264,7 +264,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the heat sensor.
             /// </summary>
             [DataMember(Name = "heatSensor")]
-            public HeatSensorEnum? HeatSensor { get; private set; }
+            public HeatSensorEnum? HeatSensor { get; init; }
 
             public enum ProximitySensorEnum
             {
@@ -276,7 +276,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the proximity sensor.
             /// </summary>
             [DataMember(Name = "proximitySensor")]
-            public ProximitySensorEnum? ProximitySensor { get; private set; }
+            public ProximitySensorEnum? ProximitySensor { get; init; }
 
             public enum AmbientLightSensorEnum
             {
@@ -288,7 +288,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the ambient light sensor.
             /// </summary>
             [DataMember(Name = "ambientLightSensor")]
-            public AmbientLightSensorEnum? AmbientLightSensor { get; private set; }
+            public AmbientLightSensorEnum? AmbientLightSensor { get; init; }
 
             [DataContract]
             public sealed class EnhancedAudioSensorClass
@@ -304,23 +304,23 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "manual")]
-                public bool? Manual { get; private set; }
+                public bool? Manual { get; init; }
 
 
                 [DataMember(Name = "auto")]
-                public bool? Auto { get; private set; }
+                public bool? Auto { get; init; }
 
 
                 [DataMember(Name = "semiAuto")]
-                public bool? SemiAuto { get; private set; }
+                public bool? SemiAuto { get; init; }
 
 
                 [DataMember(Name = "bidirectional")]
-                public bool? Bidirectional { get; private set; }
+                public bool? Bidirectional { get; init; }
 
             }
 
@@ -328,7 +328,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Audio Jack is present, and if so, which modes it supports.
             /// </summary>
             [DataMember(Name = "enhancedAudioSensor")]
-            public EnhancedAudioSensorClass EnhancedAudioSensor { get; private set; }
+            public EnhancedAudioSensorClass EnhancedAudioSensor { get; init; }
 
             public enum BootSwitchSensorEnum
             {
@@ -340,7 +340,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the boot switch sensor.
             /// </summary>
             [DataMember(Name = "bootSwitchSensor")]
-            public BootSwitchSensorEnum? BootSwitchSensor { get; private set; }
+            public BootSwitchSensorEnum? BootSwitchSensor { get; init; }
 
             public enum DisplaySensorEnum
             {
@@ -352,7 +352,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies the Consumer Display.
             /// </summary>
             [DataMember(Name = "displaySensor")]
-            public DisplaySensorEnum? DisplaySensor { get; private set; }
+            public DisplaySensorEnum? DisplaySensor { get; init; }
 
             public enum OperatorCallButtonSensorEnum
             {
@@ -364,7 +364,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Operator Call Button is available. The Operator Call Button does not actually call the operator but just sends a signal to the application.
             /// </summary>
             [DataMember(Name = "operatorCallButtonSensor")]
-            public OperatorCallButtonSensorEnum? OperatorCallButtonSensor { get; private set; }
+            public OperatorCallButtonSensorEnum? OperatorCallButtonSensor { get; init; }
 
             [DataContract]
             public sealed class HandsetSensorClass
@@ -380,23 +380,23 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "manual")]
-                public bool? Manual { get; private set; }
+                public bool? Manual { get; init; }
 
 
                 [DataMember(Name = "auto")]
-                public bool? Auto { get; private set; }
+                public bool? Auto { get; init; }
 
 
                 [DataMember(Name = "semiAuto")]
-                public bool? SemiAuto { get; private set; }
+                public bool? SemiAuto { get; init; }
 
 
                 [DataMember(Name = "microphone")]
-                public bool? Microphone { get; private set; }
+                public bool? Microphone { get; init; }
 
             }
 
@@ -404,13 +404,13 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Handset is present, and if so, which modes it supports.
             /// </summary>
             [DataMember(Name = "handsetSensor")]
-            public HandsetSensorClass HandsetSensor { get; private set; }
+            public HandsetSensorClass HandsetSensor { get; init; }
 
             /// <summary>
             /// Specifies whether the vendor dependent General-Purpose Input Ports are available. This value is an array and each index represents one General-Purpose Input Port.
             /// </summary>
             [DataMember(Name = "generalInputPort")]
-            public List<bool> GeneralInputPort { get; private set; }
+            public List<bool> GeneralInputPort { get; init; }
 
             [DataContract]
             public sealed class HeadsetMicrophoneSensorClass
@@ -425,19 +425,19 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "manual")]
-                public bool? Manual { get; private set; }
+                public bool? Manual { get; init; }
 
 
                 [DataMember(Name = "auto")]
-                public bool? Auto { get; private set; }
+                public bool? Auto { get; init; }
 
 
                 [DataMember(Name = "semiAuto")]
-                public bool? SemiAuto { get; private set; }
+                public bool? SemiAuto { get; init; }
 
             }
 
@@ -445,7 +445,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Microphone Jack is present, and if so, which modes it supports.
             /// </summary>
             [DataMember(Name = "headsetMicrophoneSensor")]
-            public HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor { get; private set; }
+            public HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor { get; init; }
 
             public enum FasciaMicrophoneSensorEnum
             {
@@ -457,7 +457,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether a Fascia Microphone (for public audio input) is present.
             /// </summary>
             [DataMember(Name = "fasciaMicrophoneSensor")]
-            public FasciaMicrophoneSensorEnum? FasciaMicrophoneSensor { get; private set; }
+            public FasciaMicrophoneSensorEnum? FasciaMicrophoneSensor { get; init; }
 
             [DataContract]
             public sealed class CabinetDoorClass
@@ -474,27 +474,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -502,7 +502,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether at least one Cabinet Doors is available, and if so, which states they can take.
             /// </summary>
             [DataMember(Name = "cabinetDoor")]
-            public CabinetDoorClass CabinetDoor { get; private set; }
+            public CabinetDoorClass CabinetDoor { get; init; }
 
             [DataContract]
             public sealed class SafeDoorClass
@@ -519,27 +519,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -547,7 +547,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the safe Door is available, and if so, which states it can take.
             /// </summary>
             [DataMember(Name = "safeDoor")]
-            public SafeDoorClass SafeDoor { get; private set; }
+            public SafeDoorClass SafeDoor { get; init; }
 
             [DataContract]
             public sealed class VandalShieldClass
@@ -565,31 +565,31 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "service")]
-                public bool? Service { get; private set; }
+                public bool? Service { get; init; }
 
 
                 [DataMember(Name = "keyboard")]
-                public bool? Keyboard { get; private set; }
+                public bool? Keyboard { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -597,7 +597,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Vandal Shield is available, and if so, which states it can take.
             /// </summary>
             [DataMember(Name = "vandalShield")]
-            public VandalShieldClass VandalShield { get; private set; }
+            public VandalShieldClass VandalShield { get; init; }
 
             [DataContract]
             public sealed class FrontCabinetClass
@@ -614,27 +614,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -642,7 +642,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether at least one Front Cabinet Door is available, and if so, which states they can take.
             /// </summary>
             [DataMember(Name = "frontCabinet")]
-            public FrontCabinetClass FrontCabinet { get; private set; }
+            public FrontCabinetClass FrontCabinet { get; init; }
 
             [DataContract]
             public sealed class RearCabinetClass
@@ -659,27 +659,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -687,7 +687,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether at least one rear Cabinet Door is available, and if so, which states they can take.
             /// </summary>
             [DataMember(Name = "rearCabinet")]
-            public RearCabinetClass RearCabinet { get; private set; }
+            public RearCabinetClass RearCabinet { get; init; }
 
             [DataContract]
             public sealed class LeftCabinetClass
@@ -704,27 +704,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -732,7 +732,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether at least one left Cabinet Door is available, and if so, which states they can take.
             /// </summary>
             [DataMember(Name = "leftCabinet")]
-            public LeftCabinetClass LeftCabinet { get; private set; }
+            public LeftCabinetClass LeftCabinet { get; init; }
 
             [DataContract]
             public sealed class RightCabinetClass
@@ -749,27 +749,27 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "closed")]
-                public bool? Closed { get; private set; }
+                public bool? Closed { get; init; }
 
 
                 [DataMember(Name = "open")]
-                public bool? Open { get; private set; }
+                public bool? Open { get; init; }
 
 
                 [DataMember(Name = "locked")]
-                public bool? Locked { get; private set; }
+                public bool? Locked { get; init; }
 
 
                 [DataMember(Name = "bolted")]
-                public bool? Bolted { get; private set; }
+                public bool? Bolted { get; init; }
 
 
                 [DataMember(Name = "tampered")]
-                public bool? Tampered { get; private set; }
+                public bool? Tampered { get; init; }
 
             }
 
@@ -777,7 +777,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether at least one right Cabinet Door is available, and if so, which states they can take.
             /// </summary>
             [DataMember(Name = "rightCabinet")]
-            public RightCabinetClass RightCabinet { get; private set; }
+            public RightCabinetClass RightCabinet { get; init; }
 
             public enum OpenCloseIndicatorEnum
             {
@@ -789,7 +789,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Open/Closed Indicator is available.
             /// </summary>
             [DataMember(Name = "openCloseIndicator")]
-            public OpenCloseIndicatorEnum? OpenCloseIndicator { get; private set; }
+            public OpenCloseIndicatorEnum? OpenCloseIndicator { get; init; }
 
             public enum FasciaLightEnum
             {
@@ -801,7 +801,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the fascia light is available.
             /// </summary>
             [DataMember(Name = "fasciaLight")]
-            public FasciaLightEnum? FasciaLight { get; private set; }
+            public FasciaLightEnum? FasciaLight { get; init; }
 
             public enum AudioEnum
             {
@@ -813,7 +813,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Audio Indicator device is available.
             /// </summary>
             [DataMember(Name = "audio")]
-            public AudioEnum? Audio { get; private set; }
+            public AudioEnum? Audio { get; init; }
 
             public enum HeatingEnum
             {
@@ -825,7 +825,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the internal Heating device is available.
             /// </summary>
             [DataMember(Name = "heating")]
-            public HeatingEnum? Heating { get; private set; }
+            public HeatingEnum? Heating { get; init; }
 
             public enum ConsumerDisplayBacklightEnum
             {
@@ -837,7 +837,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Consumer Display Backlight is available.
             /// </summary>
             [DataMember(Name = "consumerDisplayBacklight")]
-            public ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight { get; private set; }
+            public ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight { get; init; }
 
             public enum SignageDisplayEnum
             {
@@ -849,19 +849,19 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Signage Display is available.
             /// </summary>
             [DataMember(Name = "signageDisplay")]
-            public SignageDisplayEnum? SignageDisplay { get; private set; }
+            public SignageDisplayEnum? SignageDisplay { get; init; }
 
             /// <summary>
             /// Specifies whether the Transaction Indicators are available as an array. Each index of this array represents one Transaction Indicator .
             /// </summary>
             [DataMember(Name = "transactionIndicator")]
-            public List<bool> TransactionIndicator { get; private set; }
+            public List<bool> TransactionIndicator { get; init; }
 
             /// <summary>
             /// Specifies whether the vendor dependent General-Purpose Output Ports are available. This value is an array and each index represents one General-Purpose Output Port.
             /// </summary>
             [DataMember(Name = "generalOutputPort")]
-            public List<bool> GeneralOutputPort { get; private set; }
+            public List<bool> GeneralOutputPort { get; init; }
 
             [DataContract]
             public sealed class VolumeClass
@@ -874,11 +874,12 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "volumeLevel")]
-                public int? VolumeLevel { get; private set; }
+                [DataTypes(Minimum = 1, Maximum = 1000)]
+                public int? VolumeLevel { get; init; }
 
             }
 
@@ -886,7 +887,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Volume Control is available, and if so, the increment/decrement value recommended by the vendor.
             /// </summary>
             [DataMember(Name = "volume")]
-            public VolumeClass Volume { get; private set; }
+            public VolumeClass Volume { get; init; }
 
             [DataContract]
             public sealed class UPSClass
@@ -902,23 +903,23 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "low")]
-                public bool? Low { get; private set; }
+                public bool? Low { get; init; }
 
 
                 [DataMember(Name = "engaged")]
-                public bool? Engaged { get; private set; }
+                public bool? Engaged { get; init; }
 
 
                 [DataMember(Name = "powering")]
-                public bool? Powering { get; private set; }
+                public bool? Powering { get; init; }
 
 
                 [DataMember(Name = "recovered")]
-                public bool? Recovered { get; private set; }
+                public bool? Recovered { get; init; }
 
             }
 
@@ -926,7 +927,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the UPS device is available, and if so, which states it can take.
             /// </summary>
             [DataMember(Name = "UPS")]
-            public UPSClass UPS { get; private set; }
+            public UPSClass UPS { get; init; }
 
             public enum RemoteStatusMonitorEnum
             {
@@ -938,7 +939,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Remote Status Monitor device is available.
             /// </summary>
             [DataMember(Name = "remoteStatusMonitor")]
-            public RemoteStatusMonitorEnum? RemoteStatusMonitor { get; private set; }
+            public RemoteStatusMonitorEnum? RemoteStatusMonitor { get; init; }
 
             public enum AudibleAlarmEnum
             {
@@ -950,7 +951,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Audible Alarm device is available.
             /// </summary>
             [DataMember(Name = "audibleAlarm")]
-            public AudibleAlarmEnum? AudibleAlarm { get; private set; }
+            public AudibleAlarmEnum? AudibleAlarm { get; init; }
 
             [DataContract]
             public sealed class EnhancedAudioControlClass
@@ -964,15 +965,15 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "headsetDetection")]
-                public bool? HeadsetDetection { get; private set; }
+                public bool? HeadsetDetection { get; init; }
 
 
                 [DataMember(Name = "modeControllable")]
-                public bool? ModeControllable { get; private set; }
+                public bool? ModeControllable { get; init; }
 
             }
 
@@ -980,7 +981,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Enhanced Audio Controller is available, and if so, which modes it supports.
             /// </summary>
             [DataMember(Name = "enhancedAudioControl")]
-            public EnhancedAudioControlClass EnhancedAudioControl { get; private set; }
+            public EnhancedAudioControlClass EnhancedAudioControl { get; init; }
 
             [DataContract]
             public sealed class EnhancedMicrophoneControlStateClass
@@ -994,15 +995,15 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "headsetDetection")]
-                public bool? HeadsetDetection { get; private set; }
+                public bool? HeadsetDetection { get; init; }
 
 
                 [DataMember(Name = "modeControllable")]
-                public bool? ModeControllable { get; private set; }
+                public bool? ModeControllable { get; init; }
 
             }
 
@@ -1010,7 +1011,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Enhanced Microphone Controller is available, and if so, which modes it supports.
             /// </summary>
             [DataMember(Name = "enhancedMicrophoneControlState")]
-            public EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState { get; private set; }
+            public EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState { get; init; }
 
             [DataContract]
             public sealed class MicrophoneVolumeClass
@@ -1023,11 +1024,12 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "volumeLevel")]
-                public int? VolumeLevel { get; private set; }
+                [DataTypes(Minimum = 1, Maximum = 1000)]
+                public int? VolumeLevel { get; init; }
 
             }
 
@@ -1035,7 +1037,7 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies whether the Microphone Volume Control is available, and if so, the increment/decrement value recommended by the vendor.
             /// </summary>
             [DataMember(Name = "microphoneVolume")]
-            public MicrophoneVolumeClass MicrophoneVolume { get; private set; }
+            public MicrophoneVolumeClass MicrophoneVolume { get; init; }
 
             [DataContract]
             public sealed class AutoStartupModeClass
@@ -1050,19 +1052,19 @@ namespace XFS4IoT.SensorsAndIndicators
 
 
                 [DataMember(Name = "available")]
-                public bool? Available { get; private set; }
+                public bool? Available { get; init; }
 
 
                 [DataMember(Name = "specific")]
-                public bool? Specific { get; private set; }
+                public bool? Specific { get; init; }
 
 
                 [DataMember(Name = "daily")]
-                public bool? Daily { get; private set; }
+                public bool? Daily { get; init; }
 
 
                 [DataMember(Name = "weekly")]
-                public bool? Weekly { get; private set; }
+                public bool? Weekly { get; init; }
 
             }
 
@@ -1070,166 +1072,13 @@ namespace XFS4IoT.SensorsAndIndicators
             /// Specifies which mode of the auto start-up control is supported.
             /// </summary>
             [DataMember(Name = "autoStartupMode")]
-            public AutoStartupModeClass AutoStartupMode { get; private set; }
-
-            [DataContract]
-            public sealed class GuideLightsClass
-            {
-                public GuideLightsClass(GuideLightCapabilitiesClass CardReader = null, GuideLightCapabilitiesClass PinPad = null, GuideLightCapabilitiesClass NotesDispenser = null, GuideLightCapabilitiesClass CoinDispenser = null, GuideLightCapabilitiesClass ReceiptPrinter = null, GuideLightCapabilitiesClass PassbookPrinter = null, GuideLightCapabilitiesClass EnvelopeDepository = null, GuideLightCapabilitiesClass ChequeUnit = null, GuideLightCapabilitiesClass BillAcceptor = null, GuideLightCapabilitiesClass EnvelopeDispenser = null, GuideLightCapabilitiesClass DocumentPrinter = null, GuideLightCapabilitiesClass CoinAcceptor = null, GuideLightCapabilitiesClass Scanner = null, GuideLightCapabilitiesClass Contactless = null, GuideLightCapabilitiesClass CardUnit2 = null, GuideLightCapabilitiesClass NotesDispenser2 = null, GuideLightCapabilitiesClass BillAcceptor2 = null, GuideLightCapabilitiesClass VendorDependent = null)
-                {
-                    this.CardReader = CardReader;
-                    this.PinPad = PinPad;
-                    this.NotesDispenser = NotesDispenser;
-                    this.CoinDispenser = CoinDispenser;
-                    this.ReceiptPrinter = ReceiptPrinter;
-                    this.PassbookPrinter = PassbookPrinter;
-                    this.EnvelopeDepository = EnvelopeDepository;
-                    this.ChequeUnit = ChequeUnit;
-                    this.BillAcceptor = BillAcceptor;
-                    this.EnvelopeDispenser = EnvelopeDispenser;
-                    this.DocumentPrinter = DocumentPrinter;
-                    this.CoinAcceptor = CoinAcceptor;
-                    this.Scanner = Scanner;
-                    this.Contactless = Contactless;
-                    this.CardUnit2 = CardUnit2;
-                    this.NotesDispenser2 = NotesDispenser2;
-                    this.BillAcceptor2 = BillAcceptor2;
-                    this.VendorDependent = VendorDependent;
-                }
-
-                /// <summary>
-                /// Card Unit Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "cardReader")]
-                public GuideLightCapabilitiesClass CardReader { get; private set; }
-
-                /// <summary>
-                /// Pin Pad Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "pinPad")]
-                public GuideLightCapabilitiesClass PinPad { get; private set; }
-
-                /// <summary>
-                /// Notes Dispenser Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "notesDispenser")]
-                public GuideLightCapabilitiesClass NotesDispenser { get; private set; }
-
-                /// <summary>
-                /// Coin Dispenser Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "coinDispenser")]
-                public GuideLightCapabilitiesClass CoinDispenser { get; private set; }
-
-                /// <summary>
-                /// Receipt Printer Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "receiptPrinter")]
-                public GuideLightCapabilitiesClass ReceiptPrinter { get; private set; }
-
-                /// <summary>
-                /// Passbook Printer Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "passbookPrinter")]
-                public GuideLightCapabilitiesClass PassbookPrinter { get; private set; }
-
-                /// <summary>
-                /// Envelope Depository Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "EnvelopeDepository")]
-                public GuideLightCapabilitiesClass EnvelopeDepository { get; private set; }
-
-                /// <summary>
-                /// Cheque Unit Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "chequeUnit")]
-                public GuideLightCapabilitiesClass ChequeUnit { get; private set; }
-
-                /// <summary>
-                /// Bill Acceptor Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "billAcceptor")]
-                public GuideLightCapabilitiesClass BillAcceptor { get; private set; }
-
-                /// <summary>
-                /// Envelope Dispenser Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "envelopeDispenser")]
-                public GuideLightCapabilitiesClass EnvelopeDispenser { get; private set; }
-
-                /// <summary>
-                /// Document Printer Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "documentPrinter")]
-                public GuideLightCapabilitiesClass DocumentPrinter { get; private set; }
-
-                /// <summary>
-                /// Coin Acceptor Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "coinAcceptor")]
-                public GuideLightCapabilitiesClass CoinAcceptor { get; private set; }
-
-                /// <summary>
-                /// scanner Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "scanner")]
-                public GuideLightCapabilitiesClass Scanner { get; private set; }
-
-                /// <summary>
-                /// Contactless Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "contactless")]
-                public GuideLightCapabilitiesClass Contactless { get; private set; }
-
-                /// <summary>
-                /// Card Unit 2 Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "cardUnit2")]
-                public GuideLightCapabilitiesClass CardUnit2 { get; private set; }
-
-                /// <summary>
-                /// Notes Dispenser 2 Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "notesDispenser2")]
-                public GuideLightCapabilitiesClass NotesDispenser2 { get; private set; }
-
-                /// <summary>
-                /// Bill Acceptor 2 Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "billAcceptor2")]
-                public GuideLightCapabilitiesClass BillAcceptor2 { get; private set; }
-
-                /// <summary>
-                /// Vendor Dependent Guidelight.
-                /// 
-                /// </summary>
-                [DataMember(Name = "vendorDependent")]
-                public GuideLightCapabilitiesClass VendorDependent { get; private set; }
-
-            }
+            public AutoStartupModeClass AutoStartupMode { get; init; }
 
             /// <summary>
             /// Available guidelights.
             /// </summary>
             [DataMember(Name = "guideLights")]
-            public GuideLightsClass GuideLights { get; private set; }
+            public Dictionary<string, GuideLightCapabilitiesClass> GuideLights { get; init; }
 
         }
 
@@ -1237,7 +1086,7 @@ namespace XFS4IoT.SensorsAndIndicators
         /// Specifies the type of sensors and indicators supported by this device.
         /// </summary>
         [DataMember(Name = "sensorType")]
-        public SensorTypeClass SensorType { get; private set; }
+        public SensorTypeClass SensorType { get; init; }
 
     }
 

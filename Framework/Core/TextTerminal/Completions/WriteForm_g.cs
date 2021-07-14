@@ -52,7 +52,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

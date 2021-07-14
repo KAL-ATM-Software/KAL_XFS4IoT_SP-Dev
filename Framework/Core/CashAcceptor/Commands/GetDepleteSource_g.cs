@@ -38,7 +38,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// command) which would be used as the target of the depletion operation.
             /// </summary>
             [DataMember(Name = "cashunitTarget")]
-            public string CashunitTarget { get; private set; }
+            public string CashunitTarget { get; init; }
 
         }
     }

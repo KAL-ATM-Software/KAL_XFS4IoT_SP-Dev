@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var dispLightCmd = command.IsA<DispLightCommand>($"Invalid parameter in the DispLight Handle method. {nameof(DispLightCommand)}");
-            dispLightCmd.Headers.RequestId.HasValue.IsTrue();
+            dispLightCmd.Header.RequestId.HasValue.IsTrue();
 
-            IDispLightEvents events = new DispLightEvents(Connection, dispLightCmd.Headers.RequestId.Value);
+            IDispLightEvents events = new DispLightEvents(Connection, dispLightCmd.Header.RequestId.Value);
 
             var result = await HandleDispLight(events, dispLightCmd, cancel);
-            await Connection.SendMessageAsync(new DispLightCompletion(dispLightCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new DispLightCompletion(dispLightCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var dispLightcommand = command.IsA<DispLightCommand>();
-            dispLightcommand.Headers.RequestId.HasValue.IsTrue();
+            dispLightcommand.Header.RequestId.HasValue.IsTrue();
 
             DispLightCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => DispLightCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new DispLightCompletion(dispLightcommand.Headers.RequestId.Value, new DispLightCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DispLightCompletion(dispLightcommand.Header.RequestId.Value, new DispLightCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

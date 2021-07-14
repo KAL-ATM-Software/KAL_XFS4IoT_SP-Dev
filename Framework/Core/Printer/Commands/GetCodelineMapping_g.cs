@@ -47,7 +47,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```e13b``` - Report the E13B mapping.
             /// </summary>
             [DataMember(Name = "codelineFormat")]
-            public CodelineFormatEnum? CodelineFormat { get; private set; }
+            public CodelineFormatEnum? CodelineFormat { get; init; }
 
         }
     }

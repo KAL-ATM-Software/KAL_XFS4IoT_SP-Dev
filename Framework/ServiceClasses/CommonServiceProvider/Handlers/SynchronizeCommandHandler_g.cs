@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Common
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var synchronizeCommandCmd = command.IsA<SynchronizeCommandCommand>($"Invalid parameter in the SynchronizeCommand Handle method. {nameof(SynchronizeCommandCommand)}");
-            synchronizeCommandCmd.Headers.RequestId.HasValue.IsTrue();
+            synchronizeCommandCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISynchronizeCommandEvents events = new SynchronizeCommandEvents(Connection, synchronizeCommandCmd.Headers.RequestId.Value);
+            ISynchronizeCommandEvents events = new SynchronizeCommandEvents(Connection, synchronizeCommandCmd.Header.RequestId.Value);
 
             var result = await HandleSynchronizeCommand(events, synchronizeCommandCmd, cancel);
-            await Connection.SendMessageAsync(new SynchronizeCommandCompletion(synchronizeCommandCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SynchronizeCommandCompletion(synchronizeCommandCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var synchronizeCommandcommand = command.IsA<SynchronizeCommandCommand>();
-            synchronizeCommandcommand.Headers.RequestId.HasValue.IsTrue();
+            synchronizeCommandcommand.Header.RequestId.HasValue.IsTrue();
 
             SynchronizeCommandCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 _ => SynchronizeCommandCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SynchronizeCommandCompletion(synchronizeCommandcommand.Headers.RequestId.Value, new SynchronizeCommandCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SynchronizeCommandCompletion(synchronizeCommandcommand.Header.RequestId.Value, new SynchronizeCommandCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

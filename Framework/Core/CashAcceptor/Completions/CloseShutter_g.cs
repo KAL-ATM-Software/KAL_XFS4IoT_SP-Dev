@@ -45,20 +45,20 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"unsupportedPosition\": The position specified is not supported.
+            /// "unsupportedPosition": The position specified is not supported.
             /// 
-            /// \"shutterClosed\": Shutter was already closed.
+            /// "shutterClosed": Shutter was already closed.
             /// 
-            /// \"exchangeActive\": The device is in an exchange state. Note that this would not apply during an Exchange (*exchangeType* == \"depositInto\").
+            /// "exchangeActive": The device is in an exchange state. Note that this would not apply during an Exchange (*exchangeType* == "depositInto").
             /// 
-            /// \"shutterNotClosed\": Shutter failed to close.
+            /// "shutterNotClosed": Shutter failed to close.
             /// 
-            /// \"tooManyItems\": There were too many items inserted for the shutter to close.
+            /// "tooManyItems": There were too many items inserted for the shutter to close.
             /// 
-            /// \"foreignItemsDetected\": Foreign items have been detected in the input position. The shutter is open.
+            /// "foreignItemsDetected": Foreign items have been detected in the input position. The shutter is open.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

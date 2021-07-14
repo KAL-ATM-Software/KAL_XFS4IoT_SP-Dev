@@ -37,7 +37,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// Contains the form name on which to retrieve details.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
         }
     }

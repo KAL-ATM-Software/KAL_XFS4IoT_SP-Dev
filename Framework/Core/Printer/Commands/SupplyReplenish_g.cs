@@ -43,43 +43,43 @@ namespace XFS4IoT.Printer.Commands
             /// The only paper supply or the upper paper supply was replenished.
             /// </summary>
             [DataMember(Name = "upper")]
-            public bool? Upper { get; private set; }
+            public bool? Upper { get; init; }
 
             /// <summary>
             /// The lower paper supply was replenished.
             /// </summary>
             [DataMember(Name = "lower")]
-            public bool? Lower { get; private set; }
+            public bool? Lower { get; init; }
 
             /// <summary>
             /// The auxiliary paper supply was replenished.
             /// </summary>
             [DataMember(Name = "aux")]
-            public bool? Aux { get; private set; }
+            public bool? Aux { get; init; }
 
             /// <summary>
             /// The second auxiliary paper supply was replenished.
             /// </summary>
             [DataMember(Name = "aux2")]
-            public bool? Aux2 { get; private set; }
+            public bool? Aux2 { get; init; }
 
             /// <summary>
             /// The toner supply was replenished.
             /// </summary>
             [DataMember(Name = "toner")]
-            public bool? Toner { get; private set; }
+            public bool? Toner { get; init; }
 
             /// <summary>
             /// The ink supply was replenished.
             /// </summary>
             [DataMember(Name = "ink")]
-            public bool? Ink { get; private set; }
+            public bool? Ink { get; init; }
 
             /// <summary>
             /// The imaging lamp was replaced.
             /// </summary>
             [DataMember(Name = "lamp")]
-            public bool? Lamp { get; private set; }
+            public bool? Lamp { get; init; }
 
         }
     }

@@ -48,7 +48,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// This should be used if for some reason the subsequent dispense operation is no longer required.
             /// </summary>
             [DataMember(Name = "action")]
-            public ActionEnum? Action { get; private set; }
+            public ActionEnum? Action { get; init; }
 
         }
     }

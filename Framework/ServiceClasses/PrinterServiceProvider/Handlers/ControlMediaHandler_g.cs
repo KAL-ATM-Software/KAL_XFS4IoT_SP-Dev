@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var controlMediaCmd = command.IsA<ControlMediaCommand>($"Invalid parameter in the ControlMedia Handle method. {nameof(ControlMediaCommand)}");
-            controlMediaCmd.Headers.RequestId.HasValue.IsTrue();
+            controlMediaCmd.Header.RequestId.HasValue.IsTrue();
 
-            IControlMediaEvents events = new ControlMediaEvents(Connection, controlMediaCmd.Headers.RequestId.Value);
+            IControlMediaEvents events = new ControlMediaEvents(Connection, controlMediaCmd.Header.RequestId.Value);
 
             var result = await HandleControlMedia(events, controlMediaCmd, cancel);
-            await Connection.SendMessageAsync(new ControlMediaCompletion(controlMediaCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ControlMediaCompletion(controlMediaCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var controlMediacommand = command.IsA<ControlMediaCommand>();
-            controlMediacommand.Headers.RequestId.HasValue.IsTrue();
+            controlMediacommand.Header.RequestId.HasValue.IsTrue();
 
             ControlMediaCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => ControlMediaCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ControlMediaCompletion(controlMediacommand.Headers.RequestId.Value, new ControlMediaCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ControlMediaCompletion(controlMediacommand.Header.RequestId.Value, new ControlMediaCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

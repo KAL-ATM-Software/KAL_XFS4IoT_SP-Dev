@@ -75,14 +75,14 @@ namespace XFS4IoTServer
             (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
             if (async)
             {
-                Logger.Log("Dispatcher", $"Running {Command.Headers.Name} id:{Command.Headers.RequestId}");
+                Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
                 await handler.Handle(Connection, Command, cts.Token);
-                Logger.Log("Dispatcher", $"Completed {Command.Headers.Name} id:{Command.Headers.RequestId}");
+                Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
                 cts.Dispose();
             }
             else
             {
-                Logger.Log("Dispatcher", $"Queing command a {handler} handler for {Command.Headers.Name} id:{Command.Headers.RequestId}");
+                Logger.Log("Dispatcher", $"Queing command a {handler} handler for {Command.Header.Name} id:{Command.Header.RequestId}");
                 CommandQueue.Post(new CommandQueueRecord(handler, Connection, Command, cts));
             }
         }
@@ -127,13 +127,13 @@ namespace XFS4IoTServer
                 var (handler, connection, command, cts) = await CommandQueue.ReceiveAsync();
                 try
                 {
-                    Logger.Log("Dispatcher", $"Running {command.Headers.Name} id:{command.Headers.RequestId}");
+                    Logger.Log("Dispatcher", $"Running {command.Header.Name} id:{command.Header.RequestId}");
                     await handler.Handle(connection, command, cts.Token);
-                    Logger.Log("Dispatcher", $"Completed {command.Headers.Name} id:{command.Headers.RequestId}");
+                    Logger.Log("Dispatcher", $"Completed {command.Header.Name} id:{command.Header.RequestId}");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Dispatcher", $"Caught exception running {command.Headers.Name} id:{command.Headers.RequestId}");
+                    Logger.Log("Dispatcher", $"Caught exception running {command.Header.Name} id:{command.Header.RequestId}");
                     await handler.HandleError(connection, command, ex);
                 }
                 cts.Dispose();

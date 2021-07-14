@@ -50,29 +50,29 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"cashUnitError\": A problem occurred with a cash unit. A CashManagement.CashUnitErrorEvent will be sent with the details.
+            /// "cashUnitError": A problem occurred with a cash unit. A CashManagement.CashUnitErrorEvent will be sent with the details.
             /// 
-            /// \"tooManyItems\": There were too many items inserted previously. The cash-in stacker is full at the beginning of this command. 
+            /// "tooManyItems": There were too many items inserted previously. The cash-in stacker is full at the beginning of this command. 
             /// This may also be reported where a limit specified by CashAcceptor.SetCashInLimit has already been reached at the beginning of this command.
             /// 
-            /// \"noItems\": There were no items to cash-in.
+            /// "noItems": There were no items to cash-in.
             /// 
-            /// \"exchangeActive\": The device is in an exchange state.
+            /// "exchangeActive": The device is in an exchange state.
             /// 
-            /// \"shutterNotClosed\": Shutter failed to close. In the case of explicit shutter control the application should close the shutter first.
+            /// "shutterNotClosed": Shutter failed to close. In the case of explicit shutter control the application should close the shutter first.
             /// 
-            /// \"noCashInActive\": There is no cash-in transaction active.
+            /// "noCashInActive": There is no cash-in transaction active.
             /// 
-            /// \"positionNotempty\": The output position is not empty so a cash-in is not possible.
+            /// "positionNotempty": The output position is not empty so a cash-in is not possible.
             /// 
-            /// \"safeDoorOpen\": The safe door is open. This device requires the safe door to be closed in order to perform a CashAcceptor.CashIn command.
+            /// "safeDoorOpen": The safe door is open. This device requires the safe door to be closed in order to perform a CashAcceptor.CashIn command.
             /// 
-            /// \"foreignItemsDetected\": Foreign items have been detected inside the input position.
+            /// "foreignItemsDetected": Foreign items have been detected inside the input position.
             /// 
-            /// \"shutterNotOpen\": Shutter failed to open.
+            /// "shutterNotOpen": Shutter failed to open.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataContract]
             public sealed class NoteNumberClass
@@ -88,14 +88,14 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// If this value is zero then the note type is unknown.
                 /// </summary>
                 [DataMember(Name = "noteID")]
-                public int? NoteID { get; private set; }
+                public int? NoteID { get; init; }
 
                 /// <summary>
                 /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
                 /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
                 /// </summary>
                 [DataMember(Name = "count")]
-                public int? Count { get; private set; }
+                public int? Count { get; init; }
 
             }
 
@@ -103,7 +103,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Array of banknote numbers the cash unit contains.
             /// </summary>
             [DataMember(Name = "noteNumber")]
-            public List<NoteNumberClass> NoteNumber { get; private set; }
+            public List<NoteNumberClass> NoteNumber { get; init; }
 
         }
     }

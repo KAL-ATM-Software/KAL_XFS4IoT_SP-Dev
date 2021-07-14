@@ -9,10 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Drawing;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.Common.Commands;
 using XFS4IoT.Common.Completions;
+using XFS4IoT.Completions;
+using XFS4IoT.TextTerminal;
 
 namespace XFS4IoTFramework.Common
 {
@@ -396,6 +399,75 @@ namespace XFS4IoTFramework.Common
                                                                                 memChipProtocols,
                                                                                 ejectPositions,
                                                                                 result.CardReader.NumberParkingStations is null ? 0 : (int)result.CardReader.NumberParkingStations);
+            }
+
+            if (result.TextTerminal is not null)
+            {
+                if (result.TextTerminal.Type is null)
+                {
+                    Task.FromResult(new CapabilitiesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
+                                                                           $"The type proeprty is not set."));
+                }
+
+                List<Size> resolutions = new();
+                if (result.TextTerminal.Resolutions is not null)
+                {
+                    foreach (var resolution in result.TextTerminal.Resolutions)
+                    {
+                        if (resolution.SizeX is null ||
+                            resolution.SizeY is null)
+                        {
+                            Task.FromResult(new CapabilitiesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
+                                                                                   $"The no resolution size specified."));
+                        }
+                        resolutions.Add(new Size((int)resolution.SizeX, (int)resolution.SizeY));
+                    }
+                }
+
+                List<TextTerminalCapabilitiesClass.LEDClass> LEDsSupported = new();
+                if (result.TextTerminal.Leds is not null)
+                {
+                    foreach (var led in result.TextTerminal.Leds)
+                    {
+                        TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum LEDColor = TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.None;
+                        if (led.Blue is not null && (bool)led.Blue)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Blue;
+                        if (led.Cyan is not null && (bool)led.Cyan)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Cyan;
+                        if (led.Green is not null && (bool)led.Green)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Green;
+                        if (led.Magenta is not null && (bool)led.Magenta)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Magenta;
+                        if (led.Red is not null && (bool)led.Red)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Red;
+                        if (led.White is not null && (bool)led.White)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.White;
+                        if (led.Yellow is not null && (bool)led.Yellow)
+                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Yellow;
+
+                        TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum LEDLight = TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.None;
+                        if (led.Continuous is not null && (bool)led.Continuous)
+                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.Continuous;
+                        if (led.MediumFlash is not null && (bool)led.MediumFlash)
+                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.MediumFlash;
+                        if (led.Off is not null && (bool)led.Off)
+                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.Off;
+                        if (led.QuickFlash is not null && (bool)led.QuickFlash)
+                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.QuickFlash;
+                        if (led.SlowFlash is not null && (bool)led.SlowFlash)
+                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.SlowFlash;
+
+                        LEDsSupported.Add(new TextTerminalCapabilitiesClass.LEDClass(LEDColor, LEDLight));
+                    }
+                }
+
+                Common.TextTerminalCapabilities = new TextTerminalCapabilitiesClass(result.TextTerminal.Type == CapabilitiesClass.TypeEnum.Fixed ? TextTerminalCapabilitiesClass.TypeEnum.Fixed : TextTerminalCapabilitiesClass.TypeEnum.Removable,
+                                                                                    resolutions,
+                                                                                    result.TextTerminal.KeyLock is not null && (bool)result.TextTerminal.KeyLock,
+                                                                                    result.TextTerminal.DisplayLight is not null && (bool)result.TextTerminal.DisplayLight,
+                                                                                    result.TextTerminal.Cursor is not null && (bool)result.TextTerminal.Cursor,
+                                                                                    result.TextTerminal.Forms is not null && (bool)result.TextTerminal.Forms,
+                                                                                    LEDsSupported);
             }
 
             return Task.FromResult(result);

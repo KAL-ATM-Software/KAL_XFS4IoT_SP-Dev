@@ -57,7 +57,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaSize``` - The media has an incorrect size.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

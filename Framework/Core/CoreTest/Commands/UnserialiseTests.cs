@@ -32,7 +32,7 @@ namespace XFS4IoTCoreTest.Command
         public void UnserialiseStringToObject()
         {
             var ReadCardJSON = @"{
-                ""headers"":{
+                ""header"":{
                     ""name"":""CardReader.ReadRawData"",
                     ""requestId"":123456,
                     ""type"":""command""
@@ -86,7 +86,7 @@ namespace XFS4IoTCoreTest.Command
         public void UnserialiseStringToEvent()
         {
             var MediaInsertedJSON = @"{
-                ""headers"":{
+                ""header"":{
                     ""name"":""CardReader.MediaInsertedEvent"",
                     ""requestId"":123456,
                     ""type"":""event""

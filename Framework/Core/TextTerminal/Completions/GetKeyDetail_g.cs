@@ -39,7 +39,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// of this type are present on the device.
             /// </summary>
             [DataMember(Name = "keys")]
-            public string Keys { get; private set; }
+            public string Keys { get; init; }
 
             [DataContract]
             public sealed class CommandKeysClass
@@ -105,223 +105,223 @@ namespace XFS4IoT.TextTerminal.Completions
 
 
                 [DataMember(Name = "ckEnter")]
-                public bool? CkEnter { get; private set; }
+                public bool? CkEnter { get; init; }
 
 
                 [DataMember(Name = "ckCancel")]
-                public bool? CkCancel { get; private set; }
+                public bool? CkCancel { get; init; }
 
 
                 [DataMember(Name = "ckClear")]
-                public bool? CkClear { get; private set; }
+                public bool? CkClear { get; init; }
 
 
                 [DataMember(Name = "ckBackspace")]
-                public bool? CkBackspace { get; private set; }
+                public bool? CkBackspace { get; init; }
 
 
                 [DataMember(Name = "ckHelp")]
-                public bool? CkHelp { get; private set; }
+                public bool? CkHelp { get; init; }
 
 
                 [DataMember(Name = "ck00")]
-                public bool? Ck00 { get; private set; }
+                public bool? Ck00 { get; init; }
 
 
                 [DataMember(Name = "ck000")]
-                public bool? Ck000 { get; private set; }
+                public bool? Ck000 { get; init; }
 
 
                 [DataMember(Name = "ckArrowUp")]
-                public bool? CkArrowUp { get; private set; }
+                public bool? CkArrowUp { get; init; }
 
 
                 [DataMember(Name = "ckArrowDown")]
-                public bool? CkArrowDown { get; private set; }
+                public bool? CkArrowDown { get; init; }
 
 
                 [DataMember(Name = "ckArrowLeft")]
-                public bool? CkArrowLeft { get; private set; }
+                public bool? CkArrowLeft { get; init; }
 
 
                 [DataMember(Name = "ckArrowRight")]
-                public bool? CkArrowRight { get; private set; }
+                public bool? CkArrowRight { get; init; }
 
 
                 [DataMember(Name = "ckOEM1")]
-                public bool? CkOEM1 { get; private set; }
+                public bool? CkOEM1 { get; init; }
 
 
                 [DataMember(Name = "ckOEM2")]
-                public bool? CkOEM2 { get; private set; }
+                public bool? CkOEM2 { get; init; }
 
 
                 [DataMember(Name = "ckOEM3")]
-                public bool? CkOEM3 { get; private set; }
+                public bool? CkOEM3 { get; init; }
 
 
                 [DataMember(Name = "ckOEM4")]
-                public bool? CkOEM4 { get; private set; }
+                public bool? CkOEM4 { get; init; }
 
 
                 [DataMember(Name = "ckOEM5")]
-                public bool? CkOEM5 { get; private set; }
+                public bool? CkOEM5 { get; init; }
 
 
                 [DataMember(Name = "ckOEM6")]
-                public bool? CkOEM6 { get; private set; }
+                public bool? CkOEM6 { get; init; }
 
 
                 [DataMember(Name = "ckOEM7")]
-                public bool? CkOEM7 { get; private set; }
+                public bool? CkOEM7 { get; init; }
 
 
                 [DataMember(Name = "ckOEM8")]
-                public bool? CkOEM8 { get; private set; }
+                public bool? CkOEM8 { get; init; }
 
 
                 [DataMember(Name = "ckOEM9")]
-                public bool? CkOEM9 { get; private set; }
+                public bool? CkOEM9 { get; init; }
 
 
                 [DataMember(Name = "ckOEM10")]
-                public bool? CkOEM10 { get; private set; }
+                public bool? CkOEM10 { get; init; }
 
 
                 [DataMember(Name = "ckOEM11")]
-                public bool? CkOEM11 { get; private set; }
+                public bool? CkOEM11 { get; init; }
 
 
                 [DataMember(Name = "ckOEM12")]
-                public bool? CkOEM12 { get; private set; }
+                public bool? CkOEM12 { get; init; }
 
 
                 [DataMember(Name = "ckFDK01")]
-                public bool? CkFDK01 { get; private set; }
+                public bool? CkFDK01 { get; init; }
 
 
                 [DataMember(Name = "ckFDK02")]
-                public bool? CkFDK02 { get; private set; }
+                public bool? CkFDK02 { get; init; }
 
 
                 [DataMember(Name = "ckFDK03")]
-                public bool? CkFDK03 { get; private set; }
+                public bool? CkFDK03 { get; init; }
 
 
                 [DataMember(Name = "ckFDK04")]
-                public bool? CkFDK04 { get; private set; }
+                public bool? CkFDK04 { get; init; }
 
 
                 [DataMember(Name = "ckFDK05")]
-                public bool? CkFDK05 { get; private set; }
+                public bool? CkFDK05 { get; init; }
 
 
                 [DataMember(Name = "ckFDK06")]
-                public bool? CkFDK06 { get; private set; }
+                public bool? CkFDK06 { get; init; }
 
 
                 [DataMember(Name = "ckFDK07")]
-                public bool? CkFDK07 { get; private set; }
+                public bool? CkFDK07 { get; init; }
 
 
                 [DataMember(Name = "ckFDK08")]
-                public bool? CkFDK08 { get; private set; }
+                public bool? CkFDK08 { get; init; }
 
 
                 [DataMember(Name = "ckFDK09")]
-                public bool? CkFDK09 { get; private set; }
+                public bool? CkFDK09 { get; init; }
 
 
                 [DataMember(Name = "ckFDK10")]
-                public bool? CkFDK10 { get; private set; }
+                public bool? CkFDK10 { get; init; }
 
 
                 [DataMember(Name = "ckFDK11")]
-                public bool? CkFDK11 { get; private set; }
+                public bool? CkFDK11 { get; init; }
 
 
                 [DataMember(Name = "ckFDK12")]
-                public bool? CkFDK12 { get; private set; }
+                public bool? CkFDK12 { get; init; }
 
 
                 [DataMember(Name = "ckFDK13")]
-                public bool? CkFDK13 { get; private set; }
+                public bool? CkFDK13 { get; init; }
 
 
                 [DataMember(Name = "ckFDK14")]
-                public bool? CkFDK14 { get; private set; }
+                public bool? CkFDK14 { get; init; }
 
 
                 [DataMember(Name = "ckFDK15")]
-                public bool? CkFDK15 { get; private set; }
+                public bool? CkFDK15 { get; init; }
 
 
                 [DataMember(Name = "ckFDK16")]
-                public bool? CkFDK16 { get; private set; }
+                public bool? CkFDK16 { get; init; }
 
 
                 [DataMember(Name = "ckFDK17")]
-                public bool? CkFDK17 { get; private set; }
+                public bool? CkFDK17 { get; init; }
 
 
                 [DataMember(Name = "ckFDK18")]
-                public bool? CkFDK18 { get; private set; }
+                public bool? CkFDK18 { get; init; }
 
 
                 [DataMember(Name = "ckFDK19")]
-                public bool? CkFDK19 { get; private set; }
+                public bool? CkFDK19 { get; init; }
 
 
                 [DataMember(Name = "ckFDK20")]
-                public bool? CkFDK20 { get; private set; }
+                public bool? CkFDK20 { get; init; }
 
 
                 [DataMember(Name = "ckFDK21")]
-                public bool? CkFDK21 { get; private set; }
+                public bool? CkFDK21 { get; init; }
 
 
                 [DataMember(Name = "ckFDK22")]
-                public bool? CkFDK22 { get; private set; }
+                public bool? CkFDK22 { get; init; }
 
 
                 [DataMember(Name = "ckFDK23")]
-                public bool? CkFDK23 { get; private set; }
+                public bool? CkFDK23 { get; init; }
 
 
                 [DataMember(Name = "ckFDK24")]
-                public bool? CkFDK24 { get; private set; }
+                public bool? CkFDK24 { get; init; }
 
 
                 [DataMember(Name = "ckFDK25")]
-                public bool? CkFDK25 { get; private set; }
+                public bool? CkFDK25 { get; init; }
 
 
                 [DataMember(Name = "ckFDK26")]
-                public bool? CkFDK26 { get; private set; }
+                public bool? CkFDK26 { get; init; }
 
 
                 [DataMember(Name = "ckFDK27")]
-                public bool? CkFDK27 { get; private set; }
+                public bool? CkFDK27 { get; init; }
 
 
                 [DataMember(Name = "ckFDK28")]
-                public bool? CkFDK28 { get; private set; }
+                public bool? CkFDK28 { get; init; }
 
 
                 [DataMember(Name = "ckFDK29")]
-                public bool? CkFDK29 { get; private set; }
+                public bool? CkFDK29 { get; init; }
 
 
                 [DataMember(Name = "ckFDK30")]
-                public bool? CkFDK30 { get; private set; }
+                public bool? CkFDK30 { get; init; }
 
 
                 [DataMember(Name = "ckFDK31")]
-                public bool? CkFDK31 { get; private set; }
+                public bool? CkFDK31 { get; init; }
 
 
                 [DataMember(Name = "ckFDK32")]
-                public bool? CkFDK32 { get; private set; }
+                public bool? CkFDK32 { get; init; }
 
             }
 
@@ -329,7 +329,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Array of command keys on the Text Terminal Unit.
             /// </summary>
             [DataMember(Name = "commandKeys")]
-            public List<CommandKeysClass> CommandKeys { get; private set; }
+            public List<CommandKeysClass> CommandKeys { get; init; }
 
         }
     }

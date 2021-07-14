@@ -58,7 +58,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```jpg``` - The returned image is in JPG format.
             /// </summary>
             [DataMember(Name = "frontImageType")]
-            public FrontImageTypeEnum? FrontImageType { get; private set; }
+            public FrontImageTypeEnum? FrontImageType { get; init; }
 
             public enum BackImageTypeEnum
             {
@@ -78,7 +78,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```jpg``` - The returned image is in JPG format.
             /// </summary>
             [DataMember(Name = "backImageType")]
-            public BackImageTypeEnum? BackImageType { get; private set; }
+            public BackImageTypeEnum? BackImageType { get; init; }
 
             public enum FrontImageColorFormatEnum
             {
@@ -98,7 +98,7 @@ namespace XFS4IoT.Printer.Commands
             ///   red, green, blueetc.).
             /// </summary>
             [DataMember(Name = "frontImageColorFormat")]
-            public FrontImageColorFormatEnum? FrontImageColorFormat { get; private set; }
+            public FrontImageColorFormatEnum? FrontImageColorFormat { get; init; }
 
             public enum BackImageColorFormatEnum
             {
@@ -118,7 +118,7 @@ namespace XFS4IoT.Printer.Commands
             ///   red, green, blue etc.).
             /// </summary>
             [DataMember(Name = "backImageColorFormat")]
-            public BackImageColorFormatEnum? BackImageColorFormat { get; private set; }
+            public BackImageColorFormatEnum? BackImageColorFormat { get; init; }
 
             public enum CodelineFormatEnum
             {
@@ -136,7 +136,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```ocr``` - Read code line using OCR.
             /// </summary>
             [DataMember(Name = "codelineFormat")]
-            public CodelineFormatEnum? CodelineFormat { get; private set; }
+            public CodelineFormatEnum? CodelineFormat { get; init; }
 
             [DataContract]
             public sealed class ImageSourceClass
@@ -152,19 +152,19 @@ namespace XFS4IoT.Printer.Commands
                 /// The front image of the document is requested.
                 /// </summary>
                 [DataMember(Name = "front")]
-                public bool? Front { get; private set; }
+                public bool? Front { get; init; }
 
                 /// <summary>
                 /// The back image of the document is requested.
                 /// </summary>
                 [DataMember(Name = "back")]
-                public bool? Back { get; private set; }
+                public bool? Back { get; init; }
 
                 /// <summary>
                 /// The code line of the document is requested.
                 /// </summary>
                 [DataMember(Name = "codeline")]
-                public bool? Codeline { get; private set; }
+                public bool? Codeline { get; init; }
 
             }
 
@@ -172,7 +172,7 @@ namespace XFS4IoT.Printer.Commands
             /// Specifies the source as a combination of the following flags:
             /// </summary>
             [DataMember(Name = "imageSource")]
-            public ImageSourceClass ImageSource { get; private set; }
+            public ImageSourceClass ImageSource { get; init; }
 
             /// <summary>
             /// File specifying where to store the front image, e.g. "C:\\\\Temp\\\\FrontImage.bmp". If omitted or empty,
@@ -183,7 +183,7 @@ namespace XFS4IoT.Printer.Commands
             /// parameter.
             /// </summary>
             [DataMember(Name = "frontImageFile")]
-            public string FrontImageFile { get; private set; }
+            public string FrontImageFile { get; init; }
 
             /// <summary>
             /// File specifying where to store the back image, e.g. "C:\\\\Temp\\\\BackImage.bmp". If omitted or empty,
@@ -194,7 +194,7 @@ namespace XFS4IoT.Printer.Commands
             /// parameter.
             /// </summary>
             [DataMember(Name = "backImageFile")]
-            public string BackImageFile { get; private set; }
+            public string BackImageFile { get; init; }
 
         }
     }

@@ -60,7 +60,7 @@ namespace XFS4IoT.Dispenser.Events
             /// * ```rear``` - The rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
 

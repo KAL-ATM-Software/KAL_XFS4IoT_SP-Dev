@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, object Fields = null, PaperSourceEnum? PaperSource = null)
+            public PayloadData(int Timeout, string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, PaperSourceEnum? PaperSource = null)
                 : base(Timeout)
             {
                 this.FormName = FormName;
@@ -45,13 +45,13 @@ namespace XFS4IoT.Printer.Commands
             /// The form name.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// The media name. If no media definition applies, this should be empty or omitted.
             /// </summary>
             [DataMember(Name = "mediaName")]
-            public string MediaName { get; private set; }
+            public string MediaName { get; init; }
 
             public enum AlignmentEnum
             {
@@ -72,7 +72,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```bottomRight``` - Align form to bottom right of physical media.
             /// </summary>
             [DataMember(Name = "alignment")]
-            public AlignmentEnum? Alignment { get; private set; }
+            public AlignmentEnum? Alignment { get; init; }
 
             /// <summary>
             /// Specifies the horizontal offset of the form, relative to the horizontal alignment specified in
@@ -82,7 +82,8 @@ namespace XFS4IoT.Printer.Commands
             /// form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetX")]
-            public int? OffsetX { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? OffsetX { get; init; }
 
             /// <summary>
             /// Specifies the vertical offset of the form, relative to the vertical alignment specified in
@@ -91,7 +92,7 @@ namespace XFS4IoT.Printer.Commands
             /// indicates that the *yoffset* value from the form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetY")]
-            public int? OffsetY { get; private set; }
+            public int? OffsetY { get; init; }
 
             public enum ResolutionEnum
             {
@@ -110,7 +111,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```veryHigh``` - Print form with very high resolution.
             /// </summary>
             [DataMember(Name = "resolution")]
-            public ResolutionEnum? Resolution { get; private set; }
+            public ResolutionEnum? Resolution { get; init; }
 
             [DataContract]
             public sealed class MediaControlClass
@@ -143,13 +144,13 @@ namespace XFS4IoT.Printer.Commands
                 /// eject the media.
                 /// </summary>
                 [DataMember(Name = "eject")]
-                public bool? Eject { get; private set; }
+                public bool? Eject { get; init; }
 
                 /// <summary>
                 /// Flush data as per eject, then perforate the media.
                 /// </summary>
                 [DataMember(Name = "perforate")]
-                public bool? Perforate { get; private set; }
+                public bool? Perforate { get; init; }
 
                 /// <summary>
                 /// Flush data as per eject, then cut the media. For printers which have the ability to stack multiple cut
@@ -157,13 +158,13 @@ namespace XFS4IoT.Printer.Commands
                 /// causes the bundle to be moved to the exit slot.
                 /// </summary>
                 [DataMember(Name = "cut")]
-                public bool? Cut { get; private set; }
+                public bool? Cut { get; init; }
 
                 /// <summary>
                 /// Flush data as per eject, then skip the media to mark.
                 /// </summary>
                 [DataMember(Name = "skip")]
-                public bool? Skip { get; private set; }
+                public bool? Skip { get; init; }
 
                 /// <summary>
                 /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
@@ -171,7 +172,7 @@ namespace XFS4IoT.Printer.Commands
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
-                public bool? Flush { get; private set; }
+                public bool? Flush { get; init; }
 
                 /// <summary>
                 /// Flush data as per flush, then retract the media to retract bin number one. For devices with more than one
@@ -179,80 +180,80 @@ namespace XFS4IoT.Printer.Commands
                 /// retracted to another bin than bin number one.
                 /// </summary>
                 [DataMember(Name = "retract")]
-                public bool? Retract { get; private set; }
+                public bool? Retract { get; init; }
 
                 /// <summary>
                 /// Flush data as per flush, then move the media item on the internal stacker.
                 /// </summary>
                 [DataMember(Name = "stack")]
-                public bool? Stack { get; private set; }
+                public bool? Stack { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then partially cut the media.
                 /// </summary>
                 [DataMember(Name = "partialCut")]
-                public bool? PartialCut { get; private set; }
+                public bool? PartialCut { get; init; }
 
                 /// <summary>
                 /// Cause the printer to ring a bell, beep, or otherwise sound an audible alarm.
                 /// </summary>
                 [DataMember(Name = "alarm")]
-                public bool? Alarm { get; private set; }
+                public bool? Alarm { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then turn one page forward.
                 /// </summary>
                 [DataMember(Name = "forward")]
-                public bool? Forward { get; private set; }
+                public bool? Forward { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then turn one page backward.
                 /// </summary>
                 [DataMember(Name = "backward")]
-                public bool? Backward { get; private set; }
+                public bool? Backward { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then turn inserted media.
                 /// </summary>
                 [DataMember(Name = "turnMedia")]
-                public bool? TurnMedia { get; private set; }
+                public bool? TurnMedia { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then stamp on inserted media.
                 /// </summary>
                 [DataMember(Name = "stamp")]
-                public bool? Stamp { get; private set; }
+                public bool? Stamp { get; init; }
 
                 /// <summary>
                 /// Park the media in the parking station.
                 /// </summary>
                 [DataMember(Name = "park")]
-                public bool? Park { get; private set; }
+                public bool? Park { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then throw the media out of the exit slot.
                 /// </summary>
                 [DataMember(Name = "expel")]
-                public bool? Expel { get; private set; }
+                public bool? Expel { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then move the media to a position on the transport just behind the exit slot.
                 /// </summary>
                 [DataMember(Name = "ejectToTransport")]
-                public bool? EjectToTransport { get; private set; }
+                public bool? EjectToTransport { get; init; }
 
                 /// <summary>
                 /// Flush the data as per flush, then rotate media 180 degrees in the printing plane.
                 /// </summary>
                 [DataMember(Name = "rotate180")]
-                public bool? Rotate180 { get; private set; }
+                public bool? Rotate180 { get; init; }
 
                 /// <summary>
                 /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
                 /// *Printer.PrintRawFile* commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
-                public bool? ClearBuffer { get; private set; }
+                public bool? ClearBuffer { get; init; }
 
             }
 
@@ -267,7 +268,7 @@ namespace XFS4IoT.Printer.Commands
             /// applicable to this command. If set, the command will fail with error *invalidData*.
             /// </summary>
             [DataMember(Name = "mediaControl")]
-            public MediaControlClass MediaControl { get; private set; }
+            public MediaControlClass MediaControl { get; init; }
 
             /// <summary>
             /// An object containing one or more key/value pairs where the key is a field name and the value is the
@@ -276,7 +277,7 @@ namespace XFS4IoT.Printer.Commands
             /// UNICODE if supported by the service.
             /// </summary>
             [DataMember(Name = "fields")]
-            public object Fields { get; private set; }
+            public Dictionary<string, string> Fields { get; init; }
 
             public enum PaperSourceEnum
             {
@@ -304,7 +305,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```park``` - Use the parking station.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; private set; }
+            public PaperSourceEnum? PaperSource { get; init; }
 
         }
     }

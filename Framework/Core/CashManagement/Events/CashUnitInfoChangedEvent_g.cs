@@ -88,7 +88,7 @@ namespace XFS4IoT.CashManagement.Events
             /// was not in the exchange state. This cash unit cannot be dispensed from.
             /// </summary>
             [DataMember(Name = "status")]
-            public StatusEnum? Status { get; private set; }
+            public StatusEnum? Status { get; init; }
 
             public enum TypeEnum
             {
@@ -122,7 +122,7 @@ namespace XFS4IoT.CashManagement.Events
             /// * ```cashIn``` - Cash-in cash unit.
             /// </summary>
             [DataMember(Name = "type")]
-            public TypeEnum? Type { get; private set; }
+            public TypeEnum? Type { get; init; }
 
             /// <summary>
             /// A three character string storing the ISO format [Ref. 2] Currency ID. This value will be omitted for 
@@ -131,7 +131,7 @@ namespace XFS4IoT.CashManagement.Events
             /// a value to this field. This value is persistent.
             /// </summary>
             [DataMember(Name = "currencyID")]
-            public string CurrencyID { get; private set; }
+            public string CurrencyID { get; init; }
 
             /// <summary>
             /// Supplies the value of a single item in the cash unit. This value is expressed as floating point value.
@@ -140,7 +140,7 @@ namespace XFS4IoT.CashManagement.Events
             /// application to assign a value to this field. This value is persistent.
             /// </summary>
             [DataMember(Name = "value")]
-            public double? Value { get; private set; }
+            public double? Value { get; init; }
 
             /// <summary>
             /// The meaning of this count depends on the type of cash unit. This value is persistent.
@@ -158,7 +158,7 @@ namespace XFS4IoT.CashManagement.Events
             /// of retract operations which result in items entering the cash unit.
             /// </summary>
             [DataMember(Name = "logicalCount")]
-            public int? LogicalCount { get; private set; }
+            public int? LogicalCount { get; init; }
 
             /// <summary>
             /// When *count* reaches this value the 
@@ -168,7 +168,7 @@ namespace XFS4IoT.CashManagement.Events
             /// then hardware sensors will trigger threshold events if *hardwareSensor* is TRUE. This value is persistent.
             /// </summary>
             [DataMember(Name = "maximum")]
-            public int? Maximum { get; private set; }
+            public int? Maximum { get; init; }
 
             /// <summary>
             /// If this value is TRUE items cannot be dispensed from or deposited into the cash unit. 
@@ -176,7 +176,7 @@ namespace XFS4IoT.CashManagement.Events
             /// event will be generated and an error completion message will be returned. This value is persistent.
             /// </summary>
             [DataMember(Name = "appLock")]
-            public bool? AppLock { get; private set; }
+            public bool? AppLock { get; init; }
 
             /// <summary>
             /// A name which helps to identify the type of the cash unit. 
@@ -186,13 +186,13 @@ namespace XFS4IoT.CashManagement.Events
             /// types of document. Where this value is not relevant (e.g. in bill cash units) the property can be omitted. This value is persistent.
             /// </summary>
             [DataMember(Name = "cashUnitName")]
-            public string CashUnitName { get; private set; }
+            public string CashUnitName { get; init; }
 
             /// <summary>
             /// Initial number of items contained in the cash unit. This value is persistent.
             /// </summary>
             [DataMember(Name = "initialCount")]
-            public int? InitialCount { get; private set; }
+            public int? InitialCount { get; init; }
 
             /// <summary>
             /// The number of items dispensed from this cash unit. 
@@ -201,7 +201,7 @@ namespace XFS4IoT.CashManagement.Events
             /// This field is always zero for cash units with a *type* of *rejectCassette* or *retractCassette*. This value is persistent.
             /// </summary>
             [DataMember(Name = "dispensedCount")]
-            public int? DispensedCount { get; private set; }
+            public int? DispensedCount { get; init; }
 
             /// <summary>
             /// The number of items from this cash unit that have been presented to the customer. 
@@ -210,14 +210,14 @@ namespace XFS4IoT.CashManagement.Events
             /// This field is always zero for cash units with a *type* of *rejectCassette* or *retractCassette*. This value is persistent.
             /// </summary>
             [DataMember(Name = "presentedCount")]
-            public int? PresentedCount { get; private set; }
+            public int? PresentedCount { get; init; }
 
             /// <summary>
             /// The number of items that have been accessible to a customer and retracted into the 
             /// cash unit. This value is persistent.
             /// </summary>
             [DataMember(Name = "retractedCount")]
-            public int? RetractedCount { get; private set; }
+            public int? RetractedCount { get; init; }
 
             /// <summary>
             /// The number of items dispensed from this cash unit which have been rejected, are in a cash unit 
@@ -228,7 +228,7 @@ namespace XFS4IoT.CashManagement.Events
             /// (*type* is *rejectCassette* or *retractCassette*) this field does not apply and will be reported as zero. This value is persistent.
             /// </summary>
             [DataMember(Name = "rejectCount")]
-            public int? RejectCount { get; private set; }
+            public int? RejectCount { get; init; }
 
             /// <summary>
             /// This field is not applicable to retract and reject cash units. For all cash units which dispense items (all other), when *count*
@@ -237,36 +237,36 @@ namespace XFS4IoT.CashManagement.Events
             /// If this value is zero then hardware sensors will trigger threshold events if *hardwareSensor* is TRUE. This value is persistent.
             /// </summary>
             [DataMember(Name = "minimum")]
-            public int? Minimum { get; private set; }
+            public int? Minimum { get; init; }
 
             /// <summary>
             /// A name identifying the physical location of the cash unit.
             /// </summary>
             [DataMember(Name = "physicalPositionName")]
-            public string PhysicalPositionName { get; private set; }
+            public string PhysicalPositionName { get; init; }
 
             /// <summary>
             /// A 5 character string uniquely identifying the cash unit.
             /// </summary>
             [DataMember(Name = "unitID")]
-            public string UnitID { get; private set; }
+            public string UnitID { get; init; }
 
             /// <summary>
             /// As defined by the *logicalCount* description, but with the following exceptions:
             /// This count does not include items dispensed but not yet presented.
-            /// On cash units with *type* set to \"retractCassette\" the count represents 
+            /// On cash units with *type* set to "retractCassette" the count represents 
             /// the number of items, unless the device cannot count items during a retract, in which case this count will be zero.
             /// This value is persistent.
             /// </summary>
             [DataMember(Name = "count")]
-            public int? Count { get; private set; }
+            public int? Count { get; init; }
 
             /// <summary>
             /// The maximum number of items the cash unit can hold. This is only for informational purposes. 
             /// No threshold event CashManagement.CashUnitThresholdEvent will be generated. This value is persistent.
             /// </summary>
             [DataMember(Name = "maximumCapacity")]
-            public int? MaximumCapacity { get; private set; }
+            public int? MaximumCapacity { get; init; }
 
             /// <summary>
             /// Specifies whether or not threshold events can be generated based on hardware sensors in the device. 
@@ -274,7 +274,7 @@ namespace XFS4IoT.CashManagement.Events
             /// events may be generated based on hardware sensors as opposed to counts.
             /// </summary>
             [DataMember(Name = "hardwareSensor")]
-            public bool? HardwareSensor { get; private set; }
+            public bool? HardwareSensor { get; init; }
 
             [DataContract]
             public sealed class ItemTypeClass
@@ -295,51 +295,51 @@ namespace XFS4IoT.CashManagement.Events
                 /// The cash unit takes all fit banknote types. These are level 4 notes which are fit for recycling.
                 /// </summary>
                 [DataMember(Name = "all")]
-                public bool? All { get; private set; }
+                public bool? All { get; init; }
 
                 /// <summary>
                 /// The cash unit takes all unfit banknotes. These are level 4 notes which are unfit for recycling.
                 /// </summary>
                 [DataMember(Name = "unfit")]
-                public bool? Unfit { get; private set; }
+                public bool? Unfit { get; init; }
 
                 /// <summary>
                 /// The cash unit takes all types of fit banknotes specified in an individual list. These are level 4 notes
                 /// which are fit for recycling.
                 /// </summary>
                 [DataMember(Name = "individual")]
-                public bool? Individual { get; private set; }
+                public bool? Individual { get; init; }
 
                 /// <summary>
                 /// Level 1 note types are stored in this cash unit.
                 /// </summary>
                 [DataMember(Name = "level1")]
-                public bool? Level1 { get; private set; }
+                public bool? Level1 { get; init; }
 
                 /// <summary>
                 /// If notes can be classified as level 2, then level 2 note types are stored in this cash unit.
                 /// </summary>
                 [DataMember(Name = "level2")]
-                public bool? Level2 { get; private set; }
+                public bool? Level2 { get; init; }
 
                 /// <summary>
                 /// If notes can be classified as level 3, then level 3 note types are stored in this cash unit.
                 /// </summary>
                 [DataMember(Name = "level3")]
-                public bool? Level3 { get; private set; }
+                public bool? Level3 { get; init; }
 
                 /// <summary>
                 /// The cash unit can accept items on the ItemProcessor interface.
                 /// </summary>
                 [DataMember(Name = "itemProcessor")]
-                public bool? ItemProcessor { get; private set; }
+                public bool? ItemProcessor { get; init; }
 
                 /// <summary>
                 /// The cash unit takes all types of unfit banknotes specified in an individual list. These are level 4
                 /// notes which are unfit for recycling.
                 /// </summary>
                 [DataMember(Name = "unfitIndividual")]
-                public bool? UnfitIndividual { get; private set; }
+                public bool? UnfitIndividual { get; init; }
 
             }
 
@@ -348,7 +348,7 @@ namespace XFS4IoT.CashManagement.Events
             /// The table in the Comments section of this command defines how to interpret the combination of these flags (TODO: include Table)
             /// </summary>
             [DataMember(Name = "itemType")]
-            public ItemTypeClass ItemType { get; private set; }
+            public ItemTypeClass ItemType { get; init; }
 
             /// <summary>
             /// Count of items that have entered the cash unit. This counter is incremented whenever an item 
@@ -358,7 +358,7 @@ namespace XFS4IoT.CashManagement.Events
             /// items during a retract operation this value will be zero. This value is persistent.
             /// </summary>
             [DataMember(Name = "cashInCount")]
-            public int? CashInCount { get; private set; }
+            public int? CashInCount { get; init; }
 
             [DataContract]
             public sealed class NoteNumberListClass
@@ -382,14 +382,14 @@ namespace XFS4IoT.CashManagement.Events
                     /// If this value is zero then the note type is unknown.
                     /// </summary>
                     [DataMember(Name = "noteID")]
-                    public int? NoteID { get; private set; }
+                    public int? NoteID { get; init; }
 
                     /// <summary>
                     /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
                     /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
                     /// </summary>
                     [DataMember(Name = "count")]
-                    public int? Count { get; private set; }
+                    public int? Count { get; init; }
 
                 }
 
@@ -397,7 +397,7 @@ namespace XFS4IoT.CashManagement.Events
                 /// Array of banknote numbers the cash unit contains.
                 /// </summary>
                 [DataMember(Name = "noteNumber")]
-                public List<NoteNumberClass> NoteNumber { get; private set; }
+                public List<NoteNumberClass> NoteNumber { get; init; }
 
             }
 
@@ -414,7 +414,7 @@ namespace XFS4IoT.CashManagement.Events
             /// and *count* contains the number of retract operations. *cashInCount* contains the actual number of retracted items.
             /// </summary>
             [DataMember(Name = "noteNumberList")]
-            public NoteNumberListClass NoteNumberList { get; private set; }
+            public NoteNumberListClass NoteNumberList { get; init; }
 
             /// <summary>
             /// Array of integers which contains the note IDs of the banknotes the cash-in cash unit or 
@@ -422,7 +422,7 @@ namespace XFS4IoT.CashManagement.Events
             /// defined for the cassette or the cassette is not defined as *individual* then *noteIDs* will be omitted.
             /// </summary>
             [DataMember(Name = "noteIDs")]
-            public List<int> NoteIDs { get; private set; }
+            public List<int> NoteIDs { get; init; }
 
         }
 

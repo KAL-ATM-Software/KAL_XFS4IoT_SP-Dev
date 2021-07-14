@@ -65,13 +65,13 @@ namespace XFS4IoT.CardReader.Commands
                 /// * ```track3JIS``` - data is to be written to JIS I track 3 (8bits/char).
                 /// </summary>
                 [DataMember(Name = "destination")]
-                public DestinationEnum? Destination { get; private set; }
+                public DestinationEnum? Destination { get; init; }
 
                 /// <summary>
                 /// Base4 encoded representation of the data
                 /// </summary>
                 [DataMember(Name = "data")]
-                public string Data { get; private set; }
+                public string Data { get; init; }
 
                 public enum WriteMethodEnum
                 {
@@ -89,7 +89,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// * ```auto``` - Service Provider will determine whether low or high coercivity is to be used.
                 /// </summary>
                 [DataMember(Name = "writeMethod")]
-                public WriteMethodEnum? WriteMethod { get; private set; }
+                public WriteMethodEnum? WriteMethod { get; init; }
 
             }
 
@@ -97,7 +97,7 @@ namespace XFS4IoT.CardReader.Commands
             /// An array of card data structures
             /// </summary>
             [DataMember(Name = "data")]
-            public List<DataClass> Data { get; private set; }
+            public List<DataClass> Data { get; init; }
 
         }
     }

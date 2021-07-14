@@ -38,11 +38,11 @@ namespace XFS4IoT.Dispenser.Events
             }
 
             /// <summary>
-            /// \"List of currency and amount combinations for denomination. There will be one entry for each currency
-            /// in the denomination. The property name is the currency name in ISO format (e.g. \"EUR\").
+            /// "List of currency and amount combinations for denomination. There will be one entry for each currency
+            /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
             /// </summary>
             [DataMember(Name = "currencies")]
-            public Dictionary<string, double> Currencies { get; private set; }
+            public Dictionary<string, double> Currencies { get; init; }
 
             /// <summary>
             /// This list specifies the number of items to take from the cash units. 
@@ -52,13 +52,13 @@ namespace XFS4IoT.Dispenser.Events
             /// If the application does not wish to specify a denomination, it should omit the values property.
             /// </summary>
             [DataMember(Name = "values")]
-            public Dictionary<string, int> Values { get; private set; }
+            public Dictionary<string, int> Values { get; init; }
 
             /// <summary>
             /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
             /// </summary>
             [DataMember(Name = "cashBox")]
-            public int? CashBox { get; private set; }
+            public int? CashBox { get; init; }
 
         }
 

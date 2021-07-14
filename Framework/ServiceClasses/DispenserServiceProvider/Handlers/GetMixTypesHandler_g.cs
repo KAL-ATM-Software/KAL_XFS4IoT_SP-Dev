@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getMixTypesCmd = command.IsA<GetMixTypesCommand>($"Invalid parameter in the GetMixTypes Handle method. {nameof(GetMixTypesCommand)}");
-            getMixTypesCmd.Headers.RequestId.HasValue.IsTrue();
+            getMixTypesCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetMixTypesEvents events = new GetMixTypesEvents(Connection, getMixTypesCmd.Headers.RequestId.Value);
+            IGetMixTypesEvents events = new GetMixTypesEvents(Connection, getMixTypesCmd.Header.RequestId.Value);
 
             var result = await HandleGetMixTypes(events, getMixTypesCmd, cancel);
-            await Connection.SendMessageAsync(new GetMixTypesCompletion(getMixTypesCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetMixTypesCompletion(getMixTypesCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getMixTypescommand = command.IsA<GetMixTypesCommand>();
-            getMixTypescommand.Headers.RequestId.HasValue.IsTrue();
+            getMixTypescommand.Header.RequestId.HasValue.IsTrue();
 
             GetMixTypesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => GetMixTypesCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetMixTypesCompletion(getMixTypescommand.Headers.RequestId.Value, new GetMixTypesCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetMixTypesCompletion(getMixTypescommand.Header.RequestId.Value, new GetMixTypesCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

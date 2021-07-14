@@ -39,7 +39,7 @@ namespace XFS4IoT.Printer.Commands
             /// subsequent operation the media can be ejected again, or retracted to one of the retract bins.
             /// </summary>
             [DataMember(Name = "binNumber")]
-            public int? BinNumber { get; private set; }
+            public int? BinNumber { get; init; }
 
         }
     }

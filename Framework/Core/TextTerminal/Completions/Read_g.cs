@@ -47,14 +47,14 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Specifies a zero terminated string containing all the printable characters (numeric and alphanumeric) 
             /// read from the text terminal unit key pad.
             /// </summary>
             [DataMember(Name = "input")]
-            public string Input { get; private set; }
+            public string Input { get; init; }
 
         }
     }

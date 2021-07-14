@@ -42,12 +42,12 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Specifies the Mixed Media mode of the device. Following values are possible:
             /// 
-            /// \"mixedMediaNotActive\": Mixed Media transactions are deactivated. This is the default mode.
+            /// "mixedMediaNotActive": Mixed Media transactions are deactivated. This is the default mode.
             /// 
-            /// \"mixedMedia\": Mixed Media transactions are activated in combination with the ItemProcessor interface as defined by the capability *mixedMode*.
+            /// "mixedMedia": Mixed Media transactions are activated in combination with the ItemProcessor interface as defined by the capability *mixedMode*.
             /// </summary>
             [DataMember(Name = "mixedMode")]
-            public MixedModeEnum? MixedMode { get; private set; }
+            public MixedModeEnum? MixedMode { get; init; }
 
         }
     }

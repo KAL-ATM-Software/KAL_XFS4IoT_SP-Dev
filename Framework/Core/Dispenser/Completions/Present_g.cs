@@ -60,7 +60,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             public enum PositionEnum
             {
@@ -86,7 +86,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```rear``` - Items presented at the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             public enum AdditionalBunchesEnum
             {
@@ -103,15 +103,15 @@ namespace XFS4IoT.Dispenser.Completions
             /// * ```unknown``` - It is unknown whether additional bunches remain.
             /// </summary>
             [DataMember(Name = "additionalBunches")]
-            public AdditionalBunchesEnum? AdditionalBunches { get; private set; }
+            public AdditionalBunchesEnum? AdditionalBunches { get; init; }
 
             /// <summary>
-            /// If *additionalBunches* is \"oneMore\", specifies the number of additional bunches of items remaining to be presented as a result of the current operation. 
+            /// If *additionalBunches* is "oneMore", specifies the number of additional bunches of items remaining to be presented as a result of the current operation. 
             /// If the number of additional bunches is at least one, but the precise number is unknown, *bunchesRemaining* will be 255 (TODO: Check if there is a better way to represent this state). 
             /// For any other value of *additionalBunches*, *bunchesRemaining* will be zero.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
-            public int? BunchesRemaining { get; private set; }
+            public int? BunchesRemaining { get; init; }
 
         }
     }

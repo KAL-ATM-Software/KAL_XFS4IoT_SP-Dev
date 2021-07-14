@@ -41,15 +41,15 @@ namespace XFS4IoT.Dispenser.Commands
             /// Identifies the teller. This field is ignored if the device is a Self-Service Dispenser.
             /// </summary>
             [DataMember(Name = "tellerID")]
-            public int? TellerID { get; private set; }
+            public int? TellerID { get; init; }
 
             /// <summary>
             /// Mix algorithm or house mix table to be used to create a denomination of the supplied amount. 
-            /// If the value is 0 (\"individual\"), the denomination supplied in the *denomination* field is 
+            /// If the value is 0 ("individual"), the denomination supplied in the *denomination* field is 
             /// validated prior to the dispense operation. If it is found to be invalid no alternative denomination will be calculated.
             /// </summary>
             [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; private set; }
+            public int? MixNumber { get; init; }
 
             public enum PositionEnum
             {
@@ -76,7 +76,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// * ```rear``` - Present items to the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
             [DataContract]
             public sealed class DenominationClass
@@ -89,11 +89,11 @@ namespace XFS4IoT.Dispenser.Commands
                 }
 
                 /// <summary>
-                /// \"List of currency and amount combinations for denomination. There will be one entry for each currency
-                /// in the denomination. The property name is the currency name in ISO format (e.g. \"EUR\").
+                /// "List of currency and amount combinations for denomination. There will be one entry for each currency
+                /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
                 /// </summary>
                 [DataMember(Name = "currencies")]
-                public Dictionary<string, double> Currencies { get; private set; }
+                public Dictionary<string, double> Currencies { get; init; }
 
                 /// <summary>
                 /// This list specifies the number of items to take from the cash units. 
@@ -103,13 +103,13 @@ namespace XFS4IoT.Dispenser.Commands
                 /// If the application does not wish to specify a denomination, it should omit the values property.
                 /// </summary>
                 [DataMember(Name = "values")]
-                public Dictionary<string, int> Values { get; private set; }
+                public Dictionary<string, int> Values { get; init; }
 
                 /// <summary>
                 /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
                 /// </summary>
                 [DataMember(Name = "cashBox")]
-                public int? CashBox { get; private set; }
+                public int? CashBox { get; init; }
 
             }
 
@@ -117,7 +117,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// Denomination object describing the denominations used for the dispense operation.
             /// </summary>
             [DataMember(Name = "denomination")]
-            public DenominationClass Denomination { get; private set; }
+            public DenominationClass Denomination { get; init; }
 
             /// <summary>
             /// The dispense token that authorises the dispense operation, as created by the authorising host. See 
@@ -125,14 +125,14 @@ namespace XFS4IoT.Dispenser.Commands
             /// 
             /// The dispense token will follow the standard token format, and will contain the following key: 
             /// 
-            /// \"DISPENSE1\": The maximum value to be dispensed. This will be a number string that may contain a fractional 
-            /// part. The decimal character will be \".\". The value, including the fractional part, will be 
+            /// "DISPENSE1": The maximum value to be dispensed. This will be a number string that may contain a fractional 
+            /// part. The decimal character will be ".". The value, including the fractional part, will be 
             /// defined by the ISO currency. The number will be followed by the ISO currency code. The currency 
             /// code will be upper case. 
             /// 
-            /// For example, \"123.45EUR\" will be €123 and 45 cents.
+            /// For example, "123.45EUR" will be €123 and 45 cents.
             /// 
-            /// The \"DISPENSE\" key may appear multiple times with a number suffix. For example, DISPENSE1, DISPENSE2, 
+            /// The "DISPENSE" key may appear multiple times with a number suffix. For example, DISPENSE1, DISPENSE2, 
             /// DISPENSE3. The number will start at 1 and increment. Each key can only be given once. Each key must 
             /// have a value in a different currency. For example, DISPENSE1=100.00EUR,DISPENSE2=200.00USD   
             /// 
@@ -141,7 +141,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// or the Token is invalid for any reason, then the command will fail with an invalid data error code.
             /// </summary>
             [DataMember(Name = "token")]
-            public string Token { get; private set; }
+            public string Token { get; init; }
 
         }
     }

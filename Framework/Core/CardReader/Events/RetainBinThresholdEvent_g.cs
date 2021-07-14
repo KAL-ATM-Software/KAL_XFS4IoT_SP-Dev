@@ -50,7 +50,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```high``` - The retain bin of the ID card unit is nearly full.
             /// </summary>
             [DataMember(Name = "state")]
-            public StateEnum? State { get; private set; }
+            public StateEnum? State { get; init; }
 
         }
 

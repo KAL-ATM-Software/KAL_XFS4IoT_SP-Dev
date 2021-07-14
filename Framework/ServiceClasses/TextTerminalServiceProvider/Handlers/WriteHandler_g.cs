@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var writeCmd = command.IsA<WriteCommand>($"Invalid parameter in the Write Handle method. {nameof(WriteCommand)}");
-            writeCmd.Headers.RequestId.HasValue.IsTrue();
+            writeCmd.Header.RequestId.HasValue.IsTrue();
 
-            IWriteEvents events = new WriteEvents(Connection, writeCmd.Headers.RequestId.Value);
+            IWriteEvents events = new WriteEvents(Connection, writeCmd.Header.RequestId.Value);
 
             var result = await HandleWrite(events, writeCmd, cancel);
-            await Connection.SendMessageAsync(new WriteCompletion(writeCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new WriteCompletion(writeCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var writecommand = command.IsA<WriteCommand>();
-            writecommand.Headers.RequestId.HasValue.IsTrue();
+            writecommand.Header.RequestId.HasValue.IsTrue();
 
             WriteCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => WriteCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new WriteCompletion(writecommand.Headers.RequestId.Value, new WriteCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new WriteCompletion(writecommand.Header.RequestId.Value, new WriteCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

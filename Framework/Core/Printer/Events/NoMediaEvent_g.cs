@@ -43,7 +43,7 @@ namespace XFS4IoT.Printer.Events
             /// operator, along with a message that the media should be inserted.
             /// </summary>
             [DataMember(Name = "userPrompt")]
-            public string UserPrompt { get; private set; }
+            public string UserPrompt { get; init; }
 
         }
 

@@ -31,7 +31,7 @@ namespace XFS4IoTCoreTest.Command
 
             string result = command.Serialise();
 
-            AreEqual(@"{""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000},""headers"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""}}", result);
+            AreEqual(@"{""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""}}", result);
 
         }
 
@@ -41,7 +41,7 @@ namespace XFS4IoTCoreTest.Command
             var mediaInserted = new MediaInsertedEvent(123456);
 
             string result = mediaInserted.Serialise();
-            AreEqual(@"{""payload"":{},""headers"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""}}", result);
+            AreEqual(@"{""payload"":{},""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""}}", result);
         }
     }
 }

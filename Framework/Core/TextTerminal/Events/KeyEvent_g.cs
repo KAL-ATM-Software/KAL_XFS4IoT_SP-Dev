@@ -41,14 +41,14 @@ namespace XFS4IoT.TextTerminal.Events
             /// This value is not set if no numeric or alphanumeric key was pressed.
             /// </summary>
             [DataMember(Name = "key")]
-            public string Key { get; private set; }
+            public string Key { get; init; }
 
             /// <summary>
             /// On a Command key press this parameter holds the value of the Command key pressed, e.g. ckEnter.
             /// This value is not set when no command key was pressed.
             /// </summary>
             [DataMember(Name = "commandKey")]
-            public string CommandKey { get; private set; }
+            public string CommandKey { get; init; }
 
         }
 

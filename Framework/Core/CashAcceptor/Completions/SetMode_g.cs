@@ -41,12 +41,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"cashInActive\": A cash-in transaction is active.
+            /// "cashInActive": A cash-in transaction is active.
             /// 
-            /// \"mediaInActive\": An item processing transaction is active.
+            /// "mediaInActive": An item processing transaction is active.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

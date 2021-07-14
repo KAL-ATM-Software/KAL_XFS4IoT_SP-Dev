@@ -79,7 +79,7 @@ namespace XFS4IoT
         /// registered with this MessageDecoder collection. 
         /// </summary>
         /// <remarks>
-        /// JSON must contain an Name field in the Headers. 
+        /// JSON must contain an Name field in the Header. 
         /// JSON must match type registered for that Name. 
         /// </remarks>
         /// <param name="JSON">JSON for object</param>
@@ -90,7 +90,7 @@ namespace XFS4IoT
             result = default;
             string messageName = null;
 
-            // Sniff headers first and know message type
+            // Sniff header first and know message type
             if (searchType == typeof(CommandAttribute) ||
                 searchType == typeof(CompletionAttribute))
             {
@@ -99,7 +99,7 @@ namespace XFS4IoT
                 if (objMessage is null || objMessage is not MessageDeserializerHelper<MessagePayloadBase>)
                     Contracts.Fail($"Failed to unserialize JSON message in the {nameof(TryUnserialise)} nethod. SearchType:{searchType} Contents: {JSON}");
                 MessageDeserializerHelper<MessagePayloadBase> baseMessage = objMessage as MessageDeserializerHelper<MessagePayloadBase>;
-                messageName = baseMessage.Headers.Name;
+                messageName = baseMessage.Header.Name;
             }
             else
             {
@@ -163,8 +163,8 @@ namespace XFS4IoT
         //Class to use for deserializing types. 
         private class MessageDeserializerHelper<T> : Message<T>, IDeserializerHelper where T : MessagePayloadBase
         {
-            public MessageDeserializerHelper(MessageHeader Headers, T Payload)
-                : base(Headers, Payload)
+            public MessageDeserializerHelper(MessageHeader Header, T Payload)
+                : base(Header, Payload)
             { }
 
             //Create the expected message type using its constructor.
@@ -172,13 +172,13 @@ namespace XFS4IoT
             {
                 //Get constructor (RequestId, payloadType)
                 ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T) });
-                if (ci != null && Headers.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Headers.RequestId.Value, Payload });
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Header.RequestId.Value, Payload });
                 
                 //Try to get constructor (RequestId) for events
                 ci = messageType.GetConstructor(new Type[] { typeof(int) });
-                if (ci != null && Headers.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Headers.RequestId.Value });
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Header.RequestId.Value });
 
                 //Try to get constructor (payloadType) for events
                 ci = messageType.GetConstructor(new Type[] { typeof(T) });

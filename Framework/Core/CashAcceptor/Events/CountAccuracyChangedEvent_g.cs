@@ -49,7 +49,7 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// used to identify shared cash units/media bins.
                 /// </summary>
                 [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; private set; }
+                public string PhysicalPositionName { get; init; }
 
                 public enum AccuracyEnum
                 {
@@ -63,23 +63,23 @@ namespace XFS4IoT.CashAcceptor.Events
                 /// <summary>
                 /// Describes the accuracy of *count*. Following values are possible:
                 /// 
-                /// \"notSupported\": The hardware is not capable to determine the accuracy of *count*.
+                /// "notSupported": The hardware is not capable to determine the accuracy of *count*.
                 /// 
-                /// \"accurate\": The *count* is expected to be accurate. The notes were previously counted or replenished 
+                /// "accurate": The *count* is expected to be accurate. The notes were previously counted or replenished 
                 /// and there have since been no events that might have introduced inaccuracy. 
                 /// This value will be reported as a result of the following commands: Replenish and CashUnitCount.
                 /// 
-                /// \"accurateSet\": The *count* is expected to be accurate.  The notes were previously set and there have 
+                /// "accurateSet": The *count* is expected to be accurate.  The notes were previously set and there have 
                 /// since been no events that might have introduced inaccuracy.
                 /// 
-                /// \"inaccurate\": The *count* is likely to be inaccurate.  A jam, picking fault, or some other event may 
+                /// "inaccurate": The *count* is likely to be inaccurate.  A jam, picking fault, or some other event may 
                 /// have resulted in a counting inaccuracy.
                 /// 
-                /// \"unknown\": The accuracy of *count* cannot be determined. This may be due to cash unit insertion or 
+                /// "unknown": The accuracy of *count* cannot be determined. This may be due to cash unit insertion or 
                 /// some other hardware event.
                 /// </summary>
                 [DataMember(Name = "accuracy")]
-                public AccuracyEnum? Accuracy { get; private set; }
+                public AccuracyEnum? Accuracy { get; init; }
 
             }
 
@@ -88,7 +88,7 @@ namespace XFS4IoT.CashAcceptor.Events
             /// as used in [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo).
             /// </summary>
             [DataMember(Name = "cashUnitCountStatus")]
-            public Dictionary<string, CashUnitCountStatusClass> CashUnitCountStatus { get; private set; }
+            public Dictionary<string, CashUnitCountStatusClass> CashUnitCountStatus { get; init; }
 
         }
 

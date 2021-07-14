@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.TextTerminal
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var setLedCmd = command.IsA<SetLedCommand>($"Invalid parameter in the SetLed Handle method. {nameof(SetLedCommand)}");
-            setLedCmd.Headers.RequestId.HasValue.IsTrue();
+            setLedCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetLedEvents events = new SetLedEvents(Connection, setLedCmd.Headers.RequestId.Value);
+            ISetLedEvents events = new SetLedEvents(Connection, setLedCmd.Header.RequestId.Value);
 
             var result = await HandleSetLed(events, setLedCmd, cancel);
-            await Connection.SendMessageAsync(new SetLedCompletion(setLedCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetLedCompletion(setLedCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var setLedcommand = command.IsA<SetLedCommand>();
-            setLedcommand.Headers.RequestId.HasValue.IsTrue();
+            setLedcommand.Header.RequestId.HasValue.IsTrue();
 
             SetLedCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.TextTerminal
                 _ => SetLedCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetLedCompletion(setLedcommand.Headers.RequestId.Value, new SetLedCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetLedCompletion(setLedcommand.Header.RequestId.Value, new SetLedCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

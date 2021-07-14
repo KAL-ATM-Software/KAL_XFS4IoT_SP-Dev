@@ -42,36 +42,37 @@ namespace XFS4IoT.Crypto.Commands
             /// Specifies the name of the stored key.
             /// </summary>
             [DataMember(Name = "key")]
-            public string Key { get; private set; }
+            public string Key { get; init; }
 
             /// <summary>
             /// If startValue specifies an Initialization Vector (IV), then this parameter specifies the name of the
-            /// stored key used to decrypt the startValue to obtain the IV. If startValue is not set and this
+            /// stored key used to decrypt the startValue to obtain the IV. If startValue is omitted and this
             /// parameter is set, then this parameter specifies the name of the IV that has been previously imported
             /// via TR-31. If this parameter is not set, startValue is used as the Initialization Vector.
             /// </summary>
             [DataMember(Name = "startValueKey")]
-            public string StartValueKey { get; private set; }
+            public string StartValueKey { get; init; }
 
             /// <summary>
-            /// The initialization vector for CBC / CFB encryption. If this parameter and startValueKey are both not
-            /// set the default value for CBC / CFB is all zeroes.
+            /// The Base64 encoded initialization vector for CBC / CFB encryption. 
+            /// If this property and startValueKey are both omitted the default value for CBC / CFB is all zeroes.
             /// </summary>
             [DataMember(Name = "startValue")]
-            public string StartValue { get; private set; }
+            public string StartValue { get; init; }
 
             /// <summary>
             /// Specifies the padding character. The padding character is a full byte, e.g. 0xFF.  The valid range is
             /// 0x00 to 0xFF.
             /// </summary>
             [DataMember(Name = "padding")]
-            public int? Padding { get; private set; }
+            [DataTypes(Minimum = 0, Maximum = 255)]
+            public int? Padding { get; init; }
 
             /// <summary>
-            /// The data to be encrypted or decrypted formatted in Base64.
+            /// The Base64 encoded data to be encrypted or decrypted.
             /// </summary>
             [DataMember(Name = "cryptData")]
-            public string CryptData { get; private set; }
+            public string CryptData { get; init; }
 
             [DataContract]
             public sealed class CryptoAttributesClass
@@ -101,7 +102,7 @@ namespace XFS4IoT.Crypto.Commands
                 /// * ```T``` - Triple DEA (also referred to as TDEA).
                 /// </summary>
                 [DataMember(Name = "algorithm")]
-                public AlgorithmEnum? Algorithm { get; private set; }
+                public AlgorithmEnum? Algorithm { get; init; }
 
                 public enum ModeOfUseEnum
                 {
@@ -117,7 +118,7 @@ namespace XFS4IoT.Crypto.Commands
                 /// * ```E``` - Encrypt
                 /// </summary>
                 [DataMember(Name = "modeOfUse")]
-                public ModeOfUseEnum? ModeOfUse { get; private set; }
+                public ModeOfUseEnum? ModeOfUse { get; init; }
 
                 public enum CryptoMethodEnum
                 {
@@ -148,17 +149,17 @@ namespace XFS4IoT.Crypto.Commands
                 /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.
                 /// </summary>
                 [DataMember(Name = "cryptoMethod")]
-                public CryptoMethodEnum? CryptoMethod { get; private set; }
+                public CryptoMethodEnum? CryptoMethod { get; init; }
 
             }
 
             /// <summary>
             /// This parameter specifies the encryption algorithm, cryptographic method, and mode to be used for this
-            /// command. For a list of valid values see the [Capability.Attributes](#common.capabilities.completion.properties.crypto.cryptoattributes) field. The values specified must be
+            /// command. For a list of valid values see [cryptoAttributes capabilities](#common.capabilities.completion.properties.crypto.cryptoattributes) property. The values specified must be
             /// compatible with the key identified by Key.
             /// </summary>
             [DataMember(Name = "cryptoAttributes")]
-            public CryptoAttributesClass CryptoAttributes { get; private set; }
+            public CryptoAttributesClass CryptoAttributes { get; init; }
 
         }
     }

@@ -48,7 +48,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```off``` - The chip is powered off.
             /// </summary>
             [DataMember(Name = "chipPower")]
-            public ChipPowerEnum? ChipPower { get; private set; }
+            public ChipPowerEnum? ChipPower { get; init; }
 
         }
     }

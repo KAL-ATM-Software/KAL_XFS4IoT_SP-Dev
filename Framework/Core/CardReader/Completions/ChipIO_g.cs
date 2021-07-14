@@ -57,7 +57,7 @@ namespace XFS4IoT.CardReader.Completions
             /// * ```cardCollision``` - There was an unresolved collision of two or more contactless card signals.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Identifies the protocol that is used to communicate with the chip. This field contains the same value
@@ -65,13 +65,13 @@ namespace XFS4IoT.CardReader.Completions
             /// will contain *notSupported* when returned for any Memory Card dialog.
             /// </summary>
             [DataMember(Name = "chipProtocol")]
-            public string ChipProtocol { get; private set; }
+            public string ChipProtocol { get; init; }
 
             /// <summary>
             /// The Base64 encoded data received from the chip.
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; private set; }
+            public string ChipData { get; init; }
 
         }
     }

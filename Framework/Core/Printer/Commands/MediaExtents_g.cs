@@ -50,21 +50,21 @@ namespace XFS4IoT.Printer.Commands
             /// * ```rowColumn``` - The base unit is rows and columns.
             /// </summary>
             [DataMember(Name = "base")]
-            public BaseEnum? Base { get; private set; }
+            public BaseEnum? Base { get; init; }
 
             /// <summary>
             /// Specifies the horizontal resolution of the base units as a fraction of the base value. For example, a
             /// value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
             /// </summary>
             [DataMember(Name = "unitX")]
-            public int? UnitX { get; private set; }
+            public int? UnitX { get; init; }
 
             /// <summary>
             /// Specifies the vertical resolution of the base units as a fraction of the base value. For example, a
             /// value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")]
-            public int? UnitY { get; private set; }
+            public int? UnitY { get; init; }
 
         }
     }

@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```off``` - Turns the black mark detection and associated functionality off.
             /// </summary>
             [DataMember(Name = "blackMarkMode")]
-            public BlackMarkModeEnum? BlackMarkMode { get; private set; }
+            public BlackMarkModeEnum? BlackMarkMode { get; init; }
 
         }
     }

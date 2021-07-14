@@ -51,14 +51,14 @@ namespace XFS4IoT.CardReader.Completions
             ///   CardReader.EMVClessPerformTransaction command.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Contains the BER-TLV formatted data read from the chip. This will be omitted if no data has been
             /// returned.
             /// </summary>
             [DataMember(Name = "chip")]
-            public EMVClessTxOutputDataClass Chip { get; private set; }
+            public EMVClessTxOutputDataClass Chip { get; init; }
 
         }
     }

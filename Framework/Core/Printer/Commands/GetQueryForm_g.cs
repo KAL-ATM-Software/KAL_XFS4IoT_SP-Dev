@@ -37,7 +37,7 @@ namespace XFS4IoT.Printer.Commands
             /// The form name for which to retrieve details.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
         }
     }

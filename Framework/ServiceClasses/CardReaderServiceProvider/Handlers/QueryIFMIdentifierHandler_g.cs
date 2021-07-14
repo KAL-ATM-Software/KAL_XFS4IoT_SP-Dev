@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var queryIFMIdentifierCmd = command.IsA<QueryIFMIdentifierCommand>($"Invalid parameter in the QueryIFMIdentifier Handle method. {nameof(QueryIFMIdentifierCommand)}");
-            queryIFMIdentifierCmd.Headers.RequestId.HasValue.IsTrue();
+            queryIFMIdentifierCmd.Header.RequestId.HasValue.IsTrue();
 
-            IQueryIFMIdentifierEvents events = new QueryIFMIdentifierEvents(Connection, queryIFMIdentifierCmd.Headers.RequestId.Value);
+            IQueryIFMIdentifierEvents events = new QueryIFMIdentifierEvents(Connection, queryIFMIdentifierCmd.Header.RequestId.Value);
 
             var result = await HandleQueryIFMIdentifier(events, queryIFMIdentifierCmd, cancel);
-            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var queryIFMIdentifiercommand = command.IsA<QueryIFMIdentifierCommand>();
-            queryIFMIdentifiercommand.Headers.RequestId.HasValue.IsTrue();
+            queryIFMIdentifiercommand.Header.RequestId.HasValue.IsTrue();
 
             QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifiercommand.Headers.RequestId.Value, new QueryIFMIdentifierCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifiercommand.Header.RequestId.Value, new QueryIFMIdentifierCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

@@ -44,18 +44,18 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// \"unsupportedPosition\": The position specified is not supported.
+            /// "unsupportedPosition": The position specified is not supported.
             /// 
-            /// \"shutterNotOpen\": Shutter failed to open.
+            /// "shutterNotOpen": Shutter failed to open.
             /// 
-            /// \"shutterOpen\": Shutter was already open.
+            /// "shutterOpen": Shutter was already open.
             /// 
-            /// \"exchangeActive\": The device is in an exchange state. Note that this would not apply during an Exchange (*exchangeType* == \"depositInto\").
+            /// "exchangeActive": The device is in an exchange state. Note that this would not apply during an Exchange (*exchangeType* == "depositInto").
             /// 
-            /// \"foreignItemsDetected\": Foreign items have been detected in the input position. 
+            /// "foreignItemsDetected": Foreign items have been detected in the input position. 
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

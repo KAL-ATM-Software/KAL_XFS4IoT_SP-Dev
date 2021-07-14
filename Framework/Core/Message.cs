@@ -37,20 +37,20 @@ namespace XFS4IoT
 
         /// <summary>
         /// Internal constructor of the message object for response
-        /// The Payload property must be set by the derived class and passing paramters for the headers to the base class
+        /// The Payload property must be set by the derived class and passing paramters for the header to the base class
         /// For use by JsonSerializer.
         /// </summary>
-        /// <param name="Headers">header contents</param>
+        /// <param name="Header">header contents</param>
         /// <param name="Payload">payload contents</param>
-        internal Message(MessageHeader Headers, T Payload) :
-            base(Headers)
+        internal Message(MessageHeader Header, T Payload) :
+            base(Header)
         {
             this.Payload = Payload.Ignore();
         }
 
         /// <summary>
         /// Constructor of the message object for response
-        /// The Payload property must be set by the derived class and passing paramters for the headers to the base class
+        /// The Payload property must be set by the derived class and passing paramters for the header to the base class
         /// </summary>
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>

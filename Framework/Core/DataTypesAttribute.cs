@@ -34,7 +34,7 @@ namespace XFS4IoT
         /// <summary>
         /// Use the Minimum and Maximum to specify the range of possible values for type int
         /// </summary>
-        public int? Minimum { get; set; } = null;
-        public int? Maximum { get; set; } = null;
+        public int Minimum { get; set; } = -1;
+        public int Maximum { get; set; } = -1;
     }
 }

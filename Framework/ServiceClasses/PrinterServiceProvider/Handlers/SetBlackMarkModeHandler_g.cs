@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var setBlackMarkModeCmd = command.IsA<SetBlackMarkModeCommand>($"Invalid parameter in the SetBlackMarkMode Handle method. {nameof(SetBlackMarkModeCommand)}");
-            setBlackMarkModeCmd.Headers.RequestId.HasValue.IsTrue();
+            setBlackMarkModeCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetBlackMarkModeEvents events = new SetBlackMarkModeEvents(Connection, setBlackMarkModeCmd.Headers.RequestId.Value);
+            ISetBlackMarkModeEvents events = new SetBlackMarkModeEvents(Connection, setBlackMarkModeCmd.Header.RequestId.Value);
 
             var result = await HandleSetBlackMarkMode(events, setBlackMarkModeCmd, cancel);
-            await Connection.SendMessageAsync(new SetBlackMarkModeCompletion(setBlackMarkModeCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetBlackMarkModeCompletion(setBlackMarkModeCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var setBlackMarkModecommand = command.IsA<SetBlackMarkModeCommand>();
-            setBlackMarkModecommand.Headers.RequestId.HasValue.IsTrue();
+            setBlackMarkModecommand.Header.RequestId.HasValue.IsTrue();
 
             SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetBlackMarkModeCompletion(setBlackMarkModecommand.Headers.RequestId.Value, new SetBlackMarkModeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetBlackMarkModeCompletion(setBlackMarkModecommand.Header.RequestId.Value, new SetBlackMarkModeCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

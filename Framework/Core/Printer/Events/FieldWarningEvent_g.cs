@@ -41,13 +41,13 @@ namespace XFS4IoT.Printer.Events
             /// The form name.
             /// </summary>
             [DataMember(Name = "formName")]
-            public string FormName { get; private set; }
+            public string FormName { get; init; }
 
             /// <summary>
             /// The field name.
             /// </summary>
             [DataMember(Name = "fieldName")]
-            public string FieldName { get; private set; }
+            public string FieldName { get; init; }
 
             public enum FailureEnum
             {
@@ -76,7 +76,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```graphic``` - The specified graphic image could not be printed.
             /// </summary>
             [DataMember(Name = "failure")]
-            public FailureEnum? Failure { get; private set; }
+            public FailureEnum? Failure { get; init; }
 
         }
 

@@ -55,38 +55,38 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Describes the position where the media is to be presented. Following values are possible:
             /// 
-            /// \"null\": The default configuration information should be used.
+            /// "null": The default configuration information should be used.
             /// 
-            /// \"inLeft\": Present items to the left input position.
+            /// "inLeft": Present items to the left input position.
             /// 
-            /// \"inRight\": Present items to the right input position.
+            /// "inRight": Present items to the right input position.
             /// 
-            /// \"inCenter\": Present items to of the center input position.
+            /// "inCenter": Present items to of the center input position.
             /// 
-            /// \"inTop\": Present items to the top input position.
+            /// "inTop": Present items to the top input position.
             /// 
-            /// \"inBottom\": Present items to the bottom input position.
+            /// "inBottom": Present items to the bottom input position.
             /// 
-            /// \"inFront\": Present items to the front input position.
+            /// "inFront": Present items to the front input position.
             /// 
-            /// \"inRear\": Present items to the rear input position.
+            /// "inRear": Present items to the rear input position.
             /// 
-            /// \"outLeft\": Present items to the left output position.
+            /// "outLeft": Present items to the left output position.
             /// 
-            /// \"outRight\": Present items to the right output position.
+            /// "outRight": Present items to the right output position.
             /// 
-            /// \"outCenter\": Present items to the center output position.
+            /// "outCenter": Present items to the center output position.
             /// 
-            /// \"outTop\": Present items to the top output position.
+            /// "outTop": Present items to the top output position.
             /// 
-            /// \"outBottom\": Present items to the bottom output position.
+            /// "outBottom": Present items to the bottom output position.
             /// 
-            /// \"outFront\": Present items to the front output position.
+            /// "outFront": Present items to the front output position.
             /// 
-            /// \"outRear\": Present items to of the rear output position.
+            /// "outRear": Present items to of the rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

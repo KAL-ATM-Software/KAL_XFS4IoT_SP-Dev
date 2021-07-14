@@ -39,7 +39,7 @@ namespace XFS4IoT.Common.Events
             /// Specifies the actual number of seconds required by the device to resume its normal operational state. This value is zero if the device exited the power saving mode
             /// </summary>
             [DataMember(Name = "powerSaveRecoveryTime")]
-            public int? PowerSaveRecoveryTime { get; private set; }
+            public int? PowerSaveRecoveryTime { get; init; }
 
         }
 

@@ -40,21 +40,27 @@ namespace XFS4IoT.Crypto.Events
             /// Specifies the name of the key that caused the error. 
             /// </summary>
             [DataMember(Name = "keyName")]
-            public string KeyName { get; private set; }
+            public string KeyName { get; init; }
 
             public enum ErrorCodeEnum
             {
-                Keynotfound,
-                Keynovalue,
-                Useviolation,
-                Algorithmnotsupp
+                KeyNotFound,
+                KeyNoValue,
+                UseViolation,
+                AlgorithmNotSupp
             }
 
             /// <summary>
             /// Specifies the type of illegal key access that occurred
+            /// The following values are possible:
+            /// 
+            /// * ```keyNotFound``` - The specified key was not loaded or attempting to delete a non-existent key.
+            /// * ```keyNoValue``` - The specified key is not loaded.
+            /// * ```useViolation``` - The specified use is not supported by this key.
+            /// * ```algorithmNotSupp``` - The specified algorithm is not supported by this key.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
 

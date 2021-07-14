@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var setKeyCmd = command.IsA<SetKeyCommand>($"Invalid parameter in the SetKey Handle method. {nameof(SetKeyCommand)}");
-            setKeyCmd.Headers.RequestId.HasValue.IsTrue();
+            setKeyCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetKeyEvents events = new SetKeyEvents(Connection, setKeyCmd.Headers.RequestId.Value);
+            ISetKeyEvents events = new SetKeyEvents(Connection, setKeyCmd.Header.RequestId.Value);
 
             var result = await HandleSetKey(events, setKeyCmd, cancel);
-            await Connection.SendMessageAsync(new SetKeyCompletion(setKeyCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetKeyCompletion(setKeyCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var setKeycommand = command.IsA<SetKeyCommand>();
-            setKeycommand.Headers.RequestId.HasValue.IsTrue();
+            setKeycommand.Header.RequestId.HasValue.IsTrue();
 
             SetKeyCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => SetKeyCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetKeyCompletion(setKeycommand.Headers.RequestId.Value, new SetKeyCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetKeyCompletion(setKeycommand.Header.RequestId.Value, new SetKeyCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

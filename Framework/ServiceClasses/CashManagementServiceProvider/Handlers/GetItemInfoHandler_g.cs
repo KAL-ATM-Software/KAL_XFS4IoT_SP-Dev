@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CashManagement
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var getItemInfoCmd = command.IsA<GetItemInfoCommand>($"Invalid parameter in the GetItemInfo Handle method. {nameof(GetItemInfoCommand)}");
-            getItemInfoCmd.Headers.RequestId.HasValue.IsTrue();
+            getItemInfoCmd.Header.RequestId.HasValue.IsTrue();
 
-            IGetItemInfoEvents events = new GetItemInfoEvents(Connection, getItemInfoCmd.Headers.RequestId.Value);
+            IGetItemInfoEvents events = new GetItemInfoEvents(Connection, getItemInfoCmd.Header.RequestId.Value);
 
             var result = await HandleGetItemInfo(events, getItemInfoCmd, cancel);
-            await Connection.SendMessageAsync(new GetItemInfoCompletion(getItemInfoCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetItemInfoCompletion(getItemInfoCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var getItemInfocommand = command.IsA<GetItemInfoCommand>();
-            getItemInfocommand.Headers.RequestId.HasValue.IsTrue();
+            getItemInfocommand.Header.RequestId.HasValue.IsTrue();
 
             GetItemInfoCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CashManagement
                 _ => GetItemInfoCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetItemInfoCompletion(getItemInfocommand.Headers.RequestId.Value, new GetItemInfoCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetItemInfoCompletion(getItemInfocommand.Header.RequestId.Value, new GetItemInfoCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

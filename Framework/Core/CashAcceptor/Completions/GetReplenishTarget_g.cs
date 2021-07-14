@@ -45,7 +45,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// command) that can be used as a target.
                 /// </summary>
                 [DataMember(Name = "cashunitTarget")]
-                public string CashunitTarget { get; private set; }
+                public string CashunitTarget { get; init; }
 
             }
 
@@ -53,7 +53,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Array of all suitable replenish targets. Empty if no suitable target was found.
             /// </summary>
             [DataMember(Name = "replenishTargets")]
-            public List<ReplenishTargetsClass> ReplenishTargets { get; private set; }
+            public List<ReplenishTargetsClass> ReplenishTargets { get; init; }
 
         }
     }

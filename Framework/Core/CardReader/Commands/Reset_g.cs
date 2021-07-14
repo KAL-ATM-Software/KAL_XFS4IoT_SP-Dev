@@ -49,7 +49,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```noAction``` - No action should be performed on any card found.
             /// </summary>
             [DataMember(Name = "resetIn")]
-            public ResetInEnum? ResetIn { get; private set; }
+            public ResetInEnum? ResetIn { get; init; }
 
         }
     }

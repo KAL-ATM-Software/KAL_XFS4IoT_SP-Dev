@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.CardReader
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var readRawDataCmd = command.IsA<ReadRawDataCommand>($"Invalid parameter in the ReadRawData Handle method. {nameof(ReadRawDataCommand)}");
-            readRawDataCmd.Headers.RequestId.HasValue.IsTrue();
+            readRawDataCmd.Header.RequestId.HasValue.IsTrue();
 
-            IReadRawDataEvents events = new ReadRawDataEvents(Connection, readRawDataCmd.Headers.RequestId.Value);
+            IReadRawDataEvents events = new ReadRawDataEvents(Connection, readRawDataCmd.Header.RequestId.Value);
 
             var result = await HandleReadRawData(events, readRawDataCmd, cancel);
-            await Connection.SendMessageAsync(new ReadRawDataCompletion(readRawDataCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ReadRawDataCompletion(readRawDataCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var readRawDatacommand = command.IsA<ReadRawDataCommand>();
-            readRawDatacommand.Headers.RequestId.HasValue.IsTrue();
+            readRawDatacommand.Header.RequestId.HasValue.IsTrue();
 
             ReadRawDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 _ => ReadRawDataCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadRawDataCompletion(readRawDatacommand.Headers.RequestId.Value, new ReadRawDataCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadRawDataCompletion(readRawDatacommand.Header.RequestId.Value, new ReadRawDataCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

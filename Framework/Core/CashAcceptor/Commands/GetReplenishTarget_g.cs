@@ -38,7 +38,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// command) which would be used as the source of the replenishment operation.
             /// </summary>
             [DataMember(Name = "cashunitSource")]
-            public string CashunitSource { get; private set; }
+            public string CashunitSource { get; init; }
 
         }
     }

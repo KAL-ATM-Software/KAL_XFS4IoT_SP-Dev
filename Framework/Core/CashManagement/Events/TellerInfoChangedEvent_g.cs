@@ -39,7 +39,7 @@ namespace XFS4IoT.CashManagement.Events
             /// Integer holding the ID of the teller whose counts have changed.
             /// </summary>
             [DataMember(Name = "tellerID")]
-            public int? TellerID { get; private set; }
+            public int? TellerID { get; init; }
 
         }
 

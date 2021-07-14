@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Dispenser
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var presentCmd = command.IsA<PresentCommand>($"Invalid parameter in the Present Handle method. {nameof(PresentCommand)}");
-            presentCmd.Headers.RequestId.HasValue.IsTrue();
+            presentCmd.Header.RequestId.HasValue.IsTrue();
 
-            IPresentEvents events = new PresentEvents(Connection, presentCmd.Headers.RequestId.Value);
+            IPresentEvents events = new PresentEvents(Connection, presentCmd.Header.RequestId.Value);
 
             var result = await HandlePresent(events, presentCmd, cancel);
-            await Connection.SendMessageAsync(new PresentCompletion(presentCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new PresentCompletion(presentCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var presentcommand = command.IsA<PresentCommand>();
-            presentcommand.Headers.RequestId.HasValue.IsTrue();
+            presentcommand.Header.RequestId.HasValue.IsTrue();
 
             PresentCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Dispenser
                 _ => PresentCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new PresentCompletion(presentcommand.Headers.RequestId.Value, new PresentCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PresentCompletion(presentcommand.Header.RequestId.Value, new PresentCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

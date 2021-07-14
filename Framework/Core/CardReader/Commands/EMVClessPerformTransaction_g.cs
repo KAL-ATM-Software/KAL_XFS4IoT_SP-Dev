@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Commands
             /// [CardReader.EMVClessConfigure](#cardreader.emvclessconfigure) command.
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public string Data { get; init; }
 
         }
     }

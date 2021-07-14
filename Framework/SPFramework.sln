@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashManagementServiceProvid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DispenserServiceProvider", "ServiceClasses\DispenserServiceProvider\DispenserServiceProvider.csproj", "{62236B74-B3C6-4A0B-A350-76C329B03176}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextTerminalServiceProvider", "ServiceClasses\TextTerminalServiceProvider\TextTerminalServiceProvider.csproj", "{47897B41-5286-407F-8239-07624964896F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,22 @@ Global
 		{62236B74-B3C6-4A0B-A350-76C329B03176}.Release|x64.Build.0 = Release|Any CPU
 		{62236B74-B3C6-4A0B-A350-76C329B03176}.Release|x86.ActiveCfg = Release|Any CPU
 		{62236B74-B3C6-4A0B-A350-76C329B03176}.Release|x86.Build.0 = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|ARM.Build.0 = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|x64.Build.0 = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Debug|x86.Build.0 = Debug|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|ARM.Build.0 = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|x64.ActiveCfg = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|x64.Build.0 = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|x86.ActiveCfg = Release|Any CPU
+		{47897B41-5286-407F-8239-07624964896F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

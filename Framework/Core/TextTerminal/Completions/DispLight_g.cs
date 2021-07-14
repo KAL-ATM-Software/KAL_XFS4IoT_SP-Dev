@@ -26,17 +26,10 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, bool? Mode = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
                 : base(CompletionCode, ErrorDescription)
             {
-                this.Mode = Mode;
             }
-
-            /// <summary>
-            /// Specifies whether the lighting of the text terminal unit is switched on (true) or off (false).
-            /// </summary>
-            [DataMember(Name = "mode")]
-            public bool? Mode { get; private set; }
 
         }
     }

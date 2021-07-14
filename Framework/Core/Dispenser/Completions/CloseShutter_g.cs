@@ -50,7 +50,7 @@ namespace XFS4IoT.Dispenser.Completions
             /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

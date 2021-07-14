@@ -38,18 +38,18 @@ namespace XFS4IoTFramework.Printer
         public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
         {
             var loadDefinitionCmd = command.IsA<LoadDefinitionCommand>($"Invalid parameter in the LoadDefinition Handle method. {nameof(LoadDefinitionCommand)}");
-            loadDefinitionCmd.Headers.RequestId.HasValue.IsTrue();
+            loadDefinitionCmd.Header.RequestId.HasValue.IsTrue();
 
-            ILoadDefinitionEvents events = new LoadDefinitionEvents(Connection, loadDefinitionCmd.Headers.RequestId.Value);
+            ILoadDefinitionEvents events = new LoadDefinitionEvents(Connection, loadDefinitionCmd.Header.RequestId.Value);
 
             var result = await HandleLoadDefinition(events, loadDefinitionCmd, cancel);
-            await Connection.SendMessageAsync(new LoadDefinitionCompletion(loadDefinitionCmd.Headers.RequestId.Value, result));
+            await Connection.SendMessageAsync(new LoadDefinitionCompletion(loadDefinitionCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
         {
             var loadDefinitioncommand = command.IsA<LoadDefinitionCommand>();
-            loadDefinitioncommand.Headers.RequestId.HasValue.IsTrue();
+            loadDefinitioncommand.Header.RequestId.HasValue.IsTrue();
 
             LoadDefinitionCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Printer
                 _ => LoadDefinitionCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new LoadDefinitionCompletion(loadDefinitioncommand.Headers.RequestId.Value, new LoadDefinitionCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new LoadDefinitionCompletion(loadDefinitioncommand.Header.RequestId.Value, new LoadDefinitionCompletion.PayloadData(errorCode, commandException.Message));
 
             await connection.SendMessageAsync(response);
         }

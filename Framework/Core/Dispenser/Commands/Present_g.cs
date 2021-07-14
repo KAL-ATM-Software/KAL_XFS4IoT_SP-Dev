@@ -58,7 +58,7 @@ namespace XFS4IoT.Dispenser.Commands
             /// * ```rear``` - The rear output position.
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; private set; }
+            public PositionEnum? Position { get; init; }
 
         }
     }

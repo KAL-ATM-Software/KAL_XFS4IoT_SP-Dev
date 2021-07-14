@@ -60,13 +60,13 @@ namespace XFS4IoT.Printer.Completions
             ///   presented and before the command could complete successfully.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// BASE64 encoded device dependent data received from the device.
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; private set; }
+            public string Data { get; init; }
 
         }
     }

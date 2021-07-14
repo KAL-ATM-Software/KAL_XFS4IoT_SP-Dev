@@ -39,7 +39,7 @@ namespace XFS4IoT.Crypto
         /// * ```D1``` - Asymmetric data encryption.
         /// </summary>
         [DataMember(Name = "keyUsage")]
-        public KeyUsageEnum? KeyUsage { get; private set; }
+        public KeyUsageEnum? KeyUsage { get; init; }
 
         public enum AlgorithmEnum
         {
@@ -59,7 +59,7 @@ namespace XFS4IoT.Crypto
         /// * ```T``` - Triple DEA (also referred to as TDEA).
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public AlgorithmEnum? Algorithm { get; private set; }
+        public AlgorithmEnum? Algorithm { get; init; }
 
         public enum ModeOfUseEnum
         {
@@ -75,7 +75,7 @@ namespace XFS4IoT.Crypto
         /// * ```E``` - Encrypt  
         /// </summary>
         [DataMember(Name = "modeOfUse")]
-        public ModeOfUseEnum? ModeOfUse { get; private set; }
+        public ModeOfUseEnum? ModeOfUse { get; init; }
 
         public enum CryptoMethodEnum
         {
@@ -106,7 +106,7 @@ namespace XFS4IoT.Crypto
         /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.
         /// </summary>
         [DataMember(Name = "cryptoMethod")]
-        public CryptoMethodEnum? CryptoMethod { get; private set; }
+        public CryptoMethodEnum? CryptoMethod { get; init; }
 
     }
 
@@ -157,7 +157,7 @@ namespace XFS4IoT.Crypto
         /// * ```S2``` - Asymmetric key pair, nonX9.24 key.
         /// </summary>
         [DataMember(Name = "keyUsage")]
-        public KeyUsageEnum? KeyUsage { get; private set; }
+        public KeyUsageEnum? KeyUsage { get; init; }
 
         public enum AlgorithmEnum
         {
@@ -177,7 +177,7 @@ namespace XFS4IoT.Crypto
         /// * ```T``` - Triple DEA (also referred to as TDEA).
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public AlgorithmEnum? Algorithm { get; private set; }
+        public AlgorithmEnum? Algorithm { get; init; }
 
         public enum ModeOfUseEnum
         {
@@ -193,7 +193,7 @@ namespace XFS4IoT.Crypto
         /// * ```S``` - Signature
         /// </summary>
         [DataMember(Name = "modeOfUse")]
-        public ModeOfUseEnum? ModeOfUse { get; private set; }
+        public ModeOfUseEnum? ModeOfUse { get; init; }
 
         public enum CryptoMethodEnum
         {
@@ -210,7 +210,7 @@ namespace XFS4IoT.Crypto
         /// If keyUsage is specified as any of the MAC usages (i.e. ‘M1’), then this proeprty should not be not set.
         /// </summary>
         [DataMember(Name = "cryptoMethod")]
-        public CryptoMethodEnum? CryptoMethod { get; private set; }
+        public CryptoMethodEnum? CryptoMethod { get; init; }
 
         [DataContract]
         public sealed class HashAlgorithmClass
@@ -225,13 +225,13 @@ namespace XFS4IoT.Crypto
             /// The SHA 1 digest algorithm.
             /// </summary>
             [DataMember(Name = "sha1")]
-            public bool? Sha1 { get; private set; }
+            public bool? Sha1 { get; init; }
 
             /// <summary>
             /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
             /// </summary>
             [DataMember(Name = "sha256")]
-            public bool? Sha256 { get; private set; }
+            public bool? Sha256 { get; init; }
 
         }
 
@@ -240,7 +240,7 @@ namespace XFS4IoT.Crypto
         /// If keyUsage is specified as any of the MAC usages (i.e. ‘M1’), then properties should not be not set or both 'sha1' and 'sha256' are false.
         /// </summary>
         [DataMember(Name = "hashAlgorithm")]
-        public HashAlgorithmClass HashAlgorithm { get; private set; }
+        public HashAlgorithmClass HashAlgorithm { get; init; }
 
     }
 
@@ -291,7 +291,7 @@ namespace XFS4IoT.Crypto
         /// * ```S2``` - Asymmetric key pair, nonX9.24 key.
         /// </summary>
         [DataMember(Name = "keyUsage")]
-        public KeyUsageEnum? KeyUsage { get; private set; }
+        public KeyUsageEnum? KeyUsage { get; init; }
 
         public enum AlgorithmEnum
         {
@@ -311,7 +311,7 @@ namespace XFS4IoT.Crypto
         /// * ```T``` - Triple DEA (also referred to as TDEA).
         /// </summary>
         [DataMember(Name = "algorithm")]
-        public AlgorithmEnum? Algorithm { get; private set; }
+        public AlgorithmEnum? Algorithm { get; init; }
 
         public enum ModeOfUseEnum
         {
@@ -327,7 +327,7 @@ namespace XFS4IoT.Crypto
         /// * ```V``` - Verify. This be used to verify a MAC.
         /// </summary>
         [DataMember(Name = "modeOfUse")]
-        public ModeOfUseEnum? ModeOfUse { get; private set; }
+        public ModeOfUseEnum? ModeOfUse { get; init; }
 
         public enum CryptoMethodEnum
         {
@@ -345,7 +345,7 @@ namespace XFS4IoT.Crypto
         /// If keyUsage is specified as any of the MAC usages (i.e. ‘M1’), then this proeprty should not be not set.
         /// </summary>
         [DataMember(Name = "cryptoMethod")]
-        public CryptoMethodEnum? CryptoMethod { get; private set; }
+        public CryptoMethodEnum? CryptoMethod { get; init; }
 
         [DataContract]
         public sealed class HashAlgorithmClass
@@ -360,13 +360,13 @@ namespace XFS4IoT.Crypto
             /// The SHA 1 digest algorithm.
             /// </summary>
             [DataMember(Name = "sha1")]
-            public bool? Sha1 { get; private set; }
+            public bool? Sha1 { get; init; }
 
             /// <summary>
             /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
             /// </summary>
             [DataMember(Name = "sha256")]
-            public bool? Sha256 { get; private set; }
+            public bool? Sha256 { get; init; }
 
         }
 
@@ -375,7 +375,7 @@ namespace XFS4IoT.Crypto
         /// If keyUsage is specified as any of the MAC usages (i.e. ‘M1’), then properties should not be not set or both 'sha1' and 'sha256' are false.
         /// </summary>
         [DataMember(Name = "hashAlgorithm")]
-        public HashAlgorithmClass HashAlgorithm { get; private set; }
+        public HashAlgorithmClass HashAlgorithm { get; init; }
 
     }
 
@@ -417,80 +417,80 @@ namespace XFS4IoT.Crypto
             /// Electronic Code Book.
             /// </summary>
             [DataMember(Name = "ecb")]
-            public bool? Ecb { get; private set; }
+            public bool? Ecb { get; init; }
 
             /// <summary>
             /// Cipher Block Chaining.
             /// </summary>
             [DataMember(Name = "cbc")]
-            public bool? Cbc { get; private set; }
+            public bool? Cbc { get; init; }
 
             /// <summary>
             /// Cipher Feed Back.
             /// </summary>
             [DataMember(Name = "cfb")]
-            public bool? Cfb { get; private set; }
+            public bool? Cfb { get; init; }
 
             /// <summary>
             /// RSA Encryption.
             /// </summary>
             [DataMember(Name = "rsa")]
-            public bool? Rsa { get; private set; }
+            public bool? Rsa { get; init; }
 
             /// <summary>
             /// ECMA Encryption.
             /// </summary>
             [DataMember(Name = "cma")]
-            public bool? Cma { get; private set; }
+            public bool? Cma { get; init; }
 
             /// <summary>
             /// MAC calculation using CBC.
             /// </summary>
             [DataMember(Name = "desMac")]
-            public bool? DesMac { get; private set; }
+            public bool? DesMac { get; init; }
 
             /// <summary>
             /// Triple DES with Electronic Code Book.
             /// </summary>
             [DataMember(Name = "triDesEcb")]
-            public bool? TriDesEcb { get; private set; }
+            public bool? TriDesEcb { get; init; }
 
             /// <summary>
             /// Triple DES with Cipher Block Chaining.
             /// </summary>
             [DataMember(Name = "triDesCbc")]
-            public bool? TriDesCbc { get; private set; }
+            public bool? TriDesCbc { get; init; }
 
             /// <summary>
             /// Triple DES with Cipher Feed Back.
             /// </summary>
             [DataMember(Name = "triDesCfb")]
-            public bool? TriDesCfb { get; private set; }
+            public bool? TriDesCfb { get; init; }
 
             /// <summary>
             /// Last Block Triple DES MAC as defined in ISO/IEC 9797-1:1999 [Ref. 32], using: 
             /// block length n=64, padding Method 1 (when padding=0), MAC Algorithm 3, MAC length m where 32&lt;=m&lt;=64.
             /// </summary>
             [DataMember(Name = "triDesMac")]
-            public bool? TriDesMac { get; private set; }
+            public bool? TriDesMac { get; init; }
 
             /// <summary>
             /// MAC calculation using the Message authenticator algorithm as defined in ISO 8731-2.
             /// </summary>
             [DataMember(Name = "maaMac")]
-            public bool? MaaMac { get; private set; }
+            public bool? MaaMac { get; init; }
 
             /// <summary>
             /// Triple DES MAC calculation as defined in ISO 16609:2004 and and Australian Standard 2805.4.
             /// </summary>
             [DataMember(Name = "triDesMac2805")]
-            public bool? TriDesMac2805 { get; private set; }
+            public bool? TriDesMac2805 { get; init; }
 
             /// <summary>
             /// SM4 block cipher algorithm as defined in Password industry standard of the People's Republic of China GM/T 0002-2012.
             /// </summary>
             [DataMember(Name = "sm4")]
-            public bool? Sm4 { get; private set; }
+            public bool? Sm4 { get; init; }
 
             /// <summary>
             /// EMAC calculation using the Message authenticator algorithm as defined in as defined in Password 
@@ -498,7 +498,7 @@ namespace XFS4IoT.Crypto
             /// and and in PBOC3.0 JR/T 0025.17-2013.
             /// </summary>
             [DataMember(Name = "sm4Mac")]
-            public bool? Sm4Mac { get; private set; }
+            public bool? Sm4Mac { get; init; }
 
         }
 
@@ -506,7 +506,7 @@ namespace XFS4IoT.Crypto
         /// Supported encryption modes.
         /// </summary>
         [DataMember(Name = "algorithms")]
-        public AlgorithmsClass Algorithms { get; private set; }
+        public AlgorithmsClass Algorithms { get; init; }
 
         [DataContract]
         public sealed class EmvHashAlgorithmClass
@@ -521,14 +521,14 @@ namespace XFS4IoT.Crypto
             /// The SHA 1 digest algorithm is supported by the [Crypto.Digest](#crypto.digest) command.
             /// </summary>
             [DataMember(Name = "sha1Digest")]
-            public bool? Sha1Digest { get; private set; }
+            public bool? Sha1Digest { get; init; }
 
             /// <summary>
             /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2, is supported 
             /// by the [Crypto.Digest](#crypto.digest) command.
             /// </summary>
             [DataMember(Name = "sha256Digest")]
-            public bool? Sha256Digest { get; private set; }
+            public bool? Sha256Digest { get; init; }
 
         }
 
@@ -536,25 +536,25 @@ namespace XFS4IoT.Crypto
         /// Specifies which hash algorithm is supported for the calculation of the HASH.
         /// </summary>
         [DataMember(Name = "emvHashAlgorithm")]
-        public EmvHashAlgorithmClass EmvHashAlgorithm { get; private set; }
+        public EmvHashAlgorithmClass EmvHashAlgorithm { get; init; }
 
         /// <summary>
         /// Array of attributes supported by the [Crypto.CryptoData](#crypto.cryptodata) command.
         /// </summary>
         [DataMember(Name = "cryptoAttributes")]
-        public List<CryptoAttributeClass> CryptoAttributes { get; private set; }
+        public List<CryptoAttributeClass> CryptoAttributes { get; init; }
 
         /// <summary>
         /// Array of attributes supported by the [Crypto.GenerateAuthentication](#crypto.generateauthentication) command.
         /// </summary>
         [DataMember(Name = "authenticationAttributes")]
-        public List<AuthenticationAttributeClass> AuthenticationAttributes { get; private set; }
+        public List<AuthenticationAttributeClass> AuthenticationAttributes { get; init; }
 
         /// <summary>
         /// Array of attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command.
         /// </summary>
         [DataMember(Name = "verifyAttributes")]
-        public List<VerifyAttributeClass> VerifyAttributes { get; private set; }
+        public List<VerifyAttributeClass> VerifyAttributes { get; init; }
 
     }
 

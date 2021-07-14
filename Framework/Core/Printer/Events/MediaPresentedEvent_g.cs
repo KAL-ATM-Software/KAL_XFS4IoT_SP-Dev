@@ -41,13 +41,15 @@ namespace XFS4IoT.Printer.Events
             /// presented as a bunch.
             /// </summary>
             [DataMember(Name = "wadIndex")]
-            public int? WadIndex { get; private set; }
+            [DataTypes(Minimum = 1)]
+            public int? WadIndex { get; init; }
 
             /// <summary>
             /// Specifies the total number of wads in the print job, zero if the total number of wads is not known.
             /// </summary>
             [DataMember(Name = "totalWads")]
-            public int? TotalWads { get; private set; }
+            [DataTypes(Minimum = 0)]
+            public int? TotalWads { get; init; }
 
         }
 

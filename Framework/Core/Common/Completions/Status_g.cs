@@ -47,73 +47,73 @@ namespace XFS4IoT.Common.Completions
             /// Status information common to all XFS4IoT services.
             /// </summary>
             [DataMember(Name = "common")]
-            public StatusPropertiesClass Common { get; private set; }
+            public StatusPropertiesClass Common { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the CardReader interface. This will be omitted if the CardReader interface is not supported.
             /// </summary>
             [DataMember(Name = "cardReader")]
-            public CardReader.StatusClass CardReader { get; private set; }
+            public CardReader.StatusClass CardReader { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the CashAcceptor interface. This will be omitted if the CashAcceptor interface is not supported.
             /// </summary>
             [DataMember(Name = "cashAcceptor")]
-            public CashAcceptor.StatusClass CashAcceptor { get; private set; }
+            public CashAcceptor.StatusClass CashAcceptor { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the CashDispenser interface. This will be omitted if the CashDispenser interface is not supported.
             /// </summary>
             [DataMember(Name = "cashDispenser")]
-            public Dispenser.StatusClass CashDispenser { get; private set; }
+            public Dispenser.StatusClass CashDispenser { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the CashManagement interface. This will be omitted if the CashManagement interface is not supported.
             /// </summary>
             [DataMember(Name = "cashManagement")]
-            public CashManagement.StatusClass CashManagement { get; private set; }
+            public CashManagement.StatusClass CashManagement { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the KeyManagement interface. This will be omitted if the KeyManagement interface is not supported.
             /// </summary>
             [DataMember(Name = "keyManagement")]
-            public KeyManagement.StatusClass KeyManagement { get; private set; }
+            public KeyManagement.StatusClass KeyManagement { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the Keyboard interface. This will be omitted if the Keyboard interface is not supported.
             /// </summary>
             [DataMember(Name = "keyboard")]
-            public Keyboard.StatusClass Keyboard { get; private set; }
+            public Keyboard.StatusClass Keyboard { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the TextTerminal interface. This will be omitted if the TextTerminal interface is not supported.
             /// </summary>
             [DataMember(Name = "textTerminal")]
-            public TextTerminal.StatusClass TextTerminal { get; private set; }
+            public TextTerminal.StatusClass TextTerminal { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the Printer interface. This will be omitted if the Printer interface is not supported.
             /// </summary>
             [DataMember(Name = "printer")]
-            public Printer.StatusClass Printer { get; private set; }
+            public Printer.StatusClass Printer { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the CardEmbosser interface. This will be omitted if the CardEmbosser interface is not supported.
             /// </summary>
             [DataMember(Name = "cardEmbosser")]
-            public CardEmbosser.StatusClass CardEmbosser { get; private set; }
+            public CardEmbosser.StatusClass CardEmbosser { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the BarcodeReader interface. This will be omitted if the BarcodeReader interface is not supported.
             /// </summary>
             [DataMember(Name = "barcodeReader")]
-            public BarcodeReader.StatusClass BarcodeReader { get; private set; }
+            public BarcodeReader.StatusClass BarcodeReader { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the Biometrics interface. This will be omitted if the Biometrics interface is not supported.
             /// </summary>
             [DataMember(Name = "biometric")]
-            public Biometric.StatusClass Biometric { get; private set; }
+            public Biometric.StatusClass Biometric { get; init; }
 
         }
     }

@@ -45,13 +45,13 @@ namespace XFS4IoT.Crypto.Completions
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
-            public ErrorCodeEnum? ErrorCode { get; private set; }
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// The generated random number.
             /// </summary>
             [DataMember(Name = "randomNumber")]
-            public string RandomNumber { get; private set; }
+            public string RandomNumber { get; init; }
 
         }
     }
