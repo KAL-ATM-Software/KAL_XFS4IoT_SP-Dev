@@ -37,5 +37,15 @@ namespace XFS4IoTServer
         /// Stores TextTerminal interface capabilites internally
         /// </summary>
         public TextTerminalCapabilitiesClass TextTerminalCapabilities { get; set; }
+
+        /// <summary>
+        /// Stores KeyManagement interface capabilites internally
+        /// </summary>
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get; set; }
+
+        /// <summary>
+        /// Stores Crypto interface capabilites internally
+        /// </summary>
+        public CryptoCapabilitiesClass CryptoCapabilities { get; set; }
     }
 }

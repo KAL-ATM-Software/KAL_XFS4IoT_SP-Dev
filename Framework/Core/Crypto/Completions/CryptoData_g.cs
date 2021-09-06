@@ -61,7 +61,7 @@ namespace XFS4IoT.Crypto.Completions
             /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip transaction
             /// active. 
             /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported. 
-            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
+            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

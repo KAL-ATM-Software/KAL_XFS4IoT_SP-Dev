@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.CardReader
 
             if (string.IsNullOrEmpty(setKey.Payload.KeyValue))
             {
-                return new SetKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                return new SetKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         "No key data supplied.",
                                                         SetKeyCompletion.PayloadData.ErrorCodeEnum.InvalidKey);
             }

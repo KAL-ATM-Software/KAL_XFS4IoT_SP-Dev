@@ -108,11 +108,16 @@ namespace XFS4IoT
 
             Contracts.IsNotNullOrWhitespace(messageName, $"Failed to unserialize JOSN message. {JSON}");
 
-            if (!MessageTypes.ContainsKey(messageName))
+            Type thisMessageType;
+
+            if (messageName == "Common.Acknowledge")
+                thisMessageType = typeof(Acknowledge);
+            else if (MessageTypes.ContainsKey(messageName))
+                thisMessageType = MessageTypes[messageName];
+            else 
                 return false;
 
-            // Now we know the type of message and deserialize it
-            Type thisMessageType = MessageTypes[messageName];
+            // Now we know the type of message and can deserialize it
             thisMessageType.BaseType.IsNotNull($"MessageType does not have base type. {nameof(thisMessageType)}");
             Contracts.Assert(thisMessageType.BaseType.IsGenericType, $"MessageType base type is not generic. {nameof(thisMessageType)}");
 

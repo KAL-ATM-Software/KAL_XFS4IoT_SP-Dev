@@ -55,6 +55,7 @@ namespace XFS4IoTFramework.TextTerminal
             {
                 InvalidDataException => SetLedCompletion.PayloadData.CompletionCodeEnum.InvalidData,
                 NotImplementedException => SetLedCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TaskCanceledException or OperationCanceledException => SetLedCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 _ => SetLedCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

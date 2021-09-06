@@ -26,7 +26,7 @@ namespace XFS4IoTFramework.TextTerminal
                 (read.Payload.ActiveCommandKeys is null || read.Payload.ActiveCommandKeys.Count == 0) && 
                 (read.Payload.TerminateCommandKeys is null || read.Payload.TerminateCommandKeys.Count == 0))
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No Keys specified for Read command.", ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
+                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, "No Keys specified for Read command.", ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
             }
 
             // Get autoEnd value.
@@ -52,7 +52,7 @@ namespace XFS4IoTFramework.TextTerminal
                 {
                     if (!TextTerminal.SupportedKeys.Keys.Contains(c))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"Key {c} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"Key {c} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace XFS4IoTFramework.TextTerminal
                 {
                     if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
                 }
             }
@@ -76,7 +76,7 @@ namespace XFS4IoTFramework.TextTerminal
                 {
                     if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
                 }
             }

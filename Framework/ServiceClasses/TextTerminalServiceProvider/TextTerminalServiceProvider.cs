@@ -56,6 +56,8 @@ namespace TextTerminalProvider
         public Task PowerSaveChangeEvent(PowerSaveChangeEvent.PayloadData Payload) => Common.PowerSaveChangeEvent(Payload);
 
         public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => Common.DevicePositionEvent(Payload);
+
+        public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => Common.NonceClearedEvent(Payload);
         #endregion
 
         public ITextTerminalService.KeyDetails SupportedKeys { get => TextTerminal.SupportedKeys; set => TextTerminal.SupportedKeys = value; }

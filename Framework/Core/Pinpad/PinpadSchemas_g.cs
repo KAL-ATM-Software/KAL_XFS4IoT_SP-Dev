@@ -15,102 +15,9 @@ namespace XFS4IoT.PinPad
 {
 
     [DataContract]
-    public sealed class PinBlockAttributeClass
-    {
-        public PinBlockAttributeClass(KeyUsageEnum? KeyUsage = null, AlgorithmEnum? Algorithm = null, ModeOfUseEnum? ModeOfUse = null, CryptoMethodEnum? CryptoMethod = null)
-        {
-            this.KeyUsage = KeyUsage;
-            this.Algorithm = Algorithm;
-            this.ModeOfUse = ModeOfUse;
-            this.CryptoMethod = CryptoMethod;
-        }
-
-        public enum KeyUsageEnum
-        {
-            P0
-        }
-
-        /// <summary>
-        /// Specifies the key usages supported by the [PinPad.PinBlock](#pinpad.getpinblock) command.
-        /// The following values are possible:  
-        /// 
-        /// * ```P0``` - PIN Encryption
-        /// </summary>
-        [DataMember(Name = "keyUsage")]
-        public KeyUsageEnum? KeyUsage { get; init; }
-
-        public enum AlgorithmEnum
-        {
-            A,
-            D,
-            R,
-            T
-        }
-
-        /// <summary>
-        /// Specifies the encryption algorithms supported by the [PinPad.PinBlock](#pinpad.getpinblock) command.
-        /// The following values are possible: 
-        /// 
-        /// * ```A``` - AES. 
-        /// * ```D``` - DEA. 
-        /// * ```R``` - RSA. 
-        /// * ```T``` - Triple DEA (also referred to as TDEA).
-        /// </summary>
-        [DataMember(Name = "algorithm")]
-        public AlgorithmEnum? Algorithm { get; init; }
-
-        public enum ModeOfUseEnum
-        {
-            E
-        }
-
-        /// <summary>
-        /// Specifies the encryption modes supported by the [PinPad.PinBlock](#pinpad.getpinblock) command.
-        /// The following values are possible: 
-        /// 
-        /// * ```E``` - Encrypt
-        /// </summary>
-        [DataMember(Name = "modeOfUse")]
-        public ModeOfUseEnum? ModeOfUse { get; init; }
-
-        public enum CryptoMethodEnum
-        {
-            Ecb,
-            Cbc,
-            Cfb,
-            Ofb,
-            Ctr,
-            Xts,
-            RsaesPkcs1V15,
-            RsaesOaep
-        }
-
-        /// <summary>
-        /// This parameter specifies the cryptographic method that will be used with the encryption algorithm specified by algorithm.
-        /// If algorithm is ‘A’, ‘D’, or ‘T’, then this property cryptoMethod can be one of the following values:" 
-        /// 
-        /// * ```ecb``` - The ECB encryption method. 
-        /// * ```cbc``` - The CBC encryption method. 
-        /// * ```cfb``` - The CFB encryption method. 
-        /// * ```ofb``` - The OFB encryption method. 
-        /// * ```ctr``` - The CTR method defined in NIST SP800-38A. 
-        /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
-        /// 
-        /// If algorithm is ‘R’, then this property cryptoMethod can be one of the following values: 
-        /// 
-        /// * ```rsaesPkcs1V15``` - Use the RSAES_PKCS1-v1.5 algorithm. 
-        /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.
-        /// </summary>
-        [DataMember(Name = "cryptoMethod")]
-        public CryptoMethodEnum? CryptoMethod { get; init; }
-
-    }
-
-
-    [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(PinFormatsClass PinFormats = null, PresentationAlgorithmsClass PresentationAlgorithms = null, DisplayClass Display = null, bool? IdConnect = null, ValidationAlgorithmsClass ValidationAlgorithms = null, bool? PinCanPersistAfterUse = null, bool? TypeCombined = null, bool? SetPinblockDataRequired = null, List<PinBlockAttributeClass> PinBlockAttributes = null)
+        public CapabilitiesClass(PinFormatsClass PinFormats = null, PresentationAlgorithmsClass PresentationAlgorithms = null, DisplayClass Display = null, bool? IdConnect = null, ValidationAlgorithmsClass ValidationAlgorithms = null, bool? PinCanPersistAfterUse = null, bool? TypeCombined = null, bool? SetPinblockDataRequired = null, Dictionary<string, Dictionary<string, Dictionary<string, PinBlockAttributesClass>>> PinBlockAttributes = null)
         {
             this.PinFormats = PinFormats;
             this.PresentationAlgorithms = PresentationAlgorithms;
@@ -359,11 +266,106 @@ namespace XFS4IoT.PinPad
         [DataMember(Name = "setPinblockDataRequired")]
         public bool? SetPinblockDataRequired { get; init; }
 
+        [DataContract]
+        public sealed class PinBlockAttributesClass
+        {
+            public PinBlockAttributesClass(CryptoMethodClass CryptoMethod = null)
+            {
+                this.CryptoMethod = CryptoMethod;
+            }
+
+            [DataContract]
+            public sealed class CryptoMethodClass
+            {
+                public CryptoMethodClass(bool? Ecb = null, bool? Cbc = null, bool? Cfb = null, bool? Ofb = null, bool? Ctr = null, bool? Xts = null, bool? RsaesPkcs1V15 = null, bool? RsaesOaep = null)
+                {
+                    this.Ecb = Ecb;
+                    this.Cbc = Cbc;
+                    this.Cfb = Cfb;
+                    this.Ofb = Ofb;
+                    this.Ctr = Ctr;
+                    this.Xts = Xts;
+                    this.RsaesPkcs1V15 = RsaesPkcs1V15;
+                    this.RsaesOaep = RsaesOaep;
+                }
+
+                /// <summary>
+                /// The ECB encryption method. 
+                /// </summary>
+                [DataMember(Name = "ecb")]
+                public bool? Ecb { get; init; }
+
+                /// <summary>
+                /// The CBC encryption method. 
+                /// </summary>
+                [DataMember(Name = "cbc")]
+                public bool? Cbc { get; init; }
+
+                /// <summary>
+                /// The CFB encryption method. 
+                /// </summary>
+                [DataMember(Name = "cfb")]
+                public bool? Cfb { get; init; }
+
+                /// <summary>
+                /// The The OFB encryption method. 
+                /// </summary>
+                [DataMember(Name = "ofb")]
+                public bool? Ofb { get; init; }
+
+                /// <summary>
+                /// The CTR method defined in NIST SP800-38A. 
+                /// </summary>
+                [DataMember(Name = "ctr")]
+                public bool? Ctr { get; init; }
+
+                /// <summary>
+                /// The XTS method defined in NIST SP800-38E. 
+                /// </summary>
+                [DataMember(Name = "xts")]
+                public bool? Xts { get; init; }
+
+                /// <summary>
+                /// The RSAES_PKCS1-v1.5 algorithm. 
+                /// </summary>
+                [DataMember(Name = "rsaesPkcs1V15")]
+                public bool? RsaesPkcs1V15 { get; init; }
+
+                /// <summary>
+                /// The RSAES OAEP algorithm.
+                /// </summary>
+                [DataMember(Name = "rsaesOaep")]
+                public bool? RsaesOaep { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies the cryptographic method supported. 
+            /// If the algorithm is 'A', 'D', or 'T', then the following properties can be true." 
+            /// 
+            /// * ```ecb``` - The ECB encryption method. 
+            /// * ```cbc``` - The CBC encryption method.  
+            /// * ```cfb``` - The CFB encryption method.  
+            /// * ```ofb``` - The OFB encryption method. 
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A.  
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
+            /// 
+            /// If the algorithm is 'R', then following properties can be true.  
+            /// 
+            /// * ```rsaesPkcs1V15``` - Use the RSAES_PKCS1-v1.5 algorithm. 
+            /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.
+            /// </summary>
+            [DataMember(Name = "cryptoMethod")]
+            public CryptoMethodClass CryptoMethod { get; init; }
+
+        }
+
         /// <summary>
-        /// Array of attributes supported by the [PinPad.GetPinblock](#pinpad.getpinblock) command.
+        /// Key-value pair of attributes supported by the [PinPad.GetPinblock](#pinpad.getpinblock) command
+        /// to generate encrypted PIN block.
         /// </summary>
         [DataMember(Name = "pinBlockAttributes")]
-        public List<PinBlockAttributeClass> PinBlockAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, PinBlockAttributesClass>>> PinBlockAttributes { get; init; }
 
     }
 

@@ -22,6 +22,7 @@ namespace XFS4IoTServer
         {
             this.Logger = Logger.IsNotNull();
             this.ServiceClasses = Services.IsNotNull();
+            CommandQueue = new(Logger);
 
             // Find all the classes (in the named assembly if a name is give,) which 
             // have the CommandHandlerAttribute, and match them with the 'Type' value on 
@@ -71,6 +72,8 @@ namespace XFS4IoTServer
             Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
             Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
 
+            await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, new(AcknowledgePayload.StatusEnum.Ok)));
+
             var cts = new CancellationTokenSource();
             (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
             if (async)
@@ -83,7 +86,7 @@ namespace XFS4IoTServer
             else
             {
                 Logger.Log("Dispatcher", $"Queing command a {handler} handler for {Command.Header.Name} id:{Command.Header.RequestId}");
-                CommandQueue.Post(new CommandQueueRecord(handler, Connection, Command, cts));
+                await CommandQueue.EnqueueCommandAsync(handler, Connection, Command, cts);
             }
         }
 
@@ -116,29 +119,13 @@ namespace XFS4IoTServer
             return (handler, async);
         }
 
-        private readonly BufferBlock<CommandQueueRecord> CommandQueue = new BufferBlock<CommandQueueRecord>();
-        private record CommandQueueRecord ( ICommandHandler CommandHandler, IConnection Connection, MessageBase command, CancellationTokenSource cts );
+        private readonly CommandQueue CommandQueue;
 
-        public virtual async Task RunAsync()
-        {
-            // Execute queued commands
-            while( true )
-            {
-                var (handler, connection, command, cts) = await CommandQueue.ReceiveAsync();
-                try
-                {
-                    Logger.Log("Dispatcher", $"Running {command.Header.Name} id:{command.Header.RequestId}");
-                    await handler.Handle(connection, command, cts.Token);
-                    Logger.Log("Dispatcher", $"Completed {command.Header.Name} id:{command.Header.RequestId}");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log("Dispatcher", $"Caught exception running {command.Header.Name} id:{command.Header.RequestId}");
-                    await handler.HandleError(connection, command, ex);
-                }
-                cts.Dispose();
-            }
-        }
+        public virtual Task RunAsync() => CommandQueue.RunAsync();
+
+        public virtual Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds) 
+            => CommandQueue.TryCancelItemsAsync(Connection, RequestIds);
+
         private void Add(IEnumerable<(Type, Type, bool Async)> types)
         {
             foreach (var (Message, Handler, async) in types)

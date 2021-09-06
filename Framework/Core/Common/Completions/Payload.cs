@@ -20,8 +20,9 @@ namespace XFS4IoT.Completions
         public enum CompletionCodeEnum
         {
             Success,
+            CommandErrorCode,
             Canceled,
-            DeviceNotready,
+            DeviceNotReady,
             HardwareError,
             InternalError,
             InvalidCommand,
@@ -29,12 +30,17 @@ namespace XFS4IoT.Completions
             TimeOut,
             UnsupportedCommand,
             InvalidData,
-            ConnectionLost,
             UserError,
             UnsupportedData,
             FraudAttempt,
             SequenceError,
             AuthorisationRequired,
+            NoCommandNonce,
+            InvalidToken,
+            InvalidTokenNonce,
+            InvalidTokenHMAC,
+            InvalidTokenFormat,
+            InvalidTokenKeyNoValue,
         }
 
         /// <summary>

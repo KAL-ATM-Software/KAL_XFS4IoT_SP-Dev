@@ -55,6 +55,7 @@ namespace XFS4IoTFramework.CardReader
             {
                 InvalidDataException => ChipPowerCompletion.PayloadData.CompletionCodeEnum.InvalidData,
                 NotImplementedException => ChipPowerCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TaskCanceledException or OperationCanceledException => ChipPowerCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 _ => ChipPowerCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

@@ -55,6 +55,7 @@ namespace XFS4IoTFramework.Common
             {
                 InvalidDataException => GetCommandNonceCompletion.PayloadData.CompletionCodeEnum.InvalidData,
                 NotImplementedException => GetCommandNonceCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TaskCanceledException or OperationCanceledException => GetCommandNonceCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 _ => GetCommandNonceCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

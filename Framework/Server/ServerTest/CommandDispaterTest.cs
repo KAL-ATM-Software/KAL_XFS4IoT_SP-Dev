@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
+using System.Collections.Generic;
 
 namespace XFS4IoTServer.Test
 {
@@ -37,6 +38,7 @@ namespace XFS4IoTServer.Test
         public Uri WSUri { get; } = new Uri(string.Empty);
         public IDevice Device { get => throw new NotImplementedException(); }
         public Task BroadcastEvent(object payload) => throw new NotImplementedException();
+        public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds) => throw new NotImplementedException();
         public Task Dispatch(IConnection Connection, MessageBase Command) => throw new NotImplementedException();
         public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync() => throw new NotImplementedException();
@@ -61,7 +63,7 @@ namespace XFS4IoTServer.Test
 
     class TestConnection : IConnection
     {
-        public Task SendMessageAsync(object result) => throw new NotImplementedException();
+        public Task SendMessageAsync(object result) => Task.CompletedTask; //Return CompletedTask when sending Acknowledge
     }
 
     [Command(Name = "Common.TestMessage1")]

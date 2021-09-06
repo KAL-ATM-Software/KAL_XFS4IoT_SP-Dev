@@ -39,7 +39,7 @@ namespace XFS4IoTFramework.TextTerminal
             }
             if (!found)
             {
-                return new SetResolutionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Selected resolution is not supported.", SetResolutionCompletion.PayloadData.ErrorCodeEnum.ResolutionNotSupported);
+                return new SetResolutionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, "Selected resolution is not supported.", SetResolutionCompletion.PayloadData.ErrorCodeEnum.ResolutionNotSupported);
             }
 
             //Clear screen before setting resolution.

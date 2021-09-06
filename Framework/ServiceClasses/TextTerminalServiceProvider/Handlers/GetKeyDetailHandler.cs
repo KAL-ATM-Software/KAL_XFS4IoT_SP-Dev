@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.TextTerminal
             return Task.FromResult(new GetKeyDetailCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                 null,
                 TextTerminal.SupportedKeys.Keys,
-                new() { TextTerminal.SupportedKeys.CommandKeysClass }));
+                TextTerminal.SupportedKeys.CommandKeysClass));
         }
 
     }

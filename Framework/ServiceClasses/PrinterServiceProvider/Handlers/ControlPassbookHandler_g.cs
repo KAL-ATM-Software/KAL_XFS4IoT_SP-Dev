@@ -55,6 +55,7 @@ namespace XFS4IoTFramework.Printer
             {
                 InvalidDataException => ControlPassbookCompletion.PayloadData.CompletionCodeEnum.InvalidData,
                 NotImplementedException => ControlPassbookCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TaskCanceledException or OperationCanceledException => ControlPassbookCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 _ => ControlPassbookCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

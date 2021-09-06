@@ -18,6 +18,8 @@ namespace XFS4IoTServer
 
         Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException);
 
-        Task RunAsync(); 
+        Task RunAsync();
+
+        Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds);
     }
 }

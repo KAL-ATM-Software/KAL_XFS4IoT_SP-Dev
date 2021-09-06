@@ -24,7 +24,6 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         CashManagementCapabilitiesClass CashManagementCapabilities { get => null; set { } }
 
-
         /// <summary>
         /// Stores CardReader interface capabilites internally
         /// </summary>
@@ -34,6 +33,16 @@ namespace XFS4IoTFramework.Common
         /// Stores TextTerminal interface capabilites internally
         /// </summary>
         TextTerminalCapabilitiesClass TextTerminalCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores KeyManagement interface capabilites internally
+        /// </summary>
+        KeyManagementCapabilitiesClass KeyManagementCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Crypto interface capabilites internally
+        /// </summary>
+        CryptoCapabilitiesClass CryptoCapabilities { get => null; set { } }
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

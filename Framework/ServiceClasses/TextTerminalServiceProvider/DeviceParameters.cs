@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
-using XFS4IoT.Dispenser.Commands;
-using XFS4IoT.Dispenser.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoT;

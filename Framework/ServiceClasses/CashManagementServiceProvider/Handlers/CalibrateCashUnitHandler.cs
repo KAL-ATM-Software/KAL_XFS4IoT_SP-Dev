@@ -26,7 +26,7 @@ namespace XFS4IoTFramework.CashManagement
                 !CashManagement.CashUnits.ContainsKey(calibrateCashUnit.Payload.Cashunit))
             {
                 return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"The CashUnit property is specified null or empty. the application should specify imtes to be dispensed from which unit.");
+                                                                   $"The CashUnit property is specified null or empty. the application should specify items to be dispensed from which unit.");
             }
 
             ItemPosition itemPosition = null;
@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CashManagement
                  calibrateCashUnit.Payload.Position.RetractArea is null &&
                  calibrateCashUnit.Payload.Position.OutputPosition is null))
             {
-                // Default position is device decide to move items into
+                // Default position to move items into is decided by the device 
             }
             else
             {
@@ -57,14 +57,14 @@ namespace XFS4IoTFramework.CashManagement
                         calibrateCashUnit.Payload.Position.OutputPosition is not null)
                     {
                         return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
+                                                                           $"Both RetractArea and OutputPosition properties were specified. The Service Provider doesn't know where the items should be moved to.");
                     }
 
                     if (calibrateCashUnit.Payload.Position.RetractArea is not null)
                     {
                         int? index = null;
 
-                        CalibrateCashUnitCommand.PayloadData.PositionClass.RetractAreaClass retract = calibrateCashUnit.Payload.Position.RetractArea.IsA<CalibrateCashUnitCommand.PayloadData.PositionClass.RetractAreaClass>("RetractArea object must be the RetractAreaClass.");
+                        var retract = calibrateCashUnit.Payload.Position.RetractArea.IsA<CalibrateCashUnitCommand.PayloadData.PositionClass.RetractAreaClass>("RetractArea object must be the RetractAreaClass.");
 
                         CashDispenserCapabilitiesClass.RetractAreaEnum retractArea = CashDispenserCapabilitiesClass.RetractAreaEnum.Default;
                         if (retract.RetractArea is not null)
@@ -81,7 +81,7 @@ namespace XFS4IoTFramework.CashManagement
 
                             if (!CashManagement.CashDispenserCapabilities.RetractAreas[retractArea])
                             {
-                                return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                                    $"Specified unsupported retract area. {retractArea}",
                                                                                    CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
                             }
@@ -146,30 +146,32 @@ namespace XFS4IoTFramework.CashManagement
                 CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass retractArea = null;
                 if (result.Position.RetractArea is not null)
                 {
-                    retractArea = new CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass(null,
-                                                                                                             result.Position.RetractArea.RetractArea switch
-                                                                                                             {
-                                                                                                                 CashDispenserCapabilitiesClass.RetractAreaEnum.ItemCassette => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.ItemCassette,
-                                                                                                                 CashDispenserCapabilitiesClass.RetractAreaEnum.Reject => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Reject,
-                                                                                                                 CashDispenserCapabilitiesClass.RetractAreaEnum.Stacker => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Stacker,
-                                                                                                                 CashDispenserCapabilitiesClass.RetractAreaEnum.Transport => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Transport,
-                                                                                                                 _ => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Retract,
-                                                                                                             },
-                                                                                                             result.Position.RetractArea.Index);
+                    retractArea = new CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass(
+                                        null,
+                                        result.Position.RetractArea.RetractArea switch
+                                        {
+                                            CashDispenserCapabilitiesClass.RetractAreaEnum.ItemCassette => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.ItemCassette,
+                                            CashDispenserCapabilitiesClass.RetractAreaEnum.Reject => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Reject,
+                                            CashDispenserCapabilitiesClass.RetractAreaEnum.Stacker => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Stacker,
+                                            CashDispenserCapabilitiesClass.RetractAreaEnum.Transport => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Transport,
+                                            _ => CalibrateCashUnitCompletion.PayloadData.PositionClass.RetractAreaClass.RetractAreaEnum.Retract,
+                                        },
+                                        result.Position.RetractArea.Index);
                 }
-                resItemPosition = new CalibrateCashUnitCompletion.PayloadData.PositionClass(result.Position.CashUnit,
-                                                                                            retractArea,
-                                                                                            result.Position.OutputPosition is not null ? result.Position.OutputPosition switch
-                                                                                            {
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Bottom,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Center,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Front,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Left,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Rear,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Right,
-                                                                                                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Top,
-                                                                                                _ => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Default
-                                                                                            } : null);
+                resItemPosition = new CalibrateCashUnitCompletion.PayloadData.PositionClass(
+                                        result.Position.CashUnit,
+                                        retractArea,
+                                        result.Position.OutputPosition is not null ? result.Position.OutputPosition switch
+                                        {
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Bottom,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Center => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Center,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Front => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Front,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Left => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Left,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Rear,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Right => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Right,
+                                            CashDispenserCapabilitiesClass.OutputPositionEnum.Top => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Top,
+                                            _ => CalibrateCashUnitCompletion.PayloadData.PositionClass.OutputPositionEnum.Default
+                                        } : null);
             }
 
             int total = calibrateCashUnit.Payload.NumOfBills ?? 0;

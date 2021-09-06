@@ -20,5 +20,7 @@ namespace XFS4IoTFramework.Common
 
         Task DevicePositionEvent(XFS4IoT.Common.Events.DevicePositionEvent.PayloadData Payload);
 
+        Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload);
+
     }
 }

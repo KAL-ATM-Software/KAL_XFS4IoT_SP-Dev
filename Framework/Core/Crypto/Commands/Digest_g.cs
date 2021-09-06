@@ -42,7 +42,7 @@ namespace XFS4IoT.Crypto.Commands
 
             /// <summary>
             /// Specifies which hash algorithm should be used to calculate the hash. 
-            /// See the [algorithm](#common.capabilities.completion.properties.crypto) section for valid algorithms.
+            /// See the [verifyAttributes](#common.capabilities.completion.properties.crypto.verifyattributes) capability for valid algorithms.
             /// The following values are possible:
             /// 
             /// * ```sha1``` - The SHA-1 digest algorithm.

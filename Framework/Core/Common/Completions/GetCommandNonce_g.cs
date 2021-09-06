@@ -40,7 +40,7 @@ namespace XFS4IoT.Common.Completions
             /// The nonce will be given as an integer string, or HEX (upper case.)
             /// </summary>
             [DataMember(Name = "commandNonce")]
-            [DataTypes(Pattern = "^[0-9A-F]{32}$")]
+            [DataTypes(Pattern = "^[0-9A-F]{32}$|^[0-9]*$")]
             public string CommandNonce { get; init; }
 
             /// <summary>
@@ -51,7 +51,7 @@ namespace XFS4IoT.Common.Completions
             /// If this value is not returned then the nonce has no fixed maximum life-time, but it may still become 
             /// invalid, for example because of a power failure or when explicitly cleared. 
             /// 
-            /// For the best security the hardware should enforce a timeout which is short enough to stop invalid use 
+            /// For the best security the device should enforce a timeout which is short enough to stop invalid use 
             /// of the nonce, but long enough to not block valid applications. A one hour timeout might be reasonable. 
             /// </summary>
             [DataMember(Name = "nonceTimeout")]

@@ -136,7 +136,7 @@ namespace XFS4IoTFramework.CardReader
                 (Device.MediaStatus != MediaStatusEnum.Present &&
                  Device.MediaStatus != MediaStatusEnum.NotSupported))
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.HardwareError,
+                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              "Accept operation is completed successfully, but the media is not present.", 
                                                              ReadRawDataCompletion.PayloadData.ErrorCodeEnum.NoMedia);
             }

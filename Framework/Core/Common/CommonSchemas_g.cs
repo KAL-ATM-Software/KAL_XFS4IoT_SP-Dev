@@ -14,22 +14,47 @@ using System.Runtime.Serialization;
 namespace XFS4IoT.Common
 {
 
+    public enum CompletionCodeEnumEnum
+    {
+        Success,
+        CommandErrorCode,
+        Canceled,
+        DeviceNotReady,
+        HardwareError,
+        InternalError,
+        InvalidCommand,
+        InvalidRequestID,
+        TimeOut,
+        UnsupportedCommand,
+        InvalidData,
+        UserError,
+        UnsupportedData,
+        FraudAttempt,
+        SequenceError,
+        AuthorisationRequired,
+        NoCommandNonce,
+        InvalidToken,
+        InvalidTokenNonce,
+        InvalidTokenHMAC,
+        InvalidTokenFormat,
+        InvalidTokenKeyNoValue
+    }
+
+
     public enum PositionStatusEnum
     {
-        Inposition,
-        Notinposition,
-        Posunknown
+        InPosition,
+        NotInPosition,
+        Unknown
     }
 
 
     [DataContract]
     public sealed class StatusPropertiesClass
     {
-        public StatusPropertiesClass(DeviceEnum? Device = null, List<string> Extra = null, List<GuideLightsClass> GuideLights = null, PositionStatusEnum? DevicePosition = null, int? PowerSaveRecoveryTime = null, AntiFraudModuleEnum? AntiFraudModule = null)
+        public StatusPropertiesClass(DeviceEnum? Device = null, PositionStatusEnum? DevicePosition = null, int? PowerSaveRecoveryTime = null, AntiFraudModuleEnum? AntiFraudModule = null)
         {
             this.Device = Device;
-            this.Extra = Extra;
-            this.GuideLights = GuideLights;
             this.DevicePosition = DevicePosition;
             this.PowerSaveRecoveryTime = PowerSaveRecoveryTime;
             this.AntiFraudModule = AntiFraudModule;
@@ -49,109 +74,56 @@ namespace XFS4IoT.Common
         }
 
         /// <summary>
-        /// Specifies the state of the device.
+        /// Specifies the state of the device. Following values are possible:
+        /// 
+        /// * ```online``` - The device is online. This is returned when the device is present and operational.
+        /// * ```offline``` - The device is offline (e.g. the operator has taken the device offline by turning a switch).
+        /// * ```powerOff``` - The device is powered off or physically not connected.
+        /// * ```noDevice``` - The device is not intended to be there, e.g. this type of self service machine does not contain such a device or it is internally not configured.
+        /// * ```hardwareError``` - The device is inoperable due to a hardware error.
+        /// * ```userError``` - The device is present but a person is preventing proper device operation.
+        /// * ```deviceBusy``` - The device is busy and unable to process a command at this time.
+        /// * ```fraudAttempt``` - The device is present but is inoperable because it has detected a fraud attempt.
+        /// * ```potentialFraud``` - The device has detected a potential fraud attempt and is capable of remaining in service. In this case the application should make the decision as to whether to take the device offline.
         /// </summary>
         [DataMember(Name = "device")]
         public DeviceEnum? Device { get; init; }
 
         /// <summary>
-        /// Specifies a list of vendor-specific, or any other extended, information. 
-        /// The information is returned as a series of "key=value" strings so that it is easily extendable by Service Providers.
+        /// Position of the device. Following values are possible:
         /// 
-        /// </summary>
-        [DataMember(Name = "extra")]
-        public List<string> Extra { get; init; }
-
-        [DataContract]
-        public sealed class GuideLightsClass
-        {
-            public GuideLightsClass(FlashRateEnum? FlashRate = null, ColorEnum? Color = null, DirectionEnum? Direction = null)
-            {
-                this.FlashRate = FlashRate;
-                this.Color = Color;
-                this.Direction = Direction;
-            }
-
-            public enum FlashRateEnum
-            {
-                NotSupported,
-                Off,
-                Slow,
-                Medium,
-                Quick,
-                Continuous
-            }
-
-            /// <summary>
-            /// Indicates the current flash rate of the guidelight.
-            /// </summary>
-            [DataMember(Name = "flashRate")]
-            public FlashRateEnum? FlashRate { get; init; }
-
-            public enum ColorEnum
-            {
-                NotSupported,
-                Off,
-                Red,
-                Green,
-                Yellow,
-                Blue,
-                Cyan,
-                Magenta,
-                White
-            }
-
-            /// <summary>
-            /// Indicates the current color of the guidelight.
-            /// </summary>
-            [DataMember(Name = "color")]
-            public ColorEnum? Color { get; init; }
-
-            public enum DirectionEnum
-            {
-                NotSupported,
-                Off,
-                Entry,
-                Exit
-            }
-
-            /// <summary>
-            /// Indicates the current direction of the guidelight.
-            /// </summary>
-            [DataMember(Name = "direction")]
-            public DirectionEnum? Direction { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies the state of the guidance light indicators. A number of guidance light types are defined below. Vendor specific guidance lights are defined starting from the end of the array.
-        /// </summary>
-        [DataMember(Name = "guideLights")]
-        public List<GuideLightsClass> GuideLights { get; init; }
-
-        /// <summary>
-        /// Position of the device.
+        /// * ```inPosition``` - The device is in its normal operating position, or is fixed in place and cannot be moved.
+        /// * ```notInPosition``` - The device has been removed from its normal operating position.
+        /// * ```unknown``` - Due to a hardware error or other condition, the position of the device cannot be determined.
         /// </summary>
         [DataMember(Name = "devicePosition")]
         public PositionStatusEnum? DevicePosition { get; init; }
 
         /// <summary>
-        /// Specifies the actual number of seconds required by the device to resume its normal operational state from the current power saving mode. This value is zero if either the power saving mode has not been activated or no power save control is supported
+        /// Specifies the actual number of seconds required by the device to resume its normal operational state from
+        /// the current power saving mode. This value is zero if either the power saving mode has not been activated or
+        /// no power save control is supported.
         /// </summary>
         [DataMember(Name = "powerSaveRecoveryTime")]
         public int? PowerSaveRecoveryTime { get; init; }
 
         public enum AntiFraudModuleEnum
         {
-            NotSupp,
+            NotSupported,
             Ok,
-            Inop,
+            Inoperable,
             DeviceDetected,
             Unknown
         }
 
         /// <summary>
-        /// Specifies the state of the anti-fraud module
+        /// Specifies the state of the anti-fraud module. Following values are possible:
+        /// 
+        /// * ```notSupported``` - No anti-fraud module is available.
+        /// * ```ok``` - Anti-fraud module is in a good state and no foreign device is detected.
+        /// * ```inoperable``` - Anti-fraud module is inoperable.
+        /// * ```deviceDetected``` - Anti-fraud module detected the presence of a foreign device.
+        /// * ```unknown``` - The state of the anti-fraud module cannot be determined.
         /// </summary>
         [DataMember(Name = "antiFraudModule")]
         public AntiFraudModuleEnum? AntiFraudModule { get; init; }
@@ -190,7 +162,22 @@ namespace XFS4IoT.Common
         }
 
         /// <summary>
-        /// Name of supported XFS4IoT interface.
+        /// Name of supported XFS4IoT interface. Following values are supported:
+        /// 
+        /// * ```Common``` - Common interface. Every device implements this interface.
+        /// * ```CardReader``` - CardReader interface.
+        /// * ```CashAcceptor``` - CashAcceptor interface.
+        /// * ```CashDispenser``` - CashDispenser interface.
+        /// * ```CashManagement``` - CashManagement interface.
+        /// * ```PinPad``` - PinPad interface.
+        /// * ```Crypto``` - Crypto interface.
+        /// * ```KeyManagement``` - KeyManagement interface.
+        /// * ```Keyboard``` - Keyboard interface.
+        /// * ```TextTerminal``` - TextTerminal interface.
+        /// * ```Printer``` - Printer interface.
+        /// * ```SensorsAndIndicators``` - SensorsAndIndicators interface.
+        /// * ```CardEmbosser``` - CardEmbosser interface.
+        /// * ```BarcodeReader``` - BarcodeReader interface.
         /// </summary>
         [DataMember(Name = "name")]
         public NameEnum? Name { get; init; }
@@ -210,7 +197,6 @@ namespace XFS4IoT.Common
         /// <summary>
         /// Specifies the maximum number of requests which can be queued by the Service. This will be omitted if not reported. 
         /// This will be zero if the maximum number of requests is unlimited.
-        /// 
         /// </summary>
         [DataMember(Name = "maximumRequests")]
         public int? MaximumRequests { get; init; }
@@ -319,7 +305,6 @@ namespace XFS4IoT.Common
         /// <summary>
         /// Array of firmware structures specifying the names and version numbers of the firmware that is present.
         /// Single or multiple firmware versions can be reported. If the firmware versions are not reported, then this property is omitted.
-        /// 
         /// </summary>
         [DataMember(Name = "firmware")]
         public List<FirmwareClass> Firmware { get; init; }
@@ -327,7 +312,6 @@ namespace XFS4IoT.Common
         /// <summary>
         /// Array of software structures specifying the names and version numbers of the software components that are present.
         /// Single or multiple software versions can be reported. If the software versions are not reported, then this property is omitted.
-        /// 
         /// </summary>
         [DataMember(Name = "software")]
         public List<SoftwareClass> Software { get; init; }
@@ -347,7 +331,6 @@ namespace XFS4IoT.Common
         /// <summary>
         /// If TRUE, sessions with this Service may remain open during Vendor Dependent Mode for the purposes of monitoring events, 
         /// sending Info commands, or sending Execute commands listed in lpdwAllowedExecuteCommands. If FALSE, all sessions must be closed before entering Vendor Dependent Mode.
-        /// 
         /// </summary>
         [DataMember(Name = "allowOpenSessions")]
         public bool? AllowOpenSessions { get; init; }
@@ -356,7 +339,6 @@ namespace XFS4IoT.Common
         /// Array of commands which can be accepted while in Vendor Dependent Mode.
         /// Any Execute command which is not included in this list will be rejected with a SequenceError as control of the 
         /// device has been handed to the Vendor Dependent Application. If omitted, no Execute commands can be accepted.
-        /// 
         /// </summary>
         [DataMember(Name = "allowedExecuteCommands")]
         public List<string> AllowedExecuteCommands { get; init; }
@@ -367,13 +349,11 @@ namespace XFS4IoT.Common
     [DataContract]
     public sealed class CapabilityPropertiesClass
     {
-        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, VendorModeInfoClass VendorModeIformation = null, List<string> Extra = null, List<GuideLightsClass> GuideLights = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, List<string> SynchronizableCommands = null, bool? EndToEndSecurity = null, bool? HardwareSecurityElement = null, bool? ResponseSecurityEnabled = null)
+        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, VendorModeInfoClass VendorModeIformation = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, List<string> SynchronizableCommands = null, bool? EndToEndSecurity = null, bool? HardwareSecurityElement = null, bool? ResponseSecurityEnabled = null)
         {
             this.ServiceVersion = ServiceVersion;
             this.DeviceInformation = DeviceInformation;
             this.VendorModeIformation = VendorModeIformation;
-            this.Extra = Extra;
-            this.GuideLights = GuideLights;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
             this.SynchronizableCommands = SynchronizableCommands;
@@ -389,187 +369,27 @@ namespace XFS4IoT.Common
         public string ServiceVersion { get; init; }
 
         /// <summary>
-        /// Array of deviceInformation structures. If the service uses more than one device there will be on array element for each device.
+        /// Array of deviceInformation structures. If the service uses more than one device there will be on array
+        /// element for each device.
         /// </summary>
         [DataMember(Name = "deviceInformation")]
         public List<DeviceInformationClass> DeviceInformation { get; init; }
 
         /// <summary>
-        /// Specifies additional information about the Service while in Vendor Dependent Mode. If omitted, all sessions must be closed before entry to VDM.
+        /// Specifies additional information about the Service while in Vendor Dependent Mode. If omitted, all sessions
+        /// must be closed before entry to VDM.
         /// </summary>
         [DataMember(Name = "vendorModeIformation")]
         public VendorModeInfoClass VendorModeIformation { get; init; }
 
         /// <summary>
-        /// Specifies a list of vendor-specific, or any other extended, information. 
-        /// The information is returned as a series of "key=value" strings so that it is easily extendable by Service Providers
-        /// 
-        /// </summary>
-        [DataMember(Name = "extra")]
-        public List<string> Extra { get; init; }
-
-        [DataContract]
-        public sealed class GuideLightsClass
-        {
-            public GuideLightsClass(FlashRateClass FlashRate = null, ColorClass Color = null, DirectionClass Direction = null)
-            {
-                this.FlashRate = FlashRate;
-                this.Color = Color;
-                this.Direction = Direction;
-            }
-
-            [DataContract]
-            public sealed class FlashRateClass
-            {
-                public FlashRateClass(bool? Slow = null, bool? Medium = null, bool? Quick = null, bool? Continuous = null)
-                {
-                    this.Slow = Slow;
-                    this.Medium = Medium;
-                    this.Quick = Quick;
-                    this.Continuous = Continuous;
-                }
-
-                /// <summary>
-                /// The light can blink slowly.
-                /// </summary>
-                [DataMember(Name = "slow")]
-                public bool? Slow { get; init; }
-
-                /// <summary>
-                /// The light can blink medium frequency.
-                /// </summary>
-                [DataMember(Name = "medium")]
-                public bool? Medium { get; init; }
-
-                /// <summary>
-                /// The light can blink quickly.
-                /// </summary>
-                [DataMember(Name = "quick")]
-                public bool? Quick { get; init; }
-
-                /// <summary>
-                /// The light can be continuous (steady).
-                /// </summary>
-                [DataMember(Name = "continuous")]
-                public bool? Continuous { get; init; }
-
-            }
-
-            /// <summary>
-            /// Indicates which flash rates are supported by the guidelight.
-            /// </summary>
-            [DataMember(Name = "flashRate")]
-            public FlashRateClass FlashRate { get; init; }
-
-            [DataContract]
-            public sealed class ColorClass
-            {
-                public ColorClass(bool? Red = null, bool? Green = null, bool? Yellow = null, bool? Blue = null, bool? Cyan = null, bool? Magenta = null, bool? White = null)
-                {
-                    this.Red = Red;
-                    this.Green = Green;
-                    this.Yellow = Yellow;
-                    this.Blue = Blue;
-                    this.Cyan = Cyan;
-                    this.Magenta = Magenta;
-                    this.White = White;
-                }
-
-                /// <summary>
-                /// The light can be red.
-                /// </summary>
-                [DataMember(Name = "red")]
-                public bool? Red { get; init; }
-
-                /// <summary>
-                /// The light can be green.
-                /// </summary>
-                [DataMember(Name = "green")]
-                public bool? Green { get; init; }
-
-                /// <summary>
-                /// The light can be yellow.
-                /// </summary>
-                [DataMember(Name = "yellow")]
-                public bool? Yellow { get; init; }
-
-                /// <summary>
-                /// The light can be blue.
-                /// </summary>
-                [DataMember(Name = "blue")]
-                public bool? Blue { get; init; }
-
-                /// <summary>
-                /// The light can be cyan.
-                /// </summary>
-                [DataMember(Name = "cyan")]
-                public bool? Cyan { get; init; }
-
-                /// <summary>
-                /// The light can be magenta.
-                /// </summary>
-                [DataMember(Name = "magenta")]
-                public bool? Magenta { get; init; }
-
-                /// <summary>
-                /// The light can be white.
-                /// </summary>
-                [DataMember(Name = "white")]
-                public bool? White { get; init; }
-
-            }
-
-            /// <summary>
-            /// Indicates which colors are supported by the guidelight.
-            /// </summary>
-            [DataMember(Name = "color")]
-            public ColorClass Color { get; init; }
-
-            [DataContract]
-            public sealed class DirectionClass
-            {
-                public DirectionClass(bool? Entry = null, bool? Exit = null)
-                {
-                    this.Entry = Entry;
-                    this.Exit = Exit;
-                }
-
-                /// <summary>
-                /// The light can indicate entry.
-                /// </summary>
-                [DataMember(Name = "entry")]
-                public bool? Entry { get; init; }
-
-                /// <summary>
-                /// The light can indicate exit.
-                /// </summary>
-                [DataMember(Name = "exit")]
-                public bool? Exit { get; init; }
-
-            }
-
-            /// <summary>
-            /// Indicates which directions are supported by the guidelight.
-            /// </summary>
-            [DataMember(Name = "direction")]
-            public DirectionClass Direction { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies which guidance lights are available
-        /// </summary>
-        [DataMember(Name = "guideLights")]
-        public List<GuideLightsClass> GuideLights { get; init; }
-
-        /// <summary>
-        /// Specifies whether power saving control is available
+        /// Specifies whether power saving control is available.
         /// </summary>
         [DataMember(Name = "powerSaveControl")]
         public bool? PowerSaveControl { get; init; }
 
         /// <summary>
-        /// Specifies whether the anti-fraud module is available
+        /// Specifies whether the anti-fraud module is available.
         /// </summary>
         [DataMember(Name = "antiFraudModule")]
         public bool? AntiFraudModule { get; init; }
@@ -583,7 +403,7 @@ namespace XFS4IoT.Common
         /// <summary>
         /// True if this hardware supports End to End security, and requires security tokens as part of the 
         /// data to secured operations. If true then operations may fail if a valid security token is not 
-        /// suplied. 
+        /// supplied. 
         /// 
         /// If false then all operations can be performed without a security token.
         /// </summary>

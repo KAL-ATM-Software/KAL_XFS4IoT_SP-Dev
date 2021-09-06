@@ -264,7 +264,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// other than this cash unit, and which have not been accessible to a customer. This value may be unreliable, 
                 /// since a typical reason for rejecting items is a suspected pick failure. Other reasons for rejecting items 
                 /// may include incorrect note denominations, classifications not valid for dispensing, or where the transaction 
-                /// has been cancelled and a Reject command has been called. For reject and retract cash units 
+                /// has been canceled and a Reject command has been called. For reject and retract cash units 
                 /// (*type* is *rejectCassette* or *retractCassette*) this field does not apply and will be reported as zero. This value is persistent.
                 /// </summary>
                 [DataMember(Name = "rejectCount")]

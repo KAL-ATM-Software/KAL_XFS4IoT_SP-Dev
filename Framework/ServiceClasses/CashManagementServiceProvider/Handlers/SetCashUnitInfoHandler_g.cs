@@ -55,6 +55,7 @@ namespace XFS4IoTFramework.CashManagement
             {
                 InvalidDataException => SetCashUnitInfoCompletion.PayloadData.CompletionCodeEnum.InvalidData,
                 NotImplementedException => SetCashUnitInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TaskCanceledException or OperationCanceledException => SetCashUnitInfoCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 _ => SetCashUnitInfoCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

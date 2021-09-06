@@ -21,7 +21,7 @@ namespace XFS4IoTFramework.CardReader
         {
             if (string.IsNullOrEmpty(chipIO.Payload.ChipData))
             {
-                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         "No chip IO data supplied.",
                                                         ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
             }
@@ -39,7 +39,7 @@ namespace XFS4IoTFramework.CardReader
 
             if (chipProtocol is null)
             {
-                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         $"No chip protocol supplied.",
                                                         ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
             }
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CardReader
                 chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeNFC &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeNFC))
             {
-                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         $"Unsupported chip protocol supplied. {chipIO.Payload.ChipProtocol}",
                                                         ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
             }

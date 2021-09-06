@@ -25,7 +25,7 @@ namespace XFS4IoTFramework.TextTerminal
 
             if(setLed.Payload.Led.Value < 0 || setLed.Payload.Led.Value >= TextTerminal.TextTerminalCapabilities.LEDSupported.Count)
             {
-                return new SetLedCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Invalid LED specified for SetLED.", SetLedCompletion.PayloadData.ErrorCodeEnum.InvalidLed);
+                return new SetLedCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, "Invalid LED specified for SetLED.", SetLedCompletion.PayloadData.ErrorCodeEnum.InvalidLed);
             }
 
             if (setLed.Payload.Command.Off is not null && (bool)setLed.Payload.Command.Off)

@@ -160,13 +160,13 @@ namespace XFS4IoT.Keyboard
                 }
 
                 /// <summary>
-                /// Specifies that the Keyboard device will randomly shift the layout in a horizontal direction
+                /// Specifies that the device will randomly shift the layout in a horizontal direction
                 /// </summary>
                 [DataMember(Name = "x")]
                 public bool? X { get; init; }
 
                 /// <summary>
-                /// Specifies that the Keyboard device will randomly shift the layout in a vertical direction. 
+                /// Specifies that the device will randomly shift the layout in a vertical direction. 
                 /// </summary>
                 [DataMember(Name = "y")]
                 public bool? Y { get; init; }
@@ -174,7 +174,7 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies if the device can float the touch keyboards. FloatNone if the Keyboard device cannot randomly shift the layout.
+            /// Specifies if the device can float the touch keyboards. FloatNone if the device cannot randomly shift the layout.
             /// </summary>
             [DataMember(Name = "floatFlags")]
             public FloatFlagsClass FloatFlags { get; init; }
@@ -191,376 +191,199 @@ namespace XFS4IoT.Keyboard
 
 
     [DataContract]
-    public sealed class FunctionKeysClass
+    public sealed class LayoutClass
     {
-        public FunctionKeysClass(bool? Fk0 = null, bool? Fk1 = null, bool? Fk2 = null, bool? Fk3 = null, bool? Fk4 = null, bool? Fk5 = null, bool? Fk6 = null, bool? Fk7 = null, bool? Fk8 = null, bool? Fk9 = null, bool? FkA = null, bool? FkB = null, bool? FkC = null, bool? FkD = null, bool? FkE = null, bool? FkF = null, bool? FkEnter = null, bool? FkCancel = null, bool? FkClear = null, bool? FkBackspace = null, bool? FkHelp = null, bool? FkDecPoint = null, bool? Fk00 = null, bool? Fk000 = null, bool? FkShift = null, bool? FkRES01 = null, bool? FkRES02 = null, bool? FkRES03 = null, bool? FkRES04 = null, bool? FkRES05 = null, bool? FkRES06 = null, bool? FkRES07 = null, bool? FkRES08 = null, bool? FkOEM01 = null, bool? FkOEM02 = null, bool? FkOEM03 = null, bool? FkOEM04 = null, bool? FkOEM05 = null, bool? FkOEM06 = null)
+        public LayoutClass(EntryModeEnum? EntryMode = null, List<FramesClass> Frames = null)
         {
-            this.Fk0 = Fk0;
-            this.Fk1 = Fk1;
-            this.Fk2 = Fk2;
-            this.Fk3 = Fk3;
-            this.Fk4 = Fk4;
-            this.Fk5 = Fk5;
-            this.Fk6 = Fk6;
-            this.Fk7 = Fk7;
-            this.Fk8 = Fk8;
-            this.Fk9 = Fk9;
-            this.FkA = FkA;
-            this.FkB = FkB;
-            this.FkC = FkC;
-            this.FkD = FkD;
-            this.FkE = FkE;
-            this.FkF = FkF;
-            this.FkEnter = FkEnter;
-            this.FkCancel = FkCancel;
-            this.FkClear = FkClear;
-            this.FkBackspace = FkBackspace;
-            this.FkHelp = FkHelp;
-            this.FkDecPoint = FkDecPoint;
-            this.Fk00 = Fk00;
-            this.Fk000 = Fk000;
-            this.FkShift = FkShift;
-            this.FkRES01 = FkRES01;
-            this.FkRES02 = FkRES02;
-            this.FkRES03 = FkRES03;
-            this.FkRES04 = FkRES04;
-            this.FkRES05 = FkRES05;
-            this.FkRES06 = FkRES06;
-            this.FkRES07 = FkRES07;
-            this.FkRES08 = FkRES08;
-            this.FkOEM01 = FkOEM01;
-            this.FkOEM02 = FkOEM02;
-            this.FkOEM03 = FkOEM03;
-            this.FkOEM04 = FkOEM04;
-            this.FkOEM05 = FkOEM05;
-            this.FkOEM06 = FkOEM06;
+            this.EntryMode = EntryMode;
+            this.Frames = Frames;
         }
 
-
-        [DataMember(Name = "fk0")]
-        public bool? Fk0 { get; init; }
-
-
-        [DataMember(Name = "fk1")]
-        public bool? Fk1 { get; init; }
-
-
-        [DataMember(Name = "fk2")]
-        public bool? Fk2 { get; init; }
-
-
-        [DataMember(Name = "fk3")]
-        public bool? Fk3 { get; init; }
-
-
-        [DataMember(Name = "fk4")]
-        public bool? Fk4 { get; init; }
-
-
-        [DataMember(Name = "fk5")]
-        public bool? Fk5 { get; init; }
-
-
-        [DataMember(Name = "fk6")]
-        public bool? Fk6 { get; init; }
-
-
-        [DataMember(Name = "fk7")]
-        public bool? Fk7 { get; init; }
-
-
-        [DataMember(Name = "fk8")]
-        public bool? Fk8 { get; init; }
-
-
-        [DataMember(Name = "fk9")]
-        public bool? Fk9 { get; init; }
-
-
-        [DataMember(Name = "fkA")]
-        public bool? FkA { get; init; }
-
-
-        [DataMember(Name = "fkB")]
-        public bool? FkB { get; init; }
-
-
-        [DataMember(Name = "fkC")]
-        public bool? FkC { get; init; }
-
-
-        [DataMember(Name = "fkD")]
-        public bool? FkD { get; init; }
-
-
-        [DataMember(Name = "fkE")]
-        public bool? FkE { get; init; }
-
-
-        [DataMember(Name = "fkF")]
-        public bool? FkF { get; init; }
-
-
-        [DataMember(Name = "fkEnter")]
-        public bool? FkEnter { get; init; }
-
-
-        [DataMember(Name = "fkCancel")]
-        public bool? FkCancel { get; init; }
-
-
-        [DataMember(Name = "fkClear")]
-        public bool? FkClear { get; init; }
-
-
-        [DataMember(Name = "fkBackspace")]
-        public bool? FkBackspace { get; init; }
-
-
-        [DataMember(Name = "fkHelp")]
-        public bool? FkHelp { get; init; }
-
-
-        [DataMember(Name = "fkDecPoint")]
-        public bool? FkDecPoint { get; init; }
-
-
-        [DataMember(Name = "fk00")]
-        public bool? Fk00 { get; init; }
-
-
-        [DataMember(Name = "fk000")]
-        public bool? Fk000 { get; init; }
-
-
-        [DataMember(Name = "fkShift")]
-        public bool? FkShift { get; init; }
-
-
-        [DataMember(Name = "fkRES01")]
-        public bool? FkRES01 { get; init; }
-
-
-        [DataMember(Name = "fkRES02")]
-        public bool? FkRES02 { get; init; }
-
-
-        [DataMember(Name = "fkRES03")]
-        public bool? FkRES03 { get; init; }
-
-
-        [DataMember(Name = "fkRES04")]
-        public bool? FkRES04 { get; init; }
-
-
-        [DataMember(Name = "fkRES05")]
-        public bool? FkRES05 { get; init; }
-
-
-        [DataMember(Name = "fkRES06")]
-        public bool? FkRES06 { get; init; }
-
-
-        [DataMember(Name = "fkRES07")]
-        public bool? FkRES07 { get; init; }
-
-
-        [DataMember(Name = "fkRES08")]
-        public bool? FkRES08 { get; init; }
-
-
-        [DataMember(Name = "fkOEM01")]
-        public bool? FkOEM01 { get; init; }
-
-
-        [DataMember(Name = "fkOEM02")]
-        public bool? FkOEM02 { get; init; }
-
-
-        [DataMember(Name = "fkOEM03")]
-        public bool? FkOEM03 { get; init; }
-
-
-        [DataMember(Name = "fkOEM04")]
-        public bool? FkOEM04 { get; init; }
-
-
-        [DataMember(Name = "fkOEM05")]
-        public bool? FkOEM05 { get; init; }
-
-
-        [DataMember(Name = "fkOEM06")]
-        public bool? FkOEM06 { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class FDKKeysClass
-    {
-        public FDKKeysClass(bool? Fdk01 = null, bool? Fdk02 = null, bool? Fdk03 = null, bool? Fdk04 = null, bool? Fdk05 = null, bool? Fdk06 = null, bool? Fdk07 = null, bool? Fdk08 = null, bool? Fdk09 = null, bool? Fdk10 = null, bool? Fdk11 = null, bool? Fdk12 = null, bool? Fdk13 = null, bool? Fdk14 = null, bool? Fdk15 = null, bool? Fdk16 = null, bool? Fdk17 = null, bool? Fdk18 = null, bool? Fdk19 = null, bool? Fdk20 = null, bool? Fdk21 = null, bool? Fdk22 = null, bool? Fdk23 = null, bool? Fdk24 = null, bool? Fdk25 = null, bool? Fdk26 = null, bool? Fdk27 = null, bool? Fdk28 = null, bool? Fdk29 = null, bool? Fdk30 = null, bool? Fdk31 = null, bool? Fdk32 = null)
+        public enum EntryModeEnum
         {
-            this.Fdk01 = Fdk01;
-            this.Fdk02 = Fdk02;
-            this.Fdk03 = Fdk03;
-            this.Fdk04 = Fdk04;
-            this.Fdk05 = Fdk05;
-            this.Fdk06 = Fdk06;
-            this.Fdk07 = Fdk07;
-            this.Fdk08 = Fdk08;
-            this.Fdk09 = Fdk09;
-            this.Fdk10 = Fdk10;
-            this.Fdk11 = Fdk11;
-            this.Fdk12 = Fdk12;
-            this.Fdk13 = Fdk13;
-            this.Fdk14 = Fdk14;
-            this.Fdk15 = Fdk15;
-            this.Fdk16 = Fdk16;
-            this.Fdk17 = Fdk17;
-            this.Fdk18 = Fdk18;
-            this.Fdk19 = Fdk19;
-            this.Fdk20 = Fdk20;
-            this.Fdk21 = Fdk21;
-            this.Fdk22 = Fdk22;
-            this.Fdk23 = Fdk23;
-            this.Fdk24 = Fdk24;
-            this.Fdk25 = Fdk25;
-            this.Fdk26 = Fdk26;
-            this.Fdk27 = Fdk27;
-            this.Fdk28 = Fdk28;
-            this.Fdk29 = Fdk29;
-            this.Fdk30 = Fdk30;
-            this.Fdk31 = Fdk31;
-            this.Fdk32 = Fdk32;
+            Data,
+            Pin,
+            Secure
         }
 
+        /// <summary>
+        /// Specifies entry mode to which the layout applies. The following values are possible:
+        /// * ```data``` - Specifies that the layout be applied to the DataEntry method.
+        /// * ```pin``` - Specifies that the layout be applied to the PinEntry method.
+        /// * ```secure``` - Specifies that the layout be applied to the SecureKeyEntry method.
+        /// </summary>
+        [DataMember(Name = "entryMode")]
+        public EntryModeEnum? EntryMode { get; init; }
 
-        [DataMember(Name = "fdk01")]
-        public bool? Fdk01 { get; init; }
+        [DataContract]
+        public sealed class FramesClass
+        {
+            public FramesClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, FloatActionClass FloatAction = null, List<FksClass> Fks = null)
+            {
+                this.XPos = XPos;
+                this.YPos = YPos;
+                this.XSize = XSize;
+                this.YSize = YSize;
+                this.FloatAction = FloatAction;
+                this.Fks = Fks;
+            }
 
+            /// <summary>
+            /// For [ETS](#keyboard.generalinformation.ets), specifies the left coordinate of the frame as an offset from the left edge of the screen. 
+            /// For all other device types, this value is ignored
+            /// </summary>
+            [DataMember(Name = "xPos")]
+            public int? XPos { get; init; }
 
-        [DataMember(Name = "fdk02")]
-        public bool? Fdk02 { get; init; }
+            /// <summary>
+            /// For [ETS](#keyboard.generalinformation.ets), specifies the top coordinate of the frame as an offset from the top edge of the screen. 
+            /// For all other device types, this value is ignored
+            /// </summary>
+            [DataMember(Name = "yPos")]
+            public int? YPos { get; init; }
 
+            /// <summary>
+            /// For [ETS](#keyboard.generalinformation.ets), specifies the width of the frame. For all other device types, this value is ignored
+            /// </summary>
+            [DataMember(Name = "xSize")]
+            public int? XSize { get; init; }
 
-        [DataMember(Name = "fdk03")]
-        public bool? Fdk03 { get; init; }
+            /// <summary>
+            /// For [ETS](#keyboard.generalinformation.ets), specifies the height of the frame. For all other device types, this value is ignored
+            /// </summary>
+            [DataMember(Name = "ySize")]
+            public int? YSize { get; init; }
 
+            [DataContract]
+            public sealed class FloatActionClass
+            {
+                public FloatActionClass(bool? FloatX = null, bool? FloatY = null)
+                {
+                    this.FloatX = FloatX;
+                    this.FloatY = FloatY;
+                }
 
-        [DataMember(Name = "fdk04")]
-        public bool? Fdk04 { get; init; }
+                /// <summary>
+                /// Specifies that the device will randomly shift the layout in a horizontal direction
+                /// </summary>
+                [DataMember(Name = "floatX")]
+                public bool? FloatX { get; init; }
 
+                /// <summary>
+                /// Specifies that the device will randomly shift the layout in a vertical direction
+                /// </summary>
+                [DataMember(Name = "floatY")]
+                public bool? FloatY { get; init; }
 
-        [DataMember(Name = "fdk05")]
-        public bool? Fdk05 { get; init; }
+            }
 
+            /// <summary>
+            /// Specifies if the device can float the touch keyboards
+            /// </summary>
+            [DataMember(Name = "floatAction")]
+            public FloatActionClass FloatAction { get; init; }
 
-        [DataMember(Name = "fdk06")]
-        public bool? Fdk06 { get; init; }
+            [DataContract]
+            public sealed class FksClass
+            {
+                public FksClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, KeyTypeEnum? KeyType = null, string Fk = null, string ShiftFK = null)
+                {
+                    this.XPos = XPos;
+                    this.YPos = YPos;
+                    this.XSize = XSize;
+                    this.YSize = YSize;
+                    this.KeyType = KeyType;
+                    this.Fk = Fk;
+                    this.ShiftFK = ShiftFK;
+                }
 
+                /// <summary>
+                /// Specifies the position of the top left corner of the FK relative to the left hand side of the layout.
+                /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
+                /// For non-ETS devices, must be a value between 0 and 999, where 0 is the left edge and 999 is the right edge.
+                /// </summary>
+                [DataMember(Name = "xPos")]
+                [DataTypes(Minimum = 0, Maximum = 999)]
+                public int? XPos { get; init; }
 
-        [DataMember(Name = "fdk07")]
-        public bool? Fdk07 { get; init; }
+                /// <summary>
+                /// Specifies the position of the top left corner of the Function Key (FK) relative to the left hand side of the layout.
+                /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
+                /// For non-ETS devices, must be a value between 0 and 999, where 0 is the top edge and 999 is the bottom edge.
+                /// </summary>
+                [DataMember(Name = "yPos")]
+                [DataTypes(Minimum = 0, Maximum = 999)]
+                public int? YPos { get; init; }
 
+                /// <summary>
+                /// Specifies the Function Key (FK) width. 
+                /// For [ETS](#keyboard.generalinformation.ets), width is measured in pixels. For non-ETS devices, width is expressed as a value between 
+                /// 1 and 1000, where 1 is the smallest possible size and 1000 is the full width of the layout.
+                /// </summary>
+                [DataMember(Name = "xSize")]
+                [DataTypes(Minimum = 1, Maximum = 1000)]
+                public int? XSize { get; init; }
 
-        [DataMember(Name = "fdk08")]
-        public bool? Fdk08 { get; init; }
+                /// <summary>
+                /// Specifies the Function Key (FK) height.
+                /// For [ETS](#keyboard.generalinformation.ets), height is measured in pixels. 
+                /// For non-ETS devices, height is expressed as a value between 1 and 1000, where 1 is the smallest 
+                /// possible size and 1000 is the full height of the layout.
+                /// </summary>
+                [DataMember(Name = "ySize")]
+                [DataTypes(Minimum = 1, Maximum = 1000)]
+                public int? YSize { get; init; }
 
+                public enum KeyTypeEnum
+                {
+                    Fk,
+                    Fdk
+                }
 
-        [DataMember(Name = "fdk09")]
-        public bool? Fdk09 { get; init; }
+                /// <summary>
+                /// Defines the type of XFS key definition value is represented by *fk* and *shiftFK*.
+                /// If the key is physically present on the device but it is not used, this property can be omitted.
+                /// The following values are possible:
+                /// * ```fk``` - Function Keys are being used.
+                /// * ```fdk``` - Function Descriptor Keys are being used.
+                /// </summary>
+                [DataMember(Name = "keyType")]
+                public KeyTypeEnum? KeyType { get; init; }
 
+                /// <summary>
+                /// Specifies the Function Key associated with the physical area in non-shifted mode.
+                /// This property is not required if the *keyType* is omitted.
+                /// </summary>
+                [DataMember(Name = "fk")]
+                [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
+                public string Fk { get; init; }
 
-        [DataMember(Name = "fdk10")]
-        public bool? Fdk10 { get; init; }
+                /// <summary>
+                /// Specifies the Function Key associated with the physical key in shifted mode.
+                /// This property is not required if the *keyType* is omitted.
+                /// </summary>
+                [DataMember(Name = "shiftFK")]
+                [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
+                public string ShiftFK { get; init; }
 
+            }
 
-        [DataMember(Name = "fdk11")]
-        public bool? Fdk11 { get; init; }
+            /// <summary>
+            /// Defining details of the keys in the keyboard.
+            /// </summary>
+            [DataMember(Name = "fks")]
+            public List<FksClass> Fks { get; init; }
 
+        }
 
-        [DataMember(Name = "fdk12")]
-        public bool? Fdk12 { get; init; }
-
-
-        [DataMember(Name = "fdk13")]
-        public bool? Fdk13 { get; init; }
-
-
-        [DataMember(Name = "fdk14")]
-        public bool? Fdk14 { get; init; }
-
-
-        [DataMember(Name = "fdk15")]
-        public bool? Fdk15 { get; init; }
-
-
-        [DataMember(Name = "fdk16")]
-        public bool? Fdk16 { get; init; }
-
-
-        [DataMember(Name = "fdk17")]
-        public bool? Fdk17 { get; init; }
-
-
-        [DataMember(Name = "fdk18")]
-        public bool? Fdk18 { get; init; }
-
-
-        [DataMember(Name = "fdk19")]
-        public bool? Fdk19 { get; init; }
-
-
-        [DataMember(Name = "fdk20")]
-        public bool? Fdk20 { get; init; }
-
-
-        [DataMember(Name = "fdk21")]
-        public bool? Fdk21 { get; init; }
-
-
-        [DataMember(Name = "fdk22")]
-        public bool? Fdk22 { get; init; }
-
-
-        [DataMember(Name = "fdk23")]
-        public bool? Fdk23 { get; init; }
-
-
-        [DataMember(Name = "fdk24")]
-        public bool? Fdk24 { get; init; }
-
-
-        [DataMember(Name = "fdk25")]
-        public bool? Fdk25 { get; init; }
-
-
-        [DataMember(Name = "fdk26")]
-        public bool? Fdk26 { get; init; }
-
-
-        [DataMember(Name = "fdk27")]
-        public bool? Fdk27 { get; init; }
-
-
-        [DataMember(Name = "fdk28")]
-        public bool? Fdk28 { get; init; }
-
-
-        [DataMember(Name = "fdk29")]
-        public bool? Fdk29 { get; init; }
-
-
-        [DataMember(Name = "fdk30")]
-        public bool? Fdk30 { get; init; }
-
-
-        [DataMember(Name = "fdk31")]
-        public bool? Fdk31 { get; init; }
-
-
-        [DataMember(Name = "fdk32")]
-        public bool? Fdk32 { get; init; }
+        /// <summary>
+        /// There can be one or more frames included. A Physical Frame can only contain Physical Keys. 
+        /// It can contain Physical Keys positioned on the edge of the screen (for example, FDKs) or Physical Keys not positioned on the edge of the screen (for example EPP) but cannot contain both. 
+        /// A [ETS](#keyboard.generalinformation.ets) can only contain Touch Keys. To determine the frame type, frameXSize and frameYSize should be checked. 
+        /// Refer to the [layout table](#keyboard.generalinformation.layout) for the different types of frames, and see the diagram for an example.
+        /// </summary>
+        [DataMember(Name = "frames")]
+        public List<FramesClass> Frames { get; init; }
 
     }
 
