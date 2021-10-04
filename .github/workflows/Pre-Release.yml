@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build Framework
     runs-on: ubuntu-latest
 
     steps:
@@ -33,6 +34,7 @@ jobs:
         set -x
         
         dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build
+
         assets=()
         for asset in ./nuget/*.nupkg; do
           assets+=("-a" "$asset")
@@ -41,5 +43,43 @@ jobs:
           assets+=("-a" "$asset")
         done
         hub release create -p "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  buildE2E:
+    name: Build E2E
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.3
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: '5.x'
+
+    - name: Build E2E x64 Debug
+      run: |
+        msbuild .\Utilities\EndToEndSecurity\EndToEndSecurity.sln /p:"Configuration=Debug;Platform=x64;Version=${{ github.event.inputs.version }}"
+
+    - name: Build E2E x64 Release
+      run: |
+        msbuild .\Utilities\EndToEndSecurity\EndToEndSecurity.sln /p:"Configuration=Release;Platform=x64;Version=${{ github.event.inputs.version }}"
+
+    - name: Build E2E x86 Debug
+      run: |
+        msbuild .\Utilities\EndToEndSecurity\EndToEndSecurity.sln /p:"Configuration=Debug;Platform=x86;Version=${{ github.event.inputs.version }}"
+
+    - name: Build E2E x86 Release
+      run: |
+        msbuild .\Utilities\EndToEndSecurity\EndToEndSecurity.sln /p:"Configuration=Release;Platform=x86;Version=${{ github.event.inputs.version }}"
+
+    - name: Upload Nuget Package
+      run: |
+        gh release upload "v${{ github.event.inputs.version }}" .\Utilities\EndToEndSecurity\EndToEndSecurity\KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd.${{ github.event.inputs.version }}.nupkg
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
