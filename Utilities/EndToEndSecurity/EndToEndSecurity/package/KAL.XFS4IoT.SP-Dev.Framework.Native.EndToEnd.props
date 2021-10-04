@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         ToolsVersion="16.0">
+
+    <!--Find libraries to include-->
+    <ItemGroup>
+        <XFS4IoTEndToEndLibs Include="$(MSBuildThisFileDirectory)\..\lib\native\$(Platform)\$(Configuration)\*.lib" />
+    </ItemGroup>
+    <PropertyGroup>
+        <XFS4IoTEndToEndLibraries>@(XFS4IoTEndToEndLibs)</XFS4IoTEndToEndLibraries>
+    </PropertyGroup>
+    <ItemDefinitionGroup>
+        <!--Add our includes to the include path-->
+        <ClCompile>   
+            <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\..\include</AdditionalIncludeDirectories>
+        </ClCompile>
+        <!--Add our lib to the link options-->
+        <Link>
+          <AdditionalDependencies>$(XFS4IoTEndToEndLibraries);%(AdditionalDependencies)</AdditionalDependencies>
+        </Link>
+    </ItemDefinitionGroup>
+</Project>
