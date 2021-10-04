@@ -17,12 +17,12 @@ namespace XFS4IoT.PinPad
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(PinFormatsClass PinFormats = null, PresentationAlgorithmsClass PresentationAlgorithms = null, DisplayClass Display = null, bool? IdConnect = null, ValidationAlgorithmsClass ValidationAlgorithms = null, bool? PinCanPersistAfterUse = null, bool? TypeCombined = null, bool? SetPinblockDataRequired = null, Dictionary<string, Dictionary<string, Dictionary<string, PinBlockAttributesClass>>> PinBlockAttributes = null)
+        public CapabilitiesClass(PinFormatsClass PinFormats = null, PresentationAlgorithmsClass PresentationAlgorithms = null, DisplayClass Display = null, bool? IdcConnect = null, ValidationAlgorithmsClass ValidationAlgorithms = null, bool? PinCanPersistAfterUse = null, bool? TypeCombined = null, bool? SetPinblockDataRequired = null, Dictionary<string, Dictionary<string, Dictionary<string, PinBlockAttributesClass>>> PinBlockAttributes = null)
         {
             this.PinFormats = PinFormats;
             this.PresentationAlgorithms = PresentationAlgorithms;
             this.Display = Display;
-            this.IdConnect = IdConnect;
+            this.IdcConnect = IdcConnect;
             this.ValidationAlgorithms = ValidationAlgorithms;
             this.PinCanPersistAfterUse = PinCanPersistAfterUse;
             this.TypeCombined = TypeCombined;
@@ -209,8 +209,8 @@ namespace XFS4IoT.PinPad
         /// If the value is true, the PIN will be transported securely during the command 
         /// [PinPad.PresentIdc](#pinpad.presentidc).
         /// </summary>
-        [DataMember(Name = "idConnect")]
-        public bool? IdConnect { get; init; }
+        [DataMember(Name = "idcConnect")]
+        public bool? IdcConnect { get; init; }
 
         [DataContract]
         public sealed class ValidationAlgorithmsClass

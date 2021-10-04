@@ -21,25 +21,6 @@ namespace XFS4IoTFramework.KeyManagement
     {
         private async Task<InitializationCompletion.PayloadData> HandleInitialization(IInitializationEvents events, InitializationCommand initialization, CancellationToken cancel)
         {
-            if (!string.IsNullOrEmpty(initialization.Payload.Key))
-            {
-                KeyDetail keyinfo = KeyManagement.GetKeyDetail(initialization.Payload.Key);
-                if (keyinfo is null)
-                {
-                    return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"Specified key is not found. {initialization.Payload.Key}",
-                                                                    InitializationCompletion.PayloadData.ErrorCodeEnum.AccessDenied);
-                }
-            }
-
-            if (KeyManagement.KeyManagementCapabilities.IDKey.HasFlag(KeyManagementCapabilitiesClass.IDKeyEnum.Initialization) &&
-                string.IsNullOrEmpty(initialization.Payload.Ident))
-            {
-                return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"No identification data provided.",
-                                                                InitializationCompletion.PayloadData.ErrorCodeEnum.AccessDenied);
-            }
-
             AuthenticationData authData = null;
             if (initialization.Payload.Authentication is not null)
             {
@@ -87,9 +68,7 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.Initialization()");
 
-            var result = await Device.Initialization(new InitializationRequest(initialization.Payload.Key,
-                                                                               string.IsNullOrEmpty(initialization.Payload.Ident) ? null : Convert.FromBase64String(initialization.Payload.Ident).ToList(),
-                                                                               authData),
+            var result = await Device.Initialization(new InitializationRequest(authData),
                                                      cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.Initialization() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -99,24 +78,16 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyManagement.GetSecureKeyEntryStatus()?.Reset();
 
                 // Delete internal key information
-                if (string.IsNullOrEmpty(initialization.Payload.Key))
+                foreach (var key in KeyManagement.GetKeyTable())
                 {
-                    foreach (var key in KeyManagement.GetKeyTable())
-                    {
-                        if (!key.Preloaded)
-                            KeyManagement.DeleteKey(key.KeyName);
-                    }
-                }
-                else
-                {
-                    KeyManagement.DeleteKey(initialization.Payload.Key);
+                    if (!key.Preloaded)
+                        KeyManagement.DeleteKey(key.KeyName);
                 }
             }
 
             return new InitializationCompletion.PayloadData(result.CompletionCode,
                                                             result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            result.Identification is null || result.Identification.Count == 0 ? null : Convert.ToBase64String(result.Identification.ToArray()));
+                                                            result.ErrorCode);
         }
     }
 }

@@ -17,7 +17,6 @@ namespace XFS4IoTServer
 {
     public partial class CommonServiceClass
     {
-
         /// <summary>
         /// Stores CashDispenser interface capabilites internally
         /// </summary>
@@ -47,5 +46,17 @@ namespace XFS4IoTServer
         /// Stores Crypto interface capabilites internally
         /// </summary>
         public CryptoCapabilitiesClass CryptoCapabilities { get; set; }
+
+
+        /// <summary>
+        /// Stores PinPad interface capabilites internally
+        /// </summary>
+        public PinPadCapabilitiesClass PinPadCapabilities { get; set; }
+
+
+        /// <summary>
+        /// Stores Keyboard interface capabilites internally
+        /// </summary>
+        public KeyboardCapabilitiesClass KeyboardCapabilities { get; set; }
     }
 }

@@ -32,26 +32,6 @@ namespace XFS4IoTFramework.TextTerminal
         Task<DeviceResult> ClearScreenAsync(ClearScreenRequest clearInfo, CancellationToken cancellation);
 
         /// <summary>
-        /// This command is used to switch the lighting of the text terminal unit on
-        /// </summary>
-        Task<DeviceResult> DispLightOnAsync(CancellationToken cancellation);
-
-        /// <summary>
-        /// This command is used to switch the lighting of the text terminal unit off
-        /// </summary>
-        Task<DeviceResult> DispLightOffAsync(CancellationToken cancellation);
-
-        /// <summary>
-        /// This command is used to turn on an LED.
-        /// </summary>
-        Task<DeviceResult> LEDOnAsync(LEDOnRequest LEDOnInfo, CancellationToken cancellation);
-
-        /// <summary>
-        /// This command is used to turn off an LED.
-        /// </summary>
-        Task<DeviceResult> LEDOffAsync(int LED, CancellationToken cancellation);
-
-        /// <summary>
         /// This command is used to set the resolution of the display.
         /// ClearScreenAsync will be called first to clear the screen and set the cursor to the top left of the display.
         /// </summary>

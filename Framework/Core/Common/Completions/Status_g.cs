@@ -26,7 +26,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, CardEmbosser.StatusClass CardEmbosser = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, CardEmbosser.StatusClass CardEmbosser = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Dictionary<string, Lights.LightStateClass> Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Common = Common;
@@ -41,6 +41,10 @@ namespace XFS4IoT.Common.Completions
                 this.CardEmbosser = CardEmbosser;
                 this.BarcodeReader = BarcodeReader;
                 this.Biometric = Biometric;
+                this.Lights = Lights;
+                this.Auxiliaries = Auxiliaries;
+                this.VendorMode = VendorMode;
+                this.VendorApplication = VendorApplication;
             }
 
             /// <summary>
@@ -125,6 +129,34 @@ namespace XFS4IoT.Common.Completions
             /// </summary>
             [DataMember(Name = "biometric")]
             public Biometric.StatusClass Biometric { get; init; }
+
+            /// <summary>
+            /// Status information for XFS4IoT services implementing the Lights interface. This will be omitted if the
+            /// Lights interface is not supported.
+            /// </summary>
+            [DataMember(Name = "lights")]
+            public Dictionary<string, Lights.LightStateClass> Lights { get; init; }
+
+            /// <summary>
+            /// Status information for XFS4IoT services implementing the Auxiliaries interface. This will be omitted if the
+            /// Auxiliaries interface is not supported.
+            /// </summary>
+            [DataMember(Name = "auxiliaries")]
+            public Auxiliaries.StatusClass Auxiliaries { get; init; }
+
+            /// <summary>
+            /// Status information for XFS4IoT services implementing the VendorMode interface. This will be omitted if the
+            /// VendorMode interface is not supported.
+            /// </summary>
+            [DataMember(Name = "vendorMode")]
+            public VendorMode.StatusClass VendorMode { get; init; }
+
+            /// <summary>
+            /// Status information for XFS4IoT services implementing the Vendor Application interface. This 
+            /// will be omitted if the Vendor Mode interface is not supported.
+            /// </summary>
+            [DataMember(Name = "vendorApplication")]
+            public VendorApplication.StatusClass VendorApplication { get; init; }
 
         }
     }

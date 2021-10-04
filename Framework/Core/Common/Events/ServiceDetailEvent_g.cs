@@ -58,7 +58,6 @@ namespace XFS4IoT.Common.Events
 
             }
 
-
             [DataMember(Name = "services")]
             public List<ServicesClass> Services { get; init; }
 

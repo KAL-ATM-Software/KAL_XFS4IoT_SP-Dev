@@ -26,7 +26,7 @@ namespace XFS4IoT.Keyboard.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Keys = null, List<EntryCompletionEnum> PinKeys = null, EntryCompletionEnum? Completion = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Keys = null, List<KeyPressedClass> PinKeys = null, EntryCompletionEnum? Completion = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -61,7 +61,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// Array contains the keys entered by the user 
             /// </summary>
             [DataMember(Name = "pinKeys")]
-            public List<EntryCompletionEnum> PinKeys { get; init; }
+            public List<KeyPressedClass> PinKeys { get; init; }
 
             /// <summary>
             /// Specifies the reason for completion of the entry.

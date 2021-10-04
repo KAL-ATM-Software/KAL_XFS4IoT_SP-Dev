@@ -27,15 +27,12 @@ namespace XFS4IoT.Keyboard.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? MaxLen = null, bool? AutoEnd = null, string ActiveFDKs = null, string ActiveKeys = null, string TerminateFDKs = null, string TerminateKeys = null)
+            public PayloadData(int Timeout, int? MaxLen = null, bool? AutoEnd = null, Dictionary<string, KeyClass> ActiveKeys = null)
                 : base(Timeout)
             {
                 this.MaxLen = MaxLen;
                 this.AutoEnd = AutoEnd;
-                this.ActiveFDKs = ActiveFDKs;
                 this.ActiveKeys = ActiveKeys;
-                this.TerminateFDKs = TerminateFDKs;
-                this.TerminateKeys = TerminateKeys;
             }
 
             /// <summary>
@@ -53,32 +50,38 @@ namespace XFS4IoT.Keyboard.Commands
             public bool? AutoEnd { get; init; }
 
             /// <summary>
-            /// Specifies a mask of those FDKs which are active during the execution of the command.
-            /// </summary>
-            [DataMember(Name = "activeFDKs")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string ActiveFDKs { get; init; }
-
-            /// <summary>
-            /// Specifies a mask of those (other) Function Keys which are active during the execution of the command.
+            /// Specifies all Function Keys which are active during the execution of the command.
+            /// This should be the complete set or a subset of the keys returned in the payload of the 
+            /// [Keyboard.GetLayout](#keyboard.getlayout) command.
+            /// 
+            /// The following standard names are defined:
+            /// 
+            /// * ```zero``` - Numeric digit 0
+            /// * ```one``` - Numeric digit 1
+            /// * ```two``` - Numeric digit 2
+            /// * ```three``` - Numeric digit 3
+            /// * ```four``` - Numeric digit 4
+            /// * ```five``` - Numeric digit 5
+            /// * ```six``` - Numeric digit 6
+            /// * ```seven``` - Numeric digit 7
+            /// * ```eight``` - Numeric digit 8
+            /// * ```nine``` - Numeric digit 9
+            /// * ```[a-f]``` - Hex digit A to F for secure key entry
+            /// * ```enter``` - Enter
+            /// * ```cancel``` - Cancel
+            /// * ```clear``` - Clear
+            /// * ```backspace``` - Backspace
+            /// * ```help``` - Help
+            /// * ```decPoint``` - Decimal point
+            /// * ```shift``` - Shift key used during hex entry
+            /// * ```doubleZero``` - 00
+            /// * ```tripleZero``` - 000
+            /// * ```fdk[01-32]``` - 32 FDK keys
+            /// 
+            /// Additional non standard key names are also allowed.
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string ActiveKeys { get; init; }
-
-            /// <summary>
-            /// Specifies a mask of those FDKs which must terminate the execution of the command.
-            /// </summary>
-            [DataMember(Name = "terminateFDKs")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string TerminateFDKs { get; init; }
-
-            /// <summary>
-            /// Specifies a mask of those (other) Function Keys which must terminate the execution of the command.
-            /// </summary>
-            [DataMember(Name = "terminateKeys")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string TerminateKeys { get; init; }
+            public Dictionary<string, KeyClass> ActiveKeys { get; init; }
 
         }
     }

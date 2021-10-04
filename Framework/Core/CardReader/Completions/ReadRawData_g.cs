@@ -114,7 +114,6 @@ namespace XFS4IoT.CardReader.Completions
                     this.Data = Data;
                 }
 
-
                 [DataMember(Name = "status")]
                 public CardDataStatusEnum? Status { get; init; }
 
@@ -173,7 +172,6 @@ namespace XFS4IoT.CardReader.Completions
                     this.Status = Status;
                     this.Data = Data;
                 }
-
 
                 [DataMember(Name = "status")]
                 public CardDataStatusEnum? Status { get; init; }

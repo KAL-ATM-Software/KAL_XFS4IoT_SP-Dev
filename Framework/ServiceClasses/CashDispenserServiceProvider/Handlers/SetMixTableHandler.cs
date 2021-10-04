@@ -86,7 +86,7 @@ namespace XFS4IoTFramework.CashDispenser
                              new MixTable((int)setMixTable.Payload.MixNumber,
                                           setMixTable.Payload.Name,
                                           setMixTable.Payload.MixHeader,
-                                          mixTables));
+                                          mixTables, Logger));
 
             return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, null));
         }

@@ -41,7 +41,6 @@ namespace XFS4IoT.KeyManagement.Completions
             [DataMember(Name = "dataToSign")]
             public string DataToSign { get; init; }
 
-
             [DataMember(Name = "signers")]
             public SigningMethodEnum? Signers { get; init; }
 

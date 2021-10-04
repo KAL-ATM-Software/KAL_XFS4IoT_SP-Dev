@@ -27,12 +27,10 @@ namespace XFS4IoT.KeyManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, AuthenticationClass Authentication = null, string Ident = null, string Key = null)
+            public PayloadData(int Timeout, AuthenticationClass Authentication = null)
                 : base(Timeout)
             {
                 this.Authentication = Authentication;
-                this.Ident = Ident;
-                this.Key = Key;
             }
 
             [DataContract]
@@ -44,7 +42,6 @@ namespace XFS4IoT.KeyManagement.Commands
                     this.Key = Key;
                     this.Data = Data;
                 }
-
 
                 [DataMember(Name = "method")]
                 public SigningMethodEnum? Method { get; init; }
@@ -85,18 +82,6 @@ namespace XFS4IoT.KeyManagement.Commands
             /// </summary>
             [DataMember(Name = "authentication")]
             public AuthenticationClass Authentication { get; init; }
-
-            /// <summary>
-            /// The value of the ID key. this field is not required if an indent is not required.
-            /// </summary>
-            [DataMember(Name = "ident")]
-            public string Ident { get; init; }
-
-            /// <summary>
-            /// The Base64 encoded value of the encryption key. this property is not required if no specific key name required. 
-            /// </summary>
-            [DataMember(Name = "key")]
-            public string Key { get; init; }
 
         }
     }

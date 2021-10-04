@@ -78,7 +78,8 @@ namespace XFS4IoTFramework.CashDispenser
                 totalAmount = dispense.Payload.Denomination.Currencies.Select(c => c.Value).Sum();
 
             Denominate denomToDispense = new(dispense.Payload.Denomination.Currencies, 
-                                             dispense.Payload.Denomination.Values);
+                                             dispense.Payload.Denomination.Values, 
+                                             Logger);
 
             ////////////////////////////////////////////////////////////////////////////
             // 1) Check that a given denomination can currently be paid out or test that a given amount matches a given denomination.
@@ -92,7 +93,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                               "No counts specified to dispense items from the cash units.");
                 }
 
-                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(CashDispenser.CashUnits, Logger);
+                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(CashDispenser.CashUnits);
                 switch (Result)
                 {
                     case Denominate.DispensableResultEnum.Good:
@@ -151,7 +152,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                               $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
                 }
 
-                denomToDispense.Denomination = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems, Logger);
+                denomToDispense.Denomination = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
 
                 if (denomToDispense.Values is null)
                 {
@@ -171,7 +172,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                               $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
                 }
 
-                Denomination mixDenom = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems, Logger);
+                Denomination mixDenom = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
                 if (mixDenom.Values != denomToDispense.Values)
                 {
                     return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 

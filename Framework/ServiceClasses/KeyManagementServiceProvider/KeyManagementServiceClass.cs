@@ -28,7 +28,7 @@ namespace XFS4IoTServer
         : this(ServiceProvider, logger)
         {
             this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set in the " + typeof(KeyManagementServiceClass));
-            KeyDetails = PersistentData.Load< Dictionary<string, KeyDetail>> (typeof(KeyDetail).FullName);
+            KeyDetails = PersistentData.Load< Dictionary<string, KeyDetail>> (ServiceProvider.Name + typeof(KeyDetail).FullName);
             if (KeyDetails is null)
                 KeyDetails = new();
 
@@ -132,7 +132,7 @@ namespace XFS4IoTServer
                                                   ExpiryDate,
                                                   Version));
 
-            PersistentData.Store<Dictionary<string, KeyDetail>>(typeof(KeyDetail).FullName, KeyDetails);
+            PersistentData.Store<Dictionary<string, KeyDetail>>(ServiceProvider.Name + typeof(KeyDetail).FullName, KeyDetails);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace XFS4IoTServer
             if (KeyDetails.ContainsKey(KeyName))
             {
                 KeyDetails.Remove(KeyName);
-                PersistentData.Store<Dictionary<string, KeyDetail>>(typeof(KeyDetail).FullName, KeyDetails);
+                PersistentData.Store<Dictionary<string, KeyDetail>>(ServiceProvider.Name + typeof(KeyDetail).FullName, KeyDetails);
             }
             else
             {
@@ -181,7 +181,7 @@ namespace XFS4IoTServer
                                                   keyDetail.ExpiryDate,
                                                   keyDetail.Version));
 
-            PersistentData.Store<Dictionary<string, KeyDetail>>(typeof(KeyDetail).FullName, KeyDetails);
+            PersistentData.Store<Dictionary<string, KeyDetail>>(ServiceProvider.Name + typeof(KeyDetail).FullName, KeyDetails);
         }
 
         private readonly SecureKeyEntryStatusClass SecureKeyEntryStatus = new();
@@ -190,7 +190,6 @@ namespace XFS4IoTServer
         /// Return secure key entry component status
         /// The device specified class reset current status if the stored key components are claered except successful Initialization command.
         /// </summary>
-        /// <returns></returns>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => SecureKeyEntryStatus;
     }
 }

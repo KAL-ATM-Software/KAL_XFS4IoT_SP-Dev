@@ -21,15 +21,13 @@ namespace XFS4IoTFramework.Common
     public partial class ClearCommandNonceHandler
     {
 
-        private Task<ClearCommandNonceCompletion.PayloadData> HandleClearCommandNonce(IClearCommandNonceEvents events, ClearCommandNonceCommand clearCommandNonce, CancellationToken cancel)
+        private async Task<ClearCommandNonceCompletion.PayloadData> HandleClearCommandNonce(IClearCommandNonceEvents events, ClearCommandNonceCommand clearCommandNonce, CancellationToken cancel)
         {
-            //ToDo: Implement HandleClearCommandNonce for Common.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleClearCommandNonce for Common is not implemented in ClearCommandNonceHandler.cs");
-            #else
-                #error HandleClearCommandNonce for Common is not implemented in ClearCommandNonceHandler.cs
-            #endif
+            Logger.Log(Constants.DeviceClass, "CommonDev.ClearCommandNonce()");
+            var result = await Device.ClearCommandNonce();
+            Logger.Log(Constants.DeviceClass, $"CommonDev.ClearCommandNonce() -> {result.CompletionCode}");
+
+            return result;
         }
 
     }

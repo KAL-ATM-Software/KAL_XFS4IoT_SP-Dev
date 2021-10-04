@@ -26,11 +26,10 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Identification = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.Identification = Identification;
             }
 
             public enum ErrorCodeEnum
@@ -46,15 +45,6 @@ namespace XFS4IoT.KeyManagement.Completions
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
-
-            /// <summary>
-            /// The Base64 encoded value of the ID key encrypted by the encryption key.
-            /// This value can be used as authorization for the [KeyManagement.ImportKey](#keymanagement.importkey) command, this 
-            /// field is not set if no authorization required.
-            /// 
-            /// </summary>
-            [DataMember(Name = "identification")]
-            public string Identification { get; init; }
 
         }
     }

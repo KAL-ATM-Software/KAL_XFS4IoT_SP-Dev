@@ -56,7 +56,7 @@ namespace XFS4IoT.PinPad.Commands
             public string ChipProtocol { get; init; }
 
             /// <summary>
-            /// Points to the Base64 encoded data to be sent to the chip.
+            /// The Base64 encoded data to be sent to the chip.
             /// </summary>
             [DataMember(Name = "chipData")]
             public string ChipData { get; init; }

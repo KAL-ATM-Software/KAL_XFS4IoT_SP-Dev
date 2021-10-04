@@ -30,7 +30,7 @@ namespace XFS4IoTServer
             this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set. " + nameof(CashManagementServiceClass));
 
             // Load persistent data
-            CashUnits = PersistentData.Load<Dictionary<string, CashUnit>>(typeof(CashUnit).FullName);
+            CashUnits = PersistentData.Load<Dictionary<string, CashUnit>>(ServiceProvider.Name + typeof(CashUnit).FullName);
             if (CashUnits is null)
             {
                 Logger.Warning(Constants.Framework, "Failed to load persistent data. It could be a first run and no persistent exists on the file system.");
@@ -108,7 +108,7 @@ namespace XFS4IoTServer
                 }
             }
 
-            if (!PersistentData.Store(typeof(CashUnit).FullName, CashUnits))
+            if (!PersistentData.Store(ServiceProvider.Name + typeof(CashUnit).FullName, CashUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data.");
             }
@@ -248,7 +248,7 @@ namespace XFS4IoTServer
                 }
             }
 
-            if (!PersistentData.Store(typeof(CashUnit).FullName, CashUnits))
+            if (!PersistentData.Store(ServiceProvider.Name + typeof(CashUnit).FullName, CashUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data.");
             }

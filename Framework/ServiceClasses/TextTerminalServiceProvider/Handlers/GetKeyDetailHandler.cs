@@ -29,11 +29,10 @@ namespace XFS4IoTFramework.TextTerminal
                 TextTerminal.FirstGetKeyDetailCommand = false;
             }
 
-
             return Task.FromResult(new GetKeyDetailCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                 null,
                 TextTerminal.SupportedKeys.Keys,
-                TextTerminal.SupportedKeys.CommandKeysClass));
+                TextTerminal.SupportedKeys.CommandKeys));
         }
 
     }

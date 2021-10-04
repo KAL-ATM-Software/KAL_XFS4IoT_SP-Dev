@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.TextTerminal
         /// </summary>
         public bool FirstGetKeyDetailCommand { get; set; }
 
-        record KeyDetails(string Keys, List<string> CommandKeys, XFS4IoT.TextTerminal.Completions.GetKeyDetailCompletion.PayloadData.CommandKeysClass CommandKeysClass);
+        record KeyDetails(string Keys, List<string> CommandKeys);
         
         /// <summary>
         /// Keys supported by the TextTerminal device. Will be filled by the first GetKeyDetail command.

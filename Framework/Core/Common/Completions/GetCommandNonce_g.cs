@@ -26,11 +26,10 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string CommandNonce = null, int? NonceTimeout = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string CommandNonce = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.CommandNonce = CommandNonce;
-                this.NonceTimeout = NonceTimeout;
             }
 
             /// <summary>
@@ -42,20 +41,6 @@ namespace XFS4IoT.Common.Completions
             [DataMember(Name = "commandNonce")]
             [DataTypes(Pattern = "^[0-9A-F]{32}$|^[0-9]*$")]
             public string CommandNonce { get; init; }
-
-            /// <summary>
-            /// The length of time that the returned nonce value will be value for, in seconds. The value is given in 
-            /// seconds but it should not be assumed that the timeout will be accurate to the nearest second. The nonce
-            /// may also become invalid before the timeout, for example because of a power failure. 
-            /// 
-            /// If this value is not returned then the nonce has no fixed maximum life-time, but it may still become 
-            /// invalid, for example because of a power failure or when explicitly cleared. 
-            /// 
-            /// For the best security the device should enforce a timeout which is short enough to stop invalid use 
-            /// of the nonce, but long enough to not block valid applications. A one hour timeout might be reasonable. 
-            /// </summary>
-            [DataMember(Name = "nonceTimeout")]
-            public int? NonceTimeout { get; init; }
 
         }
     }

@@ -59,11 +59,10 @@ namespace XFS4IoT.KeyManagement
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(int? KeyNum = null, DerivationAlgorithmsClass DerivationAlgorithms = null, IdKeyClass IdKey = null, KeyCheckModesClass KeyCheckModes = null, string HsmVendor = null, RsaAuthenticationSchemeClass RsaAuthenticationScheme = null, RsaSignatureAlgorithmClass RsaSignatureAlgorithm = null, RsaCryptAlgorithmClass RsaCryptAlgorithm = null, RsaKeyCheckModeClass RsaKeyCheckMode = null, SignatureSchemeClass SignatureScheme = null, EmvImportSchemesClass EmvImportSchemes = null, KeyBlockImportFormatsClass KeyBlockImportFormats = null, bool? KeyImportThroughParts = null, DesKeyLengthClass DesKeyLength = null, CertificateTypesClass CertificateTypes = null, List<LoadCertOptionsClass> LoadCertOptions = null, CrklLoadOptionsClass CrklLoadOptions = null, SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods = null, Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributesClass>>> KeyAttributes = null, Dictionary<string, DecryptAttributesClass> DecryptAttributes = null, Dictionary<string, Dictionary<string, Dictionary<string, VerifyAttributesClass>>> VerifyAttributes = null)
+        public CapabilitiesClass(int? KeyNum = null, DerivationAlgorithmsClass DerivationAlgorithms = null, KeyCheckModesClass KeyCheckModes = null, string HsmVendor = null, RsaAuthenticationSchemeClass RsaAuthenticationScheme = null, RsaSignatureAlgorithmClass RsaSignatureAlgorithm = null, RsaCryptAlgorithmClass RsaCryptAlgorithm = null, RsaKeyCheckModeClass RsaKeyCheckMode = null, SignatureSchemeClass SignatureScheme = null, EmvImportSchemesClass EmvImportSchemes = null, KeyBlockImportFormatsClass KeyBlockImportFormats = null, bool? KeyImportThroughParts = null, DesKeyLengthClass DesKeyLength = null, CertificateTypesClass CertificateTypes = null, List<LoadCertOptionsClass> LoadCertOptions = null, CrklLoadOptionsClass CrklLoadOptions = null, SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods = null, Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributesClass>>> KeyAttributes = null, Dictionary<string, DecryptAttributesClass> DecryptAttributes = null, Dictionary<string, Dictionary<string, Dictionary<string, VerifyAttributesClass>>> VerifyAttributes = null)
         {
             this.KeyNum = KeyNum;
             this.DerivationAlgorithms = DerivationAlgorithms;
-            this.IdKey = IdKey;
             this.KeyCheckModes = KeyCheckModes;
             this.HsmVendor = HsmVendor;
             this.RsaAuthenticationScheme = RsaAuthenticationScheme;
@@ -111,38 +110,6 @@ namespace XFS4IoT.KeyManagement
         /// </summary>
         [DataMember(Name = "derivationAlgorithms")]
         public DerivationAlgorithmsClass DerivationAlgorithms { get; init; }
-
-        [DataContract]
-        public sealed class IdKeyClass
-        {
-            public IdKeyClass(bool? Initialization = null, bool? Import = null)
-            {
-                this.Initialization = Initialization;
-                this.Import = Import;
-            }
-
-            /// <summary>
-            /// ID key is returned by the [KeyManagement.Initialization](#keymanagement.initialization) command.
-            /// </summary>
-            [DataMember(Name = "initialization")]
-            public bool? Initialization { get; init; }
-
-            /// <summary>
-            /// ID key is required as input for the [KeyManagement.ImportKey](#keymanagement.importkey) and 
-            /// [KeyManagement.DeriveKey](#keymanagement.derivekey) command.
-            /// </summary>
-            [DataMember(Name = "import")]
-            public bool? Import { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies if key owner identification (in commands referenced as lpxIdent), which authorizes access 
-        /// to the encryption module, is required.  A zero value is returned if the encryption module does not 
-        /// support this capability.
-        /// </summary>
-        [DataMember(Name = "idKey")]
-        public IdKeyClass IdKey { get; init; }
 
         [DataContract]
         public sealed class KeyCheckModesClass

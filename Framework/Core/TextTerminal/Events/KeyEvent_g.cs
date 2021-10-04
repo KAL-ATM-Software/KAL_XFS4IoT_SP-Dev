@@ -38,16 +38,17 @@ namespace XFS4IoT.TextTerminal.Events
 
             /// <summary>
             /// On a numeric or alphanumeric key press this parameter holds the value of the key pressed. 
-            /// This value is not set if no numeric or alphanumeric key was pressed.
+            /// This property is not required if no numeric or alphanumeric key was pressed.
             /// </summary>
             [DataMember(Name = "key")]
             public string Key { get; init; }
 
             /// <summary>
-            /// On a Command key press this parameter holds the value of the Command key pressed, e.g. ckEnter.
-            /// This value is not set when no command key was pressed.
+            /// On a Command key press this parameter holds the value of the Command key pressed, e.g. 'enter'.
+            /// This property is not required when no command key was pressed.
             /// </summary>
             [DataMember(Name = "commandKey")]
+            [DataTypes(Pattern = "^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
             public string CommandKey { get; init; }
 
         }

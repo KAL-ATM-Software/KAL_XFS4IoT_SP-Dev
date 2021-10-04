@@ -3,8 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT PinPad interface.
- * ResetHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -20,17 +18,16 @@ namespace XFS4IoTFramework.PinPad
 {
     public partial class ResetHandler
     {
-
-        private Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
-            //ToDo: Implement HandleReset for PinPad.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleReset for PinPad is not implemented in ResetHandler.cs");
-            #else
-                #error HandleReset for PinPad is not implemented in ResetHandler.cs
-            #endif
-        }
+            Logger.Log(Constants.DeviceClass, "PinPadDev.ResetDevice()");
 
+            var result = await Device.ResetDevice(cancel);
+
+            Logger.Log(Constants.DeviceClass, $"PinPadDev.ResetDevice() -> {result.CompletionCode}");
+
+            return new ResetCompletion.PayloadData(result.CompletionCode,
+                                                   result.ErrorDescription);
+        }
     }
 }

@@ -27,37 +27,30 @@ namespace XFS4IoT.PinPad.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Pan = null, string Pvv = null, int? PvvDigits = null, string Key = null, string KeyEncKey = null)
+            public PayloadData(int Timeout, string Pan = null, string Pvv = null, string Key = null, string KeyEncKey = null)
                 : base(Timeout)
             {
                 this.Pan = Pan;
                 this.Pvv = Pvv;
-                this.PvvDigits = PvvDigits;
                 this.Key = Key;
                 this.KeyEncKey = KeyEncKey;
             }
 
             /// <summary>
             /// Primary Account Number from track data, as an ASCII string. 
-            /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit ), 
-            /// followed by the pvki indicator in the 12th byte.
+            /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit), 
+            /// followed by the PVKI indicator in the 12th byte.
             /// </summary>
             [DataMember(Name = "pan")]
+            [DataTypes(Pattern = "^[0-9]{23}$")]
             public string Pan { get; init; }
 
             /// <summary>
-            /// PIN Validation Value from track data. The valid range is '0' to '9'. 
-            /// This string should contain 4 digits. 
+            /// PIN Validation Value from track data.
             /// </summary>
             [DataMember(Name = "pvv")]
-            [DataTypes(Pattern = "^[0-9]$")]
+            [DataTypes(Pattern = "^[0-9]{4,}$")]
             public string Pvv { get; init; }
-
-            /// <summary>
-            /// Number of digits of PVV. 
-            /// </summary>
-            [DataMember(Name = "pvvDigits")]
-            public int? PvvDigits { get; init; }
 
             /// <summary>
             /// Name of the validation key. The key referenced by key must have the [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) 'V2' attribute.

@@ -424,61 +424,16 @@ namespace XFS4IoTFramework.Common
                     }
                 }
 
-                List<TextTerminalCapabilitiesClass.LEDClass> LEDsSupported = new();
-                if (result.TextTerminal.Leds is not null)
-                {
-                    foreach (var led in result.TextTerminal.Leds)
-                    {
-                        TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum LEDColor = TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.None;
-                        if (led.Blue is not null && (bool)led.Blue)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Blue;
-                        if (led.Cyan is not null && (bool)led.Cyan)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Cyan;
-                        if (led.Green is not null && (bool)led.Green)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Green;
-                        if (led.Magenta is not null && (bool)led.Magenta)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Magenta;
-                        if (led.Red is not null && (bool)led.Red)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Red;
-                        if (led.White is not null && (bool)led.White)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.White;
-                        if (led.Yellow is not null && (bool)led.Yellow)
-                            LEDColor |= TextTerminalCapabilitiesClass.LEDClass.LEDColorsEnum.Yellow;
-
-                        TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum LEDLight = TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.None;
-                        if (led.Continuous is not null && (bool)led.Continuous)
-                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.Continuous;
-                        if (led.MediumFlash is not null && (bool)led.MediumFlash)
-                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.MediumFlash;
-                        if (led.Off is not null && (bool)led.Off)
-                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.Off;
-                        if (led.QuickFlash is not null && (bool)led.QuickFlash)
-                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.QuickFlash;
-                        if (led.SlowFlash is not null && (bool)led.SlowFlash)
-                            LEDLight |= TextTerminalCapabilitiesClass.LEDClass.LEDLightControlsEnum.SlowFlash;
-
-                        LEDsSupported.Add(new TextTerminalCapabilitiesClass.LEDClass(LEDColor, LEDLight));
-                    }
-                }
-
                 Common.TextTerminalCapabilities = new TextTerminalCapabilitiesClass(result.TextTerminal.Type == CapabilitiesClass.TypeEnum.Fixed ? TextTerminalCapabilitiesClass.TypeEnum.Fixed : TextTerminalCapabilitiesClass.TypeEnum.Removable,
                                                                                     resolutions,
                                                                                     result.TextTerminal.KeyLock is not null && (bool)result.TextTerminal.KeyLock,
-                                                                                    result.TextTerminal.DisplayLight is not null && (bool)result.TextTerminal.DisplayLight,
                                                                                     result.TextTerminal.Cursor is not null && (bool)result.TextTerminal.Cursor,
-                                                                                    result.TextTerminal.Forms is not null && (bool)result.TextTerminal.Forms,
-                                                                                    LEDsSupported);
+                                                                                    result.TextTerminal.Forms is not null && (bool)result.TextTerminal.Forms);
             }
 
 
             if (result.KeyManagement is not null)
             {
-                KeyManagementCapabilitiesClass.IDKeyEnum idKeys = KeyManagementCapabilitiesClass.IDKeyEnum.NotSupported;
-                if (result.KeyManagement.IdKey?.Import is not null && (bool)result.KeyManagement.IdKey.Import)
-                    idKeys |= KeyManagementCapabilitiesClass.IDKeyEnum.Import;
-                if (result.KeyManagement.IdKey?.Initialization is not null && (bool)result.KeyManagement.IdKey.Initialization)
-                    idKeys |= KeyManagementCapabilitiesClass.IDKeyEnum.Initialization;
-
                 KeyManagementCapabilitiesClass.KeyCheckModeEnum keyCheckModes = KeyManagementCapabilitiesClass.KeyCheckModeEnum.NotSupported;
                 if (result.KeyManagement.KeyCheckModes?.Self is not null && (bool)result.KeyManagement.KeyCheckModes.Self)
                     keyCheckModes |= KeyManagementCapabilitiesClass.KeyCheckModeEnum.Self;
@@ -618,10 +573,10 @@ namespace XFS4IoTFramework.Common
                 
                 if (result.KeyManagement.KeyAttributes is not null && result.KeyManagement.KeyAttributes.Count > 0)
                 { 
-                    foreach (var (keyUsage, attributes) in result.KeyManagement.KeyAttributes)
+                    foreach (var (keyUsage, algorithms) in result.KeyManagement.KeyAttributes)
                     {
                         Dictionary<string, Dictionary<string, KeyManagementCapabilitiesClass.KeyAttributeOptionClass>> dicAttributes = new();
-                        foreach (var (attribute, modeOfUses) in attributes)
+                        foreach (var (algorithm, modeOfUses) in algorithms)
                         {
                             Dictionary<string, KeyManagementCapabilitiesClass.KeyAttributeOptionClass> dicModeOfUse = new();
                             foreach (var (modeOfUse, restrict) in modeOfUses)
@@ -634,7 +589,7 @@ namespace XFS4IoTFramework.Common
 
                                 dicModeOfUse.Add(modeOfUse, restricted);
                             }
-                            dicAttributes.Add(attribute, dicModeOfUse);
+                            dicAttributes.Add(algorithm, dicModeOfUse);
                         }
                         keyAttributes.Add(keyUsage, dicAttributes);
                     }
@@ -670,44 +625,43 @@ namespace XFS4IoTFramework.Common
                 Dictionary<string, Dictionary<string, Dictionary<string, KeyManagementCapabilitiesClass.VerifyMethodClass>>> verifyAttributes = new();
                 if (result.KeyManagement.VerifyAttributes is not null && result.KeyManagement.VerifyAttributes.Count > 0)
                 {
-                    foreach (var (keyUsage, attributes) in result.KeyManagement.VerifyAttributes)
+                    foreach (var (keyUsage, algorithms) in result.KeyManagement.VerifyAttributes)
                     {
                         Dictionary<string, Dictionary<string, KeyManagementCapabilitiesClass.VerifyMethodClass>> dicAttributes = new();
-                        foreach (var (attribute, modeOfUses) in attributes)
+                        foreach (var (algorithm, modeOfUses) in algorithms)
                         {
                             Dictionary<string, KeyManagementCapabilitiesClass.VerifyMethodClass> dicModeOfUse = new();
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
-                                KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum cryptoMethod = KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.NotSupported;
-                                if (method?.CryptoMethod?.KcvNone is not null && (bool)method?.CryptoMethod?.KcvNone)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVNone;
-                                if (method?.CryptoMethod?.KcvSelf is not null && (bool)method?.CryptoMethod?.KcvSelf)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVSelf;
-                                if (method?.CryptoMethod?.KcvZero is not null && (bool)method?.CryptoMethod?.KcvZero)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVZero;
-                                if (method?.CryptoMethod?.RsassaPkcs1V15 is not null && (bool)method?.CryptoMethod?.RsassaPkcs1V15)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PKCS1_V1_5;
-                                if (method?.CryptoMethod?.RsassaPss is not null && (bool)method?.CryptoMethod?.RsassaPss)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PSS;
-                                if (method?.CryptoMethod?.SigNone is not null && (bool)method?.CryptoMethod?.SigNone)
-                                    cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.SignatureNone;
+                            KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum cryptoMethod = KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.NotSupported;
+                            if (method?.CryptoMethod?.KcvNone is not null && (bool)method?.CryptoMethod?.KcvNone)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVNone;
+                            if (method?.CryptoMethod?.KcvSelf is not null && (bool)method?.CryptoMethod?.KcvSelf)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVSelf;
+                            if (method?.CryptoMethod?.KcvZero is not null && (bool)method?.CryptoMethod?.KcvZero)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVZero;
+                            if (method?.CryptoMethod?.RsassaPkcs1V15 is not null && (bool)method?.CryptoMethod?.RsassaPkcs1V15)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PKCS1_V1_5;
+                            if (method?.CryptoMethod?.RsassaPss is not null && (bool)method?.CryptoMethod?.RsassaPss)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PSS;
+                            if (method?.CryptoMethod?.SigNone is not null && (bool)method?.CryptoMethod?.SigNone)
+                                cryptoMethod |= KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.SignatureNone;
 
-                                KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum hashAlgorithm = KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.NotSupported;
-                                if (method?.HashAlgorithm?.Sha1 is not null && (bool)method?.HashAlgorithm?.Sha1)
-                                    hashAlgorithm |= KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.SHA1;
-                                if (method?.HashAlgorithm?.Sha256 is not null && (bool)method?.HashAlgorithm?.Sha256)
-                                    hashAlgorithm |= KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.SHA256;
+                            KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum hashAlgorithm = KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.NotSupported;
+                            if (method?.HashAlgorithm?.Sha1 is not null && (bool)method?.HashAlgorithm?.Sha1)
+                                hashAlgorithm |= KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.SHA1;
+                            if (method?.HashAlgorithm?.Sha256 is not null && (bool)method?.HashAlgorithm?.Sha256)
+                                hashAlgorithm |= KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.SHA256;
 
                                 dicModeOfUse.Add(modeOfUse, new KeyManagementCapabilitiesClass.VerifyMethodClass(cryptoMethod, hashAlgorithm));
                             }
-                            dicAttributes.Add(attribute, dicModeOfUse);
+                            dicAttributes.Add(algorithm, dicModeOfUse);
                         }
                         verifyAttributes.Add(keyUsage, dicAttributes);
                     }
                 }
 
                 Common.KeyManagementCapabilities = new KeyManagementCapabilitiesClass(result.KeyManagement.KeyNum is not null ? (int)result.KeyManagement.KeyNum : 0,
-                                                                                      idKeys,
                                                                                       keyCheckModes,
                                                                                       result.KeyManagement.HsmVendor,
                                                                                       rsaAuthenticationScheme,
@@ -740,10 +694,10 @@ namespace XFS4IoTFramework.Common
                 
                 if (result.Crypto.CryptoAttributes is not null && result.Crypto.CryptoAttributes.Count > 0)
                 {
-                    foreach (var (keyUsage, attributes) in result.Crypto.CryptoAttributes)
+                    foreach (var (keyUsage, algorithms) in result.Crypto.CryptoAttributes)
                     {
                         Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.CryptoAttributesClass>> dicAttributes = new();
-                        foreach (var (attribute, modeOfUses) in attributes)
+                        foreach (var (algorithm, modeOfUses) in algorithms)
                         {
                             Dictionary<string, CryptoCapabilitiesClass.CryptoAttributesClass> dicModeOfUse = new();
                             foreach (var (modeOfUse, method) in modeOfUses)
@@ -768,7 +722,7 @@ namespace XFS4IoTFramework.Common
 
                                 dicModeOfUse.Add(modeOfUse, new CryptoCapabilitiesClass.CryptoAttributesClass(cryptoMethod));
                             }
-                            dicAttributes.Add(attribute, dicModeOfUse);
+                            dicAttributes.Add(algorithm, dicModeOfUse);
                         }
                         cryptoAttributes.Add(keyUsage, dicAttributes);
                     }
@@ -777,10 +731,10 @@ namespace XFS4IoTFramework.Common
                 Dictionary<string, Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>>> authenticationAttributes = new();
                 if (result.Crypto.AuthenticationAttributes is not null && result.Crypto.AuthenticationAttributes.Count > 0)
                 {
-                    foreach (var (keyUsage, attributes) in result.Crypto.AuthenticationAttributes)
+                    foreach (var (keyUsage, algorithms) in result.Crypto.AuthenticationAttributes)
                     {
                         Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>> dicAttributes = new();
-                        foreach (var (attribute, modeOfUses) in attributes)
+                        foreach (var (algorithm, modeOfUses) in algorithms)
                         {
                             Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass> dicModeOfUse = new();
                             foreach (var (modeOfUse, method) in modeOfUses)
@@ -795,7 +749,7 @@ namespace XFS4IoTFramework.Common
 
                                 dicModeOfUse.Add(modeOfUse, new CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass(cryptoAlgorithm, hashAlgorithm));
                             }
-                            dicAttributes.Add(attribute, dicModeOfUse);
+                            dicAttributes.Add(algorithm, dicModeOfUse);
                         }
                         authenticationAttributes.Add(keyUsage, dicAttributes);
                     }
@@ -804,10 +758,10 @@ namespace XFS4IoTFramework.Common
                 Dictionary<string, Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>>> verifyAttributes = new();
                 if (result.Crypto.VerifyAttributes is not null && result.Crypto.VerifyAttributes.Count > 0)
                 {
-                    foreach (var (keyUsage, attributes) in result.Crypto.VerifyAttributes)
+                    foreach (var (keyUsage, algorithms) in result.Crypto.VerifyAttributes)
                     {
                         Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>> dicAttributes = new();
-                        foreach (var (attribute, modeOfUses) in attributes)
+                        foreach (var (algorithm, modeOfUses) in algorithms)
                         {
                             Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass> dicModeOfUse = new();
                             foreach (var (modeOfUse, method) in modeOfUses)
@@ -822,7 +776,7 @@ namespace XFS4IoTFramework.Common
 
                                 dicModeOfUse.Add(modeOfUse, new CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass(cryptoAlgorithm, hashAlgorithm));
                             }
-                            dicAttributes.Add(attribute, dicModeOfUse);
+                            dicAttributes.Add(algorithm, dicModeOfUse);
                         }
                         verifyAttributes.Add(keyUsage, dicAttributes);
                     }
@@ -832,6 +786,104 @@ namespace XFS4IoTFramework.Common
                                                                         cryptoAttributes,
                                                                         authenticationAttributes,
                                                                         verifyAttributes);
+            }
+
+            if (result.PinPad is not null)
+            {
+                PinPadCapabilitiesClass.PINFormatEnum formats = PinPadCapabilitiesClass.PINFormatEnum.NotSupported;
+                if (result.PinPad.PinFormats?.Ansi is not null && (bool)result.PinPad.PinFormats.Ansi)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ANSI;
+                if (result.PinPad.PinFormats?.Ap is not null && (bool)result.PinPad.PinFormats.Ap)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.AP;
+                if (result.PinPad.PinFormats?.Diebold is not null && (bool)result.PinPad.PinFormats.Diebold)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.DIEBOLD;
+                if (result.PinPad.PinFormats?.DieboldCo is not null && (bool)result.PinPad.PinFormats.DieboldCo)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.DIEBOLDCO;
+                if (result.PinPad.PinFormats?.Eci2 is not null && (bool)result.PinPad.PinFormats.Eci2)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ECI2;
+                if (result.PinPad.PinFormats?.Eci3 is not null && (bool)result.PinPad.PinFormats.Eci3)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ECI3;
+                if (result.PinPad.PinFormats?.Emv is not null && (bool)result.PinPad.PinFormats.Emv)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.EMV;
+                if (result.PinPad.PinFormats?.Ibm3624 is not null && (bool)result.PinPad.PinFormats.Ibm3624)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.IBM3624;
+                if (result.PinPad.PinFormats?.Iso0 is not null && (bool)result.PinPad.PinFormats.Iso0)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ISO0;
+                if (result.PinPad.PinFormats?.Iso1 is not null && (bool)result.PinPad.PinFormats.Iso1)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ISO1;
+                if (result.PinPad.PinFormats?.Iso3 is not null && (bool)result.PinPad.PinFormats.Iso3)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.ISO3;
+                if (result.PinPad.PinFormats?.Visa is not null && (bool)result.PinPad.PinFormats.Visa)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.VISA;
+                if (result.PinPad.PinFormats?.Visa3 is not null && (bool)result.PinPad.PinFormats.Visa3)
+                    formats |= PinPadCapabilitiesClass.PINFormatEnum.VISA3;
+
+                PinPadCapabilitiesClass.PresentationAlgorithmEnum presentationAlgorithms = PinPadCapabilitiesClass.PresentationAlgorithmEnum.NotSupported;
+                if (result.PinPad.PresentationAlgorithms?.PresentClear is not null && (bool)result.PinPad.PresentationAlgorithms.PresentClear)
+                    presentationAlgorithms |= PinPadCapabilitiesClass.PresentationAlgorithmEnum.PresentClear;
+
+                PinPadCapabilitiesClass.DisplayTypeEnum displayTypes = PinPadCapabilitiesClass.DisplayTypeEnum.NotSupported;
+                if (result.PinPad.Display?.LedThrough is not null && (bool)result.PinPad.Display.LedThrough)
+                    displayTypes |= PinPadCapabilitiesClass.DisplayTypeEnum.LEDThrough;
+                if (result.PinPad.Display?.Display is not null && (bool)result.PinPad.Display.Display)
+                    displayTypes |= PinPadCapabilitiesClass.DisplayTypeEnum.Display;
+
+                PinPadCapabilitiesClass.ValidationAlgorithmEnum validationAlgorithms = PinPadCapabilitiesClass.ValidationAlgorithmEnum.NotSupported;
+                if (result.PinPad.ValidationAlgorithms?.Des is not null && (bool)result.PinPad.ValidationAlgorithms.Des)
+                    validationAlgorithms |= PinPadCapabilitiesClass.ValidationAlgorithmEnum.DES;
+                if (result.PinPad.ValidationAlgorithms?.Visa is not null && (bool)result.PinPad.ValidationAlgorithms.Visa)
+                    validationAlgorithms |= PinPadCapabilitiesClass.ValidationAlgorithmEnum.VISA;
+
+                Dictionary<string, Dictionary<string, Dictionary<string, PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm>>> pinBlockAttributes = new();
+                if (result.PinPad.PinBlockAttributes is not null && result.PinPad.PinBlockAttributes.Count > 0)
+                {
+                    foreach (var (keyUsage, algorithms) in result.PinPad.PinBlockAttributes)
+                    {
+                        Dictionary<string, Dictionary<string, PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm>> pinAlgorithms = new();
+                        foreach (var (algorithm, modeOfUses) in algorithms)
+                        {
+                            Dictionary<string, PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm> pinModeOfUse = new();
+                            foreach (var (modeOfUse, method) in modeOfUses)
+                            {
+                                PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum encAlgorithm = PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.NotSupported;
+                                if (method?.CryptoMethod?.Cbc is not null && (bool)method?.CryptoMethod?.Cbc)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.CBC;
+                                if (method?.CryptoMethod?.Cfb is not null && (bool)method?.CryptoMethod?.Cfb)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.CFB;
+                                if (method?.CryptoMethod?.Ctr is not null && (bool)method?.CryptoMethod?.Ctr)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.CTR;
+                                if (method?.CryptoMethod?.Ecb is not null && (bool)method?.CryptoMethod?.Ecb)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.ECB;
+                                if (method?.CryptoMethod?.Ofb is not null && (bool)method?.CryptoMethod?.Ofb)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.OFB;
+                                if (method?.CryptoMethod?.Xts is not null && (bool)method?.CryptoMethod?.Xts)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.XTS;
+                                if (method?.CryptoMethod?.RsaesOaep is not null && (bool)method?.CryptoMethod?.RsaesOaep)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.RSAES_OAEP;
+                                if (method?.CryptoMethod?.RsaesPkcs1V15 is not null && (bool)method?.CryptoMethod?.RsaesPkcs1V15)
+                                    encAlgorithm |= PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.RSAES_PKCS1_V1_5;
+
+                                pinModeOfUse.Add(modeOfUse, new PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm(encAlgorithm));
+                            }
+                            pinAlgorithms.Add(algorithm, pinModeOfUse);
+                        }
+                        pinBlockAttributes.Add(keyUsage, pinAlgorithms);
+                    }
+                }
+
+                Common.PinPadCapabilities = new PinPadCapabilitiesClass(formats,
+                                                                        presentationAlgorithms,
+                                                                        displayTypes,
+                                                                        result.PinPad.IdcConnect is not null && (bool)result.PinPad.IdcConnect,
+                                                                        validationAlgorithms,
+                                                                        result.PinPad.PinCanPersistAfterUse is not null && (bool)result.PinPad.PinCanPersistAfterUse,
+                                                                        result.PinPad.TypeCombined is not null && (bool)result.PinPad.TypeCombined,
+                                                                        result.PinPad.SetPinblockDataRequired is not null && (bool)result.PinPad.SetPinblockDataRequired,
+                                                                        pinBlockAttributes);
+            }
+
+            if (result.Keyboard is not null)
+            {
             }
 
             return Task.FromResult(result);

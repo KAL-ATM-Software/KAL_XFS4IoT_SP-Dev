@@ -118,25 +118,25 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Raw ISO FID format
+        /// Raw ISO FID format [[Ref. biometric-4](#ref-biometric-4)].
         /// </summary>
         [DataMember(Name = "isoFid")]
         public bool? IsoFid { get; init; }
 
         /// <summary>
-        /// ISO FMD template format
+        /// ISO FMD template format [[Ref. biometric-5](#ref-biometric-5)].
         /// </summary>
         [DataMember(Name = "isoFmd")]
         public bool? IsoFmd { get; init; }
 
         /// <summary>
-        /// Raw ANSI FID format
+        /// Raw ANSI FID format [[Ref. biometric-2](#ref-biometric-2)].
         /// </summary>
         [DataMember(Name = "ansiFid")]
         public bool? AnsiFid { get; init; }
 
         /// <summary>
-        /// ANSI FMD template format 
+        /// ANSI FMD template format [[Ref. biometric-3](#ref-biometric-3)].
         /// </summary>
         [DataMember(Name = "ansiFmd")]
         public bool? AnsiFmd { get; init; }
@@ -314,10 +314,9 @@ namespace XFS4IoT.Biometric
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeClass Type = null, bool? Compound = null, int? MaxCapture = null, string TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionAlgorithmClass EncryptionalAlgorithm = null, StorageClass Storage = null, PersistanceModeClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModeClass CompareModes = null, ClearDataClass ClearData = null)
+        public CapabilitiesClass(TypeClass Type = null, int? MaxCapture = null, string TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionAlgorithmClass EncryptionalAlgorithm = null, StorageClass Storage = null, PersistanceModeClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModeClass CompareModes = null, ClearDataClass ClearData = null)
         {
             this.Type = Type;
-            this.Compound = Compound;
             this.MaxCapture = MaxCapture;
             this.TemplateStorage = TemplateStorage;
             this.DataFormats = DataFormats;
@@ -423,12 +422,6 @@ namespace XFS4IoT.Biometric
         public TypeClass Type { get; init; }
 
         /// <summary>
-        /// Specifies whether the biometric device is part of a compound device
-        /// </summary>
-        [DataMember(Name = "compound")]
-        public bool? Compound { get; init; }
-
-        /// <summary>
         /// Specifies the maximum number of times that the device can attempt to capture biometric data during a 
         /// [Biometric.Read](#biometric.read) command. If this is zero then the device or service provider determines 
         /// how many captures will be attempted.
@@ -503,11 +496,11 @@ namespace XFS4IoT.Biometric
         /// and/or [Biometric.SetMatch](#biometric.setmatch) command. 
         /// This will be one of the following values:
         /// 
-        ///   * ```None``` - The device does not support matching. 
-        ///   * ```StoredMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command 
+        ///   * ```none``` - The device does not support matching. 
+        ///   * ```storedMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command 
         ///                         and stores it, then the scanned data can be compared with imported biometric data 
         ///                         using the [Biometric.Match](#biometric.match) command 
-        ///   * ```CombinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric 
+        ///   * ```combinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric 
         ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch) command 
         ///                           must be called before the [Biometric.Read](#biometric.read) command in order to set
         ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) command can be 

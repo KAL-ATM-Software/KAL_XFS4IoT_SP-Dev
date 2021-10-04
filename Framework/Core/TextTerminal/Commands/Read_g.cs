@@ -27,7 +27,7 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Echo = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, List<string> ActiveCommandKeys = null, List<string> TerminateCommandKeys = null)
+            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Echo = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, Dictionary<string, KeyClass> ActiveCommandKeys = null)
                 : base(Timeout)
             {
                 this.NumOfChars = NumOfChars;
@@ -41,17 +41,15 @@ namespace XFS4IoT.TextTerminal.Commands
                 this.AutoEnd = AutoEnd;
                 this.ActiveKeys = ActiveKeys;
                 this.ActiveCommandKeys = ActiveCommandKeys;
-                this.TerminateCommandKeys = TerminateCommandKeys;
             }
 
             /// <summary>
             /// Specifies the number of printable characters (numeric and alphanumeric keys) that will be read from the 
-            /// text terminal unit key pad. All command keys like ckEnter, ckFDK01 will not be counted.
+            /// text terminal unit key pad. All command keys like 'enter', 'fdk01' will not be counted.
             /// </summary>
             [DataMember(Name = "numOfChars")]
             [DataTypes(Minimum = 0)]
             public int? NumOfChars { get; init; }
-
 
             [DataMember(Name = "mode")]
             public ModesEnum? Mode { get; init; }
@@ -141,7 +139,7 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Specifies whether the command input is automatically ended by Service Provider if the maximum number 
-            /// of printable characters as specified with numOfChars is entered.
+            /// of printable characters as specified with _numOfChars_ is entered.
             /// </summary>
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
@@ -157,25 +155,33 @@ namespace XFS4IoT.TextTerminal.Commands
             /// either the upper case only (e.g. "12AB"), or specifying both the upper and lower case of a particular letter 
             /// (e.g. "12AaBb"), enables that key and causes the device to return the upper case of the letter in the output parameter. 
             /// For both types of device, specifying only lower case letters (e.g. "12ab") produces a key invalid error. 
-            /// This parameter is a NULL if no keys of this type are active keys. activeKeys and activeUnicodeKeys are 
-            /// mutually exclusive, so activeKeys field must not be set  if activeUnicodeKeys field is not set.
+            /// This property can be omitted if no keys of this type are active keys.
             /// </summary>
             [DataMember(Name = "activeKeys")]
             public string ActiveKeys { get; init; }
 
             /// <summary>
-            /// Array specifying the command keys which are active during the execution of the command. 
-            /// The array is terminated with a zero value and this array is not set if no keys of this type are active keys.                      
+            /// Array specifying the command keys which are active during the execution of the command.     
+            /// 
+            /// The following standard names are defined:
+            /// 
+            /// * ```enter``` - Enter
+            /// * ```cancel``` - Cancel
+            /// * ```clear``` - Clear
+            /// * ```backspace``` - Backspace
+            /// * ```help``` - Help
+            /// * ```doubleZero``` - 00
+            /// * ```tripleZero``` - 000
+            /// * ```arrowUp``` - up arrow
+            /// * ```arrowDown``` - down arrow
+            /// * ```arrowLeft``` - left arrow
+            /// * ```arrowRight``` - right arrow
+            /// * ```fdk[01-32]``` - 32 FDK keys
+            /// 
+            /// Additional non standard key names are also allowed.
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
-            public List<string> ActiveCommandKeys { get; init; }
-
-            /// <summary>
-            /// Array specifying the command keys which must terminate the execution of the command. 
-            /// The array is terminated with a zero value and this array is not set if no keys of this type are terminate keys.
-            /// </summary>
-            [DataMember(Name = "terminateCommandKeys")]
-            public List<string> TerminateCommandKeys { get; init; }
+            public Dictionary<string, KeyClass> ActiveCommandKeys { get; init; }
 
         }
     }

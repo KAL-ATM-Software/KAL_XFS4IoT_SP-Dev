@@ -27,7 +27,7 @@ namespace XFS4IoT.KeyManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? DerivationAlgorithm = null, string Key = null, string KeyGenKey = null, string StartValueKey = null, string StartValue = null, int? Padding = null, string InputData = null, string Ident = null)
+            public PayloadData(int Timeout, int? DerivationAlgorithm = null, string Key = null, string KeyGenKey = null, string StartValueKey = null, string StartValue = null, int? Padding = null, string InputData = null)
                 : base(Timeout)
             {
                 this.DerivationAlgorithm = DerivationAlgorithm;
@@ -37,7 +37,6 @@ namespace XFS4IoT.KeyManagement.Commands
                 this.StartValue = StartValue;
                 this.Padding = Padding;
                 this.InputData = InputData;
-                this.Ident = Ident;
             }
 
             /// <summary>
@@ -83,15 +82,6 @@ namespace XFS4IoT.KeyManagement.Commands
             /// </summary>
             [DataMember(Name = "inputData")]
             public string InputData { get; init; }
-
-            /// <summary>
-            /// Specifies the key owner identification.
-            /// It is a handle to the encryption module and is returned to the application in the [KeyManagement.Initialization](#keymanagement.initialization) command.
-            /// See [idkey](#common.capabilities.completion.properties.keymanagement.idkey) for whether this value is required.
-            /// If not required, this property is omitted. The use of this parameter is vendor dependent.
-            /// </summary>
-            [DataMember(Name = "ident")]
-            public string Ident { get; init; }
 
         }
     }

@@ -46,25 +46,23 @@ namespace XFS4IoT.PinPad.Commands
             /// The validation data should be an ASCII string.
             /// </summary>
             [DataMember(Name = "validationData")]
+            [DataTypes(Pattern = "^[0-9]{16}$")]
             public string ValidationData { get; init; }
 
             /// <summary>
             /// ASCII string defining the offset data for the PIN block as an ASCII string.
             /// if this property is omitted then no offset is used.
             /// The character must be in the ranges '0' to '9', 'a' to 'f' and 'A' to 'F'.
-            /// pattern: "^[0-9a-fA-F]$\
             /// </summary>
             [DataMember(Name = "offset")]
-            [DataTypes(Pattern = "^[0-9a-fA-F]$")]
+            [DataTypes(Pattern = "^[0-9a-fA-F]{1,16}$")]
             public string Offset { get; init; }
 
             /// <summary>
             /// Specifies the padding character for the validation data. 
             /// If the validation data is less than 16 characters long then it will be padded with this character. 
             /// If padding is in the range 00 to 0F in 16 character string, padding is applied after the validation data has been compressed. 
-            /// If the padding character is in the range '0' to '9' and 'A' to 'F', or 'a' to 'f'
-            /// in hexadecimal string format, padding is applied before the validation data is compressed.  
-            /// pattern: "^0[0-9a-fA-F]$|^3[0-9]$|^4[1-6]$|^6[1-6]$\
+            /// If the character is in the range 30 to 39 ('0' to �9�), 41 to 46 (�a� to �f�), or 61 to 66 (�A� to �F�), padding is applied before the validation data is compressed.
             /// </summary>
             [DataMember(Name = "padding")]
             [DataTypes(Pattern = "^0[0-9a-fA-F]$|^3[0-9]$|^4[1-6]$|^6[1-6]$")]
@@ -109,6 +107,7 @@ namespace XFS4IoT.PinPad.Commands
             /// This table is used to convert the hexadecimal digits (0x0 to 0xF) of the encrypted validation data to decimal digits (0x0 to 0x9).
             /// </summary>
             [DataMember(Name = "decTable")]
+            [DataTypes(Pattern = "^[0-9]{16}$")]
             public string DecTable { get; init; }
 
         }

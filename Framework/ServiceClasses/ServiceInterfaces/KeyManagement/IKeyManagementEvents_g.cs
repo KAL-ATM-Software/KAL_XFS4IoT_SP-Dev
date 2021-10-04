@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.KeyManagement
     public interface IKeyManagementUnsolicitedEvents
     {
 
-        Task InitializedEvent(XFS4IoT.KeyManagement.Events.InitializedEvent.PayloadData Payload);
+        Task InitializedEvent();
 
         Task IllegalKeyAccessEvent(XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData Payload);
 

@@ -22,5 +22,7 @@ namespace XFS4IoTFramework.Common
 
         Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload);
 
+        Task ExchangeStateChangedEvent(XFS4IoT.Common.Events.ExchangeStateChangedEvent.PayloadData Payload);
+
     }
 }

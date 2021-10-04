@@ -16,14 +16,6 @@ namespace XFS4IoTFramework.Common
     public sealed class KeyManagementCapabilitiesClass
     {
         [Flags]
-        public enum IDKeyEnum
-        {
-            NotSupported = 0,
-            Initialization = 0x0001,
-            Import = 0x0002,
-        }
-
-        [Flags]
         public enum KeyCheckModeEnum
         {
             NotSupported = 0,
@@ -154,7 +146,6 @@ namespace XFS4IoTFramework.Common
         /// Constructor
         /// </summary>
         public KeyManagementCapabilitiesClass(int MaxKeys,
-                                              IDKeyEnum IDKey,
                                               KeyCheckModeEnum KeyCheckModes,
                                               string HSMVendor,
                                               RSAAuthenticationSchemeEnum RSAAuthenticationScheme,
@@ -174,7 +165,6 @@ namespace XFS4IoTFramework.Common
                                               Dictionary<string, Dictionary<string, Dictionary<string, VerifyMethodClass>>> VerifyAttributes)
         {
             this.MaxKeys = MaxKeys;
-            this.IDKey = IDKey;
             this.KeyCheckModes = KeyCheckModes;
             this.HSMVendor = HSMVendor;
             this.RSAAuthenticationScheme = RSAAuthenticationScheme;
@@ -198,13 +188,6 @@ namespace XFS4IoTFramework.Common
         /// Number of the keys which can be stored in the encryption/decryption module.
         /// </summary>
         public int MaxKeys { get; init; }
-
-        /// <summary>
-        /// Specifies if key owner identification (in commands referenced as lpxIdent), 
-        /// which authorizes access to the encryption module, is required. 
-        /// A zero value is returned if the encryption module does not support this capability.
-        /// </summary>
-        public IDKeyEnum IDKey { get; init; }
 
         /// <summary>
         /// Specifies the key check modes that are supported to check the correctness of an imported key value. 

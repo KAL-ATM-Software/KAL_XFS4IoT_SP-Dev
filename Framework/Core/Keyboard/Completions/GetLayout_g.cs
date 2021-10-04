@@ -26,7 +26,7 @@ namespace XFS4IoT.Keyboard.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<LayoutClass> Layout = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, LayoutClass Layout = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -49,7 +49,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// Return supported layouts specified by the *entryMode* property. 
             /// </summary>
             [DataMember(Name = "layout")]
-            public List<LayoutClass> Layout { get; init; }
+            public LayoutClass Layout { get; init; }
 
         }
     }

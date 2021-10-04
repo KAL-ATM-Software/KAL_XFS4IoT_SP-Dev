@@ -27,16 +27,14 @@ namespace XFS4IoT.Keyboard.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, KeyLenEnum? KeyLen = null, bool? AutoEnd = null, string ActiveFDKs = null, string ActiveKeys = null, string TerminateFDKs = null, string TrerminateKeys = null, VerificationTypeEnum? VerificationType = null)
+            public PayloadData(int Timeout, KeyLenEnum? KeyLen = null, bool? AutoEnd = null, Dictionary<string, KeyClass> ActiveKeys = null, VerificationTypeEnum? VerificationType = null, CryptoMethodEnum? CryptoMethod = null)
                 : base(Timeout)
             {
                 this.KeyLen = KeyLen;
                 this.AutoEnd = AutoEnd;
-                this.ActiveFDKs = ActiveFDKs;
                 this.ActiveKeys = ActiveKeys;
-                this.TerminateFDKs = TerminateFDKs;
-                this.TrerminateKeys = TrerminateKeys;
                 this.VerificationType = VerificationType;
+                this.CryptoMethod = CryptoMethod;
             }
 
             public enum KeyLenEnum
@@ -63,37 +61,43 @@ namespace XFS4IoT.Keyboard.Commands
             public bool? AutoEnd { get; init; }
 
             /// <summary>
-            /// Specifies those FDKs which are active during the execution of the command.
-            /// This parameter should include those FDKs mapped to edit functions.
-            /// </summary>
-            [DataMember(Name = "activeFDKs")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string ActiveFDKs { get; init; }
-
-            /// <summary>
-            /// Specifies all Function Keys(not FDKs) which are active during the execution of the command.
+            /// Specifies all Function Keys which are active during the execution of the command.
             /// This should be the complete set or a subset of the keys returned in the payload of the 
             /// [Keyboard.GetLayout](#keyboard.getlayout) command.
+            /// This should include 'zero' to 'nine' and 'a' to 'f' for all modes of secure key entry, 
+            /// but should also include 'shift' on shift based systems. 
+            /// The 'doubleZero', 'tripleZero' and 'decPoint' function keys must not be included in the list of active or terminate keys.
+            /// 
+            /// For FDKs which must terminate the execution of the command. This should include the FDKs associated with Cancel and Enter.
+            /// 
+            /// The following standard names are defined:
+            /// 
+            /// * ```zero``` - Numeric digit 0
+            /// * ```one``` - Numeric digit 1
+            /// * ```two``` - Numeric digit 2
+            /// * ```three``` - Numeric digit 3
+            /// * ```four``` - Numeric digit 4
+            /// * ```five``` - Numeric digit 5
+            /// * ```six``` - Numeric digit 6
+            /// * ```seven``` - Numeric digit 7
+            /// * ```eight``` - Numeric digit 8
+            /// * ```nine``` - Numeric digit 9
+            /// * ```[a-f]``` - Hex digit A to F for secure key entry
+            /// * ```enter``` - Enter
+            /// * ```cancel``` - Cancel
+            /// * ```clear``` - Clear
+            /// * ```backspace``` - Backspace
+            /// * ```help``` - Help
+            /// * ```decPoint``` - Decimal point
+            /// * ```shift``` - Shift key used during hex entry
+            /// * ```doubleZero``` - 00
+            /// * ```tripleZero``` - 000
+            /// * ```fdk[01-32]``` - 32 FDK keys
+            /// 
+            /// Additional non standard key names are also allowed for terminating the execution of the command.
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string ActiveKeys { get; init; }
-
-            /// <summary>
-            /// Specifies those FDKs which must terminate the execution of the command.
-            /// This should include the FDKs associated with Cancel and Enter.
-            /// </summary>
-            [DataMember(Name = "terminateFDKs")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string TerminateFDKs { get; init; }
-
-            /// <summary>
-            /// Specifies those all Function Keys (not FDKs) which must terminate the execution of the command.
-            /// This does not include the FDKs associated with Enter or Cancel.
-            /// </summary>
-            [DataMember(Name = "trerminateKeys")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-            public string TrerminateKeys { get; init; }
+            public Dictionary<string, KeyClass> ActiveKeys { get; init; }
 
             public enum VerificationTypeEnum
             {
@@ -111,6 +115,27 @@ namespace XFS4IoT.Keyboard.Commands
             /// </summary>
             [DataMember(Name = "verificationType")]
             public VerificationTypeEnum? VerificationType { get; init; }
+
+            public enum CryptoMethodEnum
+            {
+                Des,
+                TripleDes,
+                Aes
+            }
+
+            /// <summary>
+            /// Specifies the cryptographic method to be used for the verification.
+            /// If this property is omitted, *keyLen* will determine the cryptographic method used. 
+            /// If *keyLen* is 16, the cryptographic method will be Single DES. 
+            /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES
+            /// The following values are possible:
+            /// 
+            /// * ```des``` - Single DES     
+            /// * ```tripleDes``` - Triple DES
+            /// * ```aes``` - AES
+            /// </summary>
+            [DataMember(Name = "cryptoMethod")]
+            public CryptoMethodEnum? CryptoMethod { get; init; }
 
         }
     }

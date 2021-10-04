@@ -36,7 +36,7 @@ namespace XFS4IoT.KeyManagement.Commands
             [DataContract]
             public sealed class CommandClass
             {
-                public CommandClass(DeleteKeyClass DeleteKey = null, InitializationClass Initialization = null)
+                public CommandClass(DeleteKeyClass DeleteKey = null, object Initialization = null)
                 {
                     this.DeleteKey = DeleteKey;
                     this.Initialization = Initialization;
@@ -65,35 +65,12 @@ namespace XFS4IoT.KeyManagement.Commands
                 [DataMember(Name = "deleteKey")]
                 public DeleteKeyClass DeleteKey { get; init; }
 
-                [DataContract]
-                public sealed class InitializationClass
-                {
-                    public InitializationClass(string Ident = null, string Key = null)
-                    {
-                        this.Ident = Ident;
-                        this.Key = Key;
-                    }
-
-                    /// <summary>
-                    /// The value of the ID key. this field is not required if an indent is not required.
-                    /// </summary>
-                    [DataMember(Name = "ident")]
-                    public string Ident { get; init; }
-
-                    /// <summary>
-                    /// The Base64 encoded value of the encryption key. this property is not required if no specific key name required. 
-                    /// </summary>
-                    [DataMember(Name = "key")]
-                    public string Key { get; init; }
-
-                }
-
                 /// <summary>
                 /// This command can be used to initialize encryption module with authentication.
                 /// Details of [KeyManagement.Initialization](#keymanagement.initialization) command.
                 /// </summary>
                 [DataMember(Name = "initialization")]
-                public InitializationClass Initialization { get; init; }
+                public object Initialization { get; init; }
 
             }
 
