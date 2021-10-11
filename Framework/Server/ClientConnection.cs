@@ -136,6 +136,10 @@ namespace XFS4IoTServer
 
                 await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JSON)), WebSocketMessageType.Text, true, CancellationToken.None);
             }
+            catch( Exception e ) when ((e.InnerException is WebSocketException we) && ((uint)we.HResult == 0x80004005))
+            {
+                Logger.Warning(Constants.Component, "The ClientWebSocket has been aborted");
+            }
             catch (ObjectDisposedException)
             {
                 Logger.Warning(Constants.Component, "The ClientWebSocket has been closed");

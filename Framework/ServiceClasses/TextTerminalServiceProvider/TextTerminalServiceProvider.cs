@@ -58,6 +58,8 @@ namespace TextTerminalProvider
         public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => Common.DevicePositionEvent(Payload);
 
         public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => Common.NonceClearedEvent(Payload);
+
+        public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => Common.ExchangeStateChangedEvent(Payload);
         #endregion
 
         public ITextTerminalService.KeyDetails SupportedKeys { get => TextTerminal.SupportedKeys; set => TextTerminal.SupportedKeys = value; }

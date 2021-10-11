@@ -24,15 +24,14 @@ namespace XFS4IoTFramework.Common
         private async Task<GetCommandNonceCompletion.PayloadData> HandleGetCommandNonce(IGetCommandNonceEvents events, GetCommandNonceCommand getCommandNonce, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CommonDev.GetCommandRandomNumber()");
-            var result = await Device.GetCommandRandomNumber();
+            var result = await Device.GetCommandNonce();
             Logger.Log(Constants.DeviceClass, $"CommonDev.GetCommandRandomNumber() -> {result.CompletionCode}");
 
             // TODO: validate returned token
 
             return new GetCommandNonceCompletion.PayloadData(result.CompletionCode,
-                                                                    result.ErrorDescription,
-                                                                    result.CommandRandomNumber);
+                                                             result.ErrorDescription,
+                                                             result.CommandNonce);
         }
-
     }
 }

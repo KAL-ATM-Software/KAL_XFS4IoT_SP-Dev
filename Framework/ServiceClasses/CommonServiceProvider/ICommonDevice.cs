@@ -51,7 +51,9 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Get a nonce to be included in an Authorisation Token for a command that will be used to ensure end to end security.The hardware will overwrite any existing stored Command nonce with this new value. The value will be stored for future authentication. Any Authorisation Token received will be compared with this stored nonce and if the Token doesn't contain the same nonce it will be considered invalid and rejected, causing the command that contains that Authentication Token to fail.The nonce must match the algorithm used. For example, HMAC means the nonce must be 128 bit/16 bytes.
         /// </summary>
-        Task<GetCommandRandomNumberResult> GetCommandRandomNumber();
+        Task<GetCommandNonceCompletion.PayloadData> GetCommandNonce();
+
+        Task<ClearCommandNonceCompletion.PayloadData> ClearCommandNonce();
 
     }
 }

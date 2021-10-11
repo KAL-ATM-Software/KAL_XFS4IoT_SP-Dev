@@ -17,38 +17,12 @@ namespace XFS4IoT.KeyManagement.Events
 
     [DataContract]
     [Event(Name = "KeyManagement.InitializedEvent")]
-    public sealed class InitializedEvent : UnsolicitedEvent<InitializedEvent.PayloadData>
+    public sealed class InitializedEvent : UnsolicitedEvent<MessagePayloadBase>
     {
 
-        public InitializedEvent(PayloadData Payload)
-            : base(Payload)
+        public InitializedEvent()
+            : base()
         { }
-
-
-        [DataContract]
-        public sealed class PayloadData : MessagePayloadBase
-        {
-
-            public PayloadData(string Ident = null, string Key = null)
-                : base()
-            {
-                this.Ident = Ident;
-                this.Key = Key;
-            }
-
-            /// <summary>
-            /// The Base64 encoded value of the ID key formatted. if not required, this property is omitted.
-            /// </summary>
-            [DataMember(Name = "ident")]
-            public string Ident { get; init; }
-
-            /// <summary>
-            /// The Base64 encoded value of the encryption key. if not required, this property is omitted.
-            /// </summary>
-            [DataMember(Name = "key")]
-            public string Key { get; init; }
-
-        }
 
     }
 }

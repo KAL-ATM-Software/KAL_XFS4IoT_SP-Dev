@@ -69,24 +69,31 @@ namespace XFS4IoTServer
 
         public async Task Dispatch(IConnection Connection, MessageBase Command)
         {
-            Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
-            Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
-
-            await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, new(AcknowledgePayload.StatusEnum.Ok)));
-
-            var cts = new CancellationTokenSource();
-            (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
-            if (async)
+            try
             {
-                Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
-                await handler.Handle(Connection, Command, cts.Token);
-                Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
-                cts.Dispose();
+                Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
+                Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
+
+                await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, new(AcknowledgePayload.StatusEnum.Ok)));
+
+                var cts = new CancellationTokenSource();
+                (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
+                if (async)
+                {
+                    Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
+                    await handler.Handle(Connection, Command, cts.Token);
+                    Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
+                    cts.Dispose();
+                }
+                else
+                {
+                    Logger.Log("Dispatcher", $"Queing command a {handler} handler for {Command.Header.Name} id:{Command.Header.RequestId}");
+                    await CommandQueue.EnqueueCommandAsync(handler, Connection, Command, cts);
+                }
             }
-            else
+            catch (Exception e) when (e.InnerException is System.Net.WebSockets.WebSocketException we)
             {
-                Logger.Log("Dispatcher", $"Queing command a {handler} handler for {Command.Header.Name} id:{Command.Header.RequestId}");
-                await CommandQueue.EnqueueCommandAsync(handler, Connection, Command, cts);
+                Logger.Log("Dispatcher", $"Exception responding to client - assume the client went away. {we}");
             }
         }
 

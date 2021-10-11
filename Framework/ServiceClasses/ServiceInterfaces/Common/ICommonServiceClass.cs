@@ -43,6 +43,17 @@ namespace XFS4IoTFramework.Common
         /// Stores Crypto interface capabilites internally
         /// </summary>
         CryptoCapabilitiesClass CryptoCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores PinPad interface capabilites internally
+        /// </summary>
+        PinPadCapabilitiesClass PinPadCapabilities { get => null; set { } }
+
+
+        /// <summary>
+        /// Stores Keyboard interface capabilites internally
+        /// </summary>
+        KeyboardCapabilitiesClass KeyboardCapabilities { get => null; set { } }
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

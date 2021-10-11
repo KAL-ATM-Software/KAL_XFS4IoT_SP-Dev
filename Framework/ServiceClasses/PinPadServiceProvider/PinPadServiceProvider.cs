@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
-using XFS4IoT.PinPad.Events;
-using XFS4IoT.KeyManagement.Events;
 using XFS4IoTFramework.KeyManagement;
+using XFS4IoTFramework.PinPad;
+using XFS4IoTFramework.Keyboard;
 
 namespace XFS4IoTServer
 {
@@ -39,10 +39,10 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger);
-            CryptoService = new CryptoServiceClass(this, logger);
-            KeyboardService = new KeyboardServiceClass(this, logger);
-            KeyManagementService = new KeyManagementServiceClass(this, logger);
-            PinPadService = new PinPadServiceClass(this, logger);
+            KeyManagementService = new KeyManagementServiceClass(this, CommonService, logger, persistentData);
+            CryptoService = new CryptoServiceClass(this, KeyManagementService, CommonService, logger);
+            KeyboardService = new KeyboardServiceClass(this, KeyManagementService, CommonService, logger);
+            PinPadService = new PinPadServiceClass(this, KeyManagementService, CommonService, logger);
         }
 
         private readonly PinPadServiceClass PinPadService;
@@ -57,7 +57,7 @@ namespace XFS4IoTServer
         #endregion
 
         #region KeyManagement unsolicited events
-        public Task InitializedEvent(XFS4IoT.KeyManagement.Events.InitializedEvent.PayloadData Payload) => KeyManagementService.InitializedEvent(Payload);
+        public Task InitializedEvent() => KeyManagementService.InitializedEvent();
 
         public Task IllegalKeyAccessEvent(XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData Payload) => KeyManagementService.IllegalKeyAccessEvent(Payload);
 
@@ -74,6 +74,8 @@ namespace XFS4IoTServer
         public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => CommonService.DevicePositionEvent(Payload);
 
         public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => CommonService.NonceClearedEvent(Payload);
+
+        public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => CommonService.ExchangeStateChangedEvent(Payload);
         #endregion
 
         /// <summary>
@@ -107,30 +109,64 @@ namespace XFS4IoTServer
                            int KeyLength,
                            KeyDetail.KeyStatusEnum KeyStatus,
                            bool Preloaded,
-                           string RestrictedKeyUsage,
-                           string KeyVersionNumber,
-                           string Exportability,
-                           List<byte> OptionalKeyBlockHeader,
-                           int? Generation,
-                           DateTime? ActivatingDate,
-                           DateTime? ExpiryDate,
-                           int? Version) => throw new NotSupportedException("The AddKey method is not supported in the PinPad ServiceProvider.");
+                           string RestrictedKeyUsage = null,
+                           string KeyVersionNumber = null,
+                           string Exportability = null,
+                           List<byte> OptionalKeyBlockHeader = null,
+                           int? Generation = null,
+                           DateTime? ActivatingDate = null,
+                           DateTime? ExpiryDate = null,
+                           int? Version = null) => KeyManagementService.AddKey(KeyName,
+                                                                               KeySlot,
+                                                                               KeyUsage,
+                                                                               Algorithm,
+                                                                               ModeOfUse,
+                                                                               KeyLength,
+                                                                               KeyStatus,
+                                                                               Preloaded,
+                                                                               RestrictedKeyUsage,
+                                                                               KeyVersionNumber,
+                                                                               Exportability,
+                                                                               OptionalKeyBlockHeader,
+                                                                               Generation,
+                                                                               ActivatingDate,
+                                                                               ExpiryDate,
+                                                                               Version);
 
         /// <summary>
         /// Delete specified key from the collection and return key slot
         /// </summary>
-        public void DeleteKey(string KeyName) => throw new NotSupportedException("The DeleteKey method is not supported in the PinPad ServiceProvider.");
+        public void DeleteKey(string KeyName) => KeyManagementService.DeleteKey(KeyName);
 
         /// <summary>
         /// Update key status
         /// </summary>
-        public void UpdateKeyStatus(string KeyName, KeyDetail.KeyStatusEnum Status) => throw new NotSupportedException("The UpdateKeyStatus method is not supported in the PinPad ServiceProvider.");
+        public void UpdateKeyStatus(string KeyName, KeyDetail.KeyStatusEnum Status) => KeyManagementService.UpdateKeyStatus(KeyName, Status);
 
         /// <summary>
         /// Return secure key entry component status
-        /// The device specified class reset current status if the stored key components are claered except successful Initialization command.
         /// </summary>
         /// <returns></returns>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => KeyManagementService.GetSecureKeyEntryStatus();
+
+        /// <summary>
+        /// Return list of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device
+        /// </summary>
+        public PCIPTSDeviceIdClass PCIPTSDeviceId { get => PinPadService.PCIPTSDeviceId; set { } }
+
+        /// <summary>
+        /// Function keys device supported
+        /// </summary>
+        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeys { get => KeyboardService.SupportedFunctionKeys; set { } }
+
+        /// <summary>
+        /// Function keys device supported with shift key
+        /// </summary>
+        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeysWithShift { get => KeyboardService.SupportedFunctionKeysWithShift; set { } }
+
+        /// <summary>
+        /// Keyboard layout device supported
+        /// </summary>
+        public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get => KeyboardService.KeyboardLayouts; set { } }
     }
 }

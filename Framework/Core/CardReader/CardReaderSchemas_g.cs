@@ -753,7 +753,6 @@ namespace XFS4IoT.CardReader
             this.Data = Data;
         }
 
-
         [DataMember(Name = "status")]
         public CardDataStatusEnum? Status { get; init; }
 

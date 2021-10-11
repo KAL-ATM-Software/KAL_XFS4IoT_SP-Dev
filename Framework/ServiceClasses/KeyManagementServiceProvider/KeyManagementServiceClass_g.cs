@@ -23,8 +23,8 @@ namespace XFS4IoTServer
             this.Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(KeyManagementServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IKeyManagementDevice>();
         }
-        public async Task InitializedEvent(XFS4IoT.KeyManagement.Events.InitializedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.KeyManagement.Events.InitializedEvent(Payload));
+        public async Task InitializedEvent()
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.KeyManagement.Events.InitializedEvent());
 
         public async Task IllegalKeyAccessEvent(XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent(Payload));

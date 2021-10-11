@@ -27,7 +27,7 @@ namespace XFS4IoT.Keyboard.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<LayoutClass> Layout = null)
+            public PayloadData(int Timeout, LayoutClass Layout = null)
                 : base(Timeout)
             {
                 this.Layout = Layout;
@@ -37,7 +37,7 @@ namespace XFS4IoT.Keyboard.Commands
             /// Specify layouts to define.  
             /// </summary>
             [DataMember(Name = "layout")]
-            public List<LayoutClass> Layout { get; init; }
+            public LayoutClass Layout { get; init; }
 
         }
     }

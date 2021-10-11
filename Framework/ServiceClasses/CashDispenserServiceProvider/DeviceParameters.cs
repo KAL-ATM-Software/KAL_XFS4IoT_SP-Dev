@@ -26,6 +26,8 @@ namespace XFS4IoTFramework.CashDispenser
     /// </summary>
     public sealed class Denominate
     {
+        private readonly ILogger Logger;
+
         public enum DispensableResultEnum
         {
             Good,
@@ -37,9 +39,14 @@ namespace XFS4IoTFramework.CashDispenser
         }
 
         public Denominate(Dictionary<string, double> CurrencyAmounts,
-                          Dictionary<string, int> Values = null)
+                          ILogger Logger) : this(CurrencyAmounts, null, Logger) { }
+
+        public Denominate(Dictionary<string, double> CurrencyAmounts,
+                          Dictionary<string, int> Values, 
+                          ILogger Logger )
         {
             this.CurrencyAmounts = CurrencyAmounts;
+            this.Logger = Logger.IsNotNull();
             if (Values is not null)
             {
                 // Copy only value positive
@@ -69,7 +76,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Check there are enough notes to be dispensed
         /// </summary>
-        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnit> CashUnits, ILogger Logger)
+        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnit> CashUnits)
         {
             if (Values is null ||
                 Values.Count == 0)

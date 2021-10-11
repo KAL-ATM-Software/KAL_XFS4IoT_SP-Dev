@@ -101,7 +101,7 @@ namespace XFS4IoT.Keyboard
         [DataContract]
         public sealed class EtsCapsClass
         {
-            public EtsCapsClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, int? MaximumTouchFrames = null, int? MaximumTouchKeys = null, FloatFlagsClass FloatFlags = null)
+            public EtsCapsClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, int? MaximumTouchFrames = null, int? MaximumTouchKeys = null, FloatClass Float = null)
             {
                 this.XPos = XPos;
                 this.YPos = YPos;
@@ -109,7 +109,7 @@ namespace XFS4IoT.Keyboard
                 this.YSize = YSize;
                 this.MaximumTouchFrames = MaximumTouchFrames;
                 this.MaximumTouchKeys = MaximumTouchKeys;
-                this.FloatFlags = FloatFlags;
+                this.Float = Float;
             }
 
             /// <summary>
@@ -151,9 +151,9 @@ namespace XFS4IoT.Keyboard
             public int? MaximumTouchKeys { get; init; }
 
             [DataContract]
-            public sealed class FloatFlagsClass
+            public sealed class FloatClass
             {
-                public FloatFlagsClass(bool? X = null, bool? Y = null)
+                public FloatClass(bool? X = null, bool? Y = null)
                 {
                     this.X = X;
                     this.Y = Y;
@@ -174,10 +174,10 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies if the device can float the touch keyboards. FloatNone if the device cannot randomly shift the layout.
+            /// Specifies if the device can float the touch keyboards. Both properties *x* and *y* are false if the device cannot randomly shift the layout.
             /// </summary>
-            [DataMember(Name = "floatFlags")]
-            public FloatFlagsClass FloatFlags { get; init; }
+            [DataMember(Name = "float")]
+            public FloatClass Float { get; init; }
 
         }
 
@@ -191,199 +191,194 @@ namespace XFS4IoT.Keyboard
 
 
     [DataContract]
-    public sealed class LayoutClass
+    public sealed class LayoutFrameClass
     {
-        public LayoutClass(EntryModeEnum? EntryMode = null, List<FramesClass> Frames = null)
+        public LayoutFrameClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, FloatClass Float = null, List<KeysClass> Keys = null)
         {
-            this.EntryMode = EntryMode;
-            this.Frames = Frames;
-        }
-
-        public enum EntryModeEnum
-        {
-            Data,
-            Pin,
-            Secure
+            this.XPos = XPos;
+            this.YPos = YPos;
+            this.XSize = XSize;
+            this.YSize = YSize;
+            this.Float = Float;
+            this.Keys = Keys;
         }
 
         /// <summary>
-        /// Specifies entry mode to which the layout applies. The following values are possible:
-        /// * ```data``` - Specifies that the layout be applied to the DataEntry method.
-        /// * ```pin``` - Specifies that the layout be applied to the PinEntry method.
-        /// * ```secure``` - Specifies that the layout be applied to the SecureKeyEntry method.
+        /// For [ETS](#keyboard.generalinformation.ets), specifies the left coordinate of the frame as an offset from the left edge of the screen. 
+        /// For all other device types, this value is ignored
         /// </summary>
-        [DataMember(Name = "entryMode")]
-        public EntryModeEnum? EntryMode { get; init; }
+        [DataMember(Name = "xPos")]
+        public int? XPos { get; init; }
+
+        /// <summary>
+        /// For [ETS](#keyboard.generalinformation.ets), specifies the top coordinate of the frame as an offset from the top edge of the screen. 
+        /// For all other device types, this value is ignored
+        /// </summary>
+        [DataMember(Name = "yPos")]
+        public int? YPos { get; init; }
+
+        /// <summary>
+        /// For [ETS](#keyboard.generalinformation.ets), specifies the width of the frame. For all other device types, this value is ignored
+        /// </summary>
+        [DataMember(Name = "xSize")]
+        public int? XSize { get; init; }
+
+        /// <summary>
+        /// For [ETS](#keyboard.generalinformation.ets), specifies the height of the frame. For all other device types, this value is ignored
+        /// </summary>
+        [DataMember(Name = "ySize")]
+        public int? YSize { get; init; }
 
         [DataContract]
-        public sealed class FramesClass
+        public sealed class FloatClass
         {
-            public FramesClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, FloatActionClass FloatAction = null, List<FksClass> Fks = null)
+            public FloatClass(bool? X = null, bool? Y = null)
+            {
+                this.X = X;
+                this.Y = Y;
+            }
+
+            /// <summary>
+            /// Specifies that the device will randomly shift the layout in a horizontal direction
+            /// </summary>
+            [DataMember(Name = "x")]
+            public bool? X { get; init; }
+
+            /// <summary>
+            /// Specifies that the device will randomly shift the layout in a vertical direction
+            /// </summary>
+            [DataMember(Name = "y")]
+            public bool? Y { get; init; }
+
+        }
+
+        /// <summary>
+        /// Specifies if the device can float the touch keyboards
+        /// </summary>
+        [DataMember(Name = "float")]
+        public FloatClass Float { get; init; }
+
+        [DataContract]
+        public sealed class KeysClass
+        {
+            public KeysClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, string Key = null, string ShiftKey = null)
             {
                 this.XPos = XPos;
                 this.YPos = YPos;
                 this.XSize = XSize;
                 this.YSize = YSize;
-                this.FloatAction = FloatAction;
-                this.Fks = Fks;
+                this.Key = Key;
+                this.ShiftKey = ShiftKey;
             }
 
             /// <summary>
-            /// For [ETS](#keyboard.generalinformation.ets), specifies the left coordinate of the frame as an offset from the left edge of the screen. 
-            /// For all other device types, this value is ignored
+            /// Specifies the position of the top left corner of the FK relative to the left hand side of the layout.
+            /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
+            /// For non-ETS devices, must be a value between 0 and 999, where 0 is the left edge and 999 is the right edge.
             /// </summary>
             [DataMember(Name = "xPos")]
+            [DataTypes(Minimum = 0, Maximum = 999)]
             public int? XPos { get; init; }
 
             /// <summary>
-            /// For [ETS](#keyboard.generalinformation.ets), specifies the top coordinate of the frame as an offset from the top edge of the screen. 
-            /// For all other device types, this value is ignored
+            /// Specifies the position of the top left corner of the Function Key (FK) relative to the left hand side of the layout.
+            /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
+            /// For non-ETS devices, must be a value between 0 and 999, where 0 is the top edge and 999 is the bottom edge.
             /// </summary>
             [DataMember(Name = "yPos")]
+            [DataTypes(Minimum = 0, Maximum = 999)]
             public int? YPos { get; init; }
 
             /// <summary>
-            /// For [ETS](#keyboard.generalinformation.ets), specifies the width of the frame. For all other device types, this value is ignored
+            /// Specifies the Function Key (FK) width. 
+            /// For [ETS](#keyboard.generalinformation.ets), width is measured in pixels. For non-ETS devices, width is expressed as a value between 
+            /// 1 and 1000, where 1 is the smallest possible size and 1000 is the full width of the layout.
             /// </summary>
             [DataMember(Name = "xSize")]
+            [DataTypes(Minimum = 1, Maximum = 1000)]
             public int? XSize { get; init; }
 
             /// <summary>
-            /// For [ETS](#keyboard.generalinformation.ets), specifies the height of the frame. For all other device types, this value is ignored
+            /// Specifies the Function Key (FK) height.
+            /// For [ETS](#keyboard.generalinformation.ets), height is measured in pixels. 
+            /// For non-ETS devices, height is expressed as a value between 1 and 1000, where 1 is the smallest 
+            /// possible size and 1000 is the full height of the layout.
             /// </summary>
             [DataMember(Name = "ySize")]
+            [DataTypes(Minimum = 1, Maximum = 1000)]
             public int? YSize { get; init; }
 
-            [DataContract]
-            public sealed class FloatActionClass
-            {
-                public FloatActionClass(bool? FloatX = null, bool? FloatY = null)
-                {
-                    this.FloatX = FloatX;
-                    this.FloatY = FloatY;
-                }
-
-                /// <summary>
-                /// Specifies that the device will randomly shift the layout in a horizontal direction
-                /// </summary>
-                [DataMember(Name = "floatX")]
-                public bool? FloatX { get; init; }
-
-                /// <summary>
-                /// Specifies that the device will randomly shift the layout in a vertical direction
-                /// </summary>
-                [DataMember(Name = "floatY")]
-                public bool? FloatY { get; init; }
-
-            }
+            /// <summary>
+            /// Specifies the Function Key associated with the physical area in non-shifted mode.
+            /// This property is not required if the device doesn't support.
+            /// </summary>
+            [DataMember(Name = "key")]
+            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            public string Key { get; init; }
 
             /// <summary>
-            /// Specifies if the device can float the touch keyboards
+            /// Specifies the Function Key associated with the physical key in shifted mode.
+            /// This property is not required if the device doesn't support.
             /// </summary>
-            [DataMember(Name = "floatAction")]
-            public FloatActionClass FloatAction { get; init; }
-
-            [DataContract]
-            public sealed class FksClass
-            {
-                public FksClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, KeyTypeEnum? KeyType = null, string Fk = null, string ShiftFK = null)
-                {
-                    this.XPos = XPos;
-                    this.YPos = YPos;
-                    this.XSize = XSize;
-                    this.YSize = YSize;
-                    this.KeyType = KeyType;
-                    this.Fk = Fk;
-                    this.ShiftFK = ShiftFK;
-                }
-
-                /// <summary>
-                /// Specifies the position of the top left corner of the FK relative to the left hand side of the layout.
-                /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
-                /// For non-ETS devices, must be a value between 0 and 999, where 0 is the left edge and 999 is the right edge.
-                /// </summary>
-                [DataMember(Name = "xPos")]
-                [DataTypes(Minimum = 0, Maximum = 999)]
-                public int? XPos { get; init; }
-
-                /// <summary>
-                /// Specifies the position of the top left corner of the Function Key (FK) relative to the left hand side of the layout.
-                /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
-                /// For non-ETS devices, must be a value between 0 and 999, where 0 is the top edge and 999 is the bottom edge.
-                /// </summary>
-                [DataMember(Name = "yPos")]
-                [DataTypes(Minimum = 0, Maximum = 999)]
-                public int? YPos { get; init; }
-
-                /// <summary>
-                /// Specifies the Function Key (FK) width. 
-                /// For [ETS](#keyboard.generalinformation.ets), width is measured in pixels. For non-ETS devices, width is expressed as a value between 
-                /// 1 and 1000, where 1 is the smallest possible size and 1000 is the full width of the layout.
-                /// </summary>
-                [DataMember(Name = "xSize")]
-                [DataTypes(Minimum = 1, Maximum = 1000)]
-                public int? XSize { get; init; }
-
-                /// <summary>
-                /// Specifies the Function Key (FK) height.
-                /// For [ETS](#keyboard.generalinformation.ets), height is measured in pixels. 
-                /// For non-ETS devices, height is expressed as a value between 1 and 1000, where 1 is the smallest 
-                /// possible size and 1000 is the full height of the layout.
-                /// </summary>
-                [DataMember(Name = "ySize")]
-                [DataTypes(Minimum = 1, Maximum = 1000)]
-                public int? YSize { get; init; }
-
-                public enum KeyTypeEnum
-                {
-                    Fk,
-                    Fdk
-                }
-
-                /// <summary>
-                /// Defines the type of XFS key definition value is represented by *fk* and *shiftFK*.
-                /// If the key is physically present on the device but it is not used, this property can be omitted.
-                /// The following values are possible:
-                /// * ```fk``` - Function Keys are being used.
-                /// * ```fdk``` - Function Descriptor Keys are being used.
-                /// </summary>
-                [DataMember(Name = "keyType")]
-                public KeyTypeEnum? KeyType { get; init; }
-
-                /// <summary>
-                /// Specifies the Function Key associated with the physical area in non-shifted mode.
-                /// This property is not required if the *keyType* is omitted.
-                /// </summary>
-                [DataMember(Name = "fk")]
-                [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-                public string Fk { get; init; }
-
-                /// <summary>
-                /// Specifies the Function Key associated with the physical key in shifted mode.
-                /// This property is not required if the *keyType* is omitted.
-                /// </summary>
-                [DataMember(Name = "shiftFK")]
-                [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|res0[1-8]|oem0[1-6]|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$")]
-                public string ShiftFK { get; init; }
-
-            }
-
-            /// <summary>
-            /// Defining details of the keys in the keyboard.
-            /// </summary>
-            [DataMember(Name = "fks")]
-            public List<FksClass> Fks { get; init; }
+            [DataMember(Name = "shiftKey")]
+            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            public string ShiftKey { get; init; }
 
         }
 
         /// <summary>
-        /// There can be one or more frames included. A Physical Frame can only contain Physical Keys. 
-        /// It can contain Physical Keys positioned on the edge of the screen (for example, FDKs) or Physical Keys not positioned on the edge of the screen (for example EPP) but cannot contain both. 
-        /// A [ETS](#keyboard.generalinformation.ets) can only contain Touch Keys. To determine the frame type, frameXSize and frameYSize should be checked. 
-        /// Refer to the [layout table](#keyboard.generalinformation.layout) for the different types of frames, and see the diagram for an example.
+        /// Defining details of the keys in the keyboard.
         /// </summary>
-        [DataMember(Name = "frames")]
-        public List<FramesClass> Frames { get; init; }
+        [DataMember(Name = "keys")]
+        public List<KeysClass> Keys { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class LayoutClass
+    {
+        public LayoutClass(List<LayoutFrameClass> Data = null, List<LayoutFrameClass> Pin = null, List<LayoutFrameClass> Secure = null)
+        {
+            this.Data = Data;
+            this.Pin = Pin;
+            this.Secure = Secure;
+        }
+
+        /// <summary>
+        /// The layout for the DataEntry command.
+        /// </summary>
+        [DataMember(Name = "data")]
+        public List<LayoutFrameClass> Data { get; init; }
+
+        /// <summary>
+        /// The layout for the PinEntry command.
+        /// </summary>
+        [DataMember(Name = "pin")]
+        public List<LayoutFrameClass> Pin { get; init; }
+
+        /// <summary>
+        /// The layout for the SecureKeyEntry command.
+        /// </summary>
+        [DataMember(Name = "secure")]
+        public List<LayoutFrameClass> Secure { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class KeyClass
+    {
+        public KeyClass(bool? Terminate = null)
+        {
+            this.Terminate = Terminate;
+        }
+
+        /// <summary>
+        /// The key is a terminate key.
+        /// </summary>
+        [DataMember(Name = "terminate")]
+        public bool? Terminate { get; init; }
 
     }
 
@@ -400,6 +395,29 @@ namespace XFS4IoT.Keyboard
         Help,
         Fk,
         ContFdk
+    }
+
+
+    [DataContract]
+    public sealed class KeyPressedClass
+    {
+        public KeyPressedClass(EntryCompletionEnum? Completion = null, string Digit = null)
+        {
+            this.Completion = Completion;
+            this.Digit = Digit;
+        }
+
+        [DataMember(Name = "completion")]
+        public EntryCompletionEnum? Completion { get; init; }
+
+        /// <summary>
+        /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this property is omitted for the 
+        /// function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed, the corresponding key value is stored in this property. 
+        /// </summary>
+        [DataMember(Name = "digit")]
+        [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+        public string Digit { get; init; }
+
     }
 
 

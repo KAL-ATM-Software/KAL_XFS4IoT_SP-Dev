@@ -150,12 +150,21 @@ namespace XFS4IoT.CashDispenser.Commands
 
             /// <summary>
             /// The dispense token that authorizes the dispense operation, as created by the authorizing host. See 
-            /// the section on end to end security for more information. 
+            /// the section on [end to end security](#api.generalinformation.e2esecurity) for more information. 
+            /// 
+            /// The same token may be used multiple times with multiple calls to the CashDispenser.Dispense command as long 
+            /// as the total value stacked does not exceed the value given in the token. The hardware will track the value 
+            /// of the cash that has been dispensed and will raise an invalidToken error for any attempt to dispense more 
+            /// cash than authorized by the token. 
+            /// 
+            /// The token contains a nonce returned by [Common.GetCommandNonce](#common.getcommandnonce) which must match 
+            /// the nonce stored in the hardware. The nonce value stored in the hardware will be cleared when cash is 
+            /// presented meaning that all tokens will become invalid after cash is presented. 
             /// 
             /// The dispense token will follow the standard token format, and will contain the following key: 
             /// 
-            /// "DISPENSE1": The maximum value to be dispensed. This will be a number string that may contain a fractional 
-            /// part. The decimal character will be ".". The value, including the fractional part, will be 
+            /// ```DISPENSE1```: The maximum value to be dispensed. This will be a number string that may contain a 
+            /// fractional part. The decimal character will be ".". The value, including the fractional part, will be 
             /// defined by the ISO currency. The number will be followed by the ISO currency code. The currency 
             /// code will be upper case. 
             /// 

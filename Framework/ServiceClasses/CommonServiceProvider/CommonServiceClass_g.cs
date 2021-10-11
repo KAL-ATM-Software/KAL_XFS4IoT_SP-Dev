@@ -32,6 +32,9 @@ namespace XFS4IoTServer
         public async Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.NonceClearedEvent(Payload));
 
+        public async Task ExchangeStateChangedEvent(XFS4IoT.Common.Events.ExchangeStateChangedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.ExchangeStateChangedEvent(Payload));
+
         private readonly IServiceProvider ServiceProvider;
         private readonly ILogger Logger;
         private ICommonDevice Device { get => ServiceProvider.Device.IsA<ICommonDevice>(); }

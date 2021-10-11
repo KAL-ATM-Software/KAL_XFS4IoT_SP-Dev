@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd</id>
+        <authors>XFS4IoTFramework</authors>
+        <license type="expression">MIT</license>
+        <version>$version$</version>
+        <projectUrl>https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev</projectUrl>
+        <repository type="git" url="$GithubURL$"/>
+        <description>Native support components for End to End security</description>
+        <tags>native</tags>
+        <dependencies>
+            <group targetFramework="native0.0"/>
+        </dependencies>
+    </metadata>
+
+
+    <files>
+        <file src="..\..\Win32\Debug\EndToEndSecurity.lib"       target="lib\native\Win32\Debug\"     />
+        <file src="..\..\Win32\Release\EndToEndSecurity.lib"       target="lib\native\Win32\Release\"     />
+        <file src="..\..\x64\Debug\EndToEndSecurity.lib"       target="lib\native\x64\Debug\"     />
+        <file src="..\..\x64\Release\EndToEndSecurity.lib"       target="lib\native\x64\Release\"     />
+        <file src="..\endtoendsecurity.h"   target="include\" />
+        <file src="..\extensionpoints.h"   target="include\" />
+        <file src="..\tokens.h"   target="include\" />
+        <!--file src="docs\*"           target="native\docs"    /-->
+        <!--file src="README.md"        target="native"      /-->
+        <file src="KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd.props"   target="build\"/>
+    </files>
+</package>

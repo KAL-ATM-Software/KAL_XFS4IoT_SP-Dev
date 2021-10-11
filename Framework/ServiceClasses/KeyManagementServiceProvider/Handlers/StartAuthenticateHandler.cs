@@ -37,8 +37,7 @@ namespace XFS4IoTFramework.KeyManagement
             if (startAuthenticate.Payload.Command.Initialization is not null)
             {
                 request = new StartAuthenticateRequest(StartAuthenticateRequest.CommandEnum.Initialization,
-                                                       new StartAuthenticateRequest.InitializationInput(startAuthenticate.Payload.Command.Initialization.Key,
-                                                                                                        string.IsNullOrEmpty(startAuthenticate.Payload.Command.Initialization.Ident) ? null : Convert.FromBase64String(startAuthenticate.Payload.Command.Initialization.Ident).ToList()));
+                                                       new StartAuthenticateRequest.InitializationInput());
             }
             else
             {

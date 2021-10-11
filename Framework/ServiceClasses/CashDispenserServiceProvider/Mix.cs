@@ -23,6 +23,8 @@ namespace XFS4IoTFramework.CashDispenser
     [Serializable()]
     public sealed class MixTable : Mix
     {
+        private readonly ILogger Logger;
+
         public sealed class Table
         {
             public Table(double Amount, List<double> Values, List<int> Counts)
@@ -46,7 +48,8 @@ namespace XFS4IoTFramework.CashDispenser
         public MixTable(int MixNumber,
                         string Name,
                         List<double> Cols,
-                        Dictionary<double, List<Table>> Mixes)
+                        Dictionary<double, List<Table>> Mixes, 
+                        ILogger Logger )
             : base(MixNumber, 
                    TypeEnum.Table,
                    (int)SubTypeEmum.Table, 
@@ -54,9 +57,10 @@ namespace XFS4IoTFramework.CashDispenser
         {
             this.Values = Cols;
             this.Mixes = Mixes;
+            this.Logger = Logger.IsNotNull();
         }
 
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems, ILogger Logger)
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
         {
             // Loop through the table looking for a mix with the given value.
             Dictionary<string, int> denom = new();
@@ -117,7 +121,7 @@ namespace XFS4IoTFramework.CashDispenser
                         return new Denomination(CurrencyAmounts);
                     }
 
-                    if (new Denominate(CurrencyAmounts, newDenom).IsDispensable(CashUnits, Logger) == Denominate.DispensableResultEnum.Good)
+                    if (new Denominate(CurrencyAmounts, newDenom, Logger).IsDispensable(CashUnits) == Denominate.DispensableResultEnum.Good)
                     {
                         // Go to next currency and amount
                         foreach (var d in newDenom)
@@ -157,12 +161,16 @@ namespace XFS4IoTFramework.CashDispenser
     [Serializable()]
     public sealed class MinNumberMix : Mix
     {
-        public MinNumberMix(int MixNumber)
+        private readonly ILogger Logger;
+
+        public MinNumberMix(int MixNumber, ILogger Logger )
             : base(MixNumber, 
                    TypeEnum.Algorithm, 
                    (int)SubTypeEmum.MinimumNumberOfBills, 
                    "Minimum Number Of Bills")
-        { }
+        {
+            this.Logger = Logger.IsNotNull();
+        }
 
         /// <summary>
         /// Calculate a dispensable denomination with a given value, using the  number of bills.
@@ -181,9 +189,8 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CurrencyAmounts">Value to denominate and Currency to denominate in.</param>
         /// <param name="CashUnits">cash units to denominate from.</param>
         /// <param name="MaxDispensableItems"></param>
-        /// <param name="Logger"></param>
-        /// <returns>denominate to dispense</returns>
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems, ILogger Logger)
+        /// <returns>Calculated denomination</returns>
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
         {
             CurrencyAmounts.IsNotNull($"Currency and amounts should be provided to calculate mix.");
             CashUnits.IsNotNull($"Cash unit information should be provided to calculate mix.");
@@ -245,7 +252,7 @@ namespace XFS4IoTFramework.CashDispenser
                     }
                     else
                     {
-                        if (!CalculateR(remainingAmount, ca.Key, currentCashUnit, CashUnits, ref CassetteUsed, ref newDenom)) 
+                        if (!CalculateR(remainingAmount, ca.Key, currentCashUnit, CashUnits, ref CassetteUsed, ref newDenom, Logger)) 
                             continue; // If we can't do this bit of the mix, ignore it and go on to the next possibility. 
 
                         newDenomNumNotes = currentSmallest.Select(d => d.Value).Sum();
@@ -281,10 +288,10 @@ namespace XFS4IoTFramework.CashDispenser
             // At this point. CurrentSmallestNumNotes is the number of notes from cash unit we should use
             // and CurrentSmallest is the smallest denomination required from the rest of the cash units
             // Add the notes from this cash unit to the denomination and return it.
-            Denominate denom = new(CurrencyAmounts, totalSmallest);
+            Denominate denom = new(CurrencyAmounts, totalSmallest, Logger);
 
             // Check that this denomination can actually be dispensed.
-            if (denom.IsDispensable(CashUnits, Logger) != Denominate.DispensableResultEnum.Good)
+            if (denom.IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
             {
                 return new Denomination(CurrencyAmounts);
             }
@@ -304,8 +311,9 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">cash units to use</param>
         /// <param name="UnitsUsed">List of used cash units on mixing</param>
         /// <param name="Denom">Denomination to dispense</param>
+        /// <param name="Logger">DI Logger</param>
         /// <returns></returns>
-        public static bool CalculateR(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom)
+        public static bool CalculateR(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom, ILogger Logger)
         {
             Contracts.Assert(Amount != 0, "Invalid parameter used for amount in CalculateR.");
 
@@ -363,7 +371,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
                 else
                 {
-                    if (!CalculateR(remainingAmount, Currency, currentCashUnit, CashUnits, ref UnitsUsed, ref newDenom)) 
+                    if (!CalculateR(remainingAmount, Currency, currentCashUnit, CashUnits, ref UnitsUsed, ref newDenom, Logger)) 
                         continue; // If we can't do this bit of the mix, ignore it and go on to the next possibility. 
                     newDenomNumNotes = newDenom.Select(d => d.Value).Sum();
                 }
@@ -386,7 +394,7 @@ namespace XFS4IoTFramework.CashDispenser
             else
                 Denom.Add(currentCashUnit, currentSmallestNumNotes);
 
-            if (!new Denominate(new Dictionary<string, double>() { { Currency, Amount } }, Denom).CheckTotalAmount(CashUnits))
+            if (!new Denominate(new Dictionary<string, double>() { { Currency, Amount } }, Denom, Logger).CheckTotalAmount(CashUnits))
             {
                 if (UnitsUsed.Contains(currentCashUnit))
                     UnitsUsed.Remove(currentCashUnit);
@@ -404,12 +412,16 @@ namespace XFS4IoTFramework.CashDispenser
     [Serializable()]
     public sealed class EqualEmptyingMix : Mix
     {
-        public EqualEmptyingMix(int MixNumber)
+        private readonly ILogger Logger;
+
+        public EqualEmptyingMix(int MixNumber, ILogger Logger )
             : base(MixNumber,
                    TypeEnum.Algorithm,
                    (int)SubTypeEmum.EqualEmptyingOfCashUnits,
                    "Equal emptying of cash units")
-        { }
+        {
+            this.Logger = Logger.IsNotNull();
+        }
 
         /// <summary>
         /// Calculate a denomination with the given value, such that each cash unit will have equal usage.
@@ -424,9 +436,8 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CurrencyAmounts">Value to denominate and Currency to denominate in.</param>
         /// <param name="CashUnits">cash units to denominate from.</param>
         /// <param name="MaxDispensableItems"></param>
-        /// <param name="Logger"></param>
-        /// <returns>denominate to dispense</returns>
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems, ILogger Logger)
+        /// <returns>denominate that matches the requirements</returns>
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
         {
             CurrencyAmounts.IsNotNull($"Currency and amounts should be provided to calculate mix.");
             CashUnits.IsNotNull($"Cash unit information should be provided to calculate mix.");
@@ -569,7 +580,7 @@ namespace XFS4IoTFramework.CashDispenser
 
                         // Check that this denomination can actually be dispensed.
                         if (mixFailure == false &&
-                            new Denominate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, newDenom).IsDispensable(CashUnits, Logger) != Denominate.DispensableResultEnum.Good)
+                            new Denominate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
                         {
                             if (equalNumNotes > 0)
                             {
@@ -594,13 +605,13 @@ namespace XFS4IoTFramework.CashDispenser
                     {
                         // We can't allocate notes based on the Equal mix.  Bail out and try the MinNotes
                         // algorithm for the entire amount.
-                        Denomination tempDenom = new MinNumberMix(1).Calculate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, CashUnits, MaxDispensableItems, Logger);
+                        Denomination tempDenom = new MinNumberMix(1, Logger).Calculate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, CashUnits, MaxDispensableItems);
                         newDenom = tempDenom?.Values;
                     }
                 }
 
                 // Check that this denomination can actually be dispensed.
-                if (new Denominate(new Dictionary<string, double>(){ { ca.Key, ca.Value } }, newDenom).IsDispensable(CashUnits, Logger) != Denominate.DispensableResultEnum.Good)
+                if (new Denominate(new Dictionary<string, double>(){ { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
                 {
                     return new Denomination(CurrencyAmounts);
                 }
@@ -617,10 +628,10 @@ namespace XFS4IoTFramework.CashDispenser
             // At this point. CurrentSmallestNumNotes is the number of notes from cash unit we should use
             // and CurrentSmallest is the smallest denomination required from the rest of the cash units
             // Add the notes from this cash unit to the denomination and return it.
-            Denominate denom = new(CurrencyAmounts, totalEqualEmptying);
+            Denominate denom = new(CurrencyAmounts, totalEqualEmptying, Logger);
 
             // Check that this denomination can actually be dispensed.
-            if (denom.IsDispensable(CashUnits, Logger) != Denominate.DispensableResultEnum.Good)
+            if (denom.IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
             {
                 return new Denomination(CurrencyAmounts);
             }
@@ -680,7 +691,7 @@ namespace XFS4IoTFramework.CashDispenser
             // If the amount remaining isn't zero, then we can't dispense this value.
             if (remainingAmount != 0)
             {
-                MinNumberMix.CalculateR(Amount, Currency, LastCashUnit, CashUnits, ref UnitsUsed, ref Denom);
+                MinNumberMix.CalculateR(Amount, Currency, LastCashUnit, CashUnits, ref UnitsUsed, ref Denom, Logger);
                 foreach (var oriDenom in originalTotalDenomination)
                 {
                     if (Denom.ContainsKey(oriDenom.Key))

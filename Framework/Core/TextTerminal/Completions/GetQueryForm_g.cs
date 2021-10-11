@@ -26,9 +26,10 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, List<string> Fields = null, string LanguageId = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, List<string> Fields = null, string LanguageId = null)
                 : base(CompletionCode, ErrorDescription)
             {
+                this.ErrorCode = ErrorCode;
                 this.FormName = FormName;
                 this.Width = Width;
                 this.Height = Height;
@@ -37,6 +38,20 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.Fields = Fields;
                 this.LanguageId = LanguageId;
             }
+
+            public enum ErrorCodeEnum
+            {
+                FormNotFound,
+                FormInvalid
+            }
+
+            /// <summary>
+            /// Specifies the error code if applicable. The following values are possible:
+            /// * ```formNotFound``` - The specified form cannot be found.
+            /// * ```formInvalid``` - The specified form is invalid.
+            /// </summary>
+            [DataMember(Name = "errorCode")]
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Specifies the name of the form.

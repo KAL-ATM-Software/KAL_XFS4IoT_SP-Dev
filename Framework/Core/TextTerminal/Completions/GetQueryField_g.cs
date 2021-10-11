@@ -26,11 +26,30 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, Dictionary<string, FieldDetailsClass> Fields = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, FieldDetailsClass> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
+                this.ErrorCode = ErrorCode;
                 this.Fields = Fields;
             }
+
+            public enum ErrorCodeEnum
+            {
+                FormNotFound,
+                FormInvalid,
+                FieldNotfound,
+                FieldInvalid
+            }
+
+            /// <summary>
+            /// Specifies the error code if applicable. The following values are possible:
+            /// * ```formNotFound``` - The specified form cannot be found.
+            /// * ```formInvalid``` - The specified form is invalid.
+            /// * ```fieldNotfound``` - The specified field cannot be found.
+            /// * ```fieldInvalid``` - The specified field is invalid.
+            /// </summary>
+            [DataMember(Name = "errorCode")]
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// Details of the field(s) requested. The key is the field name and the value contains the details of the fields.

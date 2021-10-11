@@ -20,21 +20,21 @@ namespace XFS4IoTFramework.Common
     /// GetCommandRandomNumberResult
     /// Return authorisation token for a command
     /// </summary>
-    public sealed class GetCommandRandomNumberResult : DeviceResult
+    public sealed class GetCommandNonceResult : DeviceResult
     {
-        public GetCommandRandomNumberResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GetCommandNonceResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                             string ErrorDescription = null,
-                                            string CommandRandomNumber = null)
+                                            string Nonce = null)
             : base(CompletionCode, ErrorDescription)
         {
-            this.CommandRandomNumber = CommandRandomNumber;
+            this.Nonce = Nonce;
         }
 
-        public GetCommandRandomNumberResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                            string CommandRandomNumber = null)
+        public GetCommandNonceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                            string Nonce = null)
             : base(CompletionCode, null)
         {
-            this.CommandRandomNumber = CommandRandomNumber;
+            this.Nonce = Nonce;
         }
 
         /// <summary>
@@ -43,6 +43,6 @@ namespace XFS4IoTFramework.Common
         /// 
         /// The nonce will be given as HEX (upper case.)
         /// </summary>
-        public string CommandRandomNumber { get; private set; }
+        public string Nonce { get; private set; }
     }
 }

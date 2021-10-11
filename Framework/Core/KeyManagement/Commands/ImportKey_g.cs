@@ -260,13 +260,13 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Contains the data to be verified before importing.
-            /// This property can be omitted if no verification is needed before importing the key or the *constructing* property is true.
+            /// This property can be omitted if no verification is needed before importing the key, the *constructing* property is true or *value* contains verification data.
             /// </summary>
             [DataMember(Name = "verificationData")]
             public string VerificationData { get; init; }
 
             /// <summary>
-            /// Specifies the name of the previously loaded key which will be used to verify the verificationData.
+            /// Specifies the name of the previously loaded key which will be used to verify the *verificationData*.
             /// This property can be omitted when no verification is needed before importing the key or the *constructing* property is true.
             /// </summary>
             [DataMember(Name = "verifyKey")]
@@ -341,7 +341,6 @@ namespace XFS4IoT.KeyManagement.Commands
             /// <summary>
             /// Specifies the vendor attributes of the key to be imported.
             /// Refer to vendor documentation for details.
-            /// If no vendor attributes are used or the *constructing* property is true, then this property can be omitted.
             /// </summary>
             [DataMember(Name = "vendorAttributes")]
             public string VendorAttributes { get; init; }

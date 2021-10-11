@@ -59,20 +59,8 @@ namespace XFS4IoTServer
 
             if(result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
             {
-                List<string> SupportedCommandKeys = new();
-
-                if(result.CommandKeys != null)
-                {
-                    // Get the key name from the propertyName in the object.
-                    foreach (var prop in typeof(XFS4IoT.TextTerminal.Completions.GetKeyDetailCompletion.PayloadData.CommandKeysClass).GetProperties())
-                    {
-                        var val = prop.GetValue(result.CommandKeys);
-                        if (val is not null && (bool)val) SupportedCommandKeys.Add(Char.ToLower(prop.Name[0]) + prop.Name[1..]);
-                    }
-                }
-                
-                // Store the Keys and CommandKeys. Keep CommandKeysClass to respond to GetKeyDetail request.
-                SupportedKeys = new(result.Keys, SupportedCommandKeys, result.CommandKeys != null ? result.CommandKeys : new());
+                // Store the Keys and CommandKeys
+                SupportedKeys = new(result.Keys, result.CommandKeys ?? new());
             }
         }
     }

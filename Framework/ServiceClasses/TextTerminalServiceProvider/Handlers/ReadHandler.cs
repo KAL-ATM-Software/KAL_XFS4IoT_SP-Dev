@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
@@ -23,8 +24,7 @@ namespace XFS4IoTFramework.TextTerminal
         {
             // Check for any active keys or command keys.
             if (string.IsNullOrWhiteSpace(read.Payload.ActiveKeys) && 
-                (read.Payload.ActiveCommandKeys is null || read.Payload.ActiveCommandKeys.Count == 0) && 
-                (read.Payload.TerminateCommandKeys is null || read.Payload.TerminateCommandKeys.Count == 0))
+                (read.Payload.ActiveCommandKeys is null || read.Payload.ActiveCommandKeys.Count == 0))
             {
                 return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, "No Keys specified for Read command.", ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
             }
@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.TextTerminal
             bool autoEnd = read.Payload.AutoEnd is not null && (bool)read.Payload.AutoEnd;
 
             // Check for either AutoEnd or TerminateCommandKeys. Read will never end if neither are specified.
-            if((read.Payload.TerminateCommandKeys is null || read.Payload.TerminateCommandKeys.Count == 0) && !autoEnd)
+            if((read.Payload.ActiveCommandKeys?.FirstOrDefault(c => c.Value.Terminate is true) is null) && !autoEnd)
             {
                 return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Device cannot determine when to end Read operation.");
             }
@@ -62,25 +62,12 @@ namespace XFS4IoTFramework.TextTerminal
             {
                 foreach (var cmdKey in read.Payload.ActiveCommandKeys)
                 {
-                    if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey))
+                    if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey.Key))
                     {
                         return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
                 }
             }
-
-            // Check all Terminate keys are valid
-            if(read.Payload.TerminateCommandKeys is not null)
-            {
-                foreach (var cmdKey in read.Payload.TerminateCommandKeys)
-                {
-                    if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey))
-                    {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
-                    }
-                }
-            }
-
 
             if (read.Payload.NumOfChars is null)
             {
@@ -164,7 +151,7 @@ namespace XFS4IoTFramework.TextTerminal
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.ReadAsync()");
             
-            var result = await Device.ReadAsync(new(echo, echoAttr, PosX, PosY, read.Payload.NumOfChars.Value, read.Payload.Echo.Value, read.Payload.Flush.Value, autoEnd, read.Payload.ActiveKeys ?? string.Empty, read.Payload.ActiveCommandKeys ?? new(), read.Payload.TerminateCommandKeys ?? new()), cancel);
+            var result = await Device.ReadAsync(new(echo, echoAttr, PosX, PosY, read.Payload.NumOfChars.Value, read.Payload.Echo.Value, read.Payload.Flush.Value, autoEnd, read.Payload.ActiveKeys ?? string.Empty, read.Payload.ActiveCommandKeys?.Keys.ToList() ?? new(), read.Payload.ActiveCommandKeys?.Where(c => c.Value.Terminate is true).Select(c => c.Key).ToList() ?? new()), cancel);
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ReadAsync() -> {result.CompletionCode}");
 

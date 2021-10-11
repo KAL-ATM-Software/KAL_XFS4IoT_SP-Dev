@@ -26,7 +26,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, SensorsAndIndicators.CapabilitiesClass SensorsAndIndicators = null, CardEmbosser.CapabilitiesClass CardEmbosser = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, DK.CapabilitiesClass Dk = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, CardEmbosser.CapabilitiesClass CardEmbosser = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, DK.CapabilitiesClass Dk = null, Dictionary<string, Lights.LightCapabilitiesClass> Lights = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, VendorApplication.CapabilitiesClass VendorApplication = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Interfaces = Interfaces;
@@ -41,11 +41,13 @@ namespace XFS4IoT.Common.Completions
                 this.Keyboard = Keyboard;
                 this.TextTerminal = TextTerminal;
                 this.Printer = Printer;
-                this.SensorsAndIndicators = SensorsAndIndicators;
                 this.CardEmbosser = CardEmbosser;
                 this.BarcodeReader = BarcodeReader;
                 this.Biometric = Biometric;
                 this.Dk = Dk;
+                this.Lights = Lights;
+                this.Auxiliaries = Auxiliaries;
+                this.VendorApplication = VendorApplication;
             }
 
             /// <summary>
@@ -131,13 +133,6 @@ namespace XFS4IoT.Common.Completions
             public Printer.CapabilitiesClass Printer { get; init; }
 
             /// <summary>
-            /// Capability information for XFS4IoT services implementing the Sensors and Indicators interface. This will be
-            /// omitted if the Sensors and Indicators interface is not supported.
-            /// </summary>
-            [DataMember(Name = "SensorsAndIndicators")]
-            public SensorsAndIndicators.CapabilitiesClass SensorsAndIndicators { get; init; }
-
-            /// <summary>
             /// Capability information for XFS4IoT services implementing the CardEmbosser interface. This will be omitted if
             /// the CardEmbosser interface is not supported.
             /// </summary>
@@ -164,6 +159,27 @@ namespace XFS4IoT.Common.Completions
             /// </summary>
             [DataMember(Name = "dk")]
             public DK.CapabilitiesClass Dk { get; init; }
+
+            /// <summary>
+            /// Capability information for XFS4IoT services implementing the Lights interface. This will be omitted if the 
+            /// Lights interface is not supported.
+            /// </summary>
+            [DataMember(Name = "lights")]
+            public Dictionary<string, Lights.LightCapabilitiesClass> Lights { get; init; }
+
+            /// <summary>
+            /// Capability information for XFS4IoT services implementing the Auxiliaries interface. This will be omitted if the
+            /// Auxiliaries interface is not supported.
+            /// </summary>
+            [DataMember(Name = "auxiliaries")]
+            public Auxiliaries.CapabilitiesClass Auxiliaries { get; init; }
+
+            /// <summary>
+            /// Capability information for XFS4IoT services implementing the VendorApplication interface. This will be omitted if 
+            /// the Vendor Application interface is not supported.
+            /// </summary>
+            [DataMember(Name = "vendorApplication")]
+            public VendorApplication.CapabilitiesClass VendorApplication { get; init; }
 
         }
     }

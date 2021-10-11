@@ -27,9 +27,11 @@ namespace XFS4IoT.PinPad.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ErrorCodeEnum? ErrorCode = null, string CustomerData = null, string XorData = null, int? Padding = null, FormatEnum? Format = null, string Key = null, string SecondEncKey = null, PinBlockAttributesClass PinBlockAttributes = null)
+            public PayloadData(int Timeout, Common.CompletionCodeEnumEnum? CompletionCode = null, string ErrorDescription = null, ErrorCodeEnum? ErrorCode = null, string CustomerData = null, string XorData = null, int? Padding = null, FormatEnum? Format = null, string Key = null, string SecondEncKey = null, PinBlockAttributesClass PinBlockAttributes = null)
                 : base(Timeout)
             {
+                this.CompletionCode = CompletionCode;
+                this.ErrorDescription = ErrorDescription;
                 this.ErrorCode = ErrorCode;
                 this.CustomerData = CustomerData;
                 this.XorData = XorData;
@@ -39,6 +41,20 @@ namespace XFS4IoT.PinPad.Commands
                 this.SecondEncKey = SecondEncKey;
                 this.PinBlockAttributes = PinBlockAttributes;
             }
+
+            /// <summary>
+            /// The [completion code](#api.generalinformation.commandsequence.completioncodes). If the value is
+            /// *commandErrorCode*, the *errorCode* property contains the command specific completion error code.
+            /// </summary>
+            [DataMember(Name = "completionCode")]
+            public Common.CompletionCodeEnumEnum? CompletionCode { get; init; }
+
+            /// <summary>
+            /// If included, this contains additional vendor dependent information to assist with problem resolution.
+            /// 
+            /// </summary>
+            [DataMember(Name = "errorDescription")]
+            public string ErrorDescription { get; init; }
 
             public enum ErrorCodeEnum
             {
@@ -75,6 +91,7 @@ namespace XFS4IoT.PinPad.Commands
             /// including the check digit), and the CCS (8 digits).
             /// </summary>
             [DataMember(Name = "customerData")]
+            [DataTypes(Pattern = "^[0-9a-fA-F]{2,}$")]
             public string CustomerData { get; init; }
 
             /// <summary>
@@ -86,6 +103,7 @@ namespace XFS4IoT.PinPad.Commands
             /// no XOR-operation will be performed. If the formatted PIN is not encrypted twice (i.e. if the [secondEncKey](#pinpad.getpinblock.command.properties.secondenckey) property is omitted) this parameter is ignored.
             /// </summary>
             [DataMember(Name = "xorData")]
+            [DataTypes(Pattern = "^[0-9a-fA-F]{2,}$")]
             public string XorData { get; init; }
 
             /// <summary>

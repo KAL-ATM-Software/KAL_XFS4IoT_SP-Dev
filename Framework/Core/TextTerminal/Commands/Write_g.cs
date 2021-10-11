@@ -37,7 +37,6 @@ namespace XFS4IoT.TextTerminal.Commands
                 this.Text = Text;
             }
 
-
             [DataMember(Name = "mode")]
             public ModesEnum? Mode { get; init; }
 

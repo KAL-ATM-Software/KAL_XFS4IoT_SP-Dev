@@ -59,9 +59,8 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CurrencyAmounts">Currency and amounts to denominate</param>
         /// <param name="CashUnits">Cash units to go through</param>
         /// <param name="MaxDispensableItems">Maximum number of items can be dispensed to the stacker.</param>
-        /// <param name="Logger"></param>
-        /// <returns></returns>
-        public abstract Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems, ILogger Logger);
+        /// <returns>Calculated denomination matching the requirements</returns>
+        public abstract Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems );
 
         /// <summary>
         /// Specifies whether the mix type is an algorithm or a house mix table

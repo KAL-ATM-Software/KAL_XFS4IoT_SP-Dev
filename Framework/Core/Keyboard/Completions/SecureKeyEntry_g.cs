@@ -74,7 +74,6 @@ namespace XFS4IoT.Keyboard.Completions
             [DataMember(Name = "digits")]
             public int? Digits { get; init; }
 
-
             [DataMember(Name = "completion")]
             public EntryCompletionEnum? Completion { get; init; }
 

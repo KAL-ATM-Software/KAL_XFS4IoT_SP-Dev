@@ -45,14 +45,6 @@ namespace XFS4IoTFramework.KeyManagement
                                                                $"No derive key data specified.");
             }
 
-            if (KeyManagement.KeyManagementCapabilities.IDKey.HasFlag(KeyManagementCapabilitiesClass.IDKeyEnum.Import) &&
-                string.IsNullOrEmpty(deriveKey.Payload.Ident))
-            {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"No identification data provided.",
-                                                           DeriveKeyCompletion.PayloadData.ErrorCodeEnum.AccessDenied);
-
-            }
             KeyDetail keyGenKeyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.KeyGenKey);
             if (keyGenKeyDetail is null)
             {
@@ -133,8 +125,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                      deriveKey.Payload.StartValueKey,
                                                                      ivKeySlot,
                                                                      (byte)deriveKey.Payload.Padding,
-                                                                     Convert.FromBase64String(deriveKey.Payload.InputData).ToList(),
-                                                                     deriveKey.Payload.Ident is not null && deriveKey.Payload.Ident.Length > 0 ? Convert.FromBase64String(deriveKey.Payload.Ident).ToList() : null), 
+                                                                     Convert.FromBase64String(deriveKey.Payload.InputData).ToList()), 
                                                 cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.DeriveKey() -> {result.CompletionCode}, {result.ErrorCode}");

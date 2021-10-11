@@ -71,7 +71,7 @@ namespace XFS4IoT.KeyManagement.Completions
             public RSASignatureAlgorithmEnum? RsaSignatureAlgorithm { get; init; }
 
             /// <summary>
-            /// Specifies the Base64 encoded RSA signature of the data item exported. An empty sting can be returned when key signature are not supported. 
+            /// Specifies the RSA signature of the data item exported formatted in base64. An empty sting can be returned when key signature are not supported. 
             /// </summary>
             [DataMember(Name = "signature")]
             public string Signature { get; init; }
