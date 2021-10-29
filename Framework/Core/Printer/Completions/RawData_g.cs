@@ -64,6 +64,7 @@ namespace XFS4IoT.Printer.Completions
 
             /// <summary>
             /// BASE64 encoded device dependent data received from the device.
+            /// <example>UmF3RGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "data")]
             public string Data { get; init; }

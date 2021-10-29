@@ -78,6 +78,11 @@ jobs:
       run: |
         msbuild .\Utilities\EndToEndSecurity\EndToEndSecurity.sln /p:"Configuration=Release;Platform=x86;Version=${{ github.event.inputs.version }}"
 
+    - name: Create NuGet Package
+      run: |
+        cd .\Utilities\EndToEndSecurity\EndToEndSecurity\
+        nuget pack .\package\package.nuspec -Version ${{ github.event.inputs.version }}
+
     - name: Upload Nuget Package
       run: |
         gh release upload "v${{ github.event.inputs.version }}" .\Utilities\EndToEndSecurity\EndToEndSecurity\KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd.${{ github.event.inputs.version }}.nupkg

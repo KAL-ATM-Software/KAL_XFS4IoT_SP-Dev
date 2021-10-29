@@ -43,14 +43,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// "invalidCashUnit": The cash unit type specified is invalid.
-            /// 
-            /// "cashInActive": A cash-in transaction is active.
-            /// 
-            /// "exchangeActive": The device is in the exchange state.
-            /// 
-            /// "deviceLockFailure": The device and/or the cash units specified could not be locked/unlocked. (e.g. the lock action could not be 
-            /// performed because the cash unit specified to be locked had been removed).
+            /// * ```invalidCashUnit``` - The cash unit type specified is invalid.
+            /// * ```cashInActive``` - A cash-in transaction is active.
+            /// * ```exchangeActive``` - The device is in the exchange state.
+            /// * ```deviceLockFailure``` - The device and/or the cash units specified could not be locked/unlocked, 
+            /// e.g., the lock action could not be performed because the cash unit specified to be locked had been 
+            /// removed.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

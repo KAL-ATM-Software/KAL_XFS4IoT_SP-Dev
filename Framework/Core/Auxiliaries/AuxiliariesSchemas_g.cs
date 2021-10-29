@@ -14,821 +14,263 @@ using System.Runtime.Serialization;
 namespace XFS4IoT.Auxiliaries
 {
 
-    [DataContract]
-    public sealed class OperatorSwitchStateClass
+    public enum OperatorSwitchStateEnum
     {
-        public OperatorSwitchStateClass(OperatorSwitchStateEnum? OperatorSwitchState = null)
-        {
-            this.OperatorSwitchState = OperatorSwitchState;
-        }
-
-        public enum OperatorSwitchStateEnum
-        {
-            NotAvailable,
-            Run,
-            Maintenance,
-            Supervisor
-        }
-
-        /// <summary>
-        /// Specifies the state of the Operator switch.
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```run``` - The switch is in run mode.
-        /// * ```maintenance``` - The switch is in maintenance mode.
-        /// * ```supervisor``` - TThe switch is in supervisor mode.
-        /// </summary>
-        [DataMember(Name = "operatorSwitchState")]
-        public OperatorSwitchStateEnum? OperatorSwitchState { get; init; }
-
+        NotAvailable,
+        Run,
+        Maintenance,
+        Supervisor
     }
 
 
-    [DataContract]
-    public sealed class TamperSensorStateClass
+    public enum TamperSensorStateEnum
     {
-        public TamperSensorStateClass(TamperSensorStateEnum? TamperSensorState = null)
-        {
-            this.TamperSensorState = TamperSensorState;
-        }
-
-        public enum TamperSensorStateEnum
-        {
-            NotAvailable,
-            On,
-            Off
-        }
-
-        /// <summary>
-        /// Specifies the state of the Tamper sensor.
-        /// 
-        /// * ```notAvailable``` - The tamper sensor is not available.
-        /// * ```off``` - There is no indication of a tampering attempt.
-        /// * ```on``` - There has been a tampering attempt.
-        /// </summary>
-        [DataMember(Name = "tamperSensorState")]
-        public TamperSensorStateEnum? TamperSensorState { get; init; }
-
+        NotAvailable,
+        On,
+        Off
     }
 
 
-    [DataContract]
-    public sealed class IntTamperSensorStateClass
+    public enum IntTamperSensorStateEnum
     {
-        public IntTamperSensorStateClass(IntTamperSensorStateEnum? IntTamperSensorState = null)
-        {
-            this.IntTamperSensorState = IntTamperSensorState;
-        }
-
-        public enum IntTamperSensorStateEnum
-        {
-            NotAvailable,
-            On,
-            Off
-        }
-
-        /// <summary>
-        /// Specifies the state of the Internal Tamper Sensor for the internal alarm. This sensor indicates whether the internal alarm has been tampered with 
-        /// (such as a burglar attempt). Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The internal tamper sensor is not available.
-        /// * ```off``` - There is no indication of a tampering attempt.
-        /// * ```on``` - There has been a tampering attempt.
-        /// </summary>
-        [DataMember(Name = "intTamperSensorState")]
-        public IntTamperSensorStateEnum? IntTamperSensorState { get; init; }
-
+        NotAvailable,
+        On,
+        Off
     }
 
 
-    [DataContract]
-    public sealed class SeismicSensorStateClass
+    public enum SeismicSensorStateEnum
     {
-        public SeismicSensorStateClass(SeismicSensorStateEnum? SeismicSensorState = null)
-        {
-            this.SeismicSensorState = SeismicSensorState;
-        }
-
-        public enum SeismicSensorStateEnum
-        {
-            NotAvailable,
-            On,
-            Off
-        }
-
-        /// <summary>
-        /// Specifies the state of the Seismic Sensor. This sensor indicates whether the terminal has been shaken 
-        /// (e.g. burglar attempt or seismic activity). Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status sensor is not available.
-        /// * ```off``` - TThe seismic activity has not been high enough to trigger the sensor.
-        /// * ```on``` - The seismic or other activity has triggered the sensor.
-        /// </summary>
-        [DataMember(Name = "seismicSensorState")]
-        public SeismicSensorStateEnum? SeismicSensorState { get; init; }
-
+        NotAvailable,
+        On,
+        Off
     }
 
 
-    [DataContract]
-    public sealed class HeatSensorStateClass
+    public enum HeatSensorStateEnum
     {
-        public HeatSensorStateClass(HeatSensorStateEnum? HeatSensorState = null)
-        {
-            this.HeatSensorState = HeatSensorState;
-        }
-
-        public enum HeatSensorStateEnum
-        {
-            NotAvailable,
-            On,
-            Off
-        }
-
-        /// <summary>
-        /// Specifies the state of the Heat Sensor. This sensor is triggered by excessive heat (fire) near 
-        /// the terminal. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The heat has not been high enough to trigger the sensor.
-        /// * ```on``` - The heat has been high enough to trigger the sensor.
-        /// </summary>
-        [DataMember(Name = "heatSensorState")]
-        public HeatSensorStateEnum? HeatSensorState { get; init; }
-
+        NotAvailable,
+        On,
+        Off
     }
 
 
-    [DataContract]
-    public sealed class ProximitySensorStateClass
+    public enum ProximitySensorStateEnum
     {
-        public ProximitySensorStateClass(ProximitySensorStateEnum? ProximitySensorState = null)
-        {
-            this.ProximitySensorState = ProximitySensorState;
-        }
-
-        public enum ProximitySensorStateEnum
-        {
-            NotAvailable,
-            Present,
-            NotPresent
-        }
-
-        /// <summary>
-        /// Specifies the state of the Proximity Sensor. This sensor is triggered by movements around the
-        /// terminal. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```present``` - The sensor is showing that there is someone present at the terminal.
-        /// * ```notPresent``` - The sensor can not sense any people around the terminal.
-        /// </summary>
-        [DataMember(Name = "proximitySensorState")]
-        public ProximitySensorStateEnum? ProximitySensorState { get; init; }
-
+        NotAvailable,
+        Present,
+        NotPresent
     }
 
 
-    [DataContract]
-    public sealed class AmbientLightSensorStateClass
+    public enum AmbientLightSensorStateEnum
     {
-        public AmbientLightSensorStateClass(AmbientLightSensorStateEnum? AmbientLightSensorState = null)
-        {
-            this.AmbientLightSensorState = AmbientLightSensorState;
-        }
-
-        public enum AmbientLightSensorStateEnum
-        {
-            NotAvailable,
-            VeryDark,
-            Dark,
-            MediumLight,
-            Light,
-            VeryLight
-        }
-
-        /// <summary>
-        /// Specifies the state of the Ambient Light Sensor. This sensor indicates the level of ambient 
-        /// light around the terminal. Interpretation of this value is vendor-specific and therefore it 
-        /// is not guaranteed to report a consistent actual ambient light level across different vendor 
-        /// hardware. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```veryDark``` - The level of light is very dark.
-        /// * ```dark``` - The level of light is dark.
-        /// * ```mediumLight``` - The level of light is medium light.
-        /// * ```light``` - The level of light is light.
-        /// * ```veryLight``` - The level of light is very light.
-        /// </summary>
-        [DataMember(Name = "ambientLightSensorState")]
-        public AmbientLightSensorStateEnum? AmbientLightSensorState { get; init; }
-
+        NotAvailable,
+        VeryDark,
+        Dark,
+        MediumLight,
+        Light,
+        VeryLight
     }
 
 
-    [DataContract]
-    public sealed class EnhancedAudioSensorStateClass
+    public enum EnhancedAudioSensorStateEnum
     {
-        public EnhancedAudioSensorStateClass(EnhancedAudioSensorStateEnum? EnhancedAudioSensorState = null)
-        {
-            this.EnhancedAudioSensorState = EnhancedAudioSensorState;
-        }
-
-        public enum EnhancedAudioSensorStateEnum
-        {
-            NotAvailable,
-            Present,
-            NotPresent
-        }
-
-        /// <summary>
-        /// Specifies the presence or absence of a consumer’s headphone connected to the Audio Jack. Specified 
-        /// as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```present``` - There is a headset connected. 
-        /// * ```notPresent``` - There is no headset connected.
-        /// </summary>
-        [DataMember(Name = "enhancedAudioSensorState")]
-        public EnhancedAudioSensorStateEnum? EnhancedAudioSensorState { get; init; }
-
+        NotAvailable,
+        Present,
+        NotPresent
     }
 
 
-    [DataContract]
-    public sealed class BootSwitchSensorStateClass
+    public enum BootSwitchSensorStateEnum
     {
-        public BootSwitchSensorStateClass(BootSwitchSensorStateEnum? BootSwitchSensorState = null)
-        {
-            this.BootSwitchSensorState = BootSwitchSensorState;
-        }
-
-        public enum BootSwitchSensorStateEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the state of the Boot Switch Sensor. This sensor is triggered whenever the terminal is about to be rebooted or 
-        /// shutdown due to a delayed effect switch. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The sensor has not been triggered.
-        /// * ```on``` - The terminal is about to be rebooted or shutdown.
-        /// </summary>
-        [DataMember(Name = "bootSwitchSensorState")]
-        public BootSwitchSensorStateEnum? BootSwitchSensorState { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
-    [DataContract]
-    public sealed class DisplaySensorStateClass
+    public enum DisplaySensorStateEnum
     {
-        public DisplaySensorStateClass(DisplaySensorStateEnum? DisplaySensorState = null)
-        {
-            this.DisplaySensorState = DisplaySensorState;
-        }
-
-        public enum DisplaySensorStateEnum
-        {
-            NotAvailable,
-            Off,
-            On,
-            DisplayError
-        }
-
-        /// <summary>
-        /// Specifies the state of the Consumer Display. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Consumer Display is switched off.    
-        /// * ```on``` - The Consumer Display is in a good state and is turned on.   
-        /// * ```displayError``` - The Consumer Display is in an error state.
-        /// </summary>
-        [DataMember(Name = "displaySensorState")]
-        public DisplaySensorStateEnum? DisplaySensorState { get; init; }
-
+        NotAvailable,
+        Off,
+        On,
+        DisplayError
     }
 
 
-    [DataContract]
-    public sealed class OperatorCallButtonSensorStateClass
+    public enum OperatorCallButtonSensorStateEnum
     {
-        public OperatorCallButtonSensorStateClass(OperatorCallButtonSensorStateEnum? OperatorCallButtonSensorState = null)
-        {
-            this.OperatorCallButtonSensorState = OperatorCallButtonSensorState;
-        }
-
-        public enum OperatorCallButtonSensorStateEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the state of the Operator Call Button as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Operator Call Button is released (not pressed).
-        /// * ```on``` - The Operator Call Button is being pressed.
-        /// </summary>
-        [DataMember(Name = "operatorCallButtonSensorState")]
-        public OperatorCallButtonSensorStateEnum? OperatorCallButtonSensorState { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
-    [DataContract]
-    public sealed class HandsetSensorStateClass
+    public enum HandsetSensorStateEnum
     {
-        public HandsetSensorStateClass(HandsetSensorStateEnum? HandsetSensorState = null)
-        {
-            this.HandsetSensorState = HandsetSensorState;
-        }
-
-        public enum HandsetSensorStateEnum
-        {
-            NotAvailable,
-            OnTheHook,
-            OffTheHook
-        }
-
-        /// <summary>
-        /// Specifies the state of the Handset, which is a device similar to a telephone 
-        /// receiver. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```onTheHook``` - The Handset is on the hook.
-        /// * ```offTheHook``` - The Handset is off the hook.
-        /// </summary>
-        [DataMember(Name = "handsetSensorState")]
-        public HandsetSensorStateEnum? HandsetSensorState { get; init; }
-
+        NotAvailable,
+        OnTheHook,
+        OffTheHook
     }
 
 
-    [DataContract]
-    public sealed class HeadsetMicrophoneSensorStateClass
+    public enum HeadsetMicrophoneSensorStateEnum
     {
-        public HeadsetMicrophoneSensorStateClass(HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensorState = null)
-        {
-            this.HeadsetMicrophoneSensorState = HeadsetMicrophoneSensorState;
-        }
-
-        public enum HeadsetMicrophoneSensorStateEnum
-        {
-            NotAvailable,
-            Present,
-            NotPresent
-        }
-
-        /// <summary>
-        /// Specifies the presence or absence of a consumer’s headset microphone connected to 
-        /// the Microphone Jack. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```present``` - There is a headset microphone connected.
-        /// * ```notPresent``` - There is no headset microphone connected.
-        /// </summary>
-        [DataMember(Name = "headsetMicrophoneSensorState")]
-        public HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensorState { get; init; }
-
+        NotAvailable,
+        Present,
+        NotPresent
     }
 
 
-    [DataContract]
-    public sealed class FasciaMicrophoneSensorStateClass
+    public enum FasciaMicrophoneSensorStateEnum
     {
-        public FasciaMicrophoneSensorStateClass(FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensorState = null)
-        {
-            this.FasciaMicrophoneSensorState = FasciaMicrophoneSensorState;
-        }
-
-        public enum FasciaMicrophoneSensorStateEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the state of the fascia microphone as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Fascia Microphone is turned off.
-        /// * ```on``` - The Fascia Microphone is turned on.
-        /// </summary>
-        [DataMember(Name = "fasciaMicrophoneSensorState")]
-        public FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensorState { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
-    [DataContract]
-    public sealed class SafeDoorStateClass
+    public enum SafeDoorStateEnum
     {
-        public SafeDoorStateClass(SafeDoorStateEnum? SafeDoorState = null)
-        {
-            this.SafeDoorState = SafeDoorState;
-        }
-
-        public enum SafeDoorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Bolted,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the state of the Safe Doors. Safe Doors are doors that open up for secure 
-        /// hardware, such as the note dispenser, the security device, etc. Specified as one of the 
-        /// following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - The Safe Doors are closed.
-        /// * ```open``` - At least one of the Safe Doors is open.
-        /// * ```locked``` - All Safe Doors are closed and locked.
-        /// * ```bolted``` - All Safe Doors are closed, locked and bolted.
-        /// * ```tampered``` - At least one of the Safe Doors has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "safeDoorState")]
-        public SafeDoorStateEnum? SafeDoorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class VandalShieldStateClass
+    public enum VandalShieldStateEnum
     {
-        public VandalShieldStateClass(VandalShieldStateEnum? VandalShieldState = null)
-        {
-            this.VandalShieldState = VandalShieldState;
-        }
-
-        public enum VandalShieldStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Service,
-            Keyboard,
-            Ajar,
-            Jammed,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the state of the Vandal Shield. The Vandal Shield is a door that opens up for 
-        /// consumer access to the terminal. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - The Vandal Shield is closed.
-        /// * ```open``` - The Vandal Shield is open.
-        /// * ```locked``` - The Vandal Shield is closed and locked.
-        /// * ```service``` - The Vandal Shield is in service position.
-        /// * ```keyboard``` - The Vandal Shield position permits access to the keyboard.
-        /// * ```ajar``` - The Vandal Shield is ajar.
-        /// * ```jammed``` - The Vandal Shield is jammed.
-        /// * ```tampered``` - The Vandal Shield has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "vandalShieldState")]
-        public VandalShieldStateEnum? VandalShieldState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Service,
+        Keyboard,
+        Ajar,
+        Jammed,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class CabinetFrontDoorStateClass
+    public enum CabinetFrontDoorStateEnum
     {
-        public CabinetFrontDoorStateClass(CabinetFrontDoorStateEnum? CabinetFrontDoorState = null)
-        {
-            this.CabinetFrontDoorState = CabinetFrontDoorState;
-        }
-
-        public enum CabinetFrontDoorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Bolted,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the overall state of the Front Cabinet Doors. The front is defined as the side 
-        /// facing the customer/consumer. Cabinet Doors are doors that open up for consumables, and 
-        /// hardware that does not have to be in a secure place. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - All front Cabinet Doors are closed.
-        /// * ```open``` - At least one of the front Cabinet Doors is open.
-        /// * ```locked``` - All front Cabinet Doors are closed and locked.
-        /// * ```bolted``` - All front Cabinet Doors are closed, locked and bolted.
-        /// * ```tampered``` - At least one of the front Cabinet Doors has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "cabinetFrontDoorState")]
-        public CabinetFrontDoorStateEnum? CabinetFrontDoorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class CabinetRearDoorStateClass
+    public enum CabinetRearDoorStateEnum
     {
-        public CabinetRearDoorStateClass(CabinetRearDoorStateEnum? CabinetRearDoorState = null)
-        {
-            this.CabinetRearDoorState = CabinetRearDoorState;
-        }
-
-        public enum CabinetRearDoorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Bolted,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the overall state of the Rear Cabinet Doors. The front is defined as the side 
-        /// opposite the side facing the customer/consumer. Cabinet Doors are doors that open up for 
-        /// consumables, and hardware that does not have to be in a secure place. Specified as one 
-        /// of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - All rear Cabinet Doors are closed.
-        /// * ```open``` - At least one of the rear Cabinet Doors is open.
-        /// * ```locked``` - All rear Cabinet Doors are closed and locked.
-        /// * ```bolted``` - All rear Cabinet Doors are closed, locked and bolted.
-        /// * ```tampered``` - At least one of the rear Cabinet Doors has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "cabinetRearDoorState")]
-        public CabinetRearDoorStateEnum? CabinetRearDoorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class CabinetLeftDoorStateClass
+    public enum CabinetLeftDoorStateEnum
     {
-        public CabinetLeftDoorStateClass(CabinetLeftDoorStateEnum? CabinetLeftDoorState = null)
-        {
-            this.CabinetLeftDoorState = CabinetLeftDoorState;
-        }
-
-        public enum CabinetLeftDoorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Bolted,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the overall state of the Left Cabinet Doors. The left is defined as the side to 
-        /// the left as seen by the customer/consumer. Cabinet Doors are doors that open up for consumables, 
-        /// and hardware that does not have to be in a secure place. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - All left Cabinet Doors are closed.
-        /// * ```open``` - At least one of the left Cabinet Doors is open.
-        /// * ```locked``` - All left Cabinet Doors are closed and locked.
-        /// * ```bolted``` - All left Cabinet Doors are closed, locked and bolted.
-        /// * ```tampered``` - At least one of the left Cabinet Doors has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "cabinetLeftDoorState")]
-        public CabinetLeftDoorStateEnum? CabinetLeftDoorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class CabinetRightDoorStateClass
+    public enum CabinetRightDoorStateEnum
     {
-        public CabinetRightDoorStateClass(CabinetRightDoorStateEnum? CabinetRightDoorState = null)
-        {
-            this.CabinetRightDoorState = CabinetRightDoorState;
-        }
-
-        public enum CabinetRightDoorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open,
-            Locked,
-            Bolted,
-            Tampered
-        }
-
-        /// <summary>
-        /// Specifies the overall state of the Right Cabinet Doors. The right is defined as the side to 
-        /// the right as seen by the customer/consumer. Cabinet Doors are doors that open up for consumables, 
-        /// and hardware that does not have to be in a secure place. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - All right Cabinet Doors are closed.
-        /// * ```open``` - At least one of the right Cabinet Doors is open.
-        /// * ```locked``` - All right Cabinet Doors are closed and locked.
-        /// * ```bolted``` - All right Cabinet Doors are closed, locked and bolted.
-        /// * ```tampered``` - At least one of the right Cabinet Doors has potentially been tampered with.
-        /// </summary>
-        [DataMember(Name = "cabinetRightDoorState")]
-        public CabinetRightDoorStateEnum? CabinetRightDoorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
     }
 
 
-    [DataContract]
-    public sealed class OpenClosedIndicatorStateClass
+    public enum OpenClosedIndicatorStateEnum
     {
-        public OpenClosedIndicatorStateClass(OpenClosedIndicatorStateEnum? OpenClosedIndicatorState = null)
-        {
-            this.OpenClosedIndicatorState = OpenClosedIndicatorState;
-        }
-
-        public enum OpenClosedIndicatorStateEnum
-        {
-            NotAvailable,
-            Closed,
-            Open
-        }
-
-        /// <summary>
-        /// Specifies the state of the Open/Closed Indicator as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```closed``` - The terminal is closed for a consumer.
-        /// * ```open``` - The terminal is open to be used by a consumer.
-        /// </summary>
-        [DataMember(Name = "openClosedIndicatorState")]
-        public OpenClosedIndicatorStateEnum? OpenClosedIndicatorState { get; init; }
-
+        NotAvailable,
+        Closed,
+        Open
     }
 
 
     [DataContract]
     public sealed class AudioStateClass
     {
-        public AudioStateClass(AudioStateClassClass AudioState = null)
+        public AudioStateClass(bool? NotAvailable = null, bool? Off = null, bool? Keypress = null, bool? Exclamation = null, bool? Warning = null, bool? Error = null, bool? Critical = null, bool? Continuous = null)
         {
-            this.AudioState = AudioState;
+            this.NotAvailable = NotAvailable;
+            this.Off = Off;
+            this.Keypress = Keypress;
+            this.Exclamation = Exclamation;
+            this.Warning = Warning;
+            this.Error = Error;
+            this.Critical = Critical;
+            this.Continuous = Continuous;
         }
 
-        [DataContract]
-        public sealed class AudioStateClassClass
-        {
-            public AudioStateClassClass(bool? NotAvailable = null, bool? Off = null, bool? Keypress = null, bool? Exclamation = null, bool? Warning = null, bool? Error = null, bool? Critical = null, bool? Continuous = null)
-            {
-                this.NotAvailable = NotAvailable;
-                this.Off = Off;
-                this.Keypress = Keypress;
-                this.Exclamation = Exclamation;
-                this.Warning = Warning;
-                this.Error = Error;
-                this.Critical = Critical;
-                this.Continuous = Continuous;
-            }
+        [DataMember(Name = "notAvailable")]
+        public bool? NotAvailable { get; init; }
 
-            [DataMember(Name = "notAvailable")]
-            public bool? NotAvailable { get; init; }
+        [DataMember(Name = "off")]
+        public bool? Off { get; init; }
 
-            [DataMember(Name = "off")]
-            public bool? Off { get; init; }
+        [DataMember(Name = "keypress")]
+        public bool? Keypress { get; init; }
 
-            [DataMember(Name = "keypress")]
-            public bool? Keypress { get; init; }
+        [DataMember(Name = "exclamation")]
+        public bool? Exclamation { get; init; }
 
-            [DataMember(Name = "exclamation")]
-            public bool? Exclamation { get; init; }
+        [DataMember(Name = "warning")]
+        public bool? Warning { get; init; }
 
-            [DataMember(Name = "warning")]
-            public bool? Warning { get; init; }
+        [DataMember(Name = "error")]
+        public bool? Error { get; init; }
 
-            [DataMember(Name = "error")]
-            public bool? Error { get; init; }
+        [DataMember(Name = "critical")]
+        public bool? Critical { get; init; }
 
-            [DataMember(Name = "critical")]
-            public bool? Critical { get; init; }
-
-            [DataMember(Name = "continuous")]
-            public bool? Continuous { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies the state of the Audio Indicator as either one or a combination of the following 
-        /// values. Interpretation of this value is vendor-specific and therefore it is not possible to 
-        /// guarantee a consistent actual sound pattern across different vendor hardware:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Audio Indicator is turned off.
-        /// * ```keypress``` - The Audio Indicator sounds a key click signal.
-        /// * ```exclamation``` - The Audio Indicator sounds an exclamation signal.
-        /// * ```warning``` - The Audio Indicator sounds a warning signal.
-        /// * ```error``` - The Audio Indicator sounds an error signal.
-        /// * ```critical``` - The Audio Indicator sounds a critical signal.
-        /// * ```continuous``` - The Audio Indicator is turned on continuously.
-        /// </summary>
-        [DataMember(Name = "audioState")]
-        public AudioStateClassClass AudioState { get; init; }
+        [DataMember(Name = "continuous")]
+        public bool? Continuous { get; init; }
 
     }
 
 
-    [DataContract]
-    public sealed class HeatingStateClass
+    public enum HeatingStateEnum
     {
-        public HeatingStateClass(HeatingEnum? Heating = null)
-        {
-            this.Heating = Heating;
-        }
-
-        public enum HeatingEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the state of the internal heating as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The internal heating is turned off.
-        /// * ```on``` - The internal heating is turned on.
-        /// </summary>
-        [DataMember(Name = "heating")]
-        public HeatingEnum? Heating { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
-    [DataContract]
-    public sealed class ConsumerDisplayBacklightStateClass
+    public enum ConsumerDisplayBacklightStateEnum
     {
-        public ConsumerDisplayBacklightStateClass(ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight = null)
-        {
-            this.ConsumerDisplayBacklight = ConsumerDisplayBacklight;
-        }
-
-        public enum ConsumerDisplayBacklightEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the Consumer Display Backlight as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Consumer Display Backlight is turned off.
-        /// * ```on``` - Consumer Display Backlight is turned on.
-        /// </summary>
-        [DataMember(Name = "consumerDisplayBacklight")]
-        public ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
-    [DataContract]
-    public sealed class SignageDisplayStateClass
+    public enum SignageDisplayStateEnum
     {
-        public SignageDisplayStateClass(SignageDisplayEnum? SignageDisplay = null)
-        {
-            this.SignageDisplay = SignageDisplay;
-        }
-
-        public enum SignageDisplayEnum
-        {
-            NotAvailable,
-            Off,
-            On
-        }
-
-        /// <summary>
-        /// Specifies the state of the Signage Display. The Signage Display is a lighted banner or marquee 
-        /// that can be used to display information or an advertisement. Any dynamic data displayed must 
-        /// be loaded by a means external to the Service Provider. Specified as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Signage Display is turned off.
-        /// * ```on``` - The Signage Display is turned on.
-        /// </summary>
-        [DataMember(Name = "signageDisplay")]
-        public SignageDisplayEnum? SignageDisplay { get; init; }
-
+        NotAvailable,
+        Off,
+        On
     }
 
 
@@ -867,195 +309,62 @@ namespace XFS4IoT.Auxiliaries
     [DataContract]
     public sealed class UPSStateClass
     {
-        public UPSStateClass(UPSStateClassClass UPSState = null)
+        public UPSStateClass(bool? NotAvailable = null, bool? Low = null, bool? Engaged = null, bool? Powering = null, bool? Recovered = null)
         {
-            this.UPSState = UPSState;
+            this.NotAvailable = NotAvailable;
+            this.Low = Low;
+            this.Engaged = Engaged;
+            this.Powering = Powering;
+            this.Recovered = Recovered;
         }
 
-        [DataContract]
-        public sealed class UPSStateClassClass
-        {
-            public UPSStateClassClass(bool? NotAvailable = null, bool? Low = null, bool? Engaged = null, bool? Powering = null, bool? Recovered = null)
-            {
-                this.NotAvailable = NotAvailable;
-                this.Low = Low;
-                this.Engaged = Engaged;
-                this.Powering = Powering;
-                this.Recovered = Recovered;
-            }
+        [DataMember(Name = "notAvailable")]
+        public bool? NotAvailable { get; init; }
 
-            [DataMember(Name = "notAvailable")]
-            public bool? NotAvailable { get; init; }
+        [DataMember(Name = "low")]
+        public bool? Low { get; init; }
 
-            [DataMember(Name = "low")]
-            public bool? Low { get; init; }
+        [DataMember(Name = "engaged")]
+        public bool? Engaged { get; init; }
 
-            [DataMember(Name = "engaged")]
-            public bool? Engaged { get; init; }
+        [DataMember(Name = "powering")]
+        public bool? Powering { get; init; }
 
-            [DataMember(Name = "powering")]
-            public bool? Powering { get; init; }
-
-            [DataMember(Name = "recovered")]
-            public bool? Recovered { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies the state of the Uninterruptible Power Supply device as a combination of the 
-        /// following values:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```low``` - The charge level of the UPS is\tlow.
-        /// * ```engaged``` - TThe UPS is engaged.
-        /// * ```powering``` - The UPS is powering the system.
-        /// * ```recovered``` - The UPS was engaged when the main power went off.
-        /// </summary>
-        [DataMember(Name = "UPSState")]
-        public UPSStateClassClass UPSState { get; init; }
+        [DataMember(Name = "recovered")]
+        public bool? Recovered { get; init; }
 
     }
 
 
-    [DataContract]
-    public sealed class AudibleAlarmStateClass
+    public enum AudibleAlarmStateEnum
     {
-        public AudibleAlarmStateClass(AudibleAlarmEnum? AudibleAlarm = null)
-        {
-            this.AudibleAlarm = AudibleAlarm;
-        }
-
-        public enum AudibleAlarmEnum
-        {
-            NotAvailable,
-            On,
-            Off
-        }
-
-        /// <summary>
-        /// Species the state of the Audible Alarm device as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```off``` - The Alarm is turned off.
-        /// * ```on``` - The Alarm is turned on.
-        /// </summary>
-        [DataMember(Name = "audibleAlarm")]
-        public AudibleAlarmEnum? AudibleAlarm { get; init; }
-
+        NotAvailable,
+        On,
+        Off
     }
 
 
-    [DataContract]
-    public sealed class EnhancedAudioControlStateClass
+    public enum EnhancedAudioControlStateEnum
     {
-        public EnhancedAudioControlStateClass(EnhancedAudioControlStateEnum? EnhancedAudioControlState = null)
-        {
-            this.EnhancedAudioControlState = EnhancedAudioControlState;
-        }
-
-        public enum EnhancedAudioControlStateEnum
-        {
-            NotAvailable,
-            PublicAudioManual,
-            PublicAudioAuto,
-            PublicAudioSemiAuto,
-            PrivateAudioManual,
-            PrivateAudioAuto,
-            PrivateAudioSemiAuto
-        }
-
-        /// <summary>
-        /// Specifies the state of the Enhanced Audio Controller. The Enhanced Audio Controller controls 
-        /// how private and public audio are broadcast when the headset is inserted into/removed from the
-        /// audio jack and when the handset is off-hook/on-hook. In the following, Privacy Device is used 
-        /// to refer to either the headset or handset. The Enhanced Audio Controller state is specified 
-        /// as one of the following:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```publicAudioManual``` - The Enhanced Audio Controller is in manual mode and is in the 
-        /// public state (i.e. audio will be played through speakers). Activating a Privacy Device 
-        /// (headset connected/handset off-hook) will have no impact, i.e. Output will remain through 
-        /// the speakers &amp; no audio will be directed to the Privacy Device.
-        /// * ```publicAudioAuto``` - The Enhanced Audio Controller is in auto mode and is in the public 
-        /// state (i.e. audio will be played through speakers). When a Privacy Device is activated, the 
-        /// device will go to the private state.      
-        /// * ```publicAudioSemiAuto``` - The Enhanced Audio Controller is in semi-auto mode and is in 
-        /// the public state (i.e. audio will be played through speakers). When a Privacy Device is 
-        /// activated, the device will go to the private state.
-        /// * ```privateAudioManual``` - he Enhanced Audio Controller is in manual mode and is in the 
-        /// private state (i.e. audio will be played only through a connected Privacy Device). In private 
-        /// mode, no audio is transmitted through the speakers.
-        /// * ```privateAudioAuto``` - The Enhanced Audio Controller is in auto mode and is in the private 
-        /// state (i.e. audio will be played only through a connected Privacy Device). In private mode, no 
-        /// audio is transmitted through the speakers. When a Privacy Device is deactivated (headset 
-        /// disconnected/handset on-hook), the device will go to the public state. Where there is more 
-        /// than one Privacy Device, the device will go to the public state only when all Privacy Devices 
-        /// have been deactivated.
-        /// * ```privateAudioSemiAuto``` - The Enhanced Audio Controller is in semi-auto mode and is in 
-        /// the private state (i.e. audio will be played only through a connected Privacy Device). In 
-        /// private mode, no audio is transmitted through the speakers. When a Privacy Device is deactivated, 
-        /// the device will remain in the private state.
-        /// </summary>
-        [DataMember(Name = "enhancedAudioControlState")]
-        public EnhancedAudioControlStateEnum? EnhancedAudioControlState { get; init; }
-
+        NotAvailable,
+        PublicAudioManual,
+        PublicAudioAuto,
+        PublicAudioSemiAuto,
+        PrivateAudioManual,
+        PrivateAudioAuto,
+        PrivateAudioSemiAuto
     }
 
 
-    [DataContract]
-    public sealed class EnhancedMicrophoneControlStateClass
+    public enum EnhancedMicrophoneControlStateEnum
     {
-        public EnhancedMicrophoneControlStateClass(EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControlState = null)
-        {
-            this.EnhancedMicrophoneControlState = EnhancedMicrophoneControlState;
-        }
-
-        public enum EnhancedMicrophoneControlStateEnum
-        {
-            NotAvailable,
-            PublicAudioManual,
-            PublicAudioAuto,
-            PublicAudioSemiAuto,
-            PrivateAudioManual,
-            PrivateAudioAuto,
-            PrivateAudioSemiAuto
-        }
-
-        /// <summary>
-        /// Specifies the state of the Enhanced Microphone Controller. The Enhanced Microphone Controller controls 
-        /// how private and public audio input are transmitted when the headset is inserted into/removed from the 
-        /// audio jack and when the handset is off-hook/on-hook. In the following, Privacy Device is used to refer 
-        /// to either the headset or handset. The Enhanced Microphone Controller state is specified as one of the 
-        /// followings:
-        /// 
-        /// * ```notAvailable``` - The status is not available.
-        /// * ```publicAudioManual``` - The Enhanced Microphone Controller is in manual mode and is in the public 
-        /// state (i.e. the microphone in the fascia is active). Activating a Privacy Device (headset connected/handset 
-        /// off-hook) will have no impact, i.e. input will remain through the fascia microphone and any microphone 
-        /// associated with the Privacy Device will not be active
-        /// * ```publicAudioAuto``` - The Enhanced Microphone Controller is in auto mode and is in the public state 
-        /// (i.e. the microphone in the fascia is active). When a Privacy Device with a microphone is activated, the 
-        /// device will go to the private state. 
-        /// * ```publicAudioSemiAuto``` - The Enhanced Microphone Controller is in semi-auto mode and is in the public 
-        /// state (i.e. the microphone in the fascia is active). When a Privacy Device with a microphone is activated, 
-        /// the device will go to the private state.
-        /// * ```privateAudioManual``` - The Enhanced Microphone Controller is in manual mode and is in the private 
-        /// state (i.e. audio input will be via a microphone in the Privacy Device). In private mode, no audio input 
-        /// is transmitted through the fascia microphone. 
-        /// * ```privateAudioAuto``` - The Enhanced Microphone Controller is in auto mode and is in the private 
-        /// state (i.e. audio input will be via a microphone in the Privacy Device). In private mode, no audio input 
-        /// is transmitted through the fascia microphone. When a Privacy Device with a microphone is deactivated 
-        /// (headset disconnected/handset on-hook), the device will go to the public state. Where there is more than one 
-        /// Privacy Device with a microphone, the device will go to the public state only when all such Privacy Devices 
-        /// have been deactivated.  
-        /// * ```privateAudioSemiAuto``` - The Enhanced Microphone Controller is in semi-auto mode and is in the 
-        /// private state (i.e. audio input will be via a microphone in the Privacy Device). In private mode, no 
-        /// audio is transmitted through the fascia microphone. When a Privacy Device with a microphone is deactivated, 
-        /// the device will remain in the private state.
-        /// </summary>
-        [DataMember(Name = "enhancedMicrophoneControlState")]
-        public EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControlState { get; init; }
-
+        NotAvailable,
+        PublicAudioManual,
+        PublicAudioAuto,
+        PublicAudioSemiAuto,
+        PrivateAudioManual,
+        PrivateAudioAuto,
+        PrivateAudioSemiAuto
     }
 
 
@@ -1094,11 +403,11 @@ namespace XFS4IoT.Auxiliaries
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(OperatorSwitchStateClass OperatorSwitch = null, TamperSensorStateClass Tamper = null, IntTamperSensorStateClass IntTamperSensorState = null, SeismicSensorStateClass SeismicSensor = null, HeatSensorStateClass HeatSensor = null, ProximitySensorStateClass ProximitySensor = null, AmbientLightSensorStateClass AmbientLightSensor = null, EnhancedAudioSensorStateClass EnhancedAudioSensor = null, BootSwitchSensorStateClass BootSwitchSensor = null, DisplaySensorStateClass DisplaySensor = null, OperatorCallButtonSensorStateClass OperatorCallButtonSensor = null, HandsetSensorStateClass HandsetSensor = null, HeadsetMicrophoneSensorStateClass HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateClass FasciaMicrophoneSensor = null, SafeDoorStateClass SafeDoor = null, VandalShieldStateClass VandalShield = null, CabinetFrontDoorStateClass CabinetFrontDoor = null, CabinetRearDoorStateClass CabinetRearDoor = null, CabinetLeftDoorStateClass CabinetLeftDoor = null, CabinetRightDoorStateClass CabinetRightDoor = null, OpenClosedIndicatorStateClass OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateClass Heating = null, ConsumerDisplayBacklightStateClass ConsumerDisplayBacklight = null, SignageDisplayStateClass SignageDisplay = null, VolumeStateClass Volume = null, UPSStateClass UPS = null, AudibleAlarmStateClass AudibleAlarm = null, EnhancedAudioControlStateClass EnhancedAudioControl = null, EnhancedMicrophoneControlStateClass EnhancedMicrophoneControl = null, MicrophoneVolumeStateClass MicrophoneVolume = null)
+        public StatusClass(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, IntTamperSensorStateEnum? IntTamperSensor = null, SeismicSensorStateEnum? SeismicSensor = null, HeatSensorStateEnum? HeatSensor = null, ProximitySensorStateEnum? ProximitySensor = null, AmbientLightSensorStateEnum? AmbientLightSensor = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensor = null, BootSwitchSensorStateEnum? BootSwitchSensor = null, DisplaySensorStateEnum? DisplaySensor = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor = null, HandsetSensorStateEnum? HandsetSensor = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor = null, SafeDoorStateEnum? SafeDoor = null, VandalShieldStateEnum? VandalShield = null, CabinetFrontDoorStateEnum? CabinetFrontDoor = null, CabinetRearDoorStateEnum? CabinetRearDoor = null, CabinetLeftDoorStateEnum? CabinetLeftDoor = null, CabinetRightDoorStateEnum? CabinetRightDoor = null, OpenClosedIndicatorStateEnum? OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateEnum? Heating = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight = null, SignageDisplayStateEnum? SignageDisplay = null, VolumeStateClass Volume = null, UPSStateClass UPS = null, AudibleAlarmStateEnum? AudibleAlarm = null, EnhancedAudioControlStateEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl = null, MicrophoneVolumeStateClass MicrophoneVolume = null)
         {
             this.OperatorSwitch = OperatorSwitch;
-            this.Tamper = Tamper;
-            this.IntTamperSensorState = IntTamperSensorState;
+            this.TamperSensor = TamperSensor;
+            this.IntTamperSensor = IntTamperSensor;
             this.SeismicSensor = SeismicSensor;
             this.HeatSensor = HeatSensor;
             this.ProximitySensor = ProximitySensor;
@@ -1130,79 +439,79 @@ namespace XFS4IoT.Auxiliaries
         }
 
         [DataMember(Name = "operatorSwitch")]
-        public OperatorSwitchStateClass OperatorSwitch { get; init; }
+        public OperatorSwitchStateEnum? OperatorSwitch { get; init; }
 
-        [DataMember(Name = "tamper")]
-        public TamperSensorStateClass Tamper { get; init; }
+        [DataMember(Name = "tamperSensor")]
+        public TamperSensorStateEnum? TamperSensor { get; init; }
 
-        [DataMember(Name = "intTamperSensorState")]
-        public IntTamperSensorStateClass IntTamperSensorState { get; init; }
+        [DataMember(Name = "intTamperSensor")]
+        public IntTamperSensorStateEnum? IntTamperSensor { get; init; }
 
         [DataMember(Name = "seismicSensor")]
-        public SeismicSensorStateClass SeismicSensor { get; init; }
+        public SeismicSensorStateEnum? SeismicSensor { get; init; }
 
         [DataMember(Name = "heatSensor")]
-        public HeatSensorStateClass HeatSensor { get; init; }
+        public HeatSensorStateEnum? HeatSensor { get; init; }
 
         [DataMember(Name = "proximitySensor")]
-        public ProximitySensorStateClass ProximitySensor { get; init; }
+        public ProximitySensorStateEnum? ProximitySensor { get; init; }
 
         [DataMember(Name = "ambientLightSensor")]
-        public AmbientLightSensorStateClass AmbientLightSensor { get; init; }
+        public AmbientLightSensorStateEnum? AmbientLightSensor { get; init; }
 
         [DataMember(Name = "enhancedAudioSensor")]
-        public EnhancedAudioSensorStateClass EnhancedAudioSensor { get; init; }
+        public EnhancedAudioSensorStateEnum? EnhancedAudioSensor { get; init; }
 
         [DataMember(Name = "bootSwitchSensor")]
-        public BootSwitchSensorStateClass BootSwitchSensor { get; init; }
+        public BootSwitchSensorStateEnum? BootSwitchSensor { get; init; }
 
         [DataMember(Name = "displaySensor")]
-        public DisplaySensorStateClass DisplaySensor { get; init; }
+        public DisplaySensorStateEnum? DisplaySensor { get; init; }
 
         [DataMember(Name = "operatorCallButtonSensor")]
-        public OperatorCallButtonSensorStateClass OperatorCallButtonSensor { get; init; }
+        public OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor { get; init; }
 
         [DataMember(Name = "handsetSensor")]
-        public HandsetSensorStateClass HandsetSensor { get; init; }
+        public HandsetSensorStateEnum? HandsetSensor { get; init; }
 
         [DataMember(Name = "headsetMicrophoneSensor")]
-        public HeadsetMicrophoneSensorStateClass HeadsetMicrophoneSensor { get; init; }
+        public HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor { get; init; }
 
         [DataMember(Name = "FasciaMicrophoneSensor")]
-        public FasciaMicrophoneSensorStateClass FasciaMicrophoneSensor { get; init; }
+        public FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor { get; init; }
 
         [DataMember(Name = "safeDoor")]
-        public SafeDoorStateClass SafeDoor { get; init; }
+        public SafeDoorStateEnum? SafeDoor { get; init; }
 
         [DataMember(Name = "vandalShield")]
-        public VandalShieldStateClass VandalShield { get; init; }
+        public VandalShieldStateEnum? VandalShield { get; init; }
 
         [DataMember(Name = "cabinetFrontDoor")]
-        public CabinetFrontDoorStateClass CabinetFrontDoor { get; init; }
+        public CabinetFrontDoorStateEnum? CabinetFrontDoor { get; init; }
 
         [DataMember(Name = "cabinetRearDoor")]
-        public CabinetRearDoorStateClass CabinetRearDoor { get; init; }
+        public CabinetRearDoorStateEnum? CabinetRearDoor { get; init; }
 
         [DataMember(Name = "cabinetLeftDoor")]
-        public CabinetLeftDoorStateClass CabinetLeftDoor { get; init; }
+        public CabinetLeftDoorStateEnum? CabinetLeftDoor { get; init; }
 
         [DataMember(Name = "cabinetRightDoor")]
-        public CabinetRightDoorStateClass CabinetRightDoor { get; init; }
+        public CabinetRightDoorStateEnum? CabinetRightDoor { get; init; }
 
         [DataMember(Name = "openClosedIndicator")]
-        public OpenClosedIndicatorStateClass OpenClosedIndicator { get; init; }
+        public OpenClosedIndicatorStateEnum? OpenClosedIndicator { get; init; }
 
         [DataMember(Name = "audio")]
         public AudioStateClass Audio { get; init; }
 
         [DataMember(Name = "heating")]
-        public HeatingStateClass Heating { get; init; }
+        public HeatingStateEnum? Heating { get; init; }
 
         [DataMember(Name = "consumerDisplayBacklight")]
-        public ConsumerDisplayBacklightStateClass ConsumerDisplayBacklight { get; init; }
+        public ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight { get; init; }
 
         [DataMember(Name = "signageDisplay")]
-        public SignageDisplayStateClass SignageDisplay { get; init; }
+        public SignageDisplayStateEnum? SignageDisplay { get; init; }
 
         [DataMember(Name = "volume")]
         public VolumeStateClass Volume { get; init; }
@@ -1211,13 +520,13 @@ namespace XFS4IoT.Auxiliaries
         public UPSStateClass UPS { get; init; }
 
         [DataMember(Name = "audibleAlarm")]
-        public AudibleAlarmStateClass AudibleAlarm { get; init; }
+        public AudibleAlarmStateEnum? AudibleAlarm { get; init; }
 
         [DataMember(Name = "enhancedAudioControl")]
-        public EnhancedAudioControlStateClass EnhancedAudioControl { get; init; }
+        public EnhancedAudioControlStateEnum? EnhancedAudioControl { get; init; }
 
         [DataMember(Name = "enhancedMicrophoneControl")]
-        public EnhancedMicrophoneControlStateClass EnhancedMicrophoneControl { get; init; }
+        public EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl { get; init; }
 
         [DataMember(Name = "microphoneVolume")]
         public MicrophoneVolumeStateClass MicrophoneVolume { get; init; }

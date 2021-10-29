@@ -14,7 +14,7 @@ using XFS4IoT.Completions;
 using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using XFS4IoTFramework.Common;
-using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -24,14 +24,14 @@ namespace XFS4IoTFramework.CashManagement
     /// </summary>
     public class Retract
     {
-        public CashDispenserCapabilitiesClass.RetractAreaEnum RetractArea { get; init; }
+        public CashManagementCapabilitiesClass.RetractAreaEnum RetractArea { get; init; }
 
         /// <summary>
         /// Index is valid if the RetractArea is set to Retract, otherwise this value can be omitted
         /// </summary>
         public int? Index { get; init; }
 
-        public Retract(CashDispenserCapabilitiesClass.RetractAreaEnum RetractArea,
+        public Retract(CashManagementCapabilitiesClass.RetractAreaEnum RetractArea,
                        int? Index = null)
         {
             this.RetractArea = RetractArea;
@@ -57,7 +57,7 @@ namespace XFS4IoTFramework.CashManagement
             this.RetractArea = RetractArea;
             this.OutputPosition = null;
         }
-        public ItemPosition(CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition)
+        public ItemPosition(CashManagementCapabilitiesClass.PositionEnum? OutputPosition)
         {
             this.CashUnit = string.Empty;
             this.RetractArea = null;
@@ -77,110 +77,16 @@ namespace XFS4IoTFramework.CashManagement
         /// The output position to which items are to be moved if the RetractArea is specified to OutputPosition.
         /// Following values are possible:
         /// 
-        /// * ```default``` - The default configuration.
-        /// * ```left``` - The left output position.
-        /// * ```right``` - The right output position.
-        /// * ```center``` - The center output position.
-        /// * ```top``` - The top output position.
-        /// * ```bottom``` - The bottom output position.
-        /// * ```front``` - The front output position.
-        /// * ```rear``` - The rear output position.
+        /// * ```OutDefault``` - The default configuration.
+        /// * ```OutLeft``` - The left output position.
+        /// * ```OutRight``` - The right output position.
+        /// * ```OutCenter``` - The center output position.
+        /// * ```OutTop``` - The top output position.
+        /// * ```OutBottom``` - The bottom output position.
+        /// * ```OutFront``` - The front output position.
+        /// * ```OutRear``` - The rear output position.
         /// </summary>
-        public CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition { get; init; }
-    }
-
-    public sealed class InitiateExchangeRequest
-    {
-        public InitiateExchangeRequest(List<string> CashUnits)
-        {
-            this.CashUnits = CashUnits;
-        }
-
-        /// <summary>
-        /// Array of strings containing the object names of the cash units to be exchanged
-        /// </summary>
-        public List<string> CashUnits { get; init; }
-    }
-
-    public sealed class InitiateClearRecyclerRequest
-    {
-        public InitiateClearRecyclerRequest(string CashUnit,
-                                            CashDispenserCapabilitiesClass.OutputPositionEnum Position,
-                                            string TargetCashUnit)
-        {
-            this.CashUnit = CashUnit;
-            this.Position = Position;
-            this.TargetCashUnit = TargetCashUnit;
-        }
-
-        /// <summary>
-        /// Cash Unit name of recycle cash unit to be emptied
-        /// </summary>
-        public string CashUnit { get; init; }
-
-        /// <summary>
-        /// Determines to which position the cash should be moved
-        /// </summary>
-        public CashDispenserCapabilitiesClass.OutputPositionEnum Position { get; init; }
-
-        /// <summary>
-        /// Object name of the cash unit the items are to be moved
-        /// </summary>
-        public string TargetCashUnit { get; init; }
-    }
-
-    public sealed class InitiateExchangeResult : DeviceResult
-    {
-        public InitiateExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.CashUnits = null;
-        }
-
-        public InitiateExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      List<string> CashUnits)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.CashUnits = CashUnits;
-        }
-
-        /// <summary>
-        /// Specifies the error code on start exchange
-        /// </summary>
-        public StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
-
-        /// <summary>
-        /// Cash Unit name of cash units to be exchanged.
-        /// </summary>
-        public List<string> CashUnits { get; init; }
-
-    }
-
-    public sealed class CompleteExchangeRequest
-    {
-        public CompleteExchangeRequest()
-        {
-        }
-    }
-
-    public sealed class CompleteExchangeResult : DeviceResult
-    {
-        public CompleteExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        /// <summary>
-        /// Specifies the error code on end exchange
-        /// </summary>
-        public EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public CashManagementCapabilitiesClass.PositionEnum? OutputPosition { get; init; }
     }
 
     /// <summary>
@@ -257,7 +163,7 @@ namespace XFS4IoTFramework.CashManagement
 
         public CalibrateCashUnitResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                        ItemPosition Position,
-                                       Dictionary<string, ItemMovement> MovementResult = null)
+                                       Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -279,298 +185,408 @@ namespace XFS4IoTFramework.CashManagement
         /// <summary>
         /// Specifies the detailed note movement while in calibration.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
     }
 
     /// <summary>
-    /// SetCashUnitInfoRequest
-    /// Request to set new counts or changing cash unit configuration
+    /// OpenCloseShutterRequest
+    /// Open or Close shutter for the specified output position
     /// </summary>
-    public sealed class SetCashUnitInfoRequest
+    public sealed class OpenCloseShutterRequest
     {
-        /// <summary>
-        /// CashUnitAccounting
-        /// The object contains update cash unit accounting requested by the application
-        /// </summary>
-        public sealed class SetCashUnitAccounting
+        public enum ActionEnum
         {
-            public SetCashUnitAccounting(int? LogicalCount = null,
-                                         int? InitialCount = null,
-                                         int? DispensedCount = null,
-                                         int? PresentedCount = null,
-                                         int? RetractedCount = null,
-                                         int? RejectCount = null,
-                                         int? Count = null,
-                                         int? CashInCount = null,
-                                         List<BankNoteNumber> BankNoteNumberList = null)
-            {
-                this.LogicalCount = LogicalCount;
-                this.InitialCount = InitialCount;
-                this.DispensedCount = DispensedCount;
-                this.PresentedCount = PresentedCount;
-                this.RetractedCount = RetractedCount;
-                this.RejectCount = RejectCount;
-                this.Count = Count;
-                this.CashInCount = CashInCount;
-                this.BankNoteNumberList = BankNoteNumberList;
-            }
-
-            /// <summary>
-            /// The meaning of this count depends on the type of cash unit. This value is persistent.
-            /// For all cash units except retract cash units (*type* is not *retractCassette*) this value specifies 
-            /// the number of items inside the  cash unit.
-            /// For all dispensing cash units (*type* is *billCassette*, *coinCylinder*, 
-            /// *coinDispenser*, *coupon*, *document* or *recycling*), 
-            /// this value includes any items from the cash unit not yet presented to the customer. 
-            /// This count is only decremented when the items are either known to be in customer access or successfully rejected.
-            /// If the cash unit is usable from the CashAcceptor interface (*type* is *recycling*, *cashIn*, *retractCassette* 
-            /// or *rejectCassette*) then this value will be incremented as a result of a cash-in operation.
-            /// Note that for a reject cash unit (*type* is *rejectCassette*), this value is unreliable, since 
-            /// the typical reason for dumping items to the reject cash unit is a suspected count failure.
-            /// For a retract cash unit (*type* is *retractCassette*) this value specifies the number 
-            /// of retract operations which result in items entering the cash unit.
-            /// </summary>
-            public int? LogicalCount { get; init; }
-
-            /// <summary>
-            /// Initial number of items contained in the cash unit. This value is persistent.
-            /// </summary>
-            public int? InitialCount { get; init; }
-
-            /// <summary>
-            /// The number of items dispensed from this cash unit. 
-            /// This count is incremented when the items are removed from the cash units. 
-            /// This count includes any items that were rejected during the dispense operation and are no longer in this cash unit. 
-            /// This field is always zero for cash units with a *type* of *rejectCassette* or *retractCassette*. This value is persistent.
-            /// </summary>
-            public int? DispensedCount { get; init; }
-
-            /// <summary>
-            /// The number of items from this cash unit that have been presented to the customer. 
-            /// This count is incremented when the items are presented to the customer.
-            /// If it is unknown if a customer has been presented with the items, then this count is not updated. 
-            /// This field is always zero for cash units with a *type* of *rejectCassette* or *retractCassette*. This value is persistent.
-            /// </summary>
-            public int? PresentedCount { get; init; }
-
-            /// <summary>
-            /// The number of items that have been accessible to a customer and retracted into the 
-            /// cash unit. This value is persistent.
-            /// </summary>
-            public int? RetractedCount { get; init; }
-
-            /// <summary>
-            /// The number of items dispensed from this cash unit which have been rejected, are in a cash unit 
-            /// other than this cash unit, and which have not been accessible to a customer. This value may be unreliable, 
-            /// since a typical reason for rejecting items is a suspected pick failure. Other reasons for rejecting items 
-            /// may include incorrect note denominations, classifications not valid for dispensing, or where the transaction 
-            /// has been cancelled and a Reject command has been called. For reject and retract cash units 
-            /// (*type* is *rejectCassette* or *retractCassette*) this field does not apply and will be reported as zero. This value is persistent.
-            /// </summary>
-            public int? RejectCount { get; init; }
-
-            /// <summary>
-            /// As defined by the *logicalCount* description, but with the following exceptions:
-            /// This count does not include items dispensed but not yet presented.
-            /// On cash units with *type* set to \"retractCassette\" the count represents 
-            /// the number of items, unless the device cannot count items during a retract, in which case this count will be zero.
-            /// This value is persistent.
-            /// </summary>
-            public int? Count { get; init; }
-
-            /// <summary>
-            /// Count of items that have entered the cash unit. This counter is incremented whenever an item 
-            /// enters a cash unit for any reason, unless it originated 
-            /// from this cash unit but was returned without being accessible to a customer. For a retract cash unit this 
-            /// value represents the total number of items of all types in the cash unit, or if the device cannot count 
-            /// items during a retract operation this value will be zero. This value is persistent.
-            /// </summary>
-            public int? CashInCount { get; init; }
-
-            /// <summary>
-            /// Array of banknote numbers the cash unit contains.
-            /// Include all acceptable banknote types and counts here
-            /// </summary>
-            public List<BankNoteNumber> BankNoteNumberList { get; init; }
+            Open,
+            Close
         }
 
         /// <summary>
-        /// Cash Unit configuration changes requested by the client application
+        /// OpenCloseShutterRequest
+        /// Open or Close shutter for the specified output position
         /// </summary>
-        public sealed class SetCashUnitConfiguration
+        /// <param name="Action">Either Open or Close for the shutter operation</param>
+        /// <param name="ShutterPosition">Postion of shutter to control.</param>
+        public OpenCloseShutterRequest(ActionEnum Action, CashManagementCapabilitiesClass.PositionEnum ShutterPosition)
         {
-            public SetCashUnitConfiguration(CashUnit.TypeEnum? Type = null,
-                                            string CurrencyID = null,
-                                            double? Value = null,
-                                            int? Maximum = null,
-                                            bool? AppLock = null,
-                                            string CashUnitName = null,
-                                            int? Minimum = null,
-                                            string PhysicalPositionName = null,
-                                            string UnitID = null,
-                                            int? MaximumCapacity = null,
-                                            bool? HardwareSensor = null,
-                                            CashUnit.ItemTypesEnum? ItemTypes = null,
-                                            List<int> BanknoteIDs = null)
-            {
-                this.Type = Type;
-                this.CurrencyID = CurrencyID;
-                this.Value = Value;
-                this.Maximum = Maximum;
-                this.AppLock = AppLock;
-                this.CashUnitName = CashUnitName;
-                this.Minimum = Minimum;
-                this.PhysicalPositionName = PhysicalPositionName;
-                this.UnitID = UnitID;
-                this.MaximumCapacity = MaximumCapacity;
-                this.HardwareSensor = HardwareSensor;
-                this.ItemTypes = ItemTypes;
-                this.BanknoteIDs = BanknoteIDs;
-            }
-
-            /// <summary>
-            /// Type of cash unit. 
-            /// Following values are possible:
-            /// 
-            /// * ```notApplicable``` - Not applicable. Typically means cash unit is missing.
-            /// * ```rejectCassette``` - Reject cash unit. This type will also indicate a combined reject/retract cash unit.
-            /// * ```billCassette``` - Cash unit containing bills.
-            /// * ```coinCylinder``` - Coin cylinder.
-            /// * ```coinDispenser``` - Coin dispenser as a whole unit.
-            /// * ```retractCassette``` - Retract cash unit.
-            /// * ```coupon``` - Cash unit containing coupons or advertising material.
-            /// * ```document``` - Cash unit containing documents.
-            /// * ```replenishmentContainer``` - Replenishment container. A cash unit can be refilled from a replenishment container.
-            /// * ```recycling``` - Recycling cash unit. This unit is only present when the device implements the Dispenser and CashAcceptor interfaces.
-            /// * ```cashIn``` - Cash-in cash unit.
-            /// </summary>
-            public CashUnit.TypeEnum? Type { get; init; }
-
-            /// <summary>
-            /// A three character string storing the ISO format [Ref. 2] Currency ID. This value will be omitted for 
-            /// cash units which contain items of more than one currency type or items to which currency is not applicable. 
-            /// If the *status* field for this cash unit is *noValue* it is the responsibility of the application to assign 
-            /// a value to this field. This value is persistent.
-            /// </summary>
-            public string CurrencyID { get; init; }
-
-            /// <summary>
-            /// Supplies the value of a single item in the cash unit. This value is expressed as floating point value.
-            /// If the *currencyID* field for this cash unit is omitted, then this 
-            /// field will contain zero. If the *status* field for this cash unit is *noValue* it is the responsibility of the 
-            /// application to assign a value to this field. This value is persistent.
-            /// </summary>
-            public double? Value { get; init; }
-
-            /// <summary>
-            /// When *count* reaches this value the 
-            /// threshold event CashManagement.CashUnitThresholdEvent (*high*) will be generated. This value can be different from
-            /// the actual capacity of the cassette. 
-            /// If this value is non-zero then hardware sensors in the device do not trigger threshold events. If this value is zero 
-            /// then hardware sensors will trigger threshold events if *hardwareSensor* is TRUE. This value is persistent.
-            /// </summary>
-            public int? Maximum { get; init; }
-
-            /// <summary>
-            /// If this value is TRUE items cannot be dispensed from or deposited into the cash unit. 
-            /// If this value is TRUE and the application attempts to use the cash unit a CashManagement.CashUnitErrorEvent 
-            /// event will be generated and an error completion message will be returned. This value is persistent.
-            /// </summary>
-            public bool? AppLock { get; init; }
-
-            /// <summary>
-            /// A name which helps to identify the type of the cash unit. 
-            /// This is especially useful in the case of cash units of type *document* where different 
-            /// documents can have the same currency and value. For example, travelers checks and bank 
-            /// checks may have the same currency and value but still need to be identifiable as different 
-            /// types of document. Where this value is not relevant (e.g. in bill cash units) the property can be omitted. This value is persistent.
-            /// </summary>
-            public string CashUnitName { get; init; }
-
-            /// <summary>
-            /// This field is not applicable to retract and reject cash units. For all cash units which dispense items (all other), when *count*
-            /// reaches this value the threshold event CashManagement.CashUnitThresholdEvent (*low*) will be generated. 
-            /// If this value is non-zero then hardware sensors in the device do not trigger threshold events. 
-            /// If this value is zero then hardware sensors will trigger threshold events if *hardwareSensor* is TRUE. This value is persistent.
-            /// </summary>
-            public int? Minimum { get; init; }
-
-            /// <summary>
-            /// A name identifying the physical location of the cash unit.
-            /// </summary>
-            public string PhysicalPositionName { get; init; }
-
-            /// <summary>
-            /// A 5 character string uniquely identifying the cash unit.
-            /// </summary>
-            public string UnitID { get; init; }
-
-            /// <summary>
-            /// The maximum number of items the cash unit can hold. This is only for informational purposes. 
-            /// No threshold event CashManagement.CashUnitThresholdEvent will be generated. This value is persistent.
-            /// </summary>
-            public int? MaximumCapacity { get; init; }
-
-            /// <summary>
-            /// Specifies whether or not threshold events can be generated based on hardware sensors in the device. 
-            /// If this value is TRUE then threshold 
-            /// events may be generated based on hardware sensors as opposed to counts.
-            /// </summary>
-            public bool? HardwareSensor { get; init; }
-
-            /// <summary>
-            /// Specifies the type of items the cash unit takes as a combination of the following flags. 
-            /// The table in the Comments section of this command defines how to interpret the combination of these flags 
-            /// </summary>
-            public CashUnit.ItemTypesEnum? ItemTypes { get; init; }
-
-            /// <summary>
-            /// List of banknote IDs can be stored in this unit
-            /// </summary>
-            public List<int> BanknoteIDs { get; init; }
+            this.Action = Action;
+            this.ShutterPosition = ShutterPosition;
         }
 
-        public SetCashUnitInfoRequest(Dictionary<string, SetCashUnitConfiguration> CashUnitConfigurations,
-                                      Dictionary<string, SetCashUnitAccounting> CashUnitAccountings)
-        {
-            this.CashUnitConfigurations = CashUnitConfigurations;
-            this.CashUnitAccountings = CashUnitAccountings;
-        }
+        public ActionEnum Action { get; init; }
 
-        /// <summary>
-        /// The object contains the cash unit configuration information to be updated.
-        /// Key name must be used in output dictionary for the ConstructCashUnits
-        /// </summary>
-        public Dictionary<string, SetCashUnitConfiguration> CashUnitConfigurations { get; init; }
-
-        /// <summary>
-        /// The number of bills to be dispensed during the calibration process.
-        /// Key name must be used in output dictionary for the ConstructCashUnits.
-        /// </summary>
-        public Dictionary<string, SetCashUnitAccounting> CashUnitAccountings { get; init; }
+        public CashManagementCapabilitiesClass.PositionEnum ShutterPosition { get; init; }
     }
 
     /// <summary>
-    /// SetCashUnitInfoResult
-    /// Return result of setting new cash unit configuration or counts
+    /// OpenCloseShutterResult
+    /// Return result of shutter operation.
     /// </summary>
-    public sealed class SetCashUnitInfoResult : DeviceResult
+    public sealed class OpenCloseShutterResult : DeviceResult
+    {
+        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                      string ErrorDescription,
+                                      ErrorCodeEnum? ErrorCode,
+                                      bool Jammed)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Jammed = Jammed;
+        }
+
+        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Jammed = false;
+        }
+
+        public enum ErrorCodeEnum
+        {
+            UnsupportedPosition,
+            ShutterNotOpen,
+            ShutterOpen,
+            ShutterClosed,
+            ShutterNotClosed,
+            ExchangeActive,
+        }
+
+        /// <summary>
+        /// Specifies the error code on closing or opening shutter
+        /// </summary>
+        public ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// If the shutter is not closed and jammed
+        /// </summary>
+        public bool Jammed { get; init; }
+    }
+
+    /// <summary>
+    /// ResetDeviceRequest
+    /// The parameter class for the reset device operation
+    /// </summary>
+    public sealed class ResetDeviceRequest
     {
         /// <summary>
-        /// SetCashUnitInfoResult
-        /// Return result of setting new cash unit configuration or counts
+        /// ResetRequest
+        /// The parameter class for the reset device operation
         /// </summary>
-        public SetCashUnitInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     SetCashUnitInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ResetDeviceRequest(ItemPosition Position)
+        {
+            this.Position = Position;
+        }
+
+        /// <summary>
+        /// Specifies where the dispensed items should be moved to.
+        /// If tnis value is null, the retract items to the default position.
+        /// </summary>
+        public ItemPosition Position { get; init; }
+    }
+
+    /// <summary>
+    /// ResetDeviceResult
+    /// Return result of reset device
+    /// </summary>
+    public sealed class ResetDeviceResult : DeviceResult
+    {
+        /// <summary>
+        /// ResetDeviceResult
+        /// Return result of reset device
+        /// </summary>
+        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                 Dictionary<string, CashUnitCountClass> MovementResult = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.MovementResult = MovementResult;
+        }
+
+        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.MovementResult = MovementResult;
+        }
+
+        /// <summary>
+        /// Specifies the error code on reset device
+        /// </summary>
+        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Specifies the detailed note movement while in reset operation.
+        /// </summary>
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
+    }
+
+    /// <summary>
+    /// RetractRequest
+    /// The parameter class for the retract operation
+    /// </summary>
+    public sealed class RetractRequest
+    {
+        /// <summary>
+        /// ResetRequest
+        /// The parameter class for the retract operation
+        /// </summary>
+        public RetractRequest(ItemPosition Position)
+        {
+            this.Position = Position;
+        }
+
+        /// <summary>
+        /// Specifies where the dispensed items should be moved to.
+        /// If tnis value is null, the retract items to the default position
+        /// </summary>
+        public ItemPosition Position { get; init; }
+    }
+
+    /// <summary>
+    /// RetractResult
+    /// Return result of retract items
+    /// </summary>
+    public sealed class RetractResult : DeviceResult
+    {
+        /// <summary>
+        /// ResetDeviceResult
+        /// Return result of retract items
+        /// </summary>
+        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                             string ErrorDescription = null,
+                             RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                             Dictionary<string, CashUnitCountClass> MovementResult = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.MovementResult = MovementResult;
+        }
+
+        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                             Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.MovementResult = MovementResult;
+        }
+
+        /// <summary>
+        /// Specifies the error code on reset device
+        /// </summary>
+        public RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Specifies the detailed note movement while in reset operation.
+        /// </summary>
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
+    }
+
+    /// <summary>
+    /// GetTellerInfoRequest
+    /// The parameter class for get teller info from the  device
+    /// </summary>
+    public sealed class GetTellerInfoRequest
+    {
+        /// <summary>
+        /// ResetRequest
+        /// The parameter class for the reset device operation
+        /// </summary>
+        public GetTellerInfoRequest(int TellerId,
+                                    string CurrencyId)
+        {
+            this.TellerId = TellerId;
+            this.CurrencyId = CurrencyId;
+        }
+
+        /// <summary>
+        /// Identification of the teller. If invalid the error InvalidTellerId is reported. If it is negative value specified, all
+        /// </summary>
+        public int TellerId { get; init; }
+
+        /// <summary>
+        /// Three character ISO 4217 format currency identifier. If not specified, all currencies are reported for TellerID.
+        /// </summary>
+        public string CurrencyId { get; init; }
+    }
+
+    /// <summary>
+    /// Details of the teller information
+    /// </summary>
+    public sealed class TellerDetail
+    {
+        public TellerDetail(int TellerId,
+                            CashManagementCapabilitiesClass.PositionEnum InputPosition,
+                            CashManagementCapabilitiesClass.PositionEnum OutputPosition,
+                            Dictionary<string, TellerTotal> Totals)
+        {
+            this.TellerId = TellerId;
+            this.InputPosition = InputPosition;
+            this.OutputPosition = OutputPosition;
+            this.Totals = Totals;
+        }
+
+        public sealed class TellerTotal
+        {
+            /// <summary>
+            /// teller totals
+            /// </summary>
+            public TellerTotal(double ItemsReceived,
+                               double ItemsDispensed,
+                               double CoinsReceived,
+                               double CoinsDispensed,
+                               double CashBoxReceived,
+                               double CashBoxDispensed)
+            {
+                this.ItemsReceived = ItemsReceived;
+                this.ItemsDispensed = ItemsDispensed;
+                this.CoinsReceived = CoinsReceived;
+                this.CoinsDispensed = CoinsDispensed;
+                this.CashBoxReceived = CashBoxReceived;
+                this.CashBoxDispensed = CashBoxDispensed;
+            }
+
+            /// <summary>
+            /// The total absolute value of items(other than coins) of the specified currency accepted.
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double ItemsReceived { get; init; }
+
+            /// <summary>
+            /// The total absolute value of items (other than coins) of the specified currency dispensed.
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double ItemsDispensed { get; init; }
+
+            /// <summary>
+            /// The total absolute value of coin currency accepted. 
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double CoinsReceived { get; init; }
+
+            /// <summary>
+            /// The total absolute value of coin currency dispensed. 
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double CoinsDispensed { get; init; }
+
+            /// <summary>
+            /// The total absolute value of cash box currency accepted.
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double CashBoxReceived { get; init; }
+
+            /// <summary>
+            /// The total absolute value of cash box currency dispensed. 
+            /// The amount is expressed as a floating point value.
+            /// </summary>
+            public double CashBoxDispensed { get; init; }
+        }
+        
+        /// <summary>
+        /// Teller ID
+        /// </summary>
+        public int TellerId { get; init; }
+        /// <summary>
+        /// The input position assigned to the teller for cash entry
+        /// </summary>
+        public CashManagementCapabilitiesClass.PositionEnum InputPosition { get; init; }
+
+        /// <summary>
+        /// The output position from which cash is presented to the teller
+        /// </summary>
+        public CashManagementCapabilitiesClass.PositionEnum OutputPosition { get; init; }
+
+        /// <summary>
+        /// List of teller totals
+        /// </summary>
+        public Dictionary<string, TellerTotal> Totals { get; init; }
+    }
+
+    public sealed class GetTellerInfoResult : DeviceResult
+    {
+        /// <summary>
+        /// GetTellerInfoResult
+        /// Return result of teller info inquired
+        /// </summary>
+        public GetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   GetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                   List<TellerDetail> Details = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Details = Details;
+        }
+
+        public GetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                   List<TellerDetail> Details = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Details = Details;
+        }
+
+        /// <summary>
+        /// Specifies the error code on getting teller info
+        /// </summary>
+        public GetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Specifies the details of the teller information required
+        /// </summary>
+        public List<TellerDetail> Details { get; init; }
+    }
+
+    public sealed class SetTellerInfoRequest
+    {
+        public enum ActionEnum
+        {
+            Create,
+            Modify,
+            Delete,
+        }
+
+        /// <summary>
+        /// ResetRequest
+        /// The parameter class for the reset device operation
+        /// </summary>
+        public SetTellerInfoRequest(ActionEnum Action,
+                                    TellerDetail Detail)
+        {
+            this.Action = Action;
+            this.Detail = Detail;
+        }
+
+        /// <summary>
+        /// The action to be performed.
+        /// </summary>
+        public ActionEnum Action { get; init; }
+
+        /// <summary>
+        /// Specifies the details of the teller information to be set
+        /// </summary>
+        public TellerDetail Detail { get; init; }
+    }
+
+    public sealed class SetTellerInfoResult : DeviceResult
+    {
+        /// <summary>
+        /// SetTellerInfoResult
+        /// Return result of setting teller info inquired
+        /// </summary>
+        public SetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
         }
 
         /// <summary>
-        /// Specifies the error code on setting new cash unit information or counts
+        /// Specifies the error code on setting teller info
         /// </summary>
-        public SetCashUnitInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 }

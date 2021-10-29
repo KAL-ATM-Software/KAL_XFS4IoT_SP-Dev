@@ -390,30 +390,37 @@ namespace XFS4IoT.KeyManagement
         [DataContract]
         public sealed class KeyBlockImportFormatsClass
         {
-            public KeyBlockImportFormatsClass(bool? AnsTr31KeyBlock = null, bool? AnsTr31KeyBlockB = null, bool? AnsTr31KeyBlockC = null)
+            public KeyBlockImportFormatsClass(bool? A = null, bool? B = null, bool? C = null, bool? D = null)
             {
-                this.AnsTr31KeyBlock = AnsTr31KeyBlock;
-                this.AnsTr31KeyBlockB = AnsTr31KeyBlockB;
-                this.AnsTr31KeyBlockC = AnsTr31KeyBlockC;
+                this.A = A;
+                this.B = B;
+                this.C = C;
+                this.D = D;
             }
 
             /// <summary>
-            /// Supports ANS TR-31A Keyblock format key import.
+            /// Supports X9.143 version ID A of the key block.
             /// </summary>
-            [DataMember(Name = "ansTr31KeyBlock")]
-            public bool? AnsTr31KeyBlock { get; init; }
+            [DataMember(Name = "A")]
+            public bool? A { get; init; }
 
             /// <summary>
-            /// Supports ANS TR-31B Keyblock format key import.
+            /// Supports X9.143 version ID B of the key block.
             /// </summary>
-            [DataMember(Name = "ansTr31KeyBlockB")]
-            public bool? AnsTr31KeyBlockB { get; init; }
+            [DataMember(Name = "B")]
+            public bool? B { get; init; }
 
             /// <summary>
-            /// Supports ANS TR-31C Keyblock format key import.
+            /// Supports X9.143 version ID C of the key block.
             /// </summary>
-            [DataMember(Name = "ansTr31KeyBlockC")]
-            public bool? AnsTr31KeyBlockC { get; init; }
+            [DataMember(Name = "C")]
+            public bool? C { get; init; }
+
+            /// <summary>
+            /// Supports X9.143 version ID D of the key block.
+            /// </summary>
+            [DataMember(Name = "D")]
+            public bool? D { get; init; }
 
         }
 
@@ -708,7 +715,7 @@ namespace XFS4IoT.KeyManagement
             /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
             /// </summary>
             [DataMember(Name = "restricted")]
-            [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[2-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+            [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[2-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
             public string Restricted { get; init; }
 
         }

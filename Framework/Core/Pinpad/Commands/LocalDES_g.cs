@@ -46,7 +46,7 @@ namespace XFS4IoT.PinPad.Commands
             /// The validation data should be an ASCII string.
             /// </summary>
             [DataMember(Name = "validationData")]
-            [DataTypes(Pattern = "^[0-9]{16}$")]
+            [DataTypes(Pattern = @"^[0-9]{16}$")]
             public string ValidationData { get; init; }
 
             /// <summary>
@@ -55,7 +55,7 @@ namespace XFS4IoT.PinPad.Commands
             /// The character must be in the ranges '0' to '9', 'a' to 'f' and 'A' to 'F'.
             /// </summary>
             [DataMember(Name = "offset")]
-            [DataTypes(Pattern = "^[0-9a-fA-F]{1,16}$")]
+            [DataTypes(Pattern = @"^[0-9a-fA-F]{1,16}$")]
             public string Offset { get; init; }
 
             /// <summary>
@@ -65,7 +65,7 @@ namespace XFS4IoT.PinPad.Commands
             /// If the character is in the range 30 to 39 ('0' to �9�), 41 to 46 (�a� to �f�), or 61 to 66 (�A� to �F�), padding is applied before the validation data is compressed.
             /// </summary>
             [DataMember(Name = "padding")]
-            [DataTypes(Pattern = "^0[0-9a-fA-F]$|^3[0-9]$|^4[1-6]$|^6[1-6]$")]
+            [DataTypes(Pattern = @"^0[0-9a-fA-F]$|^3[0-9]$|^4[1-6]$|^6[1-6]$")]
             public string Padding { get; init; }
 
             /// <summary>
@@ -107,7 +107,7 @@ namespace XFS4IoT.PinPad.Commands
             /// This table is used to convert the hexadecimal digits (0x0 to 0xF) of the encrypted validation data to decimal digits (0x0 to 0x9).
             /// </summary>
             [DataMember(Name = "decTable")]
-            [DataTypes(Pattern = "^[0-9]{16}$")]
+            [DataTypes(Pattern = @"^[0-9]{16}$")]
             public string DecTable { get; init; }
 
         }

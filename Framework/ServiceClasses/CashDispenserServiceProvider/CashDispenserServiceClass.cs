@@ -15,22 +15,23 @@ using XFS4IoT;
 using XFS4IoTFramework.CashDispenser;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTServer
 {
     public partial class CashDispenserServiceClass
     {
         public CashDispenserServiceClass(IServiceProvider ServiceProvider,
-                                     ICashManagementService CashManagementService,
-                                     ICommonService CommonService,
-                                     ILogger logger, 
-                                     IPersistentData PersistentData)
+                                         ICashManagementService CashManagementService,
+                                         ICommonService CommonService,
+                                         ILogger logger, 
+                                         IPersistentData PersistentData)
             : this(ServiceProvider, logger)
         {
             this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set. " + typeof(Mix).FullName);
 
             // Load persistent data
-            Dictionary<int, Mix> tableMixes = PersistentData.Load<Dictionary<int, Mix>>(typeof(Mix).FullName);
+            Dictionary<string, Mix> tableMixes = PersistentData.Load<Dictionary<string, Mix>>(typeof(Mix).FullName);
             if (tableMixes is not null)
             {
                 // merge table mix set by the application
@@ -38,42 +39,20 @@ namespace XFS4IoTServer
                     AddMix(t.Key, t.Value);
             }
 
-            this.CashManagementService = CashManagementService.IsNotNull($"Unexpected parameter set in the " + nameof(CashDispenserServiceClass));
-            this.CommonService = CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(CashDispenserServiceClass));
+            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(CashDispenserServiceClass));
+            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(CashDispenserServiceClass));
+
+            CashManagementService.IsNotNull($"Unexpected parameter set for cash management service in the " + nameof(CashDispenserServiceClass));
+            this.CashManagementService = CashManagementService.IsA<ICashManagementService>($"Invalid interface parameter specified for cash management service. " + nameof(CashDispenserServiceClass));
 
             this.Mixes = new()
             {
-                { 1, new MinNumberMix(1, logger) },
-                { 2, new EqualEmptyingMix(2, logger) }
+                { "mix1", new MinNumberMix(logger) },
+                { "mix2", new EqualEmptyingMix(logger) }
             };
         }
 
-        /// <summary>
-        /// Common service interface
-        /// </summary>
-        private ICashManagementService CashManagementService { get; init; }
-
-        /// <summary>
-        /// ConstructCashUnits
-        /// The method retreive cash unit structures from the device class. The device class must provide cash unit structure info
-        /// </summary>
-        public void ConstructCashUnits() => CashManagementService.ConstructCashUnits();
-        /// <summary>
-        /// UpdateCashUnitAccounting
-        /// Update cash unit status and counts managed by the device specific class.
-        /// </summary>
-        public void UpdateCashUnitAccounting(Dictionary<string, ItemMovement> MovementResult = null) => CashManagementService.UpdateCashUnitAccounting(MovementResult);
-
-        /// <summary>
-        /// Cash unit structure information of this device
-        /// </summary>
-        public Dictionary<string, CashUnit> CashUnits { get => CashManagementService.CashUnits; set => CashManagementService.CashUnits = value; }
-
-        /// <summary>
-        /// True when the SP process gets started and return false once the first CashUnitInfo command is handled.
-        /// </summary>
-        public bool FirstCashUnitInfoCommand { get => CashManagementService.FirstCashUnitInfoCommand; set => CashManagementService.FirstCashUnitInfoCommand = value; }
-
+        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
@@ -82,35 +61,75 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores CashDispenser interface capabilites internally
         /// </summary>
-        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
+        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set { } }
 
         /// <summary>
         /// Stores CashManagement interface capabilites internally
         /// </summary>
-        public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
+        public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set { } }
 
+        #endregion
+
+        #region Cash Management Service
+        /// <summary>
+        /// Common service interface
+        /// </summary>
+        private ICashManagementService CashManagementService { get; init; }
+
+        /// <summary>
+        /// Update storage count from the framework after media movement command is processed
+        /// </summary>
+        public Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage) => throw new NotSupportedException($"The CashManagement interface doesn't aupport card unit information.");
+
+        /// <summary>
+        /// UpdateCashAccounting
+        /// Update cash unit status and counts managed by the device specific class.
+        /// </summary>
+        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await CashManagementService.UpdateCashAccounting(countDelta, preservedStorage);
+
+        /// <summary>
+        /// Return which type of storage SP is using
+        /// </summary>
+        public StorageTypeEnum StorageType { get => CashManagementService.StorageType; set { } }
+
+        /// <summary>
+        /// Store CardUnits and CashUnits persistently
+        /// </summary>
+        public void StorePersistent() => CashManagementService.StorePersistent();
+
+        /// <summary>
+        /// Card storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CardUnitStorage> CardUnits { get => CashManagementService.CardUnits; set { } }
+
+        /// <summary>
+        /// Cash storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CashUnitStorage> CashUnits { get => CashManagementService.CashUnits; set { } }
+
+        #endregion
 
         /// <summary>
         /// Add vendor specific mix algorithm
         /// </summary>
-        /// <param name="mixNumber"></param>
+        /// <param name="mixId"></param>
         /// <param name="mix">new mix algorithm to support for a customization</param>
-        public void AddMix(int mixNumber, Mix mix)
+        public void AddMix(string mixId, Mix mix)
         {
-            if (Mixes.ContainsKey(mixNumber))
-                Mixes.Remove(mixNumber);// replace algorithm
-            Mixes.Add(mixNumber, mix);
+            if (Mixes.ContainsKey(mixId))
+                Mixes.Remove(mixId);// replace algorithm
+            Mixes.Add(mixId, mix);
 
             if (mix.Type == Mix.TypeEnum.Table)
             {
                 // Save table mix set by the application
-                Dictionary<int, Mix> tableMixes = PersistentData.Load<Dictionary<int, Mix>>(ServiceProvider.Name + typeof(Mix).FullName);
+                Dictionary<string, Mix> tableMixes = PersistentData.Load<Dictionary<string, Mix>>(ServiceProvider.Name + typeof(Mix).FullName);
                 if (tableMixes is null)
                     tableMixes = new();
 
-                if (tableMixes.ContainsKey(mixNumber))
-                    tableMixes.Remove(mixNumber);// Replace exiting one
-                tableMixes.Add(mixNumber, mix);
+                if (tableMixes.ContainsKey(mixId))
+                    tableMixes.Remove(mixId);// Replace exiting one
+                tableMixes.Add(mixId, mix);
 
                 if (!PersistentData.Store(ServiceProvider.Name + typeof(Mix).FullName, tableMixes))
                 {
@@ -123,14 +142,17 @@ namespace XFS4IoTServer
         /// Return mix algorithm available
         /// </summary>
         /// <returns></returns>
-        public Mix GetMix(int mixNumber)
+        public Mix GetMix(string mixId)
         {
-            if (Mixes.ContainsKey(mixNumber))
-                return Mixes[mixNumber];
+            if (Mixes.ContainsKey(mixId))
+                return Mixes[mixId];
             return null;
         }
 
-        public IEnumerator GetMixAlgorithms() => Mixes.Values.GetEnumerator();
+        /// <summary>
+        /// Return mix algorithm supported by the framework or the application set mix tables
+        /// </summary>
+        public Dictionary<string, Mix> GetMixAlgorithms() => Mixes;
 
         /// <summary>
         /// Keep last present status
@@ -160,6 +182,6 @@ namespace XFS4IoTServer
         /// <summary>
         /// Supported Mix algorithm
         /// </summary>
-        private readonly Dictionary<int, Mix> Mixes;
+        private readonly Dictionary<string, Mix> Mixes;
     }
 }

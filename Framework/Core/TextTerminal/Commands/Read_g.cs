@@ -156,6 +156,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// (e.g. "12AaBb"), enables that key and causes the device to return the upper case of the letter in the output parameter. 
             /// For both types of device, specifying only lower case letters (e.g. "12ab") produces a key invalid error. 
             /// This property can be omitted if no keys of this type are active keys.
+            /// <example>12AaBb</example>
             /// </summary>
             [DataMember(Name = "activeKeys")]
             public string ActiveKeys { get; init; }

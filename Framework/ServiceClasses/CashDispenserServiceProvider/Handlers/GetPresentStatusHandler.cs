@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoT.CashDispenser;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
+using XFS4IoT.CashManagement;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
@@ -27,19 +29,25 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 position = getPresentStatus.Payload.Position switch
                 {
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Bottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Center => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Default => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Front => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Left => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Rear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Right => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    GetPresentStatusCommand.PayloadData.PositionEnum.Top => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default
+                    OutputPositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
+                    OutputPositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
+                    OutputPositionEnum.OutDefault => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
+                    OutputPositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
+                    OutputPositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
+                    OutputPositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
+                    OutputPositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
+                    OutputPositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported
                 };
             }
 
-            if (!CashDispenser.CashDispenserCapabilities.OutputPositons[position])
+            if (position == CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported)
+            {
+                return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                                  $"Specified invalid position {position}"));
+            }
+
+            if (!CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
                 return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                                   $"Specified unsupported position {position}",
@@ -51,7 +59,7 @@ namespace XFS4IoTFramework.CashDispenser
             return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                               null,
                                                                               null,
-                                                                              new GetPresentStatusCompletion.PayloadData.DenominationClass(
+                                                                              new DenominationClass(
                                                                                   CashDispenser.LastPresentStatus[position].LastDenomination?.CurrencyAmounts,
                                                                                   CashDispenser.LastPresentStatus[position].LastDenomination?.Values),
                                                                               CashDispenser.LastPresentStatus[position].Status switch
@@ -60,7 +68,6 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                   PresentStatus.PresentStatusEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
                                                                                   _ => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Unknown
                                                                               },
-                                                                              null,
                                                                               CashDispenser.LastPresentStatus[position].Token));
         }
     }

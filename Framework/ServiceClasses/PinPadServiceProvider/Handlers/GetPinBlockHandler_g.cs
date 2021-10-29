@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.PinPad
             GetPinBlockCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => GetPinBlockCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

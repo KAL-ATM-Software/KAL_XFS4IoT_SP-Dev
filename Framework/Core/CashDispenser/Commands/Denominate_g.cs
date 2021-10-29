@@ -27,66 +27,31 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? TellerID = null, int? MixNumber = null, DenominationClass Denomination = null)
+            public PayloadData(int Timeout, DenominationClass Denomination = null, string Mix = null, int? TellerID = null)
                 : base(Timeout)
             {
-                this.TellerID = TellerID;
-                this.MixNumber = MixNumber;
                 this.Denomination = Denomination;
+                this.Mix = Mix;
+                this.TellerID = TellerID;
             }
 
+            [DataMember(Name = "denomination")]
+            public DenominationClass Denomination { get; init; }
+
             /// <summary>
-            /// Identification of teller. This field is ignored if the device is a Self-Service CashDispenser.
+            /// Mix algorithm or house mix table to be used as defined by mixes reported by
+            /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes). May be omitted if the request is entirely specified
+            /// by _counts_.
+            /// <example>mix1</example>
+            /// </summary>
+            [DataMember(Name = "mix")]
+            public string Mix { get; init; }
+
+            /// <summary>
+            /// Only applies to Teller Dispensers. Identification of teller.
             /// </summary>
             [DataMember(Name = "tellerID")]
             public int? TellerID { get; init; }
-
-            /// <summary>
-            /// Mix algorithm or house mix table to be used.
-            /// </summary>
-            [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; init; }
-
-            [DataContract]
-            public sealed class DenominationClass
-            {
-                public DenominationClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, int? CashBox = null)
-                {
-                    this.Currencies = Currencies;
-                    this.Values = Values;
-                    this.CashBox = CashBox;
-                }
-
-                /// <summary>
-                /// "List of currency and amount combinations for denomination. There will be one entry for each currency
-                /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
-                /// </summary>
-                [DataMember(Name = "currencies")]
-                public Dictionary<string, double> Currencies { get; init; }
-
-                /// <summary>
-                /// This list specifies the number of items to take from the cash units. 
-                /// Each entry uses a cashunit object name as stated by the 
-                /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command. The value of the entry is the 
-                /// number of items to take from that unit.
-                /// If the application does not wish to specify a denomination, it should omit the values property.
-                /// </summary>
-                [DataMember(Name = "values")]
-                public Dictionary<string, int> Values { get; init; }
-
-                /// <summary>
-                /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
-                /// </summary>
-                [DataMember(Name = "cashBox")]
-                public int? CashBox { get; init; }
-
-            }
-
-            /// <summary>
-            /// Denomination object describing the contents of the denomination operation.
-            /// </summary>
-            [DataMember(Name = "denomination")]
-            public DenominationClass Denomination { get; init; }
 
         }
     }

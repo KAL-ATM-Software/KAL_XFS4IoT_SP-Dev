@@ -8,11 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XFS4IoT;
-using XFS4IoTServer;
-using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -25,31 +21,31 @@ namespace XFS4IoTFramework.CashDispenser
         public enum TypeEnum
         {
             Table, 
-            Algorithm
+            Algorithm,
+            Individual ,
         }
 
         /// <summary>
         /// XFS Predefined mix algorithm
         /// </summary>
-        public enum SubTypeEmum
+        public enum AlgorithmEnum
         {
-            Table = 0,
-            MinimumNumberOfBills = 1,
-            EqualEmptyingOfCashUnits = 2,
-            MaximumNumberOfCashUnits = 3,
+            Table,
+            VendorSpecific,
+            minimumBills,
+            equalEmptying,
+            maxCashUnits,
         }
 
         /// <summary>
         /// Mix Constructor
         /// </summary>
-        public Mix(int MixNumber, 
-                   TypeEnum Type, 
-                   int SubType, 
+        public Mix(TypeEnum Type,
+                   AlgorithmEnum Algorithm, 
                    string Name)
         {
-            this.MixNumber = MixNumber;
             this.Type = Type;
-            this.SubType = SubType;
+            this.Algorithm = Algorithm;
             this.Name = Name;
         }
 
@@ -60,7 +56,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">Cash units to go through</param>
         /// <param name="MaxDispensableItems">Maximum number of items can be dispensed to the stacker.</param>
         /// <returns>Calculated denomination matching the requirements</returns>
-        public abstract Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems );
+        public abstract Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnitStorage> CashUnits, int MaxDispensableItems );
 
         /// <summary>
         /// Specifies whether the mix type is an algorithm or a house mix table
@@ -74,20 +70,11 @@ namespace XFS4IoTFramework.CashDispenser
         /// Application defined mix algorithms start at hexadecimal 9000. 
         /// All numbers below 8000 hexadecimal are reserved
         /// Predefined 1-3
-        /// 1 = MINIMUM_NUMBER_OF_BILLS
-        /// 2 = EQUAL_EMPTYING_OF_CASH_UNITS
-        /// 3 = MAXIMUM_NUMBER_OF_CASH_UNITS
+        /// 1 = MinimumBills
+        /// 2 = EqualEmptying
+        /// 3 = MaxCashUnits
         /// </summary>
-        public int SubType { get; init; }
-
-        /// <summary>
-        /// Number identifying the mix algorithm or the house mix table
-        /// Individual vendor-defined mix algorithms are defined above hexadecimal 7FFF. 
-        /// Mix algorithms which are provided by the Service Provider are in the range hexadecimal 8000 - 8FFF. 
-        /// Application defined mix algorithms start at hexadecimal 9000. 
-        /// All numbers below 8000 hexadecimal are reserved
-        /// </summary>
-        public int MixNumber { get; init; }
+        public AlgorithmEnum Algorithm { get; init; }
 
         /// <summary>
         /// Name of the mix table or algorithm
@@ -103,7 +90,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">The cash units to search through.</param>
         /// <param name="UnitsUsed"></param>
         /// <returns></returns>
-        protected static string FindNextGreatest(double CurrentGreatest, string CurrencyID, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed)
+        protected static string FindNextGreatest(double CurrentGreatest, string CurrencyID, Dictionary<string, CashUnitStorage> CashUnits, ref List<string> UnitsUsed)
         {
             double currentBiggest = 0;
             string biggestCashUnit = string.Empty;
@@ -116,20 +103,15 @@ namespace XFS4IoTFramework.CashDispenser
 
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type ==  CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Value > currentBiggest
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
+                        unit.Value.Unit.Configuration.Value > currentBiggest &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
                     {
-                        currentBiggest = unit.Value.Value;
+                        currentBiggest = unit.Value.Unit.Configuration.Value;
                         biggestCashUnit = unit.Key;
                     }
                 }
@@ -138,23 +120,18 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type == CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Value > 0
-                        && unit.Value.Value >= currentBiggest
-                        && unit.Value.Value <= CurrentGreatest
-                        && !UnitsUsed.Contains(unit.Key)
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
+                        unit.Value.Unit.Configuration.Value > 0 &&
+                        unit.Value.Unit.Configuration.Value >= currentBiggest &&
+                        unit.Value.Unit.Configuration.Value <= CurrentGreatest &&
+                        !UnitsUsed.Contains(unit.Key) &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
                     {
-                        currentBiggest = unit.Value.Value;
+                        currentBiggest = unit.Value.Unit.Configuration.Value;
                         biggestCashUnit = unit.Key;
                     }
 
@@ -178,7 +155,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">The cash units to search through.</param>
         /// <param name="UnitsUsed"></param>
         /// <returns></returns>
-        protected static string FindNextLeast(double CurrentLeast, string CurrencyID, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed)
+        protected static string FindNextLeast(double CurrentLeast, string CurrencyID, Dictionary<string, CashUnitStorage> CashUnits, ref List<string> UnitsUsed)
         {
             double currentSmallest = double.MaxValue;
             string smallestCashUnit = string.Empty;
@@ -191,20 +168,15 @@ namespace XFS4IoTFramework.CashDispenser
 
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type == CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Value < currentSmallest
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
+                        unit.Value.Unit.Configuration.Value < currentSmallest &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
                     {
-                        currentSmallest = unit.Value.Value;
+                        currentSmallest = unit.Value.Unit.Configuration.Value;
                         smallestCashUnit = unit.Key;
                     }
                 }
@@ -213,23 +185,18 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type == CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Value > 0
-                        && unit.Value.Value <= currentSmallest
-                        && unit.Value.Value >= CurrentLeast
-                        && !UnitsUsed.Contains(unit.Key)
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
+                        unit.Value.Unit.Configuration.Value > 0 &&
+                        unit.Value.Unit.Configuration.Value <= currentSmallest &&
+                        unit.Value.Unit.Configuration.Value >= CurrentLeast &&
+                        !UnitsUsed.Contains(unit.Key) &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
                     {
-                        currentSmallest = unit.Value.Value;
+                        currentSmallest = unit.Value.Unit.Configuration.Value;
                         smallestCashUnit = unit.Key;
                     }
                 }
@@ -252,7 +219,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">The cash units to search through.</param>
         /// <param name="UnitsUsed"></param>
         /// <returns></returns>
-        protected static string FindNextMostFull(double LastMostFull, string CurrencyID, Dictionary<string, CashUnit> CashUnits, List<string> UnitsUsed)
+        protected static string FindNextMostFull(double LastMostFull, string CurrencyID, Dictionary<string, CashUnitStorage> CashUnits, List<string> UnitsUsed)
         {
             double currentMostFull = 0;
             string mostFullCashUnit = string.Empty;
@@ -265,20 +232,15 @@ namespace XFS4IoTFramework.CashDispenser
 
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type == CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Count > currentMostFull
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
-                    {
-                        currentMostFull = unit.Value.Count;
+                        unit.Value.Unit.Status.Count > currentMostFull &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
+                        {
+                        currentMostFull = unit.Value.Unit.Status.Count;
                         mostFullCashUnit = unit.Key;
                     }
                 }
@@ -287,23 +249,18 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 foreach (var unit in CashUnits)
                 {
-                    if ((unit.Value.Type == CashUnit.TypeEnum.BillCassette ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinCylinder ||
-                         unit.Value.Type == CashUnit.TypeEnum.CoinDispenser ||
-                         unit.Value.Type == CashUnit.TypeEnum.Recycling)
-                        && unit.Value.CurrencyID == CurrencyID
+                    if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                        unit.Value.Unit.Configuration.Currency == CurrencyID &&
                         //This check is done elsewhere
-                        && unit.Value.Count > 0
-                        && unit.Value.Count >= currentMostFull
-                        && unit.Value.Count <= LastMostFull
-                        && !UnitsUsed.Contains(unit.Key)
-                        && (unit.Value.Status == CashUnit.StatusEnum.Ok ||
-                            unit.Value.Status == CashUnit.StatusEnum.Low ||
-                            unit.Value.Status == CashUnit.StatusEnum.High ||
-                            unit.Value.Status == CashUnit.StatusEnum.Full)
-                        && !unit.Value.AppLock)
+                        unit.Value.Unit.Status.Count > 0 &&
+                        unit.Value.Unit.Status.Count >= currentMostFull &&
+                        unit.Value.Unit.Status.Count <= LastMostFull &&
+                        !UnitsUsed.Contains(unit.Key) &&
+                        unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Empty &&
+                        !unit.Value.Unit.Configuration.AppLockOut)
                     {
-                        currentMostFull = unit.Value.Count;
+                        currentMostFull = unit.Value.Unit.Status.Count;
                         mostFullCashUnit = unit.Key;
                     }
                 }

@@ -60,23 +60,25 @@ namespace XFS4IoTFramework.CardReader
                                              CancellationToken cancellation);
 
         /// <summary>
-        /// This command is only applicable to motor driven card readers and latched dip card readers.
-        /// For motorized card readers the default operation is that the card is driven to the exit slot from where the usercan remove it.
-        /// The card remains in position for withdrawal until either it is taken or another command is issuedthat moves the card.
-        /// For latched dip readers, this command causes the card to be unlatched (if not already unlatched), enablingremoval.
-        /// After successful completion of this command, a CardReader.MediaRemovedEvent is generated to inform the application when the card is taken.
+        ///  This command is only applicable to motorized and latched dip card readers.
+        ///  If after a successful completion event the card is at the exit position, the card will be accessible to the user.
+        /// A CardReader.MediaRemovedEvent is generated to inform the application when the card is taken.
+        /// 
+        /// * Motorized card readers
+        /// Motorized card readers can physically move cards from or to the transport or exit positions or a storage.
+        /// The default operation is to move a card in the transport position to the exit position.
+        /// If the card is being moved from the exit position to the exit position, these are valid behaviors:
+        /// The card does not move as the card reader can detect the card is already in the correct position.
+        /// The card is moved back into the card reader then moved back to the exit to ensure the card is in the correct position.
+        /// 
+        /// * Latched dip card readers
+        /// Latched dips card readers can logically move cards from the transport position to the exit position by
+        /// unlatching the card reader.That is, the card will not physically move but will be accessible to the user.
         /// </summary>
-        Task<EjectCardResult> EjectCardAsync(EjectCardRequest ejectCardInfo, 
-                                             CancellationToken cancellation);
+        Task<MoveCardResult> MoveCardAsync(IMoveEvents events,
+                                           MoveCardRequest mvoeCardInfo, 
+                                           CancellationToken cancellation);
 
-        /// <summary>
-        /// The card is removed from its present position (card inserted into device, card entering, unknown position) and stored in the retain bin;
-        /// applicable to motor-driven card readers only.
-        /// The ID card unit sends a CardReader.RetainBinThresholdEvent if the storage capacity of the retainbin is reached.
-        /// If the storage capacity has already been reached, and the command cannot be executed, an error isreturned and the card remains in its present position.
-        /// </summary>
-        Task<CaptureCardResult> CaptureCardAsync(IRetainCardEvents events, 
-                                                 CancellationToken cancellation);
 
         /// <summary>
         /// This command is used to communicate with the chip.
@@ -106,13 +108,6 @@ namespace XFS4IoTFramework.CardReader
                                                  CancellationToken cancellation);
 
         /// <summary>
-        /// This function resets the present value for number of cards retained to zero.
-        /// The function is possible formotor-driven card readers only.
-        /// The number of cards retained is controlled by the service.
-        /// </summary>
-        Task<ResetCountResult> ResetBinCountAsync(CancellationToken cancellation);
-
-        /// <summary>
         /// This command is used for setting the DES key that is necessary for operating a CIM86 module.
         /// The command must beexecuted before the first read command is issued to the card reader.
         /// </summary>
@@ -125,17 +120,6 @@ namespace XFS4IoTFramework.CardReader
         Task<ChipPowerResult> ChipPowerAsync(IChipPowerEvents events,
                                              ChipPowerRequest action,
                                              CancellationToken cancellation);
-
-        /// <summary>
-        /// This command is used to move a card that is present in the reader to a parking station.
-        /// A parking station isdefined as an area in the ID card unit, which can be used to temporarily store the card while the device performs operations on another card. 
-        /// This command is also used to move a card from the parking station to the read/write,chip I/O or transport position. 
-        /// When a card is moved from the parking station to the read/write, chip I/O ortransport position parkOut, the read/write, chip I/O or transport position must not be occupied with anothercard, otherwise the error cardPresent will be returned.
-        /// After moving a card to a parking station, another card can be inserted and read by calling, e.g.,CardReader.ReadRawData.
-        /// Cards in parking stations will not be affected by any CardReader commands until they are removed from the parkingstation using this command, except for the CardReader.Reset command, which will move thecards in the parking stations as specified in its input as part of the reset action if possible.
-        /// </summary>
-        Task<ParkCardResult> ParkCardAsync(ParkCardRequest parkCardInfo,
-                                           CancellationToken cancellation);
 
         /// <summary>
         /// This command is used to configure an intelligent contactless card reader before performing a contactlesstransaction.
@@ -188,12 +172,6 @@ namespace XFS4IoTFramework.CardReader
         /// The Kernel Identifier has been introduced by the EMVCo specifications; seeReference [3].
         /// </summary>
         QueryEMVApplicationResult EMVContactlessQueryApplications();
-
-
-        /// <summary>
-        /// Specify the type of cardreader
-        /// </summary>
-        DeviceTypeEnum DeviceType { get; }
 
         /// <summary>
         /// Specify the current status of media

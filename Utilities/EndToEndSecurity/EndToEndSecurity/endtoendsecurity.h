@@ -6,5 +6,24 @@
 
 #pragma once
 
+#ifdef __cplusplus
+#define C_LINKAGE "C"
+#else 
+#define C_LINKAGE
+#endif 
 
-extern "C" bool ValidateToken(char const* Token, size_t TokenLength);
+
+
+extern C_LINKAGE bool ValidateToken(char const* Token, size_t TokenLength);
+extern C_LINKAGE bool ParseDispenseToken(char const* const Token, size_t TokenSize);
+
+void CleanDispenceValues();
+
+struct DispenseKeyValues_t
+{
+    unsigned long Value;
+    unsigned long Fraction;
+    char Currency[3]; // NOT null terminated
+};
+
+extern C_LINKAGE const struct DispenseKeyValues_t *const GetDispenseKeyValues();

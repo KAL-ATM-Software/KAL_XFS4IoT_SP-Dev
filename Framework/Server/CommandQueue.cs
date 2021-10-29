@@ -43,21 +43,49 @@ namespace XFS4IoTServer
         }
 
         /// <summary>
+        /// Check for at least one valid RequestId for Cancel request.
+        /// </summary>
+        /// <param name="Connection">Connection requesting the cancel operation.</param>
+        /// <param name="RequestIds">RequestIDs to check.</param>
+        /// <returns>True if any specified ids are valid or RequestIds is null.</returns>
+        public async Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds)
+        {
+            //Any commands
+            if (RequestIds is null)
+                return true;
+
+            try
+            {
+                await syncObject.WaitAsync();
+
+                //Check current command
+                if (CurrentCommand != null &&CurrentCommand.Connection == Connection && RequestIds.Contains(CurrentCommand.Command.Header.RequestId.Value))
+                    return true;
+
+                //Check queued commands
+                return Contents.Any(c => c.Connection == Connection && RequestIds.Contains(c.Command.Header.RequestId.Value));
+            }
+            finally
+            {
+                syncObject.Release();
+            }
+        }
+
+        /// <summary>
         /// Attempt to cancel active or queued items
         /// </summary>
         /// <param name="Connection">Connection requesting the cancel operation.</param>
         /// <param name="RequestIds">RequestIDs to cancel.</param>
         /// <returns>True if any specified ids are cancelled or RequestIds is null.</returns>
-        public async Task<bool> TryCancelItemsAsync(IConnection Connection, List<int> RequestIds)
+        public async Task TryCancelItemsAsync(IConnection Connection, List<int> RequestIds)
         {
             if(RequestIds is null || RequestIds.Count == 0)
             {
                 await TryCancelAllAsync(Connection);
-                return true;
             }
             else
             {
-                return await TryCancelSpecificAsync(Connection, RequestIds);
+                await TryCancelSpecificAsync(Connection, RequestIds);
             }
         }
 
@@ -73,12 +101,15 @@ namespace XFS4IoTServer
                 
                 //Request Cancel for running command
                 if (CurrentCommand != null && CurrentCommand.Connection == Connection)
+                {
                     CurrentCommand.cts.Cancel();
-
+                    CurrentCommandCancelRequested = true;
+                }
                 foreach (var cmd in Contents.Where(c => c.Connection == Connection).ToList())
                 {
                     //Complete command with Cancelled response
-                    await cmd.CommandHandler.HandleError(cmd.Connection, cmd.Command, new OperationCanceledException());
+                    await cmd.CommandHandler.HandleError(cmd.Connection, cmd.Command, new TimeoutCanceledException(true));
+                    cmd.cts.Dispose();
                     Contents.Remove(cmd);
                 }
             }
@@ -94,9 +125,8 @@ namespace XFS4IoTServer
         /// <param name="Connection">The connection to cancel commands for.</param>
         /// <param name="RequestIds">RequestIDs to cancel.</param>
         /// <returns>True if any specified ids are cancelled.</returns>
-        private async Task<bool> TryCancelSpecificAsync(IConnection Connection, List<int> RequestIds)
+        private async Task TryCancelSpecificAsync(IConnection Connection, List<int> RequestIds)
         {
-            bool retVal = false;
             try
             {
                 await syncObject.WaitAsync();
@@ -108,7 +138,7 @@ namespace XFS4IoTServer
                     {
                         //Request Cancel for running command
                         CurrentCommand.cts.Cancel();
-                        retVal = true;
+                        CurrentCommandCancelRequested = true;
                     }
                     else
                     {
@@ -116,9 +146,9 @@ namespace XFS4IoTServer
                         if (foundID is not null)
                         {
                             //Complete command with Cancelled response
-                            await foundID.CommandHandler.HandleError(foundID.Connection, foundID.Command, new OperationCanceledException());
+                            await foundID.CommandHandler.HandleError(foundID.Connection, foundID.Command, new TimeoutCanceledException(true));
+                            foundID.cts.Dispose();
                             Contents.Remove(foundID);
-                            retVal = true;
                         }
                     }
                 }
@@ -127,7 +157,6 @@ namespace XFS4IoTServer
             {
                 syncObject.Release();
             }
-            return retVal;
         }
 
         /// <summary>
@@ -185,12 +214,33 @@ namespace XFS4IoTServer
                 try
                 {
                     Logger.Log("Dispatcher", $"Running {command.Header.Name} id:{command.Header.RequestId}");
+
+                    //Throw OperationCanceledException if command timeout has already been reached.
+                    cts.Token.ThrowIfCancellationRequested();
                     await handler.Handle(connection, command, cts.Token);
+                    
                     Logger.Log("Dispatcher", $"Completed {command.Header.Name} id:{command.Header.RequestId}");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Dispatcher", $"Caught exception running {command.Header.Name} id:{command.Header.RequestId}");
+                    Logger.Log("Dispatcher", $"Caught exception running {command.Header.Name} id:{command.Header.RequestId}.{Environment.NewLine}{ex}");
+
+                    if(ex is TaskCanceledException or OperationCanceledException)
+                    {
+                        //Check if cancel was requested.
+                        bool cancelRequested = false;
+                        try
+                        {
+                            await syncObject.WaitAsync();
+                            cancelRequested = CurrentCommandCancelRequested;
+                        }
+                        finally
+                        {
+                            syncObject.Release();
+                        }
+                        ex = new TimeoutCanceledException(ex.Message, ex, cancelRequested);
+                    }
+
                     await handler.HandleError(connection, command, ex);
                 }
 
@@ -199,6 +249,7 @@ namespace XFS4IoTServer
                 {
                     await syncObject.WaitAsync();
                     CurrentCommand = null;
+                    CurrentCommandCancelRequested = false;
                 }
                 finally
                 {
@@ -213,6 +264,7 @@ namespace XFS4IoTServer
         private readonly List<QueueItem> Contents = new();
         private readonly AutoResetEvent NewItemEvent = new(false);
         private QueueItem CurrentCommand = null;
+        private bool CurrentCommandCancelRequested = false;
         private readonly ILogger Logger;
     }
 }

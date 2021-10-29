@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.Keyboard
             KeypressBeepCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

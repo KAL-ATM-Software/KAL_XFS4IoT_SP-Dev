@@ -29,17 +29,18 @@ namespace XFS4IoT.CashDispenser.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(int? Delay = null)
+            public PayloadData(double? Delay = null)
                 : base()
             {
                 this.Delay = Delay;
             }
 
             /// <summary>
-            /// The time in milliseconds by which the dispense operation will be delayed.
+            /// The time in seconds by which the dispense operation will be delayed.
+            /// <example>0.1</example>
             /// </summary>
             [DataMember(Name = "delay")]
-            public int? Delay { get; init; }
+            public double? Delay { get; init; }
 
         }
 

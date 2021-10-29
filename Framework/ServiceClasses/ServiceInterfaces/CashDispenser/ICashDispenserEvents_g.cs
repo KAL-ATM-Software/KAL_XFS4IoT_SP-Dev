@@ -16,13 +16,5 @@ namespace XFS4IoTFramework.CashDispenser
     public interface ICashDispenserUnsolicitedEvents
     {
 
-        Task ItemsTakenEvent(XFS4IoT.CashDispenser.Events.ItemsTakenEvent.PayloadData Payload);
-
-        Task ShutterStatusChangedEvent(XFS4IoT.CashDispenser.Events.ShutterStatusChangedEvent.PayloadData Payload);
-
-        Task MediaDetectedEvent(XFS4IoT.CashDispenser.Events.MediaDetectedEvent.PayloadData Payload);
-
-        Task ItemsPresentedEvent();
-
     }
 }

@@ -23,15 +23,11 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private Task<DenominateCompletion.PayloadData> HandleDenominate(IDenominateEvents events, DenominateCommand denominate, CancellationToken cancel)
         {
-            int mixNumber = 0;
-            if (denominate.Payload.MixNumber is not null)
-                mixNumber = (int)denominate.Payload.MixNumber;
-
-            if (mixNumber != 0 &&
-                CashDispenser.GetMix((int)denominate.Payload.MixNumber) is null)
+            if (!string.IsNullOrEmpty(denominate.Payload.Mix) &&
+                CashDispenser.GetMix(denominate.Payload.Mix) is null)
             {
                 return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                                            $"Invalid MixNumber specified. {mixNumber}",
+                                                                            $"Invalid MixNumber specified. {denominate.Payload.Mix}",
                                                                             DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber));
             }
 
@@ -52,7 +48,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             ////////////////////////////////////////////////////////////////////////////
             // 1) Check that a given denomination can currently be paid out or Test that a given amount matches a given denomination.
-            if (mixNumber == 0)
+            if (string.IsNullOrEmpty(denominate.Payload.Mix))
             {
                 if (totalAmount == 0 &&
                     (denominate.Payload.Denomination.Values is null ||
@@ -105,13 +101,13 @@ namespace XFS4IoTFramework.CashDispenser
                 if (denomToDispense.Values is null)
                 {
                     return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                $"Mix failed to denominate. {mixNumber}, {denomToDispense.CurrencyAmounts}",
+                                                                                $"Mix failed to denominate. {denominate.Payload.Mix}, {denomToDispense.CurrencyAmounts}",
                                                                                 DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
                 }
             }
             ////////////////////////////////////////////////////////////////////////////
             //  2) Calculate the denomination, given an amount and mix number.
-            else if (mixNumber != 0 &&
+            else if (!string.IsNullOrEmpty(denominate.Payload.Mix) &&
                      (denominate.Payload.Denomination.Values is null ||
                       denominate.Payload.Denomination.Values.Count == 0))
             {
@@ -121,18 +117,18 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                 $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well."));
                 }
 
-                denomToDispense.Denomination = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
+                denomToDispense.Denomination = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
 
                 if (denomToDispense.Values is null)
                 {
                     return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                $"Mix failed to denominate. {mixNumber}, {denomToDispense.CurrencyAmounts}",
+                                                                                $"Mix failed to denominate. {denominate.Payload.Mix}, {denomToDispense.CurrencyAmounts}",
                                                                                 DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
                 }
             }
             ////////////////////////////////////////////////////////////////////////////
             //  3) Complete a partially specified denomination for a given amount.
-            else if (mixNumber != 0 &&
+            else if (!string.IsNullOrEmpty(denominate.Payload.Mix) &&
                      denominate.Payload.Denomination.Values.Count != 0)
             {
                 if (totalAmount == 0)
@@ -141,7 +137,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                 $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well."));
                 }
 
-                Denomination mixDenom = CashDispenser.GetMix(mixNumber).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
+                Denomination mixDenom = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
                 if (mixDenom.Values != denomToDispense.Values)
                 {
                     return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,

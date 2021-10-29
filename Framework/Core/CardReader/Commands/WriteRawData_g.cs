@@ -69,6 +69,7 @@ namespace XFS4IoT.CardReader.Commands
 
                 /// <summary>
                 /// Base4 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQgZGF0YQ==</example>
                 /// </summary>
                 [DataMember(Name = "data")]
                 public string Data { get; init; }

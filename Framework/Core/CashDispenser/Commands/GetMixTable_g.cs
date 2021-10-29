@@ -27,17 +27,18 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? MixNumber = null)
+            public PayloadData(int Timeout, string Mix = null)
                 : base(Timeout)
             {
-                this.MixNumber = MixNumber;
+                this.Mix = Mix;
             }
 
             /// <summary>
-            /// Number of the requested house mix table.
+            /// A house mix table as defined by one of the [mixes](#cashdispenser.getmixtypes.completion.properties.) reported by [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes).
+            /// <example>table21</example>
             /// </summary>
-            [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; init; }
+            [DataMember(Name = "mix")]
+            public string Mix { get; init; }
 
         }
     }

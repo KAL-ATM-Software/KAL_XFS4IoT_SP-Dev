@@ -17,7 +17,7 @@ namespace XFS4IoT.CashAcceptor
     [DataContract]
     public sealed class PositionClass
     {
-        public PositionClass(PositionEnum? Position = null, ShutterEnum? Shutter = null, PositionStatusEnum? PositionStatus = null, TransportEnum? Transport = null, TransportStatusEnum? TransportStatus = null, JammedShutterPositionEnum? JammedShutterPosition = null)
+        public PositionClass(CashManagement.PositionEnum? Position = null, ShutterEnum? Shutter = null, PositionStatusEnum? PositionStatus = null, TransportEnum? Transport = null, TransportStatusEnum? TransportStatus = null, JammedShutterPositionEnum? JammedShutterPosition = null)
         {
             this.Position = Position;
             this.Shutter = Shutter;
@@ -27,44 +27,8 @@ namespace XFS4IoT.CashAcceptor
             this.JammedShutterPosition = JammedShutterPosition;
         }
 
-        public enum PositionEnum
-        {
-            InLeft,
-            InRight,
-            InCenter,
-            InTop,
-            InBottom,
-            InFront,
-            InRear,
-            OutLeft,
-            OutRight,
-            OutCenter,
-            OutTop,
-            OutBottom,
-            OutFront,
-            OutRear
-        }
-
-        /// <summary>
-        /// Supplies the input or output position as one of the following values:
-        /// 
-        /// * ```inLeft``` - Left input position.
-        /// * ```inRight``` - Right input position.
-        /// * ```inCenter``` - Center input position.
-        /// * ```inTop``` - Top input position.
-        /// * ```inBottom``` - Bottom input position.
-        /// * ```inFront``` - Front input position.
-        /// * ```inRear``` - Rear input position.
-        /// * ```outLeft``` - Left output position.
-        /// * ```outRight``` - Right output position.
-        /// * ```outCenter``` - Center output position.
-        /// * ```outTop``` - Top output position.
-        /// * ```outBottom``` - Bottom output position.
-        /// * ```outFront``` - Front output position.
-        /// * ```outRear``` - Rear output position.
-        /// </summary>
         [DataMember(Name = "position")]
-        public PositionEnum? Position { get; init; }
+        public CashManagement.PositionEnum? Position { get; init; }
 
         public enum ShutterEnum
         {
@@ -206,9 +170,9 @@ namespace XFS4IoT.CashAcceptor
         /// 
         /// * ```empty``` - The intermediate stacker is empty.
         /// * ```notEmpty``` - The intermediate stacker is not empty.
-        /// * ```full``` - The intermediate stacker is full. This may also be reported during a cash-in transaction 
-        /// where a limit specified by CashAcceptor.SetCashInLimit has been reached.
-        /// * ```unknown``` - Due to a hardware error or other condition, the state of the intermediate stacker 
+        /// * ```full``` - The intermediate stacker is full. This may also be reported during a cash-in transaction
+        /// where a limit specified by [CashAcceptor.CashInStart](#cashacceptor.cashinstart) has been reached.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the intermediate stacker
         /// cannot be determined.
         /// * ```notSupported``` - The physical device has no intermediate stacker.
         /// </summary>
@@ -294,7 +258,7 @@ namespace XFS4IoT.CashAcceptor
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeEnum? Type = null, int? MaxCashInItems = null, bool? Shutter = null, bool? ShutterControl = null, int? IntermediateStacker = null, bool? ItemsTakenSensor = null, bool? ItemsInsertedSensor = null, PositionsClass Positions = null, RetractAreasClass RetractAreas = null, RetractTransportActionsClass RetractTransportActions = null, RetractStackerActionsClass RetractStackerActions = null, bool? CompareSignatures = null, bool? Replenish = null, CashInLimitClass CashInLimit = null, CountActionsClass CountActions = null, bool? DeviceLockControl = null, bool? Deplete = null, CounterfeitActionEnum? CounterfeitAction = null)
+        public CapabilitiesClass(TypeEnum? Type = null, int? MaxCashInItems = null, bool? Shutter = null, bool? ShutterControl = null, int? IntermediateStacker = null, bool? ItemsTakenSensor = null, bool? ItemsInsertedSensor = null, PositionsClass Positions = null, RetractAreasClass RetractAreas = null, RetractTransportActionsClass RetractTransportActions = null, RetractStackerActionsClass RetractStackerActions = null, CashInLimitClass CashInLimit = null, CountActionsClass CountActions = null, CounterfeitActionEnum? CounterfeitAction = null)
         {
             this.Type = Type;
             this.MaxCashInItems = MaxCashInItems;
@@ -307,12 +271,8 @@ namespace XFS4IoT.CashAcceptor
             this.RetractAreas = RetractAreas;
             this.RetractTransportActions = RetractTransportActions;
             this.RetractStackerActions = RetractStackerActions;
-            this.CompareSignatures = CompareSignatures;
-            this.Replenish = Replenish;
             this.CashInLimit = CashInLimit;
             this.CountActions = CountActions;
-            this.DeviceLockControl = DeviceLockControl;
-            this.Deplete = Deplete;
             this.CounterfeitAction = CounterfeitAction;
         }
 
@@ -358,11 +318,16 @@ namespace XFS4IoT.CashAcceptor
         public bool? Shutter { get; init; }
 
         /// <summary>
-        /// If true the shutter is controlled implicitly by the Service. 
-        /// If false the shutter must be controlled explicitly by the application using the OpenShutter and the 
-        /// CloseShutter commands. In either case the PresentMedia command may be used if the presentControl field is 
-        /// false.
-        /// The shutterControl field is always true if the device has no shutter. 
+        /// If true the shutter is controlled implicitly by the service.
+        /// 
+        /// If false the shutter must be controlled explicitly by the application using the
+        /// [CashManagement.OpenShutter](#cashmanagement.openshutter) and
+        /// [CashManagement.CloseShutter](#cashmanagement.closeshutter) commands.
+        /// 
+        /// In either case the [CashAcceptor.PresentMedia](#cashacceptor.presentmedia) command may be used if the 
+        /// _presentControl_ property is false.
+        /// 
+        /// This property is always true if the device has no shutter.
         /// This field applies to all shutters and all positions.
         /// </summary>
         [DataMember(Name = "shutterControl")]
@@ -373,11 +338,12 @@ namespace XFS4IoT.CashAcceptor
         /// no intermediate stacker for cash-in available.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
+        [DataTypes(Minimum = 0)]
         public int? IntermediateStacker { get; init; }
 
         /// <summary>
         /// Specifies whether or not the CashAcceptor can detect when items at the exit position are taken by the user. 
-        /// If true the Service generates an accompanying CashAcceptor.ItemsTaken event. 
+        /// If true the Service generates an accompanying [CashManagement.ItemsTakenEvent](#cashmanagement.itemstakenevent). 
         /// If false this event is not generated. 
         /// This field relates to all output positions.
         /// </summary>
@@ -387,7 +353,7 @@ namespace XFS4IoT.CashAcceptor
         /// <summary>
         /// Specifies whether the CashAcceptor has the ability to detect when items have actually been inserted by 
         /// the user. 
-        /// If true the Service generates an accompanying CashAcceptor.ItemsInserted event. 
+        /// If true the service generates an accompanying [CashManagement.ItemsInsertedEvent](#cashmanagement.itemsinsertedevent). 
         /// If false this event is not generated. 
         /// This field relates to all input positions. 
         /// This flag should not be reported as true unless item insertion can be detected.
@@ -522,7 +488,7 @@ namespace XFS4IoT.CashAcceptor
             }
 
             /// <summary>
-            /// The items may be retracted to a retract cash unit.
+            /// The items may be retracted to a retract storage unit.
             /// </summary>
             [DataMember(Name = "retract")]
             public bool? Retract { get; init; }
@@ -540,19 +506,19 @@ namespace XFS4IoT.CashAcceptor
             public bool? Stacker { get; init; }
 
             /// <summary>
-            /// The items may be retracted to a reject cash unit.
+            /// The items may be retracted to a reject storage unit.
             /// </summary>
             [DataMember(Name = "reject")]
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be retracted to the item cassettes, i.e. cash-in and recycle cash units.
+            /// The items may be retracted to cash-in and recycle storage units.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in cash unit.
+            /// Items may be retracted to a cash-in storage unit.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -585,25 +551,25 @@ namespace XFS4IoT.CashAcceptor
             public bool? Present { get; init; }
 
             /// <summary>
-            /// The items may be moved to a retract cash unit.
+            /// The items may be moved to a retract storage unit.
             /// </summary>
             [DataMember(Name = "retract")]
             public bool? Retract { get; init; }
 
             /// <summary>
-            /// The items may be moved to a reject bin.
+            /// The items may be moved to a reject storage unit.
             /// </summary>
             [DataMember(Name = "reject")]
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be moved to the item cassettes, i.e. cash-in and recycle cash units.
+            /// The items may be moved to the cash-in and recycle storage units.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in cash unit.
+            /// Items may be retracted to a cash-in storage unit.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -637,25 +603,25 @@ namespace XFS4IoT.CashAcceptor
             public bool? Present { get; init; }
 
             /// <summary>
-            /// The items may be moved to a retract cash unit.
+            /// The items may be moved to a retract storage unit.
             /// </summary>
             [DataMember(Name = "retract")]
             public bool? Retract { get; init; }
 
             /// <summary>
-            /// The items may be moved to a reject bin.
+            /// The items may be moved to a reject storage unit.
             /// </summary>
             [DataMember(Name = "reject")]
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be moved to the item cassettes, i.e. cash-in and recycle cash units.
+            /// The items may be moved to the cash-in and recycle storage units.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in cash unit.
+            /// Items may be retracted to a cash-in storage unit.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -669,19 +635,6 @@ namespace XFS4IoT.CashAcceptor
         /// </summary>
         [DataMember(Name = "retractStackerActions")]
         public RetractStackerActionsClass RetractStackerActions { get; init; }
-
-        /// <summary>
-        /// Specifies if the Service has the ability to compare signatures through the 
-        /// [CashAcceptor.CompareSignature](#cashacceptor.comparesignature) command.
-        /// </summary>
-        [DataMember(Name = "compareSignatures")]
-        public bool? CompareSignatures { get; init; }
-
-        /// <summary>
-        /// If set to true the CashAcceptor.ReplenishTarget and CashAcceptor.Replenish commands are supported.
-        /// </summary>
-        [DataMember(Name = "replenish")]
-        public bool? Replenish { get; init; }
 
         [DataContract]
         public sealed class CashInLimitClass
@@ -707,10 +660,9 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Specifies whether the cash-in limitation is supported or not for the 
-        /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command. 
-        /// If the device does not have the capability to limit the amount or the number of items during cash-in operations
-        /// all flags will be set to false.
+        /// Specifies which cash-in limitations are supported for the
+        /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command. If the device does not have the capability to
+        /// limit the amount or the number of items during cash-in operations this property is omitted.
         /// </summary>
         [DataMember(Name = "cashInLimit")]
         public CashInLimitClass CashInLimit { get; init; }
@@ -725,13 +677,13 @@ namespace XFS4IoT.CashAcceptor
             }
 
             /// <summary>
-            /// The counting of individual cash units via the input structure of the CashAcceptor.CashUnitCount command is supported.
+            /// The counting of individual cash units is supported.
             /// </summary>
             [DataMember(Name = "individual")]
             public bool? Individual { get; init; }
 
             /// <summary>
-            /// The counting of all cash units via the empty payload structure of the CashAcceptor.CashUnitCount command is supported.
+            /// The counting of all cash units is supported.
             /// </summary>
             [DataMember(Name = "all")]
             public bool? All { get; init; }
@@ -739,30 +691,11 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Specifies the count action supported by the CashAcceptor.CashUnitCount command. If the device does not support counting 
-        /// then all flags will be set to false.
+        /// Specifies the count action supported by the [CashAcceptor.CashUnitCount](#cashacceptor.cashunitcount)
+        /// command. If the device does not support counting then this property is omitted.
         /// </summary>
         [DataMember(Name = "countActions")]
         public CountActionsClass CountActions { get; init; }
-
-        /// <summary>
-        /// Specifies whether the CashAcceptor supports physical lock/unlock control of the CashAcceptor device 
-        /// and/or the cash units. 
-        /// If true, the device and/or the cash units can be locked and unlocked by the
-        /// [CashAcceptor.DeviceLockControl](#cashacceptor.devicelockcontrol)
-        /// command, and the lock status can be retrieved by the
-        /// [CashAcceptor.DeviceLockStatus](#cashacceptor.devicelockstatus) command. 
-        /// If false, the CashAcceptor will not support the physical lock/unlock control of the CashAcceptor device 
-        /// or the cash units.
-        /// </summary>
-        [DataMember(Name = "deviceLockControl")]
-        public bool? DeviceLockControl { get; init; }
-
-        /// <summary>
-        /// If set to true the CashAcceptor.Deplete command is supported.
-        /// </summary>
-        [DataMember(Name = "deplete")]
-        public bool? Deplete { get; init; }
 
         public enum CounterfeitActionEnum
         {
@@ -772,7 +705,8 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Specifies whether level 2/3 notes (see [NoteClassification](#noteclassification)) are allowed to be returned
+        /// Specifies whether level 2/3 notes (see 
+        /// [NoteClassification](#cashmanagement.generalinformation.noteclassification)) are allowed to be returned
         /// to the customer during a cash-in transaction. If notes are not to be returned to the customer by 
         /// these rules, they will not be returned regardless of whether their specific note type is configured to not 
         /// be accepted by [CashAcceptor.ConfigureNoteTypes](#cashacceptor.configurenotetypes). Following rules are 

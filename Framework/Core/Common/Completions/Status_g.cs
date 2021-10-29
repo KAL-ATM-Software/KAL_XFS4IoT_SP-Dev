@@ -26,7 +26,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, CardEmbosser.StatusClass CardEmbosser = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Dictionary<string, Lights.LightStateClass> Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, CardEmbosser.StatusClass CardEmbosser = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Dictionary<string, Lights.LightStateClass> Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Common = Common;
@@ -41,6 +41,7 @@ namespace XFS4IoT.Common.Completions
                 this.CardEmbosser = CardEmbosser;
                 this.BarcodeReader = BarcodeReader;
                 this.Biometric = Biometric;
+                this.Camera = Camera;
                 this.Lights = Lights;
                 this.Auxiliaries = Auxiliaries;
                 this.VendorMode = VendorMode;
@@ -129,6 +130,12 @@ namespace XFS4IoT.Common.Completions
             /// </summary>
             [DataMember(Name = "biometric")]
             public Biometric.StatusClass Biometric { get; init; }
+
+            /// <summary>
+            /// Status information for XFS4IoT services implementing the Camera interface. This will be omitted if the Camera interface is not supported.
+            /// </summary>
+            [DataMember(Name = "camera")]
+            public Camera.StatusClass Camera { get; init; }
 
             /// <summary>
             /// Status information for XFS4IoT services implementing the Lights interface. This will be omitted if the

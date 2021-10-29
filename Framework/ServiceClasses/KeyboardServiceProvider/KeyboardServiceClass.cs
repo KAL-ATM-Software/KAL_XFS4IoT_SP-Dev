@@ -20,13 +20,17 @@ namespace XFS4IoTServer
     public partial class KeyboardServiceClass
     {
         public KeyboardServiceClass(IServiceProvider ServiceProvider,
-                                    IKeyManagementServiceClass KeyManagement,
+                                    IKeyManagementServiceClass KeyManagementService,
                                     ICommonService CommonService,
                                     ILogger logger)
         : this(ServiceProvider, logger)
         {
-            this.KeyManagementService = KeyManagement.IsNotNull($"Unexpected parameter set in the " + nameof(KeyboardServiceClass));
-            this.CommonService = CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(KeyboardServiceClass));
+            KeyManagementService.IsNotNull($"Unexpected parameter set for key management service in the " + nameof(KeyboardServiceClass));
+            this.KeyManagementService = KeyManagementService.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. " + nameof(KeyboardServiceClass));
+
+            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(KeyboardServiceClass));
+            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(KeyboardServiceClass));
+
             SupportedFunctionKeys = new();
             SupportedFunctionKeysWithShift = new();
 
@@ -65,20 +69,31 @@ namespace XFS4IoTServer
             }
         }
 
-        /// <summary>
-        /// Stores KeyManagement interface capabilites internally
-        /// </summary>
-        public KeyboardCapabilitiesClass KeyboardCapabilitiesCapabilities { get => CommonService.KeyboardCapabilities; set => CommonService.KeyboardCapabilities = value; }
-
+        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores KeyManagement interface capabilites internally
+        /// </summary>
+        public KeyboardCapabilitiesClass KeyboardCapabilitiesCapabilities { get => CommonService.KeyboardCapabilities; set { } }
+
+        #endregion
+
+        #region Key Management Service
+        /// <summary>
         /// KeyManagement service interface
         /// </summary>
-        private IKeyManagementServiceClass KeyManagementService { get; init; }
+        private IKeyManagementService KeyManagementService { get; init; }
+
+        /// <summary>
+        /// Return secure key entry component status
+        /// </summary>
+        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => KeyManagementService.GetSecureKeyEntryStatus();
+
+        #endregion
 
         /// <summary>
         /// Function keys device supported
@@ -94,10 +109,5 @@ namespace XFS4IoTServer
         /// Keyboard layout device supported
         /// </summary>
         public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get; set; }
-
-        /// <summary>
-        /// Return secure key entry component status
-        /// </summary>
-        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => KeyManagementService.GetSecureKeyEntryStatus();
     }
 }

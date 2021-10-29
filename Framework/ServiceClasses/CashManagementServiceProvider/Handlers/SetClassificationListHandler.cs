@@ -22,6 +22,7 @@ namespace XFS4IoTFramework.CashManagement
         private Task<SetClassificationListCompletion.PayloadData> HandleSetClassificationList(ISetClassificationListEvents events, SetClassificationListCommand setClassificationList, CancellationToken cancel)
         {
             // NOT SUPPORTED
+            // KAL will support this command once CashAcceptor interface is supported.
             return Task.FromResult(new SetClassificationListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand, null));
         }
     }

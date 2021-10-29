@@ -37,9 +37,10 @@ namespace XFS4IoT.Common.Completions
             /// end to end protection.
             /// 
             /// The nonce will be given as an integer string, or HEX (upper case.)
+            /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
             /// </summary>
             [DataMember(Name = "commandNonce")]
-            [DataTypes(Pattern = "^[0-9A-F]{32}$|^[0-9]*$")]
+            [DataTypes(Pattern = @"^[0-9A-F]{32}$|^[0-9]*$")]
             public string CommandNonce { get; init; }
 
         }

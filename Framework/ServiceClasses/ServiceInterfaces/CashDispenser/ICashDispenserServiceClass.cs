@@ -22,17 +22,17 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Adding mix algorithm to an internal object held in the framework
         /// </summary>
-        void AddMix(int mixNumber, Mix mix);
+        void AddMix(string mixId, Mix mix);
 
         /// <summary>
         /// Return mix algorithm object specified 
         /// </summary>
-        Mix GetMix(int mixNumber);
+        Mix GetMix(string mixId);
 
         /// <summary>
         /// Return supported mix algorithm
         /// </summary>
-        IEnumerator GetMixAlgorithms();
+        Dictionary<string, Mix> GetMixAlgorithms();
 
         /// <summary>
         /// Keep last present status

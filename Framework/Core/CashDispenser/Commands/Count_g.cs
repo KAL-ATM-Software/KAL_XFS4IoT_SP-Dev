@@ -27,55 +27,27 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, bool? EmptyAll = null, PositionEnum? Position = null, string PhysicalPositionName = null)
+            public PayloadData(int Timeout, string Unit = null, CashManagement.OutputPositionEnum? Position = null)
                 : base(Timeout)
             {
-                this.EmptyAll = EmptyAll;
+                this.Unit = Unit;
                 this.Position = Position;
-                this.PhysicalPositionName = PhysicalPositionName;
             }
 
             /// <summary>
-            /// Specifies whether all cash units are to be emptied. If this value is TRUE then physicalPositionName is ignored.
-            /// </summary>
-            [DataMember(Name = "emptyAll")]
-            public bool? EmptyAll { get; init; }
-
-            public enum PositionEnum
-            {
-                Default,
-                Left,
-                Right,
-                Center,
-                Top,
-                Bottom,
-                Front,
-                Rear,
-                Reject
-            }
-
-            /// <summary>
-            /// Specifies the location to which items should be moved. Following values are possible:
+            /// Specifies the unit to empty or that all units are to be emptied. Following values are possible:
             /// 
-            /// * ```default``` - Output location is determined by Service.
-            /// * ```left``` - Present items to left side of device.
-            /// * ```right``` - Present items to right side of device.
-            /// * ```center``` - Present items to center output position.
-            /// * ```top``` - Present items to the top output position.
-            /// * ```bottom``` - Present items to the bottom output position.
-            /// * ```front``` - Present items to the front output position.
-            /// *  ```rear``` - Present items to the rear output position.
-            /// * ```reject``` - Reject bin is used as output location.
+            ///   * ```all``` - All units are to be emptied.
+            ///   * ```&lt;storage unit identifier&gt;``` - The storage unit to be emptied as
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
+            /// <example>unit1</example>
             /// </summary>
-            [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
+            [DataMember(Name = "unit")]
+            [DataTypes(Pattern = @"^all$|^.{1,5}$")]
+            public string Unit { get; init; }
 
-            /// <summary>
-            /// Specifies which cash unit to empty and count. This name is the same as the 
-            /// *physicalPositionName* in the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) completion message.
-            /// </summary>
-            [DataMember(Name = "physicalPositionName")]
-            public string PhysicalPositionName { get; init; }
+            [DataMember(Name = "position")]
+            public CashManagement.OutputPositionEnum? Position { get; init; }
 
         }
     }

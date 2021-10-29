@@ -20,13 +20,16 @@ namespace XFS4IoTServer
     public partial class PinPadServiceClass
     {
         public PinPadServiceClass(IServiceProvider ServiceProvider,
-                                  IKeyManagementServiceClass KeyManagement,
+                                  IKeyManagementService KeyManagementService,
                                   ICommonService CommonService,
                                   ILogger logger)
         : this(ServiceProvider, logger)
         {
-            this.KeyManagementService = KeyManagement.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
-            this.CommonService = CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
+            KeyManagementService.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
+            this.KeyManagementService = KeyManagementService.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. " + nameof(PinPadServiceClass));
+
+            CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
+            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(PinPadServiceClass));
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()");
 
@@ -38,24 +41,25 @@ namespace XFS4IoTServer
         }
 
         /// <summary>
-        /// KeyManagement service interface
-        /// </summary>
-        private IKeyManagementServiceClass KeyManagementService { get; init; }
-
-        /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
 
+        #region Key Management Service
+        /// <summary>
+        /// KeyManagement service interface
+        /// </summary>
+        private IKeyManagementService KeyManagementService { get; init; }
+
         /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set { } }
 
         /// <summary>
         /// Stores PinPad interface capabilites internally
         /// </summary>
-        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set => CommonService.PinPadCapabilities = value; }
+        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set { } }
 
         /// <summary>
         /// Find keyslot available or being used
@@ -107,6 +111,8 @@ namespace XFS4IoTServer
         /// </summary>
         /// <returns></returns>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => throw new NotSupportedException("The GetSecureKeyEntryStatus method is not supported in the PinPad interface.");
+
+        #endregion
 
         /// <summary>
         /// List of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device

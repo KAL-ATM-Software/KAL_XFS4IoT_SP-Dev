@@ -37,15 +37,17 @@ namespace XFS4IoT.TextTerminal.Completions
             /// String which holds the printable characters (numeric and alphanumeric keys) on the Text Terminal Unit, 
             /// e.g. "0123456789ABCabc" if those text terminal input keys are present. This property is omitted if no keys 
             /// of this type are present on the device.
+            /// <example>0123456789ABCabc</example>
             /// </summary>
             [DataMember(Name = "keys")]
             public string Keys { get; init; }
 
             /// <summary>
             /// Supporting command keys on the Text Terminal Unit. This property can be omitted if no command keys supported.
+            /// <example>["enter", "cancel"]</example>
             /// </summary>
             [DataMember(Name = "commandKeys")]
-            [DataTypes(Pattern = "^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
             public List<string> CommandKeys { get; init; }
 
         }

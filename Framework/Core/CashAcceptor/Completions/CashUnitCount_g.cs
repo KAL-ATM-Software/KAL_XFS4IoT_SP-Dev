@@ -45,18 +45,15 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// "invalidCashUnit": At least one of the cash units specified is either invalid or does not support being counted. No cash units have been counted.
-            /// 
-            /// "cashInActive": A cash-in transaction is active.
-            /// 
-            /// "exchangeActive": The device is in the exchange state.
-            /// 
-            /// "tooManyItemsToCount": There were too many items. The required internal position may have been of insufficient size. 
+            /// * ```invalidCashUnit``` - At least one of the cash units specified is either invalid or does not 
+            /// support being counted. No cash units have been counted.
+            /// * ```cashInActive``` - A cash-in transaction is active.
+            /// * ```exchangeActive``` - The device is in the exchange state.
+            /// * ```tooManyItemsToCount``` - There were too many items. The required internal position may have been of insufficient size. 
             /// All items should be returned to the cash unit from which they originated.
-            /// 
-            /// "countPositionNotEmpty": A required internal position is not empty so a cash unit count is not possible.
-            /// 
-            /// "cashUnitError": A cash unit caused a problem. A CashManagement.CashUnitErrorEvent will be posted with the details.
+            /// * ```countPositionNotEmpty``` - A required internal position is not empty so a cash unit count is not possible.
+            /// * ```cashUnitError``` - A cash unit caused a problem. A 
+            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

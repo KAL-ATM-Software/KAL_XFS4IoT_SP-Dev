@@ -26,12 +26,6 @@ namespace XFS4IoTServer
         public async Task TellerInfoChangedEvent(XFS4IoT.CashManagement.Events.TellerInfoChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.TellerInfoChangedEvent(Payload));
 
-        public async Task CashUnitThresholdEvent(XFS4IoT.CashManagement.Events.CashUnitThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.CashUnitThresholdEvent(Payload));
-
-        public async Task CashUnitInfoChangedEvent(XFS4IoT.CashManagement.Events.CashUnitInfoChangedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.CashUnitInfoChangedEvent(Payload));
-
         public async Task SafeDoorOpenEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.SafeDoorOpenEvent());
 

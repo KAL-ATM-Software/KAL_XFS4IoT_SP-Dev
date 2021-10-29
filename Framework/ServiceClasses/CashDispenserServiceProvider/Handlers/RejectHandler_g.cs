@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.CashDispenser
             RejectCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => RejectCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => RejectCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => RejectCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => RejectCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => RejectCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => RejectCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => RejectCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

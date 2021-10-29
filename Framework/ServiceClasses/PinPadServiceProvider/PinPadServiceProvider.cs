@@ -28,7 +28,7 @@ namespace XFS4IoTServer
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class PinPadServiceProvider : ServiceProvider, IPinPadServiceClass, IKeyManagementServiceClass, IKeyboardServiceClass, ICryptoServiceClass, ICommonServiceClass
+    public class PinPadServiceProvider : ServiceProvider, IPinPadServiceClass, IKeyManagementServiceClass, IKeyboardServiceClass, ICryptoServiceClass, ICommonServiceClass, ILightsServiceClass
     {
         public PinPadServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
             :
@@ -78,6 +78,7 @@ namespace XFS4IoTServer
         public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => CommonService.ExchangeStateChangedEvent(Payload);
         #endregion
 
+        #region Key Management Service
         /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
@@ -149,10 +150,18 @@ namespace XFS4IoTServer
         /// <returns></returns>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => KeyManagementService.GetSecureKeyEntryStatus();
 
+        #endregion
+
+        #region PinPad Service
+
         /// <summary>
         /// Return list of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device
         /// </summary>
         public PCIPTSDeviceIdClass PCIPTSDeviceId { get => PinPadService.PCIPTSDeviceId; set { } }
+
+        #endregion
+
+        #region Keyboard Service
 
         /// <summary>
         /// Function keys device supported
@@ -168,5 +177,7 @@ namespace XFS4IoTServer
         /// Keyboard layout device supported
         /// </summary>
         public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get => KeyboardService.KeyboardLayouts; set { } }
+
+        #endregion
     }
 }

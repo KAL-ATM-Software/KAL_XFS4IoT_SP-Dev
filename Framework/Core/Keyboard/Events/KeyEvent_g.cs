@@ -42,9 +42,10 @@ namespace XFS4IoT.Keyboard.Events
             /// <summary>
             /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this property is omitted for the 
             /// function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed, the corresponding key value is stored in this property. 
+            /// <example>five</example>
             /// </summary>
             [DataMember(Name = "digit")]
-            [DataTypes(Pattern = "^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
             public string Digit { get; init; }
 
         }

@@ -27,45 +27,42 @@ namespace XFS4IoT.CashManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, LevelEnum? Level = null, int? Index = null, ItemInfoTypeClass ItemInfoType = null)
+            public PayloadData(int Timeout, ItemsClass Items = null, ItemInfoTypeClass ItemInfoType = null)
                 : base(Timeout)
             {
-                this.Level = Level;
-                this.Index = Index;
+                this.Items = Items;
                 this.ItemInfoType = ItemInfoType;
             }
 
-            public enum LevelEnum
+            [DataContract]
+            public sealed class ItemsClass
             {
-                Level1,
-                Level2,
-                Level3,
-                Level4,
-                LevelAll
+                public ItemsClass(NoteLevelEnum? Level = null, int? Index = null)
+                {
+                    this.Level = Level;
+                    this.Index = Index;
+                }
+
+                [DataMember(Name = "level")]
+                public NoteLevelEnum? Level { get; init; }
+
+                /// <summary>
+                /// Specifies the zero based index for the item information required. If not specified, all items of the
+                /// specified _level_ will be returned.
+                /// <example>1</example>
+                /// </summary>
+                [DataMember(Name = "index")]
+                [DataTypes(Minimum = 0)]
+                public int? Index { get; init; }
+
             }
 
             /// <summary>
-            /// Defines the requested note level. Following values are possible:
-            /// 
-            /// * ```level1``` - Information for level 1 notes. Only an image file can be retrieved for level 1 notes.
-            /// * ```level2``` - Information for level 2 notes. On systems that do not classify notes as level 2 this value 
-            /// cannot be used and invalidData will be returned.
-            /// * ```level3``` - Information for level 3 notes. On systems that do not  classify notes as level 3 this value 
-            /// cannot be used and invalidData will be returned.
-            /// * ```level4``` - Information for level 4 notes.
-            /// * ```levelAll``` - Information for all levels and all items is to be returned with the *itemsList* output 
-            /// parameter.
+            /// Specifies which item or items to return information for. If not specified, all information on all items is
+            /// returned.
             /// </summary>
-            [DataMember(Name = "level")]
-            public LevelEnum? Level { get; init; }
-
-            /// <summary>
-            /// Specifies the index for the item information required. If no index is provided, all items of the specified 
-            /// [level](#cashmanagement.getiteminfo.command.properties.level) will be returned. If *level* is set to 
-            /// ```levelAll```, this property will be ignored.
-            /// </summary>
-            [DataMember(Name = "index")]
-            public int? Index { get; init; }
+            [DataMember(Name = "items")]
+            public ItemsClass Items { get; init; }
 
             [DataContract]
             public sealed class ItemInfoTypeClass
@@ -78,19 +75,19 @@ namespace XFS4IoT.CashManagement.Commands
                 }
 
                 /// <summary>
-                /// Serial number of the item.
+                /// Request the serial number of the item.
                 /// </summary>
                 [DataMember(Name = "serialNumber")]
                 public bool? SerialNumber { get; init; }
 
                 /// <summary>
-                /// Signature of the item.
+                /// Request the signature of the item.
                 /// </summary>
                 [DataMember(Name = "signature")]
                 public bool? Signature { get; init; }
 
                 /// <summary>
-                /// Image file of the item.
+                /// Request the image file of the item.
                 /// </summary>
                 [DataMember(Name = "imageFile")]
                 public bool? ImageFile { get; init; }
@@ -98,8 +95,7 @@ namespace XFS4IoT.CashManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the type of information required. If nothing is specified, 
-            /// all available information will be returned.
+            /// Specifies the type of information required. If not specified, all available information will be returned.
             /// </summary>
             [DataMember(Name = "itemInfoType")]
             public ItemInfoTypeClass ItemInfoType { get; init; }

@@ -31,146 +31,116 @@ namespace XFS4IoTFramework.Common
 
             if (result.CashDispenser is not null)
             {
-                Dictionary<CashDispenserCapabilitiesClass.RetractAreaEnum, bool> retractAreas = new()
-                {
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.ItemCassette, false },
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.Reject, false },
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.Retract, false },
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.Stacker, false },
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.Transport, false },
-                    { CashDispenserCapabilitiesClass.RetractAreaEnum.Default, true }
-                };
+                CashManagementCapabilitiesClass.RetractAreaEnum retractAreas = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
 
                 if (result.CashDispenser.RetractAreas?.ItemCassette is not null &&
                     (bool)result.CashDispenser.RetractAreas?.ItemCassette)
                 {
-                    retractAreas[CashDispenserCapabilitiesClass.RetractAreaEnum.ItemCassette] = true;
+                    retractAreas |= CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette;
                 }
                 if (result.CashDispenser.RetractAreas?.Reject is not null &&
                     (bool)result.CashDispenser.RetractAreas?.Reject)
                 {
-                    retractAreas[CashDispenserCapabilitiesClass.RetractAreaEnum.Reject] = true;
+                    retractAreas |= CashManagementCapabilitiesClass.RetractAreaEnum.Reject;
                 }
                 if (result.CashDispenser.RetractAreas?.Retract is not null &&
                     (bool)result.CashDispenser.RetractAreas?.Retract)
                 {
-                    retractAreas[CashDispenserCapabilitiesClass.RetractAreaEnum.Retract] = true;
+                    retractAreas |= CashManagementCapabilitiesClass.RetractAreaEnum.Retract;
                 }
                 if (result.CashDispenser.RetractAreas?.Stacker is not null &&
                     (bool)result.CashDispenser.RetractAreas?.Stacker)
                 {
-                    retractAreas[CashDispenserCapabilitiesClass.RetractAreaEnum.Stacker] = true;
+                    retractAreas |= CashManagementCapabilitiesClass.RetractAreaEnum.Stacker;
                 }
                 if (result.CashDispenser.RetractAreas?.Transport is not null &&
                     (bool)result.CashDispenser.RetractAreas?.Transport)
                 {
-                    retractAreas[CashDispenserCapabilitiesClass.RetractAreaEnum.Transport] = true;
+                    retractAreas |= CashManagementCapabilitiesClass.RetractAreaEnum.Transport;
                 }
 
-                Dictionary<CashDispenserCapabilitiesClass.RetractStackerActionEnum, bool> retractStackerActions = new()
-                {
-                    { CashDispenserCapabilitiesClass.RetractStackerActionEnum.ItemCassette, false },
-                    { CashDispenserCapabilitiesClass.RetractStackerActionEnum.Present, false },
-                    { CashDispenserCapabilitiesClass.RetractStackerActionEnum.Reject, false },
-                    { CashDispenserCapabilitiesClass.RetractStackerActionEnum.Retract, false }
-                };
+                CashManagementCapabilitiesClass.RetractStackerActionEnum retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.NotSupported;
 
                 if (result.CashDispenser.RetractStackerActions?.ItemCassette is not null &&
                     (bool)result.CashDispenser.RetractStackerActions?.ItemCassette)
                 {
-                    retractStackerActions[CashDispenserCapabilitiesClass.RetractStackerActionEnum.ItemCassette] = true;
+                    retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.ItemCassette;
                 }
                 if (result.CashDispenser.RetractStackerActions?.Present is not null &&
                     (bool)result.CashDispenser.RetractStackerActions?.Present)
                 {
-                    retractStackerActions[CashDispenserCapabilitiesClass.RetractStackerActionEnum.Present] = true;
+                    retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.Present;
                 }
                 if (result.CashDispenser.RetractStackerActions?.Reject is not null &&
                     (bool)result.CashDispenser.RetractStackerActions?.Reject)
                 {
-                    retractStackerActions[CashDispenserCapabilitiesClass.RetractStackerActionEnum.Reject] = true;
+                    retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject;
                 }
                 if (result.CashDispenser.RetractStackerActions?.Retract is not null &&
                     (bool)result.CashDispenser.RetractStackerActions?.Retract)
                 {
-                    retractStackerActions[CashDispenserCapabilitiesClass.RetractStackerActionEnum.Retract] = true;
+                    retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract;
                 }
 
-                Dictionary<CashDispenserCapabilitiesClass.RetractTransportActionEnum, bool> retractTransportActions = new()
-                {
-                    { CashDispenserCapabilitiesClass.RetractTransportActionEnum.ItemCassette, false },
-                    { CashDispenserCapabilitiesClass.RetractTransportActionEnum.Present, false },
-                    { CashDispenserCapabilitiesClass.RetractTransportActionEnum.Reject, false },
-                    { CashDispenserCapabilitiesClass.RetractTransportActionEnum.Retract, false }
-                };
+                CashManagementCapabilitiesClass.RetractTransportActionEnum retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.NotSupported;
 
                 if (result.CashDispenser.RetractTransportActions?.ItemCassette is not null &&
                     (bool)result.CashDispenser.RetractTransportActions?.ItemCassette)
                 {
-                    retractTransportActions[CashDispenserCapabilitiesClass.RetractTransportActionEnum.ItemCassette] = true;
+                    retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.ItemCassette;
                 }
                 if (result.CashDispenser.RetractTransportActions?.Present is not null &&
                     (bool)result.CashDispenser.RetractTransportActions?.Present)
                 {
-                    retractTransportActions[CashDispenserCapabilitiesClass.RetractTransportActionEnum.Present] = true;
+                    retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.ItemCassette;
                 }
                 if (result.CashDispenser.RetractTransportActions?.Reject is not null &&
                     (bool)result.CashDispenser.RetractTransportActions?.Reject)
                 {
-                    retractTransportActions[CashDispenserCapabilitiesClass.RetractTransportActionEnum.Reject] = true;
+                    retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract;
                 }
                 if (result.CashDispenser.RetractTransportActions?.Retract is not null &&
                     (bool)result.CashDispenser.RetractTransportActions?.Retract)
                 {
-                    retractTransportActions[CashDispenserCapabilitiesClass.RetractTransportActionEnum.Retract] = true;
+                    retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract;
                 }
 
-                Dictionary<CashDispenserCapabilitiesClass.OutputPositionEnum, bool> outputPositions = new()
-                {
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Center, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Default, true },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Front, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Left, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Rear, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Right, false },
-                    { CashDispenserCapabilitiesClass.OutputPositionEnum.Top, false }
-                };
+                CashDispenserCapabilitiesClass.OutputPositionEnum outputPositions = CashDispenserCapabilitiesClass.OutputPositionEnum.Default;
 
                 if (result.CashDispenser.Positions?.Bottom is not null &&
                     (bool)result.CashDispenser.Positions?.Bottom)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom;
                 }
                 if (result.CashDispenser.Positions?.Center is not null &&
                     (bool)result.CashDispenser.Positions?.Center)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Center] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Center;
                 }
                 if (result.CashDispenser.Positions?.Front is not null &&
                     (bool)result.CashDispenser.Positions?.Front)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Front] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Front;
                 }
                 if (result.CashDispenser.Positions?.Left is not null &&
                     (bool)result.CashDispenser.Positions?.Left)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Left] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Left;
                 }
                 if (result.CashDispenser.Positions?.Rear is not null &&
                     (bool)result.CashDispenser.Positions?.Rear)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Rear] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Rear;
                 }
                 if (result.CashDispenser.Positions?.Right is not null &&
                     (bool)result.CashDispenser.Positions?.Right)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Right] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Right;
                 }
                 if (result.CashDispenser.Positions?.Top is not null &&
                     (bool)result.CashDispenser.Positions?.Top)
                 {
-                    outputPositions[CashDispenserCapabilitiesClass.OutputPositionEnum.Top] = true;
+                    outputPositions |= CashDispenserCapabilitiesClass.OutputPositionEnum.Top;
                 }
 
                 Dictionary<CashDispenserCapabilitiesClass.MoveItemEnum, bool> moveItems = new()
@@ -203,24 +173,26 @@ namespace XFS4IoTFramework.Common
                 }
 
                 // Store internal object for other interfaces can be used
-                Common.CashDispenserCapabilities = new CashDispenserCapabilitiesClass(result.CashDispenser.Type switch
+                Common.CashDispenserCapabilities = new CashDispenserCapabilitiesClass(Type: result.CashDispenser.Type switch
                                                                                       {
                                                                                           XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceBill => CashDispenserCapabilitiesClass.TypeEnum.selfServiceBill,
                                                                                           XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceCoin => CashDispenserCapabilitiesClass.TypeEnum.selfServiceCoin,
                                                                                           XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.TellerBill => CashDispenserCapabilitiesClass.TypeEnum.tellerBill,
                                                                                           _ => CashDispenserCapabilitiesClass.TypeEnum.tellerCoin
                                                                                       },
-                                                                                      result.CashDispenser.MaxDispenseItems is null ? 0 : (int)result.CashDispenser.MaxDispenseItems,
-                                                                                      result.CashDispenser.Shutter is not null && (bool)result.CashDispenser.Shutter,
-                                                                                      result.CashDispenser.ShutterControl is not null && (bool)result.CashDispenser.ShutterControl,
-                                                                                      retractAreas,
-                                                                                      retractTransportActions,
-                                                                                      retractStackerActions,
-                                                                                      result.CashDispenser.IntermediateStacker is not null && (bool)result.CashDispenser.IntermediateStacker,
-                                                                                      result.CashDispenser.ItemsTakenSensor is not null && (bool)result.CashDispenser.ItemsTakenSensor,
-                                                                                      outputPositions,
-                                                                                      moveItems,
-                                                                                      result.CashDispenser.PrepareDispense is not null && (bool)result.CashDispenser.PrepareDispense);
+                                                                                      MaxDispenseItems: result.CashDispenser.MaxDispenseItems is null ? 0 : (int)result.CashDispenser.MaxDispenseItems,
+                                                                                      ShutterControl: result.CashDispenser.ShutterControl is not null && (bool)result.CashDispenser.ShutterControl,
+                                                                                      RetractAreas: retractAreas,
+                                                                                      RetractTransportActions: retractTransportActions,
+                                                                                      RetractStackerActions: retractStackerActions,
+                                                                                      IntermediateStacker: result.CashDispenser.IntermediateStacker is not null && (bool)result.CashDispenser.IntermediateStacker,
+                                                                                      ItemsTakenSensor: result.CashDispenser.ItemsTakenSensor is not null && (bool)result.CashDispenser.ItemsTakenSensor,
+                                                                                      OutputPositions: outputPositions,
+                                                                                      MoveItems: moveItems);
+            }
+
+            if (result.CashAcceptor is not null)
+            {
             }
 
             if (result.CashManagement is not null)
@@ -228,13 +200,6 @@ namespace XFS4IoTFramework.Common
                 CashManagementCapabilitiesClass.ExchangeTypesEnum exchangeType = CashManagementCapabilitiesClass.ExchangeTypesEnum.NotSupported;
                 if (result.CashManagement.ExchangeType?.ByHand is not null && (bool)result.CashManagement.ExchangeType?.ByHand)
                     exchangeType |= CashManagementCapabilitiesClass.ExchangeTypesEnum.ByHand;
-                if (result.CashManagement.ExchangeType?.ClearRecycler is not null && (bool)result.CashManagement.ExchangeType?.ClearRecycler)
-                    exchangeType |= CashManagementCapabilitiesClass.ExchangeTypesEnum.ClearRecycler;
-                if (result.CashManagement.ExchangeType?.DepositInto is not null && (bool)result.CashManagement.ExchangeType?.DepositInto)
-                    exchangeType |= CashManagementCapabilitiesClass.ExchangeTypesEnum.DepositInto;
-                if (result.CashManagement.ExchangeType?.ToCassettes is not null && (bool)result.CashManagement.ExchangeType?.ToCassettes)
-                    exchangeType |= CashManagementCapabilitiesClass.ExchangeTypesEnum.ToCassettes;
-
 
                 CashManagementCapabilitiesClass.ItemInfoTypesEnum itemInfo = CashManagementCapabilitiesClass.ItemInfoTypesEnum.NotSupported;
                 if (result.CashManagement.ItemInfoTypes?.SerialNumber is not null && (bool)result.CashManagement.ItemInfoTypes?.SerialNumber)
@@ -244,12 +209,47 @@ namespace XFS4IoTFramework.Common
                 if (result.CashManagement.ItemInfoTypes?.ImageFile is not null && (bool)result.CashManagement.ItemInfoTypes?.ImageFile)
                     itemInfo |= CashManagementCapabilitiesClass.ItemInfoTypesEnum.ImageFile;
 
-                Common.CashManagementCapabilities = new CashManagementCapabilitiesClass(exchangeType,
+                CashManagementCapabilitiesClass.PositionEnum positions = CashManagementCapabilitiesClass.PositionEnum.NotSupported;
+                bool shutterControl = false;
+                CashManagementCapabilitiesClass.RetractAreaEnum retractAreas = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
+                CashManagementCapabilitiesClass.RetractStackerActionEnum retractStackerActions = CashManagementCapabilitiesClass.RetractStackerActionEnum.NotSupported;
+                CashManagementCapabilitiesClass.RetractTransportActionEnum retractTransportActions = CashManagementCapabilitiesClass.RetractTransportActionEnum.NotSupported;
+
+                if (Common.CashDispenserCapabilities is not null)
+                {
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutBottom;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Center))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutCenter;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Default))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutDefault;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Front))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutFront;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Left))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutLeft;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Rear))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutRear;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Right))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutRight;
+                    if (Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Top))
+                        positions |= CashManagementCapabilitiesClass.PositionEnum.OutTop;
+
+                    shutterControl = Common.CashDispenserCapabilities.ShutterControl;
+                    retractAreas = Common.CashDispenserCapabilities.RetractAreas;
+                    retractStackerActions = Common.CashDispenserCapabilities.RetractStackerActions;
+                    retractTransportActions = Common.CashDispenserCapabilities.RetractTransportActions;
+                }
+
+                Common.CashManagementCapabilities = new CashManagementCapabilitiesClass(positions,
+                                                                                        shutterControl,
+                                                                                        retractAreas,
+                                                                                        retractTransportActions,
+                                                                                        retractStackerActions,
+                                                                                        exchangeType,
                                                                                         itemInfo,
                                                                                         result.CashManagement.SafeDoor is not null && (bool)result.CashManagement.SafeDoor,
                                                                                         result.CashManagement.CashBox is not null && (bool)result.CashManagement.CashBox,
-                                                                                        result.CashManagement.ClassificationList is not null && (bool)result.CashManagement.ClassificationList,
-                                                                                        result.CashManagement.PhysicalNoteList is not null && (bool)result.CashManagement.PhysicalNoteList);
+                                                                                        result.CashManagement.ClassificationList is not null && (bool)result.CashManagement.ClassificationList);
             }
 
             if (result.CardReader is not null)
@@ -334,10 +334,10 @@ namespace XFS4IoTFramework.Common
                 {
                     powerOnAction = result.CardReader.PowerOnOption switch
                     {
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.Eject => CardReaderCapabilitiesClass.PowerOptionEnum.Eject,
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.EjectThenRetain => CardReaderCapabilitiesClass.PowerOptionEnum.EjectThenRetain,
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.ReadPosition => CardReaderCapabilitiesClass.PowerOptionEnum.ReadPosition,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.Exit => CardReaderCapabilitiesClass.PowerOptionEnum.Exit,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.ExitThenRetain => CardReaderCapabilitiesClass.PowerOptionEnum.ExitThenRetain,
                         XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.Retain => CardReaderCapabilitiesClass.PowerOptionEnum.Retain,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOnOptionEnum.Transport => CardReaderCapabilitiesClass.PowerOptionEnum.Transport,
                         _ => CardReaderCapabilitiesClass.PowerOptionEnum.NoAction,
                     };
                 }
@@ -347,10 +347,10 @@ namespace XFS4IoTFramework.Common
                 {
                     powerOnAction = result.CardReader.PowerOffOption switch
                     {
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.Eject => CardReaderCapabilitiesClass.PowerOptionEnum.Eject,
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.EjectThenRetain => CardReaderCapabilitiesClass.PowerOptionEnum.EjectThenRetain,
-                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.ReadPosition => CardReaderCapabilitiesClass.PowerOptionEnum.ReadPosition,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.Exit => CardReaderCapabilitiesClass.PowerOptionEnum.Exit,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.ExitThenRetain => CardReaderCapabilitiesClass.PowerOptionEnum.ExitThenRetain,
                         XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.Retain => CardReaderCapabilitiesClass.PowerOptionEnum.Retain,
+                        XFS4IoT.CardReader.CapabilitiesClass.PowerOffOptionEnum.Transport => CardReaderCapabilitiesClass.PowerOptionEnum.Transport,
                         _ => CardReaderCapabilitiesClass.PowerOptionEnum.NoAction,
                     };
                 }
@@ -377,28 +377,26 @@ namespace XFS4IoTFramework.Common
                 if (result.CardReader.MemoryChipProtocols?.Siemens4442 is not null && (bool)result.CardReader?.MemoryChipProtocols.Siemens4442)
                     memChipProtocols |= CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.Siemens4442;
 
-                CardReaderCapabilitiesClass.EjectPositionsEnum ejectPositions = CardReaderCapabilitiesClass.EjectPositionsEnum.NotSupported;
-                if (result.CardReader.EjectPosition?.Exit is not null && (bool)result.CardReader.EjectPosition?.Exit)
-                    ejectPositions |= CardReaderCapabilitiesClass.EjectPositionsEnum.Exit;
-                if (result.CardReader.EjectPosition?.Transport is not null && (bool)result.CardReader.EjectPosition?.Transport)
-                    ejectPositions |= CardReaderCapabilitiesClass.EjectPositionsEnum.Transport;
+                CardReaderCapabilitiesClass.PositionsEnum positions = CardReaderCapabilitiesClass.PositionsEnum.NotSupported;
+                if (result.CardReader.Positions?.Exit is not null && (bool)result.CardReader.Positions?.Exit)
+                    positions |= CardReaderCapabilitiesClass.PositionsEnum.Exit;
+                if (result.CardReader.Positions?.Transport is not null && (bool)result.CardReader.Positions?.Transport)
+                    positions |= CardReaderCapabilitiesClass.PositionsEnum.Transport;
 
 
-                Common.CardReaderCapabilities = new CardReaderCapabilitiesClass(type,
-                                                                                readableData,
-                                                                                writableData,
-                                                                                chipProtocols,
-                                                                                result.CardReader.MaxCardCount is null ? 0 : (int)result.CardReader.MaxCardCount,
-                                                                                securityType,
-                                                                                powerOnAction,
-                                                                                powerOffAction,
-                                                                                result.CardReader.FluxSensorProgrammable is not null && (bool)result.CardReader.FluxSensorProgrammable,
-                                                                                result.CardReader.ReadWriteAccessFollowingEject is not null && (bool)result.CardReader.ReadWriteAccessFollowingEject,
-                                                                                writeModes,
-                                                                                chipPowers,
-                                                                                memChipProtocols,
-                                                                                ejectPositions,
-                                                                                result.CardReader.NumberParkingStations is null ? 0 : (int)result.CardReader.NumberParkingStations);
+                Common.CardReaderCapabilities = new CardReaderCapabilitiesClass(Type: type,
+                                                                                ReadTracks: readableData,
+                                                                                WriteTracks: writableData,
+                                                                                ChipProtocols: chipProtocols,
+                                                                                SecurityType: securityType,
+                                                                                PowerOnOption: powerOnAction,
+                                                                                PowerOffOption: powerOffAction,
+                                                                                FluxSensorProgrammable: result.CardReader.FluxSensorProgrammable is not null && (bool)result.CardReader.FluxSensorProgrammable,
+                                                                                ReadWriteAccessFollowingExit: result.CardReader.ReadWriteAccessFromExit is not null && (bool)result.CardReader.ReadWriteAccessFromExit,
+                                                                                WriteMode: writeModes,
+                                                                                ChipPower: chipPowers,
+                                                                                MemoryChipProtocols: memChipProtocols,
+                                                                                Positions: positions);
             }
 
             if (result.TextTerminal is not null)
@@ -493,12 +491,14 @@ namespace XFS4IoTFramework.Common
                     emvImportScheme |= KeyManagementCapabilitiesClass.EMVImportSchemeEnum.PlainCA;
 
                 KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum keyblockImportformats = KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum.NotSupported;
-                if (result.KeyManagement.KeyBlockImportFormats?.AnsTr31KeyBlock is not null && (bool)result.KeyManagement.KeyBlockImportFormats.AnsTr31KeyBlock)
+                if (result.KeyManagement.KeyBlockImportFormats?.A is not null && (bool)result.KeyManagement.KeyBlockImportFormats.A)
                     keyblockImportformats |= KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum.KEYBLOCKA;
-                if (result.KeyManagement.KeyBlockImportFormats?.AnsTr31KeyBlockB is not null && (bool)result.KeyManagement.KeyBlockImportFormats.AnsTr31KeyBlockB)
+                if (result.KeyManagement.KeyBlockImportFormats?.B is not null && (bool)result.KeyManagement.KeyBlockImportFormats.B)
                     keyblockImportformats |= KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum.KEYBLOCKB;
-                if (result.KeyManagement.KeyBlockImportFormats?.AnsTr31KeyBlockC is not null && (bool)result.KeyManagement.KeyBlockImportFormats.AnsTr31KeyBlockC)
+                if (result.KeyManagement.KeyBlockImportFormats?.C is not null && (bool)result.KeyManagement.KeyBlockImportFormats.C)
                     keyblockImportformats |= KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum.KEYBLOCKC;
+                if (result.KeyManagement.KeyBlockImportFormats?.D is not null && (bool)result.KeyManagement.KeyBlockImportFormats.D)
+                    keyblockImportformats |= KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum.KEYBLOCKD;
 
                 KeyManagementCapabilitiesClass.DESKeyLengthEmum desKeyLength = KeyManagementCapabilitiesClass.DESKeyLengthEmum.NotSupported;
                 if (result.KeyManagement.DesKeyLength?.Double is not null && (bool)result.KeyManagement.DesKeyLength.Double)
@@ -671,7 +671,7 @@ namespace XFS4IoTFramework.Common
                                                                                       signatureScheme,
                                                                                       emvImportScheme,
                                                                                       keyblockImportformats,
-                                                                                      result.KeyManagement.KeyImportThroughParts is not null ? (bool)result.KeyManagement.KeyImportThroughParts : false,
+                                                                                      result.KeyManagement.KeyImportThroughParts is not null && (bool)result.KeyManagement.KeyImportThroughParts,
                                                                                       desKeyLength,
                                                                                       certTypes,
                                                                                       loadCertOptions,
@@ -884,6 +884,108 @@ namespace XFS4IoTFramework.Common
 
             if (result.Keyboard is not null)
             {
+                KeyboardCapabilitiesClass.KeyboardBeepEnum keyboardBeep = KeyboardCapabilitiesClass.KeyboardBeepEnum.NotSupported;
+                if (result.Keyboard.AutoBeep?.ActiveAvailable is not null && (bool)result.Keyboard.AutoBeep?.ActiveAvailable)
+                    keyboardBeep |= KeyboardCapabilitiesClass.KeyboardBeepEnum.ActiveAvailable;
+                if (result.Keyboard.AutoBeep?.ActiveSelectable is not null && (bool)result.Keyboard.AutoBeep?.ActiveSelectable)
+                    keyboardBeep |= KeyboardCapabilitiesClass.KeyboardBeepEnum.ActiveSelectable;
+                if (result.Keyboard.AutoBeep?.InactiveAvailable is not null && (bool)result.Keyboard.AutoBeep?.InactiveAvailable)
+                    keyboardBeep |= KeyboardCapabilitiesClass.KeyboardBeepEnum.InActiveAvailable;
+                if (result.Keyboard.AutoBeep?.InactiveSelectable is not null && (bool)result.Keyboard.AutoBeep?.InactiveSelectable)
+                    keyboardBeep |= KeyboardCapabilitiesClass.KeyboardBeepEnum.InActiveSelectable;
+
+                List<KeyboardCapabilitiesClass.ETSCap> etsCaps = null;
+                if (result.Keyboard.EtsCaps is not null && result.Keyboard.EtsCaps.Count > 0)
+                {
+                    etsCaps = new ();
+                    foreach (XFS4IoT.Keyboard.CapabilitiesClass.EtsCapsClass ets in result.Keyboard.EtsCaps)
+                    {
+                        KeyboardCapabilitiesClass.ETSCap.FloatPositionEnum floatPos = KeyboardCapabilitiesClass.ETSCap.FloatPositionEnum.NotSupported;
+                        if (ets.Float is not null)
+                        {
+                            if ((bool)ets.Float.X)
+                                floatPos |= KeyboardCapabilitiesClass.ETSCap.FloatPositionEnum.FloatX;
+                            if ((bool)ets.Float.Y)
+                                floatPos |= KeyboardCapabilitiesClass.ETSCap.FloatPositionEnum.FloatY;
+                        }
+
+                        etsCaps.Add(new KeyboardCapabilitiesClass.ETSCap(ets.XPos is null ? 0 : (int)ets.XPos,
+                                                                         ets.YPos is null ? 0 : (int)ets.YPos,
+                                                                         ets.XSize is null ? 0 : (int)ets.XSize,
+                                                                         ets.YSize is null ? 0 : (int)ets.YSize,
+                                                                         ets.MaximumTouchFrames is null ? 0 : (int)ets.MaximumTouchFrames,
+                                                                         ets.MaximumTouchKeys is null ? 0 : (int)ets.MaximumTouchKeys,
+                                                                         floatPos));
+                    }
+                }
+
+                Common.KeyboardCapabilities = new KeyboardCapabilitiesClass(keyboardBeep, etsCaps);
+            }
+
+            if (result.Lights is not null)
+            {
+                Dictionary<string, LightsCapabilitiesClass.Light> lights = new();
+                foreach (var light in result.Lights)
+                {
+                    if (light.Value.FlashRate is null)
+                    {
+                        Logger.Warning(Constants.Framework, $"No flash rate is specified for the light. {light.Key}");
+                        continue;
+                    }
+
+                    LightsCapabilitiesClass.FlashRateEnum flashRate = 0;
+                    if (light.Value.FlashRate.Continuous is not null && (bool)light.Value.FlashRate.Continuous)
+                        flashRate |= LightsCapabilitiesClass.FlashRateEnum.Continuous;
+                    if (light.Value.FlashRate.Medium is not null && (bool)light.Value.FlashRate.Medium)
+                        flashRate |= LightsCapabilitiesClass.FlashRateEnum.Medium;
+                    if (light.Value.FlashRate.Off is not null && (bool)light.Value.FlashRate.Off)
+                        flashRate |= LightsCapabilitiesClass.FlashRateEnum.Off;
+                    if (light.Value.FlashRate.Quick is not null && (bool)light.Value.FlashRate.Quick)
+                        flashRate |= LightsCapabilitiesClass.FlashRateEnum.Quick;
+                    if (light.Value.FlashRate.Slow is not null && (bool)light.Value.FlashRate.Slow)
+                        flashRate |= LightsCapabilitiesClass.FlashRateEnum.Slow;
+
+                    LightsCapabilitiesClass.ColorEnum color = LightsCapabilitiesClass.ColorEnum.Default;
+                    if (light.Value.Color?.Blue is not null && (bool)light.Value.Color?.Blue)
+                        color |= LightsCapabilitiesClass.ColorEnum.Blue;
+                    if (light.Value.Color?.Cyan is not null && (bool)light.Value.Color?.Cyan)
+                        color |= LightsCapabilitiesClass.ColorEnum.Cyan;
+                    if (light.Value.Color?.Green is not null && (bool)light.Value.Color?.Green)
+                        color |= LightsCapabilitiesClass.ColorEnum.Green;
+                    if (light.Value.Color?.Magenta is not null && (bool)light.Value.Color?.Magenta)
+                        color |= LightsCapabilitiesClass.ColorEnum.Magenta;
+                    if (light.Value.Color?.White is not null && (bool)light.Value.Color?.White)
+                        color |= LightsCapabilitiesClass.ColorEnum.White;
+                    if (light.Value.Color?.Yellow is not null && (bool)light.Value.Color?.Yellow)
+                        color |= LightsCapabilitiesClass.ColorEnum.Yellow;
+
+                    LightsCapabilitiesClass.DirectionEnum direction = LightsCapabilitiesClass.DirectionEnum.NotSupported;
+                    if (light.Value.Direction?.Entry is not null && (bool)light.Value.Direction?.Entry)
+                        direction |= LightsCapabilitiesClass.DirectionEnum.Entry;
+                    if (light.Value.Direction?.Exit is not null && (bool)light.Value.Direction?.Exit)
+                        direction |= LightsCapabilitiesClass.DirectionEnum.Exit;
+
+                    LightsCapabilitiesClass.LightPostionEnum position = LightsCapabilitiesClass.LightPostionEnum.Default;
+                    if (light.Value.Position?.Bottom is not null && (bool)light.Value.Position?.Bottom)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Bottom;
+                    if (light.Value.Position?.Center is not null && (bool)light.Value.Position?.Center)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Center;
+                    if (light.Value.Position?.Front is not null && (bool)light.Value.Position?.Front)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Front;
+                    if (light.Value.Position?.Left is not null && (bool)light.Value.Position?.Left)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Left;
+                    if (light.Value.Position?.Rear is not null && (bool)light.Value.Position?.Rear)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Rear;
+                    if (light.Value.Position?.Right is not null && (bool)light.Value.Position?.Right)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Right;
+                    if (light.Value.Position?.Top is not null && (bool)light.Value.Position?.Top)
+                        position |= LightsCapabilitiesClass.LightPostionEnum.Top;
+
+
+                    lights.Add(light.Key, new LightsCapabilitiesClass.Light(flashRate, color, direction, position));
+                }
+
+                Common.LightsCapabilities = new LightsCapabilitiesClass(lights);
             }
 
             return Task.FromResult(result);

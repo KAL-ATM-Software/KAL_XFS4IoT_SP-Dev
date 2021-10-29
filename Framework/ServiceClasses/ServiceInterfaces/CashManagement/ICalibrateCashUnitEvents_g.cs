@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.CashManagement
     public interface ICalibrateCashUnitEvents
     {
 
-        Task CashUnitErrorEvent(XFS4IoT.CashManagement.Events.CashUnitErrorEvent.PayloadData Payload);
+        Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload);
 
         Task NoteErrorEvent(XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData Payload);
 

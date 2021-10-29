@@ -22,20 +22,19 @@ namespace XFS4IoTServer
     public partial class CryptoServiceClass
     {
         public CryptoServiceClass(IServiceProvider ServiceProvider,
-                                  IKeyManagementServiceClass KeyManagement,
+                                  IKeyManagementService KeyManagementService,
                                   ICommonService CommonService,
                                   ILogger logger)
         : this(ServiceProvider, logger)
         {
-            this.KeyManagementService = KeyManagement.IsNotNull($"Unexpected parameter set in the " + nameof(CryptoServiceClass));
-            this.CommonService = CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(CryptoServiceClass));
+            KeyManagementService.IsNotNull($"Unexpected parameter set for key management service in the " + nameof(CryptoServiceClass));
+            this.KeyManagementService = KeyManagementService.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. " + nameof(CryptoServiceClass));
+
+            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(CryptoServiceClass));
+            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(CryptoServiceClass));
         }
 
-        /// <summary>
-        /// KeyManagement service interface
-        /// </summary>
-        private IKeyManagementServiceClass KeyManagementService { get; init; }
-
+        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
@@ -44,12 +43,20 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set { } }
 
         /// <summary>
         /// Stores Crypto interface capabilites internally
         /// </summary>
-        public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set => CommonService.CryptoCapabilities = value; }
+        public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set { } }
+
+        #endregion
+
+        #region Key Management Service
+        /// <summary>
+        /// KeyManagement service interface
+        /// </summary>
+        private IKeyManagementService KeyManagementService { get; init; }
 
         /// <summary>
         /// Find keyslot available or being used
@@ -101,5 +108,7 @@ namespace XFS4IoTServer
         /// </summary>
         /// <returns></returns>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => throw new NotSupportedException("The GetSecureKeyEntryStatus method is not supported in the Crypto interface.");
+
+        #endregion
     }
 }

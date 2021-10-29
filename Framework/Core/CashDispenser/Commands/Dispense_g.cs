@@ -27,126 +27,30 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? TellerID = null, int? MixNumber = null, PositionEnum? Position = null, DenominationClass Denomination = null, PresentInBunchesEnum? PresentInBunches = null, int? Bunches = null, string Token = null)
+            public PayloadData(int Timeout, DenominateRequestClass Denomination = null, CashManagement.OutputPositionEnum? Position = null, string Token = null)
                 : base(Timeout)
             {
-                this.TellerID = TellerID;
-                this.MixNumber = MixNumber;
-                this.Position = Position;
                 this.Denomination = Denomination;
-                this.PresentInBunches = PresentInBunches;
-                this.Bunches = Bunches;
+                this.Position = Position;
                 this.Token = Token;
             }
 
             /// <summary>
-            /// Identifies the teller. This field is ignored if the device is a Self-Service CashDispenser.
-            /// </summary>
-            [DataMember(Name = "tellerID")]
-            public int? TellerID { get; init; }
-
-            /// <summary>
-            /// Mix algorithm or house mix table to be used to create a denomination of the supplied amount. 
-            /// If the value is 0 ("individual"), the denomination supplied in the *denomination* field is 
-            /// validated prior to the dispense operation. If it is found to be invalid no alternative denomination will be calculated.
-            /// </summary>
-            [DataMember(Name = "mixNumber")]
-            public int? MixNumber { get; init; }
-
-            public enum PositionEnum
-            {
-                Default,
-                Left,
-                Right,
-                Center,
-                Top,
-                Bottom,
-                Front,
-                Rear
-            }
-
-            /// <summary>
-            /// Required output position. Following values are possible:
-            /// 
-            /// * ```default``` - The default configuration information is used. This can be either position dependent or teller dependent.
-            /// * ```left``` - Present items to left side of device.
-            /// * ```right``` - Present items to right side of device.
-            /// * ```center``` - Present items to center output position.
-            /// * ```top``` - Present items to the top output position.
-            /// * ```bottom``` - Present items to the bottom output position.
-            /// * ```front``` - Present items to the front output position.
-            /// * ```rear``` - Present items to the rear output position.
-            /// </summary>
-            [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
-
-            [DataContract]
-            public sealed class DenominationClass
-            {
-                public DenominationClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, int? CashBox = null)
-                {
-                    this.Currencies = Currencies;
-                    this.Values = Values;
-                    this.CashBox = CashBox;
-                }
-
-                /// <summary>
-                /// "List of currency and amount combinations for denomination. There will be one entry for each currency
-                /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
-                /// </summary>
-                [DataMember(Name = "currencies")]
-                public Dictionary<string, double> Currencies { get; init; }
-
-                /// <summary>
-                /// This list specifies the number of items to take from the cash units. 
-                /// Each entry uses a cashunit object name as stated by the 
-                /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command. The value of the entry is the 
-                /// number of items to take from that unit.
-                /// If the application does not wish to specify a denomination, it should omit the values property.
-                /// </summary>
-                [DataMember(Name = "values")]
-                public Dictionary<string, int> Values { get; init; }
-
-                /// <summary>
-                /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
-                /// </summary>
-                [DataMember(Name = "cashBox")]
-                public int? CashBox { get; init; }
-
-            }
-
-            /// <summary>
-            /// Denomination object describing the denominations used for the dispense operation.
+            /// Denomination object describing the contents of the denomination operation.
             /// </summary>
             [DataMember(Name = "denomination")]
-            public DenominationClass Denomination { get; init; }
-
-            public enum PresentInBunchesEnum
-            {
-                False,
-                True,
-                Unknown
-            }
+            public DenominateRequestClass Denomination { get; init; }
 
             /// <summary>
-            /// Specifies whether or not the dispensed amount has to be presented in multiple bunches of items. 
-            /// Following values are possible:
+            /// If specified, defines the [output position](#cashmanagement.outputposition) to which the items are to be 
+            /// dispensed. If not specified, the items are dispensed to one of the following positions as applicable:
             /// 
-            /// * ```false``` - The dispensed amount can be presented in one operation.
-            /// * ```true``` - At least one additional bunch has to be presented.
-            /// * ```unknown``` - It is unknown whether additional bunches will remain after the first present operation.
+            /// * teller position if the device is a Teller Dispenser
+            /// * intermediate stacker if the device has one
+            /// * the default position if there is no intermediate stacker.
             /// </summary>
-            [DataMember(Name = "presentInBunches")]
-            public PresentInBunchesEnum? PresentInBunches { get; init; }
-
-            /// <summary>
-            /// If *presentInBunches* is "true", specifies the number of bunches of items to be presented as a result of 
-            /// the current operation. 
-            /// If not applicable or the number of bunches is at least two, but the precise number is unknown, 
-            /// *bunches* will be omitted.
-            /// </summary>
-            [DataMember(Name = "bunches")]
-            public int? Bunches { get; init; }
+            [DataMember(Name = "position")]
+            public CashManagement.OutputPositionEnum? Position { get; init; }
 
             /// <summary>
             /// The dispense token that authorizes the dispense operation, as created by the authorizing host. See 
@@ -177,6 +81,7 @@ namespace XFS4IoT.CashDispenser.Commands
             /// The actual amount dispensed will be given by the denomination. The value in the token MUST be
             /// greater or equal to the amount in the denomination parameter. If the Token has a lower value, 
             /// or the Token is invalid for any reason, then the command will fail with an invalid data error code.
+            /// <example>NONCE=254611E63B2531576314E86527338D61,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=50.00EUR,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2</example>
             /// </summary>
             [DataMember(Name = "token")]
             public string Token { get; init; }

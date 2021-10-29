@@ -8,14 +8,12 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
-using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 using XFS4IoT;
 
 namespace XFS4IoTFramework.CashDispenser
@@ -76,7 +74,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Check there are enough notes to be dispensed
         /// </summary>
-        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnit> CashUnits)
+        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnitStorage> CashUnits)
         {
             if (Values is null ||
                 Values.Count == 0)
@@ -98,29 +96,25 @@ namespace XFS4IoTFramework.CashDispenser
                     return DispensableResultEnum.CashUnitError;
                 }
 
-                if (CashUnits[unit.Key].Type != CashUnit.TypeEnum.BillCassette &&
-                    CashUnits[unit.Key].Type != CashUnit.TypeEnum.CoinCylinder &&
-                    CashUnits[unit.Key].Type != CashUnit.TypeEnum.CoinDispenser &&
-                    CashUnits[unit.Key].Type != CashUnit.TypeEnum.Recycling)
+                if (!CashUnits[unit.Key].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
                 {
-                    Logger.Warning(Constants.Framework, $"Invalid counts to pick from none dispensable unit. {unit.Key}, {CashUnits[unit.Key].Type}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Invalid counts to pick from none dispensable unit. {unit.Key}, {CashUnits[unit.Key].Unit.Configuration.Types}" + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitError;
                 }
 
                 // Check counts first
-                if (CashUnits[unit.Key].Count < unit.Value)
+                if (CashUnits[unit.Key].Unit.Status.Count < unit.Value)
                 {
-                    Logger.Warning(Constants.Framework, $"Not enough cash to dispense item. {unit.Key}, {CashUnits[unit.Key].Count}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Not enough cash to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}" + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitNotEnough;
                 }
 
                 // Check status
-                if (CashUnits[unit.Key].Status != CashUnit.StatusEnum.Ok &&
-                    CashUnits[unit.Key].Status != CashUnit.StatusEnum.Low &&
-                    CashUnits[unit.Key].Status != CashUnit.StatusEnum.High &&
-                    CashUnits[unit.Key].Status != CashUnit.StatusEnum.Full)
+                if (CashUnits[unit.Key].Status != CashUnitStorage.StatusEnum.Good ||
+                    (CashUnits[unit.Key].Status == CashUnitStorage.StatusEnum.Good &&
+                     CashUnits[unit.Key].Unit.Status.ReplenishmentStatus == CashStatusClass.ReplenishmentStatusEnum.Empty))
                 {
-                    Logger.Warning(Constants.Framework, $"Not good cash unit status to dispense item. {unit.Key}, {CashUnits[unit.Key].Count}, {CashUnits[unit.Key].Status}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Not good cash unit status to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Status}" + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitError;
                 }
 
@@ -131,7 +125,7 @@ namespace XFS4IoTFramework.CashDispenser
                     bool currencyOK = false;
                     foreach (var currency in CurrencyAmounts)
                     {
-                        if (CashUnits[unit.Key].CurrencyID == currency.Key)
+                        if (CashUnits[unit.Key].Unit.Configuration.Currency == currency.Key)
                         {
                             currencyOK = true;
                             break;
@@ -140,11 +134,11 @@ namespace XFS4IoTFramework.CashDispenser
 
                     if (!currencyOK)
                     {
-                        Logger.Warning(Constants.Framework, $"Specified currency ID not found to dispense. {unit.Key}, {CashUnits[unit.Key].Count}, {CashUnits[unit.Key].CurrencyID}" + nameof(IsDispensable));
+                        Logger.Warning(Constants.Framework, $"Specified currency ID not found to dispense. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Unit.Configuration.Currency}" + nameof(IsDispensable));
                         return DispensableResultEnum.InvalidCurrency;
                     }
 
-                    internalAmount += CashUnits[unit.Key].Value * unit.Value;
+                    internalAmount += CashUnits[unit.Key].Unit.Configuration.Value * unit.Value;
                 }
             }
 
@@ -168,7 +162,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Check given amount and total of cash unit denomination is equal.
         /// </summary>
-        public bool CheckTotalAmount(Dictionary<string, CashUnit> CashUnits)
+        public bool CheckTotalAmount(Dictionary<string, CashUnitStorage> CashUnits)
         {
             if (CurrencyAmounts is null &&
                 CashUnits is null)
@@ -199,7 +193,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="Denom"></param>
         /// <param name="CashUnits"></param>
         /// <returns></returns>
-        public static double GetTotalAmount(string Currency, Dictionary<string, int> Denom, Dictionary<string, CashUnit> CashUnits)
+        public static double GetTotalAmount(string Currency, Dictionary<string, int> Denom, Dictionary<string, CashUnitStorage> CashUnits)
         {
             if (Denom is null &&
                 CashUnits is null)
@@ -216,80 +210,15 @@ namespace XFS4IoTFramework.CashDispenser
             double total = 0;
             foreach (var unit in CashUnits)
             {
-                if (unit.Value.CurrencyID == Currency &&
+                if (unit.Value.Unit.Configuration.Currency == Currency &&
                     Denom.ContainsKey(unit.Key))
                 {
-                    total += Denom[unit.Key] * unit.Value.Value;
+                    total += Denom[unit.Key] * unit.Value.Unit.Configuration.Value;
                 }
             }
 
             return total;
         }
-    }
-
-    /// <summary>
-    /// OpenCloseShutterRequest
-    /// Open or Close shutter for the specified output position
-    /// </summary>
-    public sealed class OpenCloseShutterRequest
-    {
-        public enum ActionEnum
-        {
-            Open,
-            Close
-        }
-
-        /// <summary>
-        /// OpenCloseShutterRequest
-        /// Open or Close shutter for the specified output position
-        /// </summary>
-        /// <param name="Action">Either Open or Close for the shutter operation</param>
-        /// <param name="ShutterPosition">Postion of shutter to control.</param>
-        public OpenCloseShutterRequest(ActionEnum Action, CashDispenserCapabilitiesClass.OutputPositionEnum ShutterPosition)
-        {
-            this.Action = Action;
-            this.ShutterPosition = ShutterPosition;
-        }
-
-        public ActionEnum Action { get; init; }
-
-        public CashDispenserCapabilitiesClass.OutputPositionEnum ShutterPosition { get; init; }
-    }
-
-    /// <summary>
-    /// OpenCloseShutterResult
-    /// Return result of shutter operation.
-    /// </summary>
-    public sealed class OpenCloseShutterResult : DeviceResult
-    {
-        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-        }
-
-        public enum ErrorCodeEnum
-        {
-            UnsupportedPosition,
-            ShutterNotOpen,
-            ShutterOpen,
-            ShutterClosed,
-            ShutterNotClosed,
-            ExchangeActive,
-        }
-
-        /// <summary>
-        /// Specifies the error code on closing or opening shutter
-        /// </summary>
-        public ErrorCodeEnum? ErrorCode { get; init; }
     }
 
     /// <summary>
@@ -303,12 +232,11 @@ namespace XFS4IoTFramework.CashDispenser
         /// Count operation to perform
         /// </summary>
         /// <param name="Position">Cash to move</param>
-        /// <param name="PhysicalPositionName">Count from specified physical position name</param>
-        public CountRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string PhysicalPositionName)
+        /// <param name="StorageUnitIds">Count from specified storage id</param>
+        public CountRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position, List<string> StorageUnitIds)
         {
-            this.EmptyAll = false;
             this.Position = Position;
-            this.PhysicalPositionName = PhysicalPositionName;
+            this.StorageUnitIds = StorageUnitIds;
         }
         /// <summary>
         /// CountRequest
@@ -317,25 +245,19 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="Position">Cash to move</param>
         public CountRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position)
         {
-            this.EmptyAll = true;
             this.Position = Position;
-            this.PhysicalPositionName = null;
+            this.StorageUnitIds = null;
         }
-
-        /// <summary>
-        /// Specifies whether all cash units are to be emptied. If this value is TRUE then physicalPositionName is ignored.
-        /// </summary>
-        public bool EmptyAll { get; init; }
 
         /// <summary>
         /// Position of moving notes
         /// </summary>
         public CashDispenserCapabilitiesClass.OutputPositionEnum Position { get; init; }
+
         /// <summary>
-        /// Specifies which cash unit to empty and count. This name is the same as the 
-        /// *physicalPositionName* in the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) completion message.
+        /// Specifies which storage to empty and count. This identifier reported by the storage GetStorage command.
         /// </summary>
-        public string PhysicalPositionName { get; init; }
+        public List<string> StorageUnitIds { get; init; }
     }
 
     /// <summary>
@@ -351,7 +273,7 @@ namespace XFS4IoTFramework.CashDispenser
         public CountResult(MessagePayload.CompletionCodeEnum CompletionCode,
                            string ErrorDescription = null,
                            CountCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                           Dictionary<string, ItemMovement> MovementResult = null) 
+                           Dictionary<string, CashUnitCountClass> MovementResult = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -359,7 +281,7 @@ namespace XFS4IoTFramework.CashDispenser
         }
 
         public CountResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                           Dictionary<string, ItemMovement> MovementResult = null)
+                           Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -374,7 +296,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Specifies the detailed note movement while in count operation.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
     }
 
     /// <summary>
@@ -416,7 +338,7 @@ namespace XFS4IoTFramework.CashDispenser
                                  string ErrorDescription = null,
                                  PresentCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                                  int NumBunchesRemaining = 0,
-                                 Dictionary<string, ItemMovement> MovementResult = null) :
+                                 Dictionary<string, CashUnitCountClass> MovementResult = null) :
             base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -425,7 +347,7 @@ namespace XFS4IoTFramework.CashDispenser
         }
         public PresentCashResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  int NumBunchesRemaining = 0,
-                                 Dictionary<string, ItemMovement> MovementResult = null) 
+                                 Dictionary<string, CashUnitCountClass> MovementResult = null) 
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -448,68 +370,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Specifies the detailed note movement while in present operation.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
-    }
-
-    /// <summary>
-    /// ResetDeviceRequest
-    /// The parameter class for the reset device operation
-    /// </summary>
-    public sealed class ResetDeviceRequest
-    {
-        /// <summary>
-        /// ResetRequest
-        /// The parameter class for the reset device operation
-        /// </summary>
-        public ResetDeviceRequest(ItemPosition Position)
-        {
-            this.Position = Position;
-        }
-
-        /// <summary>
-        /// Specifies where the dispensed items should be moved to.
-        /// If tnis value is null, the retract items to the default position.
-        /// </summary>
-        public ItemPosition Position { get; init; }
-    }
-
-    /// <summary>
-    /// ResetDeviceResult
-    /// Return result of reset device
-    /// </summary>
-    public sealed class ResetDeviceResult : DeviceResult
-    {
-        /// <summary>
-        /// ResetDeviceResult
-        /// Return result of reset device
-        /// </summary>
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 Dictionary<string, ItemMovement> MovementResult = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 Dictionary<string, ItemMovement> MovementResult = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.MovementResult = MovementResult;
-        }
-
-        /// <summary>
-        /// Specifies the error code on reset device
-        /// </summary>
-        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
-
-        /// <summary>
-        /// Specifies the detailed note movement while in reset operation.
-        /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
     }
 
     /// <summary>
@@ -525,14 +386,14 @@ namespace XFS4IoTFramework.CashDispenser
         public RejectResult(MessagePayload.CompletionCodeEnum CompletionCode,
                             string ErrorDescription = null,
                             RejectCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                            Dictionary<string, ItemMovement> MovementResult = null)
+                            Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.MovementResult = MovementResult;
         }
         public RejectResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                            Dictionary<string, ItemMovement> MovementResult = null)
+                            Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -547,7 +408,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Specifies the detailed note movement while in reject operation.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
 
     }
 
@@ -661,20 +522,24 @@ namespace XFS4IoTFramework.CashDispenser
         /// Perform dispensing operation
         /// </summary>
         public DispenseRequest(Dictionary<string, int> Values,
+                               bool Present,
                                CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition = null,
                                string E2EToken = null,
                                int? CashBox = null)
         {
             this.Values = Values;
+            this.Present = Present;
             this.E2EToken = E2EToken;
             this.CashBox = CashBox;
             this.OutputPosition = OutputPosition;
         }
         public DispenseRequest(Dictionary<string, int> Values,
+                               bool Present,
                                CashDispenserCapabilitiesClass.OutputPositionEnum OutputPosition,
                                string E2EToken = null)
         {
             this.Values = Values;
+            this.Present = Present;
             this.E2EToken = E2EToken;
             CashBox = null;
             this.OutputPosition = OutputPosition;
@@ -682,6 +547,20 @@ namespace XFS4IoTFramework.CashDispenser
 
         public Dictionary<string, int> Values { get; init; }
 
+        /// <summary>
+        /// if this property is true, defines OutputPosition to which the items are to be dispensed.
+        /// Otherwise, one of following location
+        /// * teller position if the device is a Teller Dispenser
+        /// * intermediate stacker if the device has one
+        /// * the default position if there is no intermediate stacker.
+        /// </summary>
+        public bool Present { get; init; }
+        /// <summary>
+        /// Specify the output position item to be dispensed. if it is null, device class move items to one of following.
+        /// - teller position if the device is a Teller Dispenser
+        /// - intermediate stacker if the device has one
+        /// - the default position if there is no intermediate stacker.
+        /// </summary>
         public CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition { get; init; }
 
         public int? CashBox { get; init; }
@@ -704,7 +583,7 @@ namespace XFS4IoTFramework.CashDispenser
                               DispenseCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                               Dictionary<string, int> Values = null,
                               int? CashBox = null,
-                              Dictionary<string, ItemMovement> MovementResult = null)
+                              Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -715,7 +594,7 @@ namespace XFS4IoTFramework.CashDispenser
 
         public DispenseResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               Dictionary<string, int> Values,
-                              Dictionary<string, ItemMovement> MovementResult = null)
+                              Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -733,115 +612,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Specifies the detailed note movement while in present operation.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
-    }
-
-    /// <summary>
-    /// RetractRequest
-    /// The parameter class for the retract operation
-    /// </summary>
-    public sealed class RetractRequest
-    {
-        /// <summary>
-        /// ResetRequest
-        /// The parameter class for the retract operation
-        /// </summary>
-        public RetractRequest(ItemPosition Position)
-        {
-            this.Position = Position;
-        }
-
-        /// <summary>
-        /// Specifies where the dispensed items should be moved to.
-        /// If tnis value is null, the retract items to the default position
-        /// </summary>
-        public ItemPosition Position { get; init; }
-    }
-
-    /// <summary>
-    /// RetractResult
-    /// Return result of retract items
-    /// </summary>
-    public sealed class RetractResult : DeviceResult
-    {
-        public sealed class BankNoteItem
-        {
-            public BankNoteItem(string CurrencyID, 
-                                double Values,
-                                int Count,
-                                int Release,
-                                string CashUnit = null)
-            {
-                this.CurrencyID = CurrencyID;
-                this.Values = Values;
-                this.Release = Release;
-                this.Count = Count;
-                this.CashUnit = CashUnit;
-            }
-
-            /// <summary>
-            /// A three character array storing the ISO format [Ref. 2] Currency ID; if the currency of the item is not known this is omitted.
-            /// </summary>
-            public string CurrencyID { get; private set; }
-
-            /// <summary>
-            /// The value of a single item expressed as floating point value; or a zero value if the value of the item is not known.
-            /// </summary>
-            public double Values { get; private set; }
-
-            /// <summary>
-            /// The release of the item. The higher this number is, the newer the release. Zero means that there is 
-            /// only one release or the release is not known. This value has not been standardized 
-            /// and therefore a release number of the same item will not necessarily have the same value in different systems.
-            /// </summary>
-            public int Release { get; private set; }
-
-            /// <summary>
-            /// The count of items of the same type moved to the same destination during the execution of this command.
-            /// </summary>
-            public int Count { get; private set; }
-
-            /// <summary>
-            /// The object name of the cash unit which received items during the execution of this command as stated by the 
-            /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command.
-            /// This value will be omitted if items were moved to the 
-            /// if the retractArea is transport or stacker, this value is omitted.
-            /// </summary>
-            public string CashUnit { get; private set; }
-
-        }
-
-        /// <summary>
-        /// ResetDeviceResult
-        /// Return result of retract items
-        /// </summary>
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                             List<BankNoteItem> MovementResult = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             List<BankNoteItem> MovementResult = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.MovementResult = MovementResult;
-        }
-
-        /// <summary>
-        /// Specifies the error code on reset device
-        /// </summary>
-        public RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
-
-        /// <summary>
-        /// Specifies the detailed note movement while in reset operation.
-        /// </summary>
-        public List<BankNoteItem> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
     }
 
     /// <summary>
@@ -879,7 +650,7 @@ namespace XFS4IoTFramework.CashDispenser
         public TestCashUnitsResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                    string ErrorDescription = null,
                                    TestCashUnitsCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                   Dictionary<string, ItemMovement> MovementResult = null)
+                                   Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -887,7 +658,7 @@ namespace XFS4IoTFramework.CashDispenser
         }
 
         public TestCashUnitsResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   Dictionary<string, ItemMovement> MovementResult = null)
+                                   Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -902,6 +673,6 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Specifies the detailed note movement while in reset operation.
         /// </summary>
-        public Dictionary<string, ItemMovement> MovementResult { get; init; }
+        public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
     }
 }

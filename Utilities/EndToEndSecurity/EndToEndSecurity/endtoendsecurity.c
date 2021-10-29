@@ -10,7 +10,6 @@
 #include "extensionpoints.h"
 
 // Utility functions
-void LogV(char const* const Message, ...);
 bool CheckNibble(char nibble);
 unsigned int ConvertHex(char high, char low);
 
@@ -18,6 +17,26 @@ unsigned int ConvertHex(char high, char low);
 // if these functions aren't implemented. 
 void* Pull1 = NewNonce; 
 void* Pull2 = ClearNonce; 
+
+char const NonceStr[] = "NONCE";
+char const HMACSHA256Str[] = "HMACSHA256";
+// length of the HMAC SHA256 string - 256 bit
+#define HMACSHA256Len (64U)
+char const TokenFormatStr[] = "TOKENFORMAT";
+char const TokenLengthStr[] = "TOKENLENGTH";
+
+// Absolute minimum token length, including required keys, including null. 
+// NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2
+unsigned int const MinTokenLength = sizeof(NonceStr) - 1 + 2 + 1 +          // NONCE=1,
+                                    sizeof(TokenFormatStr) - 1 + 2 + 1 +    // TOKENFORMAT=1,
+                                    sizeof(TokenLengthStr) - 1 + 2 + 4 +    // TOKENLENGTH=0164,
+                                    sizeof(HMACSHA256Str) - 1 + 1 + HMACSHA256Len + //HMACSHA256=1234567890123456789012345678901234567890123456789012345678901234
+                                    1;                                    // null terminated
+
+// Max permitted token length, as defined in XFS Spec. (In bytes, plus null)
+unsigned int const MaxTokenLength = 1024 + 1;
+
+
 
 /// <summary>
 /// Validate that a token has a valid format.
@@ -111,7 +130,7 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
                 inKeyName = true;
                 symbolLength = 0; 
             }
-            else if (!isalnum(thisChar))
+            else if (!isalnum(thisChar) && thisChar!='.')
             {
                 Log("ValidateToken: Invalid character in value");
                 return false;

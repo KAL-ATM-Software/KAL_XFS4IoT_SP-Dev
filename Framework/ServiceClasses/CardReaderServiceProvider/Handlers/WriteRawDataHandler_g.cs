@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.CardReader
             WriteRawDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

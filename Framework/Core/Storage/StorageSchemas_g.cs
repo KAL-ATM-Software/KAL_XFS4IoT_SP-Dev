@@ -24,20 +24,32 @@ namespace XFS4IoT.Storage
     }
 
 
+    public enum ReplenishmentStatusEnumEnum
+    {
+        Ok,
+        Full,
+        High,
+        Low,
+        Empty
+    }
+
+
     [DataContract]
     public sealed class StorageUnitClass
     {
-        public StorageUnitClass(string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null)
+        public StorageUnitClass(string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null)
         {
             this.PositionName = PositionName;
             this.Capacity = Capacity;
             this.Status = Status;
             this.SerialNumber = SerialNumber;
             this.Cash = Cash;
+            this.Card = Card;
         }
 
         /// <summary>
         /// Fixed physical name for the position.
+        /// <example>Top Right</example>
         /// </summary>
         [DataMember(Name = "positionName")]
         public string PositionName { get; init; }
@@ -45,6 +57,7 @@ namespace XFS4IoT.Storage
         /// <summary>
         /// The nominal capacity of the unit. This may be an estimate as the quality and thickness of the items
         /// stored in the unit may affect how many items can be stored. 0 means the capacity is unknown.
+        /// <example>100</example>
         /// </summary>
         [DataMember(Name = "capacity")]
         [DataTypes(Minimum = 0)]
@@ -55,6 +68,7 @@ namespace XFS4IoT.Storage
 
         /// <summary>
         /// The storage unit's serial number if it can be read electronically.
+        /// <example>ABCD1234</example>
         /// </summary>
         [DataMember(Name = "serialNumber")]
         public string SerialNumber { get; init; }
@@ -65,15 +79,39 @@ namespace XFS4IoT.Storage
         [DataMember(Name = "cash")]
         public CashManagement.StorageCashClass Cash { get; init; }
 
+        /// <summary>
+        /// The card related contents, status and configuration of the unit.
+        /// </summary>
+        [DataMember(Name = "card")]
+        public CardReader.StorageClass Card { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class SingleStorageUnitClass
+    {
+        public SingleStorageUnitClass(Dictionary<string, StorageUnitClass> Storage = null)
+        {
+            this.Storage = Storage;
+        }
+
+        /// <summary>
+        /// Object containing information for a single storage unit.
+        /// </summary>
+        [DataMember(Name = "storage")]
+        public Dictionary<string, StorageUnitClass> Storage { get; init; }
+
     }
 
 
     [DataContract]
     public sealed class SetStorageUnitClass
     {
-        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null)
+        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null, CardReader.StorageSetClass Card = null)
         {
             this.Cash = Cash;
+            this.Card = Card;
         }
 
         /// <summary>
@@ -82,22 +120,11 @@ namespace XFS4IoT.Storage
         [DataMember(Name = "cash")]
         public CashManagement.StorageSetCashClass Cash { get; init; }
 
-    }
-
-
-    [DataContract]
-    public sealed class StorageClass
-    {
-        public StorageClass(Dictionary<string, StorageUnitClass> Storage = null)
-        {
-            this.Storage = Storage;
-        }
-
         /// <summary>
-        /// Object containing storage unit information.
+        /// The card related contents and configuration of the unit.
         /// </summary>
-        [DataMember(Name = "storage")]
-        public Dictionary<string, StorageUnitClass> Storage { get; init; }
+        [DataMember(Name = "card")]
+        public CardReader.StorageSetClass Card { get; init; }
 
     }
 

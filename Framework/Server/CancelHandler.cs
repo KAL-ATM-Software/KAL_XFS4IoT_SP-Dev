@@ -36,10 +36,12 @@ namespace XFS4IoTServer
 
             bool result = await dispatcher.CancelCommandsAsync(Connection, cancelCmd.Payload.RequestIds);
 
-            if(result)
-                await Connection.SendMessageAsync(new CancelCompletion(cancelCmd.Header.RequestId.Value, new CancelCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null)));
-            else
-                await Connection.SendMessageAsync(new CancelCompletion(cancelCmd.Header.RequestId.Value, new CancelCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, null, CancelCompletion.PayloadData.ErrorCodeEnum.NoMatchingRequestIDs)));
+            var completion = new CancelCompletion(cancelCmd.Header.RequestId.Value,
+                result ?
+                new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null)
+                : new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, null, CancelCompletion.PayloadData.ErrorCodeEnum.NoMatchingRequestIDs));
+
+            await Connection.SendMessageAsync(completion);
         }
 
         public async Task HandleError(IConnection connection, object command, Exception commandException)
@@ -50,8 +52,9 @@ namespace XFS4IoTServer
             CancelCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => CancelCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => CancelCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => CancelCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => CancelCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => CancelCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => CancelCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => CancelCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

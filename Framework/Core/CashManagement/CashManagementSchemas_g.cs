@@ -14,6 +14,40 @@ using System.Runtime.Serialization;
 namespace XFS4IoT.CashManagement
 {
 
+    public enum PositionEnum
+    {
+        InDefault,
+        InLeft,
+        InRight,
+        InCenter,
+        InTop,
+        InBottom,
+        InFront,
+        InRear,
+        OutDefault,
+        OutLeft,
+        OutRight,
+        OutCenter,
+        OutTop,
+        OutBottom,
+        OutFront,
+        OutRear
+    }
+
+
+    public enum OutputPositionEnum
+    {
+        OutDefault,
+        OutLeft,
+        OutRight,
+        OutCenter,
+        OutTop,
+        OutBottom,
+        OutFront,
+        OutRear
+    }
+
+
     [DataContract]
     public sealed class StatusClass
     {
@@ -46,22 +80,22 @@ namespace XFS4IoT.CashManagement
         public enum DispenserEnum
         {
             Ok,
-            CashUnitState,
-            CashUnitStop,
-            CashUnitUnknown
+            Attention,
+            Stop,
+            Unknown
         }
 
         /// <summary>
         /// Supplies the state of the storage units for dispensing cash. Following values are possible:
         /// 
         /// * ```ok``` - All storage units present are in a good state.
-        /// * ```cashUnitState``` - One or more of the storage units is in a low, empty, inoperative or manipulated condition. 
+        /// * ```attention``` - One or more of the storage units is in a low, empty, inoperative or manipulated condition. 
         /// Items can still be dispensed from at least one of the storage units.
-        /// * ```cashUnitStop``` - Due to a storage unit failure dispensing is impossible. No items can be dispensed because 
+        /// * ```stop``` - Due to a storage unit failure dispensing is impossible. No items can be dispensed because 
         /// all of the storage units are in an empty, inoperative or manipulated condition. This state may also occur 
         /// when a reject/retract storage unit is full or no reject/retract storage unit is present, or when an application 
         /// lock is set on every storage unit which can be locked.
-        /// * ```cashUnitUnknown``` - Due to a hardware error or other condition, the state of the storage units cannot be determined.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be determined.
         /// </summary>
         [DataMember(Name = "dispenser")]
         public DispenserEnum? Dispenser { get; init; }
@@ -69,21 +103,24 @@ namespace XFS4IoT.CashManagement
         public enum AcceptorEnum
         {
             Ok,
-            CashUnitState,
-            CashUnitStop,
-            CashUnitUnknown
+            Attention,
+            Stop,
+            Unknown
         }
 
         /// <summary>
         /// Supplies the state of the storage units for accepting cash. Following values are possible:
         /// 
         /// * ```ok``` - All storage units present are in a good state.
-        /// * ```cashUnitState``` - One or more of the storage units is in a high, full, inoperative or manipulated condition. Items can still be accepted into at least one of the storage units.
-        /// * ```cashUnitStop``` - Due to a storage unit failure accepting is impossible. No items can be accepted because all of the storage units are in a full, inoperative or manipulated condition.
-        /// This state may also occur when a retract storage unit is full or no retract cash storage unit is present, 
-        /// or when an application lock is set on every storage unit, or when Level 2/3 notes are to be automatically retained within storage units, 
-        /// but all of the designated storage units for storing them are full or inoperative.
-        /// * ```cashUnitUnknown``` - Due to a hardware error or other condition, the state of the storage units cannot be determined.
+        /// * ```attention``` - One or more of the storage units is in a high, full, inoperative or manipulated condition. 
+        /// Items can still be accepted into at least one of the storage units.
+        /// * ```stop``` - Due to a storage unit failure accepting is impossible. No items can be accepted because 
+        /// all of the storage units are in a full, inoperative or manipulated condition. This state may also occur when
+        /// a retract storage unit is full or no retract cash storage unit is present, or when an application lock is 
+        /// set on every storage unit, or when counterfeit or suspect items are to be automatically retained within 
+        /// storage units, but all of the designated storage units for storing them are full or inoperative.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be 
+        /// determined.
         /// </summary>
         [DataMember(Name = "acceptor")]
         public AcceptorEnum? Acceptor { get; init; }
@@ -94,14 +131,13 @@ namespace XFS4IoT.CashManagement
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(bool? SafeDoor = null, bool? CashBox = null, ExchangeTypeClass ExchangeType = null, ItemInfoTypesClass ItemInfoTypes = null, bool? ClassificationList = null, bool? PhysicalNoteList = null)
+        public CapabilitiesClass(bool? SafeDoor = null, bool? CashBox = null, ExchangeTypeClass ExchangeType = null, ItemInfoTypesClass ItemInfoTypes = null, bool? ClassificationList = null)
         {
             this.SafeDoor = SafeDoor;
             this.CashBox = CashBox;
             this.ExchangeType = ExchangeType;
             this.ItemInfoTypes = ItemInfoTypes;
             this.ClassificationList = ClassificationList;
-            this.PhysicalNoteList = PhysicalNoteList;
         }
 
         /// <summary>
@@ -120,12 +156,9 @@ namespace XFS4IoT.CashManagement
         [DataContract]
         public sealed class ExchangeTypeClass
         {
-            public ExchangeTypeClass(bool? ByHand = null, bool? ToCassettes = null, bool? ClearRecycler = null, bool? DepositInto = null)
+            public ExchangeTypeClass(bool? ByHand = null)
             {
                 this.ByHand = ByHand;
-                this.ToCassettes = ToCassettes;
-                this.ClearRecycler = ClearRecycler;
-                this.DepositInto = DepositInto;
             }
 
             /// <summary>
@@ -133,24 +166,6 @@ namespace XFS4IoT.CashManagement
             /// </summary>
             [DataMember(Name = "byHand")]
             public bool? ByHand { get; init; }
-
-            /// <summary>
-            /// The device supports moving items from the replenishment cash storage unit to another cash storage unit.
-            /// </summary>
-            [DataMember(Name = "toCassettes")]
-            public bool? ToCassettes { get; init; }
-
-            /// <summary>
-            /// The device supports the emptying of recycle cash storage units.
-            /// </summary>
-            [DataMember(Name = "clearRecycler")]
-            public bool? ClearRecycler { get; init; }
-
-            /// <summary>
-            /// The device supports moving items from the deposit entrance to the bill cash storage units.
-            /// </summary>
-            [DataMember(Name = "depositInto")]
-            public bool? DepositInto { get; init; }
 
         }
 
@@ -197,18 +212,11 @@ namespace XFS4IoT.CashManagement
         public ItemInfoTypesClass ItemInfoTypes { get; init; }
 
         /// <summary>
-        /// Specifies whether the device has the capability to maintain a classification list of serial numbers as well as
-        /// supporting the associated operations. This can either be TRUE if the device has the capability or FALSE if it does not.
+        /// Specifies whether the service has the capability to maintain a classification list of serial numbers as well 
+        /// as supporting the associated operations.
         /// </summary>
         [DataMember(Name = "classificationList")]
         public bool? ClassificationList { get; init; }
-
-        /// <summary>
-        /// Specifies whether the Service supports note number lists on physical cash units.
-        /// This can either be TRUE if the Service has the capability or FALSE if it does not.
-        /// </summary>
-        [DataMember(Name = "physicalNoteList")]
-        public bool? PhysicalNoteList { get; init; }
 
     }
 
@@ -216,7 +224,7 @@ namespace XFS4IoT.CashManagement
     [DataContract]
     public sealed class StorageCashTypesClass
     {
-        public StorageCashTypesClass(bool? CashIn = null, bool? CashOut = null, bool? Replenishment = null, bool? CashInRetract = null, bool? CashOutRetract = null, bool? Reject = null, bool? Coupon = null, bool? Document = null)
+        public StorageCashTypesClass(bool? CashIn = null, bool? CashOut = null, bool? Replenishment = null, bool? CashInRetract = null, bool? CashOutRetract = null, bool? Reject = null)
         {
             this.CashIn = CashIn;
             this.CashOut = CashOut;
@@ -224,8 +232,6 @@ namespace XFS4IoT.CashManagement
             this.CashInRetract = CashInRetract;
             this.CashOutRetract = CashOutRetract;
             this.Reject = Reject;
-            this.Coupon = Coupon;
-            this.Document = Document;
         }
 
         /// <summary>
@@ -264,6 +270,60 @@ namespace XFS4IoT.CashManagement
         [DataMember(Name = "reject")]
         public bool? Reject { get; init; }
 
+    }
+
+
+    [DataContract]
+    public sealed class StorageCashItemTypesClass
+    {
+        public StorageCashItemTypesClass(bool? Fit = null, bool? Unfit = null, bool? Unrecognized = null, bool? Counterfeit = null, bool? Suspect = null, bool? Inked = null, bool? Coupon = null, bool? Document = null)
+        {
+            this.Fit = Fit;
+            this.Unfit = Unfit;
+            this.Unrecognized = Unrecognized;
+            this.Counterfeit = Counterfeit;
+            this.Suspect = Suspect;
+            this.Inked = Inked;
+            this.Coupon = Coupon;
+            this.Document = Document;
+        }
+
+        /// <summary>
+        /// The storage unit can store cash items which are fit for recycling.
+        /// </summary>
+        [DataMember(Name = "fit")]
+        public bool? Fit { get; init; }
+
+        /// <summary>
+        /// The storage unit can store cash items which are unfit for recycling.
+        /// </summary>
+        [DataMember(Name = "unfit")]
+        public bool? Unfit { get; init; }
+
+        /// <summary>
+        /// The storage unit can store unrecognized cash items.
+        /// </summary>
+        [DataMember(Name = "unrecognized")]
+        public bool? Unrecognized { get; init; }
+
+        /// <summary>
+        /// The storage unit can store counterfeit cash items.
+        /// </summary>
+        [DataMember(Name = "counterfeit")]
+        public bool? Counterfeit { get; init; }
+
+        /// <summary>
+        /// The storage unit can store suspect counterfeit cash items.
+        /// </summary>
+        [DataMember(Name = "suspect")]
+        public bool? Suspect { get; init; }
+
+        /// <summary>
+        /// The storage unit can store cash items which have been identified as ink stained.
+        /// </summary>
+        [DataMember(Name = "inked")]
+        public bool? Inked { get; init; }
+
         /// <summary>
         /// Storage unit containing coupons or advertising material.
         /// </summary>
@@ -275,58 +335,6 @@ namespace XFS4IoT.CashManagement
         /// </summary>
         [DataMember(Name = "document")]
         public bool? Document { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class StorageCashItemTypesClass
-    {
-        public StorageCashItemTypesClass(bool? Fit = null, bool? Unfit = null, bool? Unrecognized = null, bool? Counterfeit = null, bool? Suspect = null, bool? Inked = null)
-        {
-            this.Fit = Fit;
-            this.Unfit = Unfit;
-            this.Unrecognized = Unrecognized;
-            this.Counterfeit = Counterfeit;
-            this.Suspect = Suspect;
-            this.Inked = Inked;
-        }
-
-        /// <summary>
-        /// The storage unit can store cash items which are fit for recycling (classification level 4).
-        /// </summary>
-        [DataMember(Name = "fit")]
-        public bool? Fit { get; init; }
-
-        /// <summary>
-        /// The storage unit can store cash items which are unfit for recycling (classification level 4).
-        /// </summary>
-        [DataMember(Name = "unfit")]
-        public bool? Unfit { get; init; }
-
-        /// <summary>
-        /// The storage unit can store unrecognized cash items (classification level 1).
-        /// </summary>
-        [DataMember(Name = "unrecognized")]
-        public bool? Unrecognized { get; init; }
-
-        /// <summary>
-        /// The storage unit can store counterfeit cash items (classification level 2).
-        /// </summary>
-        [DataMember(Name = "counterfeit")]
-        public bool? Counterfeit { get; init; }
-
-        /// <summary>
-        /// The storage unit can store suspect cash items (classification level 3).
-        /// </summary>
-        [DataMember(Name = "suspect")]
-        public bool? Suspect { get; init; }
-
-        /// <summary>
-        /// The storage unit can store cash items which have been identified as ink stained.
-        /// </summary>
-        [DataMember(Name = "inked")]
-        public bool? Inked { get; init; }
 
     }
 
@@ -346,6 +354,7 @@ namespace XFS4IoT.CashManagement
         /// Assigned by the XFS4IoT service. A unique number identifying a single cash item. 
         /// Each unique combination of the other properties will have a different noteID. 
         /// Can be used for migration of _usNoteID_ from XFS 3.x.
+        /// <example>25</example>
         /// </summary>
         [DataMember(Name = "noteID")]
         [DataTypes(Minimum = 1)]
@@ -353,6 +362,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// ISO 4217 currency.
+        /// <example>USD</example>
         /// </summary>
         [DataMember(Name = "currency")]
         public string Currency { get; init; }
@@ -361,16 +371,24 @@ namespace XFS4IoT.CashManagement
         /// Absolute value of all contents, 0 if mixed. May only be modified in an exchange state if applicable. May be 
         /// a floating point value to allow for coins and notes which have a value which is not a whole multiple 
         /// of the currency unit.
+        /// <example>20</example>
         /// </summary>
         [DataMember(Name = "value")]
         public double? Value { get; init; }
 
         /// <summary>
         /// The release of the cash item. The higher this number is, the newer the release.
-        /// Zero means that there is only one release of that cash item or the device is not capable of
-        /// distinguishing different release of the item, for example in a simple cash dispenser. This value has not 
-        /// been standardized and therefore a release number of the same cash item will not necessarily have the same 
-        /// value in different systems.
+        /// 
+        /// If zero or not reported, there is only one release of that cash item or the device is not
+        /// capable of distinguishing different release of the item, for example in a simple cash dispenser.
+        /// 
+        /// An example of how this can be used is being able to sort different releases of the same denomination 
+        /// note to different storage units to take older notes out of circulation.
+        /// 
+        /// This value is device, banknote reader and currency dependent, therefore a release number of the 
+        /// same cash item will not necessarily have the same value in different systems and any such usage 
+        /// would be specific to a specific device's configuration.
+        /// <example>1</example>
         /// </summary>
         [DataMember(Name = "release")]
         [DataTypes(Minimum = 0)]
@@ -457,6 +475,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// ISO 4217 currency. May only be modified in an exchange state if applicable.
+        /// <example>USD</example>
         /// </summary>
         [DataMember(Name = "currency")]
         public string Currency { get; init; }
@@ -465,6 +484,7 @@ namespace XFS4IoT.CashManagement
         /// Absolute value of all contents, 0 if mixed. May only be modified in an exchange state if applicable. May be 
         /// a floating point value to allow for coins and notes which have a value which is not a whole multiple 
         /// of the currency unit.
+        /// <example>20</example>
         /// </summary>
         [DataMember(Name = "value")]
         public double? Value { get; init; }
@@ -477,6 +497,7 @@ namespace XFS4IoT.CashManagement
         /// 
         /// If not specified, high is based on hardware sensors if supported - see
         /// [hardwareSensors](#storage.getstorage.completion.properties.storage.unit1.cash.capabilities.hardwaresensors).
+        /// <example>500</example>
         /// </summary>
         [DataMember(Name = "highThreshold")]
         [DataTypes(Minimum = 1)]
@@ -490,6 +511,7 @@ namespace XFS4IoT.CashManagement
         /// 
         /// If not specified, low is based on hardware sensors if supported - see
         /// [hardwareSensors](#storage.getstorage.completion.properties.storage.unit1.cash.capabilities.hardwaresensors).
+        /// <example>10</example>
         /// </summary>
         [DataMember(Name = "lowThreshold")]
         [DataTypes(Minimum = 1)]
@@ -515,6 +537,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// Application configured name of the unit.
+        /// <example>$10</example>
         /// </summary>
         [DataMember(Name = "name")]
         public string Name { get; init; }
@@ -523,6 +546,7 @@ namespace XFS4IoT.CashManagement
         /// If specified, this is the number of retract operations allowed into the unit.
         /// 
         /// If not specified, the maximum number is not limited by counts.
+        /// <example>5</example>
         /// </summary>
         [DataMember(Name = "maxRetracts")]
         [DataTypes(Minimum = 1)]
@@ -544,29 +568,25 @@ namespace XFS4IoT.CashManagement
         }
 
         /// <summary>
-        /// Count of genuine cash items which are fit for recycling (classification level 4 - see 
-        /// [Note Classification](#noteclassification)).
+        /// Count of genuine cash items which are fit for recycling.
         /// </summary>
         [DataMember(Name = "fit")]
         public int? Fit { get; init; }
 
         /// <summary>
-        /// Count of genuine cash items which are unfit for recycling (classification level 4 - see 
-        /// [Note Classification](#noteclassification)).
+        /// Count of genuine cash items which are unfit for recycling.
         /// </summary>
         [DataMember(Name = "unfit")]
         public int? Unfit { get; init; }
 
         /// <summary>
-        /// Count of suspect cash items (classification level 3 - see 
-        /// [Note Classification](#noteclassification)).
+        /// Count of suspected counterfeit cash items.
         /// </summary>
         [DataMember(Name = "suspect")]
         public int? Suspect { get; init; }
 
         /// <summary>
-        /// Count of counterfeit cash items (classification level 2 - see 
-        /// [Note Classification](#noteclassification)).
+        /// Count of counterfeit cash items.
         /// </summary>
         [DataMember(Name = "counterfeit")]
         public int? Counterfeit { get; init; }
@@ -605,9 +625,143 @@ namespace XFS4IoT.CashManagement
 
 
     [DataContract]
+    public sealed class StorageCashOutClass
+    {
+        public StorageCashOutClass(StorageCashCountsClass Presented = null, StorageCashCountsClass Rejected = null, StorageCashCountsClass Distributed = null, StorageCashCountsClass Unknown = null, StorageCashCountsClass Stacked = null, StorageCashCountsClass Diverted = null, StorageCashCountsClass Transport = null)
+        {
+            this.Presented = Presented;
+            this.Rejected = Rejected;
+            this.Distributed = Distributed;
+            this.Unknown = Unknown;
+            this.Stacked = Stacked;
+            this.Diverted = Diverted;
+            this.Transport = Transport;
+        }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which are or were customer accessible.
+        /// </summary>
+        [DataMember(Name = "presented")]
+        public StorageCashCountsClass Presented { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which were invalid and were diverted to a reject storage 
+        /// unit and were not customer accessible during the operation.
+        /// </summary>
+        [DataMember(Name = "rejected")]
+        public StorageCashCountsClass Rejected { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which were moved to a storage unit other than a reject storage unit 
+        /// and were not customer accessible during the operation.
+        /// </summary>
+        [DataMember(Name = "distributed")]
+        public StorageCashCountsClass Distributed { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which moved to an unknown position.
+        /// </summary>
+        [DataMember(Name = "unknown")]
+        public StorageCashCountsClass Unknown { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which are not customer accessible and are currently stacked 
+        /// awaiting presentation to the customer. This item list can increase and decrease as items are moved 
+        /// around in the device.
+        /// </summary>
+        [DataMember(Name = "stacked")]
+        public StorageCashCountsClass Stacked { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which are not customer accessible and were diverted to a 
+        /// temporary location due to being invalid and have not yet been deposited in a storage unit. This item 
+        /// list can increase and decrease as items are moved around in the device.
+        /// </summary>
+        [DataMember(Name = "diverted")]
+        public StorageCashCountsClass Diverted { get; init; }
+
+        /// <summary>
+        /// The items dispensed from this storage unit which are not customer accessible and which have jammed in
+        /// the transport. This item list can increase and decrease as items are moved around in the device.
+        /// </summary>
+        [DataMember(Name = "transport")]
+        public StorageCashCountsClass Transport { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageCashInClass
+    {
+        public StorageCashInClass(int? RetractOperations = null, StorageCashCountsClass Deposited = null, StorageCashCountsClass Retracted = null, StorageCashCountsClass Rejected = null, StorageCashCountsClass Distributed = null, StorageCashCountsClass Transport = null)
+        {
+            this.RetractOperations = RetractOperations;
+            this.Deposited = Deposited;
+            this.Retracted = Retracted;
+            this.Rejected = Rejected;
+            this.Distributed = Distributed;
+            this.Transport = Transport;
+        }
+
+        /// <summary>
+        /// Number of cash retract operations which resulted in items entering this storage unit. This can be 
+        /// used where devices do not have the capability to count or validate items after presentation.
+        /// </summary>
+        [DataMember(Name = "retractOperations")]
+        public int? RetractOperations { get; init; }
+
+        /// <summary>
+        /// The items deposited in the storage unit during a Cash In transaction.
+        /// </summary>
+        [DataMember(Name = "deposited")]
+        public StorageCashCountsClass Deposited { get; init; }
+
+        /// <summary>
+        /// The items deposited in the storage unit after being accessible to a customer. This may be inaccurate 
+        /// or not counted if items are not counted or re-validated after presentation, the number of retract 
+        /// operations is also reported separately in _retractOperations_.
+        /// </summary>
+        [DataMember(Name = "retracted")]
+        public StorageCashCountsClass Retracted { get; init; }
+
+        /// <summary>
+        /// The items deposited in this storage unit originating from another storage unit but rejected due to being 
+        /// invalid. This count may be inaccurate due to the nature of rejected items.
+        /// </summary>
+        [DataMember(Name = "rejected")]
+        public StorageCashCountsClass Rejected { get; init; }
+
+        /// <summary>
+        /// The items deposited in this storage unit originating from another storage unit but not rejected.
+        /// </summary>
+        [DataMember(Name = "distributed")]
+        public StorageCashCountsClass Distributed { get; init; }
+
+        /// <summary>
+        /// The items which were intended to be deposited in this storage unit but are not yet deposited. Typical use
+        /// case for this property is tracking items after a jam during
+        /// [CashAcceptor.CashInEnd](#cashacceptor.cashinend).
+        /// </summary>
+        [DataMember(Name = "transport")]
+        public StorageCashCountsClass Transport { get; init; }
+
+    }
+
+
+    public enum ReplenishmentStatusEnum
+    {
+        Ok,
+        Full,
+        High,
+        Low,
+        Empty
+    }
+
+
+    [DataContract]
     public sealed class StorageCashStatusClass
     {
-        public StorageCashStatusClass(int? Index = null, StorageCashCountsClass Initial = null, OutClass Out = null, InClass In = null, int? Count = null, AccuracyEnum? Accuracy = null, ReplenishmentStatusEnum? ReplenishmentStatus = null)
+        public StorageCashStatusClass(int? Index = null, StorageCashCountsClass Initial = null, StorageCashOutClass Out = null, StorageCashInClass In = null, int? Count = null, AccuracyEnum? Accuracy = null, ReplenishmentStatusEnum? ReplenishmentStatus = null)
         {
             this.Index = Index;
             this.Initial = Initial;
@@ -633,71 +787,6 @@ namespace XFS4IoT.CashManagement
         [DataMember(Name = "initial")]
         public StorageCashCountsClass Initial { get; init; }
 
-        [DataContract]
-        public sealed class OutClass
-        {
-            public OutClass(StorageCashCountsClass Presented = null, StorageCashCountsClass Rejected = null, StorageCashCountsClass Distributed = null, StorageCashCountsClass Unknown = null, StorageCashCountsClass Stacked = null, StorageCashCountsClass Diverted = null, StorageCashCountsClass Transport = null)
-            {
-                this.Presented = Presented;
-                this.Rejected = Rejected;
-                this.Distributed = Distributed;
-                this.Unknown = Unknown;
-                this.Stacked = Stacked;
-                this.Diverted = Diverted;
-                this.Transport = Transport;
-            }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which are or were customer accessible.
-            /// </summary>
-            [DataMember(Name = "presented")]
-            public StorageCashCountsClass Presented { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which were invalid and were diverted to a reject storage 
-            /// unit and were not customer accessible during the operation.
-            /// </summary>
-            [DataMember(Name = "rejected")]
-            public StorageCashCountsClass Rejected { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which were moved to a storage unit other than a reject storage unit 
-            /// and were not customer accessible during the operation.
-            /// </summary>
-            [DataMember(Name = "distributed")]
-            public StorageCashCountsClass Distributed { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which moved to an unknown position.
-            /// </summary>
-            [DataMember(Name = "unknown")]
-            public StorageCashCountsClass Unknown { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which are not customer accessible and are currently stacked 
-            /// awaiting presentation to the customer. This item list can increase and decrease as items are moved 
-            /// around in the device.
-            /// </summary>
-            [DataMember(Name = "stacked")]
-            public StorageCashCountsClass Stacked { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which are not customer accessible and were diverted to a 
-            /// temporary location due to being invalid and have not yet been deposited in a storage unit. This item 
-            /// list can increase and decrease as items are moved around in the device.
-            /// </summary>
-            [DataMember(Name = "diverted")]
-            public StorageCashCountsClass Diverted { get; init; }
-
-            /// <summary>
-            /// The items dispensed from this storage unit which are not customer accessible and which have jammed in
-            /// the transport. This item list can increase and decrease as items are moved around in the device.
-            /// </summary>
-            [DataMember(Name = "transport")]
-            public StorageCashCountsClass Transport { get; init; }
-
-        }
-
         /// <summary>
         /// The items moved from this storage unit by cash commands to another destination since the last 
         /// replenishment of this unit. Reset to empty if 
@@ -705,55 +794,7 @@ namespace XFS4IoT.CashManagement
         /// by [Storage.GetStorage](#storage.getstorage).
         /// </summary>
         [DataMember(Name = "out")]
-        public OutClass Out { get; init; }
-
-        [DataContract]
-        public sealed class InClass
-        {
-            public InClass(int? RetractOperations = null, StorageCashCountsClass Deposited = null, StorageCashCountsClass Retracted = null, StorageCashCountsClass Rejected = null, StorageCashCountsClass Distributed = null)
-            {
-                this.RetractOperations = RetractOperations;
-                this.Deposited = Deposited;
-                this.Retracted = Retracted;
-                this.Rejected = Rejected;
-                this.Distributed = Distributed;
-            }
-
-            /// <summary>
-            /// Number of cash retract operations which resulted in items entering this storage unit. This can be 
-            /// used where devices do not have the capability to count or validate items after presentation.
-            /// </summary>
-            [DataMember(Name = "retractOperations")]
-            public int? RetractOperations { get; init; }
-
-            /// <summary>
-            /// The items deposited in the storage unit during a Cash In transaction.
-            /// </summary>
-            [DataMember(Name = "deposited")]
-            public StorageCashCountsClass Deposited { get; init; }
-
-            /// <summary>
-            /// The items deposited in the storage unit after being accessible to a customer. This may be inaccurate 
-            /// or not counted if items are not counted or re-validated after presentation, the number of retract 
-            /// operations is also reported separately in _retractOperations_.
-            /// </summary>
-            [DataMember(Name = "retracted")]
-            public StorageCashCountsClass Retracted { get; init; }
-
-            /// <summary>
-            /// The items deposited in this storage unit originating from another storage unit but rejected due to being 
-            /// invalid. This count may be inaccurate due to the nature of rejected items.
-            /// </summary>
-            [DataMember(Name = "rejected")]
-            public StorageCashCountsClass Rejected { get; init; }
-
-            /// <summary>
-            /// The items deposited in this storage unit originating from another storage unit but not rejected.
-            /// </summary>
-            [DataMember(Name = "distributed")]
-            public StorageCashCountsClass Distributed { get; init; }
-
-        }
+        public StorageCashOutClass Out { get; init; }
 
         /// <summary>
         /// List of items inserted in this storage unit by cash commands from another source since the last 
@@ -762,7 +803,7 @@ namespace XFS4IoT.CashManagement
         /// by [Storage.GetStorage](#storage.getstorage).
         /// </summary>
         [DataMember(Name = "in")]
-        public InClass In { get; init; }
+        public StorageCashInClass In { get; init; }
 
         /// <summary>
         /// Total count of the items in the unit, derived from the 
@@ -804,37 +845,12 @@ namespace XFS4IoT.CashManagement
         /// since been no events that might have introduced inaccuracy.
         /// * ```inaccurate``` - The _count_ is likely to be inaccurate. A jam, picking fault, or some other event may 
         /// have resulted in a counting inaccuracy.
-        /// * ```unknown``` - The accuracy of _count_ cannot be determined. This may be due to cash unit insertion or 
+        /// * ```unknown``` - The accuracy of _count_ cannot be determined. This may be due to storage unit insertion or 
         /// some other hardware event.
         /// </summary>
         [DataMember(Name = "accuracy")]
         public AccuracyEnum? Accuracy { get; init; }
 
-        public enum ReplenishmentStatusEnum
-        {
-            Ok,
-            Full,
-            High,
-            Low,
-            Empty
-        }
-
-        /// <summary>
-        /// The state of the media in the unit if it can be determined. Note that overall 
-        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must
-        /// be taken into account when deciding whether the storage unit is usable and whether replenishment status
-        /// is applicable. In particular, if the overall status is _missing_ this will not be reported.
-        /// The following values are possible:
-        /// 
-        /// * ```ok``` - The storage unit media is in a good state.
-        /// * ```full``` - The storage unit is full.
-        /// * ```high``` - The storage unit is almost full (either sensor based or exceeded the 
-        /// [highThreshold](#storage.getstorage.completion.properties.storage.unit1.cash.configuration.highthreshold).
-        /// * ```low``` - The storage unit is almost empty (either sensor based or below the 
-        /// [lowThreshold](#storage.getstorage.completion.properties.storage.unit1.cash.configuration.lowthreshold)). 
-        /// * ```empty``` - The storage unit is empty, or insufficient items in the storage unit are preventing further 
-        /// dispense operations.
-        /// </summary>
         [DataMember(Name = "replenishmentStatus")]
         public ReplenishmentStatusEnum? ReplenishmentStatus { get; init; }
 
@@ -859,6 +875,435 @@ namespace XFS4IoT.CashManagement
 
         [DataMember(Name = "status")]
         public StorageCashStatusClass Status { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class BankNoteClass
+    {
+        public BankNoteClass(CashItemClass CashItem = null, bool? Enabled = null)
+        {
+            this.CashItem = CashItem;
+            this.Enabled = Enabled;
+        }
+
+        [DataMember(Name = "cashItem")]
+        public CashItemClass CashItem { get; init; }
+
+        /// <summary>
+        /// If true the banknote reader will accept this note type during a cash-in operations.
+        /// If false the banknote reader will refuse this note type unless it must be retained by note classification 
+        /// rules.
+        /// </summary>
+        [DataMember(Name = "enabled")]
+        public bool? Enabled { get; init; }
+
+    }
+
+
+    public enum InputPositionEnum
+    {
+        InDefault,
+        InLeft,
+        InRight,
+        InCenter,
+        InTop,
+        InBottom,
+        InFront,
+        InRear
+    }
+
+
+    [DataContract]
+    public sealed class TellerTotalsClass
+    {
+        public TellerTotalsClass(double? ItemsReceived = null, double? ItemsDispensed = null, double? CoinsReceived = null, double? CoinsDispensed = null, double? CashBoxReceived = null, double? CashBoxDispensed = null)
+        {
+            this.ItemsReceived = ItemsReceived;
+            this.ItemsDispensed = ItemsDispensed;
+            this.CoinsReceived = CoinsReceived;
+            this.CoinsDispensed = CoinsDispensed;
+            this.CashBoxReceived = CashBoxReceived;
+            this.CashBoxDispensed = CashBoxDispensed;
+        }
+
+        /// <summary>
+        /// The total absolute value of items (other than coins) of the specified currency accepted.
+        /// The amount is expressed as a floating point value.
+        /// <example>100.00</example>
+        /// </summary>
+        [DataMember(Name = "itemsReceived")]
+        public double? ItemsReceived { get; init; }
+
+        /// <summary>
+        /// The total absolute value of items (other than coins) of the specified currency dispensed. 
+        /// The amount is expressed as a floating point value.
+        /// </summary>
+        [DataMember(Name = "itemsDispensed")]
+        public double? ItemsDispensed { get; init; }
+
+        /// <summary>
+        /// The total absolute value of coin currency accepted. 
+        /// The amount is expressed as a floating point value.
+        /// <example>0.05</example>
+        /// </summary>
+        [DataMember(Name = "coinsReceived")]
+        public double? CoinsReceived { get; init; }
+
+        /// <summary>
+        /// The total absolute value of coin currency dispensed. 
+        /// The amount is expressed as a floating point value.
+        /// </summary>
+        [DataMember(Name = "coinsDispensed")]
+        public double? CoinsDispensed { get; init; }
+
+        /// <summary>
+        /// The total absolute value of cash box currency accepted. 
+        /// The amount is expressed as a floating point value.
+        /// </summary>
+        [DataMember(Name = "cashBoxReceived")]
+        public double? CashBoxReceived { get; init; }
+
+        /// <summary>
+        /// The total absolute value of cash box currency dispensed. 
+        /// The amount is expressed as a floating point value.
+        /// </summary>
+        [DataMember(Name = "cashBoxDispensed")]
+        public double? CashBoxDispensed { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class TellerDetailsClass
+    {
+        public TellerDetailsClass(int? TellerID = null, InputPositionEnum? InputPosition = null, OutputPositionEnum? OutputPosition = null, Dictionary<string, TellerTotalsClass> TellerTotals = null)
+        {
+            this.TellerID = TellerID;
+            this.InputPosition = InputPosition;
+            this.OutputPosition = OutputPosition;
+            this.TellerTotals = TellerTotals;
+        }
+
+        /// <summary>
+        /// Identification of the teller.
+        /// <example>104</example>
+        /// </summary>
+        [DataMember(Name = "tellerID")]
+        [DataTypes(Minimum = 0)]
+        public int? TellerID { get; init; }
+
+        [DataMember(Name = "inputPosition")]
+        public InputPositionEnum? InputPosition { get; init; }
+
+        [DataMember(Name = "outputPosition")]
+        public OutputPositionEnum? OutputPosition { get; init; }
+
+        /// <summary>
+        /// List of teller total objects. There is one object per currency.
+        /// </summary>
+        [DataMember(Name = "tellerTotals")]
+        public Dictionary<string, TellerTotalsClass> TellerTotals { get; init; }
+
+    }
+
+
+    public enum NoteLevelEnum
+    {
+        Unrecognized,
+        Counterfeit,
+        Suspect,
+        Fit,
+        Unfit,
+        Inked
+    }
+
+
+    public enum OrientationEnum
+    {
+        FrontTop,
+        FrontBottom,
+        BackTop,
+        BackBottom,
+        Unknown,
+        NotSupported
+    }
+
+
+    public enum OnClassificationListEnum
+    {
+        OnClassificationList,
+        NotOnClassificationList,
+        ClassificationListUnknown
+    }
+
+
+    [DataContract]
+    public sealed class ItemInfoClass
+    {
+        public ItemInfoClass(CashItemClass NoteId = null, OrientationEnum? Orientation = null, string Signature = null, NoteLevelEnum? Level = null, string SerialNumber = null, string ImageFile = null, OnClassificationListEnum? OnClassificationList = null, string ItemLocation = null)
+        {
+            this.NoteId = NoteId;
+            this.Orientation = Orientation;
+            this.Signature = Signature;
+            this.Level = Level;
+            this.SerialNumber = SerialNumber;
+            this.ImageFile = ImageFile;
+            this.OnClassificationList = OnClassificationList;
+            this.ItemLocation = ItemLocation;
+        }
+
+        [DataMember(Name = "noteId")]
+        public CashItemClass NoteId { get; init; }
+
+        [DataMember(Name = "orientation")]
+        public OrientationEnum? Orientation { get; init; }
+
+        /// <summary>
+        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is omitted.
+        /// </summary>
+        [DataMember(Name = "signature")]
+        public string Signature { get; init; }
+
+        [DataMember(Name = "level")]
+        public NoteLevelEnum? Level { get; init; }
+
+        /// <summary>
+        /// This field contains the serial number of the item as a string. A '?' character is used 
+        /// to represent any serial number character that cannot be recognized. If no serial number is available or 
+        /// has not been requested then this is omitted.
+        /// <example>AB12345YG</example>
+        /// </summary>
+        [DataMember(Name = "serialNumber")]
+        public string SerialNumber { get; init; }
+
+        /// <summary>
+        /// Base64 encoded binary image data. If the Service does not support this function or the image file has 
+        /// not been requested then imageFile is omitted.
+        /// </summary>
+        [DataMember(Name = "imageFile")]
+        public string ImageFile { get; init; }
+
+        [DataMember(Name = "onClassificationList")]
+        public OnClassificationListEnum? OnClassificationList { get; init; }
+
+        /// <summary>
+        /// Specifies the location of the item. Following values are possible:
+        /// 
+        /// * ```customer``` - The item has been presented to the customer.
+        /// * ```unknown``` - The item location is unknown.
+        /// * ```stacker``` - The item is in the intermediate stacker.
+        /// * ```output``` - The item is at the output position. The items have not been in customer access.
+        /// * ```transport``` - The item is at another location in the device.
+        /// * ```deviceUnknown``` - The item is in the device but its location is unknown.
+        /// * ```&lt;storage unit identifier&gt;``` - The item is in a storage unit with matching
+        /// [identifier](#storage.getstorage.completion.properties.storage.unit1).
+        /// <example>unit1</example>
+        /// </summary>
+        [DataMember(Name = "itemLocation")]
+        [DataTypes(Pattern = @"^customer$|^unknown$|^stacker$|^output$|^transport$|^deviceUnknown$|^.{1,5}$")]
+        public string ItemLocation { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class ClassificationElementClass
+    {
+        public ClassificationElementClass(string SerialNumber = null, string CurrencyID = null, double? Value = null, NoteLevelEnum? Level = null)
+        {
+            this.SerialNumber = SerialNumber;
+            this.CurrencyID = CurrencyID;
+            this.Value = Value;
+            this.Level = Level;
+        }
+
+        /// <summary>
+        /// This string defines the serial number or a mask of serial numbers of one element with the 
+        /// defined currency and value. For a definition of the mask see Section Note Classification.
+        /// <example>AB1234D</example>
+        /// </summary>
+        [DataMember(Name = "serialNumber")]
+        public string SerialNumber { get; init; }
+
+        /// <summary>
+        /// ISO 4217 currency.
+        /// <example>USD</example>
+        /// </summary>
+        [DataMember(Name = "currencyID")]
+        public string CurrencyID { get; init; }
+
+        /// <summary>
+        /// Absolute value of all contents, 0 if mixed. May only be modified in an exchange state if applicable. May be 
+        /// a floating point value to allow for coins and notes which have a value which is not a whole multiple 
+        /// of the currency unit.
+        /// <example>20</example>
+        /// </summary>
+        [DataMember(Name = "value")]
+        public double? Value { get; init; }
+
+        [DataMember(Name = "level")]
+        public NoteLevelEnum? Level { get; init; }
+
+    }
+
+
+    public enum ShutterEnum
+    {
+        Closed,
+        Open,
+        Jammed,
+        Unknown
+    }
+
+
+    [DataContract]
+    public sealed class PositionInfoClass
+    {
+        public PositionInfoClass(PositionEnum? Position = null, string AdditionalBunches = null)
+        {
+            this.Position = Position;
+            this.AdditionalBunches = AdditionalBunches;
+        }
+
+        [DataMember(Name = "position")]
+        public PositionEnum? Position { get; init; }
+
+        /// <summary>
+        /// Specifies how many more bunches will be required to present the request. Following values are possible:
+        /// 
+        ///   * ```&lt;number&gt;``` - The number of additional bunches to be presented.
+        ///   * ```unknown``` - More than one additional bunch is required but the precise number is unknown.
+        /// <example>1</example>
+        /// </summary>
+        [DataMember(Name = "additionalBunches")]
+        [DataTypes(Pattern = @"^unknown$|^[0-9]*$")]
+        public string AdditionalBunches { get; init; }
+
+    }
+
+
+    public enum RetractAreaEnum
+    {
+        Retract,
+        Transport,
+        Stacker,
+        Reject,
+        ItemCassette
+    }
+
+
+    [DataContract]
+    public sealed class RetractClass
+    {
+        public RetractClass(OutputPositionEnum? OutputPosition = null, RetractAreaEnum? RetractArea = null, int? Index = null)
+        {
+            this.OutputPosition = OutputPosition;
+            this.RetractArea = RetractArea;
+            this.Index = Index;
+        }
+
+        [DataMember(Name = "outputPosition")]
+        public OutputPositionEnum? OutputPosition { get; init; }
+
+        [DataMember(Name = "retractArea")]
+        public RetractAreaEnum? RetractArea { get; init; }
+
+        /// <summary>
+        /// If _retractArea_ is set to _retract_ this field defines the position inside the retract storage units into 
+        /// which the cash is to be retracted. _index_ starts with a value of one (1) for the first retract position 
+        /// and increments by one for each subsequent position. If there are several retract storage units 
+        /// (of type _retractCassette_ in [Storage.GetStorage](#storage.getstorage)), _index_ would be incremented from the 
+        /// first position of the first retract storage unit to the last position of the last retract storage unit. 
+        /// The maximum value of _index_ is the sum of _maximum_ of each retract storage unit. If _retractArea_ is not 
+        /// set to _retract_ the value of this field is ignored.
+        /// </summary>
+        [DataMember(Name = "index")]
+        public int? Index { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class ItemPositionClass
+    {
+        public ItemPositionClass(string Unit = null, RetractClass RetractArea = null, OutputPositionEnum? OutputPosition = null)
+        {
+            this.Unit = Unit;
+            this.RetractArea = RetractArea;
+            this.OutputPosition = OutputPosition;
+        }
+
+        /// <summary>
+        /// If defined, this value specifies the object name (as stated by the 
+        /// [Storage.GetStorage](#storage.getstorage) command) of the single unit to 
+        /// be used for the storage of any items found.
+        /// <example>unit5</example>
+        /// </summary>
+        [DataMember(Name = "unit")]
+        public string Unit { get; init; }
+
+        /// <summary>
+        /// This field is used if items are to be moved to internal areas of the device, including storage units, the
+        /// intermediate stacker, or the transport.
+        /// </summary>
+        [DataMember(Name = "retractArea")]
+        public RetractClass RetractArea { get; init; }
+
+        [DataMember(Name = "outputPosition")]
+        public OutputPositionEnum? OutputPosition { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageInOutClass
+    {
+        public StorageInOutClass(Dictionary<string, StorageCashInClass> In = null, Dictionary<string, StorageCashOutClass> Out = null)
+        {
+            this.In = In;
+            this.Out = Out;
+        }
+
+        /// <summary>
+        /// Object containing the the storage units which have had items inserted during the associated operation or
+        /// transaction. Only storage units whose contents have been modified are included.
+        /// </summary>
+        [DataMember(Name = "in")]
+        public Dictionary<string, StorageCashInClass> In { get; init; }
+
+        /// <summary>
+        /// Object containing the the storage units which have had items removed during the associated operation or
+        /// transaction. Only storage units whose contents have been modified are included.
+        /// </summary>
+        [DataMember(Name = "out")]
+        public Dictionary<string, StorageCashOutClass> Out { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class SignatureClass
+    {
+        public SignatureClass(CashItemClass NoteId = null, OrientationEnum? Orientation = null, string Signature = null)
+        {
+            this.NoteId = NoteId;
+            this.Orientation = Orientation;
+            this.Signature = Signature;
+        }
+
+        [DataMember(Name = "noteId")]
+        public CashItemClass NoteId { get; init; }
+
+        [DataMember(Name = "orientation")]
+        public OrientationEnum? Orientation { get; init; }
+
+        /// <summary>
+        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is omitted.
+        /// </summary>
+        [DataMember(Name = "signature")]
+        public string Signature { get; init; }
 
     }
 

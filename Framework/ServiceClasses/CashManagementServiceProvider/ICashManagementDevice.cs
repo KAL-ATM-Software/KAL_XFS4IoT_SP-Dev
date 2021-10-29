@@ -17,36 +17,29 @@ namespace XFS4IoTFramework.CashManagement
     public interface ICashManagementDevice : IDevice
     {
         /// <summary>
-        /// This method is called when the client application send CashUnitInfo command first time since executable runs or while exchange is in progress.
-        /// Return true if the cash unit configuration is being changed since last call, otherwise false
-        /// The key representing physical position name associated with the CashUnit structure.
-        /// The key name should be unique to identify Physical Cash Unit
+        /// This method will retract items which may have been in customer access from an output position or from internal areas within the CashDispenser. 
+        /// Retracted items will be moved to either a retract cash unit, a reject cash unit, item cash units, the transport or the intermediate stacker. 
+        /// After the items are retracted the shutter is closed automatically, even if the ShutterControl capability is set to false.
         /// </summary>
-        bool GetCashUnitConfiguration(out Dictionary<string, CashUnitConfiguration> CashUnits);
+        Task<RetractResult> RetractAsync(IRetractEvents events,
+                                         RetractRequest request,
+                                         CancellationToken cancellation);
 
         /// <summary>
-        /// This method is called after device operation is completed involving cash movement
-        /// returning false if the device doesn't support maintaining counters and framework will maintain counters.
-        /// However if the device doesn't support maintaining counters, the counts are not guaranteed.
-        /// The key name should be used for the GetCashUnitConfiguration output.
+        /// OpenCloseShutterAsync
+        /// Perform shutter operation to open or close.
         /// </summary>
-        Dictionary<string, CashUnitAccounting> GetCashUnitAccounting();
-
-        /// <summary>
-        /// This method is called after device operation is completed involving cash movement
-        /// Return false if the device doesn't support handware sensor to detect cash unit status.
-        /// The framework will use decide the cash unit status from the counts maintained by the framework.
-        /// The key name should be used for the GetCashUnitConfiguration output.
-        /// </summary>
-        Dictionary<string, CashUnit.StatusEnum> GetCashUnitStatus();
+        Task<OpenCloseShutterResult> OpenCloseShutterAsync(OpenCloseShutterRequest request,
+                                                           CancellationToken cancellation);
 
 
         /// <summary>
-        /// This method is used to adjust information about the status and contents of the cash units present in the CashDispenser or CashAcceptor device.
+        /// ResetDeviceAsync
+        /// Perform a hardware reset which will attempt to return the CashDispenser device to a known good state.
         /// </summary>
-        Task<SetCashUnitInfoResult> SetCashUnitInfoAsync(ISetCashUnitInfoEvents events, 
-                                                         SetCashUnitInfoRequest setCashUnitInfo, 
-                                                         CancellationToken cancellation);
+        Task<ResetDeviceResult> ResetDeviceAsync(IResetEvents events,
+                                                 ResetDeviceRequest request,
+                                                 CancellationToken cancellation);
 
         /// <summary>
         /// This method unlocks the safe door or starts the timedelay count down prior to unlocking the safe door, 
@@ -55,44 +48,27 @@ namespace XFS4IoTFramework.CashManagement
         Task<UnlockSafeResult> UnlockSafeAsync(CancellationToken cancellation);
 
         /// <summary>
-        /// InitiateExchange
-        /// This method is called when the application initiated cash unit exchange by hand
-        /// </summary>
-        Task<InitiateExchangeResult> InitiateExchangeAsync(IStartExchangeEvents events,
-                                                           InitiateExchangeRequest exchangeInfo, 
-                                                           CancellationToken cancellation);
-
-        /// <summary>
-        /// InitiateClearRecyclerRequest
-        /// This method is called when the application initiated to empty recycler units
-        /// </summary>
-        Task<InitiateExchangeResult> InitiateExchangeClearRecyclerAsync(IStartExchangeEvents events,
-                                                                        InitiateClearRecyclerRequest exchangeInfo,
-                                                                        CancellationToken cancellation);
-
-
-        /// <summary>
-        /// InitiateExchangeDepositIntoAsync
-        /// This method is called when the application initiated to filling cash into the cash units via cash-in operation.
-        /// Items will be moved from the deposit entrance to the bill cash units.
-        /// </summary>
-        Task<InitiateExchangeResult> InitiateExchangeDepositIntoAsync(IStartExchangeEvents events,
-                                                                      CancellationToken cancellation);
-
-        /// <summary>
-        /// CompleteExchangeAsync
-        /// This method will end the exchange state
-        /// </summary>
-        Task<CompleteExchangeResult> CompleteExchangeAsync(IEndExchangeEvents events, 
-                                                           CompleteExchangeRequest exchangeInfo, 
-                                                           CancellationToken cancellation);
-
-        /// <summary>
         /// This method will cause a vendor dependent sequence of hardware events which will calibrate one or more physical cash units associated with a logical cash unit.
         /// </summary>
         Task<CalibrateCashUnitResult> CalibrateCashUnitAsync(ICalibrateCashUnitEvents events, 
-                                                             CalibrateCashUnitRequest calibrationInfo, 
+                                                             CalibrateCashUnitRequest request, 
                                                              CancellationToken cancellation);
+        /// <summary>
+        /// This command only applies to Teller devices. It allows the application to obtain counts for each currency assigned to the teller.
+        /// These counts represent the total amount of currency dispensed by the teller in all transactions.
+        /// This command also enables the application to obtain the position assigned to each teller. The teller information is persistent.
+        /// </summary>
+        /// <returns></returns>
+        Task<GetTellerInfoResult> GetTellerInfoAsync(GetTellerInfoRequest request,
+                                                     CancellationToken cancellation);
 
+
+        /// <summary>
+        /// This command allows the application to initialize counts for each currency assigned to the teller.The values set by this command
+        /// are persistent.This command only applies to Teller ATMs.
+        /// </summary>
+        /// <returns></returns>
+        Task<SetTellerInfoResult> SetTellerInfoAsync(SetTellerInfoRequest request,
+                                                     CancellationToken cancellation);
     }
 }

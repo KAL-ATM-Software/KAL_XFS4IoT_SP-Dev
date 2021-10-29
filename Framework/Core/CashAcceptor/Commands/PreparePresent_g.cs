@@ -27,45 +27,14 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PositionEnum? Position = null)
+            public PayloadData(int Timeout, CashManagement.OutputPositionEnum? Position = null)
                 : base(Timeout)
             {
                 this.Position = Position;
             }
 
-            public enum PositionEnum
-            {
-                Null,
-                OutLeft,
-                OutRight,
-                OutCenter,
-                OutTop,
-                OutBottom,
-                OutFront,
-                OutRear
-            }
-
-            /// <summary>
-            /// Describes the position where the items are to be moved. Following values are possible:
-            /// 
-            /// "null": The default configuration information should be used.
-            /// 
-            /// "outLeft": Move items to the left output position.
-            /// 
-            /// "outRight": Move items to the right output position.
-            /// 
-            /// "outCenter": Move items to the center output position.
-            /// 
-            /// "outTop": Move items to the top output position.
-            /// 
-            /// "outBottom": Move items to the bottom output position.
-            /// 
-            /// "outFront": Move items to the front output position.
-            /// 
-            /// "outRear": Move items to the rear output position.
-            /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
+            public CashManagement.OutputPositionEnum? Position { get; init; }
 
         }
     }

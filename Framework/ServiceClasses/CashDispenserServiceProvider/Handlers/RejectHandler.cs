@@ -13,7 +13,7 @@ using XFS4IoTServer;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using XFS4IoT.Completions;
-using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 using System.Linq;
 
 namespace XFS4IoTFramework.CashDispenser
@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.CashDispenser
             // Find reject unit
             bool foundDestination = false;
             foreach (var _ in from unit in CashDispenser.CashUnits
-                              where unit.Value.Type == CashUnit.TypeEnum.RejectCassette
+                              where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
                               select new { })
             {
                 foundDestination = true;
@@ -43,7 +43,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.RejectAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            CashDispenser.UpdateCashUnitAccounting(result.MovementResult);
+            await CashDispenser.UpdateCashAccounting(result.MovementResult);
 
             return new RejectCompletion.PayloadData(result.CompletionCode, 
                                                     result.ErrorDescription, 

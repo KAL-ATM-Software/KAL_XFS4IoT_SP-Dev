@@ -76,7 +76,15 @@ namespace XFS4IoTServer
 
                 await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, new(AcknowledgePayload.StatusEnum.Ok)));
 
-                var cts = new CancellationTokenSource();
+                //Get timeout if available
+                CancellationTokenSource cts;
+                var payload = Command.GetType().GetProperty("Payload").GetValue(Command);
+
+                if (payload is XFS4IoT.Commands.MessagePayload payloadBase)
+                    cts = new(payloadBase.Timeout);
+                else
+                    cts = new();
+
                 (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
                 if (async)
                 {
@@ -130,8 +138,16 @@ namespace XFS4IoTServer
 
         public virtual Task RunAsync() => CommandQueue.RunAsync();
 
-        public virtual Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds) 
-            => CommandQueue.TryCancelItemsAsync(Connection, RequestIds);
+        public virtual async Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds)
+        {
+            bool retVal = await CommandQueue.AnyValidRequestID(Connection, RequestIds);
+            if (retVal)
+            {
+                //Cancel command completes before trying to cancel the running commands.
+                _ = Task.Run(async () => await CommandQueue.TryCancelItemsAsync(Connection, RequestIds));
+            }
+            return retVal;
+        }
 
         private void Add(IEnumerable<(Type, Type, bool Async)> types)
         {

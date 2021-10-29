@@ -17,18 +17,15 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(MediaEnum? Media = null, RetainBinEnum? RetainBin = null, SecurityEnum? Security = null, int? NumberCards = null, ChipPowerEnum? ChipPower = null, ChipModuleEnum? ChipModule = null, MagWriteModuleEnum? MagWriteModule = null, FrontImageModuleEnum? FrontImageModule = null, BackImageModuleEnum? BackImageModule = null, List<ParkingStationMediaEnum> ParkingStationMedia = null)
+        public StatusClass(MediaEnum? Media = null, SecurityEnum? Security = null, ChipPowerEnum? ChipPower = null, ChipModuleEnum? ChipModule = null, MagWriteModuleEnum? MagWriteModule = null, FrontImageModuleEnum? FrontImageModule = null, BackImageModuleEnum? BackImageModule = null)
         {
             this.Media = Media;
-            this.RetainBin = RetainBin;
             this.Security = Security;
-            this.NumberCards = NumberCards;
             this.ChipPower = ChipPower;
             this.ChipModule = ChipModule;
             this.MagWriteModule = MagWriteModule;
             this.FrontImageModule = FrontImageModule;
             this.BackImageModule = BackImageModule;
-            this.ParkingStationMedia = ParkingStationMedia;
         }
 
         public enum MediaEnum
@@ -43,16 +40,14 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the media state of the device as one of the following values. This status is independent of any
-        /// media in the parking stations.
+        /// Specifies the transport/exit position media state as one of the following values:
         /// 
         /// * ```notSupported``` - Capability to report media position is not supported by the device (e.g. a typical
         ///   swipe reader or contactless chip card reader).
         /// * ```unknown``` - The media state cannot be determined with the device in its current state (e.g. the value
         ///   of device is *noDevice*, *powerOff*, *offline* or *hardwareError*.
-        /// * ```present``` - Media is present in the device, not in the entering position and not jammed. A card in a
-        ///   parking station is not considered to be present. On the latched dip device, this indicates that the card
-        ///   is present in the device and the card is unlatched.
+        /// * ```present``` - Media is present in the device, not in the entering position and not jammed. On the
+        ///   latched dip device, this indicates that the card is present in the device and the card is unlatched.
         /// * ```notPresent``` - Media is not present in the device and not at the entering position.
         /// * ```jammed``` - Media is jammed in the device; operator intervention is required.
         /// * ```entering``` - Media is at the entry/exit slot of a motorized device.
@@ -62,21 +57,6 @@ namespace XFS4IoT.CardReader
         [DataMember(Name = "media")]
         public MediaEnum? Media { get; init; }
 
-        public enum RetainBinEnum
-        {
-            NotSupported,
-            Ok,
-            Full,
-            High,
-            Missing
-        }
-
-        /// <summary>
-        /// Specifies the state of the retain bin.
-        /// </summary>
-        [DataMember(Name = "retainBin")]
-        public RetainBinEnum? RetainBin { get; init; }
-
         public enum SecurityEnum
         {
             NotSupported,
@@ -85,7 +65,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the state of the security unit as one of the following:
+        /// Specifies the state of the security module as one of the following:
         /// 
         /// * ```notSupported``` - No security module is available.
         /// * ```notReady``` - The security module is not ready to process cards or is inoperable.
@@ -93,14 +73,6 @@ namespace XFS4IoT.CardReader
         /// </summary>
         [DataMember(Name = "security")]
         public SecurityEnum? Security { get; init; }
-
-        /// <summary>
-        /// The number of cards retained; applicable only to motor driven card units, for non-motorized card units this
-        /// value is zero. This value is persistent it is reset to zero by the
-        /// [CardReader.ResetCount](#cardreader.resetcount) command.
-        /// </summary>
-        [DataMember(Name = "numberCards")]
-        public int? NumberCards { get; init; }
 
         public enum ChipPowerEnum
         {
@@ -210,51 +182,28 @@ namespace XFS4IoT.CardReader
         [DataMember(Name = "backImageModule")]
         public BackImageModuleEnum? BackImageModule { get; init; }
 
-        public enum ParkingStationMediaEnum
-        {
-            Present,
-            NotPresent,
-            Jammed,
-            NotSupported,
-            Unknown
-        }
-
-        /// <summary>
-        /// An array which contains the states of the parking stations or card stacker module. This is omitted if no
-        /// parking station and no card stacker module is supported. Each status can be one of the following:
-        /// 
-        /// * ```present``` - Media is present in the parking station, and not jammed.
-        /// * ```notPresent``` - Media is not present in the parking station.
-        /// * ```jammed``` - The parking station is jammed; operator intervention is required.
-        /// * ```notSupported``` - Reporting the media status in a parking station is not supported by the device.
-        /// * ```unknown``` - The media state cannot be determined.
-        /// </summary>
-        [DataMember(Name = "parkingStationMedia")]
-        public List<ParkingStationMediaEnum> ParkingStationMedia { get; init; }
-
     }
 
 
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeEnum? Type = null, ReadTracksClass ReadTracks = null, WriteTracksClass WriteTracks = null, ChipProtocolsClass ChipProtocols = null, int? MaxCardCount = null, SecurityTypeEnum? SecurityType = null, PowerOnOptionEnum? PowerOnOption = null, PowerOffOptionEnum? PowerOffOption = null, bool? FluxSensorProgrammable = null, bool? ReadWriteAccessFollowingEject = null, WriteModeClass WriteMode = null, ChipPowerClass ChipPower = null, MemoryChipProtocolsClass MemoryChipProtocols = null, EjectPositionClass EjectPosition = null, int? NumberParkingStations = null)
+        public CapabilitiesClass(TypeEnum? Type = null, ReadTracksClass ReadTracks = null, WriteTracksClass WriteTracks = null, ChipProtocolsClass ChipProtocols = null, SecurityTypeEnum? SecurityType = null, PowerOnOptionEnum? PowerOnOption = null, PowerOffOptionEnum? PowerOffOption = null, bool? FluxSensorProgrammable = null, bool? ReadWriteAccessFromExit = null, WriteModeClass WriteMode = null, ChipPowerClass ChipPower = null, MemoryChipProtocolsClass MemoryChipProtocols = null, PositionsClass Positions = null, bool? CardTakenSensor = null)
         {
             this.Type = Type;
             this.ReadTracks = ReadTracks;
             this.WriteTracks = WriteTracks;
             this.ChipProtocols = ChipProtocols;
-            this.MaxCardCount = MaxCardCount;
             this.SecurityType = SecurityType;
             this.PowerOnOption = PowerOnOption;
             this.PowerOffOption = PowerOffOption;
             this.FluxSensorProgrammable = FluxSensorProgrammable;
-            this.ReadWriteAccessFollowingEject = ReadWriteAccessFollowingEject;
+            this.ReadWriteAccessFromExit = ReadWriteAccessFromExit;
             this.WriteMode = WriteMode;
             this.ChipPower = ChipPower;
             this.MemoryChipProtocols = MemoryChipProtocols;
-            this.EjectPosition = EjectPosition;
-            this.NumberParkingStations = NumberParkingStations;
+            this.Positions = Positions;
+            this.CardTakenSensor = CardTakenSensor;
         }
 
         public enum TypeEnum
@@ -278,7 +227,7 @@ namespace XFS4IoT.CardReader
         ///   unit device supports chip communication. The latch ensures the consumer cannot remove the card during chip
         ///   communication. Any card entered will automatically latch when a request to initiate a chip dialog is made
         ///   (via the [CardReader.ReadRawData](#cardreader.readrawdata) command). The
-        ///   [CardReader.EjectCard](#cardreader.ejectcard) command is used to unlatch the card.
+        ///   [CardReader.Move](#cardreader.move) command is used to unlatch the card.
         /// * ```contactless``` - The ID card unit is a contactless card unit, i.e. no insertion of the card is required.
         /// * ```intelligentContactless``` - The ID card unit is an intelligent contactless card unit, i.e. no insertion
         ///   of the card is required and the card unit has built-in EMV or smart card application functionality that
@@ -497,13 +446,6 @@ namespace XFS4IoT.CardReader
         [DataMember(Name = "chipProtocols")]
         public ChipProtocolsClass ChipProtocols { get; init; }
 
-        /// <summary>
-        /// Specifies the maximum numbers of cards that the retain bin and card stacker module bin can hold (zero if not
-        /// available).
-        /// </summary>
-        [DataMember(Name = "maxCardCount")]
-        public int? MaxCardCount { get; init; }
-
         public enum SecurityTypeEnum
         {
             NotSupported,
@@ -523,34 +465,38 @@ namespace XFS4IoT.CardReader
 
         public enum PowerOnOptionEnum
         {
-            NoAction,
-            Eject,
+            NotSupported,
+            Exit,
             Retain,
-            EjectThenRetain,
-            ReadPosition
+            ExitThenRetain,
+            Transport
         }
 
         /// <summary>
         /// Specifies the power-on (or off) capabilities of the device hardware as one of the following options
         /// (applicable only to motor driven ID card units):
         /// 
-        /// * ```noAction``` - No actions are supported by the device.
-        /// * ```eject``` - The card will be ejected.
-        /// * ```retain``` - The card will be retained.
-        /// * ```ejectThenRetain``` - The card will be ejected for a finite time, then if not taken, the card will be
-        ///   retained. The time for which the card remains ejected is vendor dependent.
-        /// * ```readPosition``` - The card will be moved to the read position.
+        /// * ```notSupported``` - The device does not support power on or off options.
+        /// * ```exit``` - The card will be moved to the exit position.
+        /// * ```retain``` - The card will moved to a *retain* storage unit.
+        /// * ```exitThenRetain``` - The card will be moved to the exit position for a finite time, then if not taken,
+        ///   the card will be moved to a *retain* storage unit. The time for which the card remains at the exit
+        ///   position is vendor dependent.
+        /// * ```transport``` - The card will be moved to the transport position.
+        /// 
+        /// If multiple *retain* storage units are present, the storage unit to which the card is retained is vendor 
+        /// specific.
         /// </summary>
         [DataMember(Name = "powerOnOption")]
         public PowerOnOptionEnum? PowerOnOption { get; init; }
 
         public enum PowerOffOptionEnum
         {
-            NoAction,
-            Eject,
+            NotSupported,
+            Exit,
             Retain,
-            EjectThenRetain,
-            ReadPosition
+            ExitThenRetain,
+            Transport
         }
 
         /// <summary>
@@ -567,11 +513,11 @@ namespace XFS4IoT.CardReader
         public bool? FluxSensorProgrammable { get; init; }
 
         /// <summary>
-        /// Specifies whether a card may be read or written after having been pushed to the exit slot with a
-        /// [CardReader.EjectCard](#cardreader.ejectcard)  command. The card will be retracted back into the card reader.
+        /// Specifies whether a card may be read or written after having been moved to to the exit position with a
+        /// [CardReader.Move](#cardreader.move) command. The card will be moved back into the card reader.
         /// </summary>
-        [DataMember(Name = "readWriteAccessFollowingEject")]
-        public bool? ReadWriteAccessFollowingEject { get; init; }
+        [DataMember(Name = "readWriteAccessFromExit")]
+        public bool? ReadWriteAccessFromExit { get; init; }
 
         [DataContract]
         public sealed class WriteModeClass
@@ -692,24 +638,23 @@ namespace XFS4IoT.CardReader
         public MemoryChipProtocolsClass MemoryChipProtocols { get; init; }
 
         [DataContract]
-        public sealed class EjectPositionClass
+        public sealed class PositionsClass
         {
-            public EjectPositionClass(bool? Exit = null, bool? Transport = null)
+            public PositionsClass(bool? Exit = null, bool? Transport = null)
             {
                 this.Exit = Exit;
                 this.Transport = Transport;
             }
 
             /// <summary>
-            /// The device can eject a card to the exit position, from which the user can remove it.
+            /// The device can move a card to the exit position. In this position, the card is accessible to the user.
             /// </summary>
             [DataMember(Name = "exit")]
             public bool? Exit { get; init; }
 
             /// <summary>
-            /// The device can eject a card to the transport just behind the exit position, from which the user cannot
-            /// remove it. The device which supports this must also support the
-            /// [exit](#common.capabilities.completion.properties.cardreader.ejectposition.exit) position.
+            /// The device can move a card to the transport. In this position, the card is not accessible to the user. A
+            /// service which supports this position must also support the *exit* position. 
             /// </summary>
             [DataMember(Name = "transport")]
             public bool? Transport { get; init; }
@@ -717,17 +662,19 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the target position that is supported for the eject operation, as a combination of the following:
+        /// Specifies the target positions that is supported for the [CardReader.MoveCard](#cardreader.movecard)
+        /// command. This is independent of the storage units.
         /// </summary>
-        [DataMember(Name = "ejectPosition")]
-        public EjectPositionClass EjectPosition { get; init; }
+        [DataMember(Name = "positions")]
+        public PositionsClass Positions { get; init; }
 
         /// <summary>
-        /// Specifies the number of supported parking stations or card stackers. If a zero value is specified there is
-        /// no parking station and no card stacker module supported.
+        /// Specifies whether or not the card reader has the ability to detect when a card is taken from the exit slot
+        /// by a user. If true, a [CardReader.MediaTakenEvent](#cardreader.mediatakenevent) will be sent when the card
+        /// is removed.
         /// </summary>
-        [DataMember(Name = "numberParkingStations")]
-        public int? NumberParkingStations { get; init; }
+        [DataMember(Name = "cardTakenSensor")]
+        public bool? CardTakenSensor { get; init; }
 
     }
 
@@ -758,9 +705,191 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Base64 encoded representation of the data
+        /// <example>QmFzZTY0IGVuY29kZWQgZGF0YQ==</example>
         /// </summary>
         [DataMember(Name = "data")]
         public string Data { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageCapabilitiesClass
+    {
+        public StorageCapabilitiesClass(TypeEnum? Type = null, bool? HardwareSensors = null)
+        {
+            this.Type = Type;
+            this.HardwareSensors = HardwareSensors;
+        }
+
+        public enum TypeEnum
+        {
+            Retain,
+            Dispense,
+            Park
+        }
+
+        /// <summary>
+        /// The type of card storage as one of the following:
+        /// 
+        /// * ```retain``` - The storage unit can retain cards.
+        /// * ```dispense``` - The storage unit can dispense cards.
+        /// * ```park``` - The storage unit can be used to temporarily store a card allowing another card to enter the
+        ///   transport.
+        /// </summary>
+        [DataMember(Name = "type")]
+        public TypeEnum? Type { get; init; }
+
+        /// <summary>
+        /// The storage unit has hardware sensors that can detect threshold states.
+        /// </summary>
+        [DataMember(Name = "hardwareSensors")]
+        public bool? HardwareSensors { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageConfigurationClass
+    {
+        public StorageConfigurationClass(string CardID = null, int? Threshold = null)
+        {
+            this.CardID = CardID;
+            this.Threshold = Threshold;
+        }
+
+        /// <summary>
+        /// The identifier that may be used to identify the type of cards in the storage unit. This is only applicable 
+        /// to *dispense* type storage units.
+        /// <example>LoyaltyCard</example>
+        /// </summary>
+        [DataMember(Name = "cardID")]
+        public string CardID { get; init; }
+
+        /// <summary>
+        /// If the threshold value is non zero, hardware sensors in the storage unit do not trigger
+        /// [Storage.StorageThresholdEvent](#storage.storagethresholdevent) events.
+        /// 
+        /// If non zero, when *count* reaches the threshold value:  
+        /// 
+        /// * For [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        ///   units, a [high](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus)
+        ///   threshold will be sent.
+        /// * For [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type
+        ///   storage units, a
+        ///   [low](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus) threshold
+        ///   will be sent. 
+        /// </summary>
+        [DataMember(Name = "threshold")]
+        [DataTypes(Minimum = 0)]
+        public int? Threshold { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageStatusClass
+    {
+        public StorageStatusClass(int? InitialCount = null, int? Count = null, int? RetainCount = null, Storage.ReplenishmentStatusEnumEnum? ReplenishmentStatus = null)
+        {
+            this.InitialCount = InitialCount;
+            this.Count = Count;
+            this.RetainCount = RetainCount;
+            this.ReplenishmentStatus = ReplenishmentStatus;
+        }
+
+        /// <summary>
+        /// The initial number of cards in the storage unit. This is only applicable to
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        /// units.
+        /// 
+        /// This value is persistent.
+        /// </summary>
+        [DataMember(Name = "initialCount")]
+        [DataTypes(Minimum = 0)]
+        public int? InitialCount { get; init; }
+
+        /// <summary>
+        /// The number of cards in the storage unit.
+        /// 
+        /// If the storage unit type is
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * This count also includes a card dispensed from the storage unit which has not been moved to either the 
+        ///   exit position or a [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type)
+        ///   type storage unit.
+        /// * This count is decremented when a card from the card storage unit is moved to the exit position or
+        ///   retained. If this value reaches zero it will not decrement further but will remain at zero.
+        ///   
+        /// If the storage unit type is [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * The count is incremented when a card is moved into the storage unit.
+        /// 
+        /// If the storage unit type is [park](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * The count will increment when a card is moved into the storage module and decremented when a card is
+        ///   moved out of the storage module.
+        /// 
+        /// This value is persistent.
+        /// </summary>
+        [DataMember(Name = "count")]
+        [DataTypes(Minimum = 0)]
+        public int? Count { get; init; }
+
+        /// <summary>
+        /// The number of cards from this storage unit which are in a
+        /// [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) storage unit.
+        /// 
+        /// This is only applicable to
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        /// units.
+        /// 
+        /// This value is persistent.
+        /// </summary>
+        [DataMember(Name = "retainCount")]
+        [DataTypes(Minimum = 0)]
+        public int? RetainCount { get; init; }
+
+        /// <summary>
+        /// The state of the cards in the storage unit if it can be determined. Note that overall 
+        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be taken
+        /// into account when deciding whether the storage unit is usable and whether replenishment status is
+        /// applicable. In particular, if the overall status is _missing_ this will be omitted.
+        /// 
+        /// The following values are possible:
+        /// 
+        /// * ```ok``` - The storage unit is in a good state.
+        /// * ```full``` - The storage unit is full.
+        /// * ```high``` - The storage unit is almost full (either sensor based or above the 
+        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
+        /// * ```low``` - The storage unit is almost empty (either sensor based or below the 
+        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)). 
+        /// * ```empty``` - The storage unit is empty.
+        /// </summary>
+        [DataMember(Name = "replenishmentStatus")]
+        public Storage.ReplenishmentStatusEnumEnum? ReplenishmentStatus { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageClass
+    {
+        public StorageClass(StorageCapabilitiesClass Capabilities = null, StorageConfigurationClass Configuration = null, StorageStatusClass Status = null)
+        {
+            this.Capabilities = Capabilities;
+            this.Configuration = Configuration;
+            this.Status = Status;
+        }
+
+        [DataMember(Name = "capabilities")]
+        public StorageCapabilitiesClass Capabilities { get; init; }
+
+        [DataMember(Name = "configuration")]
+        public StorageConfigurationClass Configuration { get; init; }
+
+        [DataMember(Name = "status")]
+        public StorageStatusClass Status { get; init; }
 
     }
 
@@ -836,6 +965,7 @@ namespace XFS4IoT.CardReader
         /// * ```amount``` - *value* is an Amount.
         /// * ```balance``` - *value* is a Balance.
         /// * ```notApplicable``` - *value* is neither of the above.
+        /// <example>amount</example>
         /// </summary>
         [DataMember(Name = "valueQualifier")]
         public ValueQualifierEnum? ValueQualifier { get; init; }
@@ -844,12 +974,14 @@ namespace XFS4IoT.CardReader
         /// Represents the value of the amount or balance (as specified by
         /// [valueQualifier](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.valuequalifier))
         /// to be displayed where appropriate.
+        /// <example>123.45</example>
         /// </summary>
         [DataMember(Name = "value")]
         public string Value { get; init; }
 
         /// <summary>
         /// Represents the numeric value of currency code as per ISO 4217.
+        /// <example>GBP</example>
         /// </summary>
         [DataMember(Name = "currencyCode")]
         public string CurrencyCode { get; init; }
@@ -857,6 +989,7 @@ namespace XFS4IoT.CardReader
         /// <summary>
         /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
         /// data to display all messages in the specified language until the transaction concludes.
+        /// <example>en</example>
         /// </summary>
         [DataMember(Name = "languagePreferenceData")]
         public string LanguagePreferenceData { get; init; }
@@ -925,7 +1058,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the cardholder action as one of the following:
+        /// Specifies the card holder action as one of the following:
         /// 
         /// * ```none``` - Transaction was completed. No further action is required.
         /// * ```retap``` - The contactless card should be re-tapped to complete the transaction. This value can be
@@ -976,12 +1109,12 @@ namespace XFS4IoT.CardReader
             }
 
             /// <summary>
-            /// Specifies the cardholder verification method (CVM) to be performed as one of the following:
+            /// Specifies the card holder verification method (CVM) to be performed as one of the following:
             /// 
-            /// * ```onlinePIN``` - Online PIN should be entered by the cardholder.
+            /// * ```onlinePIN``` - Online PIN should be entered by the card holder.
             /// * ```confirmationCodeVerified``` - A confirmation code entry has been successfully done on a mobile
             ///   device.
-            /// * ```sign``` - Application should obtain cardholder signature.
+            /// * ```sign``` - Application should obtain card holder signature.
             /// * ```noCVM``` - No CVM is required for this transaction.
             /// * ```noCVMPreference``` - There is no CVM preference, but application can follow the payment system's
             ///   rules to process the transaction.
@@ -1013,7 +1146,7 @@ namespace XFS4IoT.CardReader
             public bool? Receipt { get; init; }
 
             /// <summary>
-            /// The user interface details required to be displayed to the cardholder after processing the outcome of a
+            /// The user interface details required to be displayed to the card holder after processing the outcome of a
             /// contactless transaction. If no user interface details are required, this will be omitted. Please refer
             /// to EMVCo Contactless Specifications for Payment Systems Book A, Section 6.2 for details of the data
             /// within this object.
@@ -1022,7 +1155,7 @@ namespace XFS4IoT.CardReader
             public EMVClessUIClass UiOutcome { get; init; }
 
             /// <summary>
-            /// The user interface details required to be displayed to the cardholder when a transaction needs to be
+            /// The user interface details required to be displayed to the card holder when a transaction needs to be
             /// completed with a re-tap. If no user interface details are required, this will be omitted.
             /// </summary>
             [DataMember(Name = "uiRestart")]
@@ -1063,6 +1196,46 @@ namespace XFS4IoT.CardReader
         /// </summary>
         [DataMember(Name = "clessOutcome")]
         public ClessOutcomeClass ClessOutcome { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageStatusSetClass
+    {
+        public StorageStatusSetClass(int? InitialCount = null)
+        {
+            this.InitialCount = InitialCount;
+        }
+
+        /// <summary>
+        /// The number of cards in the storage unit at the last replenishment. If specified, 
+        /// [count](#storage.getstorage.completion.properties.storage.unit1.card.status.count) is set to match
+        /// this value and
+        /// [retainCount](#storage.getstorage.completion.properties.storage.unit1.card.status.retaincount) is set to
+        /// zero.
+        /// </summary>
+        [DataMember(Name = "initialCount")]
+        [DataTypes(Minimum = 0)]
+        public int? InitialCount { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageSetClass
+    {
+        public StorageSetClass(StorageConfigurationClass Configuration = null, StorageStatusSetClass Status = null)
+        {
+            this.Configuration = Configuration;
+            this.Status = Status;
+        }
+
+        [DataMember(Name = "configuration")]
+        public StorageConfigurationClass Configuration { get; init; }
+
+        [DataMember(Name = "status")]
+        public StorageStatusSetClass Status { get; init; }
 
     }
 

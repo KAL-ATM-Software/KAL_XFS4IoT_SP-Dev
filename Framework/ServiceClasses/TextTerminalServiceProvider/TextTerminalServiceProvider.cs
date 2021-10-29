@@ -26,7 +26,7 @@ namespace TextTerminalProvider
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class TextTerminalServiceProvider : ServiceProvider, ITextTerminalServiceClass, ICommonServiceClass
+    public class TextTerminalServiceProvider : ServiceProvider, ITextTerminalServiceClass, ICommonServiceClass, ILightsServiceClass
     {
         public TextTerminalServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
             :

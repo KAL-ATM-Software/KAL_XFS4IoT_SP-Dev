@@ -49,7 +49,7 @@ namespace XFS4IoT.Crypto.Commands
             /// If startValue specifies an Initialization Vector (IV), then this property specifies the name of the
             /// stored key used to decrypt the startValue to obtain the IV. If startValue is not set and this property
             /// is also not set, then this property specifies the name of the IV that has been previously imported via
-            /// TR-31. If this property is not set, *startValue* is used as the Initialization Vector.
+            /// X9.143. If this property is not set, *startValue* is used as the Initialization Vector.
             /// </summary>
             [DataMember(Name = "startValueKey")]
             public string StartValueKey { get; init; }

@@ -83,9 +83,10 @@ namespace XFS4IoTFramework.Common
         public enum KeyBlockImportFormatEmum
         {
             NotSupported = 0,
-            KEYBLOCKA = 0x0001, //ANS TR-31A Keyblock format key import.
-            KEYBLOCKB = 0x0002, //ANS TR-31B Keyblock format key import.
-            KEYBLOCKC = 0x0004, //ANS TR-31C Keyblock format key import.
+            KEYBLOCKA = 0x0001, //ANSI X9.143 version ID A of the keyblock
+            KEYBLOCKB = 0x0002, //ANSI X9.143 version ID B of the keyblock
+            KEYBLOCKC = 0x0004, //ANSI X9.143 version ID C of the keyblock
+            KEYBLOCKD = 0x0008, //ANSI X9.143 version ID D of the keyblock
         }
 
         [Flags]

@@ -8,4 +8,9 @@
 
 #include "stdbool.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+
+void LogV(char const* const Message, ...);
+void Log(char const* const Message);

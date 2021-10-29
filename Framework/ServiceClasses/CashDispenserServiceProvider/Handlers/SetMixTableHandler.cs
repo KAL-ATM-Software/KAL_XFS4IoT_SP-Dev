@@ -31,6 +31,8 @@ namespace XFS4IoTFramework.CashDispenser
                                                                              "Supplied MixNumber or Name is null."));
             }
 
+            /* Payload for GetMixTable/SetMixTable under discussion in XFS committee
+             * 
             if (setMixTable.Payload.MixHeader is null ||
                 setMixTable.Payload.MixHeader.Count == 0)
             {
@@ -87,7 +89,7 @@ namespace XFS4IoTFramework.CashDispenser
                                           setMixTable.Payload.Name,
                                           setMixTable.Payload.MixHeader,
                                           mixTables, Logger));
-
+            */
             return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, null));
         }
     }

@@ -16,7 +16,9 @@ namespace XFS4IoTFramework.CashDispenser
     public interface IDispenseEvents
     {
 
-        Task CashUnitErrorEvent(XFS4IoT.CashManagement.Events.CashUnitErrorEvent.PayloadData Payload);
+        Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload);
+
+        Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload);
 
         Task NoteErrorEvent(XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData Payload);
 
@@ -24,7 +26,7 @@ namespace XFS4IoTFramework.CashDispenser
 
         Task DelayedDispenseEvent(XFS4IoT.CashDispenser.Events.DelayedDispenseEvent.PayloadData Payload);
 
-        Task StartDispenseEvent(XFS4IoT.CashDispenser.Events.StartDispenseEvent.PayloadData Payload);
+        Task StartDispenseEvent();
 
         Task PartialDispenseEvent(XFS4IoT.CashDispenser.Events.PartialDispenseEvent.PayloadData Payload);
 

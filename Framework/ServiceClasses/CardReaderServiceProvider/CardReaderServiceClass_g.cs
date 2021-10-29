@@ -26,9 +26,6 @@ namespace XFS4IoTServer
         public async Task MediaRemovedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.MediaRemovedEvent());
 
-        public async Task RetainBinThresholdEvent(XFS4IoT.CardReader.Events.RetainBinThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.RetainBinThresholdEvent(Payload));
-
         public async Task CardActionEvent(XFS4IoT.CardReader.Events.CardActionEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.CardActionEvent(Payload));
 

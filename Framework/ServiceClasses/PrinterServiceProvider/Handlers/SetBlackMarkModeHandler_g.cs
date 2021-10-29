@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.Printer
             SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

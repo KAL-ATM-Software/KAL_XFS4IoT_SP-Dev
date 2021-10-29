@@ -26,7 +26,7 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, PositionEnum? Position = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.OutputPositionEnum? Position = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -44,50 +44,17 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// "unsupportedPosition": The position specified is not supported or is not a valid position for this command.
-            /// 
-            /// "positionNotEmpty": The input or output position is not empty.
-            /// 
-            /// "noItems": There were no items to present at the specified position.
-            /// 
-            /// "cashUnitError": A cash unit caused a problem. A CashManagement.CashUnitErrorEvent will be posted with the details.
+            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for this command.
+            /// * ```positionNotEmpty``` - The input or output position is not empty.
+            /// * ```noItems``` - There were no items to present at the specified position.
+            /// * ```cashUnitError``` - A cash unit caused a problem. A 
+            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
-            public enum PositionEnum
-            {
-                Null,
-                OutLeft,
-                OutRight,
-                OutCenter,
-                OutTop,
-                OutBottom,
-                OutFront,
-                OutRear
-            }
-
-            /// <summary>
-            /// Describes the position where the items are to be moved. Following values are possible:
-            /// 
-            /// "null": The default configuration information should be used.
-            /// 
-            /// "outLeft": Move items to the left output position.
-            /// 
-            /// "outRight": Move items to the right output position.
-            /// 
-            /// "outCenter": Move items to the center output position.
-            /// 
-            /// "outTop": Move items to the top output position.
-            /// 
-            /// "outBottom": Move items to the bottom output position.
-            /// 
-            /// "outFront": Move items to the front output position.
-            /// 
-            /// "outRear": Move items to the rear output position.
-            /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
+            public CashManagement.OutputPositionEnum? Position { get; init; }
 
         }
     }

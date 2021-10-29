@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.TextTerminal
             GetQueryFieldCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

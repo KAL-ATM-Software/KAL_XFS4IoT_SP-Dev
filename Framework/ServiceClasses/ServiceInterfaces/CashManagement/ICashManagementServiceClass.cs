@@ -11,30 +11,13 @@ using System.Collections.Generic;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoT.CashManagement.Events;
 using XFS4IoTFramework.Common;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
-    public interface ICashManagementService : ICommonService
+    public interface ICashManagementService : ICommonService, IStorageService
     {
-        /// <summary>
-        /// Construct cash unit information given by the device class
-        /// </summary>
-        void ConstructCashUnits();
 
-        /// <summary>
-        /// Update various counts from the device class
-        /// </summary>
-        void UpdateCashUnitAccounting(Dictionary<string, ItemMovement> MovementResult = null);
-
-        /// <summary>
-        /// Cash unit structure information of this device
-        /// </summary>
-        Dictionary<string, CashUnit> CashUnits { get; set;  }
-
-        /// <summary>
-        /// This property is set to true once the framework processed first GetCashUnitInfo command on the start of the day.
-        /// </summary>
-        bool FirstCashUnitInfoCommand { get; set; }
     }
 
     public interface ICashManagementServiceClass : ICashManagementService, ICashManagementUnsolicitedEvents

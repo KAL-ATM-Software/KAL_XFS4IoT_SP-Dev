@@ -22,7 +22,8 @@ namespace XFS4IoTServer
                                         ILogger logger)
             : this(ServiceProvider, logger)
         {
-            this.CommonService = CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(TextTerminalServiceClass));
+            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(TextTerminalServiceClass));
+            this.CommonService = CommonService.IsA<ICommonService>($"Invalid common interface specified in the " + nameof(TextTerminalServiceClass));
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores TexTerminal interface capabilites internally
         /// </summary>
-        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
+        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set { } }
 
         /// <summary>
         /// True when the SP process gets started and return false once the first GetKeyDetail command is handled.

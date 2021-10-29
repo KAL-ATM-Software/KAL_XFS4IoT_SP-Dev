@@ -27,18 +27,19 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string CashunitTarget = null)
+            public PayloadData(int Timeout, string CashUnitTarget = null)
                 : base(Timeout)
             {
-                this.CashunitTarget = CashunitTarget;
+                this.CashUnitTarget = CashUnitTarget;
             }
 
             /// <summary>
-            /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+            /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) which would be used as the target of the depletion operation.
+            /// <example>unit2</example>
             /// </summary>
-            [DataMember(Name = "cashunitTarget")]
-            public string CashunitTarget { get; init; }
+            [DataMember(Name = "cashUnitTarget")]
+            public string CashUnitTarget { get; init; }
 
         }
     }

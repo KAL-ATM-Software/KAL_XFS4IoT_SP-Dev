@@ -27,7 +27,7 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, DeviceActionEnum? DeviceAction = null, int? CashUnitAction = null, List<UnitLockControlClass> UnitLockControl = null)
+            public PayloadData(int Timeout, DeviceActionEnum? DeviceAction = null, CashUnitActionEnum? CashUnitAction = null, List<UnitLockControlClass> UnitLockControl = null)
                 : base(Timeout)
             {
                 this.DeviceAction = DeviceAction;
@@ -45,44 +45,48 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Specifies to lock or unlock the device in its normal operating position. Following values are possible:
             /// 
-            /// "lock": Locks the device so that it cannot be removed from its normal operating position.
-            /// 
-            /// "unlock": Unlocks the device so that it can be removed from its normal operating position.
-            /// 
-            /// "noLockAction": No lock/unlock action will be performed on the device.
+            /// * ```lock``` - Locks the device so that it cannot be removed from its normal operating position.
+            /// * ```unlock``` - Unlocks the device so that it can be removed from its normal operating position.
+            /// * ```noLockAction``` - No lock/unlock action will be performed on the device.
             /// </summary>
             [DataMember(Name = "deviceAction")]
             public DeviceActionEnum? DeviceAction { get; init; }
 
+            public enum CashUnitActionEnum
+            {
+                LockAll,
+                UnlockAll,
+                LockIndividual,
+                NoLockAction
+            }
+
             /// <summary>
             /// Specifies the type of lock/unlock action on cash units. Following values are possible:
             /// 
-            /// "lockAll": Locks all cash units supported.
-            /// 
-            /// "unlockAll": Unlocks all cash units supported.
-            /// 
-            /// "lockIndividual": Locks/unlocks cash units individually as specified in the *unitLockControl* parameter.
-            /// 
-            /// "noLockAction": 
+            /// * ```lockAll``` - Locks all cash units supported.
+            /// * ```unlockAll``` - Unlocks all cash units supported.
+            /// * ```lockIndividual``` - Locks/unlocks cash units individually as specified in the _unitLockControl_ parameter.
+            /// * ```noLockAction``` - No lock/unlock action will be performed on cash units.
             /// </summary>
             [DataMember(Name = "cashUnitAction")]
-            public int? CashUnitAction { get; init; }
+            public CashUnitActionEnum? CashUnitAction { get; init; }
 
             [DataContract]
             public sealed class UnitLockControlClass
             {
-                public UnitLockControlClass(string PhysicalPositionName = null, UnitActionEnum? UnitAction = null)
+                public UnitLockControlClass(string StorageUnit = null, UnitActionEnum? UnitAction = null)
                 {
-                    this.PhysicalPositionName = PhysicalPositionName;
+                    this.StorageUnit = StorageUnit;
                     this.UnitAction = UnitAction;
                 }
 
                 /// <summary>
-                /// Specifies which cash unit is to be locked/unlocked. This name is the same as  the *physicalPositionName* in the CashUnitInfo structure. Only cash units reported by the  CashAcceptor.DeviceLockStatus command can be specified.
-                /// 
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// command) from which items are to be removed.
+                /// <example>unit1</example>
                 /// </summary>
-                [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; init; }
+                [DataMember(Name = "storageUnit")]
+                public string StorageUnit { get; init; }
 
                 public enum UnitActionEnum
                 {
@@ -91,10 +95,11 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Specifies whether to lock or unlock the cash unit indicated in the *physicalPositionName* parameter. Following values are possible:
-                /// "lock": Locks the specified cash unit so that it cannot be removed from the device.
-                /// "unlock": Unlocks the specified cash unit so that it can be removed from the device.
+                /// Specifies whether to lock or unlock the cash unit indicated in the *physicalPositionName* parameter.
+                /// Following values are possible:
                 /// 
+                /// * ```lock``` - Locks the specified cash unit so that it cannot be removed from the device. 
+                /// * ```unlock``` - Unlocks the specified cash unit so that it can be removed from the device.
                 /// </summary>
                 [DataMember(Name = "unitAction")]
                 public UnitActionEnum? UnitAction { get; init; }
@@ -102,8 +107,9 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Array of UnitLockControl structures; only valid in the case where "lockIndividual" is specified in the *cashUnitAction* field. 
-            /// Otherwise this field will be ignored. Each element specifies one cash unit to be locked/unlocked.
+            /// Array of UnitLockControl structures; only valid in the case where ```lockIndividual``` is specified in the
+            /// _cashUnitAction_ field otherwise this field will be ignored. Each element specifies one cash unit to be 
+            /// locked/unlocked.
             /// </summary>
             [DataMember(Name = "unitLockControl")]
             public List<UnitLockControlClass> UnitLockControl { get; init; }

@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.CashManagement
             OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

@@ -27,18 +27,19 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string CashunitSource = null)
+            public PayloadData(int Timeout, string Source = null)
                 : base(Timeout)
             {
-                this.CashunitSource = CashunitSource;
+                this.Source = Source;
             }
 
             /// <summary>
-            /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) which would be used as the source of the replenishment operation.
+            /// <example>unit2</example>
             /// </summary>
-            [DataMember(Name = "cashunitSource")]
-            public string CashunitSource { get; init; }
+            [DataMember(Name = "source")]
+            public string Source { get; init; }
 
         }
     }

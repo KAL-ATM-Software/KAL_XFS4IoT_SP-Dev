@@ -27,46 +27,23 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PositionEnum? Position = null, string Nonce = null)
+            public PayloadData(int Timeout, CashManagement.OutputPositionEnum? Position = null, string Nonce = null)
                 : base(Timeout)
             {
                 this.Position = Position;
                 this.Nonce = Nonce;
             }
 
-            public enum PositionEnum
-            {
-                Default,
-                Left,
-                Right,
-                Center,
-                Top,
-                Bottom,
-                Front,
-                Rear
-            }
-
-            /// <summary>
-            /// Required output position. Following values are possible:
-            /// 
-            /// * ```default``` - The default configuration.
-            /// * ```left``` - The left output position.
-            /// * ```right``` - The right output position.
-            /// * ```center``` - The center output position.
-            /// * ```top``` - The top output position.
-            /// * ```bottom``` - The bottom output position.
-            /// * ```front``` - The front output position.
-            /// * ```rear``` - The rear output position.
-            /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
+            public CashManagement.OutputPositionEnum? Position { get; init; }
 
             /// <summary>
             /// A nonce value to be used when creating the end to end security token in the 
-            /// response. See the API documentation on end to end security for more details.
+            /// response. See the generic end to end security documentation for more details.
+            /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
             /// </summary>
             [DataMember(Name = "nonce")]
-            [DataTypes(Pattern = "^[0-9A-F]{32}$|^[0-9]*$")]
+            [DataTypes(Pattern = @"^[0-9A-F]{32}$|^[0-9]*$")]
             public string Nonce { get; init; }
 
         }

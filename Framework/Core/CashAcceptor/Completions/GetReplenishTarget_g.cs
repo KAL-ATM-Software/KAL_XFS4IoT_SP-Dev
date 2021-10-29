@@ -26,34 +26,35 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<ReplenishTargetsClass> ReplenishTargets = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<TargetsClass> Targets = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                this.ReplenishTargets = ReplenishTargets;
+                this.Targets = Targets;
             }
 
             [DataContract]
-            public sealed class ReplenishTargetsClass
+            public sealed class TargetsClass
             {
-                public ReplenishTargetsClass(string CashunitTarget = null)
+                public TargetsClass(string Target = null)
                 {
-                    this.CashunitTarget = CashunitTarget;
+                    this.Target = Target;
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) that can be used as a target.
+                /// <example>unit1</example>
                 /// </summary>
-                [DataMember(Name = "cashunitTarget")]
-                public string CashunitTarget { get; init; }
+                [DataMember(Name = "target")]
+                public string Target { get; init; }
 
             }
 
             /// <summary>
             /// Array of all suitable replenish targets. Empty if no suitable target was found.
             /// </summary>
-            [DataMember(Name = "replenishTargets")]
-            public List<ReplenishTargetsClass> ReplenishTargets { get; init; }
+            [DataMember(Name = "targets")]
+            public List<TargetsClass> Targets { get; init; }
 
         }
     }

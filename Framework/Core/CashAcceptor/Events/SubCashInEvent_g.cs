@@ -29,42 +29,24 @@ namespace XFS4IoT.CashAcceptor.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(List<NoteNumberClass> NoteNumber = null)
+            public PayloadData(int? Unrecognized = null, Dictionary<string, CashManagement.StorageCashCountClass> Cash = null)
                 : base()
             {
-                this.NoteNumber = NoteNumber;
-            }
-
-            [DataContract]
-            public sealed class NoteNumberClass
-            {
-                public NoteNumberClass(int? NoteID = null, int? Count = null)
-                {
-                    this.NoteID = NoteID;
-                    this.Count = Count;
-                }
-
-                /// <summary>
-                /// Identification of note type. The Note ID represents the note identifiers reported by the *CashAcceptor.BanknoteTypes* command. 
-                /// If this value is zero then the note type is unknown.
-                /// </summary>
-                [DataMember(Name = "noteID")]
-                public int? NoteID { get; init; }
-
-                /// <summary>
-                /// Actual count of cash items. The value is incremented each time cash items are moved to a cash unit. 
-                /// In the case of recycle cash units this count is decremented as defined in the description of the *logicalCount* field.
-                /// </summary>
-                [DataMember(Name = "count")]
-                public int? Count { get; init; }
-
+                this.Unrecognized = Unrecognized;
+                this.Cash = Cash;
             }
 
             /// <summary>
-            /// Array of banknote numbers the cash unit contains.
+            /// Count of unrecognized items handled by the cash interface
             /// </summary>
-            [DataMember(Name = "noteNumber")]
-            public List<NoteNumberClass> NoteNumber { get; init; }
+            [DataMember(Name = "unrecognized")]
+            public int? Unrecognized { get; init; }
+
+            /// <summary>
+            /// Counts of cash items broken down by cash item type and classification
+            /// </summary>
+            [DataMember(Name = "cash")]
+            public Dictionary<string, CashManagement.StorageCashCountClass> Cash { get; init; }
 
         }
 

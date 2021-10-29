@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.Common
             GetTransactionStateCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => GetTransactionStateCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

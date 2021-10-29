@@ -146,7 +146,7 @@ namespace XFS4IoT.Common
     [DataContract]
     public sealed class InterfaceClass
     {
-        public InterfaceClass(NameEnum? Name = null, List<string> Commands = null, List<string> Events = null, int? MaximumRequests = null, List<string> AuthenticationRequired = null)
+        public InterfaceClass(NameEnum? Name = null, Dictionary<string, CommandsClass> Commands = null, Dictionary<string, EventsClass> Events = null, int? MaximumRequests = null, List<string> AuthenticationRequired = null)
         {
             this.Name = Name;
             this.Commands = Commands;
@@ -170,10 +170,12 @@ namespace XFS4IoT.Common
             Printer,
             CardEmbosser,
             BarcodeReader,
+            Camera,
             Lights,
             Auxiliaries,
             VendorMode,
-            VendorApplication
+            VendorApplication,
+            Storage
         }
 
         /// <summary>
@@ -196,25 +198,65 @@ namespace XFS4IoT.Common
         /// * ```Auxiliaries``` - Auxiliaries interface.
         /// * ```VendorMode``` - VendorMode interface.
         /// * ```VendorApplication``` - VendorApplication interface.
+        /// * ```Storage``` - Storage interface
         /// </summary>
         [DataMember(Name = "name")]
         public NameEnum? Name { get; init; }
 
+        [DataContract]
+        public sealed class CommandsClass
+        {
+            public CommandsClass(List<string> Versions = null)
+            {
+                this.Versions = Versions;
+            }
+
+            /// <summary>
+            /// The versions of the command supported by the service. There will be one item for each major version
+            /// supported. The minor version number qualifies the exact version of the message the service supports. 
+            /// <example>["1.3", "2.1", "3.0"]</example>
+            /// </summary>
+            [DataMember(Name = "versions")]
+            [DataTypes(Pattern = @"^[1-9][0-9]*\.([1-9][0-9]*|0)$")]
+            public List<string> Versions { get; init; }
+
+        }
+
         /// <summary>
-        /// Full array of commands supported by this XFS4IoT interface.
+        /// The commands supported by the service.
         /// </summary>
         [DataMember(Name = "commands")]
-        public List<string> Commands { get; init; }
+        public Dictionary<string, CommandsClass> Commands { get; init; }
+
+        [DataContract]
+        public sealed class EventsClass
+        {
+            public EventsClass(List<string> Versions = null)
+            {
+                this.Versions = Versions;
+            }
+
+            /// <summary>
+            /// The versions of the event supported by the service. There will be one item for each major version
+            /// supported. The minor version number qualifies the exact version of the message the service supports.
+            /// <example>["1.3", "2.1", "3.0"]</example>
+            /// </summary>
+            [DataMember(Name = "versions")]
+            [DataTypes(Pattern = @"^[1-9][0-9]*\.([1-9][0-9]*|0)$")]
+            public List<string> Versions { get; init; }
+
+        }
 
         /// <summary>
-        /// Full array of events supported by this XFS4IoT interface.
+        /// The events (both event and unsolicited) supported by the service.
         /// </summary>
         [DataMember(Name = "events")]
-        public List<string> Events { get; init; }
+        public Dictionary<string, EventsClass> Events { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of requests which can be queued by the Service. This will be omitted if not reported. 
+        /// Specifies the maximum number of requests which can be queued by the Service. This will be omitted if not reported.
         /// This will be zero if the maximum number of requests is unlimited.
+        /// 
         /// </summary>
         [DataMember(Name = "maximumRequests")]
         public int? MaximumRequests { get; init; }
@@ -355,7 +397,7 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Array of commands which can be accepted while in Vendor Dependent Mode.
-        /// Any Execute command which is not included in this list will be rejected with a SequenceError as control of the 
+        /// Any Execute command which is not included in this list will be rejected with a SequenceError as control of the
         /// device has been handed to the Vendor Dependent Application. If omitted, no Execute commands can be accepted.
         /// </summary>
         [DataMember(Name = "allowedExecuteCommands")]
@@ -425,22 +467,25 @@ namespace XFS4IoT.Common
         /// supplied. 
         /// 
         /// If false then all operations can be performed without a security token.
+        /// <example>true</example>
         /// </summary>
         [DataMember(Name = "endToEndSecurity")]
         public bool? EndToEndSecurity { get; init; }
 
         /// <summary>
-        /// True if this hardware supports End to End security and has a Hardware Security Element which 
-        /// validates the security token. Otherwise false. 
-        /// If this valid is false it may mean that validation is performed in software, or that the 
+        /// True if this hardware supports End to End security and has a Hardware Security Element which
+        /// validates the security token. Otherwise false.
+        /// If this valid is false it may mean that validation is performed in software, or that the
         /// device doesn't support End to End security.
+        /// <example>true</example>
         /// </summary>
         [DataMember(Name = "hardwareSecurityElement")]
         public bool? HardwareSecurityElement { get; init; }
 
         /// <summary>
-        /// True if this device will return a security token as part of the response data to commands that 
+        /// True if this device will return a security token as part of the response data to commands that
         /// support End to End security, for example, to validate the result of a dispense operation.
+        /// <example>true</example>
         /// </summary>
         [DataMember(Name = "responseSecurityEnabled")]
         public bool? ResponseSecurityEnabled { get; init; }
@@ -461,6 +506,7 @@ namespace XFS4IoT.Common
         /// 
         /// If commandNonceTimeout is not reported, or it has a value of zero, then the command nonce will never 
         /// timeout. It may still become invalid, for example because of a power failure or when explicitly cleared.
+        /// <example>3600</example>
         /// </summary>
         [DataMember(Name = "commandNonceTimeout")]
         public int? CommandNonceTimeout { get; init; }

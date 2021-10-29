@@ -27,11 +27,6 @@ namespace XFS4IoTFramework.CashDispenser
                 return new PrepareDispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Index property is set to null where the retract area is specified to retract position.");
             }
 
-            if (!CashDispenser.CashDispenserCapabilities.PrepareDispense)
-            {
-                return new PrepareDispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand, "PrepareDispense command is not supported. see capabilities PrepareDispense is false.");
-            }
-
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PrepareDispenseAsync()");
 
             var result = await Device.PrepareDispenseAsync(new PrepareDispenseRequest((prepareDispense.Payload.Action == PrepareDispenseCommand.PayloadData.ActionEnum.Start) ? PrepareDispenseRequest.ActionEnum.Start : PrepareDispenseRequest.ActionEnum.Start), cancel);
@@ -42,6 +37,5 @@ namespace XFS4IoTFramework.CashDispenser
             return new PrepareDispenseCompletion.PayloadData(result.CompletionCode, 
                                                              result.ErrorDescription);
         }
-
     }
 }

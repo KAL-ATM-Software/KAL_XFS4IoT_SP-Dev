@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.KeyManagement
             ResetCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ResetCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => ResetCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => ResetCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => ResetCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => ResetCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => ResetCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => ResetCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

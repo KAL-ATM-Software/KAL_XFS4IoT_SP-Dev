@@ -5,7 +5,6 @@
  *
 \***********************************************************************************************/
 
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,12 +18,11 @@ namespace XFS4IoTFramework.CashManagement
 {
     public partial class GetItemInfoHandler
     {
-
         private Task<GetItemInfoCompletion.PayloadData> HandleGetItemInfo(IGetItemInfoEvents events, GetItemInfoCommand getItemInfo, CancellationToken cancel)
         {
             // NOT SUPPORTED
+            // KAL will support this command once CashAcceptor interface is supported.
             return Task.FromResult(new GetItemInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand, null));
         }
-
     }
 }

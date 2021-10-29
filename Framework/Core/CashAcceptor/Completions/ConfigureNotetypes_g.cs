@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * ConfigureNotetypes_g.cs uses automatically generated parts.
+ * ConfigureNoteTypes_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -15,10 +15,10 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
-    [Completion(Name = "CashAcceptor.ConfigureNotetypes")]
-    public sealed class ConfigureNotetypesCompletion : Completion<ConfigureNotetypesCompletion.PayloadData>
+    [Completion(Name = "CashAcceptor.ConfigureNoteTypes")]
+    public sealed class ConfigureNoteTypesCompletion : Completion<ConfigureNoteTypesCompletion.PayloadData>
     {
-        public ConfigureNotetypesCompletion(int RequestId, ConfigureNotetypesCompletion.PayloadData Payload)
+        public ConfigureNoteTypesCompletion(int RequestId, ConfigureNoteTypesCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -41,9 +41,9 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// "exchangeActive": The device is in the exchange state.
-            /// 
-            /// "cashInActive": A cash-in transaction is active. This device requires that no cash-in transaction is active in order to perform the command.
+            /// * ```exchangeActive``` - The device is in the exchange state.
+            /// * ```cashInActive``` - A cash-in transaction is active. This device requires that no cash-in 
+            /// transaction is active in order to perform the command.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

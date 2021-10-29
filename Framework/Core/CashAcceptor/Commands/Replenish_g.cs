@@ -27,62 +27,54 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string CashunitSource = null, List<ReplenishTargetsClass> ReplenishTargets = null)
+            public PayloadData(int Timeout, string Source = null, List<ReplenishTargetsClass> ReplenishTargets = null)
                 : base(Timeout)
             {
-                this.CashunitSource = CashunitSource;
+                this.Source = Source;
                 this.ReplenishTargets = ReplenishTargets;
             }
 
             /// <summary>
-            /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) from which items are to be removed.
+            /// <example>unit2</example>
             /// </summary>
-            [DataMember(Name = "cashunitSource")]
-            public string CashunitSource { get; init; }
+            [DataMember(Name = "source")]
+            public string Source { get; init; }
 
             [DataContract]
             public sealed class ReplenishTargetsClass
             {
-                public ReplenishTargetsClass(string CashunitTarget = null, int? NumberOfItemsToMove = null, bool? RemoveAll = null)
+                public ReplenishTargetsClass(string Target = null, int? NumberOfItemsToMove = null)
                 {
-                    this.CashunitTarget = CashunitTarget;
+                    this.Target = Target;
                     this.NumberOfItemsToMove = NumberOfItemsToMove;
-                    this.RemoveAll = RemoveAll;
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) to which items are to be moved.
+                /// <example>unit1</example>
                 /// </summary>
-                [DataMember(Name = "cashunitTarget")]
-                public string CashunitTarget { get; init; }
+                [DataMember(Name = "target")]
+                public string Target { get; init; }
 
                 /// <summary>
-                /// The number of items to be moved to the target cash unit. Any items which are removed from the 
+                /// The number of items to be moved to the target cash unit.  If 0, all items will be moved.
+                /// Any items which are removed from the 
                 /// source cash unit that are not of the correct currency ID and value for the target cash unit 
-                /// during execution of this command will be returned to the source cash unit. This field will be 
-                /// ignored if the [removeAll](#cashacceptor.replenish.command.properties.replenishtargets.removeall)
-                /// parameter is set to TRUE.
+                /// during execution of this command will be returned to the source cash unit.
+                /// <example>100</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsToMove")]
+                [DataTypes(Minimum = 0)]
                 public int? NumberOfItemsToMove { get; init; }
-
-                /// <summary>
-                /// Specifies if all items are to be moved to the target cash unit. Any items which are removed from the source 
-                /// cash unit that are not of the correct currency ID and 
-                /// value for the target cash unit during execution of this command will be returned to the source cash unit. 
-                /// If TRUE all items in the source will be moved, regardless of the *numberOfItemsToMove* field value. If 
-                /// FALSE the number of items specified with 
-                /// [numberOfItemsToMove](#cashacceptor.replenish.command.properties.replenishtargets.numberofitemstomove) will be moved.
-                /// </summary>
-                [DataMember(Name = "removeAll")]
-                public bool? RemoveAll { get; init; }
 
             }
 
             /// <summary>
-            /// Array of replenish Target elements. There must be at least one array element.
+            /// Array of target elements specifying how many items are to be moved and where. There must be at least one
+            /// array element.
             /// </summary>
             [DataMember(Name = "replenishTargets")]
             public List<ReplenishTargetsClass> ReplenishTargets { get; init; }

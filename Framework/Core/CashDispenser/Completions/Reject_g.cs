@@ -42,9 +42,11 @@ namespace XFS4IoT.CashDispenser.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A reject cash unit caused a problem. A CashManagement.CashUnitErrorEvent will be posted with the details.
-            /// * ```noItems``` - There were no items on the stacker.
-            /// * ```exchangeActive``` - The device is in an exchange state (see CashManagement.StartExchange).
+            /// * ```cashUnitError``` - A storage unit caused a problem. A 
+            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            /// * ```noItems``` - There were no items to reject.
+            /// * ```exchangeActive``` - The device is in an exchange state (see
+            /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

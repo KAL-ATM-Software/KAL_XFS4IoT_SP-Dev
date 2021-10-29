@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.Crypto
             DigestCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => DigestCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => DigestCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => DigestCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => DigestCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => DigestCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

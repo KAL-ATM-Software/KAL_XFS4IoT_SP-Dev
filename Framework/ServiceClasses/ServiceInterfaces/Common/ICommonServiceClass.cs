@@ -15,45 +15,51 @@ namespace XFS4IoTFramework.Common
     public interface ICommonService
     {
         /// <summary>
-        /// Stores CashDispenser interface capabilites internally
+        /// Stores CashDispenser interface capabilites for an internal use
         /// </summary>
         CashDispenserCapabilitiesClass CashDispenserCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores CashManagement interface capabilites internally
+        /// Stores CashManagement interface capabilites for an internal use
         /// </summary>
         CashManagementCapabilitiesClass CashManagementCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores CardReader interface capabilites internally
+        /// Stores CardReader interface capabilites for an internal use
         /// </summary>
         CardReaderCapabilitiesClass CardReaderCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores TextTerminal interface capabilites internally
+        /// Stores TextTerminal interface capabilites for an internal use
         /// </summary>
         TextTerminalCapabilitiesClass TextTerminalCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores KeyManagement interface capabilites internally
-        /// </summary>
+        /// Stores KeyManagement interface capabilites for an internal use
+        /// </summary> 
         KeyManagementCapabilitiesClass KeyManagementCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores Crypto interface capabilites internally
+        /// Stores Crypto interface capabilites for an internal use
         /// </summary>
         CryptoCapabilitiesClass CryptoCapabilities { get => null; set { } }
 
         /// <summary>
-        /// Stores PinPad interface capabilites internally
-        /// </summary>
+        /// Stores PinPad interface capabilites for an internal use
+        /// </summary> 
         PinPadCapabilitiesClass PinPadCapabilities { get => null; set { } }
 
 
         /// <summary>
-        /// Stores Keyboard interface capabilites internally
+        /// Stores Keyboard interface capabilites for an internal use
         /// </summary>
         KeyboardCapabilitiesClass KeyboardCapabilities { get => null; set { } }
+
+
+        /// <summary>
+        /// Stores Lights interface capabilities for an internal use
+        /// </summary>
+        LightsCapabilitiesClass LightsCapabilities { get => null; set { } }
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

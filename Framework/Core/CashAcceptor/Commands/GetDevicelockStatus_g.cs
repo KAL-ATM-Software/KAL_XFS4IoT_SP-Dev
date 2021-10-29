@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * GetDevicelockStatus_g.cs uses automatically generated parts.
+ * GetDeviceLockStatus_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,12 +14,12 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.CashAcceptor.Commands
 {
-    //Original name = GetDevicelockStatus
+    //Original name = GetDeviceLockStatus
     [DataContract]
-    [Command(Name = "CashAcceptor.GetDevicelockStatus")]
-    public sealed class GetDevicelockStatusCommand : Command<GetDevicelockStatusCommand.PayloadData>
+    [Command(Name = "CashAcceptor.GetDeviceLockStatus")]
+    public sealed class GetDeviceLockStatusCommand : Command<GetDeviceLockStatusCommand.PayloadData>
     {
-        public GetDevicelockStatusCommand(int RequestId, GetDevicelockStatusCommand.PayloadData Payload)
+        public GetDeviceLockStatusCommand(int RequestId, GetDeviceLockStatusCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 

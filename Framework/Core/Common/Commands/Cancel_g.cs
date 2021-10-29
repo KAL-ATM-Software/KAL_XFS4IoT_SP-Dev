@@ -42,6 +42,7 @@ namespace XFS4IoT.Common.Commands
             /// 
             /// If omitted, the service will attempt to cancel all queued or executing command requests associated with
             /// the client connection on which this command is received.
+            /// <example>[1, 2]</example>
             /// </summary>
             [DataMember(Name = "requestIds")]
             [DataTypes(Minimum = 1)]

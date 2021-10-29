@@ -21,7 +21,5 @@ namespace XFS4IoTFramework.CashDispenser
             : base(connection, requestId)
         { }
 
-        public async Task CashUnitErrorEvent(XFS4IoT.CashManagement.Events.CashUnitErrorEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.CashManagement.Events.CashUnitErrorEvent(requestId, Payload));
-
     }
 }

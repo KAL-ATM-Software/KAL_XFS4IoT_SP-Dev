@@ -18,10 +18,6 @@ namespace XFS4IoTFramework.CashManagement
 
         Task TellerInfoChangedEvent(XFS4IoT.CashManagement.Events.TellerInfoChangedEvent.PayloadData Payload);
 
-        Task CashUnitThresholdEvent(XFS4IoT.CashManagement.Events.CashUnitThresholdEvent.PayloadData Payload);
-
-        Task CashUnitInfoChangedEvent(XFS4IoT.CashManagement.Events.CashUnitInfoChangedEvent.PayloadData Payload);
-
         Task SafeDoorOpenEvent();
 
         Task SafeDoorClosedEvent();

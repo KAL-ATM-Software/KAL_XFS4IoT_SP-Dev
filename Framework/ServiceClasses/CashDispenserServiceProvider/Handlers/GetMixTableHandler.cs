@@ -22,40 +22,42 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private Task<GetMixTableCompletion.PayloadData> HandleGetMixTable(IGetMixTableEvents events, GetMixTableCommand getMixTable, CancellationToken cancel)
         {
-            if (getMixTable.Payload.MixNumber is null)
+            if (string.IsNullOrEmpty(getMixTable.Payload.Mix))
             {
                 return Task.FromResult(new GetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                                             $"Invalid mix number supplied. {getMixTable.Payload.MixNumber}",
-                                                                             GetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber));
+                                                                             $"No mix supplied.",
+                                                                             GetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMix));
             }
 
-            Mix mix = CashDispenser.GetMix((int)getMixTable.Payload.MixNumber);
+            Mix mix = CashDispenser.GetMix(getMixTable.Payload.Mix);
             if (mix is null ||
                 mix.Type != Mix.TypeEnum.Table)
             {
                 return Task.FromResult(new GetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                             $"Supplied mix number is not a MixTable. {getMixTable.Payload.MixNumber}",
-                                                                             GetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber));
+                                                                             $"Supplied mix number is not a MixTable. {getMixTable.Payload.Mix}",
+                                                                             GetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMix));
             }
 
             MixTable mixTable = mix.IsA<MixTable>($"Unexpected mix type. {mix.GetType()}");
-            List<GetMixTableCompletion.PayloadData.MixRowsClass> mixRows = new();
+            List<Dictionary<string, int>> mixRows = new();
 
+            /* Payload for GetMixTable/SetMixTable under discussion in XFS committee
             foreach (var table in mixTable.Mixes)
             {
-                List<int> cols = new();
+                Dictionary<string, int> cols = new();
                 foreach (var col in table.Value)
-                    cols.AddRange(col.Counts.Select(v=>v.Value).ToList());
+                    foreach (var elem in col.Counts)
+                        cols.Add(elem.Key.ToString(), elem.Value);
+                }
 
-                mixRows.Add(new GetMixTableCompletion.PayloadData.MixRowsClass(table.Key, cols));
-            }
+                mixRows.Add(cols);
+            }*/
 
             return Task.FromResult(new GetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                          null,
                                                                          null,
                                                                          mixTable.MixNumber,
                                                                          mixTable.Name,
-                                                                         mixTable.Values.Select(c => c).ToList(),
                                                                          mixRows));
         }
     }

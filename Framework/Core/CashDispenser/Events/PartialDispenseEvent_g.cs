@@ -39,6 +39,7 @@ namespace XFS4IoT.CashDispenser.Events
             /// The number of sub-dispense operations into which the dispense operation has been divided.
             /// </summary>
             [DataMember(Name = "dispNum")]
+            [DataTypes(Minimum = 1)]
             public int? DispNum { get; init; }
 
         }

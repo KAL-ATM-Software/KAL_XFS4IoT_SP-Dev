@@ -29,46 +29,41 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(ActionEnum? Action = null, PositionEnum? Position = null)
+            public PayloadData(string To = null, string From = null)
                 : base()
             {
-                this.Action = Action;
-                this.Position = Position;
-            }
-
-            public enum ActionEnum
-            {
-                Retained,
-                Ejected,
-                ReadPosition
+                this.To = To;
+                this.From = From;
             }
 
             /// <summary>
-            /// Specifies which action has been performed with the card. Possible values are:
+            /// Position where the card was moved to. Possible values are:
             /// 
-            /// * ```retained``` - The card has been retained.
-            /// * ```ejected``` - The card has been ejected.
-            /// * ```readPosition``` - The card has been moved to the read position.
+            /// * ```exit``` - The card was moved to the exit position.
+            /// * ```transport``` - The card was moved to the transport position. 
+            /// * ```&lt;storage unit identifier&gt;``` - The card was moved to the storage unit with matching
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
+            ///   *retain*.
+            /// <example>retn1</example>
             /// </summary>
-            [DataMember(Name = "action")]
-            public ActionEnum? Action { get; init; }
-
-            public enum PositionEnum
-            {
-                Unknown,
-                Present,
-                Entering
-            }
+            [DataMember(Name = "to")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^.{1,5}$")]
+            public string To { get; init; }
 
             /// <summary>
-            /// Position of card before being retained or ejected. Possible values are:
+            /// Position where the card was moved from. Possible values are:
             /// 
             /// * ```unknown``` - The position of the card cannot be determined.
-            /// * ```present``` - The card was present in the reader.
-            /// * ```entering``` - The card was entering the reader.
+            /// * ```exit``` - The card was in the exit position.
+            /// * ```transport``` - The card was moved in the transport position. 
+            /// * ```&lt;storage unit identifier&gt;``` - The card was in a storage unit with matching
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
+            ///   *park*.
+            /// <example>transport</example>
             /// </summary>
-            [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
+            [DataMember(Name = "from")]
+            [DataTypes(Pattern = @"^unknown$|^exit$|^transport$|^.{1,5}$")]
+            public string From { get; init; }
 
         }
 

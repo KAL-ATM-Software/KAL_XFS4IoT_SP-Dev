@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.Printer
             ReadImageCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ReadImageCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => ReadImageCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => ReadImageCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => ReadImageCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => ReadImageCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => ReadImageCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => ReadImageCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

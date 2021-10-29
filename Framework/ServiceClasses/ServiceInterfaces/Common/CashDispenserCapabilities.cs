@@ -7,9 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
@@ -45,62 +42,18 @@ namespace XFS4IoTFramework.Common
         /// rear - Present items to the rear output position.
         /// reject - Reject bin is used as output location.
         /// </summary>
+        [Flags]
         public enum OutputPositionEnum
         {
-            Default,
-            Left,
-            Right,
-            Center,
-            Top,
-            Bottom,
-            Front,
-            Rear,
-        }
-
-        /// <summary>
-        /// Retract - The items may be retracted to a retract cash unit.
-        /// Transport - The items may be retracted to the transport.
-        /// Stacker - The items may be retracted to the intermediate stacker.
-        /// Reject - The items may be retracted to a reject cash unit.
-        /// ItemCassette - The items may be retracted to the item cassettes, i.e. cassettes that can be dispensed from.
-        /// Default - The item may be retracted to the default position.
-        /// /// </summary>
-        public enum RetractAreaEnum
-        {
-            Retract,
-            Transport,
-            Stacker,
-            Reject,
-            ItemCassette,
-            Default,
-        }
-
-        /// <summary>
-        /// Present - The items may be presented.
-        /// Retract - The items may be moved to a retract cash unit.
-        /// Reject - The items may be moved to a reject bin.
-        /// ItemCassette - The items may be moved to the item cassettes, i.e. cassettes that can be dispensed from.
-        /// </summary>
-        public enum RetractTransportActionEnum
-        {
-            Present,
-            Retract,
-            Reject,
-            ItemCassette,
-        }
-
-        /// <summary>
-        /// Present - The items may be presented.
-        /// Retract - The items may be moved to a retract cash unit.
-        /// Reject - The items may be moved to a reject bin.
-        /// ItemCassette - The items may be moved to the item cassettes, i.e. cassettes that can be dispensed from.
-        /// </summary>
-        public enum RetractStackerActionEnum
-        {
-            Present,
-            Retract,
-            Reject,
-            ItemCassette,
+            NotSupported = 0,
+            Default = 0x0001,
+            Left = 0x0002,
+            Right = 0x0004,
+            Center = 0x0008,
+            Top = 0x0010,
+            Bottom = 0x0020,
+            Front = 0x0040,
+            Rear = 0x0080,
         }
 
         /// <summary>
@@ -121,30 +74,25 @@ namespace XFS4IoTFramework.Common
 
         public CashDispenserCapabilitiesClass(TypeEnum Type,
                                               int MaxDispenseItems,
-                                              bool Shutter,
                                               bool ShutterControl,
-                                              Dictionary<RetractAreaEnum, bool> RetractAreas,
-                                              Dictionary<RetractTransportActionEnum, bool> RetractTransportActions,
-                                              Dictionary<RetractStackerActionEnum, bool> RetractStackerActions,
+                                              CashManagementCapabilitiesClass.RetractAreaEnum RetractAreas,
+                                              CashManagementCapabilitiesClass.RetractTransportActionEnum RetractTransportActions,
+                                              CashManagementCapabilitiesClass.RetractStackerActionEnum RetractStackerActions,
                                               bool IntermediateStacker,
                                               bool ItemsTakenSensor,
-                                              Dictionary<OutputPositionEnum, bool> OutputPositons,
-                                              Dictionary<MoveItemEnum, bool> MoveItems,
-                                              bool PrepareDispense)
+                                              OutputPositionEnum OutputPositions,
+                                              Dictionary<MoveItemEnum, bool> MoveItems)
         {
             this.Type = Type;
             this.MaxDispenseItems = MaxDispenseItems;
-            this.Shutter = Shutter;
             this.ShutterControl = ShutterControl;
             this.RetractAreas = RetractAreas;
-            this.PrepareDispense = PrepareDispense;
             this.RetractTransportActions = RetractTransportActions;
             this.RetractStackerActions = RetractStackerActions;
             this.IntermediateStacker = IntermediateStacker;
             this.ItemsTakenSensor = ItemsTakenSensor;
-            this.OutputPositons = OutputPositons;
+            this.OutputPositions = OutputPositions;
             this.MoveItems = MoveItems;
-            this.PrepareDispense = PrepareDispense;
         }
 
         /// <summary>
@@ -158,31 +106,27 @@ namespace XFS4IoTFramework.Common
         public int MaxDispenseItems { get; init; }
 
         /// <summary>
-        /// Specifies whether or not the commands Dispenser.OpenShutter and Dispenser.CloseShutter are supported.
-        /// </summary>
-        public bool Shutter { get; init; }
-
-        /// <summary>
         /// If set to TRUE the shutter is controlled implicitly by the Service. 
         /// If set to FALSE the shutter must be controlled explicitly by the application
         /// using the Dispenser.OpenShutter and the Dispenser.CloseShutter commands.
+        /// This property is always true if the device has no shutter. This field applies to all shutters and all positions.
         /// </summary>
         public bool ShutterControl { get; init; }
 
         /// <summary>
         /// Retract areas support of this device
         /// </summary>
-        public Dictionary<RetractAreaEnum, bool> RetractAreas { get; init; }
+        public CashManagementCapabilitiesClass.RetractAreaEnum RetractAreas { get; init; }
 
         /// <summary>
         /// Action support on retracting cash to the transport
         /// </summary>
-        public Dictionary<RetractTransportActionEnum, bool> RetractTransportActions { get; init; }
+        public CashManagementCapabilitiesClass.RetractTransportActionEnum RetractTransportActions { get; init; }
 
         /// <summary>
         /// Action support on retracting cash to the stacker
         /// </summary>
-        public Dictionary<RetractStackerActionEnum, bool> RetractStackerActions { get; init; }
+        public CashManagementCapabilitiesClass.RetractStackerActionEnum RetractStackerActions { get; init; }
 
         /// <summary>
         /// Specifies whether or not the Dispenser supports stacking items to an intermediate position before the items are moved to the exit position.
@@ -197,19 +141,11 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Supported output positions
         /// </summary>
-        public Dictionary<OutputPositionEnum, bool> OutputPositons { get; init; }
+        public OutputPositionEnum OutputPositions { get; init; }
 
         /// <summary>
         /// Move items from stacker or transport to the unit
         /// </summary>
         public Dictionary<MoveItemEnum, bool> MoveItems { get; init; }
-
-        /// <summary>
-        /// On some hardware it can take a significant amount of time for the dispenser to get ready to dispense media. 
-        /// On this type of hardware the Dispenser.PrepareDispense command can be used to improve transaction performance.
-        /// This flag indicates if the hardware requires the application to use the Dispenser.PrepareDispense command
-        /// to maximize transaction performance.
-        /// </summary>
-        public bool PrepareDispense { get; init; }
     }
 }

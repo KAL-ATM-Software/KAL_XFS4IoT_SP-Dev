@@ -7,8 +7,12 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "EndToEndSecurity.h"
+#include <mutex>
 
+using namespace std; 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+mutex threadSafe; 
 
 extern "C" void Log(char const* const Message)
 {
@@ -62,7 +66,7 @@ extern "C" bool CheckHMAC(char const* const Token, unsigned int TokenLength, uns
 
 namespace EndToEndSecurityTest
 {
-    TEST_CLASS(ValidateTokenTest)
+    TEST_CLASS(GenericTokenTest)
     {
     public:
 
@@ -286,6 +290,7 @@ namespace EndToEndSecurityTest
             auto result = ValidateToken(testToken, sizeof(testToken));
 
             Assert::IsTrue(result);
+            // ExpectedHMAC should have been reset when CheckHMAC was called. 
             Assert::AreEqual(std::string(""), ExpectedHMAC);
             Assert::AreEqual(std::string("NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,HMACSHA256="), LastToken);
         }
@@ -301,5 +306,160 @@ namespace EndToEndSecurityTest
             Assert::AreEqual(std::string(""), ExpectedHMAC);
             Assert::AreEqual(std::string("NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,HMACSHA256="), LastToken);
         }
+    };
+
+    TEST_CLASS(DispenserTest)
+    {
+    public: 
+        TEST_METHOD(NullToken)
+        {
+            lock_guard<mutex> guard(threadSafe);
+
+            // Valid but unsupported. 
+            auto result = ParseDispenseToken(NULL, 123);
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(ValidDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=123.678XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            auto values = GetDispenseKeyValues();
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(unsigned long(123), values->Value);
+            Assert::AreEqual(unsigned long(678), values->Fraction);
+            Assert::AreEqual(std::string("XYZ"), std::string(values->Currency,3));
+        }
+        TEST_METHOD(MinimumValidDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=1XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            auto values = GetDispenseKeyValues();
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(unsigned long(1), values->Value);
+            Assert::AreEqual(unsigned long(0), values->Fraction);
+            Assert::AreEqual(std::string("XYZ"), std::string(values->Currency,3));
+        }
+        TEST_METHOD(MaximumValidDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=4294967295XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            auto values = GetDispenseKeyValues();
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(unsigned long(4294967295), values->Value);
+            Assert::AreEqual(unsigned long(0), values->Fraction);
+            Assert::AreEqual(std::string("XYZ"), std::string(values->Currency,3));
+        }
+        TEST_METHOD(GreaterThanMaximumValidDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=4294967296XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(LongerThanMaximumValidDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=10000000001XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MissingDispenseAmount)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=1XYZ";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(DispenseKeyAtEnd)
+        {
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MultipleDispenseAmounts)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=100.00ABC,DISPENSE2=100.00XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(DuplicateDispenseAmounts)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=100.00ABC,DISPENSE1=100.00XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MultipleDispenseAmountsOutOfOrder)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE2=100.00ABC,DISPENSE1=100.00XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MultipleDispenseAmountsNotSequential)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=100.00ABC,DISPENSE3=100.00XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MultipleDispenseAmountsOutOfOrderNotSequential)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE2=100.00ABC,DISPENSE1=100.00XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(ShortDispenseValue)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=1AB,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(ShortCurrency)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=11AB,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MissingDispenseValueValue)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=.1ABC,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(MissingFraction)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=1.ABC,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        TEST_METHOD(FractionTooLarge)
+        {
+            // Valid but unsupported. 
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=1.4294967296XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            auto result = ParseDispenseToken(testToken, sizeof(testToken));
+            AssertCleanFail(result);
+        }
+        void AssertCleanFail(bool result)
+        {
+            auto values = GetDispenseKeyValues();
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(unsigned long(0), values->Value);
+            Assert::AreEqual(unsigned long(0), values->Fraction);
+            Assert::AreEqual(std::string("   "), std::string(values->Currency, 3));
+        }
+
     };
 }

@@ -29,30 +29,25 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(ResetOutEnum? ResetOut = null)
+            public PayloadData(string Position = null)
                 : base()
             {
-                this.ResetOut = ResetOut;
-            }
-
-            public enum ResetOutEnum
-            {
-                Ejected,
-                Retained,
-                ReadPosition,
-                Jammed
+                this.Position = Position;
             }
 
             /// <summary>
-            /// Specifies the action that was performed on any card found within the device as one of the following:
+            /// Specifies a card position or jammed state as one of the following:
             /// 
-            /// * ```ejected``` - The card was ejected.
-            /// * ```retained``` - The card was retained.
-            /// * ```readPosition``` - The card is in read position.
-            /// * ```jammed``` - The card is jammed in the device.
+            /// * ```exit``` - A card is at the exit position.
+            /// * ```transport``` - A card is in to the transport position.
+            /// * ```&lt;storage unit identifier&gt;``` - A card is in the
+            ///   [identifed](#storage.getstorage.completion.properties.storage.unit1) *retain* or *park* storage unit.
+            /// * ```jammed``` - A card is jammed in the device.
+            /// <example>retn1</example>
             /// </summary>
-            [DataMember(Name = "resetOut")]
-            public ResetOutEnum? ResetOut { get; init; }
+            [DataMember(Name = "position")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^jammed$|^.{1,5}$")]
+            public string Position { get; init; }
 
         }
 

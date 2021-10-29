@@ -29,7 +29,7 @@ namespace XFS4IoT.CashDispenser.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, int? CashBox = null)
+            public PayloadData(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, Dictionary<string, double> CashBox = null)
                 : base()
             {
                 this.Currencies = Currencies;
@@ -38,18 +38,19 @@ namespace XFS4IoT.CashDispenser.Events
             }
 
             /// <summary>
-            /// "List of currency and amount combinations for denomination. There will be one entry for each currency
-            /// in the denomination. The property name is the currency name in ISO format (e.g. "EUR").
+            /// List of currency and amount combinations for denomination requests or output. There will be one entry for 
+            /// each currency in the denomination. The property name is the ISO 4217 currency identifier. This list can be 
+            /// omitted on a request if _values_ specifies the entire request.
             /// </summary>
             [DataMember(Name = "currencies")]
             public Dictionary<string, double> Currencies { get; init; }
 
             /// <summary>
-            /// This list specifies the number of items to take from the cash units. 
-            /// Each entry uses a cashunit object name as stated by the 
-            /// [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) command. The value of the entry is the 
-            /// number of items to take from that unit.
-            /// If the application does not wish to specify a denomination, it should omit the values property.
+            /// This list specifies the number of items to take from the cash units. If specified in a request, the output 
+            /// denomination must include these items.
+            /// 
+            /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
+            /// command. The value of the entry is the number of items to take from that unit.
             /// </summary>
             [DataMember(Name = "values")]
             public Dictionary<string, int> Values { get; init; }
@@ -58,7 +59,7 @@ namespace XFS4IoT.CashDispenser.Events
             /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
             /// </summary>
             [DataMember(Name = "cashBox")]
-            public int? CashBox { get; init; }
+            public Dictionary<string, double> CashBox { get; init; }
 
         }
 

@@ -49,7 +49,7 @@ namespace XFS4IoT.PinPad.Commands
             /// including the check digit), and the CCS (8 digits).
             /// </summary>
             [DataMember(Name = "customerData")]
-            [DataTypes(Pattern = "^[0-9a-fA-F]{2,}$")]
+            [DataTypes(Pattern = @"^[0-9a-fA-F]{2,}$")]
             public string CustomerData { get; init; }
 
             /// <summary>
@@ -61,7 +61,7 @@ namespace XFS4IoT.PinPad.Commands
             /// no XOR-operation will be performed. If the formatted PIN is not encrypted twice (i.e. if the [secondEncKey](#pinpad.getpinblock.command.properties.secondenckey) property is omitted) this parameter is ignored.
             /// </summary>
             [DataMember(Name = "xorData")]
-            [DataTypes(Pattern = "^[0-9a-fA-F]{2,}$")]
+            [DataTypes(Pattern = @"^[0-9a-fA-F]{2,}$")]
             public string XorData { get; init; }
 
             /// <summary>

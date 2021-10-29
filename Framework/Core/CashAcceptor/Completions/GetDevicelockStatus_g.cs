@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * GetDevicelockStatus_g.cs uses automatically generated parts.
+ * GetDeviceLockStatus_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -15,10 +15,10 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
-    [Completion(Name = "CashAcceptor.GetDevicelockStatus")]
-    public sealed class GetDevicelockStatusCompletion : Completion<GetDevicelockStatusCompletion.PayloadData>
+    [Completion(Name = "CashAcceptor.GetDeviceLockStatus")]
+    public sealed class GetDeviceLockStatusCompletion : Completion<GetDeviceLockStatusCompletion.PayloadData>
     {
-        public GetDevicelockStatusCompletion(int RequestId, GetDevicelockStatusCompletion.PayloadData Payload)
+        public GetDeviceLockStatusCompletion(int RequestId, GetDeviceLockStatusCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -26,11 +26,11 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, DeviceLockStatusEnum? DeviceLockStatus = null, List<CashUnitLockClass> CashUnitLock = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, DeviceLockStatusEnum? DeviceLockStatus = null, List<UnitLockClass> UnitLock = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.DeviceLockStatus = DeviceLockStatus;
-                this.CashUnitLock = CashUnitLock;
+                this.UnitLock = UnitLock;
             }
 
             public enum DeviceLockStatusEnum
@@ -44,34 +44,32 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// <summary>
             /// Specifies the physical lock/unlock status of the CashAcceptor device. Following values are possible:
             /// 
-            /// "lock": The device is physically locked.
-            /// 
-            /// "unlock": The device is physically unlocked.
-            /// 
-            /// "lockUnknown": Due to a hardware error or other condition, the physical lock/unlock status of the device cannot be determined.
-            /// 
-            /// "lockNotSupported": The Service does not support physical lock/unlock control of the device.
+            /// * ```lock``` - The device is physically locked.
+            /// * ```unlock``` - The device is physically unlocked.
+            /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the device cannot be determined.
+            /// * ```lockNotSupported``` - The Service does not support physical lock/unlock control of the device.
             /// </summary>
             [DataMember(Name = "deviceLockStatus")]
             public DeviceLockStatusEnum? DeviceLockStatus { get; init; }
 
             [DataContract]
-            public sealed class CashUnitLockClass
+            public sealed class UnitLockClass
             {
-                public CashUnitLockClass(string PhysicalPositionName = null, CashUnitLockStatusEnum? CashUnitLockStatus = null)
+                public UnitLockClass(string StorageUnit = null, UnitLockStatusEnum? UnitLockStatus = null)
                 {
-                    this.PhysicalPositionName = PhysicalPositionName;
-                    this.CashUnitLockStatus = CashUnitLockStatus;
+                    this.StorageUnit = StorageUnit;
+                    this.UnitLockStatus = UnitLockStatus;
                 }
 
                 /// <summary>
-                /// A name identifying the physical location of the cash unit within the CashAcceptor.  This name is the same as the "physicalPositionName" in the CashManagement.CashUnitInfo command.
-                /// 
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// command) from which items are to be removed.
+                /// <example>unit1</example>
                 /// </summary>
-                [DataMember(Name = "physicalPositionName")]
-                public string PhysicalPositionName { get; init; }
+                [DataMember(Name = "storageUnit")]
+                public string StorageUnit { get; init; }
 
-                public enum CashUnitLockStatusEnum
+                public enum UnitLockStatusEnum
                 {
                     Lock,
                     Unlock,
@@ -81,23 +79,22 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// <summary>
                 /// Specifies the physical lock/unlock status of cash units supported. Following values are possible:
                 /// 
-                /// "lock": The cash unit is physically locked.
-                /// 
-                /// "unlock": The cash unit is physically unlocked.
-                /// 
-                /// "lockunknown": Due to a hardware error or other condition, the physical lock/unlock status of the cash unit cannot be determined.
+                /// * ```lock``` - The cash unit is physically locked.
+                /// * ```unlock``` - The cash unit is physically unlocked.
+                /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the cash unit cannot be determined.
                 /// </summary>
-                [DataMember(Name = "cashUnitLockStatus")]
-                public CashUnitLockStatusEnum? CashUnitLockStatus { get; init; }
+                [DataMember(Name = "unitLockStatus")]
+                public UnitLockStatusEnum? UnitLockStatus { get; init; }
 
             }
 
             /// <summary>
-            /// Array specifying the physical lock/unlock status of cash units. Cash units that do not support the  physical lock/unlock control are not contained in the array. If there are no cash units that support  physical lock/unlock control this will be empty.
-            /// 
+            /// Array specifying the physical lock/unlock status of storage units. Units that do not support the physical
+            /// lock/unlock control are not contained in the array. If there are no units that support physical
+            /// lock/unlock control this will be empty.
             /// </summary>
-            [DataMember(Name = "cashUnitLock")]
-            public List<CashUnitLockClass> CashUnitLock { get; init; }
+            [DataMember(Name = "unitLock")]
+            public List<UnitLockClass> UnitLock { get; init; }
 
         }
     }

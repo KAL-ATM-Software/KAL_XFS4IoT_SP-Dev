@@ -35,17 +35,18 @@ namespace XFS4IoT.CashAcceptor.Completions
             [DataContract]
             public sealed class DepleteSourcesClass
             {
-                public DepleteSourcesClass(string CashunitSource = null)
+                public DepleteSourcesClass(string CashUnitSource = null)
                 {
-                    this.CashunitSource = CashunitSource;
+                    this.CashUnitSource = CashUnitSource;
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [CashManagement.GetCashUnitInfo](#cashmanagement.getcashunitinfo) 
+                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) that can be used as a source.
+                /// <example>unit1</example>
                 /// </summary>
-                [DataMember(Name = "cashunitSource")]
-                public string CashunitSource { get; init; }
+                [DataMember(Name = "cashUnitSource")]
+                public string CashUnitSource { get; init; }
 
             }
 

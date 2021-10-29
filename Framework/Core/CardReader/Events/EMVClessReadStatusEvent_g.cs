@@ -98,6 +98,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```amount``` - *value* is an Amount.
             /// * ```balance``` - *value* is a Balance.
             /// * ```notApplicable``` - *value* is neither of the above.
+            /// <example>amount</example>
             /// </summary>
             [DataMember(Name = "valueQualifier")]
             public ValueQualifierEnum? ValueQualifier { get; init; }
@@ -106,12 +107,14 @@ namespace XFS4IoT.CardReader.Events
             /// Represents the value of the amount or balance (as specified by
             /// [valueQualifier](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.valuequalifier))
             /// to be displayed where appropriate.
+            /// <example>123.45</example>
             /// </summary>
             [DataMember(Name = "value")]
             public string Value { get; init; }
 
             /// <summary>
             /// Represents the numeric value of currency code as per ISO 4217.
+            /// <example>GBP</example>
             /// </summary>
             [DataMember(Name = "currencyCode")]
             public string CurrencyCode { get; init; }
@@ -119,6 +122,7 @@ namespace XFS4IoT.CardReader.Events
             /// <summary>
             /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
             /// data to display all messages in the specified language until the transaction concludes.
+            /// <example>en</example>
             /// </summary>
             [DataMember(Name = "languagePreferenceData")]
             public string LanguagePreferenceData { get; init; }

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
-using XFS4IoTServer;
+using XFS4IoT.CashDispenser;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using XFS4IoT.Completions;
@@ -21,22 +21,36 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private Task<GetMixTypesCompletion.PayloadData> HandleGetMixTypes(IGetMixTypesEvents events, GetMixTypesCommand getMixTypes, CancellationToken cancel)
         {
-            List<GetMixTypesCompletion.PayloadData.MixTypesClass> mixes = new();
+            Dictionary<string, MixClass> mixes = new();
 
-            IEnumerator mixAlgorithms = CashDispenser.GetMixAlgorithms();
-            while (mixAlgorithms.MoveNext())
+            Dictionary<string, Mix> mixAlgorithms = CashDispenser.GetMixAlgorithms();
+            foreach (var mixAlgorithm in mixAlgorithms)
             {
-                Mix mix = ((Mix)mixAlgorithms.Current);
-                GetMixTypesCompletion.PayloadData.MixTypesClass.MixTypeEnum type = mix.Type switch
+                MixClass.TypeEnum type = mixAlgorithm.Value.Type switch
                 {
-                    Mix.TypeEnum.Algorithm => GetMixTypesCompletion.PayloadData.MixTypesClass.MixTypeEnum.MixAlgorithm,
-                    _ => GetMixTypesCompletion.PayloadData.MixTypesClass.MixTypeEnum.MixTable
+                    Mix.TypeEnum.Algorithm => MixClass.TypeEnum.Algorithm,
+                    Mix.TypeEnum.Table => MixClass.TypeEnum.Table,
+                    _ => MixClass.TypeEnum.Individual
                 };
 
-                mixes.Add(new GetMixTypesCompletion.PayloadData.MixTypesClass(mix.MixNumber, 
-                                                                              type, 
-                                                                              (int)mix.SubType,
-                                                                              mix.Name));
+                string algorithm = string.Empty;
+                if (mixAlgorithm.Value.Type == Mix.TypeEnum.Algorithm)
+                {
+                    if (mixAlgorithm.Value.Algorithm == Mix.AlgorithmEnum.equalEmptying ||
+                        mixAlgorithm.Value.Algorithm == Mix.AlgorithmEnum.maxCashUnits ||
+                        mixAlgorithm.Value.Algorithm == Mix.AlgorithmEnum.minimumBills)
+                    {
+                        algorithm = mixAlgorithm.Value.Algorithm.ToString();
+                    }
+                    else if (mixAlgorithm.Value.Algorithm == Mix.AlgorithmEnum.VendorSpecific)
+                    {
+                        algorithm = mixAlgorithm.Value.Name;
+                    }
+                }
+
+                mixes.Add(mixAlgorithm.Key, new MixClass(type,
+                                                         algorithm,
+                                                         mixAlgorithm.Value.Name));
             }
 
             return Task.FromResult(new GetMixTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,

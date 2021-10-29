@@ -35,13 +35,16 @@ namespace XFS4IoT.CashManagement.Commands
             }
 
             /// <summary>
-            /// Identification of the teller. If the value of *tellerID* is not valid the error *invalidTellerID* is reported.
+            /// Identification of the teller. If invalid the error *invalidTellerId* is reported. If not specified, all
+            /// tellers are reported.
             /// </summary>
             [DataMember(Name = "tellerID")]
+            [DataTypes(Minimum = 0)]
             public int? TellerID { get; init; }
 
             /// <summary>
-            /// Three character ISO format currency identifier [Ref 2].
+            /// Three character ISO 4217 format currency identifier. If not specified, all currencies are reported for _tellerID_.
+            /// <example>EUR</example>
             /// </summary>
             [DataMember(Name = "currencyID")]
             public string CurrencyID { get; init; }

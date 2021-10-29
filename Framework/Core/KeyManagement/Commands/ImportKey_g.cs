@@ -79,7 +79,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV). 
                 /// * ```I0``` - Initialization Vector (IV). 
                 /// * ```K0``` - Key Encryption or wrapping. 
-                /// * ```K1``` - TR-31 Key Block Protection Key. 
+                /// * ```K1``` - X9.143 Key Block Protection Key. 
                 /// * ```K2``` - TR-34 Asymmetric Key. 
                 /// * ```K3``` - Asymmetric Key for key agreement / key wrapping. 
                 /// * ```M0``` - ISO 16609 MAC algorithm 1 (using TDEA). 
@@ -103,7 +103,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "keyUsage")]
-                [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+                [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
                 public string KeyUsage { get; init; }
 
                 /// <summary>
@@ -117,7 +117,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```"0" - "9"``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "algorithm")]
-                [DataTypes(Pattern = "^[0-9ADRT]$")]
+                [DataTypes(Pattern = @"^[0-9ADRT]$")]
                 public string Algorithm { get; init; }
 
                 /// <summary>
@@ -137,7 +137,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "modeOfUse")]
-                [DataTypes(Pattern = "^[0-9BCDEGSTVXY]$")]
+                [DataTypes(Pattern = @"^[0-9BCDEGSTVXY]$")]
                 public string ModeOfUse { get; init; }
 
                 /// <summary>
@@ -160,7 +160,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV). 
                 /// * ```I0``` - Initialization Vector (IV). 
                 /// * ```K0``` - Key Encryption or wrapping. 
-                /// * ```K1``` - TR-31 Key Block Protection Key. 
+                /// * ```K1``` - X9.143 Key Block Protection Key. 
                 /// * ```K2``` - TR-34 Asymmetric Key. 
                 /// * ```K3``` - Asymmetric Key for key agreement / key wrapping. 
                 /// * ```M0``` - ISO 16609 MAC algorithm 1 (using TDEA). 
@@ -184,7 +184,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "restricted")]
-                [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+                [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
                 public string Restricted { get; init; }
 
             }
@@ -213,7 +213,7 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Specifies the name of the key used to decrypt the key being loaded.
-            /// If value contains a TR-31 key block, then decryptKey is the name of the key block protection key that is used to 
+            /// If value contains a X9.143 key block, then decryptKey is the name of the key block protection key that is used to 
             /// verify and decrypt the key block. This property is not required if the data in value is not encrypted or the constructing property is true.
             /// </summary>
             [DataMember(Name = "decryptKey")]
@@ -253,7 +253,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm. 
             /// 
             /// If the specified [decryptKey](#keymanagement.importkey.command.properties.decryptkey) is key usage ['K1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0), then this property can be omitted.
-            /// TR-31 defines the cryptographic methods used for each key block version.
+            /// X9.143 defines the cryptographic methods used for each key block version.
             /// </summary>
             [DataMember(Name = "decryptMethod")]
             public DecryptMethodEnum? DecryptMethod { get; init; }

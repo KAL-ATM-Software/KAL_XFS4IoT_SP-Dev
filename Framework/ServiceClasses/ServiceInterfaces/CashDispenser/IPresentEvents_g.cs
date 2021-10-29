@@ -16,6 +16,10 @@ namespace XFS4IoTFramework.CashDispenser
     public interface IPresentEvents
     {
 
+        Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload);
+
+        Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload);
+
         Task InfoAvailableEvent(XFS4IoT.CashManagement.Events.InfoAvailableEvent.PayloadData Payload);
 
     }

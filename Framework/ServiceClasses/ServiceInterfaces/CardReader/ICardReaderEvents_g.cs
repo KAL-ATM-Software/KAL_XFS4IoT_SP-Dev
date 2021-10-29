@@ -18,8 +18,6 @@ namespace XFS4IoTFramework.CardReader
 
         Task MediaRemovedEvent();
 
-        Task RetainBinThresholdEvent(XFS4IoT.CardReader.Events.RetainBinThresholdEvent.PayloadData Payload);
-
         Task CardActionEvent(XFS4IoT.CardReader.Events.CardActionEvent.PayloadData Payload);
 
     }

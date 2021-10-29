@@ -110,7 +110,7 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader before writing data.
-            if (Device.DeviceType == DeviceTypeEnum.Motor &&
+            if (CardReader.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Motor &&
                 (Device.MediaStatus != MediaStatusEnum.Present &&
                  Device.MediaStatus != MediaStatusEnum.NotSupported))
             {

@@ -42,14 +42,14 @@ namespace XFS4IoT.PinPad.Commands
             /// followed by the PVKI indicator in the 12th byte.
             /// </summary>
             [DataMember(Name = "pan")]
-            [DataTypes(Pattern = "^[0-9]{23}$")]
+            [DataTypes(Pattern = @"^[0-9]{23}$")]
             public string Pan { get; init; }
 
             /// <summary>
             /// PIN Validation Value from track data.
             /// </summary>
             [DataMember(Name = "pvv")]
-            [DataTypes(Pattern = "^[0-9]{4,}$")]
+            [DataTypes(Pattern = @"^[0-9]{4,}$")]
             public string Pvv { get; init; }
 
             /// <summary>

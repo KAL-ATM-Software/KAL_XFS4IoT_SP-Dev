@@ -80,7 +80,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// This value can be omitted if no such information is available for the key.
                 /// </summary>
                 [DataMember(Name = "activatingDate")]
-                [DataTypes(Pattern = "^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$")]
+                [DataTypes(Pattern = @"^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$")]
                 public string ActivatingDate { get; init; }
 
                 /// <summary>
@@ -88,7 +88,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// This value can be omitted if no such information is available for the key.
                 /// </summary>
                 [DataMember(Name = "expiryDate")]
-                [DataTypes(Pattern = "^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$")]
+                [DataTypes(Pattern = @"^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$")]
                 public string ExpiryDate { get; init; }
 
                 public enum LoadedEnum
@@ -127,7 +127,6 @@ namespace XFS4IoT.KeyManagement.Completions
 
                     /// <summary>
                     /// Specifies the intended function of the key.
-                    /// See [Reference 35. ANS X9 TR-31 2018] for all possible values.
                     /// The following values are possible:  
                     /// * ```B0``` - BDK Base Derivation Key. 
                     /// * ```B1``` - Initial DUKPT key. 
@@ -145,7 +144,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV). 
                     /// * ```I0``` - Initialization Vector (IV). 
                     /// * ```K0``` - Key Encryption or wrapping. 
-                    /// * ```K1``` - TR-31 Key Block Protection Key. 
+                    /// * ```K1``` - X9.143 Key Block Protection Key. 
                     /// * ```K2``` - TR-34 Asymmetric Key. 
                     /// * ```K3``` - Asymmetric Key for key agreement / key wrapping. 
                     /// * ```M0``` - ISO 16609 MAC algorithm 1 (using TDEA). 
@@ -169,7 +168,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                     /// </summary>
                     [DataMember(Name = "keyUsage")]
-                    [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+                    [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
                     public string KeyUsage { get; init; }
 
                     /// <summary>
@@ -215,12 +214,11 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                     /// </summary>
                     [DataMember(Name = "restrictedKeyUsage")]
-                    [DataTypes(Pattern = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[2-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+                    [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[2-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
                     public string RestrictedKeyUsage { get; init; }
 
                     /// <summary>
                     /// Specifies the algorithm for which the key can be used.
-                    /// See [Reference 35. ANS X9 TR-31 2018] for all possible values.
                     /// The following values are possible: 
                     /// * ```A``` - AES. 
                     /// * ```D``` - DEA. 
@@ -232,12 +230,11 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                     /// </summary>
                     [DataMember(Name = "algorithm")]
-                    [DataTypes(Pattern = "^[0-9ADEHRST]$")]
+                    [DataTypes(Pattern = @"^[0-9ADEHRST]$")]
                     public string Algorithm { get; init; }
 
                     /// <summary>
                     /// Specifies the operation that the key can perform.
-                    /// See [Reference 35. ANS X9 TR-31 2018] for all possible values.
                     /// The following values are possible: 
                     /// * ```B``` - Both Encrypt and Decrypt / Wrap and unwrap. 
                     /// * ```C``` - Both Generate and Verify. 
@@ -253,22 +250,20 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                     /// </summary>
                     [DataMember(Name = "modeOfUse")]
-                    [DataTypes(Pattern = "^[0-9BCDEGNSTVXY]$")]
+                    [DataTypes(Pattern = @"^[0-9BCDEGNSTVXY]$")]
                     public string ModeOfUse { get; init; }
 
                     /// <summary>
                     /// Specifies a two-digit ASCII character version number, which is optionally used to indicate that contents 
                     /// of the key block are a component, or to prevent re-injection of old keys.
-                    /// See [Reference 35. ANS X9 TR-31 2018] for all possible values.
                     /// This value can be omitted if Key versioning is not used.
                     /// </summary>
                     [DataMember(Name = "keyVersionNumber")]
-                    [DataTypes(Pattern = "^[0-9a-zA-Z][0-9a-zA-Z]$")]
+                    [DataTypes(Pattern = @"^[0-9a-zA-Z][0-9a-zA-Z]$")]
                     public string KeyVersionNumber { get; init; }
 
                     /// <summary>
                     /// Specifies whether the key may be transferred outside of the cryptographic domain in which the key is found.
-                    /// See [Reference 35. ANS X9 TR-31 2018] for all possible values.
                     /// The following values are possible: 
                     /// * ```E``` - Exportable under a KEK in a form meeting the requirements of X9.24 Parts 1 or 2.
                     /// * ```N``` - Non-exportable by the receiver of the key block, or from storage.
@@ -277,11 +272,11 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                     /// </summary>
                     [DataMember(Name = "exportability")]
-                    [DataTypes(Pattern = "^[0-9ESN]$")]
+                    [DataTypes(Pattern = @"^[0-9ESN]$")]
                     public string Exportability { get; init; }
 
                     /// <summary>
-                    /// Contains any optional header blocks, as defined in [Reference 35. ANS X9 TR-31 2018].
+                    /// Contains any optional header blocks.
                     /// This value can be omitted if there are no optional block headers. 
                     /// </summary>
                     [DataMember(Name = "optionalBlockHeader")]
@@ -296,7 +291,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 }
 
                 /// <summary>
-                /// Specifies the key attributes using ANSI TR-31 keyblock header definitions.
+                /// Specifies the key attributes using X9.143 keyblock header definitions.
                 /// </summary>
                 [DataMember(Name = "keyBlockInfo")]
                 public KeyBlockInfoClass KeyBlockInfo { get; init; }

@@ -12,9 +12,9 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
+using XFS4IoT.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoT.Completions;
-
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -27,24 +27,29 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 position = present.Payload.Position switch
                 {
-                    PresentCommand.PayloadData.PositionEnum.Bottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    PresentCommand.PayloadData.PositionEnum.Center => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    PresentCommand.PayloadData.PositionEnum.Default => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
-                    PresentCommand.PayloadData.PositionEnum.Front => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    PresentCommand.PayloadData.PositionEnum.Left => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    PresentCommand.PayloadData.PositionEnum.Rear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    PresentCommand.PayloadData.PositionEnum.Right => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    PresentCommand.PayloadData.PositionEnum.Top => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default
+                    OutputPositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
+                    OutputPositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
+                    OutputPositionEnum.OutDefault => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
+                    OutputPositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
+                    OutputPositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
+                    OutputPositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
+                    OutputPositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
+                    OutputPositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported
                 };
             }
 
-            CashDispenser.CashDispenserCapabilities.OutputPositons.ContainsKey(position).IsTrue($"Unsupported position specified. {position}");
-
-            if (!CashDispenser.CashDispenserCapabilities.OutputPositons[position])
+            if (position == CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported)
             {
                 return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                         $"Unsupported position. {position}");
+                                                         $"Invalid position specified. {position}");
+            }
+
+            if (!CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+            {
+                return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                         $"Unsupported position specified. {position}",
+                                                         PresentCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
             }
                 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PresentCashAsync()");
@@ -89,33 +94,25 @@ namespace XFS4IoTFramework.CashDispenser
                 CashDispenser.LastPresentStatus[position].Token = presentStatus.Token;
             }
 
-            CashDispenser.UpdateCashUnitAccounting(result.MovementResult);
+            await CashDispenser.UpdateCashAccounting(result.MovementResult);
 
-            PresentCompletion.PayloadData.PositionEnum resPosition = position switch
+            PositionEnum resPostion = position switch
             {
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => PresentCompletion.PayloadData.PositionEnum.Bottom,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => PresentCompletion.PayloadData.PositionEnum.Center,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => PresentCompletion.PayloadData.PositionEnum.Front,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => PresentCompletion.PayloadData.PositionEnum.Left,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => PresentCompletion.PayloadData.PositionEnum.Rear,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => PresentCompletion.PayloadData.PositionEnum.Right,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => PresentCompletion.PayloadData.PositionEnum.Top,
-                _ => PresentCompletion.PayloadData.PositionEnum.Default
-            };
-
-            PresentCompletion.PayloadData.AdditionalBunchesEnum additionalBunches = result.NumBunchesRemaining switch
-            {
-                0 => PresentCompletion.PayloadData.AdditionalBunchesEnum.None,
-                < 0 => PresentCompletion.PayloadData.AdditionalBunchesEnum.Unknown,
-                _ => PresentCompletion.PayloadData.AdditionalBunchesEnum.OneMore
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => PositionEnum.OutBottom,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => PositionEnum.OutCenter,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => PositionEnum.OutFront,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => PositionEnum.OutLeft,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => PositionEnum.OutRear,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => PositionEnum.OutRight,
+                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => PositionEnum.OutTop,
+                _ => PositionEnum.OutDefault
             };
 
             return new PresentCompletion.PayloadData(result.CompletionCode,
                                                      result.ErrorDescription,
-                                                     result.ErrorCode, 
-                                                     resPosition, 
-                                                     additionalBunches, 
-                                                     result.NumBunchesRemaining >=0 ? result.NumBunchesRemaining : null);
+                                                     result.ErrorCode,
+                                                     resPostion,
+                                                     result.NumBunchesRemaining < 0 ? "unknown" : result.NumBunchesRemaining.ToString());
         }
     }
 }

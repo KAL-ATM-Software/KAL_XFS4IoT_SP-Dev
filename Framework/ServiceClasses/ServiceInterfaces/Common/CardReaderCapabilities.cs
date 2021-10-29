@@ -23,33 +23,29 @@ namespace XFS4IoTFramework.Common
                                            ReadableDataTypesEnum ReadTracks,
                                            WritableDataTypesEnum WriteTracks,
                                            ChipProtocolsEnum ChipProtocols,
-                                           int MaxCardCount,
                                            SecurityTypeEnum SecurityType,
                                            PowerOptionEnum PowerOnOption,
                                            PowerOptionEnum PowerOffOption,
                                            bool FluxSensorProgrammable,
-                                           bool ReadWriteAccessFollowingEject,
+                                           bool ReadWriteAccessFollowingExit,
                                            WriteMethodsEnum WriteMode,
                                            ChipPowerOptionsEnum ChipPower,
                                            MemoryChipProtocolsEnum MemoryChipProtocols,
-                                           EjectPositionsEnum EjectPosition,
-                                           int NumberParkingStations)
+                                           PositionsEnum Positions)
         {
             this.Type = Type;
             this.ReadTracks = ReadTracks;
             this.WriteTracks = WriteTracks;
             this.ChipProtocols = ChipProtocols;
-            this.MaxCardCount = MaxCardCount;
             this.SecurityType = SecurityType;
             this.PowerOnOption = PowerOnOption;
             this.PowerOffOption = PowerOffOption;
             this.FluxSensorProgrammable = FluxSensorProgrammable;
-            this.ReadWriteAccessFollowingEject = ReadWriteAccessFollowingEject;
+            this.ReadWriteAccessFollowingExit = ReadWriteAccessFollowingExit;
             this.WriteMode = WriteMode;
             this.ChipPower = ChipPower;
             this.MemoryChipProtocols = MemoryChipProtocols;
-            this.EjectPosition = EjectPosition;
-            this.NumberParkingStations = NumberParkingStations;
+            this.Positions = Positions;
         }
 
         public enum DeviceTypeEnum
@@ -114,10 +110,10 @@ namespace XFS4IoTFramework.Common
         public enum PowerOptionEnum
         {
             NoAction,
-            Eject,
+            Exit,
             Retain,
-            EjectThenRetain,
-            ReadPosition
+            ExitThenRetain,
+            Transport
         }
 
         [Flags]
@@ -147,7 +143,7 @@ namespace XFS4IoTFramework.Common
         }
 
         [Flags]
-        public enum EjectPositionsEnum
+        public enum PositionsEnum
         {
             NotSupported = 0,
             Exit = 0x0001,
@@ -189,12 +185,6 @@ namespace XFS4IoTFramework.Common
         public ChipProtocolsEnum ChipProtocols { get; init; }
 
         /// <summary>
-        /// Specifies the maximum numbers of cards that the retain bin and card stacker module bin can hold (zero if not
-        /// available).
-        /// </summary>
-        public int MaxCardCount { get; init; }
-
-        /// <summary>
         /// Specifies the type of security module as one of the following:
         /// 
         /// * ```notSupported``` - The device has no security module.
@@ -231,7 +221,7 @@ namespace XFS4IoTFramework.Common
         /// Specifies whether a card may be read or written after having been pushed to the exit slot with a
         /// CardReader.EjectCard command. The card will be retracted back into the card reader.
         /// </summary>
-        public bool ReadWriteAccessFollowingEject { get; init; }
+        public bool ReadWriteAccessFollowingExit { get; init; }
 
 
         /// <summary>
@@ -255,12 +245,6 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies the target position that is supported for the eject operation, as a combination of the following:
         /// </summary>
-        public EjectPositionsEnum EjectPosition { get; init; }
-
-        /// <summary>
-        /// Specifies the number of supported parking stations or card stackers. If a zero value is specified there is
-        /// no parking station and no card stacker module supported.
-        /// </summary>
-        public int NumberParkingStations { get; init; }
+        public PositionsEnum Positions { get; init; }
     }
 }

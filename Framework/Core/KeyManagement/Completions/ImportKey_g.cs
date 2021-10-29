@@ -111,7 +111,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "keyUsage")]
-                [DataTypes(Pattern = "^M[0-8]$|^S[0-2]$|^[0-9][0-9]$")]
+                [DataTypes(Pattern = @"^M[0-8]$|^S[0-2]$|^[0-9][0-9]$")]
                 public string KeyUsage { get; init; }
 
                 /// <summary>
@@ -125,7 +125,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// * ```"0" - "9"``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "algorithm")]
-                [DataTypes(Pattern = "^[0-9ADRT]$")]
+                [DataTypes(Pattern = @"^[0-9ADRT]$")]
                 public string Algorithm { get; init; }
 
                 /// <summary>
@@ -137,7 +137,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                 /// </summary>
                 [DataMember(Name = "modeOfUse")]
-                [DataTypes(Pattern = "^[0-9SV]$")]
+                [DataTypes(Pattern = @"^[0-9SV]$")]
                 public string ModeOfUse { get; init; }
 
                 public enum CryptoMethodEnum

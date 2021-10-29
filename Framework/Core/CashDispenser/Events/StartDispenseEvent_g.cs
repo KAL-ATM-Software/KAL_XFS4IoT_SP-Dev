@@ -17,31 +17,12 @@ namespace XFS4IoT.CashDispenser.Events
 
     [DataContract]
     [Event(Name = "CashDispenser.StartDispenseEvent")]
-    public sealed class StartDispenseEvent : Event<StartDispenseEvent.PayloadData>
+    public sealed class StartDispenseEvent : Event<MessagePayloadBase>
     {
 
-        public StartDispenseEvent(int RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartDispenseEvent(int RequestId)
+            : base(RequestId)
         { }
-
-
-        [DataContract]
-        public sealed class PayloadData : MessagePayloadBase
-        {
-
-            public PayloadData(int? ReqID = null)
-                : base()
-            {
-                this.ReqID = ReqID;
-            }
-
-            /// <summary>
-            /// The requestId of the original dispense command.
-            /// </summary>
-            [DataMember(Name = "reqID")]
-            public int? ReqID { get; init; }
-
-        }
 
     }
 }

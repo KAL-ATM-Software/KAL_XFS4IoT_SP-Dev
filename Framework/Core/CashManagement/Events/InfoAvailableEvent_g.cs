@@ -38,36 +38,21 @@ namespace XFS4IoT.CashManagement.Events
             [DataContract]
             public sealed class ItemInfoSummaryClass
             {
-                public ItemInfoSummaryClass(LevelEnum? Level = null, int? NumOfItems = null)
+                public ItemInfoSummaryClass(NoteLevelEnum? Level = null, int? NumOfItems = null)
                 {
                     this.Level = Level;
                     this.NumOfItems = NumOfItems;
                 }
 
-                public enum LevelEnum
-                {
-                    Level1,
-                    Level2,
-                    Level3,
-                    Level4Fit,
-                    Level4Unfit
-                }
-
-                /// <summary>
-                /// Defines the note level. Following values are possible:
-                /// 
-                ///  * ```level1 ``` - Information for level 1 notes.
-                ///  * ```level2 ``` - Information for level 2 notes.
-                ///  * ```level3 ``` - Information for level 3 notes.
-                ///  * ```level4 ``` - Information for level 4 notes.
-                /// </summary>
                 [DataMember(Name = "level")]
-                public LevelEnum? Level { get; init; }
+                public NoteLevelEnum? Level { get; init; }
 
                 /// <summary>
-                /// Number of items classified as *level* which have information available.
+                /// Number of items classified as _level_ which have information available.
+                /// <example>2</example>
                 /// </summary>
                 [DataMember(Name = "numOfItems")]
+                [DataTypes(Minimum = 1)]
                 public int? NumOfItems { get; init; }
 
             }

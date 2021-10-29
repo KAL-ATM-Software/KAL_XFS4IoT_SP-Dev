@@ -27,19 +27,22 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<int> CUNumList = null)
+            public PayloadData(int Timeout, List<string> Units = null)
                 : base(Timeout)
             {
-                this.CUNumList = CUNumList;
+                this.Units = Units;
             }
 
             /// <summary>
-            /// Array containing the numbers of the individual cash units to be counted. 
-            /// If an invalid number is contained in this list, the command will fail with a CashUnitError error.
+            /// Array containing the [identifiers](#storage.getstorage.completion.properties.storage) of the individual 
+            /// cash storage units to be counted. 
+            /// If an invalid storage unit is contained in this list, the command will fail with a ```cashUnitError```
+            /// [errorCode](#cashacceptor.cashunitcount.completion.properties.errorcode).
             /// 
+            /// <example>unit1</example>
             /// </summary>
-            [DataMember(Name = "cUNumList")]
-            public List<int> CUNumList { get; init; }
+            [DataMember(Name = "units")]
+            public List<string> Units { get; init; }
 
         }
     }

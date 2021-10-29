@@ -54,8 +54,9 @@ namespace XFS4IoTFramework.KeyManagement
             ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TaskCanceledException or OperationCanceledException => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                NotImplementedException or NotSupportedException => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.TimeOut,
                 _ => ExportRSAEPPSignedItemCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 

@@ -25,7 +25,7 @@ namespace XFS4IoTFramework.Common
             InActiveSelectable = 0x0010,
         }
 
-        public sealed class ETSCaps
+        public sealed class ETSCap
         {
             [Flags]
             public enum FloatPositionEnum
@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Common
                 FloatY = 0x0002,
             }
 
-            public ETSCaps(int XPos,
+            public ETSCap(int XPos,
                            int YPos,
                            int XSize,
                            int YSize,
@@ -61,11 +61,14 @@ namespace XFS4IoTFramework.Common
             public FloatPositionEnum FloatFlags { get; init; }
         }
 
-        public KeyboardCapabilitiesClass(KeyboardBeepEnum AutoBeep)
+        public KeyboardCapabilitiesClass(KeyboardBeepEnum AutoBeep, List<ETSCap> ETSCaps)
         {
             this.AutoBeep = AutoBeep;
+            this.ETSCaps = ETSCaps;
         }
 
         public KeyboardBeepEnum AutoBeep { get; init; }
+
+        public List<ETSCap> ETSCaps;
     }
 }

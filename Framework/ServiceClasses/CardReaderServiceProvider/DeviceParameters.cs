@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
@@ -21,20 +22,6 @@ using XFS4IoT.CardReader.Completions;
 namespace XFS4IoTFramework.CardReader
 {
     /// The classes used by the device interface for an Input/Output parameters
-
-    /// <summary>
-    /// Device type requested by the framework
-    /// </summary>
-    public enum DeviceTypeEnum
-    {
-        Motor,
-        Swipe,
-        Dip,
-        LatchedDip,
-        Contactless,
-        IntelligentContactless,
-        Permanent,
-    }
 
     /// <summary>
     /// Media status requested by the framework
@@ -72,17 +59,17 @@ namespace XFS4IoTFramework.CardReader
             this.Timeout = Timeout;
         }
 
-        public ReadCardRequest.CardDataTypesEnum DataToRead { get; private set; }
+        public ReadCardRequest.CardDataTypesEnum DataToRead { get; init; }
 
         /// <summary>
         /// Enable flux sensor or not
         /// </summary>
-        public bool FluxInactive { get; private set; }
+        public bool FluxInactive { get; init; }
 
         /// <summary>
         /// Timeout for waiting card insertion
         /// </summary>
-        public int Timeout { get; private set; }
+        public int Timeout { get; init; }
     }
 
     /// <summary>
@@ -119,7 +106,7 @@ namespace XFS4IoTFramework.CardReader
         /// Specifies the error code on accepting card. if there are colision for the contactless card or security card read failure, 
         /// error code must be returned by the following ReadCardAsync method and this method should return success.
         /// </summary>
-        public ErrorCodeEnum? ErrorCode { get; private set; }
+        public ErrorCodeEnum? ErrorCode { get; init; }
     }
 
     /// <summary>
@@ -157,7 +144,7 @@ namespace XFS4IoTFramework.CardReader
             this.DataToRead = DataToRead;
         }
 
-        public CardDataTypesEnum DataToRead { get; private set; }
+        public CardDataTypesEnum DataToRead { get; init; }
     }
 
     /// <summary>
@@ -223,22 +210,22 @@ namespace XFS4IoTFramework.CardReader
             /// This field must be set for all requested the card data types.
             /// If there are hardware error on reading data, it can be omitted.
             /// </summary>
-            public DataStatusEnum? DataStatus { get; private set; }
+            public DataStatusEnum? DataStatus { get; init; }
 
             /// <summary>
             /// This field must be set if the card data type MemoryChip is requested to be read, otherwise omitted.
             /// </summary>
-            public ReadRawDataCompletion.PayloadData.MemoryChipClass.DataEnum? MemcoryChipDataStatus { get; private set; }
+            public ReadRawDataCompletion.PayloadData.MemoryChipClass.DataEnum? MemcoryChipDataStatus { get; init; }
 
             /// <summary>
             /// This field must be set if the card data type Security is requested to be read, otherwise omitted.
             /// </summary>
-            public ReadRawDataCompletion.PayloadData.SecurityClass.DataEnum? SecutiryDataStatus { get; private set; }
+            public ReadRawDataCompletion.PayloadData.SecurityClass.DataEnum? SecutiryDataStatus { get; init; }
 
             /// <summary>
             /// The card data read to be stored except Memory chip and Secutiry data
             /// </summary>
-            public List<byte> Data { get; private set; }
+            public List<byte> Data { get; init; }
         }
 
         /// <summary>
@@ -291,19 +278,19 @@ namespace XFS4IoTFramework.CardReader
         /// ErrorCode
         /// This error code is set if the operation is failed, otherwise omitted
         /// </summary>
-        public ReadRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public ReadRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         /// <summary>
         /// ReadData
         /// All read card data to be stored except chip ATR
         /// </summary>
-        public Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead { get; private set; }
+        public Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead { get; init; }
 
         /// <summary>
         /// Contains the ATR data read from the chip. For contactless chip card readers, multiple identification
         /// information can be returned if the card reader detects more than one chip.
         /// </summary>
-        public List<CardData> ChipATRRead { get; private set; }
+        public List<CardData> ChipATRRead { get; init; }
     }
 
     /// <summary>
@@ -329,8 +316,8 @@ namespace XFS4IoTFramework.CardReader
                 this.WriteMethod = WriteMethod;
             }
 
-            public WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum? WriteMethod { get; private set; }
-            public List<byte> Data { get; private set; }
+            public WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum? WriteMethod { get; init; }
+            public List<byte> Data { get; init; }
         }
 
         /// <summary>
@@ -342,7 +329,7 @@ namespace XFS4IoTFramework.CardReader
             this.DataToWrite = DataToWrite;
         }
 
-        public Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, CardData> DataToWrite { get; private set; }
+        public Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, CardData> DataToWrite { get; init; }
     }
 
     /// <summary>
@@ -359,77 +346,95 @@ namespace XFS4IoTFramework.CardReader
             this.ErrorCode = ErrorCode;
         }
 
-        public WriteRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public WriteRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 
     /// <summary>
-    /// EjectCardRequest
-    /// Eject card informatio including position where card to be moved.
+    /// MoveCardRequest
+    /// Move media with specified location
     /// </summary>
-    public sealed class EjectCardRequest
+    public sealed class MoveCardRequest
     {
+        public sealed class MovePosition
+        {
+            public MovePosition(MovePositionEnum Position,
+                                string StorageId = null)
+            {
+                this.Position = Position;
+                this.StorageId = StorageId;
+
+                if (Position == MovePositionEnum.Storage)
+                {
+                    Contracts.Assert(!string.IsNullOrEmpty(StorageId), $"No storage id supplied.");
+                }
+            }
+
+            public enum MovePositionEnum
+            {
+                Exit,
+                Transport,
+                Storage,
+            }
+
+            public MovePositionEnum Position { get; init; }
+
+            /// <summary>
+            /// If this value is null move default position and storage ID must report on the result if the operation completed successfully.
+            /// </summary>
+            public string StorageId { get; init; }
+        }
+
         /// <summary>
         /// EjectCardRequest
         /// </summary>
-        /// <param name="Position">Positon to move card on eject operation</param>
-        public EjectCardRequest(EjectCardCommand.PayloadData.EjectPositionEnum? Position = null)
+        public MoveCardRequest(MovePosition From, MovePosition To)
         {
-            this.Position = Position;
+            this.From = From;
+            this.To = To;
         }
 
-        public EjectCardCommand.PayloadData.EjectPositionEnum? Position { get; private set; }
+        public MovePosition From { get; init; }
+
+        public MovePosition To { get; init; }
     }
 
     /// <summary>
-    /// EjectCardResult
-    /// Return result of ejecting/returning card
+    /// MoveCardResult
+    /// Return result of ejecting/returning/dispensing/parking card
     /// </summary>
-    public sealed class EjectCardResult : DeviceResult
+    public sealed class MoveCardResult : DeviceResult
     {
-        public EjectCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               EjectCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public MoveCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              MoveCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            this.StorageId = null;
+            this.CountMoved = 0;
         }
 
-        public EjectCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; } = null;
-    }
-
-    /// <summary>
-    /// WriteCardDataResult
-    /// Return result of writing data to the card tracks
-    /// </summary>
-    public sealed class CaptureCardResult : DeviceResult
-    {
-        public CaptureCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 RetainCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 int? Count = null,
-                                 RetainCardCompletion.PayloadData.PositionEnum? Position = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Count = Count;
-            this.Position = Position;
-        }
-
-        public CaptureCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 int? Count = null,
-                                 RetainCardCompletion.PayloadData.PositionEnum? Position = null)
-           : base(CompletionCode, null)
+        public MoveCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string StorageId,
+                              int CountMoved)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
-            this.Count = Count;
-            this.Position = Position;
+            this.StorageId = StorageId;
+            this.CountMoved = CountMoved;
         }
 
-        public RetainCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public MoveCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = null;
 
-        public int? Count { get; private set; }
+        /// <summary>
+        /// This property is set when the card is moved to the default position otherwise null.
+        /// </summary>
+        public string StorageId { get; init; }
 
-        public RetainCardCompletion.PayloadData.PositionEnum? Position { get; private set; }
+        /// <summary>
+        /// Count move to the storage, if the device class doesn't report positive number, the storage counter won't increase
+        /// </summary>
+        public int CountMoved { get; init; }
     }
 
     /// <summary>
@@ -463,7 +468,7 @@ namespace XFS4IoTFramework.CardReader
             this.ChipData = ChipData;
         }
 
-        public List<byte> ChipData { get; private set; }
+        public List<byte> ChipData { get; init; }
 
         public ChipProtocolEnum ChipProtocol;
     }
@@ -492,9 +497,9 @@ namespace XFS4IoTFramework.CardReader
             this.ChipData = ChipData;
         }
 
-        public ChipIOCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public ChipIOCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
-        public List<byte> ChipData { get; private set; }
+        public List<byte> ChipData { get; init; }
     }
 
     /// <summary>
@@ -513,7 +518,7 @@ namespace XFS4IoTFramework.CardReader
             this.Action = Action;
         }
 
-        public ChipPowerCommand.PayloadData.ChipPowerEnum Action { get; private set; }
+        public ChipPowerCommand.PayloadData.ChipPowerEnum Action { get; init; }
     }
 
     /// <summary>
@@ -530,7 +535,7 @@ namespace XFS4IoTFramework.CardReader
             this.ErrorCode = ErrorCode;
         }
 
-        public ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 
     /// <summary>
@@ -539,16 +544,28 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class ResetDeviceRequest
     {
+        public enum ToEnum
+        {
+            Default,
+            Exit,
+            Retain,
+            currentPosition,
+        }
+
         /// <summary>
         /// ResetDeviceRequest
         /// </summary>
-        /// <param name="CardAction">Card action could be eject, capture or no move. if this value is set to null, the default action to be used.</param>
-        public ResetDeviceRequest(ResetCommand.PayloadData.ResetInEnum? CardAction)
+        /// <param name="MoveTo">Card to be moved on the reset action.</param>
+        /// <param name="StorageId">name of strage reported by the GetStorage command</param>
+        public ResetDeviceRequest(ToEnum MoveTo, string StorageId)
         {
-            this.CardAction = CardAction;
+            this.MoveTo = MoveTo;
+            this.StorageId = StorageId;
         }
 
-        public ResetCommand.PayloadData.ResetInEnum? CardAction { get; private set; }
+        public ToEnum MoveTo { get; init; }
+
+        public string StorageId { get; init; }
     }
 
     /// <summary>
@@ -563,21 +580,31 @@ namespace XFS4IoTFramework.CardReader
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            this.StorageId = string.Empty;
+            this.CountMoved = 0;
         }
 
-        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
-    }
+        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 int CountMoved,
+                                 string StorageId = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.StorageId = StorageId;
+            this.CountMoved = CountMoved;
+        }
 
-    /// <summary>
-    /// ResetCountResult
-    /// Return result of resetting retain bin counters
-    /// </summary>
-    public sealed class ResetCountResult : DeviceResult
-    {
-        public ResetCountResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null)
-            : base(CompletionCode, ErrorDescription)
-        { }
+        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// This property is set when the card is moved to the default position otherwise null.
+        /// </summary>
+        public string StorageId { get; init; }
+
+        /// <summary>
+        /// Count move to the storage, if the device class doesn't report positive number, the storage counter won't increase
+        /// </summary>
+        public int CountMoved { get; init; }
     }
 
     /// <summary>
@@ -595,7 +622,7 @@ namespace XFS4IoTFramework.CardReader
             this.KeyValue = KeyValue;
         }
 
-        public List<byte> KeyValue { get; private set; }
+        public List<byte> KeyValue { get; init; }
     }
 
     /// <summary>
@@ -612,51 +639,9 @@ namespace XFS4IoTFramework.CardReader
             this.ErrorCode = ErrorCode;
         }
 
-        public SetKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public SetKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
-
-    /// <summary>
-    /// ParkCardRequest
-    /// Provide parking card information
-    /// </summary>
-    public sealed class ParkCardRequest
-    {
-        /// <summary>
-        /// ParkCardRequest
-        /// Location is provided in this object where the card to be moved in the parking station.
-        /// </summary>
-        /// <param name="PowerAction">Specifies which way to move the card. if this value is null, default action to be used. 
-        /// In - move card from transport to parking station
-        /// Out - move card from parking station to the transport.</param>
-        /// <param name="ParkingStation">Specifies which which parking station should be used. if the value is null, default location to be used.</param>
-        public ParkCardRequest(ParkCardCommand.PayloadData.DirectionEnum? PowerAction, int? ParkingStation)
-        {
-            this.PowerAction = PowerAction;
-            this.ParkingStation = ParkingStation;
-        }
-
-        public ParkCardCommand.PayloadData.DirectionEnum? PowerAction { get; private set; }
-
-        public int? ParkingStation { get; private set; }
-    }
-
-    /// <summary>
-    /// ParkCardResult
-    /// Return result of moving a card to the parking station.
-    /// </summary>
-    public sealed class ParkCardResult : DeviceResult
-    {
-        public ParkCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              ParkCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public ParkCardCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
-    }
-
+    
     public sealed class AIDInfo
     {
         public AIDInfo(List<byte> AID, bool PartialSelection, int TransactionType, List<byte> KernelIdentifier, List<byte> ConfigData)
@@ -672,26 +657,26 @@ namespace XFS4IoTFramework.CardReader
         /// The application identifier to be accepted by the contactless chip card reader. The
         /// CardReader.EMVClessQueryApplications command will return the list of supported application identifiers.
         /// </summary>
-        public List<byte> AID { get; private set; }
+        public List<byte> AID { get; init; }
 
         /// <summary>
         /// If PartialSelection is true, partial name selection of the specified AID is enabled. If
         /// PartialSelection is false, partial name selection is disabled. A detailed explanation for
         /// partial name selection is given in EMV 4.3 Book 1, Section 11.3.5.
         /// </summary>
-        public bool PartialSelection { get; private set; }
+        public bool PartialSelection { get; init; }
 
         /// <summary>
         /// The transaction type supported by the AID. This indicates the type of financial transaction
         /// represented by the first two digits of the ISO 8583:1987 Processing Code.
         /// </summary>
-        public int TransactionType { get; private set; }
+        public int TransactionType { get; init; }
 
         /// <summary>
         /// The EMVCo defined kernel identifier associated with the AID.
         /// This field will be ignored if the reader does not support kernel identifiers.
         /// </summary>
-        public List<byte> KernelIdentifier { get; private set; }
+        public List<byte> KernelIdentifier { get; init; }
 
         /// <summary>
         /// The list of BER-TLV formatted configuration data, applicable to
@@ -699,7 +684,7 @@ namespace XFS4IoTFramework.CardReader
         /// specifications define the BER-TLV tags to be configured.
         /// </summary>
 
-        public List<byte> ConfigData { get; private set; }
+        public List<byte> ConfigData { get; init; }
 
     }
 
@@ -711,7 +696,7 @@ namespace XFS4IoTFramework.CardReader
         /// [2]. For example, if the EMV specification indicates the algorithm is ‘01’, the value of the
         ///  algorithm is coded as 0x01.
         /// </summary>
-        public int AlgorithmIndicator { get; private set; }
+        public int AlgorithmIndicator { get; init; }
 
         /// <summary>
         /// The CA Public Key Exponent for the specific RID.This value
@@ -745,12 +730,12 @@ namespace XFS4IoTFramework.CardReader
         /// Specifies the payment system's Registered Identifier (RID). RID is the first 5 bytes of the AID
         /// and identifies the payments system.
         /// </summary>
-        public List<byte> RID { get; private set; }
+        public List<byte> RID { get; init; }
 
         /// <summary>
         /// CA Public Key information for the specified RID
         /// </summary>
-        public List<PublicKeyInfo> CAPublicKey { get; private set; }
+        public List<PublicKeyInfo> CAPublicKey { get; init; }
 
     }
 
@@ -779,7 +764,7 @@ namespace XFS4IoTFramework.CardReader
         /// in the Payment Systems Specifications or EMVCo Contactless Payment Systems Specifications Books may be
         /// included.
         /// </summary>
-        public List<byte> TerminalData { get; private set; }
+        public List<byte> TerminalData { get; init; }
 
         /// <summary>
         /// Specifies the list of acceptable payment system applications. For EMVCo approved contactless card
@@ -789,13 +774,13 @@ namespace XFS4IoTFramework.CardReader
         /// Each AID-Transaction Type or each AID-Kernel-Transaction Type combination will have its own unique set
         /// of configuration data. 
         /// </summary>
-        public List<AIDInfo> AIDs { get; private set; }
+        public List<AIDInfo> AIDs { get; init; }
 
         /// <summary>
         /// Specifies the encryption key information required by an intelligent contactless chip card reader for
         /// offline data authentication.
         /// </summary>
-        public List<PublicKeyInfo> PublicKeys { get; private set; }
+        public List<PublicKeyInfo> PublicKeys { get; init; }
     }
 
     /// <summary>
@@ -812,7 +797,7 @@ namespace XFS4IoTFramework.CardReader
             this.ErrorCode = ErrorCode;
         }
 
-        public EMVClessConfigureCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public EMVClessConfigureCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 
     /// <summary>
@@ -837,7 +822,7 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// Specifies the contactless transaction outcome
         /// </summary>
-        public TransactionOutcomeEnum TransactionOutcome { get; private set; }
+        public TransactionOutcomeEnum TransactionOutcome { get; init; }
 
         public enum CardholderActionEnum
         {
@@ -849,14 +834,14 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         ///  Specifies the cardholder action
         /// </summary>
-        public CardholderActionEnum CardholderAction { get; private set; }
+        public CardholderActionEnum CardholderAction { get; init; }
 
         /// <summary>
         /// The data read from the chip after a contactless transaction has been completed successfully.
         /// If the data source is chip, the BER-TLV formatted data contains cryptogram tag (9F26) after a contactless chip transaction has been completed successfully.
         /// if the data source is track1, track2 or track3, the data read from the chip, i.e the value returned by the card reader device and no cryptogram tag (9F26). 
         /// </summary>
-        public List<byte> DataRead { get; private set; }
+        public List<byte> DataRead { get; init; }
 
         /// <summary>
         /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B).
@@ -876,7 +861,7 @@ namespace XFS4IoTFramework.CardReader
             /// <summary>
             ///  Specifies the cardholder verification method (CVM) to be performed
             /// </summary>
-            public CvmEnum Cvm { get; private set; }
+            public CvmEnum Cvm { get; init; }
 
             public enum AlternateInterfaceEnum
             {
@@ -888,9 +873,9 @@ namespace XFS4IoTFramework.CardReader
             /// If the TransactionOutcome property is not TryAnotherInterface, this should be ignored.
             /// If the TransactionOutcome property is TryAnotherInterface, this specifies the alternative interface to be used to complete a transaction
             /// </summary>
-            public AlternateInterfaceEnum AlternateInterface { get; private set; }
+            public AlternateInterfaceEnum AlternateInterface { get; init; }
 
-            public bool Receipt { get; private set; }
+            public bool Receipt { get; init; }
 
             /// <summary>
             /// The user interface details required to be displayed to the cardholder after processing the outcome of a
@@ -904,7 +889,7 @@ namespace XFS4IoTFramework.CardReader
                 /// Represents the EMVCo defined message identifier that indicates the text string to be displayed, e.g., 0x1B
                 /// is the “Authorising Please Wait” message(see EMVCo Contactless Specifications for Payment Systems Book A, Section 9.4).
                 /// </summary>
-                public int MessageId { get; private set; }
+                public int MessageId { get; init; }
 
                 public enum StatusEnum
                 {
@@ -918,13 +903,13 @@ namespace XFS4IoTFramework.CardReader
                 /// <summary>
                 /// Represents the EMVCo defined transaction status value to be indicated through the Beep/LEDs
                 /// </summary>
-                public StatusEnum Status { get; private set; }
+                public StatusEnum Status { get; init; }
 
                 /// <summary>
                 /// Represents the hold time in units of 100 milliseconds for which the application should display the message
                 /// before processing the next user interface data.
                 /// </summary>
-                public int HoldTime { get; private set; }
+                public int HoldTime { get; init; }
 
                 public enum ValueQualifierEnum
                 {
@@ -936,23 +921,23 @@ namespace XFS4IoTFramework.CardReader
                 /// <summary>
                 /// This data is defined by EMVCo as either “Amount”, “Balance”, or "NotApplicable"
                 /// </summary>
-                public ValueQualifierEnum ValueQualifier { get; private set; }
+                public ValueQualifierEnum ValueQualifier { get; init; }
 
                 /// <summary>
                 /// Represents the value of the amount or balance as specified by ValueQualifier to be displayed where appropriate.
                 /// </summary>
-                public string Value { get; private set; }
+                public string Value { get; init; }
 
                 /// <summary>
                 /// Represents the numeric value of currency code as per ISO 4217.
                 /// </summary>
-                public string CurrencyCode { get; private set; }
+                public string CurrencyCode { get; init; }
 
                 /// <summary>
                 /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
                 /// data to display all messages in the specified language until the transaction concludes.
                 /// </summary>
-                public string LanguagePreferenceData { get; private set; }
+                public string LanguagePreferenceData { get; init; }
 
                 public EMVContactlessUI(int MessageId,
                                         StatusEnum Status,
@@ -977,31 +962,31 @@ namespace XFS4IoTFramework.CardReader
             /// contactless transaction.If no user interface details are required, this will be omitted.Please refer
             /// to EMVCo Contactless Specifications for Payment Systems Book A, Section 6.2 for details of the data within this object.
             /// </summary>
-            public EMVContactlessUI UiOutcome { get; private set; }
+            public EMVContactlessUI UiOutcome { get; init; }
 
             /// <summary>
             /// The user interface details required to be displayed to the cardholder when a transaction needs to be
             /// completed with a re-tap.If no user interface details are required, this will be omitted.
             /// </summary>
-            public EMVContactlessUI UiRestart { get; private set; }
+            public EMVContactlessUI UiRestart { get; init; }
 
             /// <summary>
             /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
             /// the contactless card reader by issuing either the CardReader.EMVClessPerformTransaction or CardReader.EMVClessIssuerUpdate command depending on the value of
             /// For intelligent contactless card readers, the completion of this command ensures that the contactless chip card reader field is automatically turned off, so there is no need for the application to disable the field.
             /// </summary>
-            public int FieldOffHoldTime { get; private set; }
+            public int FieldOffHoldTime { get; init; }
 
             /// <summary>
             /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
             /// </summary>
-            public int CardRemovalTimeout { get; private set; }
+            public int CardRemovalTimeout { get; init; }
 
             /// <summary>
             /// The payment system's specific discretionary data read from the chip, in a BER-TLV format, 
             /// after a contactless transaction has been completed.If discretionary data is not present, this will be omitted.
             /// </summary>
-            public List<byte> DiscretionaryData { get; private set; }
+            public List<byte> DiscretionaryData { get; init; }
 
             public EMVContactlessOutcome(CvmEnum Cvm,
                                          AlternateInterfaceEnum AlternateInterface,
@@ -1023,7 +1008,7 @@ namespace XFS4IoTFramework.CardReader
             }
         }
 
-        public EMVContactlessOutcome ClessOutcome { get; private set; }
+        public EMVContactlessOutcome ClessOutcome { get; init; }
 
         public EMVContactlessTransactionDataOutput(TransactionOutcomeEnum TransactionOutcome,
                                                    CardholderActionEnum CardholderAction,
@@ -1054,8 +1039,8 @@ namespace XFS4IoTFramework.CardReader
             this.Timeout = Timeout;
         }
 
-        public List<byte> TerminalData { get; private set; }
-        public int Timeout { get; private set; }
+        public List<byte> TerminalData { get; init; }
+        public int Timeout { get; init; }
     }
 
     /// <summary>
@@ -1083,7 +1068,7 @@ namespace XFS4IoTFramework.CardReader
             this.TransactionResults = TransactionResults;
         }
 
-        public EMVClessPerformTransactionCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public EMVClessPerformTransactionCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         /// <summary>
         /// Transaction type completed in a mag-stripe mode or an EMV mode
@@ -1096,7 +1081,7 @@ namespace XFS4IoTFramework.CardReader
             Chip,
         }
 
-        public Dictionary<DataSourceTypeEnum, EMVContactlessTransactionDataOutput> TransactionResults { get; private set; }
+        public Dictionary<DataSourceTypeEnum, EMVContactlessTransactionDataOutput> TransactionResults { get; init; }
     }
 
     /// <summary>
@@ -1116,8 +1101,8 @@ namespace XFS4IoTFramework.CardReader
             this.Timeout = Timeout;
         }
 
-        public List<byte> TerminalData { get; private set; }
-        public int Timeout { get; private set; }
+        public List<byte> TerminalData { get; init; }
+        public int Timeout { get; init; }
     }
 
     /// <summary>
@@ -1145,12 +1130,12 @@ namespace XFS4IoTFramework.CardReader
             this.TransactionResult = TransactionResult;
         }
 
-        public EMVClessIssuerUpdateCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; private set; }
+        public EMVClessIssuerUpdateCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         /// <summary>
         /// Result of the contactless transaction
         /// </summary>
-        public EMVContactlessTransactionDataOutput TransactionResult { get; private set; }
+        public EMVContactlessTransactionDataOutput TransactionResult { get; init; }
     }
 
     /// <summary>
@@ -1169,11 +1154,11 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// Chip application identifier
         /// </summary>
-        public List<byte> ApplicationIdentifier { get; private set; }
+        public List<byte> ApplicationIdentifier { get; init; }
         /// <summary>
         /// The kernel identifier certified
         /// </summary>
-        public List<byte> KernelIdentifier { get; private set; }
+        public List<byte> KernelIdentifier { get; init; }
     }
 
     /// <summary>
@@ -1201,7 +1186,7 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// List of EMV applications and kernels information
         /// </summary>
-        public List<EMVApplication> EMVApplications { get; private set; }
+        public List<EMVApplication> EMVApplications { get; init; }
     }
 
     /// <summary>
@@ -1217,11 +1202,11 @@ namespace XFS4IoTFramework.CardReader
             this.IFMIdentifier = IFMIdentifier;
         }
 
-        public QueryIFMIdentifierCompletion.PayloadData.IfmAuthorityEnum IFMAuthority { get; private set; }
+        public QueryIFMIdentifierCompletion.PayloadData.IfmAuthorityEnum IFMAuthority { get; init; }
         /// <summary>
         /// The IFM Identifier of the chip card reader (or IFM) as assigned by the specified authority.
         /// </summary>
-        public List<byte> IFMIdentifier { get; private set; }
+        public List<byte> IFMIdentifier { get; init; }
     }
 
     /// <summary>

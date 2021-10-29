@@ -8,11 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoTServer;
-using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -50,17 +47,17 @@ namespace XFS4IoTFramework.CashDispenser
                         List<double> Cols,
                         Dictionary<double, List<Table>> Mixes, 
                         ILogger Logger )
-            : base(MixNumber, 
-                   TypeEnum.Table,
-                   (int)SubTypeEmum.Table, 
+            : base(TypeEnum.Table,
+                   AlgorithmEnum.Table, 
                    Name)
         {
+            this.MixNumber = MixNumber;
             this.Values = Cols;
             this.Mixes = Mixes;
             this.Logger = Logger.IsNotNull();
         }
 
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnitStorage> CashUnits, int MaxDispensableItems)
         {
             // Loop through the table looking for a mix with the given value.
             Dictionary<string, int> denom = new();
@@ -84,11 +81,11 @@ namespace XFS4IoTFramework.CashDispenser
                             // Loop through cash units
                             foreach (var unit in CashUnits)
                             {
-                                if (unit.Value.CurrencyID == ca.Key &&
-                                    unit.Value.Value == count.Key)
+                                if (unit.Value.Unit.Configuration.Currency == ca.Key &&
+                                    unit.Value.Unit.Configuration.Value == count.Key)
                                 {
                                     // Found one and check there is enough cash
-                                    if (count.Value > unit.Value.Count)
+                                    if (count.Value > unit.Value.Unit.Status.Count)
                                     {
                                         // Maybe there are another units has save value
                                         continue;
@@ -145,6 +142,11 @@ namespace XFS4IoTFramework.CashDispenser
             return new Denomination(CurrencyAmounts, denom);
         }
 
+        /// <summary>
+        /// Number identifying the house mix table.
+        /// </summary>
+        public int MixNumber { get; init; }
+
         public List<double> Values { get; init; }
 
         /// <summary>
@@ -163,10 +165,9 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private readonly ILogger Logger;
 
-        public MinNumberMix(int MixNumber, ILogger Logger )
-            : base(MixNumber, 
-                   TypeEnum.Algorithm, 
-                   (int)SubTypeEmum.MinimumNumberOfBills, 
+        public MinNumberMix(ILogger Logger)
+            : base(TypeEnum.Algorithm, 
+                   AlgorithmEnum.minimumBills, 
                    "Minimum Number Of Bills")
         {
             this.Logger = Logger.IsNotNull();
@@ -190,7 +191,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">cash units to denominate from.</param>
         /// <param name="MaxDispensableItems"></param>
         /// <returns>Calculated denomination</returns>
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnitStorage> CashUnits, int MaxDispensableItems )
         {
             CurrencyAmounts.IsNotNull($"Currency and amounts should be provided to calculate mix.");
             CashUnits.IsNotNull($"Cash unit information should be provided to calculate mix.");
@@ -214,16 +215,16 @@ namespace XFS4IoTFramework.CashDispenser
                 // dispensed. If we can't get enough notes we have to make up the rest with smaller
                 // denominations.
                 int greatestNumNotes;
-                if (CashUnits[currentCashUnit].Value != 0)
+                if (CashUnits[currentCashUnit].Unit.Configuration.Value != 0)
                 {
-                    greatestNumNotes = (int)(ca.Value / CashUnits[currentCashUnit].Value);
+                    greatestNumNotes = (int)(ca.Value / CashUnits[currentCashUnit].Unit.Configuration.Value);
                 }
                 else
                 {
                     greatestNumNotes = 0;
                 }
-                if (greatestNumNotes > CashUnits[currentCashUnit].Count)
-                    greatestNumNotes = CashUnits[currentCashUnit].Count;
+                if (greatestNumNotes > CashUnits[currentCashUnit].Unit.Status.Count)
+                    greatestNumNotes = CashUnits[currentCashUnit].Unit.Status.Count;
 
                 // We will have to dispense at least this many notes. If this is too many notes, 
                 // there is no point in continuing the calculation.
@@ -243,7 +244,7 @@ namespace XFS4IoTFramework.CashDispenser
                 // Loop through all the posible dispenses from this cash unit to find the smallest.
                 for (int numNotes = greatestNumNotes; numNotes >= 0; numNotes--)
                 {
-                    remainingAmount = ca.Value - (numNotes * CashUnits[currentCashUnit].Value);
+                    remainingAmount = ca.Value - (numNotes * CashUnits[currentCashUnit].Unit.Configuration.Value);
                     // If the remaining amount is zero, we know that the denomination will be null
                     if (remainingAmount == 0)
                     {
@@ -260,7 +261,7 @@ namespace XFS4IoTFramework.CashDispenser
                     // Always take the first one, else take it only if it is smaller than the previouse smallest
                     // and this number of notes can be dispensed from this cash unit
                     if (foundOne == false ||
-                        (numNotes < CashUnits[currentCashUnit].Count &&
+                        (numNotes < CashUnits[currentCashUnit].Unit.Status.Count &&
                          newDenomNumNotes + numNotes < currentSmallestDenomNumNotes + currentSmallestNumNotes)
                         )
                     {
@@ -313,12 +314,12 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="Denom">Denomination to dispense</param>
         /// <param name="Logger">DI Logger</param>
         /// <returns></returns>
-        public static bool CalculateR(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom, ILogger Logger)
+        public static bool CalculateR(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnitStorage> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom, ILogger Logger)
         {
             Contracts.Assert(Amount != 0, "Invalid parameter used for amount in CalculateR.");
 
             // Find the next cash unit to check
-            string currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Value, Currency, CashUnits, ref UnitsUsed);
+            string currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref UnitsUsed);
             // We've run out of cash units. The remaining amount shouldn't be zero so we can't dispense.
             if (string.IsNullOrEmpty(currentCashUnit))
                 return false;
@@ -326,7 +327,7 @@ namespace XFS4IoTFramework.CashDispenser
             // Check now if this is the last cash unit.
             bool finalCashUnit = false;
             List<string> dummy = new();
-            string nextCashUnit = FindNextGreatest(CashUnits[currentCashUnit].Value, Currency, CashUnits, ref dummy);
+            string nextCashUnit = FindNextGreatest(CashUnits[currentCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref dummy);
             if (string.IsNullOrEmpty(nextCashUnit))
                 finalCashUnit = true;
 
@@ -334,17 +335,17 @@ namespace XFS4IoTFramework.CashDispenser
             // dispensed. If we can't get enough notes we have to make up the rest with smaller
             // denominations.
             int greatestNumNotes;
-            if (CashUnits[currentCashUnit].Value != 0)
+            if (CashUnits[currentCashUnit].Unit.Configuration.Value != 0)
             {
-                greatestNumNotes = (int)(Amount / CashUnits[currentCashUnit].Value);
+                greatestNumNotes = (int)(Amount / CashUnits[currentCashUnit].Unit.Configuration.Value);
             }
             else
             {
                 greatestNumNotes = 0;
             }
 
-            if (greatestNumNotes > CashUnits[currentCashUnit].Count)
-                greatestNumNotes = CashUnits[currentCashUnit].Count;
+            if (greatestNumNotes > CashUnits[currentCashUnit].Unit.Status.Count)
+                greatestNumNotes = CashUnits[currentCashUnit].Unit.Status.Count;
 
             double remainingAmount;
             int currentSmallestDenomNumNotes = 0;
@@ -356,7 +357,7 @@ namespace XFS4IoTFramework.CashDispenser
             // smallest.
             for (int numNotes = greatestNumNotes; numNotes >= 0; numNotes--)
             {
-                remainingAmount = Amount - (numNotes * CashUnits[currentCashUnit].Value);
+                remainingAmount = Amount - (numNotes * CashUnits[currentCashUnit].Unit.Configuration.Value);
                 // If the remaining amount isn't zero, and this is the last cash unit, then 
                 // we can't mix the remaining amount, so this number of notes is invalid.
                 if (remainingAmount != 0 && 
@@ -414,10 +415,9 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private readonly ILogger Logger;
 
-        public EqualEmptyingMix(int MixNumber, ILogger Logger )
-            : base(MixNumber,
-                   TypeEnum.Algorithm,
-                   (int)SubTypeEmum.EqualEmptyingOfCashUnits,
+        public EqualEmptyingMix(ILogger Logger )
+            : base(TypeEnum.Algorithm,
+                   AlgorithmEnum.equalEmptying,
                    "Equal emptying of cash units")
         {
             this.Logger = Logger.IsNotNull();
@@ -437,7 +437,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <param name="CashUnits">cash units to denominate from.</param>
         /// <param name="MaxDispensableItems"></param>
         /// <returns>denominate that matches the requirements</returns>
-        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnit> CashUnits, int MaxDispensableItems )
+        public override Denomination Calculate(Dictionary<string, double> CurrencyAmounts, Dictionary<string, CashUnitStorage> CashUnits, int MaxDispensableItems )
         {
             CurrencyAmounts.IsNotNull($"Currency and amounts should be provided to calculate mix.");
             CashUnits.IsNotNull($"Cash unit information should be provided to calculate mix.");
@@ -468,22 +468,18 @@ namespace XFS4IoTFramework.CashDispenser
                 foreach (var unit in CashUnits)
                 {
                     // If this cash unit isn't valid, skip it.
-                    if ((unit.Value.Type != CashUnit.TypeEnum.BillCassette &&
-                         unit.Value.Type != CashUnit.TypeEnum.CoinCylinder &&
-                         unit.Value.Type != CashUnit.TypeEnum.CoinDispenser &&
-                         unit.Value.Type != CashUnit.TypeEnum.Recycling)
-                       || unit.Value.CurrencyID != ca.Key
-                       || (unit.Value.Status != CashUnit.StatusEnum.Ok &&
-                           unit.Value.Status != CashUnit.StatusEnum.Low &&
-                           unit.Value.Status != CashUnit.StatusEnum.High &&
-                           unit.Value.Status != CashUnit.StatusEnum.Full)
-                       || unit.Value.AppLock)
+                    if (!unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) || 
+                        unit.Value.Unit.Configuration.Currency != ca.Key ||
+                        unit.Value.Status != CashUnitStorage.StatusEnum.Good ||
+                        (unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                         unit.Value.Unit.Status.ReplenishmentStatus == CashStatusClass.ReplenishmentStatusEnum.Empty) ||
+                        unit.Value.Unit.Configuration.AppLockOut)
                     {
                         continue;
                     }
                     else
                     {
-                        sum += unit.Value.Value;
+                        sum += unit.Value.Unit.Configuration.Value;
                     }
                 }
 
@@ -491,7 +487,7 @@ namespace XFS4IoTFramework.CashDispenser
                 {
                     // If the amount is equal to the biggest cash unit, try to deliver this with smaller
                     // notes first.
-                    if (ca.Value == CashUnits[biggestCashUnit].Value)
+                    if (ca.Value == CashUnits[biggestCashUnit].Unit.Configuration.Value)
                     {
                         if (!CalculateLow(ca.Value, ca.Key, biggestCashUnit, CashUnits, ref CassetteUsed, ref newDenom, Logger))
                         {
@@ -518,26 +514,22 @@ namespace XFS4IoTFramework.CashDispenser
                         // contains fewer notes, take all of them.
                         foreach (var unit in CashUnits)
                         {
-                            // If this cash unit isn't valid, skip it.
-                            if ((unit.Value.Type != CashUnit.TypeEnum.BillCassette &&
-                             unit.Value.Type != CashUnit.TypeEnum.CoinCylinder &&
-                             unit.Value.Type != CashUnit.TypeEnum.CoinDispenser &&
-                             unit.Value.Type != CashUnit.TypeEnum.Recycling)
-                           || unit.Value.CurrencyID != ca.Key
-                           || (unit.Value.Status != CashUnit.StatusEnum.Ok &&
-                               unit.Value.Status != CashUnit.StatusEnum.Low &&
-                               unit.Value.Status != CashUnit.StatusEnum.High &&
-                               unit.Value.Status != CashUnit.StatusEnum.Full)
-                           || unit.Value.AppLock)
+                            if (!unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) ||
+                                unit.Value.Unit.Configuration.Currency != ca.Key ||
+                                unit.Value.Status != CashUnitStorage.StatusEnum.Good ||
+                                (unit.Value.Status == CashUnitStorage.StatusEnum.Good &&
+                                 unit.Value.Unit.Status.ReplenishmentStatus == CashStatusClass.ReplenishmentStatusEnum.Empty) ||
+                                unit.Value.Unit.Configuration.AppLockOut)
                             {
+                                // If this cash unit isn't valid, skip it.
                                 continue;
                             }
-                            else if (equalNumNotes > unit.Value.Count)
+                            else if (equalNumNotes > unit.Value.Unit.Status.Count)
                             {
                                 if (newDenom.ContainsKey(unit.Key))
-                                    newDenom[unit.Key] = unit.Value.Count;
+                                    newDenom[unit.Key] = unit.Value.Unit.Status.Count;
                                 else
-                                    newDenom.Add(unit.Key, unit.Value.Count);
+                                    newDenom.Add(unit.Key, unit.Value.Unit.Status.Count);
                             }
                             else
                             {
@@ -605,7 +597,7 @@ namespace XFS4IoTFramework.CashDispenser
                     {
                         // We can't allocate notes based on the Equal mix.  Bail out and try the MinNotes
                         // algorithm for the entire amount.
-                        Denomination tempDenom = new MinNumberMix(1, Logger).Calculate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, CashUnits, MaxDispensableItems);
+                        Denomination tempDenom = new MinNumberMix(Logger).Calculate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, CashUnits, MaxDispensableItems);
                         newDenom = tempDenom?.Values;
                     }
                 }
@@ -639,7 +631,7 @@ namespace XFS4IoTFramework.CashDispenser
             return denom.Denomination;
         }
 
-        private bool CalculateLow(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnit> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom, ILogger Logger)
+        private bool CalculateLow(double Amount, string Currency, string LastCashUnit, Dictionary<string, CashUnitStorage> CashUnits, ref List<string> UnitsUsed, ref Dictionary<string, int> Denom, ILogger Logger)
         {
             CashUnits.IsNotNull($"Cash unit information should be provided to calculate mix.");
             Denom.IsNotNull($"An empty denomination passed in. " + nameof(CalculateLow));
@@ -652,7 +644,7 @@ namespace XFS4IoTFramework.CashDispenser
             if (string.IsNullOrEmpty(LastCashUnit))
                 currentCashUnit = FindNextGreatest(0, Currency, CashUnits, ref UnitsUsed);
             else
-                currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Value, Currency, CashUnits, ref UnitsUsed);
+                currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref UnitsUsed);
             if (string.IsNullOrEmpty(currentCashUnit))
             {
                 Logger.Warning(Constants.Framework, "Failed to find cash unit to denominate in " + nameof(CalculateLow));
@@ -668,13 +660,13 @@ namespace XFS4IoTFramework.CashDispenser
                 CashUnits.ContainsKey(currentCashUnit).IsTrue($"Unexpected value of key for the cash unit found. {currentCashUnit}");
 
                 // Find the number of notes of this value which are needed.
-                int numNotes = (int)(remainingAmount / CashUnits[currentCashUnit].Value);
+                int numNotes = (int)(remainingAmount / CashUnits[currentCashUnit].Unit.Configuration.Value);
                 // If we can't dispense this many notes, dispence what we can and make up the rest from 
                 // the other cash units.
                 if (Denom.ContainsKey(currentCashUnit) &&
-                    (CashUnits[currentCashUnit].Count + Denom[currentCashUnit] < numNotes))
+                    (CashUnits[currentCashUnit].Unit.Status.Count + Denom[currentCashUnit] < numNotes))
                 {
-                    numNotes = CashUnits[currentCashUnit].Count;
+                    numNotes = CashUnits[currentCashUnit].Unit.Status.Count;
                 }
 
                 if (Denom.ContainsKey(currentCashUnit))
@@ -683,8 +675,8 @@ namespace XFS4IoTFramework.CashDispenser
                     Denom.Add(currentCashUnit, numNotes);
 
                 // Find how much will be left after these notes are included.
-                remainingAmount -= numNotes * CashUnits[currentCashUnit].Value;
-                currentCashUnit = FindNextGreatest(CashUnits[currentCashUnit].Value, Currency, CashUnits, ref UnitsUsed);
+                remainingAmount -= numNotes * CashUnits[currentCashUnit].Unit.Configuration.Value;
+                currentCashUnit = FindNextGreatest(CashUnits[currentCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref UnitsUsed);
             }
             while (!string.IsNullOrEmpty(currentCashUnit));
 

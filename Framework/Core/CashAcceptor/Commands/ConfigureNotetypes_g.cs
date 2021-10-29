@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * ConfigureNotetypes_g.cs uses automatically generated parts.
+ * ConfigureNoteTypes_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,12 +14,12 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.CashAcceptor.Commands
 {
-    //Original name = ConfigureNotetypes
+    //Original name = ConfigureNoteTypes
     [DataContract]
-    [Command(Name = "CashAcceptor.ConfigureNotetypes")]
-    public sealed class ConfigureNotetypesCommand : Command<ConfigureNotetypesCommand.PayloadData>
+    [Command(Name = "CashAcceptor.ConfigureNoteTypes")]
+    public sealed class ConfigureNoteTypesCommand : Command<ConfigureNoteTypesCommand.PayloadData>
     {
-        public ConfigureNotetypesCommand(int RequestId, ConfigureNotetypesCommand.PayloadData Payload)
+        public ConfigureNoteTypesCommand(int RequestId, ConfigureNoteTypesCommand.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 
@@ -27,17 +27,18 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<int> NoteIDs = null)
+            public PayloadData(int Timeout, Dictionary<string, CashManagement.BankNoteClass> Items = null)
                 : base(Timeout)
             {
-                this.NoteIDs = NoteIDs;
+                this.Items = Items;
             }
 
             /// <summary>
-            /// Array of unsigned integers which contains the note IDs of the banknotes the banknote reader can accept.
+            /// An object listing which cash items the device is capable of handling and whether the cash items
+            /// are enabled for acceptance.
             /// </summary>
-            [DataMember(Name = "noteIDs")]
-            public List<int> NoteIDs { get; init; }
+            [DataMember(Name = "items")]
+            public Dictionary<string, CashManagement.BankNoteClass> Items { get; init; }
 
         }
     }

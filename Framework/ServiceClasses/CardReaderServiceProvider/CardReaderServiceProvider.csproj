@@ -45,7 +45,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Server\Server.csproj" />
     <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
+    <ProjectReference Include="..\LightsServiceProvider\LightsServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
+    <ProjectReference Include="..\StorageServiceProvider\StorageServiceProvider.csproj" />
   </ItemGroup>
 
   <ItemGroup>

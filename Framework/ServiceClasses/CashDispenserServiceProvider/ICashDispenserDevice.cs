@@ -23,7 +23,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// This method performs the dispensing of items to the customer. 
         /// </summary>
         Task<DispenseResult> DispenseAsync(IDispenseEvents events, 
-                                           DispenseRequest dispenseInfo, 
+                                           DispenseRequest request, 
                                            CancellationToken cancellation);
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// The shutter will be closed when the user removes the items or the items are retracted. 
         /// </summary>
         Task<PresentCashResult> PresentCashAsync(IPresentEvents events, 
-                                                 PresentCashRequest presentInfo, 
+                                                 PresentCashRequest request, 
                                                  CancellationToken cancellation);
 
         /// <summary>
@@ -45,31 +45,6 @@ namespace XFS4IoTFramework.CashDispenser
                                        CancellationToken cancellation);
 
         /// <summary>
-        /// This method will retract items which may have been in customer access from an output position or from internal areas within the CashDispenser. 
-        /// Retracted items will be moved to either a retract cash unit, a reject cash unit, item cash units, the transport or the intermediate stacker. 
-        /// After the items are retracted the shutter is closed automatically, even if the ShutterControl capability is set to false.
-        /// </summary>
-        Task<RetractResult> RetractAsync(IRetractEvents events, 
-                                         RetractRequest retractInfo, 
-                                         CancellationToken cancellation);
-
-        /// <summary>
-        /// OpenCloseShutterAsync
-        /// Perform shutter operation to open or close.
-        /// </summary>
-        Task<OpenCloseShutterResult> OpenCloseShutterAsync(OpenCloseShutterRequest shutterInfo,
-                                                           CancellationToken cancellation);
-
-
-        /// <summary>
-        /// ResetDeviceAsync
-        /// Perform a hardware reset which will attempt to return the CashDispenser device to a known good state.
-        /// </summary>
-        Task<ResetDeviceResult> ResetDeviceAsync(IResetEvents events, 
-                                                 ResetDeviceRequest resetDeviceInfo, 
-                                                 CancellationToken cancellation);
-
-        /// <summary>
         /// This method is used to test cash units following replenishment.
         /// All physical cash units which are testable (i.e. that have a status of ok or low and no application lock in the the physical cash unit) are tested.
         /// If the hardware is able to do so tests are continued even if an error occurs while testing one of the cash units. 
@@ -77,7 +52,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// This is the case if all testable cash units could be tested and a dispense was possible from at least one of the cash units.
         /// </summary>
         Task<TestCashUnitsResult> TestCashUnitsAsync(ITestCashUnitsEvents events, 
-                                                     TestCashUnitsRequest testCashUnitsInfo, 
+                                                     TestCashUnitsRequest request, 
                                                      CancellationToken cancellation);
 
         /// <summary>
@@ -86,7 +61,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// All items dispensed from the cash unit are counted and moved to the specified output location.
         /// </summary>
         Task<CountResult> CountAsync(ICountEvents events, 
-                                     CountRequest countInfo,
+                                     CountRequest request,
                                      CancellationToken cancellation);
 
         /// <summary>
@@ -94,7 +69,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// On some hardware it can take a significant amount of time for the dispenser to get ready to dispense media. 
         /// On this type of hardware the this method can be used to improve transaction performance.
         /// </summary>
-        Task<PrepareDispenseResult> PrepareDispenseAsync(PrepareDispenseRequest prepareDispenseInfo,
+        Task<PrepareDispenseResult> PrepareDispenseAsync(PrepareDispenseRequest request,
                                                          CancellationToken cancellation);
 
 
