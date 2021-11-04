@@ -89,6 +89,7 @@ namespace XFS4IoT
         {
             result = default;
             string messageName = null;
+            MessageHeader.TypeEnum? messageType = null;
 
             // Sniff header first and know message type
             if (searchType == typeof(CommandAttribute) ||
@@ -100,17 +101,19 @@ namespace XFS4IoT
                     Contracts.Fail($"Failed to unserialize JSON message in the {nameof(TryUnserialise)} nethod. SearchType:{searchType} Contents: {JSON}");
                 MessageDeserializerHelper<MessagePayloadBase> baseMessage = objMessage as MessageDeserializerHelper<MessagePayloadBase>;
                 messageName = baseMessage.Header.Name;
+                messageType = baseMessage.Header.Type;
             }
             else
             {
                 Contracts.Fail($"MessageDecoder requires to register for command or response to populate message classes.");
             }
 
-            Contracts.IsNotNullOrWhitespace(messageName, $"Failed to unserialize JOSN message. {JSON}");
+            Contracts.IsNotNull(messageType, $"Failed to unserialize JOSN message type. {JSON}");
+            messageName.IsNotNullOrWhitespace($"Failed to unserialize JOSN message. {JSON}");
 
             Type thisMessageType;
 
-            if (messageName == "Common.Acknowledge")
+            if (messageType == MessageHeader.TypeEnum.Acknowledge)
                 thisMessageType = typeof(Acknowledge);
             else if (MessageTypes.ContainsKey(messageName))
                 thisMessageType = MessageTypes[messageName];
@@ -175,6 +178,10 @@ namespace XFS4IoT
             //Create the expected message type using its constructor.
             public object CreateMessage(Type messageType)
             {
+                //Check for Acknowledge and copy command name (RequestId, CommandName, Payload)
+                if (messageType == typeof(Acknowledge) && Header.RequestId.HasValue)
+                    return new Acknowledge((int)Header.RequestId, Header.Name, Payload.IsA<Acknowledge.PayloadData>());
+
                 //Get constructor (RequestId, payloadType)
                 ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T) });
                 if (ci != null && Header.RequestId.HasValue)

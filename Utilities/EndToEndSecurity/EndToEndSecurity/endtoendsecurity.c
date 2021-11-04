@@ -16,7 +16,14 @@ unsigned int ConvertHex(char high, char low);
 // Create a reference to the Nonce handling functions - this is just to create a compile error 
 // if these functions aren't implemented. 
 void* Pull1 = NewNonce; 
-void* Pull2 = ClearNonce; 
+
+// HMAC of the current 'active' token. It's only possible to use one token at a time, 
+// though it's possible to reuse the same token multiple times. If the token doesn't 
+// match this then it will be rejected as invalid.
+// This will be cleared when the nonce is cleared such that a new token will be accepted 
+// after that. 
+bool CurrentTokenSet = false; 
+char CurrentTokenHMAC[32];
 
 char const NonceStr[] = "NONCE";
 char const HMACSHA256Str[] = "HMACSHA256";
@@ -179,7 +186,8 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
         LogV("ValidateToken: HMACSHA256 value is too short. %d bytes, should be 64 => false", (HMACLen-/*HMACSHA256=*/11 -1));
         return false; 
     }
-    static char TokenHMAC[32]; 
+    // Convert token HMAC to binary
+    static char TokenHMAC[32] ="";
     char const* bytePtr = HMACStrOffset + sizeof(HMACSHA256Str);
     for (unsigned int i = 0; i < 32; i++)
     {
@@ -193,6 +201,7 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
         TokenHMAC[i] = ConvertHex(highNibble, lowNibble);
     }
 
+    // Check HMAC matches calculated HMAC
     if (TokenStringLength <= HMACSHA256Len) FatalError("Unexpected token length");
     unsigned int TokenExcludingHMACLen = (unsigned int)(TokenStringLength - HMACSHA256Len -1);
     if (!CheckHMAC(Token, TokenExcludingHMACLen,  TokenHMAC))
@@ -201,8 +210,6 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
         return false;
     }
 
-    // Find other keys
-    // 
     // Check Token Nonce matches current nonce
     if (CompareNonce(nonceValOffset, nonceValEnd - nonceValOffset) == false)
     {
@@ -210,10 +217,41 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
         return false; 
     }
 
-    // Check HMAC matches calculated HMAC
+    if( CurrentTokenSet && memcmp(CurrentTokenHMAC, TokenHMAC, sizeof(CurrentTokenHMAC))!=0 )
+    {
+        LogV("ValidateToken: Token doesn't match the last token used. Only one token can be used per-nonce");
+        return false;
+    }
 
+    // Token is valid and will now become the active token.
+    // It will be possible to reuse the same token again, but different tokens will be 
+    // blocked until the nonce is updated. 
+    // Use the HMAC to uniquely identify the token - two tokens "can't" have the same HMAC
+    CurrentTokenSet = true;
+    memcpy_s(CurrentTokenHMAC, sizeof(CurrentTokenHMAC), TokenHMAC, sizeof(TokenHMAC) );
 
+    // All done. All good. 
     LogV("ValidateToken: => true");
+    return true;
+}
+
+/// <summary>
+/// Invalidate any existing tokens by resetting the nonce. 
+/// </summary>
+/// <returns>true if successful</returns>
+bool InvalidateToken()
+{
+    LogV("InvalidateToken()");
+
+    // Give the hardware a chance to do anything it wants to to invalidate the current nonce. 
+    ClearNonce(); 
+
+    // Record that we don't have a nonce and don't have a 'current' token. This will alow a 
+    // new token to be created (once a new nonce has been created.) 
+    CurrentTokenSet = false;
+    memset(CurrentTokenHMAC, 0, sizeof(CurrentTokenHMAC) );
+
+    LogV("InvalidateToken: => true");
     return true;
 }
 

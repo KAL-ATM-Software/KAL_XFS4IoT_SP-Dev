@@ -27,6 +27,12 @@ namespace XFS4IoTFramework.CashManagement
                                                               $"OpenSafeDoor command received when the SP reported SafeDoor capability {CashManagement.CashManagementCapabilities.SafeDoor}");
             }
 
+            if (CashManagement.CashManagementStatus.SafeDoor == Common.CashManagementStatusClass.SafeDoorEnum.Open)
+            {
+                return new OpenSafeDoorCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
+                                                              $"The safe door is already opened.");
+            }
+
             Logger.Log(Constants.DeviceClass, "CashManagementDev.UnlockSafeAsync()");
 
             var result = await Device.UnlockSafeAsync(cancel);

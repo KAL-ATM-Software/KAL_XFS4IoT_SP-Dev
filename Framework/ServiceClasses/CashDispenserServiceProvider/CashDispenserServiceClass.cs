@@ -50,6 +50,9 @@ namespace XFS4IoTServer
                 { "mix1", new MinNumberMix(logger) },
                 { "mix2", new EqualEmptyingMix(logger) }
             };
+
+            GetStatus();
+            GetCapabilities();
         }
 
         #region Common Service
@@ -59,14 +62,35 @@ namespace XFS4IoTServer
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores CashDispenser interface capabilites internally
         /// </summary>
-        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set { } }
+        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
 
         /// <summary>
         /// Stores CashManagement interface capabilites internally
         /// </summary>
-        public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set { } }
+        public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
+
+        /// <summary>
+        /// CashDispenser Status
+        /// </summary>
+        public CashDispenserStatusClass CashDispenserStatus { get => CommonService.CashDispenserStatus; set => CommonService.CashDispenserStatus = value; }
+
+        /// <summary>
+        /// CashManagement Status
+        /// </summary>
+        public CashManagementStatusClass CashManagementStatus { get => CommonService.CashManagementStatus; set => CommonService.CashManagementStatus = value; }
+
 
         #endregion
 
@@ -183,5 +207,23 @@ namespace XFS4IoTServer
         /// Supported Mix algorithm
         /// </summary>
         private readonly Dictionary<string, Mix> Mixes;
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserStatus");
+            CashDispenserStatus = Device.CashDispenserStatus;
+            Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserStatus=");
+
+            CashDispenserStatus.IsNotNull($"The device class set CashDispenserStatus property to null. The device class must report device status.");
+        }
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserCapabilities");
+            CashDispenserCapabilities = Device.CashDispenserCapabilities;
+            Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserCapabilities=");
+
+            CashDispenserCapabilities.IsNotNull($"The device class set CashDispenserCapabilities property to null. The device class must report device capabilities.");
+        }
     }
 }

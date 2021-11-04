@@ -74,7 +74,7 @@ namespace XFS4IoTServer
                 Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
                 Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
 
-                await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, new(AcknowledgePayload.StatusEnum.Ok)));
+                await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, Command.Header.Name, new(Acknowledge.PayloadData.StatusEnum.Ok)));
 
                 //Get timeout if available
                 CancellationTokenSource cts;

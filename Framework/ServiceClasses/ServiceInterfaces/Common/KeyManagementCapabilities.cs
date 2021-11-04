@@ -135,6 +135,16 @@ namespace XFS4IoTFramework.Common
         }
 
         [Flags]
+        public enum CRKLLoadOptionEnum
+        {
+            NotSupported = 0,
+            NoRandom = 0x0001,        //Import a Key Transport Key without generating and using a random number.
+            NoRandomCRL = 0x0002,       //Import a Key Transport Key with a Certificate Revocation List appended to the input message. A random number is not generated nor used.
+            Random = 0x0004,  //Import a Key Transport Key by generating and using a random number.
+            RandomCRL = 0x0008,  //Import a Key Transport Key with a Certificate Revocation List appended to the input parameter. A random number is generated and used.
+        }
+
+        [Flags]
         public enum SymmetricKeyManagementMethodEnum
         {
             NotSupported = 0,
@@ -160,6 +170,7 @@ namespace XFS4IoTFramework.Common
                                               DESKeyLengthEmum DESKeyLength,
                                               CertificateTypeEnum CertificateTypes,
                                               List<SingerCapabilities> LoadCertificationOptions,
+                                              CRKLLoadOptionEnum CRKLLoadOption,
                                               SymmetricKeyManagementMethodEnum SymmetricKeyManagementMethods,
                                               Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributeOptionClass>>> KeyAttributes,
                                               Dictionary<string, DecryptMethodClass> DecryptAttributes,
@@ -179,6 +190,7 @@ namespace XFS4IoTFramework.Common
             this.DESKeyLength = DESKeyLength;
             this.CertificateTypes = CertificateTypes;
             this.LoadCertificationOptions = LoadCertificationOptions;
+            this.CRKLLoadOption = CRKLLoadOption;
             this.SymmetricKeyManagementMethods = SymmetricKeyManagementMethods;
             this.KeyAttributes = KeyAttributes;
             this.DecryptAttributes = DecryptAttributes;
@@ -289,6 +301,10 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         public List<SingerCapabilities> LoadCertificationOptions { get; init; }
 
+        /// <summary>
+        /// Supported options to load the Key Transport Key using the Certificate Remote Key Loading protocol.
+        /// </summary>
+        public CRKLLoadOptionEnum CRKLLoadOption { get; init; }
 
         /// <summary>
         /// Specifies the Symmentric Key Management modes.

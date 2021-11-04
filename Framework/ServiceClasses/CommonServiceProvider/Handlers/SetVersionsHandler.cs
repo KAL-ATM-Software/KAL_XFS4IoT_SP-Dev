@@ -18,6 +18,7 @@ namespace XFS4IoTFramework.Common
 {
     public partial class SetVersionsHandler
     {
+
         private Task<SetVersionsCompletion.PayloadData> HandleSetVersions(ISetVersionsEvents events, SetVersionsCommand setVersions, CancellationToken cancel)
         {
             // The version information to be transparent to the device class and handle version within the framework. TODO

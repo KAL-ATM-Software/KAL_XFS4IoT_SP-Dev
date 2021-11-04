@@ -40,7 +40,7 @@ namespace XFS4IoTServer
                  device,
                  logger)
         {
-            CommonService = new CommonServiceClass(this, logger);
+            CommonService = new CommonServiceClass(this, logger, ServiceName);
             StorageService = new StorageServiceClass(this, CommonService, logger, persistentData, StorageTypeEnum.Card);
             CardReader = new CardReaderServiceClass(this, CommonService, StorageService, logger);
         }
@@ -111,14 +111,25 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores CardReader interface capabilites internally
         /// </summary>
         public CardReaderCapabilitiesClass CardReaderCapabilities { get => CommonService.CardReaderCapabilities; set => CommonService.CardReaderCapabilities = value; }
 
         /// <summary>
-        /// Card storage information device supports 
+        /// CardReader Status
         /// </summary>
-        public Dictionary<string, CardUnitStorage> CardStorages { get => StorageService.CardUnits; set => StorageService.CardUnits = value; }
+        public CardReaderStatusClass CardReaderStatus { get => CommonService.CardReaderStatus; set => CommonService.CardReaderStatus = value; }
+
 
         #endregion
     }

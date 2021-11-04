@@ -31,7 +31,8 @@ namespace XFS4IoTFramework.Common
                                            WriteMethodsEnum WriteMode,
                                            ChipPowerOptionsEnum ChipPower,
                                            MemoryChipProtocolsEnum MemoryChipProtocols,
-                                           PositionsEnum Positions)
+                                           PositionsEnum Positions,
+                                           bool CardTakenSensor)
         {
             this.Type = Type;
             this.ReadTracks = ReadTracks;
@@ -46,6 +47,7 @@ namespace XFS4IoTFramework.Common
             this.ChipPower = ChipPower;
             this.MemoryChipProtocols = MemoryChipProtocols;
             this.Positions = Positions;
+            this.CardTakenSensor = CardTakenSensor;
         }
 
         public enum DeviceTypeEnum
@@ -246,5 +248,11 @@ namespace XFS4IoTFramework.Common
         /// Specifies the target position that is supported for the eject operation, as a combination of the following:
         /// </summary>
         public PositionsEnum Positions { get; init; }
+
+        /// <summary>
+        /// Specifies whether or not the card reader has the ability to detect when a card is taken from the exit slot
+        /// by a user.If true, a CardReader.MediaTakenEvent will be sent when the card is removed.
+        /// </summary>
+        public bool CardTakenSensor { get; init; }
     }
 }

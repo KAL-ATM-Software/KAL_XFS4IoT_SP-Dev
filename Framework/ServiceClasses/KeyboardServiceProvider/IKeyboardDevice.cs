@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of keyboard. 
 namespace XFS4IoTFramework.Keyboard
@@ -111,5 +112,14 @@ namespace XFS4IoTFramework.Keyboard
         Task<DefineLayoutResult> DefineLayout(Dictionary<EntryModeEnum, List<FrameClass>> request,
                                               CancellationToken cancellation);
 
+        /// <summary>
+        /// Keyboard Status
+        /// </summary>
+        KeyboardStatusClass KeyboardStatus { get; set; }
+
+        /// <summary>
+        /// Keyboard Capabilities
+        /// </summary>
+        KeyboardCapabilitiesClass KeyboardCapabilities { get; set; }
     }
 }

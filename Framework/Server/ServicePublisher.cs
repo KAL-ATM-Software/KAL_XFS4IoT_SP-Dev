@@ -71,7 +71,6 @@ namespace XFS4IoTServer
                                             CommandDispatcher: this,
                                             Logger);
 
-                    _Services.Add(this);
                     return;
                 }
                 catch (System.Net.HttpListenerException)
@@ -88,7 +87,6 @@ namespace XFS4IoTServer
         {
             var thisTask = Task.WhenAll( EndPoint.RunAsync(), base.RunAsync() );
             var otherTasks = from service in _Services
-                             where service != this
                              select service.RunAsync();
 
             var allTasks = Enumerable.Append(otherTasks, thisTask);

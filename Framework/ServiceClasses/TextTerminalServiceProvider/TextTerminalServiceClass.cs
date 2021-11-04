@@ -24,6 +24,9 @@ namespace XFS4IoTServer
         {
             CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(TextTerminalServiceClass));
             this.CommonService = CommonService.IsA<ICommonService>($"Invalid common interface specified in the " + nameof(TextTerminalServiceClass));
+
+            GetStatus();
+            GetCapabilities();
         }
 
         /// <summary>
@@ -32,9 +35,24 @@ namespace XFS4IoTServer
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores TexTerminal interface capabilites internally
         /// </summary>
-        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set { } }
+        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
+
+        /// <summary>
+        /// Stores TexTerminal interface status internally
+        /// </summary>
+        public TextTerminalStatusClass TextTerminalStatus { get => CommonService.TextTerminalStatus; set => CommonService.TextTerminalStatus = value; }
 
         /// <summary>
         /// True when the SP process gets started and return false once the first GetKeyDetail command is handled.
@@ -63,6 +81,24 @@ namespace XFS4IoTServer
                 // Store the Keys and CommandKeys
                 SupportedKeys = new(result.Keys, result.CommandKeys ?? new());
             }
+        }
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalStatus");
+            TextTerminalStatus = Device.TextTerminalStatus;
+            Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalStatus=");
+
+            TextTerminalStatus.IsNotNull($"The device class set TextTerminalStatus property to null. The device class must report device status.");
+        }
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalCapabilities");
+            TextTerminalCapabilities = Device.TextTerminalCapabilities;
+            Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalCapabilities=");
+
+            TextTerminalCapabilities.IsNotNull($"The device class set TextTerminalCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

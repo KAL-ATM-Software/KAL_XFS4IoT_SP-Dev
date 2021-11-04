@@ -8,11 +8,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoT.Crypto.Events;
 using XFS4IoT.Common.Events;
 using XFS4IoT.KeyManagement.Events;
 using XFS4IoTFramework.KeyManagement;
@@ -38,7 +35,7 @@ namespace XFS4IoTServer
                  device,
                  logger)
         {
-            CommonService = new CommonServiceClass(this, logger);
+            CommonService = new CommonServiceClass(this, logger, ServiceName);
             KeyManagementService = new KeyManagementServiceClass(this, CommonService, logger, persistentData);
             CryptoService = new CryptoServiceClass(this, KeyManagementService, CommonService, logger);
         }
@@ -72,6 +69,16 @@ namespace XFS4IoTServer
         #endregion
 
         #region Common Service
+        /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
         /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>

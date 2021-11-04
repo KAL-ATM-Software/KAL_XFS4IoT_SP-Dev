@@ -4,11 +4,11 @@
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
-
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT.TextTerminal.Completions;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of textterminal. 
 namespace XFS4IoTFramework.TextTerminal
@@ -88,5 +88,15 @@ namespace XFS4IoTFramework.TextTerminal
         /// If set to true the Framework will make space for the text by calling ScrollAsync.
         /// </summary>
         bool ScrollingSupported { get; }
+
+        /// <summary>
+        /// TextTerminal Status
+        /// </summary>
+        TextTerminalStatusClass TextTerminalStatus { get; set; }
+
+        /// <summary>
+        /// TextTerminal Capabilities
+        /// </summary>
+        TextTerminalCapabilitiesClass TextTerminalCapabilities { get; set; }
     }
 }

@@ -23,7 +23,6 @@ namespace XFS4IoT
         /// <summary>
         /// Unique request identifier supplied by the client used to correlate the command with responses, events and
         /// completions.For Unsolicited Events the field will be empty.
-        /// example: "b34800d0-9dd2-4d50-89ea-92d1b13df54b"
         /// </summary>
         [DataMember(IsRequired = true, Name = "requestId")]
         public int? RequestId { get; private set; }
@@ -35,7 +34,7 @@ namespace XFS4IoT
         public enum TypeEnum
         {
             Command,
-            Acknowledgement,
+            Acknowledge,
             Event,
             Completion,
             Unsolicited,

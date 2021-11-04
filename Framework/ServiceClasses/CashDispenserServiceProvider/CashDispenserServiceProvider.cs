@@ -40,7 +40,7 @@ namespace XFS4IoTServer
                  device,
                  logger)
         {
-            CommonService = new CommonServiceClass(this, logger);
+            CommonService = new CommonServiceClass(this, logger, ServiceName);
             StorageService = new StorageServiceClass(this, CommonService, logger, persistentData, StorageTypeEnum.Cash);
             CashManagementService = new CashManagementServiceClass(this, CommonService, StorageService, logger);
             CashDispenserService = new CashDispenserServiceClass(this, CashManagementService, CommonService, logger, persistentData);
@@ -80,6 +80,16 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores CashDispenser interface capabilites internally
         /// </summary>
         public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
@@ -88,6 +98,16 @@ namespace XFS4IoTServer
         /// Stores CashManagement interface capabilites internally
         /// </summary>
         public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
+
+        /// <summary>
+        /// CashDispenser Status
+        /// </summary>
+        public CashDispenserStatusClass CashDispenserStatus { get => CommonService.CashDispenserStatus; set => CommonService.CashDispenserStatus = value; }
+
+        /// <summary>
+        /// CashManagement Status
+        /// </summary>
+        public CashManagementStatusClass CashManagementStatus { get => CommonService.CashManagementStatus; set => CommonService.CashManagementStatus = value; }
 
         #endregion
 

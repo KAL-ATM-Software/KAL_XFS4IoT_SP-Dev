@@ -67,6 +67,9 @@ namespace XFS4IoTServer
                     SupportedFunctionKeysWithShift.Add(entryType.Key, shiftKeys);
                 }
             }
+
+            GetStatus();
+            GetCapabilities();
         }
 
         #region Common Service
@@ -76,9 +79,24 @@ namespace XFS4IoTServer
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
-        public KeyboardCapabilitiesClass KeyboardCapabilitiesCapabilities { get => CommonService.KeyboardCapabilities; set { } }
+        public KeyboardCapabilitiesClass KeyboardCapabilities { get => CommonService.KeyboardCapabilities; set => CommonService.KeyboardCapabilities = value; }
+
+        /// <summary>
+        /// Stores KeyManagement status internally
+        /// </summary>
+        public KeyboardStatusClass KeyboardStatus { get => CommonService.KeyboardStatus; set => CommonService.KeyboardStatus = value; }
 
         #endregion
 
@@ -109,5 +127,23 @@ namespace XFS4IoTServer
         /// Keyboard layout device supported
         /// </summary>
         public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get; set; }
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardStatus");
+            KeyboardStatus = Device.KeyboardStatus;
+            Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardStatus=");
+
+            KeyboardStatus.IsNotNull($"The device class set KeyboardStatus property to null. The device class must report device status.");
+        }
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardCapabilities");
+            KeyboardCapabilities = Device.KeyboardCapabilities;
+            Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardCapabilities=");
+
+            KeyboardCapabilities.IsNotNull($"The device class set KeyboardCapabilities property to null. The device class must report device capabilities.");
+        }
     }
 }

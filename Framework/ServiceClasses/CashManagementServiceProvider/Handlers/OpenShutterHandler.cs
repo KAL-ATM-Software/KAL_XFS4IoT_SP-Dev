@@ -63,6 +63,35 @@ namespace XFS4IoTFramework.CashManagement
                                                              OpenShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
             }
 
+            if (CashManagement.CashDispenserCapabilities is not null &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InBottom &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InCenter &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InDefault &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InFront &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InLeft &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InRear &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InRight &&
+                position != CashManagementCapabilitiesClass.PositionEnum.InTop)
+            {
+                CashDispenserCapabilitiesClass.OutputPositionEnum outPos = position switch
+                {
+                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
+                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
+                    CashManagementCapabilitiesClass.PositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
+                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
+                    CashManagementCapabilitiesClass.PositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
+                    CashManagementCapabilitiesClass.PositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
+                    CashManagementCapabilitiesClass.PositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
+                };
+
+                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashDispenserStatusClass.PositionStatusClass.ShutterEnum.Open)
+                {
+                    return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
+                                                                 $"The shutter is already opened.");
+                }
+            }
+
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.OpenCloseShutterAsync()");
 
             var result = await Device.OpenCloseShutterAsync(new OpenCloseShutterRequest(OpenCloseShutterRequest.ActionEnum.Open, position), cancel);

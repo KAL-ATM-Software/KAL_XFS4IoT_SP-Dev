@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of pinpad. 
 namespace XFS4IoTFramework.PinPad
@@ -72,5 +73,11 @@ namespace XFS4IoTFramework.PinPad
         /// </summary>
         Task<PresentIDCResult> PresentIDC(PresentIDCRequest request, 
                                         CancellationToken cancellation);
+
+
+        /// <summary>
+        /// PinPad Capabilities
+        /// </summary>
+        PinPadCapabilitiesClass PinPadCapabilities { get; set; }
     }
 }

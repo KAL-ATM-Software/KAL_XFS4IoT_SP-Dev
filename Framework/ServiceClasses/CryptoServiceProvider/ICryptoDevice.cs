@@ -9,6 +9,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of crypto. 
 namespace XFS4IoTFramework.Crypto
@@ -72,5 +73,10 @@ namespace XFS4IoTFramework.Crypto
         Task<GenerateDigestResult> GenerateDigest(GenerateDigestRequest request, 
                                                   CancellationToken cancellation);
 
+
+        /// <summary>
+        /// Crypto Capabilities
+        /// </summary>
+        CryptoCapabilitiesClass CryptoCapabilities { get; set; }
     }
 }

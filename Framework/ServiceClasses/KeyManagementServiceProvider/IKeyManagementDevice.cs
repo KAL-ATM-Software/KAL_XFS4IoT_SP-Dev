@@ -9,8 +9,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
-using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of keymanagement. 
 namespace XFS4IoTFramework.KeyManagement
@@ -167,5 +166,15 @@ namespace XFS4IoTFramework.KeyManagement
         Task<StartAuthenticateResult> StartAuthenticate(StartAuthenticateRequest request, 
                                                         CancellationToken cancellation);
 
+
+        /// <summary>
+        /// KeyManagement Status
+        /// </summary>
+        KeyManagementStatusClass KeyManagementStatus { get; set; }
+
+        /// <summary>
+        /// KeyManagement Capabilities
+        /// </summary>
+        KeyManagementCapabilitiesClass KeyManagementCapabilities { get; set; }
     }
 }

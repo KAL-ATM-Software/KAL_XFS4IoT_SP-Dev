@@ -24,10 +24,10 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         public enum TypeEnum
         {
-            tellerBill,
-            selfServiceBill,
-            tellerCoin,
-            selfServiceCoin,
+            TellerBill,
+            SelfServiceBill,
+            TellerCoin,
+            SelfServiceCoin,
         }
 
         /// <summary>
@@ -64,12 +64,14 @@ namespace XFS4IoTFramework.Common
         /// intermediate stacker that have not been in customer access.Items remaining on the stacker from a previous dispense
         /// may first need to be rejected explicitly by the application if they are not to be presented.
         /// </summary>
+        [Flags]
         public enum MoveItemEnum
         {
-            FromCashUnit,
-            ToCashUnit,
-            ToTransport,
-            ToStacker,
+            NotSupported = 0,
+            FromCashUnit = 0x0001,
+            ToCashUnit = 0x0002,
+            ToTransport = 0x0004,
+            ToStacker = 0x0008,
         }
 
         public CashDispenserCapabilitiesClass(TypeEnum Type,
@@ -81,7 +83,7 @@ namespace XFS4IoTFramework.Common
                                               bool IntermediateStacker,
                                               bool ItemsTakenSensor,
                                               OutputPositionEnum OutputPositions,
-                                              Dictionary<MoveItemEnum, bool> MoveItems)
+                                              MoveItemEnum MoveItems)
         {
             this.Type = Type;
             this.MaxDispenseItems = MaxDispenseItems;
@@ -146,6 +148,6 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Move items from stacker or transport to the unit
         /// </summary>
-        public Dictionary<MoveItemEnum, bool> MoveItems { get; init; }
+        public MoveItemEnum MoveItems { get; init; }
     }
 }

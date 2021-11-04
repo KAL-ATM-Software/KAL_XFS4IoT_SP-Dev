@@ -79,5 +79,15 @@ namespace XFS4IoTFramework.CashDispenser
         /// Throw NotImplementedException if the device specific class doesn't support to manage present status.
         /// </summary>
        PresentStatus GetPresentStatus(CashDispenserCapabilitiesClass.OutputPositionEnum position);
+
+        /// <summary>
+        /// CashDispenser Status
+        /// </summary>
+        CashDispenserStatusClass CashDispenserStatus { get; set; }
+
+        /// <summary>
+        /// CashDispenser Capabilities
+        /// </summary>
+        CashDispenserCapabilitiesClass CashDispenserCapabilities { get; set; }
     }
 }

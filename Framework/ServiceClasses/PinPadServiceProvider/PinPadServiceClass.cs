@@ -38,12 +38,25 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()-> " + deviceId is null ? "No information" : "Received information");
 
             PCIPTSDeviceId = deviceId;
+
+            GetCapabilities();
         }
 
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
+
+        /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
 
         #region Key Management Service
         /// <summary>
@@ -59,7 +72,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores PinPad interface capabilites internally
         /// </summary>
-        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set { } }
+        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set => CommonService.PinPadCapabilities = value; }
 
         /// <summary>
         /// Find keyslot available or being used
@@ -118,5 +131,14 @@ namespace XFS4IoTServer
         /// List of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device
         /// </summary>
         public PCIPTSDeviceIdClass PCIPTSDeviceId { get; set; }
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "PinPadDev.PinPadCapabilities");
+            PinPadCapabilities = Device.PinPadCapabilities;
+            Logger.Log(Constants.DeviceClass, "PinPadDev.PinPadCapabilities=");
+
+            PinPadCapabilities.IsNotNull($"The device class set PinPadCapabilities property to null. The device class must report device capabilities.");
+        }
     }
 }

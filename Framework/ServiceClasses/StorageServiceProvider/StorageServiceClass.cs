@@ -63,6 +63,17 @@ namespace XFS4IoTServer
         /// </summary>
         private ICommonService CommonService { get; init; }
 
+        /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+
         #region Card
         private void ConstructCardStorage()
         {

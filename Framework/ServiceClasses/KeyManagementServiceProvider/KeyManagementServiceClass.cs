@@ -30,6 +30,9 @@ namespace XFS4IoTServer
 
             CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(KeyManagementServiceClass));
             this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(KeyManagementServiceClass));
+
+            GetStatus();
+            GetCapabilities();
         }
 
         /// <summary>
@@ -38,10 +41,24 @@ namespace XFS4IoTServer
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set { } }
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
 
+        /// <summary>
+        /// Stores KeyManagement interface status internally
+        /// </summary>
+        public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
 
         /// <summary>
         /// Persistent data storage access
@@ -194,5 +211,23 @@ namespace XFS4IoTServer
         /// The device specified class reset current status if the stored key components are claered except successful Initialization command.
         /// </summary>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => SecureKeyEntryStatus;
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementStatus");
+            KeyManagementStatus = Device.KeyManagementStatus;
+            Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementStatus=");
+
+            KeyManagementStatus.IsNotNull($"The device class set KeyManagementStatus property to null. The device class must report device status.");
+        }
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementCapabilities");
+            KeyManagementCapabilities = Device.KeyManagementCapabilities;
+            Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementCapabilities=");
+
+            KeyManagementCapabilities.IsNotNull($"The device class set KeyManagementCapabilities property to null. The device class must report device capabilities.");
+        }
     }
 }

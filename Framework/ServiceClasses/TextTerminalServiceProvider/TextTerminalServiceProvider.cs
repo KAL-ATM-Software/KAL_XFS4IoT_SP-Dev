@@ -36,7 +36,7 @@ namespace TextTerminalProvider
                  device,
                  logger)
         {
-            Common = new CommonServiceClass(this, logger);
+            Common = new CommonServiceClass(this, logger, ServiceName);
             TextTerminal = new TextTerminalServiceClass(this, Common, logger);
         }
 
@@ -60,6 +60,20 @@ namespace TextTerminalProvider
         public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => Common.NonceClearedEvent(Payload);
 
         public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => Common.ExchangeStateChangedEvent(Payload);
+        #endregion
+
+
+        #region Common Service
+        /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => Common.CommonCapabilities; set => Common.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => Common.CommonStatus; set => Common.CommonStatus = value; }
+
         #endregion
 
         public ITextTerminalService.KeyDetails SupportedKeys { get => TextTerminal.SupportedKeys; set => TextTerminal.SupportedKeys = value; }

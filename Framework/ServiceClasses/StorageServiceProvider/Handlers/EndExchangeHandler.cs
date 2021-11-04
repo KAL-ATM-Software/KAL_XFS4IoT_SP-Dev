@@ -29,9 +29,26 @@ namespace XFS4IoTFramework.Storage
                 }
             }
 
+            if (Storage.CommonStatus.Exchange == Common.CommonStatusClass.ExchangeEnum.NotSupported)
+            {
+                return new EndExchangeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
+                                                             $"The exchange command is not supported.");
+            }
+
+            if (Storage.CommonStatus.Exchange == Common.CommonStatusClass.ExchangeEnum.Inactive)
+            {
+                return new EndExchangeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
+                                                             $"The exchange state is already in active.");
+            }
+
             Logger.Log(Constants.DeviceClass, "StorageDev.EndExchangeAsync()");
             var result = await Device.EndExchangeAsync(cancel);
             Logger.Log(Constants.DeviceClass, $"StorageDev.EndExchangeAsync() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            {
+                Storage.CommonStatus.Exchange = Common.CommonStatusClass.ExchangeEnum.Inactive;
+            }
 
             return new EndExchangeCompletion.PayloadData(result.CompletionCode,
                                                          result.ErrorDescription,

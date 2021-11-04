@@ -42,22 +42,4 @@ namespace XFS4IoT.Events
             }
         }
     }
-
-    [DataContract]
-    public abstract class Acknowledgement<T> : Message<T> where T : MessagePayloadBase
-    {
-        /// <summary>
-        /// Acknowledgement event message class to be derived from.
-        /// </summary>
-        /// <param name="RequestId">Request id of the command this even relates to. May be null in some error cases.</param>
-        /// <param name="Payload">Data for the event</param>
-        public Acknowledgement(int RequestId, T Payload = null) :
-            base(RequestId, MessageHeader.TypeEnum.Acknowledgement, Payload)
-        {
-            if (Payload is null)
-            {
-                this.Payload = new MessagePayloadBase().IsA<T>($"Invalid Payload in {nameof(Acknowledgement<T>)} constructor. Payload can not be null.");
-            }
-        }
-    }
 }

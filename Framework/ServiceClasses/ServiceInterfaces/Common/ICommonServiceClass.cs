@@ -15,6 +15,11 @@ namespace XFS4IoTFramework.Common
     public interface ICommonService
     {
         /// <summary>
+        /// Stores Common Capabilities
+        /// </summary>
+        CommonCapabilitiesClass CommonCapabilities { get; set; }
+
+        /// <summary>
         /// Stores CashDispenser interface capabilites for an internal use
         /// </summary>
         CashDispenserCapabilitiesClass CashDispenserCapabilities { get => null; set { } }
@@ -60,6 +65,46 @@ namespace XFS4IoTFramework.Common
         /// Stores Lights interface capabilities for an internal use
         /// </summary>
         LightsCapabilitiesClass LightsCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Commons status
+        /// </summary>
+        CommonStatusClass CommonStatus { get; set; }
+
+        /// <summary>
+        /// Storas CardReader status
+        /// </summary>
+        CardReaderStatusClass CardReaderStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas CashDispenser status
+        /// </summary>
+        CashDispenserStatusClass CashDispenserStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas CashManagement status
+        /// </summary>
+        CashManagementStatusClass CashManagementStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas KeyManagement status
+        /// </summary>
+        KeyManagementStatusClass KeyManagementStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas Keyboard status
+        /// </summary>
+        KeyboardStatusClass KeyboardStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas CardReader status
+        /// </summary>
+        TextTerminalStatusClass TextTerminalStatus { get => null; set { } }
+
+        /// <summary>
+        /// Storas light status
+        /// </summary>
+        LightsStatusClass LightsStatus { get => null; set { } }
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

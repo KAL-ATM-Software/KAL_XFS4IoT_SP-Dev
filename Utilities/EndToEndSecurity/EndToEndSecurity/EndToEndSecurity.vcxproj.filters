@@ -49,8 +49,5 @@
     <None Include="package\KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd.props">
       <Filter>nuget</Filter>
     </None>
-    <None Include="package.nuspec">
-      <Filter>nuget</Filter>
-    </None>
   </ItemGroup>
 </Project>

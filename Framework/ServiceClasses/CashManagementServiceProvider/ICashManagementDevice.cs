@@ -5,13 +5,12 @@
  * 
 \***********************************************************************************************/
 
-
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 
-// KAL specific implementation of cashmanagement. 
 namespace XFS4IoTFramework.CashManagement
 {
     public interface ICashManagementDevice : IDevice
@@ -70,5 +69,15 @@ namespace XFS4IoTFramework.CashManagement
         /// <returns></returns>
         Task<SetTellerInfoResult> SetTellerInfoAsync(SetTellerInfoRequest request,
                                                      CancellationToken cancellation);
+
+        /// <summary>
+        /// CashManagement Status
+        /// </summary>
+        CashManagementStatusClass CashManagementStatus { get; set; }
+
+        /// <summary>
+        /// CashManagement Capabilities
+        /// </summary>
+        CashManagementCapabilitiesClass CashManagementCapabilities { get; set; }
     }
 }

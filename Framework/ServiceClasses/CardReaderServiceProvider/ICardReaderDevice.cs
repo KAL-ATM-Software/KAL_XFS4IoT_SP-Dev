@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
+using XFS4IoTFramework.Common;
 
 // KAL specific implementation of cardreader. 
 namespace XFS4IoTFramework.CardReader
@@ -173,10 +173,15 @@ namespace XFS4IoTFramework.CardReader
         /// </summary>
         QueryEMVApplicationResult EMVContactlessQueryApplications();
 
-        /// <summary>
-        /// Specify the current status of media
-        /// </summary>
-        MediaStatusEnum MediaStatus { get; }
 
+        /// <summary>
+        /// CardReader Status
+        /// </summary>
+        CardReaderStatusClass CardReaderStatus { get; set; }
+
+        /// <summary>
+        /// CardReader Capabilities
+        /// </summary>
+        CardReaderCapabilitiesClass CardReaderCapabilities { get; set; }
     }
 }

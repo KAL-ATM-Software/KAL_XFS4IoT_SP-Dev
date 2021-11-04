@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoT.Storage.Events;
+using XFS4IoTFramework.CardReader;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
 
@@ -30,6 +30,9 @@ namespace XFS4IoTServer
 
             StorageService.IsNotNull($"Unexpected parameter set in the " + nameof(CardReaderServiceClass));
             this.StorageService = StorageService.IsA<IStorageService>($"Invalid interface parameter specified for storage service. " + nameof(CardReaderServiceClass));
+
+            GetCapabilities();
+            GetStatus();
         }
 
         #region Common Service
@@ -39,9 +42,25 @@ namespace XFS4IoTServer
         public ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+        /// <summary>
         /// Stores CardReader interface capabilites internally
         /// </summary>
-        public CardReaderCapabilitiesClass CardReaderCapabilities { get => CommonService.CardReaderCapabilities; set { } }
+        public CardReaderCapabilitiesClass CardReaderCapabilities { get => CommonService.CardReaderCapabilities; set => CommonService.CardReaderCapabilities = value; }
+
+        /// <summary>
+        /// CardReader Status
+        /// </summary>
+        public CardReaderStatusClass CardReaderStatus { get => CommonService.CardReaderStatus; set => CommonService.CardReaderStatus = value; }
+
         #endregion
 
         #region Storage Service
@@ -81,5 +100,23 @@ namespace XFS4IoTServer
         /// </summary>
         public Dictionary<string, CashUnitStorage> CashUnits { get => throw new NotSupportedException($"CardReader service provider doesn't support cash storage."); set { } }
         #endregion
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "CardReaderDev.CardReaderCapabilities");
+            CardReaderCapabilities = Device.CardReaderCapabilities;
+            Logger.Log(Constants.DeviceClass, "CardReaderDev.CardReaderCapabilities=");
+
+            CardReaderCapabilities.IsNotNull($"The device class set CardReaderCapabilities property to null. The device class must report device capabilities.");
+        }
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "CardReaderDev.CardReaderStatus");
+            CardReaderStatus = Device.CardReaderStatus;
+            Logger.Log(Constants.DeviceClass, "CardReaderDev.CardReaderStatus=");
+
+            CardReaderStatus.IsNotNull($"The device class set CardReaderStatus property to null. The device class must report device status.");
+        }
     }
 }

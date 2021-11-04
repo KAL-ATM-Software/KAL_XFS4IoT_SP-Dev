@@ -12,10 +12,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoT.Crypto.Events;
-using XFS4IoT.Common.Events;
+
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
+using XFS4IoTFramework.Crypto;
 
 namespace XFS4IoTServer
 {
@@ -32,6 +32,8 @@ namespace XFS4IoTServer
 
             CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(CryptoServiceClass));
             this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(CryptoServiceClass));
+
+            GetCapabilities();
         }
 
         #region Common Service
@@ -41,14 +43,25 @@ namespace XFS4IoTServer
         private ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
+
+        /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set { } }
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
 
         /// <summary>
         /// Stores Crypto interface capabilites internally
         /// </summary>
-        public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set { } }
+        public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set => CommonService.CryptoCapabilities = value; }
 
         #endregion
 
@@ -110,5 +123,14 @@ namespace XFS4IoTServer
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => throw new NotSupportedException("The GetSecureKeyEntryStatus method is not supported in the Crypto interface.");
 
         #endregion
+
+        private void GetCapabilities()
+        {
+            Logger.Log(Constants.DeviceClass, "CryptoDev.CryptoCapabilities");
+            CryptoCapabilities = Device.CryptoCapabilities;
+            Logger.Log(Constants.DeviceClass, "CryptoDev.CryptoCapabilities=");
+
+            CryptoCapabilities.IsNotNull($"The device class set CryptoCapabilities property to null. The device class must report device capabilities.");
+        }
     }
 }

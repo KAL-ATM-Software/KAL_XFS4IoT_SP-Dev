@@ -16,18 +16,6 @@ namespace XFS4IoTFramework.Common
 {
     public interface ICommonDevice : IDevice
     {
-
-        /// <summary>
-        /// This command is used to obtain the overall status of any XFS4IoT service. The status includes common status information and can include zero or more interface specific status objects, depending on the implemented interfaces of the service. It may also return vendor-specific status information.
-        /// </summary>
-        StatusCompletion.PayloadData Status();
-
-        /// <summary>
-        /// This command retrieves the capabilities of the device. It may also return vendor specific capability information.
-        /// </summary>
-        CapabilitiesCompletion.PayloadData Capabilities();
-
-
         /// <summary>
         /// This command activates or deactivates the power-saving mode.If the Service Provider receives another execute command while in power saving mode, the Service Provider automatically exits the power saving mode, and executes the requested command. If the Service Provider receives an information command while in power saving mode, the Service Provider will not exit the power saving mode.
         /// </summary>
@@ -53,7 +41,21 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         Task<GetCommandNonceCompletion.PayloadData> GetCommandNonce();
 
+        /// <summary>
+        /// Clear generated nonce 
+        /// </summary>
         Task<ClearCommandNonceCompletion.PayloadData> ClearCommandNonce();
+
+
+        /// <summary>
+        /// CardReader Status
+        /// </summary>
+        CommonStatusClass CommonStatus { get; set; }
+
+        /// <summary>
+        /// Common Capabilities
+        /// </summary>
+        CommonCapabilitiesClass CommonCapabilities { get; set; }
 
     }
 }

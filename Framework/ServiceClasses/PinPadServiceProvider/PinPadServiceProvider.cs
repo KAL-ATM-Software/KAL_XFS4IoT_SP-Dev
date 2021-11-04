@@ -38,7 +38,7 @@ namespace XFS4IoTServer
                  device,
                  logger)
         {
-            CommonService = new CommonServiceClass(this, logger);
+            CommonService = new CommonServiceClass(this, logger, ServiceName);
             KeyManagementService = new KeyManagementServiceClass(this, CommonService, logger, persistentData);
             CryptoService = new CryptoServiceClass(this, KeyManagementService, CommonService, logger);
             KeyboardService = new KeyboardServiceClass(this, KeyManagementService, CommonService, logger);
@@ -76,6 +76,19 @@ namespace XFS4IoTServer
         public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => CommonService.NonceClearedEvent(Payload);
 
         public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => CommonService.ExchangeStateChangedEvent(Payload);
+        #endregion
+
+        #region Common Service
+        /// <summary>
+        /// Stores Common interface capabilites internally
+        /// </summary>
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        /// <summary>
+        /// Common Status
+        /// </summary>
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
+
         #endregion
 
         #region Key Management Service

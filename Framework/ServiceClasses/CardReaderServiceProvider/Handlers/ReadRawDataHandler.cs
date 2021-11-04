@@ -133,8 +133,8 @@ namespace XFS4IoTFramework.CardReader
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader
             // Latch Dip can latch a card and possibly report Lached or Present status, but if the application asks to read tracks, card won't be latched and the media status is not reliable 
             if (CardReader.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Motor &&
-                (Device.MediaStatus != MediaStatusEnum.Present &&
-                 Device.MediaStatus != MediaStatusEnum.NotSupported))
+                (CardReader.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.Present  &&
+                 CardReader.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.NotPresent))
             {
                 return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              "Accept operation is completed successfully, but the media is not present.", 
