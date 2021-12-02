@@ -45,10 +45,10 @@ namespace XFS4IoTServer
             CashManagementService.IsNotNull($"Unexpected parameter set for cash management service in the " + nameof(CashDispenserServiceClass));
             this.CashManagementService = CashManagementService.IsA<ICashManagementService>($"Invalid interface parameter specified for cash management service. " + nameof(CashDispenserServiceClass));
 
-            this.Mixes = new()
+            Mixes = new()
             {
-                { "mixMinNumber", new MinNumberMix(logger) },
-                { "mixEqualEmpty", new EqualEmptyingMix(logger) }
+                { "mix1", new MinNumberMix(logger) },
+                { "mix2", new EqualEmptyingMix(logger) }
             };
 
             GetStatus();
