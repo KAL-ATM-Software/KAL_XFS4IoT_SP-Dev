@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Common
     [CommandHandler(XFSConstants.ServiceClass.Common, typeof(StatusCommand))]
     public partial class StatusHandler : ICommandHandler
     {
-        public StatusHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public StatusHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(StatusHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Common
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(StatusHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICommonDevice>();
 
-            Common = Provider.IsA<ICommonServiceClass>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(StatusHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(StatusHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var statusCmd = command.IsA<StatusCommand>($"Invalid parameter in the Status Handle method. {nameof(StatusCommand)}");
             statusCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Common
             await Connection.SendMessageAsync(new StatusCompletion(statusCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var statuscommand = command.IsA<StatusCommand>();
             statuscommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Common
 
             var response = new StatusCompletion(statuscommand.Header.RequestId.Value, new StatusCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICommonDevice Device { get => Provider.Device.IsA<ICommonDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICommonServiceClass Common { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

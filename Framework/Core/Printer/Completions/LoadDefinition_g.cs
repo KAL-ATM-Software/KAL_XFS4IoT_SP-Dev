@@ -34,7 +34,6 @@ namespace XFS4IoT.Printer.Completions
 
             public enum ErrorCodeEnum
             {
-                FileNotFound,
                 FormInvalid,
                 MediaInvalid,
                 DefinitionExists
@@ -43,7 +42,6 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```fileNotFound``` - The specified file cannot be found.
             /// * ```formInvalid``` - The form is invalid.
             /// * ```mediaInvalid``` - The media definition is invalid.
             /// * ```definitionExists``` - The specified form or media definition already exists and the *overwrite*

@@ -128,7 +128,7 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashManagementDev.CalibrateCashUnitAsync()");
 
-            var result = await Device.CalibrateCashUnitAsync(events, new CalibrateCashUnitRequest(calibrateCashUnit.Payload.Unit,
+            var result = await Device.CalibrateCashUnitAsync(new ItemErrorCommandEvents(events), new CalibrateCashUnitRequest(calibrateCashUnit.Payload.Unit,
                                                                                                   calibrateCashUnit.Payload.NumOfBills is null ? 0 : (int)calibrateCashUnit.Payload.NumOfBills,
                                                                                                   itemPosition), cancel);
 

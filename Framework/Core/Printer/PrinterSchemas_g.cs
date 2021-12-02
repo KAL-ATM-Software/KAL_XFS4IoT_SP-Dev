@@ -36,7 +36,7 @@ namespace XFS4IoT.Printer
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(MediaEnum? Media = null, Dictionary<string, PaperSupplyEnum> Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, List<RetractBinsClass> RetractBins = null, int? MediaOnStacker = null, Dictionary<string, PaperTypeEnum> PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
+        public StatusClass(MediaEnum? Media = null, PaperClass Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, List<RetractBinsClass> RetractBins = null, int? MediaOnStacker = null, PaperTypeClass PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
         {
             this.Media = Media;
             this.Paper = Paper;
@@ -78,6 +78,67 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "media")]
         public MediaEnum? Media { get; init; }
 
+        [DataContract]
+        public sealed class PaperClass
+        {
+            public PaperClass(PaperSupplyEnum? Upper = null, PaperSupplyEnum? Lower = null, PaperSupplyEnum? External = null, PaperSupplyEnum? Aux = null, PaperSupplyEnum? Aux2 = null, PaperSupplyEnum? Park = null)
+            {
+                this.Upper = Upper;
+                this.Lower = Lower;
+                this.External = External;
+                this.Aux = Aux;
+                this.Aux2 = Aux2;
+                this.Park = Park;
+            }
+
+            /// <summary>
+            /// The state of the upper paper supply.
+            /// </summary>
+            [DataMember(Name = "upper")]
+            public PaperSupplyEnum? Upper { get; init; }
+
+            /// <summary>
+            /// The state of the lower paper supply.
+            /// </summary>
+            [DataMember(Name = "lower")]
+            public PaperSupplyEnum? Lower { get; init; }
+
+            /// <summary>
+            /// The state of the external paper supply.
+            /// </summary>
+            [DataMember(Name = "external")]
+            public PaperSupplyEnum? External { get; init; }
+
+            /// <summary>
+            /// The state of the auxiliary paper supply.
+            /// </summary>
+            [DataMember(Name = "aux")]
+            public PaperSupplyEnum? Aux { get; init; }
+
+            /// <summary>
+            /// The state of the second auxiliary paper supply.
+            /// </summary>
+            [DataMember(Name = "aux2")]
+            public PaperSupplyEnum? Aux2 { get; init; }
+
+            /// <summary>
+            /// The state of the parking station paper supply.
+            /// </summary>
+            [DataMember(Name = "park")]
+            public PaperSupplyEnum? Park { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, PaperSupplyEnum> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<PaperSupplyEnum>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<PaperSupplyEnum>(value);
+            }
+
+        }
+
         /// <summary>
         /// Specifies the state of paper supplies as one of the following values:
         /// 
@@ -89,7 +150,7 @@ namespace XFS4IoT.Printer
         /// * ```jammed``` - The paper supply is jammed.
         /// </summary>
         [DataMember(Name = "paper")]
-        public Dictionary<string, PaperSupplyEnum> Paper { get; init; }
+        public PaperClass Paper { get; init; }
 
         public enum TonerEnum
         {
@@ -207,6 +268,67 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "mediaOnStacker")]
         public int? MediaOnStacker { get; init; }
 
+        [DataContract]
+        public sealed class PaperTypeClass
+        {
+            public PaperTypeClass(PaperTypeEnum? Upper = null, PaperTypeEnum? Lower = null, PaperTypeEnum? External = null, PaperTypeEnum? Aux = null, PaperTypeEnum? Aux2 = null, PaperTypeEnum? Park = null)
+            {
+                this.Upper = Upper;
+                this.Lower = Lower;
+                this.External = External;
+                this.Aux = Aux;
+                this.Aux2 = Aux2;
+                this.Park = Park;
+            }
+
+            /// <summary>
+            /// The upper paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "upper")]
+            public PaperTypeEnum? Upper { get; init; }
+
+            /// <summary>
+            /// The lower paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "lower")]
+            public PaperTypeEnum? Lower { get; init; }
+
+            /// <summary>
+            /// The external paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "external")]
+            public PaperTypeEnum? External { get; init; }
+
+            /// <summary>
+            /// The auxililliary paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "aux")]
+            public PaperTypeEnum? Aux { get; init; }
+
+            /// <summary>
+            /// The second auxililliary paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "aux2")]
+            public PaperTypeEnum? Aux2 { get; init; }
+
+            /// <summary>
+            /// The parking station paper supply paper type.
+            /// </summary>
+            [DataMember(Name = "park")]
+            public PaperTypeEnum? Park { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, PaperTypeEnum> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<PaperTypeEnum>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<PaperTypeEnum>(value);
+            }
+
+        }
+
         /// <summary>
         /// Specifies the type of paper loaded as one of the following:
         /// 
@@ -216,7 +338,7 @@ namespace XFS4IoT.Printer
         /// * ```dual``` - The paper can be printed on both sides.
         /// </summary>
         [DataMember(Name = "paperType")]
-        public Dictionary<string, PaperTypeEnum> PaperType { get; init; }
+        public PaperTypeClass PaperType { get; init; }
 
         public enum BlackMarkModeEnum
         {
@@ -236,6 +358,70 @@ namespace XFS4IoT.Printer
         /// </summary>
         [DataMember(Name = "blackMarkMode")]
         public BlackMarkModeEnum? BlackMarkMode { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class PaperSourcesClass
+    {
+        public PaperSourcesClass(bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
+        {
+            this.Upper = Upper;
+            this.Lower = Lower;
+            this.External = External;
+            this.Aux = Aux;
+            this.Aux2 = Aux2;
+            this.Park = Park;
+        }
+
+        /// <summary>
+        /// The upper paper source.
+        /// </summary>
+        [DataMember(Name = "upper")]
+        public bool? Upper { get; init; }
+
+        /// <summary>
+        /// The lower paper source.
+        /// </summary>
+        [DataMember(Name = "lower")]
+        public bool? Lower { get; init; }
+
+        /// <summary>
+        /// The external paper source.
+        /// </summary>
+        [DataMember(Name = "external")]
+        public bool? External { get; init; }
+
+        /// <summary>
+        /// The auxiliary paper source.
+        /// </summary>
+        [DataMember(Name = "aux")]
+        public bool? Aux { get; init; }
+
+        /// <summary>
+        /// The second auxiliary paper source.
+        /// </summary>
+        [DataMember(Name = "aux2")]
+        public bool? Aux2 { get; init; }
+
+        /// <summary>
+        /// The parking station.
+        /// </summary>
+        [DataMember(Name = "park")]
+        public bool? Park { get; init; }
+
+        [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+        [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Dictionary<string, bool> ExtendedProperties
+        {
+            get => MessageBase.ParseExtendedProperties<bool>(ExtensionData);
+            set => ExtensionData = MessageBase.CreateExtensionData<bool>(value);
+        }
 
     }
 
@@ -684,60 +870,8 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "multiPage")]
         public bool? MultiPage { get; init; }
 
-        [DataContract]
-        public sealed class PaperSourcesClass
-        {
-            public PaperSourcesClass(bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
-            {
-                this.Upper = Upper;
-                this.Lower = Lower;
-                this.External = External;
-                this.Aux = Aux;
-                this.Aux2 = Aux2;
-                this.Park = Park;
-            }
-
-            /// <summary>
-            /// Indicates an upper paper source is available; devices with only one paper supply must indicate upper as
-            /// being available.
-            /// </summary>
-            [DataMember(Name = "upper")]
-            public bool? Upper { get; init; }
-
-            /// <summary>
-            /// Indicates a lower paper source is available.
-            /// </summary>
-            [DataMember(Name = "lower")]
-            public bool? Lower { get; init; }
-
-            /// <summary>
-            /// Indicates an external paper source (such as envelope tray or single sheet feed) is available.
-            /// </summary>
-            [DataMember(Name = "external")]
-            public bool? External { get; init; }
-
-            /// <summary>
-            /// An auxiliary paper source is available.
-            /// </summary>
-            [DataMember(Name = "aux")]
-            public bool? Aux { get; init; }
-
-            /// <summary>
-            /// A second auxiliary paper source is available.
-            /// </summary>
-            [DataMember(Name = "aux2")]
-            public bool? Aux2 { get; init; }
-
-            /// <summary>
-            /// A parking station is available.
-            /// </summary>
-            [DataMember(Name = "park")]
-            public bool? Park { get; init; }
-
-        }
-
         /// <summary>
-        /// Specifies the Paper sources available for this printer as a combination of the following flags
+        /// Specifies the paper sources available for this printer as a combination of the following flags.
         /// </summary>
         [DataMember(Name = "paperSources")]
         public PaperSourcesClass PaperSources { get; init; }
@@ -963,8 +1097,8 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// Specifies the name of the default logical operating system printer that is associated with this Service
         /// Provider. Applications should use this printer name to generate native printer files to be printed through
-        /// the [Printer.PrintRawFile](#printer.printrawfile) command. This value will be omitted if the Service
-        /// Provider does not support the *Printer.PrintRawFile* command.
+        /// the [Printer.PrintNative](#printer.printnative) command. This value will be omitted if the Service
+        /// Provider does not support the *Printer.PrintNative* command.
         /// </summary>
         [DataMember(Name = "osPrinter")]
         public string OsPrinter { get; init; }

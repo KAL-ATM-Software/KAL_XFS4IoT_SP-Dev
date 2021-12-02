@@ -37,7 +37,8 @@ namespace XFS4IoT.Common
         InvalidTokenNonce,
         InvalidTokenHMAC,
         InvalidTokenFormat,
-        InvalidTokenKeyNoValue
+        InvalidTokenKeyNoValue,
+        NotEnoughSpace
     }
 
 
@@ -60,13 +61,14 @@ namespace XFS4IoT.Common
     [DataContract]
     public sealed class StatusPropertiesClass
     {
-        public StatusPropertiesClass(DeviceEnum? Device = null, PositionStatusEnum? DevicePosition = null, int? PowerSaveRecoveryTime = null, AntiFraudModuleEnum? AntiFraudModule = null, ExchangeEnum? Exchange = null)
+        public StatusPropertiesClass(DeviceEnum? Device = null, PositionStatusEnum? DevicePosition = null, int? PowerSaveRecoveryTime = null, AntiFraudModuleEnum? AntiFraudModule = null, ExchangeEnum? Exchange = null, EndToEndSecurityEnum? EndToEndSecurity = null)
         {
             this.Device = Device;
             this.DevicePosition = DevicePosition;
             this.PowerSaveRecoveryTime = PowerSaveRecoveryTime;
             this.AntiFraudModule = AntiFraudModule;
             this.Exchange = Exchange;
+            this.EndToEndSecurity = EndToEndSecurity;
         }
 
         public enum DeviceEnum
@@ -140,19 +142,45 @@ namespace XFS4IoT.Common
         [DataMember(Name = "exchange")]
         public ExchangeEnum? Exchange { get; init; }
 
+        public enum EndToEndSecurityEnum
+        {
+            NotSupported,
+            NotEnforced,
+            NotConfigured,
+            Enforced
+        }
+
+        /// <summary>
+        /// Specifies the status of end to end security support on this device. 
+        /// 
+        /// Also see [Common.CapabilityProperties.endToEndSecurity](#common.capabilities.completion.properties.common.endtoendsecurity). 
+        /// 
+        /// * ```notSupported``` - E2E security is not supported by this hardware. Any command can be called without a 
+        /// token. 
+        /// * ```notEnforced``` - E2E security is supported by this hardware but it is not currently enforced, for 
+        /// example because required keys aren't loaded. It's currently possible to perform E2E commands without a 
+        /// token. 
+        /// * ```notConfigured``` - E2E security is supported but not correctly configured, for example because required
+        /// keys aren't loaded. Any attempt to perform any command protected by E2E security will fail.
+        /// * ```enforced``` - E2E security is supported and correctly configured. E2E security will be enforced. 
+        /// Calling E2E protected commands will only be possible if a valid token is given.
+        /// <example>enforced</example>
+        /// </summary>
+        [DataMember(Name = "endToEndSecurity")]
+        public EndToEndSecurityEnum? EndToEndSecurity { get; init; }
+
     }
 
 
     [DataContract]
     public sealed class InterfaceClass
     {
-        public InterfaceClass(NameEnum? Name = null, Dictionary<string, CommandsClass> Commands = null, Dictionary<string, EventsClass> Events = null, int? MaximumRequests = null, List<string> AuthenticationRequired = null)
+        public InterfaceClass(NameEnum? Name = null, Dictionary<string, CommandsClass> Commands = null, Dictionary<string, EventsClass> Events = null, int? MaximumRequests = null)
         {
             this.Name = Name;
             this.Commands = Commands;
             this.Events = Events;
             this.MaximumRequests = MaximumRequests;
-            this.AuthenticationRequired = AuthenticationRequired;
         }
 
         public enum NameEnum
@@ -260,12 +288,6 @@ namespace XFS4IoT.Common
         /// </summary>
         [DataMember(Name = "maximumRequests")]
         public int? MaximumRequests { get; init; }
-
-        /// <summary>
-        /// Array of commands, which need to be authenticated using the security interface.
-        /// </summary>
-        [DataMember(Name = "authenticationRequired")]
-        public List<string> AuthenticationRequired { get; init; }
 
     }
 
@@ -380,28 +402,107 @@ namespace XFS4IoT.Common
 
 
     [DataContract]
-    public sealed class VendorModeInfoClass
+    public sealed class EndToEndSecurityClass
     {
-        public VendorModeInfoClass(bool? AllowOpenSessions = null, List<string> AllowedExecuteCommands = null)
+        public EndToEndSecurityClass(RequiredEnum? Required = null, bool? HardwareSecurityElement = null, ResponseSecurityEnabledEnum? ResponseSecurityEnabled = null, List<string> Commands = null, int? CommandNonceTimeout = null)
         {
-            this.AllowOpenSessions = AllowOpenSessions;
-            this.AllowedExecuteCommands = AllowedExecuteCommands;
+            this.Required = Required;
+            this.HardwareSecurityElement = HardwareSecurityElement;
+            this.ResponseSecurityEnabled = ResponseSecurityEnabled;
+            this.Commands = Commands;
+            this.CommandNonceTimeout = CommandNonceTimeout;
+        }
+
+        public enum RequiredEnum
+        {
+            IfConfigured,
+            Always
         }
 
         /// <summary>
-        /// If TRUE, sessions with this Service may remain open during Vendor Dependent Mode for the purposes of monitoring events, 
-        /// sending Info commands, or sending Execute commands listed in lpdwAllowedExecuteCommands. If FALSE, all sessions must be closed before entering Vendor Dependent Mode.
+        /// Specifies the level of support for end to end security
+        /// 
+        /// * ```ifConfigured``` - The device is capable of supporting E2E security, but it will not be 
+        ///   enforced if not configured, for example because the required keys are not loaded.
+        /// * ```always``` - E2E security is supported and enforced at all times. Failure to supply the required 
+        ///   security details will lead to errors. If E2E security is not correctly configured, for example because 
+        ///   the required keys are not loaded, all secured commands will fail with an error.
+        /// 
+        /// If end to end security is not supported this value will not be present. 
+        /// <example>always</example>
         /// </summary>
-        [DataMember(Name = "allowOpenSessions")]
-        public bool? AllowOpenSessions { get; init; }
+        [DataMember(Name = "required")]
+        public RequiredEnum? Required { get; init; }
 
         /// <summary>
-        /// Array of commands which can be accepted while in Vendor Dependent Mode.
-        /// Any Execute command which is not included in this list will be rejected with a SequenceError as control of the
-        /// device has been handed to the Vendor Dependent Application. If omitted, no Execute commands can be accepted.
+        /// Specifies if this device has a Hardware Security Element (HSE) which validates the security token. 
+        /// If this property is false it means that validation is performed in software.
+        /// <example>true</example>
         /// </summary>
-        [DataMember(Name = "allowedExecuteCommands")]
-        public List<string> AllowedExecuteCommands { get; init; }
+        [DataMember(Name = "hardwareSecurityElement")]
+        public bool? HardwareSecurityElement { get; init; }
+
+        public enum ResponseSecurityEnabledEnum
+        {
+            NotSupported,
+            IfConfigured,
+            Always
+        }
+
+        /// <summary>
+        /// Specifies if this device will return a security token as part of the response data to commands that 
+        /// support end to end security, for example, to validate the result of a dispense operation.
+        /// 
+        /// * ```notSupported``` -  The device is incapable of returning a response token.
+        /// * ```ifConfigured``` - The device is capable of supporting E2E security if correctly configured. If E2E 
+        ///   security has not been correctly configured, for example because the required keys are not loaded, 
+        ///   commands will complete without a security token.
+        /// * ```always``` - A security token will be included with command responses. If E2E security is not correctly 
+        ///   configured, for example because the required keys are not loaded, the command will complete with an error.
+        /// <example>always</example>
+        /// </summary>
+        [DataMember(Name = "responseSecurityEnabled")]
+        public ResponseSecurityEnabledEnum? ResponseSecurityEnabled { get; init; }
+
+        /// <summary>
+        /// Array of commands which require an E2E token to authorize. These commands will fail if called without 
+        /// a valid token. 
+        /// 
+        /// The commands that can be listed here depends on the XFS4IoT standard, but it's possible that the standard
+        /// will change over time, so for maximum compatibility an application should check this property before calling
+        /// a command. 
+        /// 
+        /// Note that this only includes commands that _require_ a token. Commands that take a nonce and _return_ a 
+        /// token will not be listed here. Those commands can be called without a nonce and will continue to operate 
+        /// in a compatible way. 
+        /// <example>["CashDispenser.Dispense", "AnotherService.SecureCommand"]</example>
+        /// </summary>
+        [DataMember(Name = "commands")]
+        [DataTypes(Pattern = @"^[A-Za-z][A-Za-z0-9]*\.[A-Za-z][A-Za-z0-9]*$")]
+        public List<string> Commands { get; init; }
+
+        /// <summary>
+        /// If this device supports end to end security and can return a command nonce with the command 
+        /// [Common.GetCommandNonce](#common.getcommandnonce), and the device automatically clears the command 
+        /// nonce after a fixed length of time, this property will report the number of seconds between returning
+        /// the command nonce and clearing it. 
+        /// 
+        /// The value is given in seconds but it should not be assumed that the timeout will be accurate to the nearest 
+        /// second. The nonce may also become invalid before the timeout, for example because of a power failure. 
+        /// 
+        /// The device may impose a timeout to reduce the chance of an attacker re-using a nonce value or a token. This 
+        /// timeout will be long enough to support normal operations such as dispense and present including creating 
+        /// the required token on the host and passing it to the device. For example, a command nonce might time out
+        /// after one hour (that is, 3600 seconds).
+        /// 
+        /// In all other cases, commandNonceTimeout will have a value of zero. Any command nonce will never 
+        /// timeout. It may still become invalid, for example because of a power failure or when explicitly cleared 
+        /// using the ClearCommandNonce command. 
+        /// <example>3600</example>
+        /// </summary>
+        [DataMember(Name = "commandNonceTimeout")]
+        [DataTypes(Minimum = 0)]
+        public int? CommandNonceTimeout { get; init; }
 
     }
 
@@ -409,18 +510,14 @@ namespace XFS4IoT.Common
     [DataContract]
     public sealed class CapabilityPropertiesClass
     {
-        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, VendorModeInfoClass VendorModeIformation = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, List<string> SynchronizableCommands = null, bool? EndToEndSecurity = null, bool? HardwareSecurityElement = null, bool? ResponseSecurityEnabled = null, int? CommandNonceTimeout = null)
+        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, List<string> SynchronizableCommands = null, EndToEndSecurityClass EndToEndSecurity = null)
         {
             this.ServiceVersion = ServiceVersion;
             this.DeviceInformation = DeviceInformation;
-            this.VendorModeIformation = VendorModeIformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
             this.SynchronizableCommands = SynchronizableCommands;
             this.EndToEndSecurity = EndToEndSecurity;
-            this.HardwareSecurityElement = HardwareSecurityElement;
-            this.ResponseSecurityEnabled = ResponseSecurityEnabled;
-            this.CommandNonceTimeout = CommandNonceTimeout;
         }
 
         /// <summary>
@@ -435,13 +532,6 @@ namespace XFS4IoT.Common
         /// </summary>
         [DataMember(Name = "deviceInformation")]
         public List<DeviceInformationClass> DeviceInformation { get; init; }
-
-        /// <summary>
-        /// Specifies additional information about the Service while in Vendor Dependent Mode. If omitted, all sessions
-        /// must be closed before entry to VDM.
-        /// </summary>
-        [DataMember(Name = "vendorModeIformation")]
-        public VendorModeInfoClass VendorModeIformation { get; init; }
 
         /// <summary>
         /// Specifies whether power saving control is available.
@@ -462,54 +552,15 @@ namespace XFS4IoT.Common
         public List<string> SynchronizableCommands { get; init; }
 
         /// <summary>
-        /// True if this hardware supports End to End security, and requires security tokens as part of the 
-        /// data to secured operations. If true then operations may fail if a valid security token is not 
-        /// supplied. 
+        /// If this value is present then end to end security is supported. The sub-properties detail exactly 
+        /// how it is supported and what level of support is enabled. Also see
+        /// [common.StatusProperties.endToEndSecurity](#common.status.completion.properties.common.endtoendsecurity) for the current 
+        /// status of end to end security, such as if it is being enforced, or if configuration is required. 
         /// 
-        /// If false then all operations can be performed without a security token.
-        /// <example>true</example>
+        /// If this value is not present then end to end security is not supported by this service. 
         /// </summary>
         [DataMember(Name = "endToEndSecurity")]
-        public bool? EndToEndSecurity { get; init; }
-
-        /// <summary>
-        /// True if this hardware supports End to End security and has a Hardware Security Element which
-        /// validates the security token. Otherwise false.
-        /// If this valid is false it may mean that validation is performed in software, or that the
-        /// device doesn't support End to End security.
-        /// <example>true</example>
-        /// </summary>
-        [DataMember(Name = "hardwareSecurityElement")]
-        public bool? HardwareSecurityElement { get; init; }
-
-        /// <summary>
-        /// True if this device will return a security token as part of the response data to commands that
-        /// support End to End security, for example, to validate the result of a dispense operation.
-        /// <example>true</example>
-        /// </summary>
-        [DataMember(Name = "responseSecurityEnabled")]
-        public bool? ResponseSecurityEnabled { get; init; }
-
-        /// <summary>
-        /// If this device supports end to end security and can return a command nonce with the command 
-        /// [Common.GetCommandNonce](#common.getcommandnonce), and the hardware automatically clears the command 
-        /// nonce after a fixed length of time, this property will report the number of seconds between returning
-        /// the command nonce and clearing it. 
-        /// 
-        /// The value is given in seconds but it should not be assumed that the timeout will be accurate to the nearest 
-        /// second. The nonce may also become invalid before the timeout, for example because of a power failure. 
-        /// 
-        /// Hardware may impose a timeout to reduce the chance of an attacker re-using a nonce value or a token. This 
-        /// timeout will be long enough to support normal operations such as dispense and present including creating 
-        /// the required token on the host and passing it to the hardware. For example, a command nonce might time out
-        /// after one hour (that is, 3600 seconds).
-        /// 
-        /// If commandNonceTimeout is not reported, or it has a value of zero, then the command nonce will never 
-        /// timeout. It may still become invalid, for example because of a power failure or when explicitly cleared.
-        /// <example>3600</example>
-        /// </summary>
-        [DataMember(Name = "commandNonceTimeout")]
-        public int? CommandNonceTimeout { get; init; }
+        public EndToEndSecurityClass EndToEndSecurity { get; init; }
 
     }
 

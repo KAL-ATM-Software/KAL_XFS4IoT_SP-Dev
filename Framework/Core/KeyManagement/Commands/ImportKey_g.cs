@@ -244,8 +244,8 @@ namespace XFS4IoT.KeyManagement.Commands
             /// * ```cbc``` - The CBC encryption method. 
             /// * ```cfb``` - The CFB encryption method. 
             /// * ```ofb``` - The OFB encryption method. 
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A. 
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-keymanagement-49)]). 
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-keymanagement-50)]).
             /// 
             /// If the decryptKey algorithm is ['R'](#common.capabilities.completion.properties.keymanagement.decryptattributes.a), then this property can be one of the following values: 
             /// 
@@ -322,7 +322,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// If the specified [verifyKey](#keymanagement.importkey.properties.verifykey) is key usage any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.k1)), then this property can be omitted.
                 /// 
                 /// * ```sha1``` - The SHA 1 digest algorithm. 
-                /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+                /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-keymanagement-40)] and FIPS 180-2 [[Ref. 41](#ref-keymanagement-41)].
                 /// </summary>
                 [DataMember(Name = "hashAlgorithm")]
                 public HashAlgorithmEnum? HashAlgorithm { get; init; }

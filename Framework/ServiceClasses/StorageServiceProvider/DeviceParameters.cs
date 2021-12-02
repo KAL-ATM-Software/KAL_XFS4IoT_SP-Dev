@@ -17,6 +17,17 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Storage
 {
+    public enum FailureEnum
+    {
+        Empty,
+        Error,
+        Full,
+        Locked,
+        Invalid,
+        Config,
+        NotConfigured
+    }
+
     public sealed class StartExchangeResult : DeviceResult
     {
         public StartExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
@@ -122,7 +133,7 @@ namespace XFS4IoTFramework.Storage
                                     int? LowThreshold,
                                     bool? AppLockIn,
                                     bool? AppLockOut,
-                                    Dictionary<string, BanknoteItem> BanknoteItems,
+                                    List<string> BanknoteItems,
                                     string Name,
                                     int? MaxRetracts)
         {
@@ -186,7 +197,7 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// Lists the cash items which are configured to this unit.
         /// </summary>
-        public Dictionary<string, BanknoteItem> BanknoteItems { get; set; }
+        public List<string> BanknoteItems { get; set; }
 
         /// <summary>
         /// Application configured name of the unit.

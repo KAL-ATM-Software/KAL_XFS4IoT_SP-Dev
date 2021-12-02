@@ -13,10 +13,10 @@ namespace XFS4IoTServer
     public interface ICommandHandler
     {
         // Must have a constructor of the form: 
-        // ICommandHandler( ICommandDispatcher, ILogger )
+        // ICommandHandler( IConnection, ICommandDispatcher, ILogger )
 
-        Task Handle(IConnection Connection, object Command, CancellationToken Cancel);
+        Task Handle(object Command, CancellationToken Cancel);
 
-        Task HandleError(IConnection Connection, object Command, Exception CommandException);
+        Task HandleError(object Command, Exception CommandException);
     }
 }

@@ -44,10 +44,10 @@ namespace XFS4IoT.CardReader.Events
             /// * ```&lt;storage unit identifier&gt;``` - The card was moved to the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *retain*.
-            /// <example>retn1</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "to")]
-            [DataTypes(Pattern = @"^exit$|^transport$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^unit[0-9A-Za-z]+$")]
             public string To { get; init; }
 
             /// <summary>
@@ -62,7 +62,7 @@ namespace XFS4IoT.CardReader.Events
             /// <example>transport</example>
             /// </summary>
             [DataMember(Name = "from")]
-            [DataTypes(Pattern = @"^unknown$|^exit$|^transport$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^unknown$|^exit$|^transport$|^unit[0-9A-Za-z]+$")]
             public string From { get; init; }
 
         }

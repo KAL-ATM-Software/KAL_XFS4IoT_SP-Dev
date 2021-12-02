@@ -102,10 +102,7 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            IAcceptCardEvents newEvents = new AcceptCardEvents((ReadRawDataEvents)events);
-            newEvents.IsNotNull($"Invalid event reference. {nameof(AcceptCardEvents)}");
-
-            var acceptCardResult = await Device.AcceptCardAsync(newEvents,
+            var acceptCardResult = await Device.AcceptCardAsync(new AcceptCardCommandEvents(events),
                                                                 new AcceptCardRequest(dataTypes, fluxInactive, readRawData.Payload.Timeout),
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
@@ -143,7 +140,7 @@ namespace XFS4IoTFramework.CardReader
 
             // Card is accepted now and in the device, try to read card data now
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ReadCardAsync()");
-            var readCardDataResult = await Device.ReadCardAsync(events,
+            var readCardDataResult = await Device.ReadCardAsync(new ReadCardCommandEvents(events),
                                                                 new ReadCardRequest(dataTypes),
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ReadCardAsync() -> {readCardDataResult.CompletionCode}, {readCardDataResult.ErrorCode}");

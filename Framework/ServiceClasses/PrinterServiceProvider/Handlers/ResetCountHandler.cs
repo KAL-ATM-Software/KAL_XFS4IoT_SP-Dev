@@ -3,34 +3,43 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT Printer interface.
- * ResetCountHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
 
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Printer
 {
     public partial class ResetCountHandler
     {
-
-        private Task<ResetCountCompletion.PayloadData> HandleResetCount(IResetCountEvents events, ResetCountCommand resetCount, CancellationToken cancel)
+        private async Task<ResetCountCompletion.PayloadData> HandleResetCount(IResetCountEvents events, ResetCountCommand resetCount, CancellationToken cancel)
         {
-            //ToDo: Implement HandleResetCount for Printer.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleResetCount for Printer is not implemented in ResetCountHandler.cs");
-            #else
-                #error HandleResetCount for Printer is not implemented in ResetCountHandler.cs
-            #endif
-        }
+            if (Printer.PrinterCapabilities.RetractBins == 0)
+            {
+                return new ResetCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                            $"Invalid bin number specifid.");
+            }
 
+            if (resetCount.Payload.BinNumber is not null &&
+                resetCount.Payload.BinNumber > Printer.PrinterCapabilities.RetractBins)
+            {
+                return new ResetCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                            $"Specified an invalid retract bin number.{resetCount.Payload.BinNumber}");
+            }
+
+            Logger.Log(Constants.DeviceClass, "PrinterDev.ResetBinCounterAsync()");
+            var result = await Device.ResetBinCounterAsync(resetCount.Payload.BinNumber is null ? -1 : (int)resetCount.Payload.BinNumber, cancel);
+            Logger.Log(Constants.DeviceClass, $"PrinterDev.ResetBinCounterAsync() -> {result.CompletionCode}");
+
+            return new ResetCountCompletion.PayloadData(result.CompletionCode,
+                                                        result.ErrorDescription);
+        }
     }
 }

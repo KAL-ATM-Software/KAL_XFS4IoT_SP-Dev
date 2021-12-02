@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, FrontImageTypeEnum? FrontImageType = null, BackImageTypeEnum? BackImageType = null, FrontImageColorFormatEnum? FrontImageColorFormat = null, BackImageColorFormatEnum? BackImageColorFormat = null, CodelineFormatEnum? CodelineFormat = null, ImageSourceClass ImageSource = null, string FrontImageFile = null, string BackImageFile = null)
+            public PayloadData(int Timeout, FrontImageTypeEnum? FrontImageType = null, BackImageTypeEnum? BackImageType = null, FrontImageColorFormatEnum? FrontImageColorFormat = null, BackImageColorFormatEnum? BackImageColorFormat = null, CodelineFormatEnum? CodelineFormat = null, ImageSourceClass ImageSource = null)
                 : base(Timeout)
             {
                 this.FrontImageType = FrontImageType;
@@ -36,8 +36,6 @@ namespace XFS4IoT.Printer.Commands
                 this.BackImageColorFormat = BackImageColorFormat;
                 this.CodelineFormat = CodelineFormat;
                 this.ImageSource = ImageSource;
-                this.FrontImageFile = FrontImageFile;
-                this.BackImageFile = BackImageFile;
             }
 
             public enum FrontImageTypeEnum
@@ -173,28 +171,6 @@ namespace XFS4IoT.Printer.Commands
             /// </summary>
             [DataMember(Name = "imageSource")]
             public ImageSourceClass ImageSource { get; init; }
-
-            /// <summary>
-            /// File specifying where to store the front image, e.g. "C:\\\\Temp\\\\FrontImage.bmp". If omitted or empty,
-            /// the front image data will be returned in the output parameter. This value must not contain UNICODE
-            /// characters.
-            /// 
-            /// To reduce the size of data sent between the client and service, it is recommended to use of this
-            /// parameter.
-            /// </summary>
-            [DataMember(Name = "frontImageFile")]
-            public string FrontImageFile { get; init; }
-
-            /// <summary>
-            /// File specifying where to store the back image, e.g. "C:\\\\Temp\\\\BackImage.bmp". If omitted or empty,
-            /// the back image data will be returned in the output parameter. This value must not contain UNICODE
-            /// characters.
-            /// 
-            /// To reduce the size of data sent between the client and service, it is recommended to use of this
-            /// parameter.
-            /// </summary>
-            [DataMember(Name = "backImageFile")]
-            public string BackImageFile { get; init; }
 
         }
     }

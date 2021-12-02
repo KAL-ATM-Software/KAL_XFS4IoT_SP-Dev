@@ -6,6 +6,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
 using XFS4IoT.Lights.Completions;
@@ -15,20 +16,22 @@ namespace XFS4IoTFramework.Lights
 {
     public sealed class SetLightRequest
     {
-        public SetLightRequest(string UnitName, LightsStatusClass.LightOperation Operation)
+        public SetLightRequest(Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsStatusClass.LightOperation> StdLights,
+                               Dictionary<string, LightsStatusClass.LightOperation> CustomLights)
         {
-            this.Operation = Operation;
+            this.StdLights = StdLights;
+            this.CustomLights = CustomLights;
         }
 
         /// <summary>
-        /// Name of device unit to change light state
+        /// standard name of device unit to change lights
         /// </summary>
-        public string UnitName;
+        public Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsStatusClass.LightOperation> StdLights;
 
         /// <summary>
-        /// Parameters to change light
+        /// Vendor specific device unit name to change lights
         /// </summary>
-        public LightsStatusClass.LightOperation Operation;
+        public Dictionary<string, LightsStatusClass.LightOperation> CustomLights;
     }
 
     public sealed class SetLightResult : DeviceResult

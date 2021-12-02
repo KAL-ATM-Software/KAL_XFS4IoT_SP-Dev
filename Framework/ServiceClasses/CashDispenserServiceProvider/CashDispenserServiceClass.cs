@@ -47,8 +47,8 @@ namespace XFS4IoTServer
 
             this.Mixes = new()
             {
-                { "mix1", new MinNumberMix(logger) },
-                { "mix2", new EqualEmptyingMix(logger) }
+                { "mixMinNumber", new MinNumberMix(logger) },
+                { "mixEqualEmpty", new EqualEmptyingMix(logger) }
             };
 
             GetStatus();
@@ -152,7 +152,7 @@ namespace XFS4IoTServer
                     tableMixes = new();
 
                 if (tableMixes.ContainsKey(mixId))
-                    tableMixes.Remove(mixId);// Replace exiting one
+                    tableMixes.Remove(mixId);// Existing table is tested by the SetMixTable command handler and report error to the application. but here could be an internal usage and can be udated.
                 tableMixes.Add(mixId, mix);
 
                 if (!PersistentData.Store(ServiceProvider.Name + typeof(Mix).FullName, tableMixes))

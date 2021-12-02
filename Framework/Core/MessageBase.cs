@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using System.Text.Encodings.Web;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic;
 
 namespace XFS4IoT
 {
@@ -90,6 +91,25 @@ namespace XFS4IoT
                 return s;
         
             return null;
+        }
+
+
+        internal static Dictionary<string, T> ParseExtendedProperties<T>(Dictionary<string, JsonElement> elements)
+        {
+            return new(elements.Select(c => 
+                        new KeyValuePair<string, T>(c.Key, JsonSerializer.Deserialize<T>(c.Value.GetRawText(), JsonOptions))));
+        }
+
+        internal static Dictionary<string, JsonElement> CreateExtensionData<T>(Dictionary<string, T> elements)
+        {
+            return new(elements.Select(c => 
+                        new KeyValuePair<string, JsonElement>(c.Key, ElementFromObject(c.Value))));
+        }
+
+        internal static JsonElement ElementFromObject<T>(T obj)
+        {
+            var utf8JsonBytes = JsonSerializer.SerializeToUtf8Bytes(obj, JsonOptions);
+            return JsonSerializer.Deserialize<JsonElement>(utf8JsonBytes);
         }
     }
 }

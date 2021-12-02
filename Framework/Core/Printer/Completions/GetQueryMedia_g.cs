@@ -215,67 +215,9 @@ namespace XFS4IoT.Printer.Completions
             [DataMember(Name = "foldType")]
             public FoldTypeEnum? FoldType { get; init; }
 
-            [DataContract]
-            public sealed class PaperSourcesClass
-            {
-                public PaperSourcesClass(bool? Any = null, bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
-                {
-                    this.Any = Any;
-                    this.Upper = Upper;
-                    this.Lower = Lower;
-                    this.External = External;
-                    this.Aux = Aux;
-                    this.Aux2 = Aux2;
-                    this.Park = Park;
-                }
-
-                /// <summary>
-                /// Use any paper source.
-                /// </summary>
-                [DataMember(Name = "any")]
-                public bool? Any { get; init; }
-
-                /// <summary>
-                /// Use the only or the upper paper source.
-                /// </summary>
-                [DataMember(Name = "upper")]
-                public bool? Upper { get; init; }
-
-                /// <summary>
-                /// Use the lower paper source.
-                /// </summary>
-                [DataMember(Name = "lower")]
-                public bool? Lower { get; init; }
-
-                /// <summary>
-                /// Use the external paper source.
-                /// </summary>
-                [DataMember(Name = "external")]
-                public bool? External { get; init; }
-
-                /// <summary>
-                /// Use the auxiliary paper source.
-                /// </summary>
-                [DataMember(Name = "aux")]
-                public bool? Aux { get; init; }
-
-                /// <summary>
-                /// Use the second auxiliary paper source.
-                /// </summary>
-                [DataMember(Name = "aux2")]
-                public bool? Aux2 { get; init; }
-
-                /// <summary>
-                /// Use the parking station.
-                /// </summary>
-                [DataMember(Name = "park")]
-                public bool? Park { get; init; }
-
-            }
-
             /// <summary>
-            /// Specifies the Paper sources to use when printing forms using this media as a combination of the
-            /// following flags
+            /// Specifies the paper sources to use when printing forms using this media as a combination of the
+            /// following flags. If omitted, the Paper source is determined by the Service.
             /// </summary>
             [DataMember(Name = "paperSources")]
             public PaperSourcesClass PaperSources { get; init; }

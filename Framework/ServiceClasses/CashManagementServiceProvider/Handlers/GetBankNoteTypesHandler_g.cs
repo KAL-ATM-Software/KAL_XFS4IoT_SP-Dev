@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
     [CommandHandler(XFSConstants.ServiceClass.CashManagement, typeof(GetBankNoteTypesCommand))]
     public partial class GetBankNoteTypesHandler : ICommandHandler
     {
-        public GetBankNoteTypesHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetBankNoteTypesHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetBankNoteTypesHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetBankNoteTypesHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashManagementDevice>();
 
-            CashManagement = Provider.IsA<ICashManagementServiceClass>();
+            CashManagement = Provider.IsA<ICashManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetBankNoteTypesHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetBankNoteTypesHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getBankNoteTypesCmd = command.IsA<GetBankNoteTypesCommand>($"Invalid parameter in the GetBankNoteTypes Handle method. {nameof(GetBankNoteTypesCommand)}");
             getBankNoteTypesCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashManagement
             await Connection.SendMessageAsync(new GetBankNoteTypesCompletion(getBankNoteTypesCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getBankNoteTypescommand = command.IsA<GetBankNoteTypesCommand>();
             getBankNoteTypescommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashManagement
 
             var response = new GetBankNoteTypesCompletion(getBankNoteTypescommand.Header.RequestId.Value, new GetBankNoteTypesCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashManagementServiceClass CashManagement { get; }
+        private ICashManagementService CashManagement { get; }
         private ILogger Logger { get; }
     }
 

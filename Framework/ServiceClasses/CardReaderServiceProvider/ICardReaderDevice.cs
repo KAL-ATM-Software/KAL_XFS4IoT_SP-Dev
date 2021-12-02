@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * ICardReaderDevice.cs uses automatically generated parts. 
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace XFS4IoTFramework.CardReader
         /// If no card has been inserted, and for all other categories of card readers, the card unit waits for the period of time specified in the call for a card to be either inserted or pulled through.
         /// The InsertCardEvent will be generated when there is no card in the cardreader and the device is ready to accept a card.
         /// </summary>
-        Task<AcceptCardResult> AcceptCardAsync(IAcceptCardEvents events,
+        Task<AcceptCardResult> AcceptCardAsync(AcceptCardCommandEvents events,
                                                AcceptCardRequest acceptCardInfo,
                                                CancellationToken cancellation);
 
@@ -44,7 +43,7 @@ namespace XFS4IoTFramework.CardReader
         /// For contactless chip card readers a collision of two or more card signals may happen. 
         /// In this case, if the deviceis not able to pick the strongest signal, errorCardCollision will be returned.
         /// </summary>
-        Task<ReadCardResult> ReadCardAsync(IReadRawDataEvents events,
+        Task<ReadCardResult> ReadCardAsync(ReadCardCommandEvents events,
                                            ReadCardRequest dataToRead,
                                            CancellationToken cancellation);
 
@@ -55,7 +54,7 @@ namespace XFS4IoTFramework.CardReader
         /// This procedure is followed by data verification.
         /// If power fails during a write the outcome of the operation will be vendor specific, there is no guarantee that thewrite will have succeeded.
         /// </summary>
-        Task<WriteCardResult> WriteCardAsync(IWriteRawDataEvents events,
+        Task<WriteCardResult> WriteCardAsync(WriteCardCommandEvents events,
                                              WriteCardRequest dataToWrite,
                                              CancellationToken cancellation);
 
@@ -75,8 +74,7 @@ namespace XFS4IoTFramework.CardReader
         /// Latched dips card readers can logically move cards from the transport position to the exit position by
         /// unlatching the card reader.That is, the card will not physically move but will be accessible to the user.
         /// </summary>
-        Task<MoveCardResult> MoveCardAsync(IMoveEvents events,
-                                           MoveCardRequest mvoeCardInfo, 
+        Task<MoveCardResult> MoveCardAsync(MoveCardRequest mvoeCardInfo, 
                                            CancellationToken cancellation);
 
 
@@ -103,7 +101,7 @@ namespace XFS4IoTFramework.CardReader
         /// If no action is specified the user card will not be moved even if this means that the devicecannot be recovered.
         /// If the device is a permanent chip card unit, this command will power-off the chip.For devices with parking station capability there will be one MediaInsertedEvent for each card found.
         /// </summary>
-        Task<ResetDeviceResult> ResetDeviceAsync(IResetEvents events,
+        Task<ResetDeviceResult> ResetDeviceAsync(ResetCommandEvents events,
                                                  ResetDeviceRequest cardAction,
                                                  CancellationToken cancellation);
 
@@ -117,8 +115,7 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// This command handles the power actions that can be done on the chip.For user chips, this command is only used after the chip has been contacted for the first time using the[CardReader.ReadRawData](#cardreader.readrawdata) command. For contactless user chips, this command may be used todeactivate the contactless card communication.For permanently connected chip cards, this command is the only way to control the chip power.
         /// </summary>
-        Task<ChipPowerResult> ChipPowerAsync(IChipPowerEvents events,
-                                             ChipPowerRequest action,
+        Task<ChipPowerResult> ChipPowerAsync(ChipPowerRequest action,
                                              CancellationToken cancellation);
 
         /// <summary>
@@ -143,7 +140,7 @@ namespace XFS4IoTFramework.CardReader
         /// For intelligent contactless card readers, any in-built audio/visual feedback such as Beep/LEDs, need to becontrolled directly by the reader. 
         /// These indications should be implemented based on the EMVCo and payment system'sspecifications.
         /// </summary>
-        Task<EMVContactlessPerformTransactionResult> EMVContactlessPerformTransactionAsync(IEMVClessPerformTransactionEvents events,
+        Task<EMVContactlessPerformTransactionResult> EMVContactlessPerformTransactionAsync(EMVClessCommandEvents events,
                                                                                            EMVContactlessPerformTransactionRequest transactionData,
                                                                                            CancellationToken cancellation);
 
@@ -154,7 +151,7 @@ namespace XFS4IoTFramework.CardReader
         /// The command enables the contactless card reader and waits for the customer to re-tap their card.
         /// The contactless chip card reader waits for the period of time specified in the command all for a card to be tapped.
         /// </summary>
-        Task<EMVContactlessIssuerUpdateResult> EMVContactlessIssuerUpdateAsync(IEMVClessIssuerUpdateEvents events,
+        Task<EMVContactlessIssuerUpdateResult> EMVContactlessIssuerUpdateAsync(EMVClessCommandEvents events,
                                                                                EMVContactlessIssuerUpdateRequest transactionData,
                                                                                CancellationToken cancellation);
 

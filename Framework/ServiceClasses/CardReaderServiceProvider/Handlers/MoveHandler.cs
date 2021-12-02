@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.CardReader
                                                       "The property From is not specified.");
             }
 
-            MoveCardRequest.MovePosition.MovePositionEnum fromPos = MoveCardRequest.MovePosition.MovePositionEnum.Storage;
+            MovePosition.MovePositionEnum fromPos = MovePosition.MovePositionEnum.Storage;
 
             // First to check the specified storage is valid
             if (move.Payload.From != "exit" &&
@@ -42,9 +42,9 @@ namespace XFS4IoTFramework.CardReader
             else
             {
                 if (move.Payload.From == "exit")
-                    fromPos = MoveCardRequest.MovePosition.MovePositionEnum.Exit;
+                    fromPos = MovePosition.MovePositionEnum.Exit;
                 else
-                    fromPos = MoveCardRequest.MovePosition.MovePositionEnum.Transport;
+                    fromPos = MovePosition.MovePositionEnum.Transport;
             }
 
             if (string.IsNullOrEmpty(move.Payload.To))
@@ -53,7 +53,7 @@ namespace XFS4IoTFramework.CardReader
                                                       "The property To is not specified.");
             }
 
-            MoveCardRequest.MovePosition.MovePositionEnum toPos = MoveCardRequest.MovePosition.MovePositionEnum.Storage;
+            MovePosition.MovePositionEnum toPos = MovePosition.MovePositionEnum.Storage;
             if (move.Payload.To != "exit" &&
                 move.Payload.To != "transport")
             {
@@ -66,9 +66,9 @@ namespace XFS4IoTFramework.CardReader
             else
             {
                 if (move.Payload.To == "exit")
-                    toPos = MoveCardRequest.MovePosition.MovePositionEnum.Exit;
+                    toPos = MovePosition.MovePositionEnum.Exit;
                 else
-                    toPos = MoveCardRequest.MovePosition.MovePositionEnum.Transport;
+                    toPos = MovePosition.MovePositionEnum.Transport;
             }
 
             // Check parameters for the type of card reader
@@ -76,8 +76,8 @@ namespace XFS4IoTFramework.CardReader
                 CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless ||
                 CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.LatchedDip)
             {
-                if (toPos == MoveCardRequest.MovePosition.MovePositionEnum.Storage ||
-                    fromPos == MoveCardRequest.MovePosition.MovePositionEnum.Storage)
+                if (toPos == MovePosition.MovePositionEnum.Storage ||
+                    fromPos == MovePosition.MovePositionEnum.Storage)
                 {
                     return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                           $"Invalid location specified to or from move mdeia as the contractless cardreader won't have a retain bin or dispensing unit. {move.Payload.To}");
@@ -96,22 +96,21 @@ namespace XFS4IoTFramework.CardReader
                 }
             }
 
-            MoveCardRequest.MovePosition from = new (fromPos, 
-                                                     fromPos == MoveCardRequest.MovePosition.MovePositionEnum.Storage ? move.Payload.From : null);
+            MovePosition from = new (fromPos, 
+                                     fromPos == MovePosition.MovePositionEnum.Storage ? move.Payload.From : null);
             
-            MoveCardRequest.MovePosition to = new (toPos, 
-                                                   toPos == MoveCardRequest.MovePosition.MovePositionEnum.Storage ? move.Payload.To : null);
+            MovePosition to = new (toPos, 
+                                   toPos == MovePosition.MovePositionEnum.Storage ? move.Payload.To : null);
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.MoveCardAsync()");
-            var result = await Device.MoveCardAsync(events,
-                                                    new MoveCardRequest(from, to),
+            var result = await Device.MoveCardAsync(new MoveCardRequest(from, to),
                                                     cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.MoveCardAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
                 // Update counters and save persistently
-                if (to.Position == MoveCardRequest.MovePosition.MovePositionEnum.Storage)
+                if (to.Position == MovePosition.MovePositionEnum.Storage)
                 {
                     string storageId = to.StorageId;
                     if (string.IsNullOrEmpty(to.StorageId))

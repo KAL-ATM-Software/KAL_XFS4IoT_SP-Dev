@@ -63,7 +63,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// Both the signature and the data that was signed must be verified before the operation is performed.
                 /// If certHost, ca, or hl are specified for *signer* property, then _signedData_ is a PKCS #7 structure which includes the data that was returned by the StartAuthenticate command.
                 /// The optional CRL field may or may not be included in the PKCS #7 _signedData_ structure.
-                /// If the signer is certHostTr34, caTr34 or hlTr34, please refer to the X9 TR34-2012 [Ref. 42] for more details.
+                /// If the signer is certHostTr34, caTr34 or hlTr34, please refer to the X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)] for more details.
                 /// If sigHost is specified for the *signer* property specified, then s is a PKCS #7 structure which includes the data that was returned by the StartAuthenticate command.
                 /// If cmcmac or cmac are specified for the *signer* property specified, then _signatureKey_ must refer to a key loaded with the key usage of key attribute is M0 to M8.
                 /// </summary>

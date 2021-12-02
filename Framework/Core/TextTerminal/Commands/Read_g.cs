@@ -138,7 +138,7 @@ namespace XFS4IoT.TextTerminal.Commands
             public bool? Flush { get; init; }
 
             /// <summary>
-            /// Specifies whether the command input is automatically ended by Service Provider if the maximum number 
+            /// Specifies whether the command input is automatically ended by Service if the maximum number 
             /// of printable characters as specified with _numOfChars_ is entered.
             /// </summary>
             [DataMember(Name = "autoEnd")]

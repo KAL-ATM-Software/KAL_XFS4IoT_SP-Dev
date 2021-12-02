@@ -143,8 +143,8 @@ namespace XFS4IoTFramework.Storage
                           string.IsNullOrEmpty(storage.Value.Cash.Configuration.Name))) &&
                         (storage.Value.Cash.Status is null ||
                          (storage.Value.Cash.Status.Initial is null ||
-                          storage.Value.Cash.Status.Initial.Cash is null ||
-                          storage.Value.Cash.Status.Initial.Cash.Count == 0)))
+                          storage.Value.Cash.Status.Initial is null ||
+                          storage.Value.Cash.Status.Initial.ExtendedProperties.Count == 0)))
                     {
                         // No configuration or count specified and just ingore this unit
                         continue;
@@ -207,33 +207,16 @@ namespace XFS4IoTFramework.Storage
                         if (storage.Value.Cash.Configuration.Items?.Unrecognized is not null && (bool)storage.Value.Cash.Configuration.Items?.Unrecognized)
                             items |= CashCapabilitiesClass.ItemsEnum.Unrecognized;
 
-                        Dictionary<string, BanknoteItem> banknoteItems = null;
                         if (storage.Value.Cash.Configuration.CashItems is not null &&
                             storage.Value.Cash.Configuration.CashItems.Count > 0)
                         {
-                            banknoteItems = new();
                             foreach (var item in storage.Value.Cash.Configuration.CashItems)
                             {
-                                if (item.Value.NoteID is null)
+                                if (!Storage.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item))
                                 {
                                     return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                $"No note ID is supplied in the CashItems. {item.Key}");
+                                                                                $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");
                                 }
-                                if (item.Value.Value is null)
-                                {
-                                    return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                $"No value is supplied in the CashItems. {item.Key}");
-                                }
-                                if (item.Value.Release is null)
-                                {
-                                    return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                $"No release is supplied in the CashItems. {item.Key}");
-                                }
-
-                                banknoteItems.Add(item.Key, new BanknoteItem((int)item.Value.NoteID,
-                                                                             item.Value.Currency,
-                                                                             (double)item.Value.Value,
-                                                                             (int)item.Value.Release));
                             }
                         }
 
@@ -245,7 +228,7 @@ namespace XFS4IoTFramework.Storage
                                                              storage.Value.Cash.Configuration.LowThreshold,
                                                              storage.Value.Cash.Configuration.AppLockIn,
                                                              storage.Value.Cash.Configuration.AppLockOut,
-                                                             banknoteItems,
+                                                             storage.Value.Cash.Configuration.CashItems,
                                                              storage.Value.Cash.Configuration.Name,
                                                              storage.Value.Cash.Configuration.MaxRetracts);
                     }
@@ -255,11 +238,11 @@ namespace XFS4IoTFramework.Storage
                         storage.Value.Cash.Status.Initial is not null)
                     {
                         Dictionary<string, CashItemCountClass> itemCounts = null;
-                        if (storage.Value.Cash.Status.Initial.Cash is not null &&
-                            storage.Value.Cash.Status.Initial.Cash.Count > 0)
+                        if (storage.Value.Cash.Status.Initial is not null &&
+                            storage.Value.Cash.Status.Initial.ExtendedProperties.Count > 0)
                         {
                             itemCounts = new();
-                            foreach (var item in storage.Value.Cash.Status.Initial.Cash)
+                            foreach (var item in storage.Value.Cash.Status.Initial.ExtendedProperties)
                             {
                                 itemCounts.Add(item.Key, new CashItemCountClass(item.Value.Fit is null ? 0 : (int)item.Value.Fit,
                                                                                 item.Value.Unfit is null ? 0 : (int)item.Value.Unfit,

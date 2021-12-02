@@ -107,7 +107,7 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.RetractAsync()");
 
-            var result = await Device.RetractAsync(events,
+            var result = await Device.RetractAsync(new RetractCommandEvents(events),
                                                    new RetractRequest(itemPosition),
                                                    cancel);
 
@@ -135,12 +135,27 @@ namespace XFS4IoTFramework.CashManagement
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> transport = new();
                     foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
                         transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
-                    itemMovementResult.Add(movement.Key, new StorageCashInClass(movement.Value.StorageCashInCount.RetractOperations,
-                                                            new StorageCashCountsClass(movement.Value.StorageCashInCount.Deposited.Unrecognized, deposited),
-                                                            new StorageCashCountsClass(movement.Value.StorageCashInCount.Retracted.Unrecognized, retracted),
-                                                            new StorageCashCountsClass(movement.Value.StorageCashInCount.Rejected.Unrecognized, rejected),
-                                                            new StorageCashCountsClass(movement.Value.StorageCashInCount.Distributed.Unrecognized, distributed),
-                                                            new StorageCashCountsClass(movement.Value.StorageCashInCount.Transport.Unrecognized, transport)));
+
+                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized);
+                    depositedCount.ExtendedProperties = deposited;
+                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized);
+                    retractedCount.ExtendedProperties = retracted;
+                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized);
+                    rejectedCount.ExtendedProperties = rejected;
+                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized);
+                    distributedCount.ExtendedProperties = distributed;
+                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized);
+                    transportCount.ExtendedProperties = transport;
+
+                    itemMovementResult.Add(movement.Key, new StorageCashInClass
+                                                             (
+                                                                movement.Value.StorageCashInCount.RetractOperations,
+                                                                depositedCount,
+                                                                retractedCount,
+                                                                rejectedCount,
+                                                                distributedCount,
+                                                                transportCount
+                                                             ));
                 }
             }
 

@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, PaperSourceEnum? PaperSource = null)
+            public PayloadData(int Timeout, string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, string PaperSource = null)
                 : base(Timeout)
             {
                 this.FormName = FormName;
@@ -140,7 +140,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Flush any data to the printer that has not yet been printed from previous
-                /// [Printer.PrintForm](#printer.printform) or [Printer.PrintRawFile](#printer.printrawfile) commands, then
+                /// [Printer.PrintForm](#printer.printform) or [Printer.PrintNative](#printer.printnative) commands, then
                 /// eject the media.
                 /// </summary>
                 [DataMember(Name = "eject")]
@@ -168,7 +168,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintRawFile* commands. This will synchronize the application with the device to ensure that all
+                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -250,7 +250,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintRawFile* commands.
+                /// *Printer.PrintNative* commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }
@@ -279,33 +279,24 @@ namespace XFS4IoT.Printer.Commands
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }
 
-            public enum PaperSourceEnum
-            {
-                Any,
-                Upper,
-                Lower,
-                External,
-                Aux,
-                Aux2,
-                Park
-            }
-
             /// <summary>
-            /// Specifies the Paper source to use when printing this form. When the value is zero, then the paper
+            /// Specifies the paper source to use when printing this form. If omitted, then the paper
             /// source is determined from the media definition. This parameter is ignored if there is already paper in
-            /// the print position. Possible values are:
+            /// the print position.
+            /// It can be one of the following:
             /// 
-            /// * ```any``` - Any paper source can be used; it is determined by the service.
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
-            ///   supply.
+            ///                 supply.
             /// * ```lower``` - Use the lower paper source.
-            /// * ```external``` - Use the external paper source (such as envelope tray or single sheet feed).
+            /// * ```external``` - Use the external paper.
             /// * ```aux``` - Use the auxiliary paper source.
             /// * ```aux2``` - Use the second auxiliary paper source.
-            /// * ```park``` - Use the parking station.
+            /// * ```park``` - Use the parking station paper source.
+            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; init; }
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            public string PaperSource { get; init; }
 
         }
     }

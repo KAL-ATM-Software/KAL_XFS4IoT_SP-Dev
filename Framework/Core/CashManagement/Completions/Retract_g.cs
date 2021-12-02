@@ -55,8 +55,8 @@ namespace XFS4IoT.CashManagement.Completions
             /// * ```shutterNotClosed``` - The shutter failed to close.
             /// * ```itemsTaken``` - Items were present at the output position at the start of the operation, but were 
             /// removed before the operation was complete - some or all of the items were not retracted.
-            /// * ```invalidRetractPosition``` - The *index* is not supported.
-            /// * ```notRetractArea``` - The retract area specified in *retractArea* is not supported.
+            /// * ```invalidRetractPosition``` - The _index_ is not supported.
+            /// * ```notRetractArea``` - The retract area specified in _retractArea_ is not supported.
             /// * ```foreignItemsDetected``` - Foreign items have been detected inside the input position.
             /// </summary>
             [DataMember(Name = "errorCode")]

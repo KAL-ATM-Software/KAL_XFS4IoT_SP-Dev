@@ -47,7 +47,7 @@ namespace XFS4IoTFramework.Keyboard
         /// If the application makes a call to [PinPad.GetPinblock](#pinpad.getpinblock) or a local verification command without the minimum PIN digits having been entered, 
         /// either the command will fail or the PIN verification will fail. It is the responsibility of the application to identify the mapping between the FDK code and the physical location of the FDK.
         /// </summary>
-        Task<PinEntryResult> PinEntry(IPinEntryEvents events, 
+        Task<PinEntryResult> PinEntry(KeyboardCommandEvents events, 
                                       PinEntryRequest request, 
                                       CancellationToken cancellation);
 
@@ -55,7 +55,7 @@ namespace XFS4IoTFramework.Keyboard
         /// This function enables keyboard insercure mode and report entered key in clear text with solicited events. 
         /// For Keyboard device, this command will clear the pin unless the application has requested that the pin be maintained through the MaintainPin command.
         /// </summary>
-        Task<DataEntryResult> DataEntry(IDataEntryEvents events, 
+        Task<DataEntryResult> DataEntry(KeyboardCommandEvents events, 
                                         DataEntryRequest request, 
                                         CancellationToken cancellation);
 
@@ -86,7 +86,7 @@ namespace XFS4IoTFramework.Keyboard
         /// Encryption key parts entered with this command are stored through either the ImportKey. 
         /// Each key part can only be stored once after which the secure key buffer will be cleared automatically.
         /// </summary>
-        Task<SecureKeyEntryResult> SecureKeyEntry(ISecureKeyEntryEvents events, 
+        Task<SecureKeyEntryResult> SecureKeyEntry(KeyboardCommandEvents events, 
                                                   SecureKeyEntryRequest request, 
                                                   CancellationToken cancellation);
         /// <summary>

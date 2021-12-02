@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Printer
     [CommandHandler(XFSConstants.ServiceClass.Printer, typeof(DispensePaperCommand))]
     public partial class DispensePaperHandler : ICommandHandler
     {
-        public DispensePaperHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DispensePaperHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DispensePaperHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Printer
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DispensePaperHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPrinterDevice>();
 
-            Printer = Provider.IsA<IPrinterServiceClass>();
+            Printer = Provider.IsA<IPrinterService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DispensePaperHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DispensePaperHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var dispensePaperCmd = command.IsA<DispensePaperCommand>($"Invalid parameter in the DispensePaper Handle method. {nameof(DispensePaperCommand)}");
             dispensePaperCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Printer
             await Connection.SendMessageAsync(new DispensePaperCompletion(dispensePaperCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var dispensePapercommand = command.IsA<DispensePaperCommand>();
             dispensePapercommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Printer
 
             var response = new DispensePaperCompletion(dispensePapercommand.Header.RequestId.Value, new DispensePaperCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPrinterDevice Device { get => Provider.Device.IsA<IPrinterDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPrinterServiceClass Printer { get; }
+        private IPrinterService Printer { get; }
         private ILogger Logger { get; }
     }
 

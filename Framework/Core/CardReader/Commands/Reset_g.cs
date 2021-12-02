@@ -64,10 +64,10 @@ namespace XFS4IoT.CardReader.Commands
             /// 
             /// If omitted, the service will select the retain storage unit based on the number of retain storage
             /// units available and service specific configuration.
-            /// <example>retn1</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "storageId")]
-            [DataTypes(Pattern = @"^.{1,5}$")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string StorageId { get; init; }
 
         }

@@ -39,7 +39,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// If an invalid storage unit is contained in this list, the command will fail with a ```cashUnitError```
             /// [errorCode](#cashacceptor.cashunitcount.completion.properties.errorcode).
             /// 
-            /// <example>unit1</example>
+            /// <example>'["unit1", "unit2"]'</example>
             /// </summary>
             [DataMember(Name = "units")]
             public List<string> Units { get; init; }

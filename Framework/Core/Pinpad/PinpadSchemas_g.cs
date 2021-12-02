@@ -131,7 +131,7 @@ namespace XFS4IoT.PinPad
             public bool? Iso3 { get; init; }
 
             /// <summary>
-            /// PIN is formatted according to the Italian Bancomat specifications. It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN, 
+            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. 36](#ref-pinpad-36)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN, 
             /// and the 8 digit CCS from the track data.
             /// </summary>
             [DataMember(Name = "ap")]
@@ -314,13 +314,13 @@ namespace XFS4IoT.PinPad
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A. 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-pinpad-49)]). 
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
 
                 /// <summary>
-                /// The XTS method defined in NIST SP800-38E. 
+                /// The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-pinpad-50)]).
                 /// </summary>
                 [DataMember(Name = "xts")]
                 public bool? Xts { get; init; }
@@ -347,8 +347,8 @@ namespace XFS4IoT.PinPad
             /// * ```cbc``` - The CBC encryption method.  
             /// * ```cfb``` - The CFB encryption method.  
             /// * ```ofb``` - The OFB encryption method. 
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A.  
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-pinpad-49)]).
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-pinpad-50)]).
             /// 
             /// If the algorithm is 'R', then following properties can be true.  
             /// 

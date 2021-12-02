@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
     [CommandHandler(XFSConstants.ServiceClass.CashDispenser, typeof(TestCashUnitsCommand))]
     public partial class TestCashUnitsHandler : ICommandHandler
     {
-        public TestCashUnitsHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public TestCashUnitsHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(TestCashUnitsHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashDispenser
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(TestCashUnitsHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashDispenserDevice>();
 
-            CashDispenser = Provider.IsA<ICashDispenserServiceClass>();
+            CashDispenser = Provider.IsA<ICashDispenserService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(TestCashUnitsHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(TestCashUnitsHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var testCashUnitsCmd = command.IsA<TestCashUnitsCommand>($"Invalid parameter in the TestCashUnits Handle method. {nameof(TestCashUnitsCommand)}");
             testCashUnitsCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
             await Connection.SendMessageAsync(new TestCashUnitsCompletion(testCashUnitsCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var testCashUnitscommand = command.IsA<TestCashUnitsCommand>();
             testCashUnitscommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             var response = new TestCashUnitsCompletion(testCashUnitscommand.Header.RequestId.Value, new TestCashUnitsCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashDispenserDevice Device { get => Provider.Device.IsA<ICashDispenserDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashDispenserServiceClass CashDispenser { get; }
+        private ICashDispenserService CashDispenser { get; }
         private ILogger Logger { get; }
     }
 

@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.PinPad
     [CommandHandler(XFSConstants.ServiceClass.PinPad, typeof(LocalDESCommand))]
     public partial class LocalDESHandler : ICommandHandler
     {
-        public LocalDESHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public LocalDESHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(LocalDESHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.PinPad
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(LocalDESHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPinPadDevice>();
 
-            PinPad = Provider.IsA<IPinPadServiceClass>();
+            PinPad = Provider.IsA<IPinPadService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(LocalDESHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(LocalDESHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var localDESCmd = command.IsA<LocalDESCommand>($"Invalid parameter in the LocalDES Handle method. {nameof(LocalDESCommand)}");
             localDESCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.PinPad
             await Connection.SendMessageAsync(new LocalDESCompletion(localDESCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var localDEScommand = command.IsA<LocalDESCommand>();
             localDEScommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.PinPad
 
             var response = new LocalDESCompletion(localDEScommand.Header.RequestId.Value, new LocalDESCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPinPadDevice Device { get => Provider.Device.IsA<IPinPadDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPinPadServiceClass PinPad { get; }
+        private IPinPadService PinPad { get; }
         private ILogger Logger { get; }
     }
 

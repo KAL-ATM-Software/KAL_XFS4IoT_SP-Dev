@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.SecureKeyEntry()");
 
-            var result = await Device.SecureKeyEntry(events, 
+            var result = await Device.SecureKeyEntry(new KeyboardCommandEvents(events), 
                                                      new(secureKeyEntry.Payload.KeyLen switch
                                                          { 
                                                              SecureKeyEntryCommand.PayloadData.KeyLenEnum.Number16 => 16,
@@ -91,7 +91,20 @@ namespace XFS4IoTFramework.Keyboard
                                                             result.ErrorDescription,
                                                             result.ErrorCode,
                                                             result.Digits,
-                                                            result.Completion,
+                                                            result.Completion switch
+                                                            {
+                                                                EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                                                                EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                                                                EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                                                                EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                                                                EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                                                                EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                                                                EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                                                                EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                                                                EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                                                                EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                                                                _ => null,
+                                                            },
                                                             result.KeyCheckValue is not null || result.KeyCheckValue.Count == 0 ? Convert.ToBase64String(result.KeyCheckValue.ToArray()) : null);
         }
     }

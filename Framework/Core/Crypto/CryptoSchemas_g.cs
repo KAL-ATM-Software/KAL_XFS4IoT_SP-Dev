@@ -41,7 +41,7 @@ namespace XFS4IoT.Crypto
             public bool? Sha1Digest { get; init; }
 
             /// <summary>
-            /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2, is supported 
+            /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)], is supported 
             /// by the [Crypto.Digest](#crypto.digest) command.
             /// </summary>
             [DataMember(Name = "sha256Digest")]
@@ -103,13 +103,13 @@ namespace XFS4IoT.Crypto
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A. 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-crypto-49)]) 
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
 
                 /// <summary>
-                /// The XTS method defined in NIST SP800-38E. 
+                /// The XTS method defined in NIST SP800-38E. (See [[Ref. 50](#ref-crypto-50)])
                 /// </summary>
                 [DataMember(Name = "xts")]
                 public bool? Xts { get; init; }
@@ -136,8 +136,8 @@ namespace XFS4IoT.Crypto
             /// * ```cbc``` - The CBC encryption method.
             /// * ```cfb``` - The CFB encryption method.
             /// * ```ofb``` - The OFB encryption method.
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A.
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E.
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-crypto-49)])
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-crypto-50)])
             /// 
             /// If the algorithm is 'R' and the key usage is ['D0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0), then the following properties can be true. 
             /// 
@@ -212,7 +212,7 @@ namespace XFS4IoT.Crypto
                 public bool? Sha1 { get; init; }
 
                 /// <summary>
-                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)].
                 /// </summary>
                 [DataMember(Name = "sha256")]
                 public bool? Sha256 { get; init; }
@@ -289,7 +289,7 @@ namespace XFS4IoT.Crypto
                 public bool? Sha1 { get; init; }
 
                 /// <summary>
-                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)].
                 /// </summary>
                 [DataMember(Name = "sha256")]
                 public bool? Sha256 { get; init; }

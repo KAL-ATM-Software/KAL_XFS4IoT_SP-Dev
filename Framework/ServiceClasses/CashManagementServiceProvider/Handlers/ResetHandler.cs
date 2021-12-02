@@ -120,7 +120,7 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.ResetDeviceAsync()");
 
-            var result = await Device.ResetDeviceAsync(events,
+            var result = await Device.ResetDeviceAsync(new ShutterStatusChangedCommandEvents(events),
                                                        new ResetDeviceRequest(itemPosition),
                                                        cancel);
 

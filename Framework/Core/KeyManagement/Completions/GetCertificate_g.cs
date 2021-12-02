@@ -51,7 +51,7 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Contains the certificate that is to be loaded represented in DER encoded ASN.1 notation.
-            /// This data should be in a binary encoded PKCS #7 using the degenerate certificate only case of the signed-data content 
+            /// This data should be in a binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the degenerate certificate only case of the signed-data content 
             /// type in which the inner content's data file is omitted and there are no signers.
             /// </summary>
             [DataMember(Name = "certificate")]

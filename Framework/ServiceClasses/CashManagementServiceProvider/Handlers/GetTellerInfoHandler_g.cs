@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
     [CommandHandler(XFSConstants.ServiceClass.CashManagement, typeof(GetTellerInfoCommand))]
     public partial class GetTellerInfoHandler : ICommandHandler
     {
-        public GetTellerInfoHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetTellerInfoHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetTellerInfoHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetTellerInfoHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashManagementDevice>();
 
-            CashManagement = Provider.IsA<ICashManagementServiceClass>();
+            CashManagement = Provider.IsA<ICashManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetTellerInfoHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetTellerInfoHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getTellerInfoCmd = command.IsA<GetTellerInfoCommand>($"Invalid parameter in the GetTellerInfo Handle method. {nameof(GetTellerInfoCommand)}");
             getTellerInfoCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashManagement
             await Connection.SendMessageAsync(new GetTellerInfoCompletion(getTellerInfoCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getTellerInfocommand = command.IsA<GetTellerInfoCommand>();
             getTellerInfocommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashManagement
 
             var response = new GetTellerInfoCompletion(getTellerInfocommand.Header.RequestId.Value, new GetTellerInfoCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashManagementServiceClass CashManagement { get; }
+        private ICashManagementService CashManagement { get; }
         private ILogger Logger { get; }
     }
 

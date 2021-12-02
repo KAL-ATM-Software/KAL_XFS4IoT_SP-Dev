@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandler(XFSConstants.ServiceClass.KeyManagement, typeof(DeriveKeyCommand))]
     public partial class DeriveKeyHandler : ICommandHandler
     {
-        public DeriveKeyHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DeriveKeyHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DeriveKeyHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.KeyManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DeriveKeyHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyManagementDevice>();
 
-            KeyManagement = Provider.IsA<IKeyManagementServiceClass>();
+            KeyManagement = Provider.IsA<IKeyManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DeriveKeyHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DeriveKeyHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var deriveKeyCmd = command.IsA<DeriveKeyCommand>($"Invalid parameter in the DeriveKey Handle method. {nameof(DeriveKeyCommand)}");
             deriveKeyCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.KeyManagement
             await Connection.SendMessageAsync(new DeriveKeyCompletion(deriveKeyCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var deriveKeycommand = command.IsA<DeriveKeyCommand>();
             deriveKeycommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.KeyManagement
 
             var response = new DeriveKeyCompletion(deriveKeycommand.Header.RequestId.Value, new DeriveKeyCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyManagementServiceClass KeyManagement { get; }
+        private IKeyManagementService KeyManagement { get; }
         private ILogger Logger { get; }
     }
 

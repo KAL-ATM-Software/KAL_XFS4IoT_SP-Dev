@@ -30,8 +30,7 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             Mix mix = CashDispenser.GetMix(getMixTable.Payload.Mix);
-            if (mix is null ||
-                mix.Type != Mix.TypeEnum.Table)
+            if (mix is null)
             {
                 return Task.FromResult(new GetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                              $"Supplied mix number is not a MixTable. {getMixTable.Payload.Mix}",
@@ -39,26 +38,26 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             MixTable mixTable = mix.IsA<MixTable>($"Unexpected mix type. {mix.GetType()}");
-            List<Dictionary<string, int>> mixRows = new();
+            List<XFS4IoT.CashDispenser.MixRowClass> mixRows = new();
 
-            /* Payload for GetMixTable/SetMixTable under discussion in XFS committee
-            foreach (var table in mixTable.Mixes)
+            foreach (var tables in mixTable.Mixes)
             {
-                Dictionary<string, int> cols = new();
-                foreach (var col in table.Value)
-                    foreach (var elem in col.Counts)
-                        cols.Add(elem.Key.ToString(), elem.Value);
+                foreach (var table in tables.Value)
+                {
+                    List<XFS4IoT.CashDispenser.MixRowClass.MixClass> breakdown = new();
+                    foreach (var list in table.Counts)
+                    {
+                        breakdown.Add(new (list.Key, list.Value));
+                    }
+                    mixRows.Add(new XFS4IoT.CashDispenser.MixRowClass(table.Amount, breakdown));
                 }
+            }
 
-                mixRows.Add(cols);
-            }*/
-
-            return Task.FromResult(new GetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                         null,
-                                                                         null,
-                                                                         mixTable.MixNumber,
-                                                                         mixTable.Name,
-                                                                         mixRows));
+            return Task.FromResult(new GetMixTableCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.Success,
+                                                                         ErrorDescription: null,
+                                                                         MixNumber: mixTable.MixNumber,
+                                                                         Name: mixTable.Name,
+                                                                         MixRows: mixRows));
         }
     }
 }

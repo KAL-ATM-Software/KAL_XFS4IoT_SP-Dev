@@ -29,17 +29,22 @@ namespace XFS4IoT.Storage.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(Dictionary<string, StorageUnitClass> Storage = null)
+            public PayloadData()
                 : base()
             {
-                this.Storage = Storage;
             }
 
-            /// <summary>
-            /// Object containing information for a single storage unit.
-            /// </summary>
-            [DataMember(Name = "storage")]
-            public Dictionary<string, StorageUnitClass> Storage { get; init; }
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, StorageUnitClass> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<StorageUnitClass>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<StorageUnitClass>(value);
+            }
 
         }
 

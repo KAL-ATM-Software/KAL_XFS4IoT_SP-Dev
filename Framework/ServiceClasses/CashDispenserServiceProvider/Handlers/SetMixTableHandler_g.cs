@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
     [CommandHandler(XFSConstants.ServiceClass.CashDispenser, typeof(SetMixTableCommand))]
     public partial class SetMixTableHandler : ICommandHandler
     {
-        public SetMixTableHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public SetMixTableHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetMixTableHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashDispenser
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetMixTableHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashDispenserDevice>();
 
-            CashDispenser = Provider.IsA<ICashDispenserServiceClass>();
+            CashDispenser = Provider.IsA<ICashDispenserService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetMixTableHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetMixTableHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var setMixTableCmd = command.IsA<SetMixTableCommand>($"Invalid parameter in the SetMixTable Handle method. {nameof(SetMixTableCommand)}");
             setMixTableCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
             await Connection.SendMessageAsync(new SetMixTableCompletion(setMixTableCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var setMixTablecommand = command.IsA<SetMixTableCommand>();
             setMixTablecommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             var response = new SetMixTableCompletion(setMixTablecommand.Header.RequestId.Value, new SetMixTableCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashDispenserDevice Device { get => Provider.Device.IsA<ICashDispenserDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashDispenserServiceClass CashDispenser { get; }
+        private ICashDispenserService CashDispenser { get; }
         private ILogger Logger { get; }
     }
 

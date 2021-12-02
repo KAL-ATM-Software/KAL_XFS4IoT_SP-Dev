@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Printer
     [CommandHandler(XFSConstants.ServiceClass.Printer, typeof(GetMediaListCommand))]
     public partial class GetMediaListHandler : ICommandHandler
     {
-        public GetMediaListHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetMediaListHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetMediaListHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Printer
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetMediaListHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPrinterDevice>();
 
-            Printer = Provider.IsA<IPrinterServiceClass>();
+            Printer = Provider.IsA<IPrinterService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetMediaListHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetMediaListHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getMediaListCmd = command.IsA<GetMediaListCommand>($"Invalid parameter in the GetMediaList Handle method. {nameof(GetMediaListCommand)}");
             getMediaListCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Printer
             await Connection.SendMessageAsync(new GetMediaListCompletion(getMediaListCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getMediaListcommand = command.IsA<GetMediaListCommand>();
             getMediaListcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Printer
 
             var response = new GetMediaListCompletion(getMediaListcommand.Header.RequestId.Value, new GetMediaListCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPrinterDevice Device { get => Provider.Device.IsA<IPrinterDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPrinterServiceClass Printer { get; }
+        private IPrinterService Printer { get; }
         private ILogger Logger { get; }
     }
 

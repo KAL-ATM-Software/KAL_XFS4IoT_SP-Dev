@@ -42,7 +42,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified keys is invalid.
-            /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service Provider.
+            /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service.
             /// * ```noActiveKeys``` - There are no active keys specified.
             /// </summary>
             [DataMember(Name = "errorCode")]

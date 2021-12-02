@@ -25,9 +25,9 @@ namespace XFS4IoTFramework.Storage
             {
                 foreach (var storage in Storage.CardUnits)
                 {
-                    StorageUnitClass thisStorage = new(storage.Value.PositionName,
-                                                       storage.Value.Capacity,
-                                                       storage.Value.Status switch
+                    StorageUnitClass thisStorage = new(PositionName: storage.Value.PositionName,
+                                                       Capacity: storage.Value.Capacity,
+                                                       Status: storage.Value.Status switch
                                                        {
                                                            CardUnitStorage.StatusEnum.Good => StatusEnum.Ok,
                                                            CardUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Storage
                                                            CardUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
                                                            _ => StatusEnum.NotConfigured,
                                                        },
-                                                       storage.Value.SerialNumber,
+                                                       SerialNumber: storage.Value.SerialNumber,
                                                        Cash: null,
                                                        Card: new XFS4IoT.CardReader.StorageClass(new XFS4IoT.CardReader.StorageCapabilitiesClass(storage.Value.Unit.Capabilities.Type switch
                                                                                                                                                  {
@@ -64,31 +64,8 @@ namespace XFS4IoTFramework.Storage
             {
                 foreach (var storage in Storage.CashUnits)
                 {
-                    Dictionary<string, XFS4IoT.CashManagement.CashItemClass> capItems = new();
-                    if (storage.Value.Unit.Capabilities.BanknoteItems is not null)
-                    {
-                        foreach (var item in storage.Value.Unit.Capabilities.BanknoteItems)
-                        {
-                            capItems.Add(item.Key, new XFS4IoT.CashManagement.CashItemClass(item.Value.NoteId,
-                                                                                            item.Value.Currency,
-                                                                                            item.Value.Value,
-                                                                                            item.Value.Release));
-                        }
-                    }
-
-                    Dictionary<string, XFS4IoT.CashManagement.CashItemClass> confItems = new();
-                    if (storage.Value.Unit.Configuration.BanknoteItems is not null)
-                    {
-                        foreach (var item in storage.Value.Unit.Configuration.BanknoteItems)
-                        {
-                            confItems.Add(item.Key, new XFS4IoT.CashManagement.CashItemClass(item.Value.NoteId,
-                                                                                             item.Value.Currency,
-                                                                                             item.Value.Value,
-                                                                                             item.Value.Release));
-                        }
-                    }
-
-                    StorageUnitClass thisStorage = new(storage.Value.PositionName,
+                    StorageUnitClass thisStorage = new(storage.Value.Id,
+                                                       storage.Value.PositionName,
                                                        storage.Value.Capacity,
                                                        storage.Value.Status switch
                                                        {
@@ -117,7 +94,7 @@ namespace XFS4IoTFramework.Storage
                                                                                                                         storage.Value.Unit.Capabilities.HardwareSensors,
                                                                                                                         storage.Value.Unit.Capabilities.RetractAreas,
                                                                                                                         storage.Value.Unit.Capabilities.RetractThresholds,
-                                                                                                                        capItems),
+                                                                                                                        storage.Value.Unit.Configuration.BanknoteItems),
                                                                 new XFS4IoT.CashManagement.StorageCashConfigurationClass(new XFS4IoT.CashManagement.StorageCashTypesClass(storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
                                                                                                                                                                           storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
                                                                                                                                                                           storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
@@ -138,7 +115,7 @@ namespace XFS4IoTFramework.Storage
                                                                                                                         storage.Value.Unit.Configuration.LowThreshold,
                                                                                                                         storage.Value.Unit.Configuration.AppLockIn,
                                                                                                                         storage.Value.Unit.Configuration.AppLockOut,
-                                                                                                                        confItems),
+                                                                                                                        storage.Value.Unit.Configuration.BanknoteItems),
                                                                 new XFS4IoT.CashManagement.StorageCashStatusClass(storage.Value.Unit.Status.Index,
                                                                                                                   storage.Value.Unit.Status.InitialCounts?.CopyTo(),
                                                                                                                   new XFS4IoT.CashManagement.StorageCashOutClass(storage.Value.Unit.Status.StorageCashOutCount?.Presented?.CopyTo(),
@@ -154,7 +131,6 @@ namespace XFS4IoTFramework.Storage
                                                                                                                                                                 storage.Value.Unit.Status.StorageCashInCount?.Rejected?.CopyTo(),
                                                                                                                                                                 storage.Value.Unit.Status.StorageCashInCount?.Distributed?.CopyTo(),
                                                                                                                                                                 storage.Value.Unit.Status.StorageCashInCount?.Transport?.CopyTo()),
-                                                                                                                  storage.Value.Unit.Status.Count,
                                                                                                                   storage.Value.Unit.Status.Accuracy switch
                                                                                                                   {
                                                                                                                       CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,

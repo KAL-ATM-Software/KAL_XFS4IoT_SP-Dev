@@ -34,44 +34,55 @@ namespace XFS4IoTServer
         public CommonCapabilitiesClass CommonCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores CashDispenser interface capabilites internally
+        /// Stores CashDispenser capabilites
         /// </summary>
         public CashDispenserCapabilitiesClass CashDispenserCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores CashManagement interface capabilites internally
+        /// Stores CashManagement capabilites
         /// </summary>
         public CashManagementCapabilitiesClass CashManagementCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores CardReader interface capabilites internally
+        /// Stores CardReader capabilites
         /// </summary>
         public CardReaderCapabilitiesClass CardReaderCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores TextTerminal interface capabilites internally
+        /// Stores TextTerminal capabilites
         /// </summary>
         public TextTerminalCapabilitiesClass TextTerminalCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores KeyManagement interface capabilites internally
+        /// Stores KeyManagement capabilites
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores Crypto interface capabilites internally
+        /// Stores Crypto capabilites
         /// </summary>
         public CryptoCapabilitiesClass CryptoCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores PinPad interface capabilites internally
+        /// Stores PinPad capabilites
         /// </summary>
         public PinPadCapabilitiesClass PinPadCapabilities { get; set; } = null;
 
         /// <summary>
-        /// Stores Keyboard interface capabilites internally
+        /// Stores Keyboard capabilites
         /// </summary>
         public KeyboardCapabilitiesClass KeyboardCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores Lights capabilities for an internal use
+        /// </summary>
+        public LightsCapabilitiesClass LightsCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores printer capabilites
+        /// </summary>
+        public PrinterCapabilitiesClass PrinterCapabilities { get; set; } = null;
+
         #endregion
 
         #region Device Status
@@ -81,38 +92,44 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas CardReader status
+        /// Stores CardReader status
         /// </summary>
         public CardReaderStatusClass CardReaderStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas CashDispenser status
+        /// Stores CashDispenser status
         /// </summary>
         public CashDispenserStatusClass CashDispenserStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas CashManagement status
+        /// Stores CashManagement status
         /// </summary>
         public CashManagementStatusClass CashManagementStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas KeyManagement status
+        /// Stores KeyManagement status
         /// </summary>
         public KeyManagementStatusClass KeyManagementStatus { get; set; } = null;
+
         /// <summary>
-        /// Storas Keyboard status
+        /// Stores Keyboard status
         /// </summary>
         public KeyboardStatusClass KeyboardStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas CardReader status
+        /// Stores CardReader status
         /// </summary>
         public TextTerminalStatusClass TextTerminalStatus { get; set; } = null;
 
         /// <summary>
-        /// Storas light status
+        /// Stores light status
         /// </summary>
         public LightsStatusClass LightsStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores printer status
+        /// </summary>
+        public PrinterStatusClass PrinterStatus { get; set; } = null;
 
         #endregion
 

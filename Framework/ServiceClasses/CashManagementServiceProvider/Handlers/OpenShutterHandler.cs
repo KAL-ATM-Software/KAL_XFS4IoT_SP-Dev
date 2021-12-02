@@ -85,7 +85,7 @@ namespace XFS4IoTFramework.CashManagement
                     _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
                 };
 
-                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashDispenserStatusClass.PositionStatusClass.ShutterEnum.Open)
+                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Open)
                 {
                     return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                  $"The shutter is already opened.");
@@ -100,12 +100,12 @@ namespace XFS4IoTFramework.CashManagement
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                await events.ShutterStatusChangedEvent(new ShutterStatusChangedEvent.PayloadData(openShutter.Payload.Position,
+                await events.ShutterStatusChangedEvent(new XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData(openShutter.Payload.Position,
                                                                                                   ShutterEnum.Open));
             }
             else if (result.CompletionCode == MessagePayload.CompletionCodeEnum.HardwareError)
             {
-                await events.ShutterStatusChangedEvent(new ShutterStatusChangedEvent.PayloadData(openShutter.Payload.Position,
+                await events.ShutterStatusChangedEvent(new XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData(openShutter.Payload.Position,
                                                                                                  result.Jammed ? ShutterEnum.Jammed : ShutterEnum.Unknown));
             }
             OpenShutterCompletion.PayloadData.ErrorCodeEnum? errorCode = null;

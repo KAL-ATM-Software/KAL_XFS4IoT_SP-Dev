@@ -193,6 +193,16 @@ namespace XFS4IoT.Lights.Commands
             [DataMember(Name = "fasciaLight")]
             public LightStateClass FasciaLight { get; init; }
 
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, LightStateClass> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<LightStateClass>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<LightStateClass>(value);
+            }
+
         }
     }
 }

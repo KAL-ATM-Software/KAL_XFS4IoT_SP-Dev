@@ -18,8 +18,6 @@ namespace XFS4IoTFramework.CashDispenser
 
         Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload);
 
-        Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload);
-
         Task NoteErrorEvent(XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData Payload);
 
         Task InfoAvailableEvent(XFS4IoT.CashManagement.Events.InfoAvailableEvent.PayloadData Payload);
@@ -27,10 +25,6 @@ namespace XFS4IoTFramework.CashDispenser
         Task DelayedDispenseEvent(XFS4IoT.CashDispenser.Events.DelayedDispenseEvent.PayloadData Payload);
 
         Task StartDispenseEvent();
-
-        Task PartialDispenseEvent(XFS4IoT.CashDispenser.Events.PartialDispenseEvent.PayloadData Payload);
-
-        Task SubDispenseOkEvent(XFS4IoT.CashDispenser.Events.SubDispenseOkEvent.PayloadData Payload);
 
         Task IncompleteDispenseEvent(XFS4IoT.CashDispenser.Events.IncompleteDispenseEvent.PayloadData Payload);
 

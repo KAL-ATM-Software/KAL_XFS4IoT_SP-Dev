@@ -26,7 +26,7 @@ namespace XFS4IoTFramework.CashManagement
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.GetTellerInfoAsync()");
 
             var result = await Device.GetTellerInfoAsync(new GetTellerInfoRequest(getTellerInfo.Payload.TellerID is null ? -1 : (int)getTellerInfo.Payload.TellerID,
-                                                                                  getTellerInfo.Payload.CurrencyID), 
+                                                                                  getTellerInfo.Payload.Currency), 
                                                           cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.GetTellerInfoAsync() -> {result.CompletionCode}, {result.ErrorCode}");

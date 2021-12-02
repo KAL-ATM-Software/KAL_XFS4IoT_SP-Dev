@@ -29,11 +29,10 @@ namespace XFS4IoT.CashAcceptor.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(int? Unrecognized = null, Dictionary<string, CashManagement.StorageCashCountClass> Cash = null)
+            public PayloadData(int? Unrecognized = null)
                 : base()
             {
                 this.Unrecognized = Unrecognized;
-                this.Cash = Cash;
             }
 
             /// <summary>
@@ -42,11 +41,15 @@ namespace XFS4IoT.CashAcceptor.Events
             [DataMember(Name = "unrecognized")]
             public int? Unrecognized { get; init; }
 
-            /// <summary>
-            /// Counts of cash items broken down by cash item type and classification
-            /// </summary>
-            [DataMember(Name = "cash")]
-            public Dictionary<string, CashManagement.StorageCashCountClass> Cash { get; init; }
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, CashManagement.StorageCashCountClass> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<CashManagement.StorageCashCountClass>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<CashManagement.StorageCashCountClass>(value);
+            }
 
         }
 

@@ -65,10 +65,10 @@ namespace XFS4IoT.CashAcceptor.Events
                 [DataContract]
                 public sealed class ReplenishTargetResultsClass
                 {
-                    public ReplenishTargetResultsClass(string Target = null, CashManagement.CashItemClass NoteId = null, int? NumberOfItemsReceived = null)
+                    public ReplenishTargetResultsClass(string Target = null, string CashItem = null, int? NumberOfItemsReceived = null)
                     {
                         this.Target = Target;
-                        this.NoteId = NoteId;
+                        this.CashItem = CashItem;
                         this.NumberOfItemsReceived = NumberOfItemsReceived;
                     }
 
@@ -78,10 +78,17 @@ namespace XFS4IoT.CashAcceptor.Events
                     /// <example>unit1</example>
                     /// </summary>
                     [DataMember(Name = "target")]
+                    [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                     public string Target { get; init; }
 
-                    [DataMember(Name = "noteId")]
-                    public CashManagement.CashItemClass NoteId { get; init; }
+                    /// <summary>
+                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
+                    /// not identified as a cash item.
+                    /// <example>type20USD1</example>
+                    /// </summary>
+                    [DataMember(Name = "cashItem")]
+                    [DataTypes(Pattern = @"^type[0-9A-Z]+$")]
+                    public string CashItem { get; init; }
 
                     /// <summary>
                     /// Total number of items received in this target cash unit of the _noteId_ note type.

@@ -46,6 +46,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "cashUnitSource")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string CashUnitSource { get; init; }
 
             }

@@ -62,11 +62,11 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-                /// command) from which items are to be removed.
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage).
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "storageUnit")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string StorageUnit { get; init; }
 
                 public enum UnitLockStatusEnum

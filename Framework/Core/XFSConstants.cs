@@ -4,6 +4,8 @@
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
+using System.Collections.Generic;
+
 namespace XFS4IoT
 {
     /// <summary>
@@ -51,7 +53,18 @@ namespace XFS4IoT
             Keyboard, 
             KeyManagement, 
             Storage, 
-            Lights 
+            Lights,
+            Auxiliaries
         }
+
+        /// <summary>
+        /// Service version
+        /// </summary>
+        public static readonly string ServiceVersion = "1.0";
+
+        /// <summary>
+        /// Command payload version range supported
+        /// </summary>
+        public static readonly List<string> SupportedVersionRange = new(){ "1.0" };
     }
 }

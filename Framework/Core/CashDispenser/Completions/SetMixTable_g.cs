@@ -41,7 +41,7 @@ namespace XFS4IoT.CashDispenser.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```invalidMixNumber``` - The *mixNumber* is invalid.
+            /// * ```invalidMixNumber``` - The _mixNumber_ is invalid.
             /// * ```invalidMixTable``` - The contents of at least one of the defined rows of the mix table is incorrect.
             /// </summary>
             [DataMember(Name = "errorCode")]

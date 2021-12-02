@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.TextTerminal
     [CommandHandler(XFSConstants.ServiceClass.TextTerminal, typeof(DefineKeysCommand))]
     public partial class DefineKeysHandler : ICommandHandler
     {
-        public DefineKeysHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DefineKeysHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DefineKeysHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.TextTerminal
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DefineKeysHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ITextTerminalDevice>();
 
-            TextTerminal = Provider.IsA<ITextTerminalServiceClass>();
+            TextTerminal = Provider.IsA<ITextTerminalService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DefineKeysHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DefineKeysHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var defineKeysCmd = command.IsA<DefineKeysCommand>($"Invalid parameter in the DefineKeys Handle method. {nameof(DefineKeysCommand)}");
             defineKeysCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.TextTerminal
             await Connection.SendMessageAsync(new DefineKeysCompletion(defineKeysCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var defineKeyscommand = command.IsA<DefineKeysCommand>();
             defineKeyscommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.TextTerminal
 
             var response = new DefineKeysCompletion(defineKeyscommand.Header.RequestId.Value, new DefineKeysCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ITextTerminalDevice Device { get => Provider.Device.IsA<ITextTerminalDevice>(); }
         private IServiceProvider Provider { get; }
-        private ITextTerminalServiceClass TextTerminal { get; }
+        private ITextTerminalService TextTerminal { get; }
         private ILogger Logger { get; }
     }
 

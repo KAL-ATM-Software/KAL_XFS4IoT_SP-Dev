@@ -40,6 +40,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Server\Server.csproj" />
+	  <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
+	  <ProjectReference Include="..\KeyManagementServiceProvider\KeyManagementServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
   </ItemGroup>
 

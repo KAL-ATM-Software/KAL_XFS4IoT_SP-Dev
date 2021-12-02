@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Printer
     [CommandHandler(XFSConstants.ServiceClass.Printer, typeof(LoadDefinitionCommand))]
     public partial class LoadDefinitionHandler : ICommandHandler
     {
-        public LoadDefinitionHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public LoadDefinitionHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(LoadDefinitionHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Printer
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(LoadDefinitionHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPrinterDevice>();
 
-            Printer = Provider.IsA<IPrinterServiceClass>();
+            Printer = Provider.IsA<IPrinterService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(LoadDefinitionHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(LoadDefinitionHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var loadDefinitionCmd = command.IsA<LoadDefinitionCommand>($"Invalid parameter in the LoadDefinition Handle method. {nameof(LoadDefinitionCommand)}");
             loadDefinitionCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Printer
             await Connection.SendMessageAsync(new LoadDefinitionCompletion(loadDefinitionCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var loadDefinitioncommand = command.IsA<LoadDefinitionCommand>();
             loadDefinitioncommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Printer
 
             var response = new LoadDefinitionCompletion(loadDefinitioncommand.Header.RequestId.Value, new LoadDefinitionCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPrinterDevice Device { get => Provider.Device.IsA<IPrinterDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPrinterServiceClass Printer { get; }
+        private IPrinterService Printer { get; }
         private ILogger Logger { get; }
     }
 

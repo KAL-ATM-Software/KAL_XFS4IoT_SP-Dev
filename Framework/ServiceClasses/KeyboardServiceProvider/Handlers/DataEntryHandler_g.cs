@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Keyboard
     [CommandHandler(XFSConstants.ServiceClass.Keyboard, typeof(DataEntryCommand))]
     public partial class DataEntryHandler : ICommandHandler
     {
-        public DataEntryHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DataEntryHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DataEntryHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Keyboard
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DataEntryHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyboardDevice>();
 
-            Keyboard = Provider.IsA<IKeyboardServiceClass>();
+            Keyboard = Provider.IsA<IKeyboardService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DataEntryHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DataEntryHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var dataEntryCmd = command.IsA<DataEntryCommand>($"Invalid parameter in the DataEntry Handle method. {nameof(DataEntryCommand)}");
             dataEntryCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Keyboard
             await Connection.SendMessageAsync(new DataEntryCompletion(dataEntryCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var dataEntrycommand = command.IsA<DataEntryCommand>();
             dataEntrycommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Keyboard
 
             var response = new DataEntryCompletion(dataEntrycommand.Header.RequestId.Value, new DataEntryCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyboardDevice Device { get => Provider.Device.IsA<IKeyboardDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyboardServiceClass Keyboard { get; }
+        private IKeyboardService Keyboard { get; }
         private ILogger Logger { get; }
     }
 

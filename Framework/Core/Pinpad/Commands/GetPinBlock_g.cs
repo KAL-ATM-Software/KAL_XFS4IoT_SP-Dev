@@ -40,7 +40,8 @@ namespace XFS4IoT.PinPad.Commands
             }
 
             /// <summary>
-            /// The customer data should be an ASCII string. Used for ANSI, ISO-0 and ISO-1 algorithm to build the formatted PIN. 
+            /// The customer data should be an ASCII string. Used for ANSI, ISO-0 and ISO-1 algorithm 
+            /// (See [[Ref. 3](#ref-pinpad-3)], [[Ref. 20](#ref-pinpad-20)], [[Ref. 21](#ref-pinpad-21)]) to build the formatted PIN. 
             /// For ANSI and ISO-0 the PAN (Primary Account Number, without the check number) is supplied, for ISO-1 a ten digit 
             /// transaction field is required. If not used, this property can be omitted. Used for DIEBOLD with coordination number, as a 
             /// two digit coordination number. Used for EMV with challenge number (8 bytes) coming from the chip card. 
@@ -164,8 +165,8 @@ namespace XFS4IoT.PinPad.Commands
                 /// * ```cbc``` - The CBC encryption method.  
                 /// * ```cfb``` - The CFB encryption method.  
                 /// * ```ofb``` - The OFB encryption method. 
-                /// * ```ctr``` - The CTR method defined in NIST SP800-38A.  
-                /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
+                /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-pinpad-49)]) 
+                /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-pinpad-50)]) 
                 ///  
                 /// If the algorithm is ['R'](#common.capabilities.completion.properties.pinpad.pinblockattributes.p0.t), then this property can be one of the following values:  
                 /// 

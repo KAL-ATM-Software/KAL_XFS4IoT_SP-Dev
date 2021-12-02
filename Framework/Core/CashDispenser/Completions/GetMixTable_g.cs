@@ -26,7 +26,7 @@ namespace XFS4IoT.CashDispenser.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? MixNumber = null, string Name = null, List<Dictionary<string, int>> MixRows = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -67,7 +67,7 @@ namespace XFS4IoT.CashDispenser.Completions
             /// Array of rows of the mix table.
             /// </summary>
             [DataMember(Name = "mixRows")]
-            public List<Dictionary<string, int>> MixRows { get; init; }
+            public List<MixRowClass> MixRows { get; init; }
 
         }
     }

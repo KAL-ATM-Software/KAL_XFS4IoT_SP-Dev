@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.PinPad
     [CommandHandler(XFSConstants.ServiceClass.PinPad, typeof(GetPinBlockCommand))]
     public partial class GetPinBlockHandler : ICommandHandler
     {
-        public GetPinBlockHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetPinBlockHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetPinBlockHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.PinPad
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetPinBlockHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPinPadDevice>();
 
-            PinPad = Provider.IsA<IPinPadServiceClass>();
+            PinPad = Provider.IsA<IPinPadService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetPinBlockHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetPinBlockHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getPinBlockCmd = command.IsA<GetPinBlockCommand>($"Invalid parameter in the GetPinBlock Handle method. {nameof(GetPinBlockCommand)}");
             getPinBlockCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.PinPad
             await Connection.SendMessageAsync(new GetPinBlockCompletion(getPinBlockCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getPinBlockcommand = command.IsA<GetPinBlockCommand>();
             getPinBlockcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.PinPad
 
             var response = new GetPinBlockCompletion(getPinBlockcommand.Header.RequestId.Value, new GetPinBlockCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPinPadDevice Device { get => Provider.Device.IsA<IPinPadDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPinPadServiceClass PinPad { get; }
+        private IPinPadService PinPad { get; }
         private ILogger Logger { get; }
     }
 

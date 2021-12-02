@@ -69,15 +69,15 @@ namespace XFS4IoT.KeyManagement.Commands
             /// The structure that contains the certificate that is to be loaded represented in DER encoded ASN.1
             /// notation. 
             /// 
-            /// For loadNewHost, this data should be in a binary encoded PKCS #7 using the 'degenerate certificate only'
+            /// For loadNewHost, this data should be in a binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the 'degenerate certificate only'
             /// case of the signed-data content type in which the inner content's data file is omitted and there are no
             /// signers.
             /// 
             /// For replaceHost, the message has an outer signedData content type with the signerInfo encryptedDigest 
-            /// field containing the signature of signer. The inner content is binary encoded PKCS #7 using the
+            /// field containing the signature of signer. The inner content is binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the
             /// degenerate certificate.
             /// 
-            /// The optional CRL field may or may not be included in the PKCS #7 signedData structure.
+            /// The optional CRL field may or may not be included in the PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) signedData structure.
             /// </summary>
             [DataMember(Name = "certificateData")]
             public string CertificateData { get; init; }

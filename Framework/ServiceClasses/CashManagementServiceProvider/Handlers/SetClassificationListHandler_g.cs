@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
     [CommandHandler(XFSConstants.ServiceClass.CashManagement, typeof(SetClassificationListCommand))]
     public partial class SetClassificationListHandler : ICommandHandler
     {
-        public SetClassificationListHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public SetClassificationListHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetClassificationListHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetClassificationListHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashManagementDevice>();
 
-            CashManagement = Provider.IsA<ICashManagementServiceClass>();
+            CashManagement = Provider.IsA<ICashManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetClassificationListHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetClassificationListHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var setClassificationListCmd = command.IsA<SetClassificationListCommand>($"Invalid parameter in the SetClassificationList Handle method. {nameof(SetClassificationListCommand)}");
             setClassificationListCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashManagement
             await Connection.SendMessageAsync(new SetClassificationListCompletion(setClassificationListCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var setClassificationListcommand = command.IsA<SetClassificationListCommand>();
             setClassificationListcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashManagement
 
             var response = new SetClassificationListCompletion(setClassificationListcommand.Header.RequestId.Value, new SetClassificationListCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashManagementServiceClass CashManagement { get; }
+        private ICashManagementService CashManagement { get; }
         private ILogger Logger { get; }
     }
 

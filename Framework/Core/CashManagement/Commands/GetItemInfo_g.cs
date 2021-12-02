@@ -67,11 +67,11 @@ namespace XFS4IoT.CashManagement.Commands
             [DataContract]
             public sealed class ItemInfoTypeClass
             {
-                public ItemInfoTypeClass(bool? SerialNumber = null, bool? Signature = null, bool? ImageFile = null)
+                public ItemInfoTypeClass(bool? SerialNumber = null, bool? Signature = null, bool? Image = null)
                 {
                     this.SerialNumber = SerialNumber;
                     this.Signature = Signature;
-                    this.ImageFile = ImageFile;
+                    this.Image = Image;
                 }
 
                 /// <summary>
@@ -87,10 +87,10 @@ namespace XFS4IoT.CashManagement.Commands
                 public bool? Signature { get; init; }
 
                 /// <summary>
-                /// Request the image file of the item.
+                /// Request the image of the item.
                 /// </summary>
-                [DataMember(Name = "imageFile")]
-                public bool? ImageFile { get; init; }
+                [DataMember(Name = "image")]
+                public bool? Image { get; init; }
 
             }
 

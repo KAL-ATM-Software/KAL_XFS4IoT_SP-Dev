@@ -36,11 +36,53 @@ namespace XFS4IoT.Camera
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(Dictionary<string, MediaStateEnum> Media = null, Dictionary<string, CamerasStateEnum> Cameras = null, Dictionary<string, int> Pictures = null)
+        public StatusClass(MediaClass Media = null, CamerasClass Cameras = null, PicturesClass Pictures = null)
         {
             this.Media = Media;
             this.Cameras = Cameras;
             this.Pictures = Pictures;
+        }
+
+        [DataContract]
+        public sealed class MediaClass
+        {
+            public MediaClass(MediaStateEnum? Room = null, MediaStateEnum? Person = null, MediaStateEnum? ExitSlot = null)
+            {
+                this.Room = Room;
+                this.Person = Person;
+                this.ExitSlot = ExitSlot;
+            }
+
+            /// <summary>
+            /// Specifies the state of the recording media of the camera that monitors the whole self-service area.
+            /// </summary>
+            [DataMember(Name = "room")]
+            public MediaStateEnum? Room { get; init; }
+
+            /// <summary>
+            /// Specifies the state of the recording media of the camera that monitors the person standing in front of 
+            /// the self-service machine.
+            /// </summary>
+            [DataMember(Name = "person")]
+            public MediaStateEnum? Person { get; init; }
+
+            /// <summary>
+            /// Specifies the state of the recording media of the camera that monitors the exit slot(s) of the 
+            /// self-service machine.
+            /// </summary>
+            [DataMember(Name = "exitSlot")]
+            public MediaStateEnum? ExitSlot { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, MediaStateEnum> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<MediaStateEnum>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<MediaStateEnum>(value);
+            }
+
         }
 
         /// <summary>
@@ -55,7 +97,48 @@ namespace XFS4IoT.Camera
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the media cannot be determined.
         /// </summary>
         [DataMember(Name = "media")]
-        public Dictionary<string, MediaStateEnum> Media { get; init; }
+        public MediaClass Media { get; init; }
+
+        [DataContract]
+        public sealed class CamerasClass
+        {
+            public CamerasClass(CamerasStateEnum? Room = null, CamerasStateEnum? Person = null, CamerasStateEnum? ExitSlot = null)
+            {
+                this.Room = Room;
+                this.Person = Person;
+                this.ExitSlot = ExitSlot;
+            }
+
+            /// <summary>
+            /// Specifies the state of the camera that monitors the whole self-service area.
+            /// </summary>
+            [DataMember(Name = "room")]
+            public CamerasStateEnum? Room { get; init; }
+
+            /// <summary>
+            /// Specifies the state of the camera that monitors the person standing in front of the 
+            /// self-service machine. 
+            /// </summary>
+            [DataMember(Name = "person")]
+            public CamerasStateEnum? Person { get; init; }
+
+            /// <summary>
+            /// Specifies the state of the camera that monitors the exit slot(s) of the self-service machine.
+            /// </summary>
+            [DataMember(Name = "exitSlot")]
+            public CamerasStateEnum? ExitSlot { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, CamerasStateEnum> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<CamerasStateEnum>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<CamerasStateEnum>(value);
+            }
+
+        }
 
         /// <summary>
         /// Specifies the state of the cameras as one of the following.
@@ -66,7 +149,50 @@ namespace XFS4IoT.Camera
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the camera cannot be determined.
         /// </summary>
         [DataMember(Name = "cameras")]
-        public Dictionary<string, CamerasStateEnum> Cameras { get; init; }
+        public CamerasClass Cameras { get; init; }
+
+        [DataContract]
+        public sealed class PicturesClass
+        {
+            public PicturesClass(int? Room = null, int? Person = null, int? ExitSlot = null)
+            {
+                this.Room = Room;
+                this.Person = Person;
+                this.ExitSlot = ExitSlot;
+            }
+
+            /// <summary>
+            /// Specifies the number of pictures stored on the recording media of the room camera
+            /// </summary>
+            [DataMember(Name = "room")]
+            [DataTypes(Minimum = 0)]
+            public int? Room { get; init; }
+
+            /// <summary>
+            /// Specifies the number of pictures stored on the recording media of the person camera
+            /// </summary>
+            [DataMember(Name = "person")]
+            [DataTypes(Minimum = 0)]
+            public int? Person { get; init; }
+
+            /// <summary>
+            /// Specifies the number of pictures stored on the recording media of the exit slot camera
+            /// </summary>
+            [DataMember(Name = "exitSlot")]
+            [DataTypes(Minimum = 0)]
+            public int? ExitSlot { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, int> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<int>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<int>(value);
+            }
+
+        }
 
         /// <summary>
         /// Specifies the number of pictures stored on the recording media of the cameras. For a device which 
@@ -74,7 +200,7 @@ namespace XFS4IoT.Camera
         /// field should be zero.
         /// </summary>
         [DataMember(Name = "pictures")]
-        public Dictionary<string, int> Pictures { get; init; }
+        public PicturesClass Pictures { get; init; }
 
     }
 
@@ -82,7 +208,7 @@ namespace XFS4IoT.Camera
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeEnum? Type = null, Dictionary<string, bool> Cameras = null, int? MaxPictures = null, CamDataClass CamData = null, int? MaxDataLength = null, bool? PictureFile = null)
+        public CapabilitiesClass(TypeEnum? Type = null, CamerasClass Cameras = null, int? MaxPictures = null, CamDataClass CamData = null, int? MaxDataLength = null, bool? PictureFile = null)
         {
             this.Type = Type;
             this.Cameras = Cameras;
@@ -105,12 +231,53 @@ namespace XFS4IoT.Camera
         [DataMember(Name = "type")]
         public TypeEnum? Type { get; init; }
 
+        [DataContract]
+        public sealed class CamerasClass
+        {
+            public CamerasClass(bool? Room = null, bool? Person = null, bool? ExitSlot = null)
+            {
+                this.Room = Room;
+                this.Person = Person;
+                this.ExitSlot = ExitSlot;
+            }
+
+            /// <summary>
+            /// Specifies whether the camera that monitors the whole self-service area is available.
+            /// </summary>
+            [DataMember(Name = "room")]
+            public bool? Room { get; init; }
+
+            /// <summary>
+            /// Specifies whether the camera that monitors the person standing in front of the self-service is 
+            /// available. 
+            /// </summary>
+            [DataMember(Name = "person")]
+            public bool? Person { get; init; }
+
+            /// <summary>
+            /// Specifies whether the camera that monitors the exit slot(s) of the self-service machine is available.
+            /// </summary>
+            [DataMember(Name = "exitSlot")]
+            public bool? ExitSlot { get; init; }
+
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, bool> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<bool>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<bool>(value);
+            }
+
+        }
+
         /// <summary>
         /// Specifies whether cameras are available. The value of this parameter is either TRUE or FALSE. 
         /// TRUE is available.
         /// </summary>
         [DataMember(Name = "cameras")]
-        public Dictionary<string, bool> Cameras { get; init; }
+        public CamerasClass Cameras { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of pictures that can be stored on the recording media.

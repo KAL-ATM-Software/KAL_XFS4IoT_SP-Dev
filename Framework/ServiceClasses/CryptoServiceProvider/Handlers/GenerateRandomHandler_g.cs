@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Crypto
     [CommandHandler(XFSConstants.ServiceClass.Crypto, typeof(GenerateRandomCommand))]
     public partial class GenerateRandomHandler : ICommandHandler
     {
-        public GenerateRandomHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GenerateRandomHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GenerateRandomHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Crypto
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GenerateRandomHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICryptoDevice>();
 
-            Crypto = Provider.IsA<ICryptoServiceClass>();
+            Crypto = Provider.IsA<ICryptoService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GenerateRandomHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GenerateRandomHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var generateRandomCmd = command.IsA<GenerateRandomCommand>($"Invalid parameter in the GenerateRandom Handle method. {nameof(GenerateRandomCommand)}");
             generateRandomCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Crypto
             await Connection.SendMessageAsync(new GenerateRandomCompletion(generateRandomCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var generateRandomcommand = command.IsA<GenerateRandomCommand>();
             generateRandomcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Crypto
 
             var response = new GenerateRandomCompletion(generateRandomcommand.Header.RequestId.Value, new GenerateRandomCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICryptoDevice Device { get => Provider.Device.IsA<ICryptoDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICryptoServiceClass Crypto { get; }
+        private ICryptoService Crypto { get; }
         private ILogger Logger { get; }
     }
 

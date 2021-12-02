@@ -3,8 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT Common interface.
- * ClearCommandNonceHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -27,7 +25,8 @@ namespace XFS4IoTFramework.Common
             var result = await Device.ClearCommandNonce();
             Logger.Log(Constants.DeviceClass, $"CommonDev.ClearCommandNonce() -> {result.CompletionCode}");
 
-            return result;
+            return new ClearCommandNonceCompletion.PayloadData(result.CompletionCode,
+                                                               result.ErrorDescription);
         }
 
     }

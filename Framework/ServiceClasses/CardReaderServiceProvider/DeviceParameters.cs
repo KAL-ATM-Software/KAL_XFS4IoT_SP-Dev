@@ -3,9 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT CardReader interface.
- * ChipIOHandler.cs uses automatically generated parts. 
- * created at 4/20/2021 12:28:05 PM
 \***********************************************************************************************/
 
 using System;
@@ -22,20 +19,6 @@ using XFS4IoT.CardReader.Completions;
 namespace XFS4IoTFramework.CardReader
 {
     /// The classes used by the device interface for an Input/Output parameters
-
-    /// <summary>
-    /// Media status requested by the framework
-    /// </summary>
-    public enum MediaStatusEnum
-    {
-        NotSupported,
-        Unknown,
-        Present,
-        NotPresent,
-        Jammed,
-        Entering,
-        Latched
-    }
 
     /// <summary>
     /// AcceptCardRequest
@@ -350,40 +333,45 @@ namespace XFS4IoTFramework.CardReader
     }
 
     /// <summary>
+    /// MovePosition
+    /// Representing position to move media
+    /// </summary>
+    public sealed class MovePosition
+    {
+        public MovePosition(MovePositionEnum Position,
+                            string StorageId = null)
+        {
+            this.Position = Position;
+            this.StorageId = StorageId;
+
+            if (Position == MovePositionEnum.Storage)
+            {
+                Contracts.Assert(!string.IsNullOrEmpty(StorageId), $"No storage id supplied.");
+            }
+        }
+
+        public enum MovePositionEnum
+        {
+            Exit,
+            Transport,
+            Storage,
+        }
+
+        public MovePositionEnum Position { get; init; }
+
+        /// <summary>
+        /// If this value is null move default position and storage ID must report on the result if the operation completed successfully.
+        /// </summary>
+        public string StorageId { get; init; }
+    }
+
+
+    /// <summary>
     /// MoveCardRequest
     /// Move media with specified location
     /// </summary>
     public sealed class MoveCardRequest
     {
-        public sealed class MovePosition
-        {
-            public MovePosition(MovePositionEnum Position,
-                                string StorageId = null)
-            {
-                this.Position = Position;
-                this.StorageId = StorageId;
-
-                if (Position == MovePositionEnum.Storage)
-                {
-                    Contracts.Assert(!string.IsNullOrEmpty(StorageId), $"No storage id supplied.");
-                }
-            }
-
-            public enum MovePositionEnum
-            {
-                Exit,
-                Transport,
-                Storage,
-            }
-
-            public MovePositionEnum Position { get; init; }
-
-            /// <summary>
-            /// If this value is null move default position and storage ID must report on the result if the operation completed successfully.
-            /// </summary>
-            public string StorageId { get; init; }
-        }
-
         /// <summary>
         /// EjectCardRequest
         /// </summary>

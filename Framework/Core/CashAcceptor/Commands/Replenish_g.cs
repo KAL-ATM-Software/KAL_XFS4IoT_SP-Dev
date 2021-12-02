@@ -57,12 +57,13 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "target")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string Target { get; init; }
 
                 /// <summary>
-                /// The number of items to be moved to the target cash unit.  If 0, all items will be moved.
+                /// The number of items to be moved to the target cash unit. If 0, all items will be moved.
                 /// Any items which are removed from the 
-                /// source cash unit that are not of the correct currency ID and value for the target cash unit 
+                /// source cash unit that are not of the correct currency and value for the target cash unit 
                 /// during execution of this command will be returned to the source cash unit.
                 /// <example>100</example>
                 /// </summary>

@@ -19,8 +19,7 @@ namespace XFS4IoTFramework.TextTerminal
         private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.ResetDeviceAsync()");
-            var result = await Device.ResetDeviceAsync(events,
-                                                       cancel);
+            var result = await Device.ResetDeviceAsync(cancel);
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ResetDeviceAsync() -> {result.CompletionCode}");
 
             return new ResetCompletion.PayloadData(result.CompletionCode,

@@ -37,8 +37,9 @@ namespace XFS4IoT.Storage
     [DataContract]
     public sealed class StorageUnitClass
     {
-        public StorageUnitClass(string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null)
+        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null)
         {
+            this.Id = Id;
             this.PositionName = PositionName;
             this.Capacity = Capacity;
             this.Status = Status;
@@ -46,6 +47,14 @@ namespace XFS4IoT.Storage
             this.Cash = Cash;
             this.Card = Card;
         }
+
+        /// <summary>
+        /// An identifier which can be used for cUnitID in CDM/CIM XFS 3.x migration. Not required if not applicable.
+        /// <example>RC1</example>
+        /// </summary>
+        [DataMember(Name = "id")]
+        [DataTypes(Pattern = @"^.{1,5}$")]
+        public string Id { get; init; }
 
         /// <summary>
         /// Fixed physical name for the position.
@@ -84,23 +93,6 @@ namespace XFS4IoT.Storage
         /// </summary>
         [DataMember(Name = "card")]
         public CardReader.StorageClass Card { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class SingleStorageUnitClass
-    {
-        public SingleStorageUnitClass(Dictionary<string, StorageUnitClass> Storage = null)
-        {
-            this.Storage = Storage;
-        }
-
-        /// <summary>
-        /// Object containing information for a single storage unit.
-        /// </summary>
-        [DataMember(Name = "storage")]
-        public Dictionary<string, StorageUnitClass> Storage { get; init; }
 
     }
 

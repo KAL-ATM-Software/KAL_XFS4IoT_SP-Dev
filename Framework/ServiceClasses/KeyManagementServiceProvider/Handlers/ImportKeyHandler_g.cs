@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandler(XFSConstants.ServiceClass.KeyManagement, typeof(ImportKeyCommand))]
     public partial class ImportKeyHandler : ICommandHandler
     {
-        public ImportKeyHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public ImportKeyHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ImportKeyHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.KeyManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ImportKeyHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyManagementDevice>();
 
-            KeyManagement = Provider.IsA<IKeyManagementServiceClass>();
+            KeyManagement = Provider.IsA<IKeyManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ImportKeyHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ImportKeyHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var importKeyCmd = command.IsA<ImportKeyCommand>($"Invalid parameter in the ImportKey Handle method. {nameof(ImportKeyCommand)}");
             importKeyCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.KeyManagement
             await Connection.SendMessageAsync(new ImportKeyCompletion(importKeyCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var importKeycommand = command.IsA<ImportKeyCommand>();
             importKeycommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.KeyManagement
 
             var response = new ImportKeyCompletion(importKeycommand.Header.RequestId.Value, new ImportKeyCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyManagementServiceClass KeyManagement { get; }
+        private IKeyManagementService KeyManagement { get; }
         private ILogger Logger { get; }
     }
 

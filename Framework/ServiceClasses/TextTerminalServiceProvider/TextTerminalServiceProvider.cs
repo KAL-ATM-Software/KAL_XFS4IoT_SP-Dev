@@ -26,7 +26,7 @@ namespace TextTerminalProvider
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class TextTerminalServiceProvider : ServiceProvider, ITextTerminalServiceClass, ICommonServiceClass, ILightsServiceClass
+    public class TextTerminalServiceProvider : ServiceProvider, ITextTerminalService, ICommonService, ILightsService
     {
         public TextTerminalServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
             :
@@ -36,30 +36,42 @@ namespace TextTerminalProvider
                  device,
                  logger)
         {
-            Common = new CommonServiceClass(this, logger, ServiceName);
-            TextTerminal = new TextTerminalServiceClass(this, Common, logger);
+            CommonService = new CommonServiceClass(this, logger, ServiceName);
+            TextTerminal = new TextTerminalServiceClass(this, CommonService, logger);
         }
 
         private readonly TextTerminalServiceClass TextTerminal;
-        private readonly CommonServiceClass Common;
+        private readonly CommonServiceClass CommonService;
 
 
         #region TextTerminal unsolicited events
-        public Task FieldErrorEvent(FieldErrorEvent.PayloadData Payload) => TextTerminal.FieldErrorEvent(Payload);
-
         public Task FieldWarningEvent() => TextTerminal.FieldWarningEvent();
 
-        public Task KeyEvent(KeyEvent.PayloadData Payload) => TextTerminal.KeyEvent(Payload);
+        public Task KeyEvent(string Key, string CommandKey) => TextTerminal.KeyEvent(new KeyEvent.PayloadData(Key, CommandKey));
         #endregion
 
         #region Common unsolicited events
-        public Task PowerSaveChangeEvent(PowerSaveChangeEvent.PayloadData Payload) => Common.PowerSaveChangeEvent(Payload);
+        public Task PowerSaveChangeEvent(int PowerSaveRecoveryTime) => CommonService.PowerSaveChangeEvent(new PowerSaveChangeEvent.PayloadData(PowerSaveRecoveryTime));
 
-        public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => Common.DevicePositionEvent(Payload);
+        public Task DevicePositionEvent(CommonStatusClass.PositionStatusEnum Position) => CommonService.DevicePositionEvent(
+                                                                                                        new DevicePositionEvent.PayloadData(Position switch
+                                                                                                        {
+                                                                                                            CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
+                                                                                                            CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
+                                                                                                            _ => XFS4IoT.Common.PositionStatusEnum.Unknown,
+                                                                                                        }
+                                                                                                    ));
 
-        public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => Common.NonceClearedEvent(Payload);
+        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
 
-        public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => Common.ExchangeStateChangedEvent(Payload);
+        public Task ExchangeStateChangedEvent(CommonStatusClass.ExchangeEnum Exchange) => CommonService.ExchangeStateChangedEvent(
+                                                                                                        new ExchangeStateChangedEvent.PayloadData(Exchange switch
+                                                                                                        {
+                                                                                                            CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
+                                                                                                            CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
+                                                                                                            _ => XFS4IoT.Common.ExchangeEnum.NotSupported,
+                                                                                                        }
+                                                                                                    ));
         #endregion
 
 
@@ -67,12 +79,12 @@ namespace TextTerminalProvider
         /// <summary>
         /// Stores Common interface capabilites internally
         /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => Common.CommonCapabilities; set => Common.CommonCapabilities = value; }
+        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
         /// <summary>
         /// Common Status
         /// </summary>
-        public CommonStatusClass CommonStatus { get => Common.CommonStatus; set => Common.CommonStatus = value; }
+        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         #endregion
 
@@ -81,6 +93,6 @@ namespace TextTerminalProvider
 
         public void UpdateKeyDetails() => TextTerminal.UpdateKeyDetails();
 
-        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => Common.TextTerminalCapabilities; set => Common.TextTerminalCapabilities = value; }
+        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
     }
 }

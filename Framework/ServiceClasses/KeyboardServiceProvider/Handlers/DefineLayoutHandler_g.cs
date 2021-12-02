@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Keyboard
     [CommandHandler(XFSConstants.ServiceClass.Keyboard, typeof(DefineLayoutCommand))]
     public partial class DefineLayoutHandler : ICommandHandler
     {
-        public DefineLayoutHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DefineLayoutHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DefineLayoutHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Keyboard
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DefineLayoutHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyboardDevice>();
 
-            Keyboard = Provider.IsA<IKeyboardServiceClass>();
+            Keyboard = Provider.IsA<IKeyboardService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DefineLayoutHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DefineLayoutHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var defineLayoutCmd = command.IsA<DefineLayoutCommand>($"Invalid parameter in the DefineLayout Handle method. {nameof(DefineLayoutCommand)}");
             defineLayoutCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Keyboard
             await Connection.SendMessageAsync(new DefineLayoutCompletion(defineLayoutCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var defineLayoutcommand = command.IsA<DefineLayoutCommand>();
             defineLayoutcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Keyboard
 
             var response = new DefineLayoutCompletion(defineLayoutcommand.Header.RequestId.Value, new DefineLayoutCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyboardDevice Device { get => Provider.Device.IsA<IKeyboardDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyboardServiceClass Keyboard { get; }
+        private IKeyboardService Keyboard { get; }
         private ILogger Logger { get; }
     }
 

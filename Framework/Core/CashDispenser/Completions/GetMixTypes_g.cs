@@ -33,9 +33,12 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Object containing mix specifications. The property name of each mix can be used as the _mix_ in the 
-            /// [CashDispenser.GetMixTable](#cashdispenser.getmixtable), [CashDispenser.Dispense](#cashdispenser.dispense)
-            /// and [CashDispenser.Denominate](#cashdispenser.denominate) commands.
+            /// Object containing mix specifications including mix tables and pre-defined algorithms. The property name of
+            /// each mix can be used as the _mix_ in the [CashDispenser.Dispense](#cashdispenser.dispense) and 
+            /// [CashDispenser.Denominate](#cashdispenser.denominate) commands.
+            /// 
+            /// Mix tables are defined by [CashDispenser.SetMixTable](#cashdispenser.setmixtable). A mix table's definition
+            /// can be queried using its property name as input to [CashDispenser.GetMixTable](#cashdispenser.getmixtable).
             /// </summary>
             [DataMember(Name = "mixes")]
             public Dictionary<string, MixClass> Mixes { get; init; }

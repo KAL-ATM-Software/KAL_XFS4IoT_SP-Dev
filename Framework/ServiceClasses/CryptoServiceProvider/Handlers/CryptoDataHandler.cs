@@ -173,14 +173,14 @@ namespace XFS4IoTFramework.Crypto
                     // it then send it as a clear IV
                     Logger.Log(Constants.DeviceClass, "CryptoDev.Crypto()");
 
-                    var decryptResult = await Device.Crypto(events, 
-                                                     new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
-                                                                           CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                           cryptoData.Payload.StartValueKey,
-                                                                           Crypto.GetKeyDetail(cryptoData.Payload.StartValueKey).KeySlot,
-                                                                           new(Convert.FromBase64String(cryptoData.Payload.StartValue)),
-                                                                           0),
-                                                     cancel);
+                    var decryptResult = await Device.Crypto(new CryptoCommandEvents(events), 
+                                                            new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
+                                                                                  CryptoDataRequest.CryptoAlgorithmEnum.ECB,
+                                                                                  cryptoData.Payload.StartValueKey,
+                                                                                  Crypto.GetKeyDetail(cryptoData.Payload.StartValueKey).KeySlot,
+                                                                                  new(Convert.FromBase64String(cryptoData.Payload.StartValue)),
+                                                                                  0),
+                                                            cancel);
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
@@ -203,7 +203,7 @@ namespace XFS4IoTFramework.Crypto
 
             byte padding = (byte)(cryptoData.Payload.Padding is not null ? cryptoData.Payload.Padding : 0);
 
-            var result = await Device.Crypto(events,
+            var result = await Device.Crypto(new CryptoCommandEvents(events),
                                              new CryptoDataRequest(keyDetail.ModeOfUse == "E" ? CryptoDataRequest.CryptoModeEnum.Encrypt : CryptoDataRequest.CryptoModeEnum.Decrypt,
                                                                    cryptoData.Payload.CryptoAttributes.CryptoMethod switch
                                                                    {

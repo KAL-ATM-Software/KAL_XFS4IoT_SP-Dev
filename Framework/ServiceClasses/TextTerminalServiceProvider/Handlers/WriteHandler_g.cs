@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.TextTerminal
     [CommandHandler(XFSConstants.ServiceClass.TextTerminal, typeof(WriteCommand))]
     public partial class WriteHandler : ICommandHandler
     {
-        public WriteHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public WriteHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(WriteHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.TextTerminal
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(WriteHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ITextTerminalDevice>();
 
-            TextTerminal = Provider.IsA<ITextTerminalServiceClass>();
+            TextTerminal = Provider.IsA<ITextTerminalService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(WriteHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(WriteHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var writeCmd = command.IsA<WriteCommand>($"Invalid parameter in the Write Handle method. {nameof(WriteCommand)}");
             writeCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.TextTerminal
             await Connection.SendMessageAsync(new WriteCompletion(writeCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var writecommand = command.IsA<WriteCommand>();
             writecommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.TextTerminal
 
             var response = new WriteCompletion(writecommand.Header.RequestId.Value, new WriteCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ITextTerminalDevice Device { get => Provider.Device.IsA<ITextTerminalDevice>(); }
         private IServiceProvider Provider { get; }
-        private ITextTerminalServiceClass TextTerminal { get; }
+        private ITextTerminalService TextTerminal { get; }
         private ILogger Logger { get; }
     }
 

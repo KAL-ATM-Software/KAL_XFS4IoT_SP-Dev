@@ -61,7 +61,7 @@ namespace XFS4IoTFramework.PinPad
         /// The PIN block can be calculated using one of the algorithms specified in the device capabilities.
         /// This command will clear the PIN unless the application has requested that the PIN be maintained through the MaintinPin command enabled.
         /// </summary>
-        Task<PINBlockResult> GetPinBlock(IGetPinBlockEvents events, 
+        Task<PINBlockResult> GetPinBlock(PinPadCommandEvents events, 
                                          PINBlockRequest request, 
                                          CancellationToken cancellation);
 
@@ -72,7 +72,7 @@ namespace XFS4IoTFramework.PinPad
         /// This command will clear the PIN unless the application has requested that the PIN be maintained through the MaintainPin command.
         /// </summary>
         Task<PresentIDCResult> PresentIDC(PresentIDCRequest request, 
-                                        CancellationToken cancellation);
+                                          CancellationToken cancellation);
 
 
         /// <summary>

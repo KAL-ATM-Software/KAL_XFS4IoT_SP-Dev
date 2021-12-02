@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Crypto
     [CommandHandler(XFSConstants.ServiceClass.Crypto, typeof(CryptoDataCommand))]
     public partial class CryptoDataHandler : ICommandHandler
     {
-        public CryptoDataHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public CryptoDataHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(CryptoDataHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Crypto
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(CryptoDataHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICryptoDevice>();
 
-            Crypto = Provider.IsA<ICryptoServiceClass>();
+            Crypto = Provider.IsA<ICryptoService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(CryptoDataHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(CryptoDataHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var cryptoDataCmd = command.IsA<CryptoDataCommand>($"Invalid parameter in the CryptoData Handle method. {nameof(CryptoDataCommand)}");
             cryptoDataCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Crypto
             await Connection.SendMessageAsync(new CryptoDataCompletion(cryptoDataCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var cryptoDatacommand = command.IsA<CryptoDataCommand>();
             cryptoDatacommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Crypto
 
             var response = new CryptoDataCompletion(cryptoDatacommand.Header.RequestId.Value, new CryptoDataCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICryptoDevice Device { get => Provider.Device.IsA<ICryptoDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICryptoServiceClass Crypto { get; }
+        private ICryptoService Crypto { get; }
         private ILogger Logger { get; }
     }
 

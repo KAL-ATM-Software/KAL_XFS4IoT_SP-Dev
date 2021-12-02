@@ -20,7 +20,7 @@ namespace XFS4IoTFramework.CashManagement
         /// Retracted items will be moved to either a retract cash unit, a reject cash unit, item cash units, the transport or the intermediate stacker. 
         /// After the items are retracted the shutter is closed automatically, even if the ShutterControl capability is set to false.
         /// </summary>
-        Task<RetractResult> RetractAsync(IRetractEvents events,
+        Task<RetractResult> RetractAsync(RetractCommandEvents events,
                                          RetractRequest request,
                                          CancellationToken cancellation);
 
@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetDeviceAsync
         /// Perform a hardware reset which will attempt to return the CashDispenser device to a known good state.
         /// </summary>
-        Task<ResetDeviceResult> ResetDeviceAsync(IResetEvents events,
+        Task<ResetDeviceResult> ResetDeviceAsync(ShutterStatusChangedCommandEvents events,
                                                  ResetDeviceRequest request,
                                                  CancellationToken cancellation);
 
@@ -49,7 +49,7 @@ namespace XFS4IoTFramework.CashManagement
         /// <summary>
         /// This method will cause a vendor dependent sequence of hardware events which will calibrate one or more physical cash units associated with a logical cash unit.
         /// </summary>
-        Task<CalibrateCashUnitResult> CalibrateCashUnitAsync(ICalibrateCashUnitEvents events, 
+        Task<CalibrateCashUnitResult> CalibrateCashUnitAsync(ItemErrorCommandEvents events, 
                                                              CalibrateCashUnitRequest request, 
                                                              CancellationToken cancellation);
         /// <summary>

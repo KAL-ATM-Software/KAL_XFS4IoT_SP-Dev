@@ -146,14 +146,13 @@ namespace XFS4IoT.CashAcceptor
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(IntermediateStackerEnum? IntermediateStacker = null, StackerItemsEnum? StackerItems = null, BanknoteReaderEnum? BanknoteReader = null, bool? DropBox = null, List<PositionClass> Positions = null, MixedModeEnum? MixedMode = null)
+        public StatusClass(IntermediateStackerEnum? IntermediateStacker = null, StackerItemsEnum? StackerItems = null, BanknoteReaderEnum? BanknoteReader = null, bool? DropBox = null, List<PositionClass> Positions = null)
         {
             this.IntermediateStacker = IntermediateStacker;
             this.StackerItems = StackerItems;
             this.BanknoteReader = BanknoteReader;
             this.DropBox = DropBox;
             this.Positions = Positions;
-            this.MixedMode = MixedMode;
         }
 
         public enum IntermediateStackerEnum
@@ -236,21 +235,6 @@ namespace XFS4IoT.CashAcceptor
         /// </summary>
         [DataMember(Name = "positions")]
         public List<PositionClass> Positions { get; init; }
-
-        public enum MixedModeEnum
-        {
-            NotActive,
-            Active
-        }
-
-        /// <summary>
-        /// Reports if Mixed Media mode is active. Following values are possible:
-        /// 
-        /// * ```notActive``` - Mixed Media transactions are not supported by the device or Mixed Media mode is not activated.
-        /// * ```active``` - Mixed Media mode using the CashAcceptor and ItemProcessor interfaces is activated.
-        /// </summary>
-        [DataMember(Name = "mixedMode")]
-        public MixedModeEnum? MixedMode { get; init; }
 
     }
 

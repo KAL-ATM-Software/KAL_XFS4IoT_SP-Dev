@@ -88,18 +88,16 @@ namespace XFS4IoTServer.Test
     [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(TestMessage1))]
     public class TestMessageHandler1 : ICommandHandler
     {
-        public TestMessageHandler1(ICommandDispatcher _, ILogger _1 ){}
+        public TestMessageHandler1(IConnection _, ICommandDispatcher _1, ILogger _2 ){}
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
-            Assert.IsInstanceOfType(Connection, typeof(IConnection));
             Assert.IsInstanceOfType(command, typeof(TestMessage1));
             await Task.CompletedTask;
         }
 
-        public async Task HandleError(IConnection Connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
-            Assert.IsInstanceOfType(Connection, typeof(IConnection));
             Assert.IsInstanceOfType(command, typeof(TestMessage1));
             await Task.CompletedTask;
         }
@@ -109,19 +107,17 @@ namespace XFS4IoTServer.Test
     //[CommandHandler(typeof(Int32))] // Non-CommandMessage types will FE on process startup. 
     public class TestMessageHandler2 : ICommandHandler
     {
-        public TestMessageHandler2(ICommandDispatcher _, ILogger _1) { }
+        public TestMessageHandler2(IConnection _, ICommandDispatcher _1, ILogger _2) { }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
-            Assert.IsInstanceOfType(Connection, typeof(IConnection));
             Assert.IsTrue(command is TestMessage2 || command is TestMessage3);
 
             await Task.CompletedTask;
         }
 
-        public async Task HandleError(IConnection Connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
-            Assert.IsInstanceOfType(Connection, typeof(IConnection));
             Assert.IsTrue(command is TestMessage2 || command is TestMessage3);
 
             await Task.CompletedTask;

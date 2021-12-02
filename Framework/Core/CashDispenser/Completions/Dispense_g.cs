@@ -49,7 +49,6 @@ namespace XFS4IoT.CashDispenser.Completions
                 ExchangeActive,
                 NoCashBoxPresent,
                 AmountNotInMixTable,
-                ItemsNotTaken,
                 ItemsLeft,
                 ShutterOpen
             }
@@ -76,11 +75,9 @@ namespace XFS4IoT.CashDispenser.Completions
             /// * ```amountNotInMixTable``` - A mix table is being used to determine the denomination but the amount 
             /// specified in the request is not in the mix table.
             /// * ```unsupportedPosition``` - The specified output position is not supported.
-            /// * ```itemsNotTaken``` - Items have not been taken during a sub-dispense operation. This error occurs
-            /// if a hardware timeout expires.
             /// * ```itemsLeft``` - Items have been left in the transport or exit slot as a result of a prior 
             /// dispense, present or recycler cash-in operation.
-            /// * ```shutterOpen``` - The service cannot dispense items with an open output shutter.
+            /// * ```shutterOpen``` - The Service cannot dispense items with an open output shutter.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -82,7 +82,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// be presented as a result of the current operation.
             /// This property is omitted if any of the following are true:
             /// * If the number of additional bunches is at least one, but the precise number is unknown. 
-            /// * *additionalBunches* is not ```oneMore```.
+            /// * _additionalBunches_ is not ```oneMore```.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
             public int? BunchesRemaining { get; init; }

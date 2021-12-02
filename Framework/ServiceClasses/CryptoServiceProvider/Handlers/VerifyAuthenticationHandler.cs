@@ -249,14 +249,14 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.VerifySignature()");
 
-                result = await Device.VerifySignature(events,
-                                                        new VerifySignatureRequest(verifyAuthentication.Payload.Key,
-                                                                                   Crypto.GetKeyDetail(verifyAuthentication.Payload.Key).KeySlot,
-                                                                                   Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
-                                                                                   Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
-                                                                                   (VerifySignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm,
-                                                                                   padding),
-                                                        cancel);
+                result = await Device.VerifySignature(new CryptoCommandEvents(events),
+                                                      new VerifySignatureRequest(verifyAuthentication.Payload.Key,
+                                                                                 Crypto.GetKeyDetail(verifyAuthentication.Payload.Key).KeySlot,
+                                                                                 Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
+                                                                                 Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
+                                                                                 (VerifySignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm,
+                                                                                  padding),
+                                                      cancel);
 
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.VerifySignature() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -265,16 +265,16 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.VerifyMAC()");
 
-                result = await Device.VerifyMAC(events,
-                                                  new VerifyMACRequest(keyDetail.KeyName,
-                                                                       keyDetail.KeySlot,
-                                                                       Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
-                                                                       Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
-                                                                       padding,
-                                                                       ivKeyName,
-                                                                       ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
-                                                                       ivData),
-                                                  cancel);
+                result = await Device.VerifyMAC(new CryptoCommandEvents(events),
+                                                new VerifyMACRequest(keyDetail.KeyName,
+                                                                     keyDetail.KeySlot,
+                                                                     Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
+                                                                     Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
+                                                                     padding,
+                                                                     ivKeyName,
+                                                                     ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
+                                                                     ivData),
+                                                cancel);
 
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.VerifyMAC() -> {result.CompletionCode}, {result.ErrorCode}");

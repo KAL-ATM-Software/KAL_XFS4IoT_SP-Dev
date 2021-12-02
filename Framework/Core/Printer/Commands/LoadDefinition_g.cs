@@ -27,22 +27,21 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FileName = null, bool? Overwrite = null)
+            public PayloadData(int Timeout, string Definition = null, bool? Overwrite = null)
                 : base(Timeout)
             {
-                this.FileName = FileName;
+                this.Definition = Definition;
                 this.Overwrite = Overwrite;
             }
 
             /// <summary>
-            /// This is the full path and file name of the file to be loaded. This value cannot contain UNICODE
-            /// characters. The file contains the form (including sub-forms and frames) or media definition in text
-            /// format as described in
+            /// This contains the form (including sub-forms and frames) or media definition in text format as
+            /// described in
             /// [Form, Sub-Form, Field, Frame, Table and Media Definitions](#printer.generalinformation.formandmediadefinitions).
-            /// Only one form or media definition can be defined in the file.
+            /// Only one form or media definition can be included in this property.
             /// </summary>
-            [DataMember(Name = "fileName")]
-            public string FileName { get; init; }
+            [DataMember(Name = "definition")]
+            public string Definition { get; init; }
 
             /// <summary>
             /// Specifies if an existing form or media definition with the same name is to be replaced. If this flag

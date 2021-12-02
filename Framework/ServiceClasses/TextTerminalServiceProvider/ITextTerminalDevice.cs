@@ -2,6 +2,7 @@
  * (C) KAL ATM Software GmbH, 2021
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
+ * 
 \***********************************************************************************************/
 
 using System.Threading;
@@ -54,7 +55,7 @@ namespace XFS4IoTFramework.TextTerminal
         /// Sends a service reset to the Service Provider. 
         /// This command clears the screen, clears the keyboard buffer, sets the default resolution and sets the cursor position to the upper left.
         /// </summary>
-        Task<DeviceResult> ResetDeviceAsync(IResetEvents events, CancellationToken cancellation);
+        Task<DeviceResult> ResetDeviceAsync(CancellationToken cancellation);
 
         /// <summary>
         /// This command is used to start a read operation on the device.

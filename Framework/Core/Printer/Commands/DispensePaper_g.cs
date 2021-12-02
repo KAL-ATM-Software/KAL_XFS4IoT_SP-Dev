@@ -27,37 +27,29 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PaperSourceEnum? PaperSource = null)
+            public PayloadData(int Timeout, string PaperSource = null)
                 : base(Timeout)
             {
                 this.PaperSource = PaperSource;
             }
 
-            public enum PaperSourceEnum
-            {
-                Any,
-                Upper,
-                Lower,
-                External,
-                Aux,
-                Aux2,
-                Park
-            }
-
             /// <summary>
-            /// The paper source to dispense from. It can be one of the following:
+            /// Specifes the paper source to be used. 
+            /// This property can be omitted if any paper source to be used and the paper source is determined by the service.
+            /// It can be one of the following:
             /// 
-            /// * ```any``` - Any paper source can be used; it is determined by the service.
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
-            ///   supply.
+            ///                 supply.
             /// * ```lower``` - Use the lower paper source.
-            /// * ```internal``` - Use the external paper.
+            /// * ```external``` - Use the external paper.
             /// * ```aux``` - Use the auxiliary paper source.
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
+            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; init; }
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            public string PaperSource { get; init; }
 
         }
     }

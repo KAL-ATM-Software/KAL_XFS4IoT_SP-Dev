@@ -27,18 +27,45 @@ namespace XFS4IoT.CashAcceptor.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, Dictionary<string, CashManagement.BankNoteClass> Items = null)
+            public PayloadData(int Timeout, List<ItemsClass> Items = null)
                 : base(Timeout)
             {
                 this.Items = Items;
             }
 
+            [DataContract]
+            public sealed class ItemsClass
+            {
+                public ItemsClass(string Item = null, bool? Enabled = null)
+                {
+                    this.Item = Item;
+                    this.Enabled = Enabled;
+                }
+
+                /// <summary>
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
+                /// not identified as a cash item.
+                /// <example>type20USD1</example>
+                /// </summary>
+                [DataMember(Name = "item")]
+                [DataTypes(Pattern = @"^type[0-9A-Z]+$")]
+                public string Item { get; init; }
+
+                /// <summary>
+                /// If true the banknote reader will accept this note type during a cash-in operations.
+                /// If false the banknote reader will refuse this note type unless it must be retained by note classification 
+                /// rules.
+                /// </summary>
+                [DataMember(Name = "enabled")]
+                public bool? Enabled { get; init; }
+
+            }
+
             /// <summary>
-            /// An object listing which cash items the device is capable of handling and whether the cash items
-            /// are enabled for acceptance.
+            /// An array which specifies which note types are to be disabled or re-enabled.
             /// </summary>
             [DataMember(Name = "items")]
-            public Dictionary<string, CashManagement.BankNoteClass> Items { get; init; }
+            public List<ItemsClass> Items { get; init; }
 
         }
     }

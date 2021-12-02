@@ -21,15 +21,27 @@ namespace XFS4IoTFramework.Printer
     public partial class LoadDefinitionHandler
     {
 
-        private Task<LoadDefinitionCompletion.PayloadData> HandleLoadDefinition(ILoadDefinitionEvents events, LoadDefinitionCommand loadDefinition, CancellationToken cancel)
+        private async Task<LoadDefinitionCompletion.PayloadData> HandleLoadDefinition(ILoadDefinitionEvents events, LoadDefinitionCommand loadDefinition, CancellationToken cancel)
         {
-            //ToDo: Implement HandleLoadDefinition for Printer.
+            if (string.IsNullOrWhiteSpace(loadDefinition.Payload.Definition))
+                return new LoadDefinitionCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Definition cannot be null or whitespace.");
+
             
-            #if DEBUG
-                throw new NotImplementedException("HandleLoadDefinition for Printer is not implemented in LoadDefinitionHandler.cs");
-            #else
-                #error HandleLoadDefinition for Printer is not implemented in LoadDefinitionHandler.cs
-            #endif
+            if (Printer.LoadSingleDefinition(loadDefinition.Payload.Definition, loadDefinition.Payload.Overwrite ?? false, out var type, out var name, out var errorMsg))
+            {
+                await Provider.BroadcastEvent(new XFS4IoT.Printer.Events.DefinitionLoadedEvent(new(name, type)));
+                return new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null);
+            }
+            else
+            {
+                LoadDefinitionCompletion.PayloadData.ErrorCodeEnum errorCode = type switch
+                {
+                    XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum.Form => LoadDefinitionCompletion.PayloadData.ErrorCodeEnum.FormInvalid,
+                    XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum.Media => LoadDefinitionCompletion.PayloadData.ErrorCodeEnum.MediaInvalid,
+                    _ => LoadDefinitionCompletion.PayloadData.ErrorCodeEnum.DefinitionExists
+                };
+                return new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, errorMsg ?? "Failed to read definition.", errorCode);
+            }
         }
 
     }

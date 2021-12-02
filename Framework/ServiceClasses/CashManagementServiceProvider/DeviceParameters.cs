@@ -18,6 +18,39 @@ using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
+    public enum NoteLevelEnum
+    {
+        Unrecognized,
+        Counterfeit,
+        Suspect,
+        Fit,
+        Unfit,
+        Inked
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public sealed class ItemInfoSummary
+    {
+        public ItemInfoSummary(NoteLevelEnum Level, int NumOfItems)
+        {
+            this.Level = Level;
+            this.NumOfItems = NumOfItems;
+        }
+
+        /// <summary>
+        /// Level of item
+        /// </summary>
+        public NoteLevelEnum Level { get; init; }
+
+        /// <summary>
+        /// Number of items classified as level which have information available.
+        /// </summary>
+        public int NumOfItems { get; init; }
+
+    }
+
     /// <summary>
     /// This field is used if items are to be moved to internal areas of the device, including cash units, 
     /// the intermediate stacker, or the transport.

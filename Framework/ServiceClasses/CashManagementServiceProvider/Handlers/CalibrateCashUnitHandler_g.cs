@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
     [CommandHandler(XFSConstants.ServiceClass.CashManagement, typeof(CalibrateCashUnitCommand))]
     public partial class CalibrateCashUnitHandler : ICommandHandler
     {
-        public CalibrateCashUnitHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public CalibrateCashUnitHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(CalibrateCashUnitHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(CalibrateCashUnitHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashManagementDevice>();
 
-            CashManagement = Provider.IsA<ICashManagementServiceClass>();
+            CashManagement = Provider.IsA<ICashManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(CalibrateCashUnitHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(CalibrateCashUnitHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var calibrateCashUnitCmd = command.IsA<CalibrateCashUnitCommand>($"Invalid parameter in the CalibrateCashUnit Handle method. {nameof(CalibrateCashUnitCommand)}");
             calibrateCashUnitCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashManagement
             await Connection.SendMessageAsync(new CalibrateCashUnitCompletion(calibrateCashUnitCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var calibrateCashUnitcommand = command.IsA<CalibrateCashUnitCommand>();
             calibrateCashUnitcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashManagement
 
             var response = new CalibrateCashUnitCompletion(calibrateCashUnitcommand.Header.RequestId.Value, new CalibrateCashUnitCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashManagementServiceClass CashManagement { get; }
+        private ICashManagementService CashManagement { get; }
         private ILogger Logger { get; }
     }
 

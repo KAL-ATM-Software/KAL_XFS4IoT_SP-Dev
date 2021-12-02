@@ -27,15 +27,15 @@ namespace XFS4IoT.CashManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? TellerID = null, string CurrencyID = null)
+            public PayloadData(int Timeout, int? TellerID = null, string Currency = null)
                 : base(Timeout)
             {
                 this.TellerID = TellerID;
-                this.CurrencyID = CurrencyID;
+                this.Currency = Currency;
             }
 
             /// <summary>
-            /// Identification of the teller. If invalid the error *invalidTellerId* is reported. If not specified, all
+            /// Identification of the teller. If invalid the error _invalidTellerId_ is reported. If not specified, all
             /// tellers are reported.
             /// </summary>
             [DataMember(Name = "tellerID")]
@@ -43,11 +43,12 @@ namespace XFS4IoT.CashManagement.Commands
             public int? TellerID { get; init; }
 
             /// <summary>
-            /// Three character ISO 4217 format currency identifier. If not specified, all currencies are reported for _tellerID_.
-            /// <example>EUR</example>
+            /// ISO 4217 format currency identifier. If not specified, all currencies are reported for _tellerID_.
+            /// <example>USD</example>
             /// </summary>
-            [DataMember(Name = "currencyID")]
-            public string CurrencyID { get; init; }
+            [DataMember(Name = "currency")]
+            [DataTypes(Pattern = @"^[A-Z][A-Z][A-Z]$")]
+            public string Currency { get; init; }
 
         }
     }

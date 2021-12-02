@@ -172,7 +172,7 @@ namespace XFS4IoT.KeyManagement
             public bool? Number3partyCert { get; init; }
 
             /// <summary>
-            /// Three-party Certificate based authentication described by X9 TR34-2012.
+            /// Three-party Certificate based authentication described by X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)].
             /// </summary>
             [DataMember(Name = "3partyCertTr34")]
             public bool? Number3partyCertTr34 { get; init; }
@@ -253,13 +253,13 @@ namespace XFS4IoT.KeyManagement
             }
 
             /// <summary>
-            /// sha1 is supported as defined in Ref. 3.
+            /// sha1 is supported as defined in [[Ref. 3](#ref-keymanagement-3)].
             /// </summary>
             [DataMember(Name = "sha1")]
             public bool? Sha1 { get; init; }
 
             /// <summary>
-            /// sha256 is supported as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+            /// sha256 is supported as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-keymanagement-40)] and FIPS 180-2 [[Ref. 41](#ref-keymanagement-41)].
             /// </summary>
             [DataMember(Name = "sha256")]
             public bool? Sha256 { get; init; }
@@ -342,32 +342,32 @@ namespace XFS4IoT.KeyManagement
             public bool? PlainCA { get; init; }
 
             /// <summary>
-            /// A plain text CA public key is imported using the EMV 2000 verification algorithm.
+            /// A plain text CA public key is imported using the EMV 2000 verification algorithm. See [[Ref. 4](#ref-keymanagement-4)].
             /// </summary>
             [DataMember(Name = "chksumCA")]
             public bool? ChksumCA { get; init; }
 
             /// <summary>
             /// A CA public key is imported using the selfsign scheme defined in the Europay International, epi CA Module 
-            /// Technical - Interface specification.\
+            /// Technical - Interface specification Version 1.4, [[Ref. 5](#ref-keymanagement-5)].
             /// </summary>
             [DataMember(Name = "epiCA")]
             public bool? EpiCA { get; init; }
 
             /// <summary>
-            /// An Issuer public key is imported as defined in EMV 2000 Book II.
+            /// An Issuer public key is imported as defined in EMV 2000 Book II, [[Ref. 4](#ref-keymanagement-4)].
             /// </summary>
             [DataMember(Name = "issuer")]
             public bool? Issuer { get; init; }
 
             /// <summary>
-            /// An ICC public key is imported as defined in EMV 2000 Book II.
+            /// An ICC public key is imported as defined in EMV 2000 Book II, [[Ref. 4](#ref-keymanagement-4)].
             /// </summary>
             [DataMember(Name = "icc")]
             public bool? Icc { get; init; }
 
             /// <summary>
-            /// An ICC PIN public key is imported as defined in EMV 2000 Book II.
+            /// An ICC PIN public key is imported as defined in EMV 2000 Book II, [[Ref. 4](#ref-keymanagement-4)].
             /// </summary>
             [DataMember(Name = "iccPin")]
             public bool? IccPin { get; init; }
@@ -536,9 +536,9 @@ namespace XFS4IoT.KeyManagement
             /// * ```certHost``` - The current Host RSA Private Key is used to sign the token.
             /// * ```sigHost``` - The current Host RSA Private Key is used to sign the token, signature format is used.
             /// * ```hl``` - A Higher-Level Authority RSA Private Key is used to sign the token.
-            /// * ```certHostTr34``` - The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2012.
-            /// * ```caTr34``` - The Certificate Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2012.
-            /// * ```hlTr34``` - A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2012.
+            /// * ```certHostTr34``` - The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)].
+            /// * ```caTr34``` - The Certificate Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)].
+            /// * ```hlTr34``` - A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)].
             /// </summary>
             [DataMember(Name = "signer")]
             public SignerEnum? Signer { get; init; }
@@ -650,7 +650,7 @@ namespace XFS4IoT.KeyManagement
             public bool? MasterKey { get; init; }
 
             /// <summary>
-            /// This method uses TDES Derived Unique Key Per Transaction (see reference 45).
+            /// This method uses TDES Derived Unique Key Per Transaction (see [[Ref. 45](#ref-keymanagement-45)]).
             /// </summary>
             [DataMember(Name = "tdesDukpt")]
             public bool? TdesDukpt { get; init; }
@@ -774,13 +774,13 @@ namespace XFS4IoT.KeyManagement
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A. 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-keymanagement-49)]).
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
 
                 /// <summary>
-                /// The XTS method defined in NIST SP800-38E. 
+                /// The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-keymanagement-50)]).
                 /// </summary>
                 [DataMember(Name = "xts")]
                 public bool? Xts { get; init; }
@@ -807,8 +807,8 @@ namespace XFS4IoT.KeyManagement
             /// * ```cbc``` - The CBC encryption method. 
             /// * ```cfb``` - The CFB encryption method. 
             /// * ```ofb``` - The OFB encryption method. 
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A. 
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E. 
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-keymanagement-49)]). 
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-keymanagement-50)]).
             /// 
             /// If the algorithm is 'R', then one of following property must be true and ecb, cbc, cfb, ofb, ctr, xts must be all false.
             /// 
@@ -923,7 +923,7 @@ namespace XFS4IoT.KeyManagement
                 public bool? Sha1 { get; init; }
 
                 /// <summary>
-                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-keymanagement-40)] and FIPS 180-2 [[Ref. 41](#ref-keymanagement-41)].
                 /// </summary>
                 [DataMember(Name = "sha256")]
                 public bool? Sha256 { get; init; }

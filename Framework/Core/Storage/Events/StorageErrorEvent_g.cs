@@ -29,7 +29,7 @@ namespace XFS4IoT.Storage.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(FailureEnum? Failure = null, SingleStorageUnitClass Unit = null)
+            public PayloadData(FailureEnum? Failure = null, Dictionary<string, StorageUnitClass> Unit = null)
                 : base()
             {
                 this.Failure = Failure;
@@ -65,7 +65,7 @@ namespace XFS4IoT.Storage.Events
             /// The storage unit object that caused the problem.
             /// </summary>
             [DataMember(Name = "unit")]
-            public SingleStorageUnitClass Unit { get; init; }
+            public Dictionary<string, StorageUnitClass> Unit { get; init; }
 
         }
 

@@ -3,34 +3,68 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT Printer interface.
- * SupplyReplenishHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
 
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Printer
 {
     public partial class SupplyReplenishHandler
     {
-
-        private Task<SupplyReplenishCompletion.PayloadData> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
+        private async Task<SupplyReplenishCompletion.PayloadData> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
         {
-            //ToDo: Implement HandleSupplyReplenish for Printer.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleSupplyReplenish for Printer is not implemented in SupplyReplenishHandler.cs");
-            #else
-                #error HandleSupplyReplenish for Printer is not implemented in SupplyReplenishHandler.cs
-            #endif
-        }
+            SupplyReplenishedRequest.SupplyEnum supplies = SupplyReplenishedRequest.SupplyEnum.NotSupported;
 
+            if (supplyReplenish.Payload.Aux is not null &&
+                (bool)supplyReplenish.Payload.Aux)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.AUX;
+            }
+            if (supplyReplenish.Payload.Aux2 is not null &&
+                (bool)supplyReplenish.Payload.Aux2)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.AUX2;
+            }
+            if (supplyReplenish.Payload.Upper is not null &&
+                (bool)supplyReplenish.Payload.Upper)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.Upper;
+            }
+            if (supplyReplenish.Payload.Lower is not null &&
+                (bool)supplyReplenish.Payload.Lower)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.Lower;
+            }
+            if (supplyReplenish.Payload.Toner is not null &&
+                (bool)supplyReplenish.Payload.Toner)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.Toner;
+            }
+            if (supplyReplenish.Payload.Ink is not null &&
+                (bool)supplyReplenish.Payload.Ink)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.Ink;
+            }
+            if (supplyReplenish.Payload.Lamp is not null &&
+                (bool)supplyReplenish.Payload.Lamp)
+            {
+                supplies |= SupplyReplenishedRequest.SupplyEnum.Lamp;
+            }
+
+            Logger.Log(Constants.DeviceClass, "PrinterDev.SupplyReplenishedAsync()");
+            var result = await Device.SupplyReplenishedAsync(new (supplies), cancel);
+            Logger.Log(Constants.DeviceClass, $"PrinterDev.SupplyReplenishedAsync() -> {result.CompletionCode}");
+
+            return new SupplyReplenishCompletion.PayloadData(result.CompletionCode,
+                                                             result.ErrorDescription);
+        }
     }
 }

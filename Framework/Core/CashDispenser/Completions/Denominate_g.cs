@@ -84,8 +84,8 @@ namespace XFS4IoT.CashDispenser.Completions
             public Dictionary<string, double> Currencies { get; init; }
 
             /// <summary>
-            /// This list specifies the number of items to take from the cash units. If specified in a request, the output 
-            /// denomination must include these items.
+            /// This list specifies the number of items to take or which have been taken from the storage units. If specified in
+            /// a request, the output denomination must include these items.
             /// 
             /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
             /// command. The value of the entry is the number of items to take from that unit.

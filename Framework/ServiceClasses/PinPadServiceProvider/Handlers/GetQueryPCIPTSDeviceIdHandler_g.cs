@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.PinPad
     [CommandHandler(XFSConstants.ServiceClass.PinPad, typeof(GetQueryPCIPTSDeviceIdCommand))]
     public partial class GetQueryPCIPTSDeviceIdHandler : ICommandHandler
     {
-        public GetQueryPCIPTSDeviceIdHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetQueryPCIPTSDeviceIdHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetQueryPCIPTSDeviceIdHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.PinPad
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetQueryPCIPTSDeviceIdHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPinPadDevice>();
 
-            PinPad = Provider.IsA<IPinPadServiceClass>();
+            PinPad = Provider.IsA<IPinPadService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetQueryPCIPTSDeviceIdHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetQueryPCIPTSDeviceIdHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getQueryPCIPTSDeviceIdCmd = command.IsA<GetQueryPCIPTSDeviceIdCommand>($"Invalid parameter in the GetQueryPCIPTSDeviceId Handle method. {nameof(GetQueryPCIPTSDeviceIdCommand)}");
             getQueryPCIPTSDeviceIdCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.PinPad
             await Connection.SendMessageAsync(new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getQueryPCIPTSDeviceIdcommand = command.IsA<GetQueryPCIPTSDeviceIdCommand>();
             getQueryPCIPTSDeviceIdcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.PinPad
 
             var response = new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdcommand.Header.RequestId.Value, new GetQueryPCIPTSDeviceIdCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPinPadDevice Device { get => Provider.Device.IsA<IPinPadDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPinPadServiceClass PinPad { get; }
+        private IPinPadService PinPad { get; }
         private ILogger Logger { get; }
     }
 

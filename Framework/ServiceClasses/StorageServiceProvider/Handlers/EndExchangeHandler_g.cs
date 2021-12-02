@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Storage
     [CommandHandler(XFSConstants.ServiceClass.Storage, typeof(EndExchangeCommand))]
     public partial class EndExchangeHandler : ICommandHandler
     {
-        public EndExchangeHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public EndExchangeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(EndExchangeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Storage
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(EndExchangeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IStorageDevice>();
 
-            Storage = Provider.IsA<IStorageServiceClass>();
+            Storage = Provider.IsA<IStorageService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(EndExchangeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(EndExchangeHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var endExchangeCmd = command.IsA<EndExchangeCommand>($"Invalid parameter in the EndExchange Handle method. {nameof(EndExchangeCommand)}");
             endExchangeCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Storage
             await Connection.SendMessageAsync(new EndExchangeCompletion(endExchangeCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var endExchangecommand = command.IsA<EndExchangeCommand>();
             endExchangecommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Storage
 
             var response = new EndExchangeCompletion(endExchangecommand.Header.RequestId.Value, new EndExchangeCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IStorageDevice Device { get => Provider.Device.IsA<IStorageDevice>(); }
         private IServiceProvider Provider { get; }
-        private IStorageServiceClass Storage { get; }
+        private IStorageService Storage { get; }
         private ILogger Logger { get; }
     }
 

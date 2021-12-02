@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
     [CommandHandler(XFSConstants.ServiceClass.CashManagement, typeof(ResetCommand))]
     public partial class ResetHandler : ICommandHandler
     {
-        public ResetHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public ResetHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ResetHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ResetHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashManagementDevice>();
 
-            CashManagement = Provider.IsA<ICashManagementServiceClass>();
+            CashManagement = Provider.IsA<ICashManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ResetHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ResetHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var resetCmd = command.IsA<ResetCommand>($"Invalid parameter in the Reset Handle method. {nameof(ResetCommand)}");
             resetCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashManagement
             await Connection.SendMessageAsync(new ResetCompletion(resetCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var resetcommand = command.IsA<ResetCommand>();
             resetcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashManagement
 
             var response = new ResetCompletion(resetcommand.Header.RequestId.Value, new ResetCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashManagementServiceClass CashManagement { get; }
+        private ICashManagementService CashManagement { get; }
         private ILogger Logger { get; }
     }
 

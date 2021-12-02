@@ -129,7 +129,7 @@ namespace XFS4IoT.TextTerminal
         /// <summary>
         /// Array specifies the resolutions supported by the physical display device. (For the definition of Resolution see 
         /// the command [TextTerminal.SetResolution](#textterminal.setresolution)). The resolution indicated in the first 
-        /// position is the default resolution and the device will be placed in this resolution when the Service Provider 
+        /// position is the default resolution and the device will be placed in this resolution when the Service 
         /// is initialized or reset through the [TextTerminal.Reset](#textterminal.reset) command.
         /// </summary>
         [DataMember(Name = "resolutions")]

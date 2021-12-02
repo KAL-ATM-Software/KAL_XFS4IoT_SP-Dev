@@ -148,6 +148,15 @@ namespace XFS4IoT
         /// </summary>
         [Contract]
         public static T IsNotNull<T>(this T v, string message = "Value should not be null") where T:class => v.Is(x => x != null, message);
+        
+        /// <summary>
+        /// Assert value must be not null 
+        /// <code><![CDATA[
+        ///     var x = MyValue.IsNotNull().MyProperty; 
+        /// ]]></code>
+        /// </summary>
+        [Contract]
+        public static T IsNotNull<T>(this T? v, string message = "Value should not be null") where T:struct => v.Is(x => x is not null && x.HasValue, message).Value;
 
         /// <summary>
         /// Assert value must be not null 

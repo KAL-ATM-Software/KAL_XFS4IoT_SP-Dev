@@ -26,12 +26,11 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Unrecognized = null, Dictionary<string, CashManagement.StorageCashCountClass> Cash = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Unrecognized = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
                 this.Unrecognized = Unrecognized;
-                this.Cash = Cash;
             }
 
             public enum ErrorCodeEnum
@@ -77,11 +76,15 @@ namespace XFS4IoT.CashAcceptor.Completions
             [DataMember(Name = "unrecognized")]
             public int? Unrecognized { get; init; }
 
-            /// <summary>
-            /// Counts of cash items broken down by cash item type and classification
-            /// </summary>
-            [DataMember(Name = "cash")]
-            public Dictionary<string, CashManagement.StorageCashCountClass> Cash { get; init; }
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, CashManagement.StorageCashCountClass> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<CashManagement.StorageCashCountClass>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<CashManagement.StorageCashCountClass>(value);
+            }
 
         }
     }

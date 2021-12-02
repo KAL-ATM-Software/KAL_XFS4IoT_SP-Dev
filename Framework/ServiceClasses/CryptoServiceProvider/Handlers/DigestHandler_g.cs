@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Crypto
     [CommandHandler(XFSConstants.ServiceClass.Crypto, typeof(DigestCommand))]
     public partial class DigestHandler : ICommandHandler
     {
-        public DigestHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DigestHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DigestHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Crypto
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DigestHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICryptoDevice>();
 
-            Crypto = Provider.IsA<ICryptoServiceClass>();
+            Crypto = Provider.IsA<ICryptoService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DigestHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DigestHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var digestCmd = command.IsA<DigestCommand>($"Invalid parameter in the Digest Handle method. {nameof(DigestCommand)}");
             digestCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Crypto
             await Connection.SendMessageAsync(new DigestCompletion(digestCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var digestcommand = command.IsA<DigestCommand>();
             digestcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Crypto
 
             var response = new DigestCompletion(digestcommand.Header.RequestId.Value, new DigestCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICryptoDevice Device { get => Provider.Device.IsA<ICryptoDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICryptoServiceClass Crypto { get; }
+        private ICryptoService Crypto { get; }
         private ILogger Logger { get; }
     }
 

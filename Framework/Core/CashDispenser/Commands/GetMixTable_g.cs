@@ -34,8 +34,10 @@ namespace XFS4IoT.CashDispenser.Commands
             }
 
             /// <summary>
-            /// A house mix table as defined by one of the [mixes](#cashdispenser.getmixtypes.completion.properties.) reported by [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes).
-            /// <example>table21</example>
+            /// A house mix table as defined by one of the
+            /// [mixes](#cashdispenser.getmixtypes.completion.properties.mixes) reported by
+            /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes).
+            /// <example>mixTable21</example>
             /// </summary>
             [DataMember(Name = "mix")]
             public string Mix { get; init; }

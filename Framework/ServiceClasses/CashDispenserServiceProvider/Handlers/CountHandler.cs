@@ -74,7 +74,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CountAsync()");
 
-            var result = await Device.CountAsync(events, request, cancel);
+            var result = await Device.CountAsync(new DispenserCommandEvents(events), request, cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.CountAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

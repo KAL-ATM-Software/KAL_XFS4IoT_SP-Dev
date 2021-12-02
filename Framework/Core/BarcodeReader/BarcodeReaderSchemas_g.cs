@@ -134,7 +134,7 @@ namespace XFS4IoT.BarcodeReader
         public bool? Ean8_5 { get; init; }
 
         /// <summary>
-        /// EAN13
+        /// EAN-13
         /// </summary>
         [DataMember(Name = "ean13")]
         public bool? Ean13 { get; init; }
@@ -152,7 +152,7 @@ namespace XFS4IoT.BarcodeReader
         public bool? Ean13_5 { get; init; }
 
         /// <summary>
-        /// jan-13
+        /// JAN-13
         /// </summary>
         [DataMember(Name = "jan13")]
         public bool? Jan13 { get; init; }

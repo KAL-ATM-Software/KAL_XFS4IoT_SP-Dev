@@ -19,20 +19,20 @@ namespace Server
     public class GetServiceHandler : ICommandHandler
     {
 
-        public GetServiceHandler(ICommandDispatcher Dispatcher, ILogger Logger)   
+        public GetServiceHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger Logger)   
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetServiceHandler)} constructor. {nameof(Dispatcher)}");
-            Contracts.IsTrue(Dispatcher is ServicePublisher, $"Expected a {nameof(XFS4IoTServer.ServicePublisher)} got {Dispatcher.GetType().FullName}");
-            Logger.IsNotNull($"Invalid parameter received in the {nameof(GetServiceHandler)} constructor. {nameof(Logger)}");
 
-            this.ServicePublisher = (ServicePublisher)Dispatcher;
-            this.Logger = Logger;
+            this.ServicePublisher = Dispatcher.IsA<ServicePublisher>($"Expected a {nameof(XFS4IoTServer.ServicePublisher)} got {Dispatcher.GetType().FullName}");
+            this.Logger = Logger.IsNotNull($"Invalid parameter received in the {nameof(GetServiceHandler)} constructor. {nameof(Logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter received in the {nameof(GetServiceHandler)} constructor. {nameof(Connection)}");
         }
 
+        public IConnection Connection { get; }
         public ServicePublisher ServicePublisher { get; }
         public ILogger Logger { get; }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             Connection.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(Connection)}");
             command.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(command)}");
@@ -51,7 +51,7 @@ namespace Server
             await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, payLoad));
         }
 
-        public async Task HandleError(IConnection Connection, object command, Exception commandErrorException)
+        public async Task HandleError(object command, Exception commandErrorException)
         {
             Connection.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(Connection)}");
             command.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(command)}");

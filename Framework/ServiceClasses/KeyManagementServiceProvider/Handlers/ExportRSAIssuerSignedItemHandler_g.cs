@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandler(XFSConstants.ServiceClass.KeyManagement, typeof(ExportRSAIssuerSignedItemCommand))]
     public partial class ExportRSAIssuerSignedItemHandler : ICommandHandler
     {
-        public ExportRSAIssuerSignedItemHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public ExportRSAIssuerSignedItemHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ExportRSAIssuerSignedItemHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.KeyManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ExportRSAIssuerSignedItemHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyManagementDevice>();
 
-            KeyManagement = Provider.IsA<IKeyManagementServiceClass>();
+            KeyManagement = Provider.IsA<IKeyManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ExportRSAIssuerSignedItemHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ExportRSAIssuerSignedItemHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var exportRSAIssuerSignedItemCmd = command.IsA<ExportRSAIssuerSignedItemCommand>($"Invalid parameter in the ExportRSAIssuerSignedItem Handle method. {nameof(ExportRSAIssuerSignedItemCommand)}");
             exportRSAIssuerSignedItemCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.KeyManagement
             await Connection.SendMessageAsync(new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var exportRSAIssuerSignedItemcommand = command.IsA<ExportRSAIssuerSignedItemCommand>();
             exportRSAIssuerSignedItemcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.KeyManagement
 
             var response = new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemcommand.Header.RequestId.Value, new ExportRSAIssuerSignedItemCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyManagementServiceClass KeyManagement { get; }
+        private IKeyManagementService KeyManagement { get; }
         private ILogger Logger { get; }
     }
 

@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
     [CommandHandler(XFSConstants.ServiceClass.CashDispenser, typeof(PrepareDispenseCommand))]
     public partial class PrepareDispenseHandler : ICommandHandler
     {
-        public PrepareDispenseHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public PrepareDispenseHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(PrepareDispenseHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashDispenser
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(PrepareDispenseHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashDispenserDevice>();
 
-            CashDispenser = Provider.IsA<ICashDispenserServiceClass>();
+            CashDispenser = Provider.IsA<ICashDispenserService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(PrepareDispenseHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(PrepareDispenseHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var prepareDispenseCmd = command.IsA<PrepareDispenseCommand>($"Invalid parameter in the PrepareDispense Handle method. {nameof(PrepareDispenseCommand)}");
             prepareDispenseCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
             await Connection.SendMessageAsync(new PrepareDispenseCompletion(prepareDispenseCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var prepareDispensecommand = command.IsA<PrepareDispenseCommand>();
             prepareDispensecommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             var response = new PrepareDispenseCompletion(prepareDispensecommand.Header.RequestId.Value, new PrepareDispenseCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashDispenserDevice Device { get => Provider.Device.IsA<ICashDispenserDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashDispenserServiceClass CashDispenser { get; }
+        private ICashDispenserService CashDispenser { get; }
         private ILogger Logger { get; }
     }
 

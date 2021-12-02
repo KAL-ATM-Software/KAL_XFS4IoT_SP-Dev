@@ -44,6 +44,7 @@
     <ProjectReference Include="..\CryptoServiceProvider\CryptoServiceProvider.csproj" />
     <ProjectReference Include="..\KeyboardServiceProvider\KeyboardServiceProvider.csproj" />
     <ProjectReference Include="..\KeyManagementServiceProvider\KeyManagementServiceProvider.csproj" />
+	<ProjectReference Include="..\LightsServiceProvider\LightsServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
   </ItemGroup>
 

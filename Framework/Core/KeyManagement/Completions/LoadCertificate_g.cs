@@ -70,7 +70,7 @@ namespace XFS4IoT.KeyManagement.Completions
             public RsaKeyCheckModeEnum? RsaKeyCheckMode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded PKCS #7 structure using a Digested-data content type.
+            /// The Base64 encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) structure using a Digested-data content type.
             /// The digest parameter should contain the thumb print value calculated by the algorithm 
             /// specified by rsaKeyCheckMode. If rsaKeyCheckMode is none, then this field is not be set or an empty string.
             /// </summary>

@@ -51,9 +51,9 @@ namespace XFS4IoT.CashManagement.Completions
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```invalidCashUnit``` - The cash unit number specified is not valid.
-            /// * ```invalidRetractPosition``` - The *index* is not supported.
-            /// * ```notRetractArea``` - The retract area specified in *retractArea* is not supported.
-            /// * ```positionNotEmpty``` - The retract area specified in *retractArea* is not empty so the moving of items was not possible.
+            /// * ```invalidRetractPosition``` - The _index_ is not supported.
+            /// * ```notRetractArea``` - The retract area specified in _retractArea_ is not supported.
+            /// * ```positionNotEmpty``` - The retract area specified in _retractArea_ is not empty so the moving of items was not possible.
             /// * ```foreignItemsDetected``` - Foreign items have been detected in the input position.
             /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by other error codes. The detail will be reported with the Dispenser.IncompleteRetractEvent.
             /// </summary>

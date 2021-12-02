@@ -17,11 +17,11 @@ namespace XFS4IoT.CashManagement.Events
 
     [DataContract]
     [Event(Name = "CashManagement.MediaDetectedEvent")]
-    public sealed class MediaDetectedEvent : Event<MediaDetectedEvent.PayloadData>
+    public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
     {
 
-        public MediaDetectedEvent(int RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public MediaDetectedEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 

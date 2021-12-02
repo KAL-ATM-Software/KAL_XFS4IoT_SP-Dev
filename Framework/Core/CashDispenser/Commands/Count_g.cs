@@ -43,7 +43,7 @@ namespace XFS4IoT.CashDispenser.Commands
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]
-            [DataTypes(Pattern = @"^all$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^all$|^unit[0-9A-Za-z]+$")]
             public string Unit { get; init; }
 
             [DataMember(Name = "position")]

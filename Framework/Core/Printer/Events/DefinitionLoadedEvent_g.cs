@@ -38,6 +38,7 @@ namespace XFS4IoT.Printer.Events
 
             /// <summary>
             /// Specifies the name of the form or media just loaded.
+            /// <example>form name</example>
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; init; }
@@ -45,7 +46,7 @@ namespace XFS4IoT.Printer.Events
             public enum TypeEnum
             {
                 Form,
-                Name
+                Media
             }
 
             /// <summary>

@@ -181,7 +181,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// If the *keyUsage* property is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.k1)), then this property can be omitted.
                 /// 
                 /// * ```sha1``` - The SHA 1 digest algorithm. 
-                /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
+                /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-keymanagement-40)] and FIPS 180-2 [[Ref. 41](#ref-keymanagement-41)].
                 /// </summary>
                 [DataMember(Name = "hashAlgorithm")]
                 public HashAlgorithmEnum? HashAlgorithm { get; init; }

@@ -36,8 +36,7 @@ namespace XFS4IoTFramework.CardReader
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ChipPowerAsync()");
-            var result = await Device.ChipPowerAsync(events,
-                                                     new ChipPowerRequest((ChipPowerCommand.PayloadData.ChipPowerEnum)chipPower.Payload.ChipPower),
+            var result = await Device.ChipPowerAsync(new ChipPowerRequest((ChipPowerCommand.PayloadData.ChipPowerEnum)chipPower.Payload.ChipPower),
                                                      cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ChipPowerAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

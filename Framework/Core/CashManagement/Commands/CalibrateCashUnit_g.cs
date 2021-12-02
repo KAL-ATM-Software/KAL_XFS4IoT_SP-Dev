@@ -37,9 +37,10 @@ namespace XFS4IoT.CashManagement.Commands
 
             /// <summary>
             /// The object name of the storage unit as stated by the [Storage.GetStorage](#storage.getstorage) command.
-            /// <example>20USD1</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string Unit { get; init; }
 
             /// <summary>

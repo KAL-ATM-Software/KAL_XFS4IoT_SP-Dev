@@ -82,6 +82,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// <example>USD</example>
                 /// </summary>
                 [DataMember(Name = "currency")]
+                [DataTypes(Pattern = @"^[A-Z][A-Z][A-Z]$")]
                 public string Currency { get; init; }
 
                 /// <summary>

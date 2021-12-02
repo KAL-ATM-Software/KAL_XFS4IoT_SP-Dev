@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Crypto
     [CommandHandler(XFSConstants.ServiceClass.Crypto, typeof(GenerateAuthenticationCommand))]
     public partial class GenerateAuthenticationHandler : ICommandHandler
     {
-        public GenerateAuthenticationHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GenerateAuthenticationHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GenerateAuthenticationHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Crypto
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GenerateAuthenticationHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICryptoDevice>();
 
-            Crypto = Provider.IsA<ICryptoServiceClass>();
+            Crypto = Provider.IsA<ICryptoService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GenerateAuthenticationHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GenerateAuthenticationHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var generateAuthenticationCmd = command.IsA<GenerateAuthenticationCommand>($"Invalid parameter in the GenerateAuthentication Handle method. {nameof(GenerateAuthenticationCommand)}");
             generateAuthenticationCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Crypto
             await Connection.SendMessageAsync(new GenerateAuthenticationCompletion(generateAuthenticationCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var generateAuthenticationcommand = command.IsA<GenerateAuthenticationCommand>();
             generateAuthenticationcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Crypto
 
             var response = new GenerateAuthenticationCompletion(generateAuthenticationcommand.Header.RequestId.Value, new GenerateAuthenticationCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICryptoDevice Device { get => Provider.Device.IsA<ICryptoDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICryptoServiceClass Crypto { get; }
+        private ICryptoService Crypto { get; }
         private ILogger Logger { get; }
     }
 

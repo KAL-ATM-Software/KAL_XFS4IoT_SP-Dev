@@ -127,7 +127,7 @@ namespace XFS4IoT.KeyManagement.Completions
 
                     /// <summary>
                     /// Specifies the intended function of the key.
-                    /// The following values are possible:  
+                    /// The following values are possible - See [[Ref. 35](#ref-keymanagement-35)] :  
                     /// * ```B0``` - BDK Base Derivation Key. 
                     /// * ```B1``` - Initial DUKPT key. 
                     /// * ```B2``` - Base Key Variant Key. 
@@ -219,7 +219,7 @@ namespace XFS4IoT.KeyManagement.Completions
 
                     /// <summary>
                     /// Specifies the algorithm for which the key can be used.
-                    /// The following values are possible: 
+                    /// See [[Ref. 35](#ref-keymanagement-35)] for all possible values: 
                     /// * ```A``` - AES. 
                     /// * ```D``` - DEA. 
                     /// * ```E``` - Elliptic Curve. 
@@ -235,7 +235,7 @@ namespace XFS4IoT.KeyManagement.Completions
 
                     /// <summary>
                     /// Specifies the operation that the key can perform.
-                    /// The following values are possible: 
+                    /// See [[Ref. 35](#ref-keymanagement-35)] for all possible values:
                     /// * ```B``` - Both Encrypt and Decrypt / Wrap and unwrap. 
                     /// * ```C``` - Both Generate and Verify. 
                     /// * ```D``` - Decrypt / Unwrap Only. 
@@ -256,6 +256,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// <summary>
                     /// Specifies a two-digit ASCII character version number, which is optionally used to indicate that contents 
                     /// of the key block are a component, or to prevent re-injection of old keys.
+                    /// See [[Ref. 35](#ref-keymanagement-35)] for all possible values.
                     /// This value can be omitted if Key versioning is not used.
                     /// </summary>
                     [DataMember(Name = "keyVersionNumber")]
@@ -264,7 +265,7 @@ namespace XFS4IoT.KeyManagement.Completions
 
                     /// <summary>
                     /// Specifies whether the key may be transferred outside of the cryptographic domain in which the key is found.
-                    /// The following values are possible: 
+                    /// See [[Ref. 35](#ref-keymanagement-35)] for all possible values:
                     /// * ```E``` - Exportable under a KEK in a form meeting the requirements of X9.24 Parts 1 or 2.
                     /// * ```N``` - Non-exportable by the receiver of the key block, or from storage.
                     ///             Does not preclude exporting keys derived from a non-exportable key. 
@@ -276,7 +277,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     public string Exportability { get; init; }
 
                     /// <summary>
-                    /// Contains any optional header blocks.
+                    /// Contains any optional header blocks, as defined in [[Ref. 35](#ref-keymanagement-35)].
                     /// This value can be omitted if there are no optional block headers. 
                     /// </summary>
                     [DataMember(Name = "optionalBlockHeader")]

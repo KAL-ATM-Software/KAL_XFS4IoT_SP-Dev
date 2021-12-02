@@ -37,7 +37,6 @@ namespace XFS4IoT.Printer.Completions
             {
                 ShutterFail,
                 MediaJammed,
-                FileIOError,
                 LampInoperative,
                 MediaSize,
                 MediaRejected
@@ -48,8 +47,6 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
-            /// * ```fileIOError``` - Directory does not exist or a File IO error occurred while storing the image to
-            ///   the hard disk.
             /// * ```lampInoperative``` - Imaging lamp is inoperative.
             /// * ```mediaSize``` - The media entered has an incorrect size and the media remains inside the device.
             /// * ```mediaRejected``` - The media was rejected during the insertion phase. The
@@ -96,15 +93,14 @@ namespace XFS4IoT.Printer.Completions
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
-                    /// provided), this will contain the Base64 encoded image.
+                    /// If the image source is a front or back image, this contains the Base64 encoded image.
                     /// 
                     /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
                     /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
                     /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
                     /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
                     /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// [Printer.CodelineMapping](#printer.codelinemapping) command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
                     public string Data { get; init; }
@@ -144,15 +140,14 @@ namespace XFS4IoT.Printer.Completions
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
-                    /// provided), this will contain the Base64 encoded image.
+                    /// If the image source is a front or back image, this contains the Base64 encoded image.
                     /// 
                     /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
                     /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
                     /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
                     /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
                     /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// [Printer.CodelineMapping](#printer.codelinemapping) command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
                     public string Data { get; init; }
@@ -192,15 +187,14 @@ namespace XFS4IoT.Printer.Completions
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// If the image source is front or back and the image data has not been stored to the hard disk (file name not
-                    /// provided), this will contain the Base64 encoded image.
+                    /// If the image source is a front or back image, this contains the Base64 encoded image.
                     /// 
                     /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
                     /// using the OCR-A font then the ASCII codes will conform to Figure E1 in ANSI X3.17-1981. If the code line was
                     /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in ANSI X3.49-1975. In both these
                     /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
                     /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// Printer.CodelineMapping command for the symbols that are unique to MICR fonts.
+                    /// [Printer.CodelineMapping](#printer.codelinemapping) command for the symbols that are unique to MICR fonts.
                     /// </summary>
                     [DataMember(Name = "data")]
                     public string Data { get; init; }

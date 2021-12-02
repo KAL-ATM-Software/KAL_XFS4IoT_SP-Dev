@@ -70,7 +70,7 @@ namespace XFS4IoT.PinPad.Commands
 
             /// <summary>
             /// Maximum number of PIN digits to be used for validation.
-            /// This parameter corresponds to PINMINL in the IBM 3624 specification.
+            /// This parameter corresponds to PINMINL in the IBM 3624 specification (see [[Ref. 24](#ref-pinpad-24)]).
             /// </summary>
             [DataMember(Name = "maxPIN")]
             public int? MaxPIN { get; init; }

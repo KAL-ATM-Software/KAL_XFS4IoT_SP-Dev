@@ -49,7 +49,7 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.PinEntry()");
 
-            var result = await Device.PinEntry(events, 
+            var result = await Device.PinEntry(new KeyboardCommandEvents(events), 
                                                new(pinEntry.Payload.MinLen is null ? 0 : (int)pinEntry.Payload.MinLen,
                                                    pinEntry.Payload.MaxLen is null ? 0 : (int)pinEntry.Payload.MaxLen,
                                                    pinEntry.Payload.AutoEnd is not null && (bool)pinEntry.Payload.AutoEnd,
@@ -63,7 +63,20 @@ namespace XFS4IoTFramework.Keyboard
                                                       result.ErrorDescription,
                                                       result.ErrorCode,
                                                       result.Digits,
-                                                      result.Completion);
+                                                      result.Completion switch
+                                                      {
+                                                          EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                                                          EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                                                          EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                                                          EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                                                          EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                                                          EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                                                          EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                                                          EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                                                          EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                                                          EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                                                          _ => null,
+                                                      });
         }
     }
 }

@@ -5,6 +5,7 @@
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
  * GetCommandNonceHandler.cs uses automatically generated parts.
+ * 
 \***********************************************************************************************/
 
 
@@ -31,7 +32,7 @@ namespace XFS4IoTFramework.Common
 
             return new GetCommandNonceCompletion.PayloadData(result.CompletionCode,
                                                              result.ErrorDescription,
-                                                             result.CommandNonce);
+                                                             result.Nonce);
         }
     }
 }

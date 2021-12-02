@@ -20,6 +20,19 @@ using XFS4IoT;
 
 namespace XFS4IoTFramework.KeyManagement
 {
+    public enum KeyAccessErrorCodeEnum
+    {
+        KeyNotFound,
+        KeyNoValue,
+        UseViolation,
+        AlgorithmNotSupp
+    }
+
+    public enum CertificateChangeEnum
+    {
+        Secondary
+    }
+
     public enum SignerEnum
     {
         EPP,

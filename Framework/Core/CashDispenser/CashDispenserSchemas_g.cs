@@ -223,17 +223,14 @@ namespace XFS4IoT.CashDispenser
         public TypeEnum? Type { get; init; }
 
         /// <summary>
-        /// Supplies the maximum number of items that can be dispensed in a single dispense operation. 
-        /// If no limit applies this value will be zero - in this case, if an attempt is made to dispense more items 
-        /// than the hardware limitations will allow, the Service will implement the dispense as a series 
-        /// of sub-dispense operations (see section Sub-Dispensing Command Flow).
+        /// Supplies the maximum number of items that can be dispensed in a single dispense operation.
         /// </summary>
         [DataMember(Name = "maxDispenseItems")]
         [DataTypes(Minimum = 1)]
         public int? MaxDispenseItems { get; init; }
 
         /// <summary>
-        /// If true the shutter is controlled implicitly by the service. 
+        /// If true the shutter is controlled implicitly by the Service. 
         /// If false the shutter must be controlled explicitly by the application using the
         /// [CashManagement.OpenShutter](#cashmanagement.openshutter) and
         /// [CashManagement.CloseShutter](#cashmanagement.closeshutter) commands.
@@ -538,7 +535,7 @@ namespace XFS4IoT.CashDispenser
         /// <summary>
         /// Specifies the mix type as one of the following:
         /// 
-        /// * ```individual``` - the mix is not calculated by the service, completely specified by the application.
+        /// * ```individual``` - the mix is not calculated by the Service, completely specified by the application.
         /// * ```algorithm``` - the mix is calculated using one of the algorithms specified by _algorithm_.
         /// * ```table``` - the mix is calculated using a mix table - see
         /// [CashDispenser.GetMixTable](#cashdispenser.getmixtable)
@@ -575,6 +572,71 @@ namespace XFS4IoT.CashDispenser
 
 
     [DataContract]
+    public sealed class MixRowClass
+    {
+        public MixRowClass(double? Amount = null, List<MixClass> Mix = null)
+        {
+            this.Amount = Amount;
+            this.Mix = Mix;
+        }
+
+        /// <summary>
+        /// Absolute value of the amount denominated by this mix row.
+        /// <example>0.30</example>
+        /// </summary>
+        [DataMember(Name = "amount")]
+        public double? Amount { get; init; }
+
+        [DataContract]
+        public sealed class MixClass
+        {
+            public MixClass(double? Value = null, int? Count = null)
+            {
+                this.Value = Value;
+                this.Count = Count;
+            }
+
+            /// <summary>
+            /// The absolute value of a single cash item
+            /// <example>0.05</example>
+            /// </summary>
+            [DataMember(Name = "value")]
+            public double? Value { get; init; }
+
+            /// <summary>
+            /// The number of items of _value_ contained in the mix
+            /// <example>6</example>
+            /// </summary>
+            [DataMember(Name = "count")]
+            [DataTypes(Minimum = 1)]
+            public int? Count { get; init; }
+
+        }
+
+        /// <summary>
+        /// The items used to create _amount_. Each element in this array defines the quantity of a given item used to 
+        /// create the mix. An example showing how 0.30 can be broken down would be
+        /// 
+        /// ```
+        /// [
+        ///   {
+        ///     "value": 0.05,
+        ///     "count": 2
+        ///   },
+        ///   {
+        ///     "value": 0.10,
+        ///     "count": 2
+        ///   }
+        /// ]
+        /// ```
+        /// </summary>
+        [DataMember(Name = "mix")]
+        public List<MixClass> Mix { get; init; }
+
+    }
+
+
+    [DataContract]
     public sealed class DenominationClass
     {
         public DenominationClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, Dictionary<string, double> CashBox = null)
@@ -593,8 +655,8 @@ namespace XFS4IoT.CashDispenser
         public Dictionary<string, double> Currencies { get; init; }
 
         /// <summary>
-        /// This list specifies the number of items to take from the cash units. If specified in a request, the output 
-        /// denomination must include these items.
+        /// This list specifies the number of items to take or which have been taken from the storage units. If specified in
+        /// a request, the output denomination must include these items.
         /// 
         /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
         /// command. The value of the entry is the number of items to take from that unit.

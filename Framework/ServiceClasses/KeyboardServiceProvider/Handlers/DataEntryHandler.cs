@@ -53,7 +53,7 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.DataEntry()");
 
-            var result = await Device.DataEntry(events, 
+            var result = await Device.DataEntry(new KeyboardCommandEvents(events), 
                                                 new(dataEntry.Payload.MaxLen is null ? 0 : (int)dataEntry.Payload.MaxLen,
                                                     dataEntry.Payload.AutoEnd is not null && (bool)dataEntry.Payload.AutoEnd,
                                                     keys), 
@@ -67,7 +67,21 @@ namespace XFS4IoTFramework.Keyboard
             {
                 keysPressed = new();
                 foreach (var key in result.EnteredKeys)
-                    keysPressed.Add(new(key.Completion, key.Key));
+                    keysPressed.Add(new(key.Completion switch
+                                        {
+                                            EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                                            EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                                            EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                                            EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                                            EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                                            EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                                            EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                                            EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                                            EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                                            EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                                            _ => null,
+                                        }, 
+                                        key.Key));
             }
 
             return new DataEntryCompletion.PayloadData(result.CompletionCode,
@@ -75,7 +89,20 @@ namespace XFS4IoTFramework.Keyboard
                                                        result.ErrorCode,
                                                        result.Keys,
                                                        keysPressed,
-                                                       result.Completion);
+                                                       result.Completion switch
+                                                       {
+                                                            EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                                                            EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                                                            EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                                                            EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                                                            EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                                                            EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                                                            EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                                                            EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                                                            EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                                                            EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                                                            _ => null,
+                                                       });
         }
     }
 }

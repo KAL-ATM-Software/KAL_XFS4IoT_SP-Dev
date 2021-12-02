@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.TextTerminal
     [CommandHandler(XFSConstants.ServiceClass.TextTerminal, typeof(BeepCommand))]
     public partial class BeepHandler : ICommandHandler
     {
-        public BeepHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public BeepHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(BeepHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.TextTerminal
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(BeepHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ITextTerminalDevice>();
 
-            TextTerminal = Provider.IsA<ITextTerminalServiceClass>();
+            TextTerminal = Provider.IsA<ITextTerminalService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(BeepHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(BeepHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var beepCmd = command.IsA<BeepCommand>($"Invalid parameter in the Beep Handle method. {nameof(BeepCommand)}");
             beepCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.TextTerminal
             await Connection.SendMessageAsync(new BeepCompletion(beepCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var beepcommand = command.IsA<BeepCommand>();
             beepcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.TextTerminal
 
             var response = new BeepCompletion(beepcommand.Header.RequestId.Value, new BeepCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ITextTerminalDevice Device { get => Provider.Device.IsA<ITextTerminalDevice>(); }
         private IServiceProvider Provider { get; }
-        private ITextTerminalServiceClass TextTerminal { get; }
+        private ITextTerminalService TextTerminal { get; }
         private ILogger Logger { get; }
     }
 

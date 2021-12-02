@@ -81,10 +81,7 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            IAcceptCardEvents newEvents = new AcceptCardEvents((WriteRawDataEvents)events);
-            newEvents.IsNotNull($"Invalid event reference. {nameof(AcceptCardEvents)}");
-
-            var acceptCardResult = await Device.AcceptCardAsync(newEvents,
+            var acceptCardResult = await Device.AcceptCardAsync(new AcceptCardCommandEvents(events),
                                                                 new AcceptCardRequest(ReadCardRequest.CardDataTypesEnum.NoDataRead, false, writeRawData.Payload.Timeout),
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
@@ -120,7 +117,7 @@ namespace XFS4IoTFramework.CardReader
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.WriteCardDataAsync()");
-            var writeCardDataResult = await Device.WriteCardAsync(events,
+            var writeCardDataResult = await Device.WriteCardAsync(new WriteCardCommandEvents(events),
                                                                   new WriteCardRequest(dataToWrite),
                                                                   cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.WriteCardDataAsync() -> {writeCardDataResult.CompletionCode}, {writeCardDataResult.ErrorCode}");

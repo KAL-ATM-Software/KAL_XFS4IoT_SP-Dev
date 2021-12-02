@@ -186,7 +186,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.DispenseAsync()");
 
-            var result = await Device.DispenseAsync(events, 
+            var result = await Device.DispenseAsync(new DispenseCommandEvents(events), 
                                                     new DispenseRequest(denomToDispense.Values,
                                                                         present,
                                                                         position,

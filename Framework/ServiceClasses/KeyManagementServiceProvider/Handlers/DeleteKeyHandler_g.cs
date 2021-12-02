@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandler(XFSConstants.ServiceClass.KeyManagement, typeof(DeleteKeyCommand))]
     public partial class DeleteKeyHandler : ICommandHandler
     {
-        public DeleteKeyHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public DeleteKeyHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(DeleteKeyHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.KeyManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(DeleteKeyHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyManagementDevice>();
 
-            KeyManagement = Provider.IsA<IKeyManagementServiceClass>();
+            KeyManagement = Provider.IsA<IKeyManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DeleteKeyHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DeleteKeyHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var deleteKeyCmd = command.IsA<DeleteKeyCommand>($"Invalid parameter in the DeleteKey Handle method. {nameof(DeleteKeyCommand)}");
             deleteKeyCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.KeyManagement
             await Connection.SendMessageAsync(new DeleteKeyCompletion(deleteKeyCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var deleteKeycommand = command.IsA<DeleteKeyCommand>();
             deleteKeycommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.KeyManagement
 
             var response = new DeleteKeyCompletion(deleteKeycommand.Header.RequestId.Value, new DeleteKeyCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyManagementServiceClass KeyManagement { get; }
+        private IKeyManagementService KeyManagement { get; }
         private ILogger Logger { get; }
     }
 

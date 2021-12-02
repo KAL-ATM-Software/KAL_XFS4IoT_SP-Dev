@@ -82,10 +82,11 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-                /// command) from which items are to be removed.
+                /// command) to be locked or unlocked.
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "storageUnit")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string StorageUnit { get; init; }
 
                 public enum UnitActionEnum
@@ -95,7 +96,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Specifies whether to lock or unlock the cash unit indicated in the *physicalPositionName* parameter.
+                /// Specifies whether to lock or unlock the storage unit indicated in the _storageUnit_ parameter.
                 /// Following values are possible:
                 /// 
                 /// * ```lock``` - Locks the specified cash unit so that it cannot be removed from the device. 

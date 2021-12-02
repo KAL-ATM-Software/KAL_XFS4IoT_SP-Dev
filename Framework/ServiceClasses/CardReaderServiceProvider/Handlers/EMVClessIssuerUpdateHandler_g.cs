@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CardReader
     [CommandHandler(XFSConstants.ServiceClass.CardReader, typeof(EMVClessIssuerUpdateCommand))]
     public partial class EMVClessIssuerUpdateHandler : ICommandHandler
     {
-        public EMVClessIssuerUpdateHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public EMVClessIssuerUpdateHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(EMVClessIssuerUpdateHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CardReader
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(EMVClessIssuerUpdateHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICardReaderDevice>();
 
-            CardReader = Provider.IsA<ICardReaderServiceClass>();
+            CardReader = Provider.IsA<ICardReaderService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(EMVClessIssuerUpdateHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(EMVClessIssuerUpdateHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var eMVClessIssuerUpdateCmd = command.IsA<EMVClessIssuerUpdateCommand>($"Invalid parameter in the EMVClessIssuerUpdate Handle method. {nameof(EMVClessIssuerUpdateCommand)}");
             eMVClessIssuerUpdateCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CardReader
             await Connection.SendMessageAsync(new EMVClessIssuerUpdateCompletion(eMVClessIssuerUpdateCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var eMVClessIssuerUpdatecommand = command.IsA<EMVClessIssuerUpdateCommand>();
             eMVClessIssuerUpdatecommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CardReader
 
             var response = new EMVClessIssuerUpdateCompletion(eMVClessIssuerUpdatecommand.Header.RequestId.Value, new EMVClessIssuerUpdateCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICardReaderDevice Device { get => Provider.Device.IsA<ICardReaderDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICardReaderServiceClass CardReader { get; }
+        private ICardReaderService CardReader { get; }
         private ILogger Logger { get; }
     }
 

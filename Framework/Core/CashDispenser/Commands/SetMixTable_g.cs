@@ -27,7 +27,7 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? MixNumber = null, string Name = null, List<Dictionary<string, int>> MixRows = null)
+            public PayloadData(int Timeout, int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
                 : base(Timeout)
             {
                 this.MixNumber = MixNumber;
@@ -54,7 +54,7 @@ namespace XFS4IoT.CashDispenser.Commands
             /// Array of rows of the mix table.
             /// </summary>
             [DataMember(Name = "mixRows")]
-            public List<Dictionary<string, int>> MixRows { get; init; }
+            public List<MixRowClass> MixRows { get; init; }
 
         }
     }

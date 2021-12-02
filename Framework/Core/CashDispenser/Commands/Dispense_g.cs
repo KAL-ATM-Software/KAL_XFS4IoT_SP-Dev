@@ -56,20 +56,29 @@ namespace XFS4IoT.CashDispenser.Commands
             /// The dispense token that authorizes the dispense operation, as created by the authorizing host. See 
             /// the section on [end to end security](#api.generalinformation.e2esecurity) for more information. 
             /// 
-            /// The same token may be used multiple times with multiple calls to the CashDispenser.Dispense command as long 
-            /// as the total value stacked does not exceed the value given in the token. The hardware will track the value 
-            /// of the cash that has been dispensed and will raise an invalidToken error for any attempt to dispense more 
-            /// cash than authorized by the token. 
+            /// The same token may be used multiple times with multiple calls to the CashDispenser.Dispense and 
+            /// CashDispense.Present commands, as long as the total value stacked does not exceed the value given in the 
+            /// token. The hardware will track the total value of the cash and will raise an invalidToken error for any 
+            /// attempt to dispense or present more cash than authorized by the token. 
             /// 
             /// The token contains a nonce returned by [Common.GetCommandNonce](#common.getcommandnonce) which must match 
-            /// the nonce stored in the hardware. The nonce value stored in the hardware will be cleared when cash is 
-            /// presented meaning that all tokens will become invalid after cash is presented. 
+            /// the nonce stored in the hardware. The nonce value stored in the hardware will be cleared automatically at 
+            /// various times, meaning that all tokens will become invalid. 
             /// 
-            /// The dispense token will follow the standard token format, and will contain the following key: 
+            /// The hardware will also track the token being used and block any attempt to use multiple tokens with the 
+            /// same nonce. The same token must be used for all calls to dispense, until the nonce is cleared and a new 
+            /// nonce and token is created. Any attempt to use a different token will trigger a invalidToken error.
+            /// 
+            /// For maximum security the client should also explicitly clear the command nonce (and hence invalidate and 
+            /// existing tokens,) with the [Common.ClearCommandNonce](#common.clearcommandnonce) command as soon as it's 
+            /// finished using the current token.
+            /// 
+            /// The dispense token will follow the standard token format, and will contain the standard keys plus the 
+            /// following key: 
             /// 
             /// ```DISPENSE1```: The maximum value to be dispensed. This will be a number string that may contain a 
             /// fractional part. The decimal character will be ".". The value, including the fractional part, will be 
-            /// defined by the ISO currency. The number will be followed by the ISO currency code. The currency 
+            /// defined by the ISO 4217 currency. The number will be followed by the ISO 4217 currency code. The currency 
             /// code will be upper case. 
             /// 
             /// For example, "123.45EUR" will be €123 and 45 cents.

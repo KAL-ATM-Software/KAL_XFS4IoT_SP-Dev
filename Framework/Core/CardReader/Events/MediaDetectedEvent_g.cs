@@ -41,12 +41,12 @@ namespace XFS4IoT.CardReader.Events
             /// * ```exit``` - A card is at the exit position.
             /// * ```transport``` - A card is in to the transport position.
             /// * ```&lt;storage unit identifier&gt;``` - A card is in the
-            ///   [identifed](#storage.getstorage.completion.properties.storage.unit1) *retain* or *park* storage unit.
+            ///   [identified](#storage.getstorage.completion.properties.storage.unit1) *retain* or *park* storage unit.
             /// * ```jammed``` - A card is jammed in the device.
-            /// <example>retn1</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "position")]
-            [DataTypes(Pattern = @"^exit$|^transport$|^jammed$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^jammed$|^unit[0-9A-Za-z]+$")]
             public string Position { get; init; }
 
         }

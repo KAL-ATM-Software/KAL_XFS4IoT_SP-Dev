@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Lights
     [CommandHandler(XFSConstants.ServiceClass.Lights, typeof(SetLightCommand))]
     public partial class SetLightHandler : ICommandHandler
     {
-        public SetLightHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public SetLightHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetLightHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Lights
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetLightHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ILightsDevice>();
 
-            Lights = Provider.IsA<ILightsServiceClass>();
+            Lights = Provider.IsA<ILightsService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetLightHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetLightHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var setLightCmd = command.IsA<SetLightCommand>($"Invalid parameter in the SetLight Handle method. {nameof(SetLightCommand)}");
             setLightCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Lights
             await Connection.SendMessageAsync(new SetLightCompletion(setLightCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var setLightcommand = command.IsA<SetLightCommand>();
             setLightcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Lights
 
             var response = new SetLightCompletion(setLightcommand.Header.RequestId.Value, new SetLightCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ILightsDevice Device { get => Provider.Device.IsA<ILightsDevice>(); }
         private IServiceProvider Provider { get; }
-        private ILightsServiceClass Lights { get; }
+        private ILightsService Lights { get; }
         private ILogger Logger { get; }
     }
 

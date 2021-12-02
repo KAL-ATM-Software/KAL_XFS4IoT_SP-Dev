@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.PinPad
     [CommandHandler(XFSConstants.ServiceClass.PinPad, typeof(LocalVisaCommand))]
     public partial class LocalVisaHandler : ICommandHandler
     {
-        public LocalVisaHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public LocalVisaHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(LocalVisaHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.PinPad
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(LocalVisaHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IPinPadDevice>();
 
-            PinPad = Provider.IsA<IPinPadServiceClass>();
+            PinPad = Provider.IsA<IPinPadService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(LocalVisaHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(LocalVisaHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var localVisaCmd = command.IsA<LocalVisaCommand>($"Invalid parameter in the LocalVisa Handle method. {nameof(LocalVisaCommand)}");
             localVisaCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.PinPad
             await Connection.SendMessageAsync(new LocalVisaCompletion(localVisaCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var localVisacommand = command.IsA<LocalVisaCommand>();
             localVisacommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.PinPad
 
             var response = new LocalVisaCompletion(localVisacommand.Header.RequestId.Value, new LocalVisaCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IPinPadDevice Device { get => Provider.Device.IsA<IPinPadDevice>(); }
         private IServiceProvider Provider { get; }
-        private IPinPadServiceClass PinPad { get; }
+        private IPinPadService PinPad { get; }
         private ILogger Logger { get; }
     }
 

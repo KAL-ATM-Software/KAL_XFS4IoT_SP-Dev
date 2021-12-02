@@ -17,11 +17,11 @@ namespace XFS4IoT.CashManagement.Events
 
     [DataContract]
     [Event(Name = "CashManagement.ItemsPresentedEvent")]
-    public sealed class ItemsPresentedEvent : Event<ItemsPresentedEvent.PayloadData>
+    public sealed class ItemsPresentedEvent : UnsolicitedEvent<ItemsPresentedEvent.PayloadData>
     {
 
-        public ItemsPresentedEvent(int RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public ItemsPresentedEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 

@@ -25,7 +25,7 @@ namespace XFS4IoTServer
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class CryptoServiceProvider : ServiceProvider, ICryptoServiceClass, IKeyManagementServiceClass, ICommonServiceClass
+    public class CryptoServiceProvider : ServiceProvider, ICryptoService, IKeyManagementService, ICommonService
     {
         public CryptoServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
             :
@@ -45,27 +45,46 @@ namespace XFS4IoTServer
         private readonly CommonServiceClass CommonService;
 
 
-        #region Crypto unsolicited events
-        public Task IllegalKeyAccessEvent(XFS4IoT.Crypto.Events.IllegalKeyAccessEvent.PayloadData Payload) => CryptoService.IllegalKeyAccessEvent(Payload);
-        #endregion
-
         #region KeyManagement unsolicited events
         public Task InitializedEvent() => KeyManagementService.InitializedEvent();
 
-        public Task IllegalKeyAccessEvent(XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData Payload) => KeyManagementService.IllegalKeyAccessEvent(Payload);
+        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService.IllegalKeyAccessEvent(new IllegalKeyAccessEvent.PayloadData(KeyName, ErrorCode switch
+                                                                                                                                                                                         {
+                                                                                                                                                                                             KeyAccessErrorCodeEnum.AlgorithmNotSupp => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.AlgorithmNotSupp,
+                                                                                                                                                                                             KeyAccessErrorCodeEnum.KeyNotFound => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNotFound,
+                                                                                                                                                                                             KeyAccessErrorCodeEnum.KeyNoValue => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNoValue,
+                                                                                                                                                                                             _ => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.UseViolation,
+                                                                                                                                                                                         }));
 
-        public Task CertificateChangeEvent(CertificateChangeEvent.PayloadData Payload) => KeyManagementService.CertificateChangeEvent(Payload);
+        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService.CertificateChangeEvent(new CertificateChangeEvent.PayloadData(CertificateChange switch
+                                                                                                                                                                          { 
+                                                                                                                                                                              _ => XFS4IoT.KeyManagement.Events.CertificateChangeEvent.PayloadData.CertificateChangeEnum.Secondary
+                                                                                                                                                                          }));
 
         #endregion
 
         #region Common unsolicited events
-        public Task PowerSaveChangeEvent(PowerSaveChangeEvent.PayloadData Payload) => CommonService.PowerSaveChangeEvent(Payload);
+        public Task PowerSaveChangeEvent(int PowerSaveRecoveryTime) => CommonService.PowerSaveChangeEvent(new PowerSaveChangeEvent.PayloadData(PowerSaveRecoveryTime));
 
-        public Task DevicePositionEvent(DevicePositionEvent.PayloadData Payload) => CommonService.DevicePositionEvent(Payload);
+        public Task DevicePositionEvent(CommonStatusClass.PositionStatusEnum Position) => CommonService.DevicePositionEvent(
+                                                                                                        new DevicePositionEvent.PayloadData(Position switch
+                                                                                                        {
+                                                                                                            CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
+                                                                                                            CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
+                                                                                                            _ => XFS4IoT.Common.PositionStatusEnum.Unknown,
+                                                                                                        }
+                                                                                                    ));
 
-        public Task NonceClearedEvent(NonceClearedEvent.PayloadData Payload) => CommonService.NonceClearedEvent(Payload);
+        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
 
-        public Task ExchangeStateChangedEvent(ExchangeStateChangedEvent.PayloadData Payload) => CommonService.ExchangeStateChangedEvent(Payload);
+        public Task ExchangeStateChangedEvent(CommonStatusClass.ExchangeEnum Exchange) => CommonService.ExchangeStateChangedEvent(
+                                                                                                        new ExchangeStateChangedEvent.PayloadData(Exchange switch
+                                                                                                        {
+                                                                                                            CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
+                                                                                                            CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
+                                                                                                            _ => XFS4IoT.Common.ExchangeEnum.NotSupported,
+                                                                                                        }
+                                                                                                    ));
         #endregion
 
         #region Common Service

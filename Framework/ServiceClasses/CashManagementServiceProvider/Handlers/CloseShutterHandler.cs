@@ -84,7 +84,7 @@ namespace XFS4IoTFramework.CashManagement
                     _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
                 };
 
-                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashDispenserStatusClass.PositionStatusClass.ShutterEnum.Closed)
+                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Closed)
                 {
                     return new CloseShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                   $"The shutter is already closed.");

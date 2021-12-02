@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Crypto
     [CommandHandler(XFSConstants.ServiceClass.Crypto, typeof(VerifyAuthenticationCommand))]
     public partial class VerifyAuthenticationHandler : ICommandHandler
     {
-        public VerifyAuthenticationHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public VerifyAuthenticationHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(VerifyAuthenticationHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.Crypto
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(VerifyAuthenticationHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICryptoDevice>();
 
-            Crypto = Provider.IsA<ICryptoServiceClass>();
+            Crypto = Provider.IsA<ICryptoService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(VerifyAuthenticationHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(VerifyAuthenticationHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var verifyAuthenticationCmd = command.IsA<VerifyAuthenticationCommand>($"Invalid parameter in the VerifyAuthentication Handle method. {nameof(VerifyAuthenticationCommand)}");
             verifyAuthenticationCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.Crypto
             await Connection.SendMessageAsync(new VerifyAuthenticationCompletion(verifyAuthenticationCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var verifyAuthenticationcommand = command.IsA<VerifyAuthenticationCommand>();
             verifyAuthenticationcommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.Crypto
 
             var response = new VerifyAuthenticationCompletion(verifyAuthenticationcommand.Header.RequestId.Value, new VerifyAuthenticationCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICryptoDevice Device { get => Provider.Device.IsA<ICryptoDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICryptoServiceClass Crypto { get; }
+        private ICryptoService Crypto { get; }
         private ILogger Logger { get; }
     }
 

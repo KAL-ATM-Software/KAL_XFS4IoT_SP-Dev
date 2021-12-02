@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
     [CommandHandler(XFSConstants.ServiceClass.CashDispenser, typeof(GetPresentStatusCommand))]
     public partial class GetPresentStatusHandler : ICommandHandler
     {
-        public GetPresentStatusHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GetPresentStatusHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GetPresentStatusHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.CashDispenser
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GetPresentStatusHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<ICashDispenserDevice>();
 
-            CashDispenser = Provider.IsA<ICashDispenserServiceClass>();
+            CashDispenser = Provider.IsA<ICashDispenserService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetPresentStatusHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetPresentStatusHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var getPresentStatusCmd = command.IsA<GetPresentStatusCommand>($"Invalid parameter in the GetPresentStatus Handle method. {nameof(GetPresentStatusCommand)}");
             getPresentStatusCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
             await Connection.SendMessageAsync(new GetPresentStatusCompletion(getPresentStatusCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var getPresentStatuscommand = command.IsA<GetPresentStatusCommand>();
             getPresentStatuscommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             var response = new GetPresentStatusCompletion(getPresentStatuscommand.Header.RequestId.Value, new GetPresentStatusCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private ICashDispenserDevice Device { get => Provider.Device.IsA<ICashDispenserDevice>(); }
         private IServiceProvider Provider { get; }
-        private ICashDispenserServiceClass CashDispenser { get; }
+        private ICashDispenserService CashDispenser { get; }
         private ILogger Logger { get; }
     }
 

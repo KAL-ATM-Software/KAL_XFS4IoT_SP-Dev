@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandler(XFSConstants.ServiceClass.KeyManagement, typeof(GenerateRSAKeyPairCommand))]
     public partial class GenerateRSAKeyPairHandler : ICommandHandler
     {
-        public GenerateRSAKeyPairHandler(ICommandDispatcher Dispatcher, ILogger logger)
+        public GenerateRSAKeyPairHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(GenerateRSAKeyPairHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
@@ -30,12 +30,13 @@ namespace XFS4IoTFramework.KeyManagement
             Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(GenerateRSAKeyPairHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IKeyManagementDevice>();
 
-            KeyManagement = Provider.IsA<IKeyManagementServiceClass>();
+            KeyManagement = Provider.IsA<IKeyManagementService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GenerateRSAKeyPairHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GenerateRSAKeyPairHandler)} constructor. {nameof(Connection)}");
         }
 
-        public async Task Handle(IConnection Connection, object command, CancellationToken cancel)
+        public async Task Handle(object command, CancellationToken cancel)
         {
             var generateRSAKeyPairCmd = command.IsA<GenerateRSAKeyPairCommand>($"Invalid parameter in the GenerateRSAKeyPair Handle method. {nameof(GenerateRSAKeyPairCommand)}");
             generateRSAKeyPairCmd.Header.RequestId.HasValue.IsTrue();
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.KeyManagement
             await Connection.SendMessageAsync(new GenerateRSAKeyPairCompletion(generateRSAKeyPairCmd.Header.RequestId.Value, result));
         }
 
-        public async Task HandleError(IConnection connection, object command, Exception commandException)
+        public async Task HandleError(object command, Exception commandException)
         {
             var generateRSAKeyPaircommand = command.IsA<GenerateRSAKeyPairCommand>();
             generateRSAKeyPaircommand.Header.RequestId.HasValue.IsTrue();
@@ -62,12 +63,13 @@ namespace XFS4IoTFramework.KeyManagement
 
             var response = new GenerateRSAKeyPairCompletion(generateRSAKeyPaircommand.Header.RequestId.Value, new GenerateRSAKeyPairCompletion.PayloadData(errorCode, commandException.Message));
 
-            await connection.SendMessageAsync(response);
+            await Connection.SendMessageAsync(response);
         }
 
+        private IConnection Connection { get; }
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
-        private IKeyManagementServiceClass KeyManagement { get; }
+        private IKeyManagementService KeyManagement { get; }
         private ILogger Logger { get; }
     }
 

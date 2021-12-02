@@ -70,7 +70,7 @@ namespace XFS4IoT.TextTerminal.Events
             /// * ```notRead``` - The specified field is not an input field.
             /// * ```notWrite``` - An attempt was made to write to an input field.
             /// * ```typeNotSupported``` - The form field type is not supported with device.
-            /// * ```charSetForm``` - Service Provider does not support character set specified in form.
+            /// * ```charSetForm``` - Service does not support character set specified in form.
             /// </summary>
             [DataMember(Name = "failure")]
             public FailureEnum? Failure { get; init; }

@@ -49,6 +49,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "source")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string Source { get; init; }
 
                 /// <summary>
@@ -72,9 +73,10 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) to which items are to be moved.
-            /// <example>unit2</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "cashUnitTarget")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string CashUnitTarget { get; init; }
 
         }

@@ -56,11 +56,12 @@ namespace XFS4IoT.CashManagement.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The object name of the cash unit which has been calibrated as stated by the 
-            /// [Storage.GetStorage](#storage.getstorage) command.
-            /// <example>20USD1</example>
+            /// The object name of the cash unit which has been calibrated as stated by
+            /// [Storage.GetStorage](#storage.getstorage).
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string Unit { get; init; }
 
             /// <summary>

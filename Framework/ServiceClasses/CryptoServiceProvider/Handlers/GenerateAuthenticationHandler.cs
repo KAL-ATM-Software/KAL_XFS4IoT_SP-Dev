@@ -262,7 +262,7 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateSignature()");
 
-                result = await Device.GenerateSignature(events,
+                result = await Device.GenerateSignature(new CryptoCommandEvents(events),
                                                         new GenerateSignatureRequest(generateAuthentication.Payload.Key,
                                                                                      Crypto.GetKeyDetail(generateAuthentication.Payload.Key).KeySlot,
                                                                                      Convert.FromBase64String(generateAuthentication.Payload.AuthenticationData).ToList(),
@@ -277,7 +277,7 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateMAC()");
 
-                result = await Device.GenerateMAC(events,
+                result = await Device.GenerateMAC(new CryptoCommandEvents(events),
                                                   new GenerateMACRequest(keyDetail.KeyName,
                                                                          keyDetail.KeySlot,
                                                                          Convert.FromBase64String(generateAuthentication.Payload.AuthenticationData).ToList(),

@@ -108,7 +108,7 @@ namespace XFS4IoTServer
                 foreach (var cmd in Contents.Where(c => c.Connection == Connection).ToList())
                 {
                     //Complete command with Cancelled response
-                    await cmd.CommandHandler.HandleError(cmd.Connection, cmd.Command, new TimeoutCanceledException(true));
+                    await cmd.CommandHandler.HandleError(cmd.Command, new TimeoutCanceledException(true));
                     cmd.cts.Dispose();
                     Contents.Remove(cmd);
                 }
@@ -146,7 +146,7 @@ namespace XFS4IoTServer
                         if (foundID is not null)
                         {
                             //Complete command with Cancelled response
-                            await foundID.CommandHandler.HandleError(foundID.Connection, foundID.Command, new TimeoutCanceledException(true));
+                            await foundID.CommandHandler.HandleError(foundID.Command, new TimeoutCanceledException(true));
                             foundID.cts.Dispose();
                             Contents.Remove(foundID);
                         }
@@ -209,7 +209,7 @@ namespace XFS4IoTServer
             while (true)
             {
                 //Wait for item to be received.
-                var (handler, connection, command, cts) = await ReceiveItemAsync();
+                var (handler, _, command, cts) = await ReceiveItemAsync();
 
                 try
                 {
@@ -217,7 +217,7 @@ namespace XFS4IoTServer
 
                     //Throw OperationCanceledException if command timeout has already been reached.
                     cts.Token.ThrowIfCancellationRequested();
-                    await handler.Handle(connection, command, cts.Token);
+                    await handler.Handle(command, cts.Token);
                     
                     Logger.Log("Dispatcher", $"Completed {command.Header.Name} id:{command.Header.RequestId}");
                 }
@@ -241,7 +241,7 @@ namespace XFS4IoTServer
                         ex = new TimeoutCanceledException(ex.Message, ex, cancelRequested);
                     }
 
-                    await handler.HandleError(connection, command, ex);
+                    await handler.HandleError(command, ex);
                 }
 
                 //Command is complete - unassign CurrentCommand.

@@ -30,7 +30,7 @@ namespace XFS4IoTFramework.Crypto
         /// The start value (or Initialization Vector) can be provided as input data to this command, or it can beimported via TR-31 prior to requesting this command and referenced by name.
         /// The start value and start value keyare both optional parameters.
         /// </summary>
-        Task<CryptoDataResult> Crypto(ICryptoDataEvents events, 
+        Task<CryptoDataResult> Crypto(CryptoCommandEvents events, 
                                       CryptoDataRequest request, 
                                       CancellationToken cancellation);
 
@@ -39,13 +39,13 @@ namespace XFS4IoTFramework.Crypto
         /// This input data is padded to necessary length mandated by the signature algorithm using padding parameter.
         /// Applications can use an alternative padding method by pre-formatting the data passed and combining this withthe standard padding method. 
         /// </summary>
-        Task<GenerateAuthenticationDataResult> GenerateSignature(IGenerateAuthenticationEvents events,
+        Task<GenerateAuthenticationDataResult> GenerateSignature(CryptoCommandEvents events,
                                                                  GenerateSignatureRequest request,
                                                                  CancellationToken cancellation);
 
         /// This command can be used for Message Authentication Code generation (i.e. macing).
         /// The input data ispadded to the necessary length mandated by the encryption algorithm using the padding parameter.
-        Task<GenerateAuthenticationDataResult> GenerateMAC(IGenerateAuthenticationEvents events,
+        Task<GenerateAuthenticationDataResult> GenerateMAC(CryptoCommandEvents events,
                                                            GenerateMACRequest request,
                                                            CancellationToken cancellation);
 
@@ -56,13 +56,13 @@ namespace XFS4IoTFramework.Crypto
         /// The start value (orInitialization Vector) can be provided as input data to this command, or it can be imported via TR-31 prior to requesting this command and referenced by name. 
         /// The start value and start value key are both optional parameters.
         /// </summary>
-        Task<VerifyAuthenticationDataResult> VerifySignature(IVerifyAuthenticationEvents events, 
+        Task<VerifyAuthenticationDataResult> VerifySignature(CryptoCommandEvents events, 
                                                              VerifySignatureRequest request, 
                                                              CancellationToken cancellation);
 
         /// This command can be used for MAC verification.
         /// The input data is padded to the necessary length mandated by the encryption algorithm using the padding parameter.
-        Task<VerifyAuthenticationDataResult> VerifyMAC(IVerifyAuthenticationEvents events,
+        Task<VerifyAuthenticationDataResult> VerifyMAC(CryptoCommandEvents events,
                                                        VerifyMACRequest request,
                                                        CancellationToken cancellation);
 

@@ -82,7 +82,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Flush any data to the printer that has not yet been printed from previous
-                /// [Printer.PrintForm](#printer.printform) or [Printer.PrintRawFile](#printer.printrawfile) commands, then
+                /// [Printer.PrintForm](#printer.printform) or [Printer.PrintNative](#printer.printnative) commands, then
                 /// eject the media.
                 /// </summary>
                 [DataMember(Name = "eject")]
@@ -110,7 +110,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintRawFile* commands. This will synchronize the application with the device to ensure that all
+                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -192,7 +192,7 @@ namespace XFS4IoT.Printer.Commands
 
                 /// <summary>
                 /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintRawFile* commands.
+                /// *Printer.PrintNative* commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }

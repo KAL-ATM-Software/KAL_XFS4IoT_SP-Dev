@@ -10,6 +10,10 @@
 #include "endtoendsecurity.h"
 #include <climits>
 
+extern C_LINKAGE bool ValidateToken(char const* const Token, size_t TokenLength);
+extern C_LINKAGE bool ParseDispenseToken(char const* const Token, size_t TokenSize);
+extern C_LINKAGE bool AuthoriseDispense(unsigned int UnitValue, unsigned int SubUnitValue, char const Currency[3]);
+
 // We currently only support singgle currencies - hence one dispense token. 
 char const DISPENSE_KEY_NAME[] = "DISPENSE";
 
@@ -181,9 +185,9 @@ bool ExtractValue(char const* const Start, char const* const End, unsigned long 
 }
 
 /// <summary>
-/// Authorise the given amount based on the current token. 
-/// If the amount is authorised then it will be subtracted from the remaining value for this token - 
-/// this part of the value can't be dispensed again even if the dispense then fails. 
+/// Authorise the given amount based on the current token.
+/// Note that once the cash has actually been dispense, ConfirmDispense _must_ be called
+/// to track the remaining amount available. 
 /// </summary>
 /// <param name="Value">Unit part of the value</param>
 /// <param name="Fraction">fractional part of the value</param>
@@ -191,7 +195,7 @@ bool ExtractValue(char const* const Start, char const* const End, unsigned long 
 /// <returns></returns>
 bool AuthoriseDispense(unsigned int Value, unsigned int Fraction, char const Currency[3] )
 {
-    LogV("AuthoriseAgainstToken( Value=%d, Fraction=%d, Currency=\"%c%c%c\" )", Value, Fraction, Currency[0], Currency[1], Currency[2]);
+    LogV("AuthoriseDispense( Value=%d, Fraction=%d, Currency=\"%c%c%c\" )", Value, Fraction, Currency[0], Currency[1], Currency[2]);
 
     // Sanity check that the requested currency matches. 
     // (Note - we only support a single currency per-token at the moment. )
@@ -201,7 +205,7 @@ bool AuthoriseDispense(unsigned int Value, unsigned int Fraction, char const Cur
         Currency[2] != RemainingValue.Currency[2]
         )
     {
-        Log("AuthoriseAgainstToken: Requested dispense currency doesn't match the token currency");
+        Log("AuthoriseDispense: Requested dispense currency doesn't match the token currency");
         return false;
     }
 
@@ -209,8 +213,34 @@ bool AuthoriseDispense(unsigned int Value, unsigned int Fraction, char const Cur
     if( Value > RemainingValue.Value || 
         Value == RemainingValue.Value && Fraction > RemainingValue.Fraction )
     {
-        LogV("AuthoriseAgainstToken: Request to dispense more than the current token authorises. Remaining = %d.%d%c%c%c"
+        LogV("AuthoriseDispense: Request to dispense more than the current token authorises. Remaining = %d.%d%c%c%c"
             , RemainingValue.Value, RemainingValue.Fraction, RemainingValue.Currency[0], RemainingValue.Currency[1], RemainingValue.Currency[2]);
+        return false;
+    }
+    LogV("AuthoriseDispense: => true");
+    return true;
+}
+
+/// <summary>
+/// Confirm that the given amount was dispensed, so it can be tracked against the current token. 
+/// If the amount is authorised then it will be subtracted from the remaining value for this token - 
+/// this part of the value can't be dispensed again even if the dispense then fails. 
+/// </summary>
+/// <param name="Value">Unit part of the value</param>
+/// <param name="Fraction">fractional part of the value</param>
+/// <param name="Currency">Three char currency ID</param>
+/// <returns></returns>
+bool ConfirmDispense(unsigned int Value, unsigned int Fraction, char const Currency[3] )
+{
+    LogV("ConfirmDispense( Value=%d, Fraction=%d, Currency=\"%c%c%c\" )", Value, Fraction, Currency[0], Currency[1], Currency[2]);
+
+    // Sanity check that the amount was actually authorised. 
+    if (!AuthoriseDispense(Value, Fraction, Currency))
+    {
+        LogV("ConfirmDispense: Internal error - A dispense amount was confirmed that wasn't authorised.");
+        InvalidateToken();
+        CleanDispenceValues();
+
         return false;
     }
 
@@ -222,23 +252,19 @@ bool AuthoriseDispense(unsigned int Value, unsigned int Fraction, char const Cur
     // and allow a new token to be created and used. 
     if (RemainingValue.Value == 0 && RemainingValue.Fraction == 0)
     {
-        LogV("AuthoriseAgainstToken: Full token value has been dispensed. The token/nonce will now be cleared");
-        bool result = InvalidateToken();
-        if (!result)
-        {
-            LogV("AuthoriseAgainstToken: Internal error - Token has been used up, but it couldn't be invalidated");
-            return false;
-        }
+        LogV("ConfirmDispense: Full token value has been dispensed. The token/nonce will now be cleared");
+        InvalidateToken();
+        CleanDispenceValues();
     }
     else
     {
-        LogV("AuthoriseAgainstToken: Authorised=%d.%d%c%c%c, remaining=%d.%d%c%c%c",
+        LogV("ConfirmDispense: Authorised=%d.%d%c%c%c, remaining=%d.%d%c%c%c",
              Value, Fraction, Currency[0], Currency[1], Currency[2],
              RemainingValue.Value, RemainingValue.Fraction, RemainingValue.Currency[0], RemainingValue.Currency[1], RemainingValue.Currency[2]
             );
     }
 
-    LogV("AuthoriseAgainstToken: => true");
+    LogV("ConfirmDispense: => true");
     return true;
 }
 
@@ -262,6 +288,7 @@ bool AuthoriseDispenseAgainstToken(char const* Token, size_t TokenLength, unsign
     result = ValidateToken(Token, TokenLength);
     if (!result) 
     {
+        CleanDispenceValues();
         Log("AuthoriseDispenseAgainstToken: => false");
         return false;
     }
@@ -271,6 +298,7 @@ bool AuthoriseDispenseAgainstToken(char const* Token, size_t TokenLength, unsign
         result = ParseDispenseToken(Token, TokenLength);
         if (!result)
         {
+            CleanDispenceValues();
             Log("AuthoriseDispenseAgainstToken: => false");
             return false;
         }
@@ -279,7 +307,8 @@ bool AuthoriseDispenseAgainstToken(char const* Token, size_t TokenLength, unsign
     result = AuthoriseDispense(Value, Fraction, Currency);
     if (!result)
     {
-        Log("AuthoriseDispenseAgainstToken: => false");
+        CleanDispenceValues();
+        Log("ConfirmDispenseAgainstToken: => false");
         return false;
     }
 
@@ -287,6 +316,27 @@ bool AuthoriseDispenseAgainstToken(char const* Token, size_t TokenLength, unsign
     return true;
 }
 
+/// <summary>
+/// Confirm a completed dispense against the token and adjust the remaining value. 
+/// </summary>
+/// <param name="Token">Full token string, including HMAC</param>
+/// <param name="TokenLength">Length of the token string, including null</param>
+/// <param name="Value">Unit value of dispense to authorise</param>
+/// <param name="Fraction">Fractional value of dispense, to authorise</param>
+/// <param name="Currency">Currency code of dispense to authorise</param>
+/// <returns>Normally true. False if something went wrong. If false the current token is invalidated.</returns>
+bool ConfirmDispenseAgainstToken(char const* Token, size_t TokenLength, unsigned int Value, unsigned int Fraction, char const Currency[3])
+{
+    LogV("ConfirmDispenseAgainstToken( Token=\"%.1024s\", TokenSize=%d, Value=%d, Fraction=%d, Currency=\"%c%c%c\"  )", Token, TokenLength, Value, Fraction, Currency[0], Currency[1], Currency[2]);
+    bool result = ConfirmDispense(Value, Fraction, Currency);
+    if (!result)
+    {
+        Log("ConfirmDispenseAgainstToken: => false");
+        return false;
+    }
+    LogV("ConfirmDispenseAgainstToken: => true");
+    return true;
+}
 
 void CleanDispenceValues()
 {

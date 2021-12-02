@@ -6,6 +6,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
@@ -14,7 +15,7 @@ using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.Storage;
-using System.Linq;
+using XFS4IoTFramework.CashManagement;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -39,7 +40,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                         $"No reject units supported for this device.");
             }
 
-            var result = await Device.RejectAsync(events, cancel);
+            var result = await Device.RejectAsync(new ItemInfoAvailableCommandEvent(events), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.RejectAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

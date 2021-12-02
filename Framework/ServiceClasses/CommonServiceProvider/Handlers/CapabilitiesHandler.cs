@@ -5,12 +5,14 @@
 \***********************************************************************************************/
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Drawing;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoT.Common;
 using XFS4IoT.Common.Commands;
 using XFS4IoT.Common.Completions;
 using XFS4IoT.Completions;
@@ -28,72 +30,274 @@ namespace XFS4IoTFramework.Common
                 return Task.FromResult(new CapabilitiesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError, $"No common capabilities is reported by the device class."));
             }
 
-            List<XFS4IoT.Common.InterfaceClass> interfaces = new();
-            foreach (var commonInterface in Common.CommonCapabilities.Interfaces)
+            List<string> synchronizableCommands = new();
+            List<InterfaceClass> interfaces = new();
+            List<string> authenticationRequiredCommands = new();
+
+            // The command and event versions are controlled by the framework, currently it's hardcoded.
+            InterfaceClass.CommandsClass commandVersion = new (XFSConstants.SupportedVersionRange);
+            InterfaceClass.EventsClass eventVersion = new (XFSConstants.SupportedVersionRange);
+
+            InterfaceClass.NameEnum interfaceName = InterfaceClass.NameEnum.Common;
+            // Common interface
+            Common.CommonCapabilities.CommonInterface.IsNotNull($"Common interface must be supported.");
+            interfaces.Add(new(interfaceName,
+                               Common.CommonCapabilities.CommonInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                               Common.CommonCapabilities.CommonInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                               0));
+            if (Common.CommonCapabilities.CommonInterface?.SynchronizableCommands?.Count > 0)
             {
-                Dictionary<string, XFS4IoT.Common.InterfaceClass.CommandsClass> supportedCommands = null;
-                if ( commonInterface.Commands?.Count > 0)
-                {
-                    supportedCommands = new();
-                    foreach (var cmd in commonInterface.Commands)
-                    {
-                        supportedCommands.Add(cmd.Key, new XFS4IoT.Common.InterfaceClass.CommandsClass(cmd.Value?.Versions));
-                    }
-                }
-
-                Dictionary<string, XFS4IoT.Common.InterfaceClass.EventsClass> supportedEvents = null;
-                if (commonInterface.Events?.Count > 0)
-                {
-                    supportedEvents = new();
-                    foreach (var ev in commonInterface.Events)
-                    {
-                        supportedEvents.Add(ev.Key, new XFS4IoT.Common.InterfaceClass.EventsClass(ev.Value?.Versions));
-                    }
-                }
-
-                interfaces.Add(new XFS4IoT.Common.InterfaceClass(
-                    Name: commonInterface.Name switch
-                    {
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Auxiliaries => XFS4IoT.Common.InterfaceClass.NameEnum.Auxiliaries,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.BarcodeReader => XFS4IoT.Common.InterfaceClass.NameEnum.BarcodeReader,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Camera => XFS4IoT.Common.InterfaceClass.NameEnum.Camera,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.CardEmbosser => XFS4IoT.Common.InterfaceClass.NameEnum.CardEmbosser,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.CardReader => XFS4IoT.Common.InterfaceClass.NameEnum.CardReader,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.CashAcceptor => XFS4IoT.Common.InterfaceClass.NameEnum.CashAcceptor,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.CashDispenser => XFS4IoT.Common.InterfaceClass.NameEnum.CashDispenser,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.CashManagement => XFS4IoT.Common.InterfaceClass.NameEnum.CashManagement,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Common => XFS4IoT.Common.InterfaceClass.NameEnum.Common,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Crypto => XFS4IoT.Common.InterfaceClass.NameEnum.Crypto,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Keyboard => XFS4IoT.Common.InterfaceClass.NameEnum.Keyboard,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.KeyManagement => XFS4IoT.Common.InterfaceClass.NameEnum.KeyManagement,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Lights => XFS4IoT.Common.InterfaceClass.NameEnum.Lights,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.PinPad => XFS4IoT.Common.InterfaceClass.NameEnum.PinPad,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Printer => XFS4IoT.Common.InterfaceClass.NameEnum.Printer,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.Storage => XFS4IoT.Common.InterfaceClass.NameEnum.Storage,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.TextTerminal => XFS4IoT.Common.InterfaceClass.NameEnum.TextTerminal,
-                        CommonCapabilitiesClass.InterfaceClass.NameEnum.VendorApplication => XFS4IoT.Common.InterfaceClass.NameEnum.VendorApplication,
-                        _ => XFS4IoT.Common.InterfaceClass.NameEnum.VendorMode,
-                    },
-                    Commands: supportedCommands,
-                    Events: supportedEvents,
-                    MaximumRequests: commonInterface.MaximumRequests,
-                    AuthenticationRequired: commonInterface.AuthenticationRequired
-                    ));
+                synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CommonInterface.SynchronizableCommands
+                                                select $"{interfaceName}.{cmd}");
+            }
+            if (Common.CommonCapabilities.CommonInterface.AuthenticationRequired?.Count > 0)
+            {
+                authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CommonInterface.AuthenticationRequired
+                                                        select $"{interfaceName}.{cmd}");
             }
 
-            List<XFS4IoT.Common.DeviceInformationClass> deviceInformation = null;
+            // CardReader interface
+            if (Common.CommonCapabilities.CardReaderInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.CardReader;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.CardReaderInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.CardReaderInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.CardReaderInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CardReaderInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.CardReaderInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CardReaderInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // CashDispenser interface
+            if (Common.CommonCapabilities.CashDispenserInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.CashDispenser;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.CashDispenserInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.CashDispenserInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.CashDispenserInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CashDispenserInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.CashDispenserInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CashDispenserInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // CashManagement interface
+            if (Common.CommonCapabilities.CashManagementInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.CashManagement;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.CashManagementInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.CashManagementInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.CashManagementInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CashManagementInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.CashManagementInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CashManagementInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Crypto interface
+            if (Common.CommonCapabilities.CryptoInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Crypto;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.CryptoInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.CryptoInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.CryptoInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CryptoInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.CryptoInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CryptoInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Keyboard interface
+            if (Common.CommonCapabilities.KeyboardInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Keyboard;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.KeyboardInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.KeyboardInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.KeyboardInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.KeyboardInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.KeyboardInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.KeyboardInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // KeyManagement interface
+            if (Common.CommonCapabilities.KeyManagementInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.KeyManagement;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.KeyManagementInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.KeyManagementInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.KeyManagementInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.KeyManagementInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.KeyManagementInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.KeyManagementInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // PinPad interface
+            if (Common.CommonCapabilities.PinPadInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.PinPad;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.PinPadInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.PinPadInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.PinPadInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.PinPadInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.PinPadInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.PinPadInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // TextTerminal interface
+            if (Common.CommonCapabilities.TextTerminalInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.TextTerminal;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.TextTerminalInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.TextTerminalInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.TextTerminalInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.TextTerminalInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.TextTerminalInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.TextTerminalInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Storage interface
+            if (Common.CommonCapabilities.StorageInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Storage;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.StorageInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.StorageInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.StorageInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.StorageInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.StorageInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.StorageInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Printer interface
+            if (Common.CommonCapabilities.PrinterInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Printer;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.PrinterInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.PrinterInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.PrinterInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.PrinterInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.PrinterInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.PrinterInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Lights interface
+            if (Common.CommonCapabilities.LightsInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Lights;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.LightsInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.LightsInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.LightsInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.LightsInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.LightsInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.LightsInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Auxiliaries interface
+            if (Common.CommonCapabilities.AuxiliariesInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Auxiliaries;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.AuxiliariesInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.AuxiliariesInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.AuxiliariesInterface.SynchronizableCommands?.Count > 0)
+                {
+                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.AuxiliariesInterface.SynchronizableCommands
+                                                    select $"{interfaceName}.{cmd}");
+                }
+                if (Common.CommonCapabilities.AuxiliariesInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.AuxiliariesInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+
+            List<DeviceInformationClass> deviceInformation = null;
             if (Common.CommonCapabilities.DeviceInformation?.Count > 0)
             {
                 deviceInformation = new();
                 foreach (var device in Common.CommonCapabilities.DeviceInformation)
                 {
-                    List<XFS4IoT.Common.FirmwareClass> firmware = null;
+                    List<FirmwareClass> firmware = null;
                     if (device.Firmware?.Count > 0)
                     {
                         firmware = new();
                         foreach (var firm in device.Firmware)
                         {
-                            firmware.Add(new XFS4IoT.Common.FirmwareClass(
+                            firmware.Add(new FirmwareClass(
                                 FirmwareName: firm.FirmwareName,
                                 FirmwareVersion: firm.FirmwareVersion,
                                 HardwareRevision: firm.HardwareRevision
@@ -101,20 +305,20 @@ namespace XFS4IoTFramework.Common
                         }
                     }
 
-                    List<XFS4IoT.Common.SoftwareClass> software = null;
+                    List<SoftwareClass> software = null;
                     if (device.Software?.Count > 0)
                     {
                         software = new();
                         foreach (var soft in device.Software)
                         {
-                            software.Add(new XFS4IoT.Common.SoftwareClass(
+                            software.Add(new SoftwareClass(
                                 SoftwareName: soft.SoftwareName,
                                 SoftwareVersion: soft.SoftwareVersion
                                 ));
                         }
                     }
 
-                    deviceInformation.Add(new XFS4IoT.Common.DeviceInformationClass(
+                    deviceInformation.Add(new DeviceInformationClass(
                         ModelName: device.ModelName,
                         SerialNumber: device.SerialNumber,
                         RevisionNumber: device.RevisionNumber,
@@ -125,22 +329,30 @@ namespace XFS4IoTFramework.Common
                 }
             }
 
-            XFS4IoT.Common.CapabilityPropertiesClass commonCapabilities = new(
-                ServiceVersion: Common.CommonCapabilities.ServiceVersion,
+            CapabilityPropertiesClass commonCapabilities = new(
+                ServiceVersion: XFSConstants.ServiceVersion,
                 DeviceInformation: deviceInformation,
-                VendorModeIformation: Common.CommonCapabilities.VendorModeIformation is null ? null :
-                new XFS4IoT.Common.VendorModeInfoClass(
-                    Common.CommonCapabilities.VendorModeIformation.AllowOpenSessions,
-                    Common.CommonCapabilities.VendorModeIformation.AllowedExecuteCommands
-                    ),
                 PowerSaveControl: Common.CommonCapabilities.PowerSaveControl,
                 AntiFraudModule: Common.CommonCapabilities.AntiFraudModule,
-                SynchronizableCommands: Common.CommonCapabilities.SynchronizableCommands,
-                EndToEndSecurity: Common.CommonCapabilities.EndToEndSecurity,
-                HardwareSecurityElement: Common.CommonCapabilities.HardwareSecurityElement,
-                ResponseSecurityEnabled: Common.CommonCapabilities.ResponseSecurityEnabled,
-                CommandNonceTimeout: Common.CommonCapabilities.CommandNonceTimeout
-                );
+                SynchronizableCommands: synchronizableCommands,
+                EndToEndSecurity: Common.CommonCapabilities.EndToEndSecurity is null ? null :
+                    new EndToEndSecurityClass(
+                        Common.CommonCapabilities.EndToEndSecurity.Required switch
+                        {
+                            CommonCapabilitiesClass.EndToEndSecurityClass.RequiredEnum.Always => EndToEndSecurityClass.RequiredEnum.Always,
+                            _=> EndToEndSecurityClass.RequiredEnum.IfConfigured,
+                        },
+                        Common.CommonCapabilities.EndToEndSecurity.HardwareSecurityElement,
+                        Common.CommonCapabilities.EndToEndSecurity.ResponseSecurityEnabled switch
+                        {
+                            CommonCapabilitiesClass.EndToEndSecurityClass.ResponseSecurityEnabledEnum.Always => EndToEndSecurityClass.ResponseSecurityEnabledEnum.Always,
+                            CommonCapabilitiesClass.EndToEndSecurityClass.ResponseSecurityEnabledEnum.IfConfigured => EndToEndSecurityClass.ResponseSecurityEnabledEnum.IfConfigured,
+                            _ => EndToEndSecurityClass.ResponseSecurityEnabledEnum.NotSupported,
+                        },
+                        authenticationRequiredCommands.Count > 0 ? authenticationRequiredCommands : null,
+                        Common.CommonCapabilities.EndToEndSecurity.CommandNonceTimeout
+                        )
+                    );
 
             XFS4IoT.CardReader.CapabilitiesClass cardReader = null;
             if (Common.CardReaderCapabilities is not null)
@@ -655,38 +867,192 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
-            Dictionary<string, XFS4IoT.Lights.LightCapabilitiesClass> lights = null;
+            Dictionary<LightsCapabilitiesClass.DeviceEnum, XFS4IoT.Lights.LightCapabilitiesClass> stdLights = null;
+            Dictionary<string, XFS4IoT.Lights.LightCapabilitiesClass> customLights = null;
             if (Common.LightsCapabilities?.Lights?.Count > 0)
             {
-                lights = new();
+                stdLights = new();
                 foreach (var light in Common.LightsCapabilities.Lights)
                 {
-                    lights.Add(light.Key, new XFS4IoT.Lights.LightCapabilitiesClass(
-                                            new XFS4IoT.Lights.LightCapabilitiesClass.FlashRateClass(light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
-                                                                                                     light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
-                                                                                                     light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
-                                                                                                     light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
-                                                                                                     light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
-                                            new XFS4IoT.Lights.LightCapabilitiesClass.ColorClass(light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Blue),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
-                                                                                                 light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
-                                            new XFS4IoT.Lights.LightCapabilitiesClass.DirectionClass(light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
-                                                                                                     light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit)),
-                                            new XFS4IoT.Lights.LightCapabilitiesClass.PositionClass(light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Left),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Right),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Center),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Top),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Bottom),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Front),
-                                                                                                    light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Rear))
-
-
+                    stdLights.Add(light.Key, new XFS4IoT.Lights.LightCapabilitiesClass(
+                                                new XFS4IoT.Lights.LightCapabilitiesClass.FlashRateClass(light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
+                                                                                                         light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
+                                                                                                         light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
+                                                                                                         light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
+                                                                                                         light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
+                                                new XFS4IoT.Lights.LightCapabilitiesClass.ColorClass(light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Blue),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
+                                                                                                     light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
+                                                new XFS4IoT.Lights.LightCapabilitiesClass.DirectionClass(light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
+                                                                                                         light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit)),
+                                                new XFS4IoT.Lights.LightCapabilitiesClass.PositionClass(light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Left),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Right),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Center),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Top),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Bottom),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Front),
+                                                                                                        light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Rear))
                                             ));
                 }
+            }
+            if (Common.LightsCapabilities?.CustomLights?.Count > 0)
+            {
+                customLights = new();
+                foreach (var light in Common.LightsCapabilities.CustomLights)
+                {
+                    customLights.Add(light.Key, new XFS4IoT.Lights.LightCapabilitiesClass(
+                                                    new XFS4IoT.Lights.LightCapabilitiesClass.FlashRateClass(light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
+                                                                                                             light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
+                                                                                                             light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
+                                                                                                             light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
+                                                                                                             light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
+                                                    new XFS4IoT.Lights.LightCapabilitiesClass.ColorClass(light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Blue),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
+                                                                                                         light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
+                                                    new XFS4IoT.Lights.LightCapabilitiesClass.DirectionClass(light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
+                                                                                                             light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit)),
+                                                    new XFS4IoT.Lights.LightCapabilitiesClass.PositionClass(light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Left),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Right),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Center),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Top),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Bottom),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Front),
+                                                                                                            light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Rear))
+                                            ));
+                }
+            }
+
+            XFS4IoT.Lights.CapabilitiesClass lights = null;
+            if (stdLights?.Count > 0)
+            {
+                lights = new XFS4IoT.Lights.CapabilitiesClass
+                    (
+                    CardReader: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardReader] : null,
+                    PinPad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PinPad) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PinPad] : null,
+                    NotesDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser] : null,
+                    CoinDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinDispenser] : null,
+                    ReceiptPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter] : null,
+                    PassbookPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PassbookPrinter] : null,
+                    EnvelopeDepository: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository] : null,
+                    ChequeUnit: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ChequeUnit) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ChequeUnit] : null,
+                    BillAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor] : null,
+                    EnvelopeDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser] : null,
+                    DocumentPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.DocumentPrinter] : null,
+                    CoinAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinAcceptor] : null,
+                    Scanner: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Scanner) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Scanner] : null,
+                    CardUnit2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardUnit2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardUnit2] : null,
+                    NotesDispenser2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser2] : null,
+                    BillAcceptor2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor2] : null,
+                    StatusGood: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator] : null,
+                    StatusWarning: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator] : null,
+                    StatusBad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator] : null,
+                    FasciaLight: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.FasciaLight) ? stdLights[LightsCapabilitiesClass.DeviceEnum.FasciaLight] : null
+                    );
+            }
+            if (customLights?.Count > 0)
+            {
+                if (lights is null)
+                {
+                    lights = new();
+                }
+                lights.ExtendedProperties = customLights;
+            }
+
+            XFS4IoT.Printer.CapabilitiesClass printer = null;
+            if (Common.PrinterCapabilities is not null)
+            {
+                XFS4IoT.Printer.PaperSourcesClass paperSources = new (Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Upper),
+                                                                      Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Lower),
+                                                                      Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.External),
+                                                                      Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX),
+                                                                      Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX2),
+                                                                      Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Park));
+
+                if (Common.PrinterCapabilities.CustomPaperSources is not null)
+                {
+                    paperSources.ExtendedProperties = Common.PrinterCapabilities.CustomPaperSources;
+                }
+
+                printer = new XFS4IoT.Printer.CapabilitiesClass(
+                    new XFS4IoT.Printer.CapabilitiesClass.TypeClass(Common.PrinterCapabilities.Types.HasFlag(PrinterCapabilitiesClass.TypeEnum.Receipt),
+                                                                    Common.PrinterCapabilities.Types.HasFlag(PrinterCapabilitiesClass.TypeEnum.Passbook),
+                                                                    Common.PrinterCapabilities.Types.HasFlag(PrinterCapabilitiesClass.TypeEnum.Journal),
+                                                                    Common.PrinterCapabilities.Types.HasFlag(PrinterCapabilitiesClass.TypeEnum.Document),
+                                                                    Common.PrinterCapabilities.Types.HasFlag(PrinterCapabilitiesClass.TypeEnum.Scanner)),
+                    new XFS4IoT.Printer.CapabilitiesClass.ResolutionClass(Common.PrinterCapabilities.Resolutions.HasFlag(PrinterCapabilitiesClass.ResolutionEnum.Low),
+                                                                          Common.PrinterCapabilities.Resolutions.HasFlag(PrinterCapabilitiesClass.ResolutionEnum.Medium),
+                                                                          Common.PrinterCapabilities.Resolutions.HasFlag(PrinterCapabilitiesClass.ResolutionEnum.High),
+                                                                          Common.PrinterCapabilities.Resolutions.HasFlag(PrinterCapabilitiesClass.ResolutionEnum.VeryHigh)),
+                    new XFS4IoT.Printer.CapabilitiesClass.ReadFormClass(Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.OCR),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.MICR),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.MSF),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.Barcode),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.PageMark),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.Image),
+                                                                        Common.PrinterCapabilities.ReadForms.HasFlag(PrinterCapabilitiesClass.ReadFormEnum.EmptyLine)),
+                    new XFS4IoT.Printer.CapabilitiesClass.WriteFormClass(Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.Text),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.Graphics),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.OCR),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.MICR),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.MSF),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.Barcode),
+                                                                         Common.PrinterCapabilities.WriteForms.HasFlag(PrinterCapabilitiesClass.WriteFormEnum.Stamp)),
+                    new XFS4IoT.Printer.CapabilitiesClass.ExtentsClass(Common.PrinterCapabilities.Extents.HasFlag(PrinterCapabilitiesClass.ExtentEnum.Horizontal),
+                                                                       Common.PrinterCapabilities.Extents.HasFlag(PrinterCapabilitiesClass.ExtentEnum.Vertical)),
+                    new XFS4IoT.Printer.CapabilitiesClass.ControlClass(Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Perforate),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Cut),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Skip),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Flush),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PartialCut),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Alarm),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PageForward),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PageBackward),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.TurnMedia),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stamp),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Rotate180),
+                                                                       Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.ClearBuffer)),
+                    Common.PrinterCapabilities.MaxMediaOnStacker,
+                    Common.PrinterCapabilities.AcceptMedia,
+                    Common.PrinterCapabilities.MultiPage,
+                    paperSources,
+                    Common.PrinterCapabilities.MediaTaken,
+                    Common.PrinterCapabilities.RetractBins,
+                    Common.PrinterCapabilities.MaxRetract,
+                    new XFS4IoT.Printer.CapabilitiesClass.ImageTypeClass(Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF),
+                                                                         Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF),
+                                                                         Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP),
+                                                                         Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG)),
+                    new XFS4IoT.Printer.CapabilitiesClass.FrontImageColorFormatClass(Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Binary),
+                                                                                     Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.GrayScale),
+                                                                                     Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Full)),
+                    new XFS4IoT.Printer.CapabilitiesClass.BackImageColorFormatClass(Common.PrinterCapabilities.BackImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Binary),
+                                                                                    Common.PrinterCapabilities.BackImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.GrayScale),
+                                                                                    Common.PrinterCapabilities.BackImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Full)),
+                    new XFS4IoT.Printer.CapabilitiesClass.CodelineFormatClass(Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.CMC7),
+                                                                              Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.E13B),
+                                                                              Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.OCR)),
+                    new XFS4IoT.Printer.CapabilitiesClass.ImageSourceClass(Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageFront),
+                                                                           Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageBack),
+                                                                           Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.CodeLine)),
+                    Common.PrinterCapabilities.DispensePaper,
+                    Common.PrinterCapabilities.OSPrinter,
+                    Common.PrinterCapabilities.MediaPresented,
+                    Common.PrinterCapabilities.AutoRetractPeriod,
+                    Common.PrinterCapabilities.RetractToTransport);
             }
 
             return Task.FromResult(
@@ -703,8 +1069,9 @@ namespace XFS4IoTFramework.Common
                     KeyManagement: keyManagement,
                     Keyboard: keyboard,
                     TextTerminal: textTerminal,
-                    Lights: lights)
-                );  ;
+                    Lights: lights,
+                    Printer: printer)
+                );
         }
     }
 }

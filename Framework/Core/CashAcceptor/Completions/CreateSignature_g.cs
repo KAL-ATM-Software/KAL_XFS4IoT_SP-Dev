@@ -26,11 +26,11 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.CashItemClass NoteId = null, CashManagement.OrientationEnum? Orientation = null, string Signature = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string NoteType = null, CashManagement.OrientationEnum? Orientation = null, string Signature = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.NoteId = NoteId;
+                this.NoteType = NoteType;
                 this.Orientation = Orientation;
                 this.Signature = Signature;
             }
@@ -62,14 +62,21 @@ namespace XFS4IoT.CashAcceptor.Completions
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
-            [DataMember(Name = "noteId")]
-            public CashManagement.CashItemClass NoteId { get; init; }
+            /// <summary>
+            /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
+            /// not identified as a cash item.
+            /// <example>type20USD1</example>
+            /// </summary>
+            [DataMember(Name = "noteType")]
+            [DataTypes(Pattern = @"^type[0-9A-Z]+$")]
+            public string NoteType { get; init; }
 
             [DataMember(Name = "orientation")]
             public CashManagement.OrientationEnum? Orientation { get; init; }
 
             /// <summary>
             /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is omitted.
+            /// <example>MAA5ADgANwA2ADUANAAzADIAMQAxADIAMwA3ADgAOQAwAA==</example>
             /// </summary>
             [DataMember(Name = "signature")]
             public string Signature { get; init; }

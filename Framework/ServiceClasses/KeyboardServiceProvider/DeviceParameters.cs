@@ -29,6 +29,20 @@ namespace XFS4IoTFramework.Keyboard
         InActive = 0x2,
     }
 
+    public enum EntryCompletionEnum
+    {
+        Auto,
+        Enter,
+        Cancel,
+        Continue,
+        Clear,
+        Backspace,
+        FDK,
+        Help,
+        FK,
+        ContinueFDK
+    }
+
     public class ActiveKeyCalss
     {
 

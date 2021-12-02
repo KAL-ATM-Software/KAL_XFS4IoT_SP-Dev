@@ -29,33 +29,28 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(PaperSourceEnum? PaperSource = null, ThresholdEnum? Threshold = null)
+            public PayloadData(string PaperSource = null, ThresholdEnum? Threshold = null)
                 : base()
             {
                 this.PaperSource = PaperSource;
                 this.Threshold = Threshold;
             }
 
-            public enum PaperSourceEnum
-            {
-                Upper,
-                Lower,
-                External,
-                Aux,
-                Aux2
-            }
-
             /// <summary>
             /// Specifies the paper source as one of the following:
             /// 
-            /// * ```upper``` - The only paper source or the upper paper source, if there is more than one paper supply.
-            /// * ```lower``` - The lower paper source.
-            /// * ```external``` - The external paper source (such as envelope tray or single sheet feed).
-            /// * ```aux``` - The auxiliary paper source.
-            /// * ```aux2``` - The second auxiliary paper source.
+            /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
+            ///                 supply.
+            /// * ```lower``` - Use the lower paper source.
+            /// * ```external``` - Use the external paper.
+            /// * ```aux``` - Use the auxiliary paper source.
+            /// * ```aux2``` - Use the second auxiliary paper source.
+            /// * ```park``` - Use the parking station paper source.
+            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
             /// </summary>
             [DataMember(Name = "paperSource")]
-            public PaperSourceEnum? PaperSource { get; init; }
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            public string PaperSource { get; init; }
 
             public enum ThresholdEnum
             {

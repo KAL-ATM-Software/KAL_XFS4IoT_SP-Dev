@@ -77,10 +77,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             [DataContract]
             public sealed class DepleteSourceResultsClass
             {
-                public DepleteSourceResultsClass(string CashUnitSource = null, CashManagement.CashItemClass NoteId = null, int? NumberOfItemsRemoved = null)
+                public DepleteSourceResultsClass(string CashUnitSource = null, string CashItem = null, int? NumberOfItemsRemoved = null)
                 {
                     this.CashUnitSource = CashUnitSource;
-                    this.NoteId = NoteId;
+                    this.CashItem = CashItem;
                     this.NumberOfItemsRemoved = NumberOfItemsRemoved;
                 }
 
@@ -90,10 +90,17 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "cashUnitSource")]
+                [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
                 public string CashUnitSource { get; init; }
 
-                [DataMember(Name = "noteId")]
-                public CashManagement.CashItemClass NoteId { get; init; }
+                /// <summary>
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
+                /// not identified as a cash item.
+                /// <example>type20USD1</example>
+                /// </summary>
+                [DataMember(Name = "cashItem")]
+                [DataTypes(Pattern = @"^type[0-9A-Z]+$")]
+                public string CashItem { get; init; }
 
                 /// <summary>
                 /// Total number of items removed from this source cash unit of the _noteId_ item type. 

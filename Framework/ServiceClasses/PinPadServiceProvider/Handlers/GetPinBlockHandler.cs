@@ -130,7 +130,7 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPinBlock()");
 
-            var result = await Device.GetPinBlock(events,
+            var result = await Device.GetPinBlock(new PinPadCommandEvents(events),
                                                   new PINBlockRequest(getPinBlock.Payload.CustomerData,
                                                                       getPinBlock.Payload.XorData,
                                                                       (byte)getPinBlock.Payload.Padding,

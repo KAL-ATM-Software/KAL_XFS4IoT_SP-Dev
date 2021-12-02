@@ -57,7 +57,7 @@ namespace XFS4IoTServer
             {
                 try
                 {
-                    ConstructorInfo constructorInfo = handlerClass.GetConstructor(new Type[] { typeof(ICommandDispatcher), typeof(ILogger) });
+                    ConstructorInfo constructorInfo = handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) });
                     Contracts.IsNotNull(constructorInfo, $"Failed to find constructor for {handlerClass}");
                 }
                 catch (Exception e) when (e.Message.Contains("Failed to find constructor"))
@@ -85,11 +85,11 @@ namespace XFS4IoTServer
                 else
                     cts = new();
 
-                (ICommandHandler handler, bool async) = CreateHandler(Command.GetType());
+                (ICommandHandler handler, bool async) = CreateHandler(Command.GetType(), Connection);
                 if (async)
                 {
                     Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
-                    await handler.Handle(Connection, Command, cts.Token);
+                    await handler.Handle(Command, cts.Token);
                     Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
                     cts.Dispose();
                 }
@@ -111,11 +111,11 @@ namespace XFS4IoTServer
             Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
             CommandErrorexception.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(CommandErrorexception)}");
 
-            var (handler, _) = CreateHandler(Command.GetType());
-            return handler.HandleError( Connection, Command, CommandErrorexception ) ?? Task.CompletedTask;
+            var (handler, _) = CreateHandler(Command.GetType(), Connection);
+            return handler.HandleError( Command, CommandErrorexception ) ?? Task.CompletedTask;
         }
 
-        private (ICommandHandler handler, bool async) CreateHandler(Type type)
+        private (ICommandHandler handler, bool async) CreateHandler(Type type, IConnection Connection)
         {
             Type handlerClass = MessageHandlers[type].Type;
             bool async = MessageHandlers[type].Async;
@@ -127,9 +127,9 @@ namespace XFS4IoTServer
 
             // Create a new handler object. Effectively the same as: 
             // ICommandHandler handler = new handlerClass( this, Logger );
-            var handler =  handlerClass.GetConstructor(new Type[] { typeof(ICommandDispatcher), typeof(ILogger) })
+            var handler =  handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) })
                                .IsNotNull($"Failed to find constructor for {handlerClass}")
-                               .Invoke(parameters: new object[] { this, Logger })
+                               .Invoke(parameters: new object[] { Connection, this, Logger })
                                .IsA<ICommandHandler>();
             return (handler, async);
         }

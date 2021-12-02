@@ -46,7 +46,7 @@ namespace XFS4IoT.CardReader.Commands
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "from")]
-            [DataTypes(Pattern = @"^exit$|^transport$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^unit[0-9A-Za-z]+$")]
             public string From { get; init; }
 
             /// <summary>
@@ -61,7 +61,7 @@ namespace XFS4IoT.CardReader.Commands
             /// <example>exit</example>
             /// </summary>
             [DataMember(Name = "to")]
-            [DataTypes(Pattern = @"^exit$|^transport$|^.{1,5}$")]
+            [DataTypes(Pattern = @"^exit$|^transport$|^unit[0-9A-Za-z]+$")]
             public string To { get; init; }
 
         }
