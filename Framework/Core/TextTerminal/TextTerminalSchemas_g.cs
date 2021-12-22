@@ -58,14 +58,14 @@ namespace XFS4IoT.TextTerminal
         public KeyLockEnum? KeyLock { get; init; }
 
         /// <summary>
-        /// Specifies the horizontal size of the display of the text terminal unit.
+        /// Specifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
         /// </summary>
         [DataMember(Name = "displaySizeX")]
         [DataTypes(Minimum = 0)]
         public int? DisplaySizeX { get; init; }
 
         /// <summary>
-        /// Specifies the vertical size of the display of the text terminal unit.
+        /// Specifies the vertical size of the display of the text terminal unit (the number of rows that can be displayed).
         /// </summary>
         [DataMember(Name = "displaySizeY")]
         [DataTypes(Minimum = 0)]
@@ -84,7 +84,7 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// TSpecifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
+        /// Specifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
         /// </summary>
         [DataMember(Name = "sizeX")]
         [DataTypes(Minimum = 0)]
@@ -119,7 +119,7 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies the type of the text terminal unit as one of the following flags:
+        /// Specifies the type of the text terminal unit as one of the following:
         /// * ```fixed``` - The text terminal unit is a fixed device.
         /// * ```removable``` - The text terminal unit is a removable device.
         /// </summary>
@@ -159,14 +159,13 @@ namespace XFS4IoT.TextTerminal
     [DataContract]
     public sealed class FieldDetailsClass
     {
-        public FieldDetailsClass(TypeEnum? Type = null, ClassEnum? Class = null, AccessClass Access = null, OverflowEnum? Overflow = null, string Format = null, string LanguageId = null)
+        public FieldDetailsClass(TypeEnum? Type = null, ClassEnum? Class = null, AccessClass Access = null, OverflowEnum? Overflow = null, string Format = null)
         {
             this.Type = Type;
             this.Class = Class;
             this.Access = Access;
             this.Overflow = Overflow;
             this.Format = Format;
-            this.LanguageId = LanguageId;
         }
 
         public enum TypeEnum
@@ -180,7 +179,7 @@ namespace XFS4IoT.TextTerminal
         /// Specifies the type of field and can be one of the following:
         ///   * ```text``` - A text field.
         ///   * ```invisible``` - An invisible text field.
-        ///   * ```password``` - A password field, input is echoed as '*'.  
+        ///   * ```password``` - A password field, input is echoed as '\\*'.
         /// </summary>
         [DataMember(Name = "type")]
         public TypeEnum? Type { get; init; }
@@ -204,23 +203,23 @@ namespace XFS4IoT.TextTerminal
         [DataContract]
         public sealed class AccessClass
         {
-            public AccessClass(string Read = null, string Write = null)
+            public AccessClass(bool? Read = null, bool? Write = null)
             {
                 this.Read = Read;
                 this.Write = Write;
             }
 
             /// <summary>
-            /// The Field is used for input from the physical device.
+            /// The field is used for input from the physical device.
             /// </summary>
             [DataMember(Name = "read")]
-            public string Read { get; init; }
+            public bool? Read { get; init; }
 
             /// <summary>
-            /// The Field is used for output to the physical device.
+            /// The field is used for output to the physical device.
             /// </summary>
             [DataMember(Name = "write")]
-            public string Write { get; init; }
+            public bool? Write { get; init; }
 
         }
 
@@ -238,7 +237,7 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies how an overflow of field data should be handle and can be one of the following:
+        /// Specifies how an overflow of field data should be handled and can be one of the following:
         /// * ```terminate``` - Return an error and terminate display of the form.
         /// * ```truncate``` - Truncate the field data to fit in the field.
         /// * ```overwrite``` - Print the field data beyond the extents of the field boundary.
@@ -248,15 +247,10 @@ namespace XFS4IoT.TextTerminal
 
         /// <summary>
         /// Format string as defined in the form for this field.
+        /// <example>Format 1</example>
         /// </summary>
         [DataMember(Name = "format")]
         public string Format { get; init; }
-
-        /// <summary>
-        /// Specifies the language identifier for the field.
-        /// </summary>
-        [DataMember(Name = "languageId")]
-        public string LanguageId { get; init; }
 
     }
 

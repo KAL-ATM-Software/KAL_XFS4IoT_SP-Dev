@@ -38,8 +38,8 @@ namespace XFS4IoT.CashDispenser.Commands
             public CashManagement.OutputPositionEnum? Position { get; init; }
 
             /// <summary>
-            /// A nonce value to be used when creating the end to end security token in the 
-            /// response. See the generic end to end security documentation for more details.
+            /// A nonce value to be used when creating the end-to-end security token in the 
+            /// response. See the generic end-to-end security documentation for more details.
             /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
             /// </summary>
             [DataMember(Name = "nonce")]

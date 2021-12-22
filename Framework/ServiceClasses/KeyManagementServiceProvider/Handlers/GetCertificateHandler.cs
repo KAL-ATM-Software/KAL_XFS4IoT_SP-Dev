@@ -39,7 +39,7 @@ namespace XFS4IoTFramework.KeyManagement
             return new GetCertificateCompletion.PayloadData(result.CompletionCode,
                                                             result.ErrorDescription,
                                                             result.ErrorCode,
-                                                            result.Certificate is not null && result.Certificate.Count > 0 ? Convert.ToBase64String(result.Certificate.ToArray()) : null);
+                                                            result.Certificate);
         }
     }
 }

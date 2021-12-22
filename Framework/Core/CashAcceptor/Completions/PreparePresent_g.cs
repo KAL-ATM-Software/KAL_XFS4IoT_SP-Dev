@@ -42,12 +42,13 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for this command.
+            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for 
+            /// this command.
             /// * ```positionNotEmpty``` - The input or output position is not empty.
             /// * ```noItems``` - There were no items to present at the specified position.
-            /// * ```cashUnitError``` - A cash unit caused a problem. A 
+            /// * ```cashUnitError``` - A storage unit caused a problem. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]

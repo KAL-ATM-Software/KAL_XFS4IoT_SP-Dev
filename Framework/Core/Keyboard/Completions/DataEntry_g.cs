@@ -45,7 +45,8 @@ namespace XFS4IoT.Keyboard.Completions
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
-            /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the Service Provider.
+            /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
+            ///                           Service Provider.
             /// * ```noActivekeys``` - There are no active keys specified, or there is no defined layout definition.
             /// </summary>
             [DataMember(Name = "errorCode")]
@@ -55,10 +56,11 @@ namespace XFS4IoT.Keyboard.Completions
             /// Number of keys entered by the user
             /// </summary>
             [DataMember(Name = "keys")]
+            [DataTypes(Minimum = 0)]
             public int? Keys { get; init; }
 
             /// <summary>
-            /// Array contains the keys entered by the user 
+            /// Array contains the keys entered by the user
             /// </summary>
             [DataMember(Name = "pinKeys")]
             public List<KeyPressedClass> PinKeys { get; init; }

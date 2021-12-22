@@ -17,14 +17,13 @@ namespace XFS4IoT.CashAcceptor
     [DataContract]
     public sealed class PositionClass
     {
-        public PositionClass(CashManagement.PositionEnum? Position = null, ShutterEnum? Shutter = null, PositionStatusEnum? PositionStatus = null, TransportEnum? Transport = null, TransportStatusEnum? TransportStatus = null, JammedShutterPositionEnum? JammedShutterPosition = null)
+        public PositionClass(CashManagement.PositionEnum? Position = null, ShutterEnum? Shutter = null, PositionStatusEnum? PositionStatus = null, TransportEnum? Transport = null, TransportStatusEnum? TransportStatus = null)
         {
             this.Position = Position;
             this.Shutter = Shutter;
             this.PositionStatus = PositionStatus;
             this.Transport = Transport;
             this.TransportStatus = TransportStatus;
-            this.JammedShutterPosition = JammedShutterPosition;
         }
 
         [DataMember(Name = "position")]
@@ -34,18 +33,23 @@ namespace XFS4IoT.CashAcceptor
         {
             Closed,
             Open,
-            Jammed,
+            JammedOpen,
+            JammedPartiallyOpen,
+            JammedClosed,
+            JammedUnknown,
             Unknown,
             NotSupported
         }
 
         /// <summary>
-        /// Supplies the state of the shutter. Following values are possible:
+        /// Supplies the state of the shutter. The following values are possible:
         /// 
-        /// * ```closed``` - The shutter is operational and is closed.
+        /// * ```closed``` - The shutter is operational and is fully closed.
         /// * ```open``` - The shutter is operational and is open.
-        /// * ```jammed``` - The shutter is jammed and is not operational. The _jammedShutterPosition_ provides
-        /// the positional state of the shutter.
+        /// * ```jammedOpen``` - The shutter is jammed, but fully open. It is not operational.
+        /// * ```jammedPartiallyOpen``` - The shutter is jammed, but partially open. It is not operational.
+        /// * ```jammedClosed``` - The shutter is jammed, but fully closed. It is not operational.
+        /// * ```jammedUnknown``` - The shutter is jammed, but its position is unknown. It is not operational.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
         /// * ```notSupported``` - The physical device has no shutter or shutter state reporting is not supported.
         /// </summary>
@@ -62,12 +66,12 @@ namespace XFS4IoT.CashAcceptor
 
         /// <summary>
         /// The status of the input or output position.
-        /// Following values are possible:
+        /// The following values are possible:
         /// 
-        /// * ```empty``` - The output position is empty.
-        /// * ```notEmpty``` - The output position is not empty.
-        /// * ```unknown``` - Due to a hardware error or other condition, the state of the output position cannot be determined.
-        /// * ```notSupported``` - The device is not capable of reporting whether or not items are at the output position.
+        /// * ```empty``` - The position is empty.
+        /// * ```notEmpty``` - The position is not empty.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the position cannot be determined.
+        /// * ```notSupported``` - The device is not capable of reporting whether items are at the position.
         /// </summary>
         [DataMember(Name = "positionStatus")]
         public PositionStatusEnum? PositionStatus { get; init; }
@@ -82,7 +86,7 @@ namespace XFS4IoT.CashAcceptor
 
         /// <summary>
         /// Supplies the state of the transport mechanism. The transport is defined as any area leading to or from the position.
-        /// Following values are possible:
+        /// The following values are possible:
         /// 
         /// * ```ok``` - The transport is in a good state.
         /// * ```inoperative``` - The transport is inoperative due to a hardware failure or media jam.
@@ -97,48 +101,23 @@ namespace XFS4IoT.CashAcceptor
             Empty,
             NotEmpty,
             NotEmptyCustomer,
-            NotEmptyUnknown,
+            Unknown,
             NotSupported
         }
 
         /// <summary>
         /// Returns information regarding items which may be on the transport. If the device is a recycler 
         /// device it is possible that the transport will not be empty due to a previous dispense operation. 
-        /// Following values are possible:
+        /// The following values are possible:
         /// 
         /// * ```empty``` - The transport is empty.
         /// * ```notEmpty``` - The transport is not empty.
         /// * ```notEmptyCustomer``` - Items which a customer has had access to are on the transport.
-        /// * ```notEmptyUnknown``` - Due to a hardware error or other condition it is not known whether there are items on the transport.
+        /// * ```unknown``` - Due to a hardware error or other condition it is not known whether there are items on the transport.
         /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
         /// </summary>
         [DataMember(Name = "transportStatus")]
         public TransportStatusEnum? TransportStatus { get; init; }
-
-        public enum JammedShutterPositionEnum
-        {
-            NotSupported,
-            NotJammed,
-            Open,
-            PartiallyOpen,
-            Closed,
-            Unknown
-        }
-
-        /// <summary>
-        /// Returns information regarding the position of the jammed shutter.
-        /// Following values are possible:
-        /// 
-        /// * ```notSupported``` - The physical device has no shutter or the reporting of the position of a jammed 
-        /// shutter is not supported.
-        /// * ```notJammed``` - The shutter is not jammed.
-        /// * ```open``` - The shutter is jammed, but fully open.
-        /// * ```partiallyOpen``` - The shutter is jammed, but partially open.
-        /// * ```closed``` - The shutter is jammed, but fully closed.
-        /// * ```unknown``` - The position of the shutter is unknown.
-        /// </summary>
-        [DataMember(Name = "jammedShutterPosition")]
-        public JammedShutterPositionEnum? JammedShutterPosition { get; init; }
 
     }
 
@@ -165,7 +144,7 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Supplies the state of the intermediate stacker. Following values are possible:
+        /// Supplies the state of the intermediate stacker. The following values are possible:
         /// 
         /// * ```empty``` - The intermediate stacker is empty.
         /// * ```notEmpty``` - The intermediate stacker is not empty.
@@ -188,7 +167,7 @@ namespace XFS4IoT.CashAcceptor
 
         /// <summary>
         /// This field informs the application whether items on the intermediate stacker have been in customer access. 
-        /// Following values are possible:
+        /// The following values are possible:
         /// 
         /// * ```customerAccess``` - Items on the intermediate stacker have been in customer access. If the device is a 
         /// cash recycler then the items on the intermediate stacker may be there as a result of a previous 
@@ -210,7 +189,7 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Supplies the state of the banknote reader. Following values are possible:
+        /// Supplies the state of the banknote reader. The following values are possible:
         /// 
         /// * ```ok``` - The banknote reader is in a good state.
         /// * ```inoperable``` - The banknote reader is inoperable.
@@ -222,7 +201,7 @@ namespace XFS4IoT.CashAcceptor
         public BanknoteReaderEnum? BanknoteReader { get; init; }
 
         /// <summary>
-        /// The drop box is an area within the CashAcceptor where items which have caused a problem during an operation 
+        /// The drop box is an area within the Cash Acceptor where items which have caused a problem during an operation 
         /// are stored. This field specifies the status of the drop box. 
         /// If true, some items are stored in the drop box due to a cash-in transaction which caused a problem.
         /// If false, the drop box is empty or there is no drop box.
@@ -231,7 +210,7 @@ namespace XFS4IoT.CashAcceptor
         public bool? DropBox { get; init; }
 
         /// <summary>
-        /// Array of structures for each position from which items can be accepted.
+        /// Array of structures reporting status for each position from which items can be accepted.
         /// </summary>
         [DataMember(Name = "positions")]
         public List<PositionClass> Positions { get; init; }
@@ -269,7 +248,7 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Supplies the type of CashAcceptor. Following values are possible:
+        /// Supplies the type of CashAcceptor. The following values are possible:
         /// 
         /// * ```tellerBill``` - The CashAcceptor is a Teller Bill Acceptor.
         /// * ```selfServiceBill``` - The CashAcceptor is a Self-Service Bill Acceptor.
@@ -291,7 +270,7 @@ namespace XFS4IoT.CashAcceptor
 
         /// <summary>
         /// If true then the device has a shutter and explicit shutter control through the commands 
-        /// OpenShutter and CloseShutter is supported. The definition of a shutter will depend on the h/w 
+        /// [CashManagement.OpenShutter](#cashmanagement.openshutter) and [CashManagement.CloseShutter](#cashmanagement.closeshutter) is supported. The definition of a shutter will depend on the h/w 
         /// implementation. On some devices where items are automatically detected and accepted then a shutter is simply
         /// a latch that is opened and closed, usually under implicit control by the Service. On other devices, the term
         /// shutter refers to a door, which is opened and closed to allow the customer to place the items onto a tray.
@@ -309,7 +288,7 @@ namespace XFS4IoT.CashAcceptor
         /// [CashManagement.CloseShutter](#cashmanagement.closeshutter) commands.
         /// 
         /// In either case the [CashAcceptor.PresentMedia](#cashacceptor.presentmedia) command may be used if the 
-        /// _presentControl_ property is false.
+        /// *presentControl* property is false.
         /// 
         /// This property is always true if the device has no shutter.
         /// This field applies to all shutters and all positions.
@@ -318,7 +297,7 @@ namespace XFS4IoT.CashAcceptor
         public bool? ShutterControl { get; init; }
 
         /// <summary>
-        /// Specifies the number of items the intermediate stacker for cash-in can hold. Zero means that there is 
+        /// Specifies the number of items the intermediate stacker for cash-in can hold. Omitted if there is
         /// no intermediate stacker for cash-in available.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
@@ -326,21 +305,20 @@ namespace XFS4IoT.CashAcceptor
         public int? IntermediateStacker { get; init; }
 
         /// <summary>
-        /// Specifies whether or not the CashAcceptor can detect when items at the exit position are taken by the user. 
+        /// Specifies whether the CashAcceptor can detect when items at the exit position are taken by the user. 
         /// If true the Service generates an accompanying [CashManagement.ItemsTakenEvent](#cashmanagement.itemstakenevent). 
         /// If false this event is not generated. 
-        /// This field relates to all output positions.
+        /// This property relates to all output positions.
         /// </summary>
         [DataMember(Name = "itemsTakenSensor")]
         public bool? ItemsTakenSensor { get; init; }
 
         /// <summary>
-        /// Specifies whether the CashAcceptor has the ability to detect when items have actually been inserted by 
+        /// Specifies whether the CashAcceptor has the ability to detect when items have been inserted by 
         /// the user. 
         /// If true the service generates an accompanying [CashManagement.ItemsInsertedEvent](#cashmanagement.itemsinsertedevent). 
         /// If false this event is not generated. 
-        /// This field relates to all input positions. 
-        /// This flag should not be reported as true unless item insertion can be detected.
+        /// This relates to all input positions and should not be reported as true unless item insertion can be detected.
         /// </summary>
         [DataMember(Name = "itemsInsertedSensor")]
         public bool? ItemsInsertedSensor { get; init; }
@@ -502,7 +480,7 @@ namespace XFS4IoT.CashAcceptor
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in storage unit.
+            /// Items may be retracted to cash-in storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -553,7 +531,7 @@ namespace XFS4IoT.CashAcceptor
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in storage unit.
+            /// Items may be retracted to cash-in storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -605,7 +583,7 @@ namespace XFS4IoT.CashAcceptor
             public bool? BillCassette { get; init; }
 
             /// <summary>
-            /// Items may be retracted to a cash-in storage unit.
+            /// Items may be retracted to cash-in storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -661,13 +639,13 @@ namespace XFS4IoT.CashAcceptor
             }
 
             /// <summary>
-            /// The counting of individual cash units is supported.
+            /// The counting of individual storage units is supported.
             /// </summary>
             [DataMember(Name = "individual")]
             public bool? Individual { get; init; }
 
             /// <summary>
-            /// The counting of all cash units is supported.
+            /// The counting of all storage units is supported.
             /// </summary>
             [DataMember(Name = "all")]
             public bool? All { get; init; }
@@ -689,17 +667,17 @@ namespace XFS4IoT.CashAcceptor
         }
 
         /// <summary>
-        /// Specifies whether level 2/3 notes (see 
-        /// [NoteClassification](#cashmanagement.generalinformation.noteclassification)) are allowed to be returned
-        /// to the customer during a cash-in transaction. If notes are not to be returned to the customer by 
+        /// Specifies whether counterfeit or suspect items (see 
+        /// [Note Classification](#cashmanagement.generalinformation.noteclassification)) are allowed to be returned
+        /// to the customer during a cash-in transaction. If items are not to be returned to the customer by 
         /// these rules, they will not be returned regardless of whether their specific note type is configured to not 
-        /// be accepted by [CashAcceptor.ConfigureNoteTypes](#cashacceptor.configurenotetypes). Following rules are 
+        /// be accepted by [CashAcceptor.ConfigureNoteTypes](#cashacceptor.configurenotetypes). The following rules are 
         /// possible:
         /// 
-        /// * ```none``` - The device is not able to classify notes as level 1, 2, 3 or 4.
-        /// * ```level2``` - Notes are classified as level 1, 2, 3 or 4 and only level 2 notes will not be returned to 
+        /// * ```none``` - The device is not able to classify items as counterfeit or suspect.
+        /// * ```level2``` - Items are classified including counterfeit or suspect. Counterfeit items will not be returned to 
         /// the customer in a cash-in transaction.
-        /// * ```level23``` - Notes are classified as level 1, 2, 3 or 4 and level 2 and level 3 notes will not be 
+        /// * ```level23``` - Items are classified including counterfeit or suspect. Counterfeit and suspect items will not be 
         /// returned to the customer in a cash-in transaction.
         /// </summary>
         [DataMember(Name = "counterfeitAction")]

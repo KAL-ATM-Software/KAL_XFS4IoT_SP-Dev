@@ -49,13 +49,13 @@ namespace XFS4IoT.CashManagement.Events
             /// <summary>
             /// The reason for the notes detection error. Following values are possible:
             /// 
-            /// * ```doubleNote``` - Double notes have been detected.
+            /// * ```doubleNote``` - A double note has been detected.
             /// * ```longNote``` - A long note has been detected.
             /// * ```skewedNote``` - A skewed note has been detected.
             /// * ```incorrectCount``` - An item counting error has occurred.
             /// * ```notesTooClose``` - Notes have been detected as being too close.
             /// * ```otherNoteError``` - An item error not covered by the other values has been detected.
-            /// * ```shortNote``` - Short notes have been detected.
+            /// * ```shortNote``` - A short note has been detected.
             /// </summary>
             [DataMember(Name = "reason")]
             public ReasonEnum? Reason { get; init; }

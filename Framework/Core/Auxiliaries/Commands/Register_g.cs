@@ -27,12 +27,12 @@ namespace XFS4IoT.Auxiliaries.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, OperatorSwitchEnum? OperatorSwitch = null, TamperSensorEnum? TamperSensor = null, IntTamperSensorEnum? IntTamperSensor = null, SeismicSensorEnum? SeismicSensor = null, HeatSensorEnum? HeatSensor = null, ProximitySensorEnum? ProximitySensor = null, AmbientLightSensorEnum? AmbientLightSensor = null, EnhancedAudioEnum? EnhancedAudio = null, BootSwitchEnum? BootSwitch = null, ConsumerDisplayEnum? ConsumerDisplay = null, OperatorCallButtonEnum? OperatorCallButton = null, HandsetSensorEnum? HandsetSensor = null, HeadsetMicrophoneEnum? HeadsetMicrophone = null, CabinetDoorEnum? CabinetDoor = null, SafeDoorEnum? SafeDoor = null, VandalShieldEnum? VandalShield = null, CabinetFrontEnum? CabinetFront = null, CabinetRearEnum? CabinetRear = null, CabinetRightEnum? CabinetRight = null, CabinetLeftEnum? CabinetLeft = null, OpenCloseIndicatorEnum? OpenCloseIndicator = null, FasciaLightEnum? FasciaLight = null, AudioIndicatorEnum? AudioIndicator = null, HeatingIndicatorEnum? HeatingIndicator = null, ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight = null, SignageDisplayEnum? SignageDisplay = null, TransactionIndicatorEnum? TransactionIndicator = null, VolumeControlEnum? VolumeControl = null, UpsEnum? Ups = null, RemoteStatusMonitorEnum? RemoteStatusMonitor = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlEnum? EnhancedMicrophoneControl = null, MicrophoneVolumeEnum? MicrophoneVolume = null)
+            public PayloadData(int Timeout, OperatorSwitchEnum? OperatorSwitch = null, TamperSensorEnum? TamperSensor = null, InternalTamperSensorEnum? InternalTamperSensor = null, SeismicSensorEnum? SeismicSensor = null, HeatSensorEnum? HeatSensor = null, ProximitySensorEnum? ProximitySensor = null, AmbientLightSensorEnum? AmbientLightSensor = null, EnhancedAudioEnum? EnhancedAudio = null, BootSwitchEnum? BootSwitch = null, ConsumerDisplayEnum? ConsumerDisplay = null, OperatorCallButtonEnum? OperatorCallButton = null, HandsetSensorEnum? HandsetSensor = null, HeadsetMicrophoneEnum? HeadsetMicrophone = null, CabinetDoorEnum? CabinetDoor = null, SafeDoorEnum? SafeDoor = null, VandalShieldEnum? VandalShield = null, CabinetFrontEnum? CabinetFront = null, CabinetRearEnum? CabinetRear = null, CabinetRightEnum? CabinetRight = null, CabinetLeftEnum? CabinetLeft = null, OpenCloseIndicatorEnum? OpenCloseIndicator = null, FasciaLightEnum? FasciaLight = null, AudioIndicatorEnum? AudioIndicator = null, HeatingIndicatorEnum? HeatingIndicator = null, ConsumerDisplayBacklightEnum? ConsumerDisplayBacklight = null, SignageDisplayEnum? SignageDisplay = null, VolumeControlEnum? VolumeControl = null, UpsEnum? Ups = null, RemoteStatusMonitorEnum? RemoteStatusMonitor = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlEnum? EnhancedMicrophoneControl = null, MicrophoneVolumeEnum? MicrophoneVolume = null)
                 : base(Timeout)
             {
                 this.OperatorSwitch = OperatorSwitch;
                 this.TamperSensor = TamperSensor;
-                this.IntTamperSensor = IntTamperSensor;
+                this.InternalTamperSensor = InternalTamperSensor;
                 this.SeismicSensor = SeismicSensor;
                 this.HeatSensor = HeatSensor;
                 this.ProximitySensor = ProximitySensor;
@@ -56,7 +56,6 @@ namespace XFS4IoT.Auxiliaries.Commands
                 this.HeatingIndicator = HeatingIndicator;
                 this.ConsumerDisplayBacklight = ConsumerDisplayBacklight;
                 this.SignageDisplay = SignageDisplay;
-                this.TransactionIndicator = TransactionIndicator;
                 this.VolumeControl = VolumeControl;
                 this.Ups = Ups;
                 this.RemoteStatusMonitor = RemoteStatusMonitor;
@@ -94,7 +93,7 @@ namespace XFS4IoT.Auxiliaries.Commands
             [DataMember(Name = "tamperSensor")]
             public TamperSensorEnum? TamperSensor { get; init; }
 
-            public enum IntTamperSensorEnum
+            public enum InternalTamperSensorEnum
             {
                 Register,
                 Deregister
@@ -105,8 +104,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// alarm. See 
             /// [operatorSwitch](#auxiliaries.register.command.properties.operatorswitch) for the possible values.
             /// </summary>
-            [DataMember(Name = "intTamperSensor")]
-            public IntTamperSensorEnum? IntTamperSensor { get; init; }
+            [DataMember(Name = "internalTamperSensor")]
+            public InternalTamperSensorEnum? InternalTamperSensor { get; init; }
 
             public enum SeismicSensorEnum
             {
@@ -235,7 +234,7 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// "pecifies whether the Microphone Jack should report whenever it detects changes in the microphone jack. See 
+            /// Specifies whether the Microphone Jack should report whenever it detects changes in the microphone jack. See 
             /// [operatorSwitch](#auxiliaries.register.command.properties.operatorswitch) for the possible values.
             /// </summary>
             [DataMember(Name = "headsetMicrophone")]
@@ -414,20 +413,6 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// </summary>
             [DataMember(Name = "signageDisplay")]
             public SignageDisplayEnum? SignageDisplay { get; init; }
-
-            public enum TransactionIndicatorEnum
-            {
-                Register,
-                Deregister
-            }
-
-            /// <summary>
-            /// Specifies whether the Transaction Indicators should report whenever any one of them is turned on or turned
-            /// off. See 
-            /// [operatorSwitch](#auxiliaries.register.command.properties.operatorswitch) for the possible values.
-            /// </summary>
-            [DataMember(Name = "transactionIndicator")]
-            public TransactionIndicatorEnum? TransactionIndicator { get; init; }
 
             public enum VolumeControlEnum
             {

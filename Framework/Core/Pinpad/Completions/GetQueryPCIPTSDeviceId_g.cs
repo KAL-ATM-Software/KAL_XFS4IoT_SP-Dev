@@ -37,38 +37,42 @@ namespace XFS4IoT.PinPad.Completions
             }
 
             /// <summary>
-            /// Returns the manufacturer identifier of the PIN device.
-            /// This value is not set if the manufacturer identifier is not available. 
-            /// This property is distinct from the HSM key pair that may be reported in the extra property by the 
-            /// [Capabilities](#common.capabilities.completion.properties.pinpad) command.
+            /// Returns the manufacturer identifier of the PIN device. This value is not set if the manufacturer
+            /// identifier is not available. This property is distinct from the HSM key pair that may be reported in
+            /// the extra property by the [Capabilities](#common.capabilities.completion.properties.pinpad) command.
+            /// <example>Manufacturer ID</example>
             /// </summary>
             [DataMember(Name = "manufacturerIdentifier")]
             public string ManufacturerIdentifier { get; init; }
 
             /// <summary>
-            /// Returns the model identifier of the PIN device. 
-            /// This value is not set if the model identifier is not available.
+            /// Returns the model identifier of the PIN device. This value is not set if the model identifier is not
+            /// available.
+            /// <example>Model ID</example>
             /// </summary>
             [DataMember(Name = "modelIdentifier")]
             public string ModelIdentifier { get; init; }
 
             /// <summary>
-            /// Returns the hardware identifier of the PIN device. 
-            /// This value is not set if the hardware identifier is not available.
+            /// Returns the hardware identifier of the PIN device. This value is not set if the hardware identifier is
+            /// not available.
+            /// <example>Hardware ID</example>
             /// </summary>
             [DataMember(Name = "hardwareIdentifier")]
             public string HardwareIdentifier { get; init; }
 
             /// <summary>
-            /// Returns the firmware identifier of the PIN device. 
-            /// This value is not set if the firmware identifier is not available.
+            /// Returns the firmware identifier of the PIN device. This value is not set if the firmware identifier is
+            /// not available.
+            /// <example>Formware ID</example>
             /// </summary>
             [DataMember(Name = "firmwareIdentifier")]
             public string FirmwareIdentifier { get; init; }
 
             /// <summary>
-            /// Returns the application identifier of the PIN device.
-            /// This value is not set if the application identifier is not available.
+            /// Returns the application identifier of the PIN device. This value is not set if the application
+            /// identifier is not available.
+            /// <example>Application ID</example>
             /// </summary>
             [DataMember(Name = "applicationIdentifier")]
             public string ApplicationIdentifier { get; init; }

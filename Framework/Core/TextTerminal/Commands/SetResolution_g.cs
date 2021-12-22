@@ -34,7 +34,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the horizontal size of the display of the text terminal unit.
+            /// This must be one of the supported [resolutions](#common.capabilities.completion.properties.textterminal.resolutions).
             /// </summary>
             [DataMember(Name = "resolution")]
             public ResolutionClass Resolution { get; init; }

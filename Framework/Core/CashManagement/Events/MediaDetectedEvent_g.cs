@@ -17,11 +17,11 @@ namespace XFS4IoT.CashManagement.Events
 
     [DataContract]
     [Event(Name = "CashManagement.MediaDetectedEvent")]
-    public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
+    public sealed class MediaDetectedEvent : Event<MediaDetectedEvent.PayloadData>
     {
 
-        public MediaDetectedEvent(PayloadData Payload)
-            : base(Payload)
+        public MediaDetectedEvent(int RequestId, PayloadData Payload)
+            : base(RequestId, Payload)
         { }
 
 
@@ -38,17 +38,18 @@ namespace XFS4IoT.CashManagement.Events
             }
 
             /// <summary>
-            /// If defined, this value specifies the object name (as stated by the 
+            /// Specifies the object name (as stated by the 
             /// [Storage.GetStorage](#storage.getstorage) command) of the single unit to 
             /// be used for the storage of any items found.
-            /// <example>unit5</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string Unit { get; init; }
 
             /// <summary>
-            /// This field is used if items are to be moved to internal areas of the device, including storage units, the
-            /// intermediate stacker, or the transport.
+            /// This property is used if items are to be moved to internal areas of
+            /// the device, including storage units, the intermediate stacker, or the transport.
             /// </summary>
             [DataMember(Name = "retractArea")]
             public RetractClass RetractArea { get; init; }

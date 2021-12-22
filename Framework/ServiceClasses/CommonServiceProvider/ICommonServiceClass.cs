@@ -113,6 +113,29 @@ namespace XFS4IoTFramework.Common
         /// Stores printer status
         /// </summary>
         PrinterStatusClass PrinterStatus { get => null; set { } }
+
+
+        /// <summary>
+        /// Status changed event
+        /// </summary>
+        Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                CommonStatusClass.PositionStatusEnum? Position,
+                                int? PowerSaveRecoveryTime,
+                                CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                CommonStatusClass.ExchangeEnum? Exchange,
+                                CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity);
+
+        /// <summary>
+        /// Nonce cleared event
+        /// </summary>
+        Task NonceClearedEvent(string ReasonDescription);
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                        CommonStatusClass.ErrorActionEnum Action,
+                        string VendorDescription);
     }
 
     public interface ICommonServiceClass : ICommonService, ICommonUnsolicitedEvents

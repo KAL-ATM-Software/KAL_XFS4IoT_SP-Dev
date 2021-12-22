@@ -45,16 +45,16 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Status of the currently active or most recently ended cash-in transaction. Following values are possible:
+            /// Status of the currently active or most recently ended cash-in transaction. The following values are possible:
             /// 
-            /// * ```ok``` - The cash-in transaction is complete and has ended with a [CashAcceptor.CashInEnd](#cashacceptor.cashinend) command call.
-            /// * ```rollback``` - The cash-in transaction was has ended with a [CashAcceptor.CashInRollback](#cashacceptor.cashinrollback) command call.
+            /// * ```ok``` - The cash-in transaction is complete and has ended with [CashAcceptor.CashInEnd](#cashacceptor.cashinend).
+            /// * ```rollback``` - The cash-in transaction ended with [CashAcceptor.CashInRollback](#cashacceptor.cashinrollback).
             /// * ```active``` - There is a cash-in transaction active. See the [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command description 
             /// for a definition of an active cash-in transaction.
-            /// * ```retract``` - The cash-in transaction ended with a [CashAcceptor.Retract](#cashacceptor.retract) command call.
-            /// * ```unknown``` - The state of the cash-in transaction is unknown. This status is also set if the 
-            /// noteNumberList details are not known or are not reliable.
-            /// * ```reset``` - The cash-in transaction ended with a [CashAcceptor.Reset](#cashacceptor.reset) command call.
+            /// * ```retract``` - The cash-in transaction ended with [CashManagement.Retract](#cashmanagement.retract).
+            /// * ```unknown``` - The state of the cash-in transaction is unknown. This status is also set if the *noteNumberList* 
+            /// details are not known or are not reliable.
+            /// * ```reset``` - The cash-in transaction ended with [CashManagement.Reset](#cashmanagement.reset).
             /// </summary>
             [DataMember(Name = "status")]
             public StatusEnum? Status { get; init; }
@@ -68,13 +68,11 @@ namespace XFS4IoT.CashAcceptor.Completions
             public int? NumOfRefused { get; init; }
 
             /// <summary>
-            /// List of banknote types that were inserted, identified and accepted during the currently active or most 
-            /// recently ended cash-in transaction period. If items have been rolled back (status is _rollback_) they will 
-            /// be included in this list. If status is _retract_ or _reset_ then identified and accepted items moved to 
-            /// Cash-In or Recycle cash units are included in this list, but items moved to the Retract or Reject cash units 
-            /// are not included.
+            /// List of banknote types that were inserted, identified, and accepted during the currently active or most 
+            /// recently ended cash-in transaction period. If items have been rolled back (*status* is *rollback*) they will 
+            /// be included in this list.
             /// 
-            /// Includes any level 2 or level 3 notes, and all level 4 fit and unfit notes.
+            /// Includes any identified notes.
             /// </summary>
             [DataMember(Name = "noteNumberList")]
             public CashManagement.StorageCashCountsClass NoteNumberList { get; init; }

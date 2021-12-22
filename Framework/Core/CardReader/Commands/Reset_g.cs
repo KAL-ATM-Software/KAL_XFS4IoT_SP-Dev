@@ -38,11 +38,11 @@ namespace XFS4IoT.CardReader.Commands
             {
                 Exit,
                 Retain,
-                Transport
+                CurrentPosition
             }
 
             /// <summary>
-            /// Specifies the position a card in the transport or exit position should be moved to as one of the
+            /// Specifies the position a card in the transport or exit position should be moved to as one of the 
             /// following:
             /// 
             /// * ```exit``` - Move the card to the exit position. If the card is already at the exit, it may be moved

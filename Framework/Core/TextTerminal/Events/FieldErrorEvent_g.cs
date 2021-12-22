@@ -17,11 +17,11 @@ namespace XFS4IoT.TextTerminal.Events
 
     [DataContract]
     [Event(Name = "TextTerminal.FieldErrorEvent")]
-    public sealed class FieldErrorEvent : UnsolicitedEvent<FieldErrorEvent.PayloadData>
+    public sealed class FieldErrorEvent : Event<FieldErrorEvent.PayloadData>
     {
 
-        public FieldErrorEvent(PayloadData Payload)
-            : base(Payload)
+        public FieldErrorEvent(int RequestId, PayloadData Payload)
+            : base(RequestId, Payload)
         { }
 
 
@@ -39,12 +39,14 @@ namespace XFS4IoT.TextTerminal.Events
 
             /// <summary>
             /// Specifies the form name.
+            /// <example>Example form</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
             /// Specifies the field name.
+            /// <example>Field1</example>
             /// </summary>
             [DataMember(Name = "fieldName")]
             public string FieldName { get; init; }
@@ -52,7 +54,7 @@ namespace XFS4IoT.TextTerminal.Events
             public enum FailureEnum
             {
                 Required,
-                StaticOvwr,
+                StaticOverwrite,
                 Overflow,
                 NotFound,
                 NotRead,
@@ -64,7 +66,7 @@ namespace XFS4IoT.TextTerminal.Events
             /// <summary>
             /// Specifies the type of failure and can be one of the following:
             /// * ```required``` - The specified field must be supplied by the application.
-            /// * ```staticOvwr``` - The specified field is static and thus cannot be overwritten by the application.
+            /// * ```staticOverwrite``` - The specified field is static and thus cannot be overwritten by the application.
             /// * ```overflow``` - The value supplied for the specified fields is too long.
             /// * ```notFound``` - The specified field does not exist.
             /// * ```notRead``` - The specified field is not an input field.

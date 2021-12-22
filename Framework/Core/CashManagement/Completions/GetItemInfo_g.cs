@@ -33,7 +33,7 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Array of "item info" objects.
+            /// Array of objects listing the item information.
             /// </summary>
             [DataMember(Name = "itemsList")]
             public List<ItemInfoClass> ItemsList { get; init; }

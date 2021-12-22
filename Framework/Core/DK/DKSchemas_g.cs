@@ -32,8 +32,6 @@ namespace XFS4IoT.DK
 
         /// <summary>
         /// Specifies whether the hsm supports journaling by the [DK.GetJournal](#dk.getjournal) command.
-        /// The value of this parameter is either TRUE or FALSE. TRUE means the hsm supports journaling by 
-        /// [DK.GetJournal](#dk.getjournal).
         /// </summary>
         [DataMember(Name = "hsmJournaling")]
         public bool? HsmJournaling { get; init; }

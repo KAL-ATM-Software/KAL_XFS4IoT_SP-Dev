@@ -44,8 +44,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-                /// command) from which items are to be removed.
+                /// Name of the storage unit (as stated by the *Storage.GetStorage* command) from which items are to be removed.
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "source")]
@@ -54,8 +53,8 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// The number of items to be moved from the source storage unit. If 0, all items will be moved.
-                /// If non-zero, this must be equal to or less than the count of items reported for the cash unit specified by 
-                /// _cashUnitSource_. This field will be ignored if the _removeAll_ parameter is set to true.
+                /// If non-zero, this must be equal to or less than the count of items reported for the storage unit specified by 
+                /// *cashUnitSource*.
                 /// <example>100</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsToMove")]
@@ -65,14 +64,14 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Array of DepleteSource structures. There must be at least one element in this array.
+            /// Array of objects listing which storage units are to be depleted. There must be at least one element in this
+            /// array.
             /// </summary>
             [DataMember(Name = "depleteSources")]
             public List<DepleteSourcesClass> DepleteSources { get; init; }
 
             /// <summary>
-            /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-            /// command) to which items are to be moved.
+            /// Name of the storage unit (as stated by the *Storage.GetStorage* command) to which items are to be moved.
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "cashUnitTarget")]

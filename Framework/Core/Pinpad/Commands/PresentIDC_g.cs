@@ -27,7 +27,7 @@ namespace XFS4IoT.PinPad.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PresentAlgorithmEnum? PresentAlgorithm = null, string ChipProtocol = null, string ChipData = null, AlgorithmDataClass AlgorithmData = null)
+            public PayloadData(int Timeout, PresentAlgorithmEnum? PresentAlgorithm = null, string ChipProtocol = null, List<byte> ChipData = null, AlgorithmDataClass AlgorithmData = null)
                 : base(Timeout)
             {
                 this.PresentAlgorithm = PresentAlgorithm;
@@ -42,24 +42,29 @@ namespace XFS4IoT.PinPad.Commands
             }
 
             /// <summary>
-            /// Specifies the algorithm that is used for presentation.
-            /// Possible values are: (see [presentationAlgorithms](#common.capabilities.completion.properties.pinpad.presentationAlgorithms)).
+            /// Specifies the algorithm that is used for presentation. See
+            /// [presentationAlgorithms](#common.capabilities.completion.properties.pinpad.presentationalgorithms) for
+            /// possible values.
             /// </summary>
             [DataMember(Name = "presentAlgorithm")]
             public PresentAlgorithmEnum? PresentAlgorithm { get; init; }
 
             /// <summary>
-            /// Identifies the protocol that is used to communicate with the chip. Possible values are: 
-            /// (see command [chipProtocols](#common.capabilities.completion.properties.cardreader.chipProtocols) in the Identification Card Device Class Interface)
+            /// Identifies the protocol that is used to communicate with the chip. See
+            /// [chipProtocols](#common.capabilities.completion.properties.cardreader.chipprotocols) for possible
+            /// values.
+            /// <example>chipT0</example>
             /// </summary>
             [DataMember(Name = "chipProtocol")]
             public string ChipProtocol { get; init; }
 
             /// <summary>
-            /// The Base64 encoded data to be sent to the chip.
+            /// The data to be sent to the chip.
+            /// <example>Y2hpcCBkYXRhIHRvIHNl ...</example>
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> ChipData { get; init; }
 
             [DataContract]
             public sealed class AlgorithmDataClass
@@ -72,9 +77,10 @@ namespace XFS4IoT.PinPad.Commands
 
                 /// <summary>
                 /// The byte offset where to start inserting the PIN into chipData. 
-                /// The leftmost byte is numbered zero. See below for an example
+                /// The leftmost byte is numbered zero.
                 /// </summary>
                 [DataMember(Name = "pinPointer")]
+                [DataTypes(Minimum = 0)]
                 public int? PinPointer { get; init; }
 
                 /// <summary>
@@ -82,6 +88,7 @@ namespace XFS4IoT.PinPad.Commands
                 /// The leftmost bit numbered zero.
                 /// </summary>
                 [DataMember(Name = "pinOffset")]
+                [DataTypes(Minimum = 0)]
                 public int? PinOffset { get; init; }
 
             }

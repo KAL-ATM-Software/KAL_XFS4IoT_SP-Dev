@@ -43,12 +43,14 @@ namespace XFS4IoT.Printer.Commands
 
             /// <summary>
             /// The form name.
+            /// <example>Form1</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
             /// The media name. If no media definition applies, this should be empty or omitted.
+            /// <example>Media1</example>
             /// </summary>
             [DataMember(Name = "mediaName")]
             public string MediaName { get; init; }
@@ -78,7 +80,7 @@ namespace XFS4IoT.Printer.Commands
             /// Specifies the horizontal offset of the form, relative to the horizontal alignment specified in
             /// [alignment](#printer.printform.command.properties.alignment), in horizontal resolution units (from
             /// form definition); always a positive number (i.e. if aligned to the right side of the media, means
-            /// offset the form to the left). A value of *formDefinition* indicates that the *xoffset* value from the
+            /// offset the form to the left). If not specified, the *xoffset* value from the
             /// form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetX")]
@@ -88,10 +90,11 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// Specifies the vertical offset of the form, relative to the vertical alignment specified in
             /// *alignment*, in vertical resolution units (from form definition); always a positive number (i.e. if
-            /// aligned to the bottom of the media, means offset the form upward). A value of *formDefinition*
-            /// indicates that the *yoffset* value from the form definition should be used.
+            /// aligned to the bottom of the media, means offset the form upward). If not specified,
+            /// the *yoffset* value from the form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetY")]
+            [DataTypes(Minimum = 0)]
             public int? OffsetY { get; init; }
 
             public enum ResolutionEnum
@@ -167,8 +170,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Skip { get; init; }
 
                 /// <summary>
-                /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
+                /// Flush any data to the printer that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -249,8 +252,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Rotate180 { get; init; }
 
                 /// <summary>
-                /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintNative* commands.
+                /// Clear any data that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }
@@ -258,13 +261,13 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the manner in which the media should be handled after the printing is done, as a combination
-            /// of the following flags. If no flags are set, it means do none of these actions, as when printing
-            /// multiple forms on a single page. When no flags are set and the device does not support the flush
+            /// Specifies the manner in which the media should be handled after the printing is done.
+            /// If no options are set, it means do none of these actions, as when printing
+            /// multiple forms on a single page. When no options are set and the device does not support the flush
             /// capability, the data will be printed immediately. If the device supports flush, the data may be
             /// buffered and the [Printer.ControlMedia](#printer.controlmedia) command should be used to synchronize
             /// the application with the device to ensure that all data has been physically printed. The
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) flag is not
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
             /// applicable to this command. If set, the command will fail with error *invalidData*.
             /// </summary>
             [DataMember(Name = "mediaControl")]
@@ -273,8 +276,7 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// An object containing one or more key/value pairs where the key is a field name and the value is the
             /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
-            /// index specifies the zero-based element of the index field. The field names and values can contain
-            /// UNICODE if supported by the service.
+            /// index specifies the zero-based element of the index field.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }

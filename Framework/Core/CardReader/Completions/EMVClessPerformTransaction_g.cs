@@ -26,14 +26,14 @@ namespace XFS4IoT.CardReader.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, EMVClessTxOutputDataClass Track1 = null, EMVClessTxOutputDataClass Track2 = null, EMVClessTxOutputDataClass Track3 = null, EMVClessTxOutputDataClass Chip = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Chip = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track1 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track2 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track3 = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+                this.Chip = Chip;
                 this.Track1 = Track1;
                 this.Track2 = Track2;
                 this.Track3 = Track3;
-                this.Chip = Chip;
             }
 
             public enum ErrorCodeEnum
@@ -56,32 +56,32 @@ namespace XFS4IoT.CardReader.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
+            /// Contains the BER-TLV formatted data read from the chip. This value is set after the contactless
+            /// transaction has been completed with EMV mode or mag-stripe mode.
+            /// </summary>
+            [DataMember(Name = "chip")]
+            public EMVClessPerformTransactionEMVClessTxOutputDataClass Chip { get; init; }
+
+            /// <summary>
             /// Contains the chip returned data formatted in as track 1. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track1")]
-            public EMVClessTxOutputDataClass Track1 { get; init; }
+            public EMVClessPerformTransactionEMVClessTxOutputDataClass Track1 { get; init; }
 
             /// <summary>
             /// Contains the chip returned data formatted in as track 2. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track2")]
-            public EMVClessTxOutputDataClass Track2 { get; init; }
+            public EMVClessPerformTransactionEMVClessTxOutputDataClass Track2 { get; init; }
 
             /// <summary>
             /// Contains the chip returned data formatted in as track 3. This value is set after the contactless
             /// transaction has been completed with mag-stripe mode.
             /// </summary>
             [DataMember(Name = "track3")]
-            public EMVClessTxOutputDataClass Track3 { get; init; }
-
-            /// <summary>
-            /// Contains the BER-TLV formatted data read from the chip. This value is set after the contactless
-            /// transaction has been completed with EMV mode or mag-stripe mode.
-            /// </summary>
-            [DataMember(Name = "chip")]
-            public EMVClessTxOutputDataClass Chip { get; init; }
+            public EMVClessPerformTransactionEMVClessTxOutputDataClass Track3 { get; init; }
 
         }
     }

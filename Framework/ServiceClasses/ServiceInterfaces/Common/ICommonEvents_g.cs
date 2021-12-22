@@ -16,13 +16,11 @@ namespace XFS4IoTFramework.Common
     public interface ICommonUnsolicitedEvents
     {
 
-        Task PowerSaveChangeEvent(XFS4IoT.Common.Events.PowerSaveChangeEvent.PayloadData Payload);
+        Task StatusChangedEvent(XFS4IoT.Common.Events.StatusChangedEvent.PayloadData Payload);
 
-        Task DevicePositionEvent(XFS4IoT.Common.Events.DevicePositionEvent.PayloadData Payload);
+        Task ErrorEvent(XFS4IoT.Common.Events.ErrorEvent.PayloadData Payload);
 
         Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload);
-
-        Task ExchangeStateChangedEvent(XFS4IoT.Common.Events.ExchangeStateChangedEvent.PayloadData Payload);
 
     }
 }

@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.Crypto
     public interface ICryptoUnsolicitedEvents
     {
 
-        Task IllegalKeyAccessEvent(XFS4IoT.Crypto.Events.IllegalKeyAccessEvent.PayloadData Payload);
-
     }
 }

@@ -48,9 +48,9 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a cash unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```tooManyItems``` - There were too many items inserted previously. The cash-in stacker is full at 
             /// the beginning of this command. This may also be reported where a limit specified by 
@@ -71,7 +71,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Count of unrecognized items handled by the cash interface
+            /// Count of unrecognized items handled by the cash interface.
             /// </summary>
             [DataMember(Name = "unrecognized")]
             public int? Unrecognized { get; init; }

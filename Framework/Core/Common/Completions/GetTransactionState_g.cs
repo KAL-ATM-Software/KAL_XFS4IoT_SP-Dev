@@ -26,12 +26,11 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StateEnum? State = null, string TransactionID = null, List<string> Extra = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StateEnum? State = null, string TransactionID = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.State = State;
                 this.TransactionID = TransactionID;
-                this.Extra = Extra;
             }
 
             public enum StateEnum
@@ -43,27 +42,18 @@ namespace XFS4IoT.Common.Completions
             /// <summary>
             /// Specifies the transaction state. Following values are possible:
             /// 
-            /// "active": A customer transaction is in progress.
-            /// 
-            /// "inactive": No customer transaction is in progress.
+            /// - ```active``` - A customer transaction is in progress.
+            /// - ```inactive``` - No customer transaction is in progress.
             /// </summary>
             [DataMember(Name = "state")]
             public StateEnum? State { get; init; }
 
             /// <summary>
-            /// Specifies a string which identifies the transaction ID. The value returned in this 
-            /// parameter is an application defined customer transaction identifier, which was previously set in the Common.SetTransactionState command
+            /// Specifies a string which identifies the transaction ID.
+            /// <example>Example transaction ID</example>
             /// </summary>
             [DataMember(Name = "transactionID")]
             public string TransactionID { get; init; }
-
-            /// <summary>
-            /// A list of vendor-specific, or any other extended, transaction information. The information is set as a series 
-            /// of "key=value" strings. Each string is null-terminated, with the final string terminating with two null characters. 
-            /// An empty list may be indicated by either a NULL pointer or a pointer to two consecutive null characters
-            /// </summary>
-            [DataMember(Name = "extra")]
-            public List<string> Extra { get; init; }
 
         }
     }

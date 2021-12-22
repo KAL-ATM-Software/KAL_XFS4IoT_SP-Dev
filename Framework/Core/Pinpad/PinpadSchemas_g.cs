@@ -33,7 +33,7 @@ namespace XFS4IoT.PinPad
         [DataContract]
         public sealed class PinFormatsClass
         {
-            public PinFormatsClass(bool? Ibm3624 = null, bool? Ansi = null, bool? Iso0 = null, bool? Iso1 = null, bool? Eci2 = null, bool? Eci3 = null, bool? Visa = null, bool? Diebold = null, bool? DieboldCo = null, bool? Visa3 = null, bool? Emv = null, bool? Iso3 = null, bool? Ap = null)
+            public PinFormatsClass(bool? Ibm3624 = null, bool? Ansi = null, bool? Iso0 = null, bool? Iso1 = null, bool? Eci2 = null, bool? Eci3 = null, bool? Visa = null, bool? Diebold = null, bool? DieboldCo = null, bool? Visa3 = null, bool? Banksys = null, bool? Emv = null, bool? Iso3 = null, bool? Ap = null, bool? Iso4 = null)
             {
                 this.Ibm3624 = Ibm3624;
                 this.Ansi = Ansi;
@@ -45,9 +45,11 @@ namespace XFS4IoT.PinPad
                 this.Diebold = Diebold;
                 this.DieboldCo = DieboldCo;
                 this.Visa3 = Visa3;
+                this.Banksys = Banksys;
                 this.Emv = Emv;
                 this.Iso3 = Iso3;
                 this.Ap = Ap;
+                this.Iso4 = Iso4;
             }
 
             /// <summary>
@@ -118,6 +120,12 @@ namespace XFS4IoT.PinPad
             public bool? Visa3 { get; init; }
 
             /// <summary>
+            /// PIN is encrypted and formatted according to the Banksys PIN block specifications.
+            /// </summary>
+            [DataMember(Name = "banksys")]
+            public bool? Banksys { get; init; }
+
+            /// <summary>
             /// The PIN block is constructed as follows: PIN is preceded by 0x02 and the length of the PIN (0x04 to 0x0C), filled with padding character 0x0F 
             /// to the right, formatted up to 248 bytes of other data as defined within the EMV 4.0 specifications and finally encrypted with an RSA key.
             /// </summary>
@@ -131,11 +139,17 @@ namespace XFS4IoT.PinPad
             public bool? Iso3 { get; init; }
 
             /// <summary>
-            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. 36](#ref-pinpad-36)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN, 
+            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. pinpad-5](#ref-pinpad-5)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN, 
             /// and the 8 digit CCS from the track data.
             /// </summary>
             [DataMember(Name = "ap")]
             public bool? Ap { get; init; }
+
+            /// <summary>
+            /// PIN is formatted according to ISO 9564-1: 2017 Format-4 (uses AES Encryption).
+            /// </summary>
+            [DataMember(Name = "iso4")]
+            public bool? Iso4 { get; init; }
 
         }
 
@@ -191,7 +205,7 @@ namespace XFS4IoT.PinPad
             public bool? LedThrough { get; init; }
 
             /// <summary>
-            /// A real display is available (this doesnâ€™t apply for self-service).
+            /// A real display is available (this doesn't apply for self-service).
             /// </summary>
             [DataMember(Name = "display")]
             public bool? Display { get; init; }
@@ -290,43 +304,43 @@ namespace XFS4IoT.PinPad
                 }
 
                 /// <summary>
-                /// The ECB encryption method. 
+                /// The ECB encryption method.
                 /// </summary>
                 [DataMember(Name = "ecb")]
                 public bool? Ecb { get; init; }
 
                 /// <summary>
-                /// The CBC encryption method. 
+                /// The CBC encryption method.
                 /// </summary>
                 [DataMember(Name = "cbc")]
                 public bool? Cbc { get; init; }
 
                 /// <summary>
-                /// The CFB encryption method. 
+                /// The CFB encryption method.
                 /// </summary>
                 [DataMember(Name = "cfb")]
                 public bool? Cfb { get; init; }
 
                 /// <summary>
-                /// The The OFB encryption method. 
+                /// The OFB encryption method.
                 /// </summary>
                 [DataMember(Name = "ofb")]
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-pinpad-49)]). 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. pinpad-7](#ref-pinpad-7)]).
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
 
                 /// <summary>
-                /// The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-pinpad-50)]).
+                /// The XTS method defined in NIST SP800-38E (See [[Ref. pinpad-8](#ref-pinpad-8)]).
                 /// </summary>
                 [DataMember(Name = "xts")]
                 public bool? Xts { get; init; }
 
                 /// <summary>
-                /// The RSAES_PKCS1-v1.5 algorithm. 
+                /// The RSAES_PKCS1-v1.5 algorithm.
                 /// </summary>
                 [DataMember(Name = "rsaesPkcs1V15")]
                 public bool? RsaesPkcs1V15 { get; init; }
@@ -341,16 +355,16 @@ namespace XFS4IoT.PinPad
 
             /// <summary>
             /// Specifies the cryptographic method supported. 
-            /// If the algorithm is 'A', 'D', or 'T', then the following properties can be true." 
+            /// If the algorithm is 'A', 'D', or 'T', then the following properties can be true:
             /// 
             /// * ```ecb``` - The ECB encryption method. 
             /// * ```cbc``` - The CBC encryption method.  
             /// * ```cfb``` - The CFB encryption method.  
             /// * ```ofb``` - The OFB encryption method. 
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-pinpad-49)]).
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-pinpad-50)]).
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. pinpad-7](#ref-pinpad-7)]).
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. pinpad-8](#ref-pinpad-8)]).
             /// 
-            /// If the algorithm is 'R', then following properties can be true.  
+            /// If the algorithm is 'R', then following properties can be true:
             /// 
             /// * ```rsaesPkcs1V15``` - Use the RSAES_PKCS1-v1.5 algorithm. 
             /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.

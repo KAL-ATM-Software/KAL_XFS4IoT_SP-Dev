@@ -38,6 +38,7 @@ namespace XFS4IoT.CardReader.Completions
                 ShutterFail,
                 NoMedia,
                 Occupied,
+                Full,
                 MediaRetained
             }
 
@@ -51,6 +52,8 @@ namespace XFS4IoT.CardReader.Completions
             ///   position.
             /// * ```occupied``` - A card already occupies the requested
             ///   [*to*](#cardreader.move.command.properties.to) position. 
+            /// * ```full``` - The [*to*](#cardreader.move.command.properties.to) position is full. The card is still 
+            ///   in the device.
             /// * ```mediaRetained``` - The card has been retained during attempts to move it to the exit position. 
             ///   The device is clear and can be used.
             /// </summary>

@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Certificate = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Certificate = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -42,7 +42,8 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```invalidCertificateState``` - The certificate module is in a state in which the request is invalid.
             /// * ```keyNotFound``` - The specified public key was not found.
             /// </summary>
@@ -51,11 +52,14 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Contains the certificate that is to be loaded represented in DER encoded ASN.1 notation.
-            /// This data should be in a binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the degenerate certificate only case of the signed-data content 
-            /// type in which the inner content's data file is omitted and there are no signers.
+            /// This data should be in a binary encoded PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)])
+            /// using the degenerate certificate only case of the signed-data content  type in which the inner content's
+            /// data file is omitted and there are no signers.
+            /// <example>Y2VydGlmaWNhdGUgREVS ...</example>
             /// </summary>
             [DataMember(Name = "certificate")]
-            public string Certificate { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Certificate { get; init; }
 
         }
     }

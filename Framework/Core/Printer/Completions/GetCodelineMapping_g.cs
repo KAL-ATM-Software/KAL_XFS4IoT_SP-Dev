@@ -50,7 +50,7 @@ namespace XFS4IoT.Printer.Completions
 
             /// <summary>
             /// Defines the mapping of the font specific symbols to byte values. These byte values are used to
-            /// represent the font specific characters when the code line is read through the Printer.ReadImage
+            /// represent the font specific characters when the code line is read through the [Printer.ReadImage](#printer.readimage)
             /// command. The font specific meaning of each index is defined in the following tables.
             /// 
             /// *E13B* 

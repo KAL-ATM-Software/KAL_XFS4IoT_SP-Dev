@@ -37,9 +37,10 @@ namespace XFS4IoT.PinPad.Commands
             }
 
             /// <summary>
-            /// Primary Account Number from track data, as an ASCII string. 
-            /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit), 
-            /// followed by the PVKI indicator in the 12th byte.
+            /// Primary Account Number from track data, as an ASCII string. The PAN should contain the eleven
+            /// rightmost digits of the PAN (excluding the check digit), followed by the PVKI indicator in the 12th
+            /// byte.
+            /// <example>01234567890123456789123</example>
             /// </summary>
             [DataMember(Name = "pan")]
             [DataTypes(Pattern = @"^[0-9]{23}$")]
@@ -47,20 +48,24 @@ namespace XFS4IoT.PinPad.Commands
 
             /// <summary>
             /// PIN Validation Value from track data.
+            /// <example>0286</example>
             /// </summary>
             [DataMember(Name = "pvv")]
             [DataTypes(Pattern = @"^[0-9]{4,}$")]
             public string Pvv { get; init; }
 
             /// <summary>
-            /// Name of the validation key. The key referenced by key must have the [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) 'V2' attribute.
+            /// Name of the validation key. The key referenced by key must have the
+            /// [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) 'V2' attribute.
+            /// <example>Key01</example>
             /// </summary>
             [DataMember(Name = "key")]
             public string Key { get; init; }
 
             /// <summary>
-            /// If this property is omitted, key is used directly for PIN validation. Otherwise, key is used to decrypt the 
-            /// encrypted key passed in *keyEncKey* and the result is used for PIN validation. 
+            /// If this property is omitted, key is used directly for PIN validation. Otherwise, key is used to
+            /// decrypt the encrypted key passed in *keyEncKey* and the result is used for PIN validation.
+            /// <example>Key02</example>
             /// </summary>
             [DataMember(Name = "keyEncKey")]
             public string KeyEncKey { get; init; }

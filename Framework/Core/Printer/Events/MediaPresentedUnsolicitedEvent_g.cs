@@ -37,7 +37,7 @@ namespace XFS4IoT.Printer.Events
             }
 
             /// <summary>
-            /// Specifies the index (starting from one) of the presented wad, where a Wad is a bunch of one or more pages
+            /// Specifies the index (starting from one) of the presented wad, where a wad is a bunch of one or more pages
             /// presented as a bunch.
             /// </summary>
             [DataMember(Name = "wadIndex")]
@@ -45,7 +45,7 @@ namespace XFS4IoT.Printer.Events
             public int? WadIndex { get; init; }
 
             /// <summary>
-            /// Specifies the total number of wads in the print job, zero if the total number of wads is not known.
+            /// Specifies the total number of wads in the print job, 0 if not known.
             /// </summary>
             [DataMember(Name = "totalWads")]
             [DataTypes(Minimum = 0)]

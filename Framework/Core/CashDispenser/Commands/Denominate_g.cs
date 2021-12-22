@@ -41,10 +41,11 @@ namespace XFS4IoT.CashDispenser.Commands
             /// <summary>
             /// Mix algorithm or house mix table to be used as defined by mixes reported by
             /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes). May be omitted if the request is entirely specified
-            /// by _counts_.
+            /// by *counts*.
             /// <example>mix1</example>
             /// </summary>
             [DataMember(Name = "mix")]
+            [DataTypes(Pattern = @"^mix[0-9A-Za-z]+$")]
             public string Mix { get; init; }
 
             /// <summary>

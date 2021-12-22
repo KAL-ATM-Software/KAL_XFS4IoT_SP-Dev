@@ -105,7 +105,7 @@ namespace XFS4IoTFramework.Keyboard
                                                                 EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
                                                                 _ => null,
                                                             },
-                                                            result.KeyCheckValue is not null || result.KeyCheckValue.Count == 0 ? Convert.ToBase64String(result.KeyCheckValue.ToArray()) : null);
+                                                            result.KeyCheckValue);
         }
     }
 }

@@ -30,10 +30,14 @@ namespace XFS4IoTFramework.TextTerminal
             }
 
             // Get autoEnd value.
-            bool autoEnd = read.Payload.AutoEnd is not null && (bool)read.Payload.AutoEnd;
+            bool autoEnd = true;
+            if (read.Payload.AutoEnd is not null && !(bool)read.Payload.AutoEnd)
+            {
+                autoEnd = false;
+            }
 
             // Check for either AutoEnd or TerminateCommandKeys. Read will never end if neither are specified.
-            if((read.Payload.ActiveCommandKeys?.FirstOrDefault(c => c.Value.Terminate is true) is null) && !autoEnd)
+            if ((read.Payload.ActiveCommandKeys?.FirstOrDefault(c => c.Value.Terminate is true) is null) && !autoEnd)
             {
                 return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Device cannot determine when to end Read operation.");
             }
@@ -85,29 +89,16 @@ namespace XFS4IoTFramework.TextTerminal
             {
                 return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "PosY is not supplied");
             }
-            else if (read.Payload.Echo is null)
-            {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Echo is not supplied");
-            }
             else if (read.Payload.Flush is null)
             {
                 return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Flush is not supplied");
             }
-            else if (read.Payload.EchoAttr is null)
-            {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "EchoAttr is not supplied");
-            }
-            else if (read.Payload.EchoMode is null)
-            {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "EchoMode is not supplied");
-            }
 
             ReadRequest.EchoModeEnum echo = read.Payload.EchoMode.Value switch
             {
-                ReadCommand.PayloadData.EchoModeEnum.Text => ReadRequest.EchoModeEnum.Text,
                 ReadCommand.PayloadData.EchoModeEnum.Invisible => ReadRequest.EchoModeEnum.Invisible,
                 ReadCommand.PayloadData.EchoModeEnum.Password => ReadRequest.EchoModeEnum.Password,
-                _ => throw new InvalidDataException("Unknown EchoMode value. " + read.Payload.EchoMode.Value)
+                _ => ReadRequest.EchoModeEnum.Text,
             };
 
             ReadRequest.TextAttributesEnum echoAttr = ReadRequest.TextAttributesEnum.None;
@@ -151,7 +142,19 @@ namespace XFS4IoTFramework.TextTerminal
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.ReadAsync()");
             
-            var result = await Device.ReadAsync(new(echo, echoAttr, PosX, PosY, read.Payload.NumOfChars.Value, read.Payload.Echo.Value, read.Payload.Flush.Value, autoEnd, read.Payload.ActiveKeys ?? string.Empty, read.Payload.ActiveCommandKeys?.Keys.ToList() ?? new(), read.Payload.ActiveCommandKeys?.Where(c => c.Value.Terminate is true).Select(c => c.Key).ToList() ?? new()), cancel);
+            var result = await Device.ReadAsync(new ReadCommandEvents(events),
+                                                new ReadRequest(echo, 
+                                                                echoAttr, 
+                                                                PosX, 
+                                                                PosY, 
+                                                                read.Payload.NumOfChars.Value, 
+                                                                read.Payload.Visible.Value, 
+                                                                read.Payload.Flush.Value, 
+                                                                autoEnd, 
+                                                                read.Payload.ActiveKeys ?? string.Empty, 
+                                                                read.Payload.ActiveCommandKeys?.Keys.ToList() ?? new(), 
+                                                                read.Payload.ActiveCommandKeys?.Where(c => c.Value.Terminate is true).Select(c => c.Key).ToList() ?? new()),
+                                                cancel);
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ReadAsync() -> {result.CompletionCode}");
 

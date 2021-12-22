@@ -87,8 +87,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Skip { get; init; }
 
                 /// <summary>
-                /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
+                /// Flush any data to the printer that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -169,8 +169,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Rotate180 { get; init; }
 
                 /// <summary>
-                /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintNative* commands.
+                /// Clear any data that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }
@@ -178,17 +178,17 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the manner in which the media should be handled, as a combination of the following flags:
+            /// Specifies the manner in which the media should be handled, as a combination of the following properties:
             /// 
-            /// It is not possible to combine the flags eject, retract, park, expel and ejectToTransport with each
-            /// other otherwise the command completes with errInvalidData.
+            /// It is not possible to combine the properties eject, retract, park, expel and ejectToTransport with each
+            /// other otherwise the command completes with *invalidData*.
             /// 
-            /// It is not possible to combine the flag
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) with any other flags,
-            /// otherwise the command completes with *invalidData*.
+            /// It is not possible to combine the property
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) with any other 
+            /// properties, otherwise the command completes with *invalidData*.
             /// 
             /// An application should be aware that the sequence of the actions is not guaranteed if more than one
-            /// flag is specified in this parameter.
+            /// property is specified in this parameter.
             /// </summary>
             [DataMember(Name = "mediaControl")]
             public MediaControlClass MediaControl { get; init; }

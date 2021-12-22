@@ -34,9 +34,13 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the height of the media in terms of the base vertical resolution.
+            /// The number of the retract bin for which the retract count should be reset to 0. If omitted or
+            /// 0, all bin counts will be set to 0. See
+            /// [retractBins](#common.capabilities.completion.properties.printer.retractbins).
+            /// <example>1</example>
             /// </summary>
             [DataMember(Name = "binNumber")]
+            [DataTypes(Minimum = 0)]
             public int? BinNumber { get; init; }
 
         }

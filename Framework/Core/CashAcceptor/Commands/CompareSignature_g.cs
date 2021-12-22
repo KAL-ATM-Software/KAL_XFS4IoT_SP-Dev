@@ -36,18 +36,19 @@ namespace XFS4IoT.CashAcceptor.Commands
 
             /// <summary>
             /// Array of Signature structures.
+            /// 
             /// Each structure represents the signature corresponding to one orientation of a single reference banknote.
             /// At least one orientation must be provided. If no orientations are provided (this array is missing or empty) 
-            /// the command returns an invalidData error.
+            /// the command returns an *invalidData* error.
             /// </summary>
             [DataMember(Name = "referenceSignatures")]
             public List<CashManagement.SignatureClass> ReferenceSignatures { get; init; }
 
             /// <summary>
             /// Array of Signature structures. Each structure represents a signature from the cash-in
-            /// transactions, to be compared with the reference signatures in _referenceSignatures_.
+            /// transactions, to be compared with the reference signatures in *referenceSignatures*.
             /// At least one signature must be provided. If there are no signatures provided (this array is missing or 
-            /// empty) the command returns an invalidData error.
+            /// empty) the command returns an *invalidData* error.
             /// </summary>
             [DataMember(Name = "signatures")]
             public List<CashManagement.SignatureClass> Signatures { get; init; }

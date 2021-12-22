@@ -27,7 +27,7 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Echo = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, Dictionary<string, KeyClass> ActiveCommandKeys = null)
+            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Visible = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, Dictionary<string, KeyClass> ActiveCommandKeys = null)
                 : base(Timeout)
             {
                 this.NumOfChars = NumOfChars;
@@ -36,7 +36,7 @@ namespace XFS4IoT.TextTerminal.Commands
                 this.PosY = PosY;
                 this.EchoMode = EchoMode;
                 this.EchoAttr = EchoAttr;
-                this.Echo = Echo;
+                this.Visible = Visible;
                 this.Flush = Flush;
                 this.AutoEnd = AutoEnd;
                 this.ActiveKeys = ActiveKeys;
@@ -55,18 +55,18 @@ namespace XFS4IoT.TextTerminal.Commands
             public ModesEnum? Mode { get; init; }
 
             /// <summary>
-            /// If mode is set to absolute, this specifies the absolute horizontal position. 
-            /// If mode is set to relative this specifies a horizontal offset relative to the 
-            /// current cursor position as a zero (0) based value.
+            /// If mode is *absolute*, this specifies the absolute horizontal position. 
+            /// If mode is *relative*, this specifies a horizontal offset relative to the 
+            /// current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posX")]
             [DataTypes(Minimum = 0)]
             public int? PosX { get; init; }
 
             /// <summary>
-            /// If mode is set to absolute, this specifies the absolute vertical position. 
-            /// If mode is set to relative this specifies a vertical offset relative to the 
-            /// current cursor position as a zero (0) based value.
+            /// If mode is *absolute*, this specifies the absolute vertical position. 
+            /// If mode is *relative* this specifies a vertical offset relative to the 
+            /// current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posY")]
             [DataTypes(Minimum = 0)]
@@ -80,7 +80,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies how the user input is echoed to the screen as one of the following flags:
+            /// Specifies how the user input is echoed to the screen as one of the following:
             /// * ```text``` - The user input is echoed to the screen.
             /// * ```invisible``` - The user input is not echoed to the screen.
             /// * ```password``` - The keys entered by the user are echoed as the replace character on the screen.
@@ -120,16 +120,16 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Specifies the text attributes with which the user input is echoed to the screen. 
-            /// If none of the following attribute flags are selected then the text will be displayed as normal text.
+            /// If none of the attributes are selected then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "echoAttr")]
             public EchoAttrClass EchoAttr { get; init; }
 
             /// <summary>
-            /// Specifies whether the cursor is visible(true) or invisible(false).
+            /// Specifies whether the cursor is visible.
             /// </summary>
-            [DataMember(Name = "echo")]
-            public bool? Echo { get; init; }
+            [DataMember(Name = "visible")]
+            public bool? Visible { get; init; }
 
             /// <summary>
             /// Specifies whether the keyboard input buffer is cleared before allowing for user input(true) or not (false).
@@ -138,7 +138,7 @@ namespace XFS4IoT.TextTerminal.Commands
             public bool? Flush { get; init; }
 
             /// <summary>
-            /// Specifies whether the command input is automatically ended by Service if the maximum number 
+            /// Specifies whether the command input is automatically ended by the Service if the maximum number 
             /// of printable characters as specified with _numOfChars_ is entered.
             /// </summary>
             [DataMember(Name = "autoEnd")]
@@ -162,24 +162,7 @@ namespace XFS4IoT.TextTerminal.Commands
             public string ActiveKeys { get; init; }
 
             /// <summary>
-            /// Array specifying the command keys which are active during the execution of the command.     
-            /// 
-            /// The following standard names are defined:
-            /// 
-            /// * ```enter``` - Enter
-            /// * ```cancel``` - Cancel
-            /// * ```clear``` - Clear
-            /// * ```backspace``` - Backspace
-            /// * ```help``` - Help
-            /// * ```doubleZero``` - 00
-            /// * ```tripleZero``` - 000
-            /// * ```arrowUp``` - up arrow
-            /// * ```arrowDown``` - down arrow
-            /// * ```arrowLeft``` - left arrow
-            /// * ```arrowRight``` - right arrow
-            /// * ```fdk[01-32]``` - 32 FDK keys
-            /// 
-            /// Additional non standard key names are also allowed.
+            /// Specifying the command keys which are active during the execution of the command.     
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
             public Dictionary<string, KeyClass> ActiveCommandKeys { get; init; }

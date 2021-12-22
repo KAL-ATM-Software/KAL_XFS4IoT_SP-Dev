@@ -53,9 +53,7 @@ namespace XFS4IoTFramework.Common
                     CommonStatusClass.AntiFraudModuleEnum.DeviceDetected => XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.DeviceDetected,
                     CommonStatusClass.AntiFraudModuleEnum.Inoperable=> XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.Inoperable,
                     CommonStatusClass.AntiFraudModuleEnum.Ok=> XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.Ok,
-                    CommonStatusClass.AntiFraudModuleEnum.Unknown=> XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.DeviceDetected,
-                    _ => XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.NotSupported
-
+                    _ => XFS4IoT.Common.StatusPropertiesClass.AntiFraudModuleEnum.Unknown,
                 },
                 Exchange: Common.CommonStatus.Exchange switch
                 {
@@ -82,7 +80,7 @@ namespace XFS4IoTFramework.Common
                     Security: Common.CardReaderStatus.Security switch
                     {
                         CardReaderStatusClass.SecurityEnum.Open => XFS4IoT.CardReader.StatusClass.SecurityEnum.Open,
-                        CardReaderStatusClass.SecurityEnum.Ready => XFS4IoT.CardReader.StatusClass.SecurityEnum.Ready,
+                        CardReaderStatusClass.SecurityEnum.NotReady => XFS4IoT.CardReader.StatusClass.SecurityEnum.NotReady,
                         _ => XFS4IoT.CardReader.StatusClass.SecurityEnum.NotSupported,
                     },
                     ChipPower: Common.CardReaderStatus.ChipPower switch
@@ -152,7 +150,10 @@ namespace XFS4IoTFramework.Common
                             Shutter: position.Value.Shutter switch
                             {
                                 CashManagementStatusClass.ShutterEnum.Closed => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.Closed,
-                                CashManagementStatusClass.ShutterEnum.Jammed => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.Jammed,
+                                CashManagementStatusClass.ShutterEnum.JammedOpen => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.JammedOpen,
+                                CashManagementStatusClass.ShutterEnum.JammedPartiallyOpen => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.JammedPartiallyOpen,
+                                CashManagementStatusClass.ShutterEnum.JammedClosed => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.JammedClosed,
+                                CashManagementStatusClass.ShutterEnum.JammedUnknown => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.JammedUnknown,
                                 CashManagementStatusClass.ShutterEnum.Open => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.Open,
                                 CashManagementStatusClass.ShutterEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.Unknown,
                                 _ => XFS4IoT.CashDispenser.OutPosClass.ShutterEnum.NotSupported,
@@ -176,18 +177,9 @@ namespace XFS4IoTFramework.Common
                                 CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.Empty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Empty,
                                 CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.NotEmpty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmpty,
                                 CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.NotEmptyCustomer => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmptyCustomer,
-                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.NotEmptyUnknown => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmptyUnknown,
+                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Unknown,
                                 _ => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotSupported,
-                            },
-                            JammedShutterPosition: position.Value.JammedShutterPosition switch
-                            {
-                                CashDispenserStatusClass.PositionStatusClass.JammedShutterPositionEnum.Closed => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.Closed,
-                                CashDispenserStatusClass.PositionStatusClass.JammedShutterPositionEnum.NotJammed => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.NotJammed,
-                                CashDispenserStatusClass.PositionStatusClass.JammedShutterPositionEnum.Open => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.Open,
-                                CashDispenserStatusClass.PositionStatusClass.JammedShutterPositionEnum.PartiallyOpen => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.PartiallyOpen,
-                                CashDispenserStatusClass.PositionStatusClass.JammedShutterPositionEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.Unknown,
-                                _ => XFS4IoT.CashDispenser.OutPosClass.JammedShutterPositionEnum.NotSupported,
-                            } 
+                            }
                             ));
                     }
                 }
@@ -264,13 +256,14 @@ namespace XFS4IoTFramework.Common
             XFS4IoT.Keyboard.StatusClass keyboard = null;
             if (Common.KeyboardStatus is not null)
             {
+                /*
                 keyboard = new XFS4IoT.Keyboard.StatusClass(
                     AutoBeepMode: Common.KeyboardStatus.AutoBeepMode == KeyboardStatusClass.AutoBeepModeEnum.NotSupported ? null :
                         Common.KeyboardStatus.AutoBeepMode switch
                         {
                             KeyboardStatusClass.AutoBeepModeEnum.Active => XFS4IoT.Keyboard.StatusClass.AutoBeepModeEnum.Active,
                             _ => XFS4IoT.Keyboard.StatusClass.AutoBeepModeEnum.InActive
-                        });
+                        });*/
             }
 
             XFS4IoT.TextTerminal.StatusClass textTerminal = null;
@@ -321,16 +314,16 @@ namespace XFS4IoTFramework.Common
                             LightsStatusClass.LightOperation.FlashRateEnum.Quick => XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick,
                             _ => XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow,
                         },
-                        Colour: light.Value.Colour == LightsStatusClass.LightOperation.ColourEnum.Default ? null :
+                        Color: light.Value.Colour == LightsStatusClass.LightOperation.ColourEnum.Default ? null :
                         light.Value.Colour switch
                         {
-                            LightsStatusClass.LightOperation.ColourEnum.Blue => XFS4IoT.Lights.LightStateClass.ColourEnum.Blue,
-                            LightsStatusClass.LightOperation.ColourEnum.Cyan => XFS4IoT.Lights.LightStateClass.ColourEnum.Cyan,
-                            LightsStatusClass.LightOperation.ColourEnum.Green => XFS4IoT.Lights.LightStateClass.ColourEnum.Green,
-                            LightsStatusClass.LightOperation.ColourEnum.Magenta => XFS4IoT.Lights.LightStateClass.ColourEnum.Magenta,
-                            LightsStatusClass.LightOperation.ColourEnum.Red => XFS4IoT.Lights.LightStateClass.ColourEnum.Red,
-                            LightsStatusClass.LightOperation.ColourEnum.White => XFS4IoT.Lights.LightStateClass.ColourEnum.White,
-                            _ => XFS4IoT.Lights.LightStateClass.ColourEnum.Yellow,
+                            LightsStatusClass.LightOperation.ColourEnum.Blue => XFS4IoT.Lights.LightStateClass.ColorEnum.Blue,
+                            LightsStatusClass.LightOperation.ColourEnum.Cyan => XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan,
+                            LightsStatusClass.LightOperation.ColourEnum.Green => XFS4IoT.Lights.LightStateClass.ColorEnum.Green,
+                            LightsStatusClass.LightOperation.ColourEnum.Magenta => XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta,
+                            LightsStatusClass.LightOperation.ColourEnum.Red => XFS4IoT.Lights.LightStateClass.ColorEnum.Red,
+                            LightsStatusClass.LightOperation.ColourEnum.White => XFS4IoT.Lights.LightStateClass.ColorEnum.White,
+                            _ => XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow,
                         },
                         Direction: light.Value.Direction == LightsStatusClass.LightOperation.DirectionEnum.None ? null :
                         light.Value.Direction switch
@@ -366,16 +359,16 @@ namespace XFS4IoTFramework.Common
                             LightsStatusClass.LightOperation.FlashRateEnum.Quick => XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick,
                             _ => XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow,
                         },
-                        Colour: light.Value.Colour == LightsStatusClass.LightOperation.ColourEnum.Default ? null :
+                        Color: light.Value.Colour == LightsStatusClass.LightOperation.ColourEnum.Default ? null :
                         light.Value.Colour switch
                         {
-                            LightsStatusClass.LightOperation.ColourEnum.Blue => XFS4IoT.Lights.LightStateClass.ColourEnum.Blue,
-                            LightsStatusClass.LightOperation.ColourEnum.Cyan => XFS4IoT.Lights.LightStateClass.ColourEnum.Cyan,
-                            LightsStatusClass.LightOperation.ColourEnum.Green => XFS4IoT.Lights.LightStateClass.ColourEnum.Green,
-                            LightsStatusClass.LightOperation.ColourEnum.Magenta => XFS4IoT.Lights.LightStateClass.ColourEnum.Magenta,
-                            LightsStatusClass.LightOperation.ColourEnum.Red => XFS4IoT.Lights.LightStateClass.ColourEnum.Red,
-                            LightsStatusClass.LightOperation.ColourEnum.White => XFS4IoT.Lights.LightStateClass.ColourEnum.White,
-                            _ => XFS4IoT.Lights.LightStateClass.ColourEnum.Yellow,
+                            LightsStatusClass.LightOperation.ColourEnum.Blue => XFS4IoT.Lights.LightStateClass.ColorEnum.Blue,
+                            LightsStatusClass.LightOperation.ColourEnum.Cyan => XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan,
+                            LightsStatusClass.LightOperation.ColourEnum.Green => XFS4IoT.Lights.LightStateClass.ColorEnum.Green,
+                            LightsStatusClass.LightOperation.ColourEnum.Magenta => XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta,
+                            LightsStatusClass.LightOperation.ColourEnum.Red => XFS4IoT.Lights.LightStateClass.ColorEnum.Red,
+                            LightsStatusClass.LightOperation.ColourEnum.White => XFS4IoT.Lights.LightStateClass.ColorEnum.White,
+                            _ => XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow,
                         },
                         Direction: light.Value.Direction == LightsStatusClass.LightOperation.DirectionEnum.None ? null :
                         light.Value.Direction switch
@@ -398,18 +391,20 @@ namespace XFS4IoTFramework.Common
                     ReceiptPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter] : null,
                     PassbookPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PassbookPrinter] : null,
                     EnvelopeDepository: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository] : null,
-                    ChequeUnit: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ChequeUnit) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ChequeUnit] : null,
                     BillAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor] : null,
                     EnvelopeDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser] : null,
                     DocumentPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.DocumentPrinter] : null,
                     CoinAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinAcceptor] : null,
                     Scanner: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Scanner) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Scanner] : null,
-                    CardUnit2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardUnit2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardUnit2] : null,
+                    Contactless: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Contactless) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Contactless] : null, 
+                    CardReader2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardReader2] : null,
                     NotesDispenser2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser2] : null,
                     BillAcceptor2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor2] : null,
                     StatusGood: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator] : null,
                     StatusWarning: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator] : null,
                     StatusBad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator] : null,
+                    StatusSupervisor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator] : null,
+                    StatusInService: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator] : null,
                     FasciaLight: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.FasciaLight) ? stdLights[LightsCapabilitiesClass.DeviceEnum.FasciaLight] : null
                     );
             }

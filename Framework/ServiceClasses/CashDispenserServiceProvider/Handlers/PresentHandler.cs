@@ -55,7 +55,7 @@ namespace XFS4IoTFramework.CashDispenser
                 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PresentCashAsync()");
 
-            var result = await Device.PresentCashAsync(new ShutterStatusChangedCommandEvents(events), new PresentCashRequest(position), cancel);
+            var result = await Device.PresentCashAsync(new ItemInfoAvailableCommandEvent(events), new PresentCashRequest(position), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.PresentCashAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

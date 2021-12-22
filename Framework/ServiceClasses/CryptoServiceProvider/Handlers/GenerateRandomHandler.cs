@@ -26,11 +26,10 @@ namespace XFS4IoTFramework.Crypto
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateRandomNumber() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            byte[] random = result.RandomNumber?.ToArray();
             return new GenerateRandomCompletion.PayloadData(result.CompletionCode,
                                                             result.ErrorDescription,
                                                             result.ErrorCode,
-                                                            random is null ? string.Empty : Convert.ToBase64String(random));
+                                                            result.RandomNumber);
         }
     }
 }

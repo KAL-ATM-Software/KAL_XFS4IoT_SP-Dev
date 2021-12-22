@@ -26,7 +26,7 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string NoteType = null, CashManagement.OrientationEnum? Orientation = null, string Signature = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string NoteType = null, CashManagement.OrientationEnum? Orientation = null, List<byte> Signature = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -48,7 +48,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```tooManyItems``` - There was more than one banknote inserted for creating a signature.
             /// * ```noItems``` - There was no banknote to create a signature.
@@ -63,8 +63,8 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
-            /// not identified as a cash item.
+            /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
+            /// specified if the item was not identified as a cash item.
             /// <example>type20USD1</example>
             /// </summary>
             [DataMember(Name = "noteType")]
@@ -76,10 +76,11 @@ namespace XFS4IoT.CashAcceptor.Completions
 
             /// <summary>
             /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is omitted.
-            /// <example>MAA5ADgANwA2ADUANAAzADIAMQAxADIAMwA3ADgAOQAwAA==</example>
+            /// <example>MAA5ADgANwA2ADUANAAz ...</example>
             /// </summary>
             [DataMember(Name = "signature")]
-            public string Signature { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Signature { get; init; }
 
         }
     }

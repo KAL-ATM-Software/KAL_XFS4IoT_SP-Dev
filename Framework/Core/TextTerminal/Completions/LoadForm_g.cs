@@ -42,8 +42,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```formInvalid``` - The form is invalid.
-            /// * ```definitionExists``` - The specified form definition already exists and the *overwrite*
-            ///   flag was false.
+            /// * ```definitionExists``` - The specified form definition already exists and *overwrite* was false.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

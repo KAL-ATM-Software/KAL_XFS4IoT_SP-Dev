@@ -43,7 +43,7 @@ namespace XFS4IoT.CashManagement.Commands
             public string Version { get; init; }
 
             /// <summary>
-            /// Array of classification objects.
+            /// Array of objects defining the classification list.
             /// </summary>
             [DataMember(Name = "classificationElements")]
             public List<ClassificationElementClass> ClassificationElements { get; init; }

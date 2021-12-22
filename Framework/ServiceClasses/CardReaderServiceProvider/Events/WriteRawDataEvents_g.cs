@@ -27,7 +27,5 @@ namespace XFS4IoTFramework.CardReader
 
         public async Task InvalidMediaEvent() => await connection.SendMessageAsync(new XFS4IoT.CardReader.Events.InvalidMediaEvent(requestId));
 
-        public async Task InvalidTrackDataEvent(XFS4IoT.CardReader.Events.InvalidTrackDataEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.CardReader.Events.InvalidTrackDataEvent(requestId, Payload));
-
     }
 }

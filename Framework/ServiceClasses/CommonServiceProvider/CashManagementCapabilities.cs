@@ -128,7 +128,6 @@ namespace XFS4IoTFramework.Common
                                                RetractStackerActionEnum RetractStackerActions,
                                                ExchangeTypesEnum ExchangeTypes,
                                                ItemInfoTypesEnum ItemInfoTypes,
-                                               bool SafeDoor,
                                                bool CashBox,
                                                bool ClassificationList,
                                                Dictionary<string, BanknoteItem> AllBanknoteItems)
@@ -140,7 +139,6 @@ namespace XFS4IoTFramework.Common
             this.RetractStackerActions = RetractStackerActions;
             this.ExchangeTypes = ExchangeTypes;
             this.ItemInfoTypes = ItemInfoTypes;
-            this.SafeDoor = SafeDoor;
             this.CashBox = CashBox;
             this.ClassificationList = ClassificationList;
             this.AllBanknoteItems = AllBanknoteItems;
@@ -230,11 +228,6 @@ namespace XFS4IoTFramework.Common
         /// Specifies the types of information that can be retrieved through the CashManagement.GetItemInfo command.
         /// </summary>
         public ItemInfoTypesEnum ItemInfoTypes { get; init; }
-
-        /// <summary>
-        /// Specifies whether or not the  CashManagement.OpenSafeDoor command is supported.
-        /// </summary>
-        public bool SafeDoor { get; init; }
 
         /// <summary>
         /// This field is only applicable to teller type devices. 

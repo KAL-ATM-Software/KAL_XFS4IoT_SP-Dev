@@ -16,5 +16,7 @@ namespace XFS4IoTFramework.TextTerminal
     public interface IReadEvents
     {
 
+        Task KeyEvent(XFS4IoT.TextTerminal.Events.KeyEvent.PayloadData Payload);
+
     }
 }

@@ -38,10 +38,11 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specifies the minimum number of digits which must be entered for the PIN. 
+            /// Specifies the minimum number of digits which must be entered for the PIN.
             /// A value of zero indicates no minimum PIN length verification.
             /// </summary>
             [DataMember(Name = "minLen")]
+            [DataTypes(Minimum = 0)]
             public int? MinLen { get; init; }
 
             /// <summary>
@@ -49,25 +50,27 @@ namespace XFS4IoT.Keyboard.Commands
             /// A value of zero indicates no maximum PIN length verification.
             /// </summary>
             [DataMember(Name = "maxLen")]
+            [DataTypes(Minimum = 0)]
             public int? MaxLen { get; init; }
 
             /// <summary>
-            /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of digits are entered. 
-            /// Otherwise, the input is terminated by the user using one of the termination keys. 
-            /// autoEnd is ignored when maxLen is set to zero.
+            /// If *autoEnd* is set to true, the Service Provider terminates the command when the maximum number of
+            /// digits are entered. Otherwise, the input is terminated by the user using one of the termination keys.
+            /// *autoEnd* is ignored when *maxLen* is set to zero.
             /// </summary>
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
 
             /// <summary>
-            /// Specifies the replace character to be echoed on a local display for the PIN digit. 
+            /// Specifies the replace character to be echoed on a local display for the PIN digit.
+            /// <example>X</example>
             /// </summary>
             [DataMember(Name = "echo")]
             public string Echo { get; init; }
 
             /// <summary>
             /// Specifies all Function Keys which are active during the execution of the command.
-            /// This should be the complete set or a subset of the keys returned in the payload of the 
+            /// This should be the complete set or a subset of the keys returned in the payload of the
             /// [Keyboard.GetLayout](#keyboard.getlayout) command.
             /// 
             /// The following standard names are defined:
@@ -94,7 +97,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// * ```tripleZero``` - 000
             /// * ```fdk[01-32]``` - 32 FDK keys
             /// 
-            /// Additional non standard key names are also allowed.
+            /// Additional non-standard key names are also allowed:
+            /// 
+            /// * ```oem[a-zA-Z0-9]*``` - A non-standard key name
             /// </summary>
             [DataMember(Name = "activeKeys")]
             public Dictionary<string, KeyClass> ActiveKeys { get; init; }

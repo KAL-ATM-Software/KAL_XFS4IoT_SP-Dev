@@ -52,6 +52,7 @@ namespace XFS4IoT.KeyManagement.Commands
 
                     /// <summary>
                     /// Specifies the name of key being deleted. if this property is omitted. all keys are deleted.
+                    /// <example>Key01</example>
                     /// </summary>
                     [DataMember(Name = "key")]
                     public string Key { get; init; }
@@ -59,15 +60,15 @@ namespace XFS4IoT.KeyManagement.Commands
                 }
 
                 /// <summary>
-                /// This command can be used to delete a key with authentication.
-                /// Details of [KeyManagement.DeleteKey](#keymanagement.deletekey) command.
+                /// This command can be used to delete a key with authentication. Details of
+                /// [KeyManagement.DeleteKey](#keymanagement.deletekey) command.
                 /// </summary>
                 [DataMember(Name = "deleteKey")]
                 public DeleteKeyClass DeleteKey { get; init; }
 
                 /// <summary>
-                /// This command can be used to initialize encryption module with authentication.
-                /// Details of [KeyManagement.Initialization](#keymanagement.initialization) command.
+                /// This command can be used to initialize encryption module with authentication. Details of
+                /// [KeyManagement.Initialization](#keymanagement.initialization) command.
                 /// </summary>
                 [DataMember(Name = "initialization")]
                 public object Initialization { get; init; }
@@ -75,8 +76,9 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// The command and the input parameters to which authentication is being applied.
-            /// The possible command is one of:
+            /// The command and the input parameters to which authentication is being applied. The possible command is
+            /// one of:
+            /// 
             /// * ```deleteKey``` - Delete a key with authentication.
             /// * ```initialization``` - Initialize encryption module with authentication.
             /// </summary>

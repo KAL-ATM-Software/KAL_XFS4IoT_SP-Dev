@@ -53,7 +53,7 @@ namespace XFS4IoT.CashDispenser.Completions
             /// * ```shutterOpen``` - The shutter is open when it should be closed. No items presented.
             /// * ```noItems``` - There are no items on the stacker.
             /// * ```exchangeActive``` - The device is in an exchange state (see 
-            /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
+            /// [Storage.StartExchange](#storage.startexchange)).
             /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were 
             /// presented.
             /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the

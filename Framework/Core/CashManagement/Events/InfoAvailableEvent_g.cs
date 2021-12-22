@@ -48,7 +48,7 @@ namespace XFS4IoT.CashManagement.Events
                 public NoteLevelEnum? Level { get; init; }
 
                 /// <summary>
-                /// Number of items classified as _level_ which have information available.
+                /// Number of items classified as *level* which have information available.
                 /// <example>2</example>
                 /// </summary>
                 [DataMember(Name = "numOfItems")]

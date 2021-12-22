@@ -44,11 +44,11 @@ namespace XFS4IoT.CashDispenser.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A cash unit caused a problem. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            /// * ```cashUnitError``` - A storage unit caused a problem. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order to perform this operation.
             /// * ```exchangeActive``` - The device is in an exchange state (see 
-            /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
+            /// [Storage.StartExchange](#storage.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -89,7 +89,7 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// List of counted cash unit objects.
+            /// List of counted storage unit objects.
             /// </summary>
             [DataMember(Name = "countedCashUnits")]
             public Dictionary<string, CountedCashUnitsClass> CountedCashUnits { get; init; }

@@ -43,11 +43,12 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```invalidModulusLength``` - The modulus length specified is invalid.
             /// * ```useViolation``` - The specified use is not supported by this key.
             /// * ```duplicateKey``` - A key exists with that name and cannot be overwritten.
-            /// * ```keyGenerationError``` - The EPP is unable to generate a key pair.
+            /// * ```keyGenerationError``` - The device is unable to generate a key pair.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -44,13 +44,13 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a cash unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details. If appropriate 
             /// a [CashAcceptor.IncompleteReplenishEvent](#cashacceptor.incompletereplenishevent) will also be sent.
-            /// * ```invalidCashUnit``` - The source or target cash unit specified is invalid for this operation. 
-            /// The [CashAcceptor.ReplenishTarget](#cashacceptor.replenishtarget) command can be used to determine which source or target is valid.
+            /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation. 
+            /// The [CashAcceptor.GetReplenishTarget](#cashacceptor.getreplenishtarget) command can be used to determine which source or target is valid.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// </summary>
@@ -85,7 +85,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) to which items have been moved.
                 /// <example>unit1</example>
                 /// </summary>
@@ -94,8 +94,8 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string Target { get; init; }
 
                 /// <summary>
-                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
-                /// not identified as a cash item.
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
+                /// specified if the item was not identified as a cash item.
                 /// <example>type20USD1</example>
                 /// </summary>
                 [DataMember(Name = "cashItem")]
@@ -103,7 +103,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string CashItem { get; init; }
 
                 /// <summary>
-                /// Total number of items received in this target cash unit of the _noteId_ note type.
+                /// Total number of items received in this target storage unit of the *cashItem* note type.
                 /// <example>20</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsReceived")]
@@ -113,12 +113,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Breakdown of which notes moved where. In the case where one note type has several releases and these 
-            /// are moved, or where items are moved from a multi denomination cash unit to a multi denomination cash unit, 
+            /// Breakdown of which notes were moved and where they moved to. In the case where one note type has several releases and these 
+            /// are moved, or where items are moved from a multi denomination storage unit to a multi denomination storage unit, 
             /// each target can receive several note types. 
             /// 
             /// For example:
-            /// * If one single target was specified with the _replenishTargets_ input structure, and this target received 
+            /// * If one single target was specified with the *replenishTargets* input structure, and this target received 
             /// two different note types, then this property will have two elements.
             /// * If two targets were specified and the first target received two different note types and the second target 
             /// received three different note types, then this property will have five elements.

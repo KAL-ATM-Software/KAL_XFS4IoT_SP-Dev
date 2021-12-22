@@ -28,11 +28,7 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.SetBlackMarkModeAsync()");
-            var result = await Device.SetBlackMarkModeAsync(setBlackMarkMode.Payload.BlackMarkMode switch
-                                                            {
-                                                                SetBlackMarkModeCommand.PayloadData.BlackMarkModeEnum.On => BlackMarkModeEnum.On,
-                                                                _ => BlackMarkModeEnum.Off
-                                                            }, 
+            var result = await Device.SetBlackMarkModeAsync(setBlackMarkMode.Payload.BlackMarkMode is not null && (bool)setBlackMarkMode.Payload.BlackMarkMode ? BlackMarkModeEnum.On : BlackMarkModeEnum.Off, 
                                                             cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.SetBlackMarkModeAsync() -> {result.CompletionCode}");
 

@@ -95,8 +95,8 @@ namespace XFS4IoT.VendorApplication
         /// <summary>
         /// Specifies the supported access levels. This allows the application to show a user interface with
         /// reduced or extended functionality depending on the access levels. The exact meaning or functionalities
-        /// definition is left to the vendor. If no access levels are supported this field will be accessNotSupported.
-        /// Otherwise this field will  be set to a combination of true or false value for supported or not supported
+        /// definition is left to the vendor. If no access levels are supported this property will be omitted.
+        /// Otherwise this will report the supported access levels.
         /// respectively.
         /// </summary>
         [DataMember(Name = "supportedAccessLevels")]

@@ -43,7 +43,8 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Specifies to lock or unlock the device in its normal operating position. Following values are possible:
+            /// Specifies locking or unlocking the device in its normal operating position. The following values are 
+            /// possible:
             /// 
             /// * ```lock``` - Locks the device so that it cannot be removed from its normal operating position.
             /// * ```unlock``` - Unlocks the device so that it can be removed from its normal operating position.
@@ -61,12 +62,12 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Specifies the type of lock/unlock action on cash units. Following values are possible:
+            /// Specifies the type of lock/unlock action on storage units. The following values are possible:
             /// 
-            /// * ```lockAll``` - Locks all cash units supported.
-            /// * ```unlockAll``` - Unlocks all cash units supported.
-            /// * ```lockIndividual``` - Locks/unlocks cash units individually as specified in the _unitLockControl_ parameter.
-            /// * ```noLockAction``` - No lock/unlock action will be performed on cash units.
+            /// * ```lockAll``` - Locks all storage units supported.
+            /// * ```unlockAll``` - Unlocks all storage units supported.
+            /// * ```lockIndividual``` - Locks/unlocks storage units individually as specified in the *unitLockControl* parameter.
+            /// * ```noLockAction``` - No lock/unlock action will be performed on storage units.
             /// </summary>
             [DataMember(Name = "cashUnitAction")]
             public CashUnitActionEnum? CashUnitAction { get; init; }
@@ -81,7 +82,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) to be locked or unlocked.
                 /// <example>unit1</example>
                 /// </summary>
@@ -96,11 +97,11 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Specifies whether to lock or unlock the storage unit indicated in the _storageUnit_ parameter.
-                /// Following values are possible:
+                /// Specifies whether to lock or unlock the storage unit indicated in the *storageUnit* parameter.
+                /// The following values are possible:
                 /// 
-                /// * ```lock``` - Locks the specified cash unit so that it cannot be removed from the device. 
-                /// * ```unlock``` - Unlocks the specified cash unit so that it can be removed from the device.
+                /// * ```lock``` - Locks the specified storage unit so that it cannot be removed from the device. 
+                /// * ```unlock``` - Unlocks the specified storage unit so that it can be removed from the device.
                 /// </summary>
                 [DataMember(Name = "unitAction")]
                 public UnitActionEnum? UnitAction { get; init; }
@@ -108,9 +109,8 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Array of UnitLockControl structures; only valid in the case where ```lockIndividual``` is specified in the
-            /// _cashUnitAction_ field otherwise this field will be ignored. Each element specifies one cash unit to be 
-            /// locked/unlocked.
+            /// Array of structures, one for each storage unit to be locked or unlocked. Only valid in the case where 
+            /// *lockIndividual* is specified in the *cashUnitAction* property otherwise this will be ignored.
             /// </summary>
             [DataMember(Name = "unitLockControl")]
             public List<UnitLockControlClass> UnitLockControl { get; init; }

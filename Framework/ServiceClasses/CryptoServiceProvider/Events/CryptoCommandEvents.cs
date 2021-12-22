@@ -34,9 +34,9 @@ namespace XFS4IoTFramework.Crypto
             VerifyAuthenticationEvents = events;
         }
 
-        public Task DUKPTKSNEvent(string Key, string KSN)
+        public Task DUKPTKSNEvent(string Key, List<byte> KSN)
         {
-            XFS4IoT.Crypto.Events.DUKPTKSNEvent.PayloadData payload = new(Key, KSN);
+            XFS4IoT.KeyManagement.Events.DUKPTKSNEvent.PayloadData payload = new(Key, KSN);
                 
             if (CryptoDataEvents is not null)
             {

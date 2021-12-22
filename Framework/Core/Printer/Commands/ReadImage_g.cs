@@ -88,12 +88,12 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// Specifies the color format of the requested front image as one of the following:
             /// 
-            /// * ```binary``` - The scanned images has to be returned in binary (image contains two colors,  usually
+            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors,  usually
             ///   the colors black and white).
-            /// * ```grayscale``` - The scanned images has to be returned in gray scale (image contains multiple gray
+            /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
             ///   colors).
-            /// * ```fullcolor``` - The scanned images has to be returned in full color (image contains colors like
-            ///   red, green, blueetc.).
+            /// * ```fullcolor``` - The scanned image has to be returned in full color (image contains colors like
+            ///   red, green, blue, etc.).
             /// </summary>
             [DataMember(Name = "frontImageColorFormat")]
             public FrontImageColorFormatEnum? FrontImageColorFormat { get; init; }
@@ -108,11 +108,11 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// Specifies the color format of the requested back image as one of the following:
             /// 
-            /// * ```binary``` - The scanned images has to be returned in binary (image contains two colors,  usually
+            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors,  usually
             ///   the colors black and white).
-            /// * ```grayscale``` - The scanned images has to be returned in gray scale (image contains multiple gray
+            /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
             ///   colors).
-            /// * ```fullcolor``` - The scanned images has to be returned in full color (image contains colors like
+            /// * ```fullcolor``` - The scanned image has to be returned in full color (image contains colors like
             ///   red, green, blue etc.).
             /// </summary>
             [DataMember(Name = "backImageColorFormat")]
@@ -126,7 +126,7 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the code line (MICR data) format, as one of the following flags (zero if source not
+            /// Specifies the code line (MICR data) format, as one of the following options (not applicable if no imageSource
             /// selected):
             /// 
             /// * ```cmc7``` - Read CMC7 code line.
@@ -167,7 +167,7 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the source as a combination of the following flags:
+            /// Specifies the source.
             /// </summary>
             [DataMember(Name = "imageSource")]
             public ImageSourceClass ImageSource { get; init; }

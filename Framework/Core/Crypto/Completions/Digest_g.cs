@@ -26,11 +26,11 @@ namespace XFS4IoT.Crypto.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string DigestOutput = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Digest = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.DigestOutput = DigestOutput;
+                this.Digest = Digest;
             }
 
             public enum ErrorCodeEnum
@@ -48,10 +48,12 @@ namespace XFS4IoT.Crypto.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains the Base64 encoded length and the data containing the calculated hash.
+            /// Contains the generated digest.
+            /// <example>OTNjYzE2Y2FkNzYwMTY3 ...</example>
             /// </summary>
-            [DataMember(Name = "digestOutput")]
-            public string DigestOutput { get; init; }
+            [DataMember(Name = "digest")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Digest { get; init; }
 
         }
     }

@@ -215,11 +215,9 @@ namespace XFS4IoTFramework.Printer
                     { 
                         AcceptAndReadImageResult.DataRead.StatusEnum.Ok => ReadImageCompletion.PayloadData.ImagesClass.FrontClass.StatusEnum.Ok,
                         AcceptAndReadImageResult.DataRead.StatusEnum.Missing => ReadImageCompletion.PayloadData.ImagesClass.FrontClass.StatusEnum.Missing,
-                        _ => ReadImageCompletion.PayloadData.ImagesClass.FrontClass.StatusEnum.NotSupp,
+                        _ => ReadImageCompletion.PayloadData.ImagesClass.FrontClass.StatusEnum.NotSupported,
                     },
-                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Front].Data?.Count > 0 ?
-                    Convert.ToBase64String(result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Front].Data.ToArray()) :
-                    null);
+                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Front].Data);
                 }
                 ReadImageCompletion.PayloadData.ImagesClass.BackClass back = null;
                 if (result.Data.ContainsKey(AcceptAndReadImageRequest.SourceTypeEnum.Back))
@@ -228,11 +226,9 @@ namespace XFS4IoTFramework.Printer
                     {
                         AcceptAndReadImageResult.DataRead.StatusEnum.Ok => ReadImageCompletion.PayloadData.ImagesClass.BackClass.StatusEnum.Ok,
                         AcceptAndReadImageResult.DataRead.StatusEnum.Missing => ReadImageCompletion.PayloadData.ImagesClass.BackClass.StatusEnum.Missing,
-                        _ => ReadImageCompletion.PayloadData.ImagesClass.BackClass.StatusEnum.NotSupp,
+                        _ => ReadImageCompletion.PayloadData.ImagesClass.BackClass.StatusEnum.NotSupported,
                     },
-                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Back].Data?.Count > 0 ?
-                    Convert.ToBase64String(result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Back].Data.ToArray()) :
-                    null);
+                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Back].Data);
                 }
                 ReadImageCompletion.PayloadData.ImagesClass.CodelineClass codeline = null;
                 if (result.Data.ContainsKey(AcceptAndReadImageRequest.SourceTypeEnum.Codeline))
@@ -241,11 +237,9 @@ namespace XFS4IoTFramework.Printer
                     {
                         AcceptAndReadImageResult.DataRead.StatusEnum.Ok => ReadImageCompletion.PayloadData.ImagesClass.CodelineClass.StatusEnum.Ok,
                         AcceptAndReadImageResult.DataRead.StatusEnum.Missing => ReadImageCompletion.PayloadData.ImagesClass.CodelineClass.StatusEnum.Missing,
-                        _ => ReadImageCompletion.PayloadData.ImagesClass.CodelineClass.StatusEnum.NotSupp,
+                        _ => ReadImageCompletion.PayloadData.ImagesClass.CodelineClass.StatusEnum.NotSupported,
                     },
-                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Codeline].Data?.Count > 0 ?
-                    Convert.ToBase64String(result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Codeline].Data.ToArray()) :
-                    null);
+                    result.Data[AcceptAndReadImageRequest.SourceTypeEnum.Codeline].Data);
                 }
                 dataRead = new(front, back, codeline);
             }

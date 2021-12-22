@@ -58,17 +58,14 @@ namespace XFS4IoTFramework.Common
         {
             this.State = StateEnum.None;
             this.TransactionID = string.Empty;
-            this.Extra = null;
         }
         public GetTransactionStateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          StateEnum State,
-                                         string TransactionID,
-                                         List<string> Extra)
+                                         string TransactionID)
             : base(CompletionCode, string.Empty)
         {
             this.State = State;
             this.TransactionID = TransactionID;
-            this.Extra = Extra;
         }
 
         public enum StateEnum
@@ -92,13 +89,6 @@ namespace XFS4IoTFramework.Common
         /// parameter is an application defined customer transaction identifier, which was previously set in the Common.SetTransactionState command
         /// </summary>
         public string TransactionID { get; init; }
-
-        /// <summary>
-        /// A list of vendor-specific, or any other extended, transaction information. The information is set as a series 
-        /// of "key=value" strings. Each string is null-terminated, with the final string terminating with two null characters. 
-        /// An empty list may be indicated by either a NULL pointer or a pointer to two consecutive null characters
-        /// </summary>
-        public List<string> Extra { get; init; }
     }
 
     /// <summary>
@@ -108,12 +98,10 @@ namespace XFS4IoTFramework.Common
     public sealed class SetTransactionStateRequest
     {
         public SetTransactionStateRequest(StateEnum State,
-                                         string TransactionID,
-                                         List<string> Extra)
+                                          string TransactionID)
         {
             this.State = State;
             this.TransactionID = TransactionID;
-            this.Extra = Extra;
         }
 
         public enum StateEnum
@@ -136,13 +124,6 @@ namespace XFS4IoTFramework.Common
         /// parameter is an application defined customer transaction identifier, which was previously set in the Common.SetTransactionState command
         /// </summary>
         public string TransactionID { get; init; }
-
-        /// <summary>
-        /// A list of vendor-specific, or any other extended, transaction information. The information is set as a series 
-        /// of "key=value" strings. Each string is null-terminated, with the final string terminating with two null characters. 
-        /// An empty list may be indicated by either a NULL pointer or a pointer to two consecutive null characters
-        /// </summary>
-        public List<string> Extra { get; init; }
     }
 
     /// <summary>

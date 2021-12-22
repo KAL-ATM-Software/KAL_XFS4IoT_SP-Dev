@@ -50,7 +50,7 @@ namespace XFS4IoT.CashAcceptor.Completions
 
             /// <summary>
             /// Supplies the status of the items that were to be presented by the most recent attempt to present or return 
-            /// items to the customer. Following values are possible:
+            /// items to the customer. The following values are possible:
             /// 
             /// * ```presented``` - The items were presented. This status is set as soon as the customer has access to the items.
             /// * ```notPresented``` - The customer has not had access to the items.
@@ -68,7 +68,7 @@ namespace XFS4IoT.CashAcceptor.Completions
 
             /// <summary>
             /// Specifies whether or not additional bunches of items are remaining to be presented as a result of the 
-            /// most recent operation. Following values are possible:
+            /// most recent operation. The following values are possible:
             /// 
             /// * ```none``` - No additional bunches remain.
             /// * ```oneMore``` - At least one additional bunch remains.
@@ -78,30 +78,34 @@ namespace XFS4IoT.CashAcceptor.Completions
             public AdditionalBunchesEnum? AdditionalBunches { get; init; }
 
             /// <summary>
-            /// If _additionalBunches_ is ```oneMore```, specifies the number of additional bunches of items remaining to 
+            /// If *additionalBunches* is ```oneMore```, specifies the number of additional bunches of items remaining to 
             /// be presented as a result of the current operation.
             /// This property is omitted if any of the following are true:
             /// * If the number of additional bunches is at least one, but the precise number is unknown. 
-            /// * _additionalBunches_ is not ```oneMore```.
+            /// * *additionalBunches* is not ```oneMore```.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
             public int? BunchesRemaining { get; init; }
 
             /// <summary>
-            /// Array holding a list of banknote numbers which have been moved to the output position as a result of the most recent operation.
+            /// Array holding a list of counts of banknotes which have been moved to the output position as a result of the 
+            /// most recent operation.
             /// </summary>
             [DataMember(Name = "returnedItems")]
             public CashManagement.StorageCashCountsClass ReturnedItems { get; init; }
 
             /// <summary>
-            /// Array of cumulative banknote numbers which have been moved to the output position. 
-            /// This value will be reset when the CashInStart, CashIn, CashInEnd, Retract, Reset or CashInRollback command is executed.
+            /// Array of cumulative counts of banknotes which have been moved to the output position. 
+            /// This value will be reset when a *CashAcceptor.CashInStart*, *CashAcceptor.CashIn*, 
+            /// *CashAcceptor.CashInEnd*, *CashManagement.Retract*, *CashManagement.Reset* or *CashAcceptor.CashInRollback* 
+            /// command is executed.
             /// </summary>
             [DataMember(Name = "totalReturnedItems")]
             public CashManagement.StorageCashCountsClass TotalReturnedItems { get; init; }
 
             /// <summary>
-            /// Array of banknote numbers on the intermediate stacker or transport which have not been yet moved to the output position.
+            /// Array of counts of banknotes on the intermediate stacker or transport which have not been yet moved to the 
+            /// output position.
             /// </summary>
             [DataMember(Name = "remainingItems")]
             public CashManagement.StorageCashCountsClass RemainingItems { get; init; }

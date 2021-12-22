@@ -41,7 +41,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// The name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) that can be used as a source.
                 /// <example>unit1</example>
                 /// </summary>

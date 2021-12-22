@@ -52,112 +52,41 @@ namespace XFS4IoTServer
         private readonly StorageServiceClass StorageService;
 
         #region CashManagement unsolicited events
-        public Task TellerInfoChangedEvent(int TellerID) => CashManagementService.TellerInfoChangedEvent(new TellerInfoChangedEvent.PayloadData(TellerID));
 
         public Task SafeDoorOpenEvent() => CashManagementService.SafeDoorOpenEvent();
 
         public Task SafeDoorClosedEvent() => CashManagementService.SafeDoorClosedEvent();
 
-        public Task ItemsTakenEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(
-                    new ItemsTakenEvent.PayloadData(
-                        new XFS4IoT.CashManagement.PositionInfoClass(Position switch
-                            {
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => XFS4IoT.CashManagement.PositionEnum.OutCenter,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Default => XFS4IoT.CashManagement.PositionEnum.OutDefault,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => XFS4IoT.CashManagement.PositionEnum.OutFront,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => XFS4IoT.CashManagement.PositionEnum.OutLeft,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => XFS4IoT.CashManagement.PositionEnum.OutRear,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => XFS4IoT.CashManagement.PositionEnum.OutRight,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                                _ => null,
-                            },
-                            AdditionalBunches))
-                    );
+        public Task ItemsTakenEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
 
-        public Task ItemsInsertedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Postion) => CashManagementService.ItemsInsertedEvent(
-            new ItemsInsertedEvent.PayloadData(Postion switch
-                                               {
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Center => XFS4IoT.CashManagement.PositionEnum.OutCenter,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Default => XFS4IoT.CashManagement.PositionEnum.OutDefault,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Front => XFS4IoT.CashManagement.PositionEnum.OutFront,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Left => XFS4IoT.CashManagement.PositionEnum.OutLeft,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => XFS4IoT.CashManagement.PositionEnum.OutRear,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Right => XFS4IoT.CashManagement.PositionEnum.OutRight,
-                                                   CashDispenserCapabilitiesClass.OutputPositionEnum.Top => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                                                   _ => null,
-                                               }));
+        public Task ItemsInsertedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Postion) => CashManagementService.ItemsInsertedEvent(Postion);
 
-        public Task MediaDetectedEvent(ItemPosition Position)
-        {
-            return CashManagementService.MediaDetectedEvent(
-                new MediaDetectedEvent.PayloadData(Position.CashUnit,
-                        new XFS4IoT.CashManagement.RetractClass(Position.OutputPosition switch
-                                                                {
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.OutputPositionEnum.OutBottom,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.OutputPositionEnum.OutCenter,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.OutputPositionEnum.OutDefault,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.OutputPositionEnum.OutFront,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.OutputPositionEnum.OutLeft,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.OutputPositionEnum.OutRear,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.OutputPositionEnum.OutRight,
-                                                                    CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.OutputPositionEnum.OutTop,
-                                                                    _ => null
-                                                                },
-                                                                Position.RetractArea.RetractArea switch
-                                                                {
-                                                                    CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette => XFS4IoT.CashManagement.RetractAreaEnum.ItemCassette,
-                                                                    CashManagementCapabilitiesClass.RetractAreaEnum.Reject => XFS4IoT.CashManagement.RetractAreaEnum.Reject,
-                                                                    CashManagementCapabilitiesClass.RetractAreaEnum.Retract => XFS4IoT.CashManagement.RetractAreaEnum.Retract,
-                                                                    CashManagementCapabilitiesClass.RetractAreaEnum.Stacker => XFS4IoT.CashManagement.RetractAreaEnum.Stacker,
-                                                                    CashManagementCapabilitiesClass.RetractAreaEnum.Transport => XFS4IoT.CashManagement.RetractAreaEnum.Transport,
-                                                                    _ => null
-                                                                },
-                                                                Position.RetractArea.Index))
-                ); ;
-        }
+        public Task ItemsPresentedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
-        public Task ItemsPresentedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(
-                        new ItemsPresentedEvent.PayloadData(
-                            new XFS4IoT.CashManagement.PositionInfoClass(Position switch
-                            {
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => XFS4IoT.CashManagement.PositionEnum.OutCenter,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Default => XFS4IoT.CashManagement.PositionEnum.OutDefault,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => XFS4IoT.CashManagement.PositionEnum.OutFront,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => XFS4IoT.CashManagement.PositionEnum.OutLeft,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => XFS4IoT.CashManagement.PositionEnum.OutRear,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => XFS4IoT.CashManagement.PositionEnum.OutRight,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                                _ => null,
-                            },
-                            AdditionalBunches)));
+        public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
 
         #endregion
 
         #region Common unsolicited events
-        public Task PowerSaveChangeEvent(int PowerSaveRecoveryTime) => CommonService.PowerSaveChangeEvent(new PowerSaveChangeEvent.PayloadData(PowerSaveRecoveryTime));
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
 
-        public Task DevicePositionEvent(CommonStatusClass.PositionStatusEnum Position) => CommonService.DevicePositionEvent(
-                                                                                                        new DevicePositionEvent.PayloadData(Position switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
-                                                                                                            CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
-                                                                                                            _ => XFS4IoT.Common.PositionStatusEnum.Unknown,
-                                                                                                        }
-                                                                                                    ));
 
-        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
+        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(ReasonDescription);
 
-        public Task ExchangeStateChangedEvent(CommonStatusClass.ExchangeEnum Exchange) => CommonService.ExchangeStateChangedEvent(
-                                                                                                        new ExchangeStateChangedEvent.PayloadData(Exchange switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
-                                                                                                            CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
-                                                                                                            _ => XFS4IoT.Common.ExchangeEnum.NotSupported,
-                                                                                                        }
-                                                                                                    ));
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId, 
+                               CommonStatusClass.ErrorActionEnum Action, 
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
         #endregion
 
         #region Storage unsolic events

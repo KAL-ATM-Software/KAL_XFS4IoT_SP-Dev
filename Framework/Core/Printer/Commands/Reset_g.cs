@@ -58,6 +58,7 @@ namespace XFS4IoT.Printer.Commands
             /// *retract*.
             /// </summary>
             [DataMember(Name = "retractBinNumber")]
+            [DataTypes(Minimum = 1)]
             public int? RetractBinNumber { get; init; }
 
         }

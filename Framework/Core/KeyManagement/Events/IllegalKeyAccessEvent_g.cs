@@ -38,6 +38,7 @@ namespace XFS4IoT.KeyManagement.Events
 
             /// <summary>
             /// Specifies the name of the key that caused the error. 
+            /// <example>Key02</example>
             /// </summary>
             [DataMember(Name = "keyName")]
             public string KeyName { get; init; }
@@ -47,7 +48,8 @@ namespace XFS4IoT.KeyManagement.Events
                 KeyNotFound,
                 KeyNoValue,
                 UseViolation,
-                AlgorithmNotSupp
+                AlgorithmNotSupp,
+                DukptOverflow
             }
 
             /// <summary>
@@ -57,7 +59,9 @@ namespace XFS4IoT.KeyManagement.Events
             /// * ```keyNotFound``` - The specified key was not loaded or attempting to delete a non-existent key.
             /// * ```keyNoValue``` - The specified key is not loaded.
             /// * ```useViolation``` - The specified use is not supported by this key.
-            /// * ```algorithmNotSupp``` - The specified algorithm is not supported by this key.
+            /// * ```algorithmNotSupported``` - The specified algorithm is not supported by this key.
+            /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be
+            /// loaded.
             /// 
             /// </summary>
             [DataMember(Name = "errorCode")]

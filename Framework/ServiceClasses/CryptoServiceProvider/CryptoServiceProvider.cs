@@ -48,43 +48,30 @@ namespace XFS4IoTServer
         #region KeyManagement unsolicited events
         public Task InitializedEvent() => KeyManagementService.InitializedEvent();
 
-        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService.IllegalKeyAccessEvent(new IllegalKeyAccessEvent.PayloadData(KeyName, ErrorCode switch
-                                                                                                                                                                                         {
-                                                                                                                                                                                             KeyAccessErrorCodeEnum.AlgorithmNotSupp => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.AlgorithmNotSupp,
-                                                                                                                                                                                             KeyAccessErrorCodeEnum.KeyNotFound => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNotFound,
-                                                                                                                                                                                             KeyAccessErrorCodeEnum.KeyNoValue => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNoValue,
-                                                                                                                                                                                             _ => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.UseViolation,
-                                                                                                                                                                                         }));
+        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService.IllegalKeyAccessEvent(KeyName, ErrorCode);
 
-        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService.CertificateChangeEvent(new CertificateChangeEvent.PayloadData(CertificateChange switch
-                                                                                                                                                                          { 
-                                                                                                                                                                              _ => XFS4IoT.KeyManagement.Events.CertificateChangeEvent.PayloadData.CertificateChangeEnum.Secondary
-                                                                                                                                                                          }));
+        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService.CertificateChangeEvent(CertificateChange);
 
         #endregion
 
         #region Common unsolicited events
-        public Task PowerSaveChangeEvent(int PowerSaveRecoveryTime) => CommonService.PowerSaveChangeEvent(new PowerSaveChangeEvent.PayloadData(PowerSaveRecoveryTime));
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
+        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
 
-        public Task DevicePositionEvent(CommonStatusClass.PositionStatusEnum Position) => CommonService.DevicePositionEvent(
-                                                                                                        new DevicePositionEvent.PayloadData(Position switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
-                                                                                                            CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
-                                                                                                            _ => XFS4IoT.Common.PositionStatusEnum.Unknown,
-                                                                                                        }
-                                                                                                    ));
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
-        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
-
-        public Task ExchangeStateChangedEvent(CommonStatusClass.ExchangeEnum Exchange) => CommonService.ExchangeStateChangedEvent(
-                                                                                                        new ExchangeStateChangedEvent.PayloadData(Exchange switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
-                                                                                                            CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
-                                                                                                            _ => XFS4IoT.Common.ExchangeEnum.NotSupported,
-                                                                                                        }
-                                                                                                    ));
         #endregion
 
         #region Common Service

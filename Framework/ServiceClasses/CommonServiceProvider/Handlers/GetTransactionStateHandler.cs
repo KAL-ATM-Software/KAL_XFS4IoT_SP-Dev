@@ -33,8 +33,7 @@ namespace XFS4IoTFramework.Common
                                                                      GetTransactionStateResult.StateEnum.Inactive => GetTransactionStateCompletion.PayloadData.StateEnum.Inactive,
                                                                      _ => null,
                                                                  },
-                                                                 result.TransactionID,
-                                                                 result.Extra);
+                                                                 result.TransactionID);
         }
     }
 }

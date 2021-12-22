@@ -34,8 +34,8 @@ namespace XFS4IoTFramework.CardReader
             {
                 if (app.ApplicationIdentifier.Count == 0)
                     continue;
-                appData.Add(new EMVClessQueryApplicationsCompletion.PayloadData.AppDataClass(Convert.ToBase64String(app.ApplicationIdentifier.ToArray()),
-                                                                                             app.KernelIdentifier.Count == 0 ? null : Convert.ToBase64String(app.KernelIdentifier.ToArray())));
+                appData.Add(new EMVClessQueryApplicationsCompletion.PayloadData.AppDataClass(app.ApplicationIdentifier,
+                                                                                             app.KernelIdentifier));
             }
 
             return Task.FromResult(new EMVClessQueryApplicationsCompletion.PayloadData(result.CompletionCode,

@@ -46,7 +46,7 @@ namespace XFS4IoT.Keyboard.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Return supported layouts specified by the *entryMode* property. 
+            /// Return supported layouts specified by the *entryMode* property.
             /// </summary>
             [DataMember(Name = "layout")]
             public LayoutClass Layout { get; init; }

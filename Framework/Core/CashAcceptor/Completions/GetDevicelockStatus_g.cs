@@ -42,12 +42,14 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the physical lock/unlock status of the CashAcceptor device. Following values are possible:
+            /// Specifies the physical lock/unlock status of the CashAcceptor device. The following values are possible:
             /// 
             /// * ```lock``` - The device is physically locked.
             /// * ```unlock``` - The device is physically unlocked.
-            /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the device cannot be determined.
-            /// * ```lockNotSupported``` - The Service does not support physical lock/unlock control of the device.
+            /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the 
+            /// device cannot be determined.
+            /// * ```lockNotSupported``` - The Service does not support reporting the physical lock/unlock status of the 
+            /// device.
             /// </summary>
             [DataMember(Name = "deviceLockStatus")]
             public DeviceLockStatusEnum? DeviceLockStatus { get; init; }
@@ -62,7 +64,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage).
+                /// Object name of the storage unit as stated by [Storage.GetStorage](#storage.getstorage).
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "storageUnit")]
@@ -77,11 +79,12 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Specifies the physical lock/unlock status of cash units supported. Following values are possible:
+                /// Specifies the physical lock/unlock status of storage units supported. The following values are possible:
                 /// 
-                /// * ```lock``` - The cash unit is physically locked.
-                /// * ```unlock``` - The cash unit is physically unlocked.
-                /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the cash unit cannot be determined.
+                /// * ```lock``` - The storage unit is physically locked.
+                /// * ```unlock``` - The storage unit is physically unlocked.
+                /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the 
+                /// storage unit cannot be determined.
                 /// </summary>
                 [DataMember(Name = "unitLockStatus")]
                 public UnitLockStatusEnum? UnitLockStatus { get; init; }

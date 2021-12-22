@@ -35,7 +35,8 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the name of key that should be used to generate the kcv.
+            /// Specifies the name of key that should be used to generate the KCV.
+            /// <example>Key01</example>
             /// </summary>
             [DataMember(Name = "key")]
             public string Key { get; init; }
@@ -47,14 +48,14 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the mode that is used to create the key check value.
-            /// The following values are possible:
+            /// Specifies the mode that is used to create the key check value. The following values are possible:
             /// 
-            /// * ```self``` - The key check value (KCV) is created by an encryption of the key with itself. 
-            ///                For the description refer to the kcvSelf literal described in the [keyCheckModes](#common.capabilities.completion.properties.keymanagement.keycheckmodes).
-            /// * ```zero``` - The key check value (KCV) is created by encrypting a zero value with the key. 
-            ///                Unless otherwise specified, ECB encryption is used
-            ///                The encryption algorithm used (i.e. DES, 3DES, AES) is determined by the type of key used to generate the KCV.
+            /// * ```self``` - The key check value (KCV) is created by an encryption of the key with itself. For the
+            /// description refer to the *self* literal described in the
+            /// [keyCheckModes](#common.capabilities.completion.properties.keymanagement.keycheckmodes).
+            /// * ```zero``` - The key check value (KCV) is created by encrypting a zero value with the key. Unless
+            /// otherwise specified, ECB encryption is used The encryption algorithm used (i.e. DES, 3DES, AES) is
+            /// determined by the type of key used to generate the KCV.
             /// </summary>
             [DataMember(Name = "keyCheckMode")]
             public KeyCheckModeEnum? KeyCheckMode { get; init; }

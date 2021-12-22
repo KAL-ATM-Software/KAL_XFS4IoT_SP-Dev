@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
-using XFS4IoTFramework.CashDispenser;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -20,45 +20,76 @@ namespace XFS4IoTFramework.CashManagement
             base(events)
         { }
 
-        public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status)
+        public enum IncompleteRetractReasonEnum
         {
-            XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData payload = new(
-                Position switch
-                {
-                    CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
-                    CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
-                    CashManagementCapabilitiesClass.PositionEnum.InDefault => XFS4IoT.CashManagement.PositionEnum.InDefault,
-                    CashManagementCapabilitiesClass.PositionEnum.InFront => XFS4IoT.CashManagement.PositionEnum.InFront,
-                    CashManagementCapabilitiesClass.PositionEnum.InLeft => XFS4IoT.CashManagement.PositionEnum.InLeft,
-                    CashManagementCapabilitiesClass.PositionEnum.InRear => XFS4IoT.CashManagement.PositionEnum.InRear,
-                    CashManagementCapabilitiesClass.PositionEnum.InRight => XFS4IoT.CashManagement.PositionEnum.InRight,
-                    CashManagementCapabilitiesClass.PositionEnum.InTop => XFS4IoT.CashManagement.PositionEnum.InTop,
-                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
-                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.PositionEnum.OutCenter,
-                    CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.PositionEnum.OutDefault,
-                    CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.PositionEnum.OutFront,
-                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.PositionEnum.OutLeft,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
-                    CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                    _ => null,
-                },
-                Status switch
-                {
-                    CashManagementStatusClass.ShutterEnum.Closed => XFS4IoT.CashManagement.ShutterEnum.Closed,
-                    CashManagementStatusClass.ShutterEnum.Jammed => XFS4IoT.CashManagement.ShutterEnum.Jammed,
-                    CashManagementStatusClass.ShutterEnum.Open => XFS4IoT.CashManagement.ShutterEnum.Closed,
-                    CashManagementStatusClass.ShutterEnum.Unknown => XFS4IoT.CashManagement.ShutterEnum.Closed,
-                    _ => null,
-                }
-                );
+            RetractFailure,
+            RetractAreaFull,
+            ForeignItemsDetected,
+            InvalidBunch
+        }
 
+        public Task IncompleteRetractEvent(Dictionary<string, CashUnitCountClass> movements, IncompleteRetractReasonEnum reason)
+        {
             if (RetractEvents is not null)
             {
-                return ResetEvents.ShutterStatusChangedEvent(payload);
+                Dictionary<string, XFS4IoT.CashManagement.StorageCashInClass> itemMovementResult = null;
+                if (movements?.Count > 0)
+                {
+                    itemMovementResult = new();
+                    foreach (var movement in movements)
+                    {
+                        Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
+                        foreach (var item in movement.Value.StorageCashInCount.Deposited.ItemCounts)
+                            deposited.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                        Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> retracted = new();
+                        foreach (var item in movement.Value.StorageCashInCount.Retracted.ItemCounts)
+                            retracted.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                        Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> rejected = new();
+                        foreach (var item in movement.Value.StorageCashInCount.Rejected.ItemCounts)
+                            rejected.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                        Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> distributed = new();
+                        foreach (var item in movement.Value.StorageCashInCount.Distributed.ItemCounts)
+                            distributed.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                        Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> transport = new();
+                        foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
+                            transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+
+                        XFS4IoT.CashManagement.StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized);
+                        depositedCount.ExtendedProperties = deposited;
+                        XFS4IoT.CashManagement.StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized);
+                        retractedCount.ExtendedProperties = retracted;
+                        XFS4IoT.CashManagement.StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized);
+                        rejectedCount.ExtendedProperties = rejected;
+                        XFS4IoT.CashManagement.StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized);
+                        distributedCount.ExtendedProperties = distributed;
+                        XFS4IoT.CashManagement.StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized);
+                        transportCount.ExtendedProperties = transport;
+
+                        itemMovementResult.Add(movement.Key, new XFS4IoT.CashManagement.StorageCashInClass
+                                                                 (
+                                                                    movement.Value.StorageCashInCount.RetractOperations,
+                                                                    depositedCount,
+                                                                    retractedCount,
+                                                                    rejectedCount,
+                                                                    distributedCount,
+                                                                    transportCount
+                                                                 ));
+                    }
+                }
+
+                return RetractEvents.IncompleteRetractEvent(
+                        new XFS4IoT.CashManagement.Events.IncompleteRetractEvent.PayloadData(itemMovementResult,
+                        reason switch
+                        {
+                            IncompleteRetractReasonEnum.ForeignItemsDetected => XFS4IoT.CashManagement.Events.IncompleteRetractEvent.PayloadData.ReasonEnum.ForeignItemsDetected,
+                            IncompleteRetractReasonEnum.InvalidBunch => XFS4IoT.CashManagement.Events.IncompleteRetractEvent.PayloadData.ReasonEnum.InvalidBunch,
+                            IncompleteRetractReasonEnum.RetractAreaFull => XFS4IoT.CashManagement.Events.IncompleteRetractEvent.PayloadData.ReasonEnum.RetractAreaFull,
+                            _ => XFS4IoT.CashManagement.Events.IncompleteRetractEvent.PayloadData.ReasonEnum.RetractFailure,
+                        })
+                );
             }
 
-            throw new InvalidOperationException($"Unreachable code. " + nameof(ItemInfoAvailableCommandEvent));
+            throw new InvalidOperationException($"Unreachable code. " + nameof(IncompleteRetractEvent));
         }
     }
 }

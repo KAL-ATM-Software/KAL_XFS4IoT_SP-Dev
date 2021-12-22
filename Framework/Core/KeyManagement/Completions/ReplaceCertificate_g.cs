@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string NewCertificateData = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> NewCertificateData = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -42,7 +42,8 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```formatInvalid``` - The format of the message is invalid.
             /// * ```invalidCertificateState``` - The certificate module is in a state in which the request is invalid.
             /// </summary>
@@ -50,11 +51,13 @@ namespace XFS4IoT.KeyManagement.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using a Digested-data content type.
-            /// The digest parameter should contain the thumb print value.
+            /// The PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)]) using a Digested-data content type. The
+            /// digest parameter should contain the thumb print value.
+            /// <example>UEtDUyAjNyB0aHVtYiBw ...</example>
             /// </summary>
             [DataMember(Name = "newCertificateData")]
-            public string NewCertificateData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> NewCertificateData { get; init; }
 
         }
     }

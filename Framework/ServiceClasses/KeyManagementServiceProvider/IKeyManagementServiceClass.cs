@@ -67,7 +67,17 @@ namespace XFS4IoTServer
         /// Return secure key entry component status
         /// </summary>
         /// <returns></returns>
-        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus();
+        SecureKeyEntryStatusClass GetSecureKeyEntryStatus();
+
+        /// <summary>
+        /// Illegal Key Access Event
+        /// </summary>
+        Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode);
+
+        /// <summary>
+        /// Certificate Changed Event
+        /// </summary>
+        Task CertificateChangeEvent(CertificateChangeEnum CertificateChange);
     }
 
     public interface IKeyManagementServiceClass : IKeyManagementService, IKeyManagementUnsolicitedEvents

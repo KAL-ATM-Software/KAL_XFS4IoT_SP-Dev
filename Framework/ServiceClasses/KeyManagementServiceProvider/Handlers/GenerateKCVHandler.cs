@@ -79,7 +79,7 @@ namespace XFS4IoTFramework.KeyManagement
             return new GenerateKCVCompletion.PayloadData(result.CompletionCode,
                                                          result.ErrorDescription,
                                                          result.ErrorCode,
-                                                         result.KCV is not null && result.KCV.Count > 0 ? Convert.ToBase64String(result.KCV.ToArray()) : null);
+                                                         result.KCV);
         }
     }
 }

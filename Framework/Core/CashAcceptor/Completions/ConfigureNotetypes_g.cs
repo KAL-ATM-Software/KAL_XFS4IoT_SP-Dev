@@ -39,7 +39,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - A cash-in transaction is active. This device requires that no cash-in 

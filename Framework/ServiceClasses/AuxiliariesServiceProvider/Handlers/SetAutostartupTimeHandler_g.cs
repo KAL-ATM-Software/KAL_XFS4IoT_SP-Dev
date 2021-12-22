@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutostartupTimeHandler_g.cs uses automatically generated parts.
+ * SetAutoStartupTimeHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -19,49 +19,49 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutostartupTimeCommand))]
-    public partial class SetAutostartupTimeHandler : ICommandHandler
+    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartupTimeCommand))]
+    public partial class SetAutoStartupTimeHandler : ICommandHandler
     {
-        public SetAutostartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
+        public SetAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
-            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutostartupTimeHandler)} constructor. {nameof(Dispatcher)}");
+            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutostartupTimeHandler)} constructor. {nameof(Provider.Device)}")
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IAuxiliariesDevice>();
 
             Auxiliaries = Provider.IsA<IAuxiliariesService>();
 
-            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutostartupTimeHandler)} constructor. {nameof(logger)}");
-            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutostartupTimeHandler)} constructor. {nameof(Connection)}");
+            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Connection)}");
         }
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var setAutostartupTimeCmd = command.IsA<SetAutostartupTimeCommand>($"Invalid parameter in the SetAutostartupTime Handle method. {nameof(SetAutostartupTimeCommand)}");
-            setAutostartupTimeCmd.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartupTimeCmd = command.IsA<SetAutoStartupTimeCommand>($"Invalid parameter in the SetAutoStartupTime Handle method. {nameof(SetAutoStartupTimeCommand)}");
+            setAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetAutostartupTimeEvents events = new SetAutostartupTimeEvents(Connection, setAutostartupTimeCmd.Header.RequestId.Value);
+            ISetAutoStartupTimeEvents events = new SetAutoStartupTimeEvents(Connection, setAutoStartupTimeCmd.Header.RequestId.Value);
 
-            var result = await HandleSetAutostartupTime(events, setAutostartupTimeCmd, cancel);
-            await Connection.SendMessageAsync(new SetAutostartupTimeCompletion(setAutostartupTimeCmd.Header.RequestId.Value, result));
+            var result = await HandleSetAutoStartupTime(events, setAutoStartupTimeCmd, cancel);
+            await Connection.SendMessageAsync(new SetAutoStartupTimeCompletion(setAutoStartupTimeCmd.Header.RequestId.Value, result));
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setAutostartupTimecommand = command.IsA<SetAutostartupTimeCommand>();
-            setAutostartupTimecommand.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartupTimecommand = command.IsA<SetAutoStartupTimeCommand>();
+            setAutoStartupTimecommand.Header.RequestId.HasValue.IsTrue();
 
-            SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                NotImplementedException or NotSupportedException => SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetAutostartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                NotImplementedException or NotSupportedException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
+                _ => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetAutostartupTimeCompletion(setAutostartupTimecommand.Header.RequestId.Value, new SetAutostartupTimeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetAutoStartupTimeCompletion(setAutoStartupTimecommand.Header.RequestId.Value, new SetAutoStartupTimeCompletion.PayloadData(errorCode, commandException.Message));
 
             await Connection.SendMessageAsync(response);
         }

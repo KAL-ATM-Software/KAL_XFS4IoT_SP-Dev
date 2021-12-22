@@ -39,7 +39,7 @@ namespace XFS4IoT.CardReader.Events
             /// Specifies a card position or jammed state as one of the following:
             /// 
             /// * ```exit``` - A card is at the exit position.
-            /// * ```transport``` - A card is in to the transport position.
+            /// * ```transport``` - A card is in the transport position.
             /// * ```&lt;storage unit identifier&gt;``` - A card is in the
             ///   [identified](#storage.getstorage.completion.properties.storage.unit1) *retain* or *park* storage unit.
             /// * ```jammed``` - A card is jammed in the device.

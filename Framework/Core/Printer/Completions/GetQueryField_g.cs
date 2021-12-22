@@ -68,10 +68,11 @@ namespace XFS4IoT.Printer.Completions
                 }
 
                 /// <summary>
-                /// Specifies the number of entries for an index field. A value of zero indicates that this field is
+                /// Specifies the number of entries for an index field. A value of 0 indicates that this field is
                 /// not an index field. Index fields are typically used to present information in a tabular fashion.
                 /// </summary>
                 [DataMember(Name = "indexCount")]
+                [DataTypes(Minimum = 0)]
                 public int? IndexCount { get; init; }
 
                 public enum TypeEnum
@@ -160,6 +161,7 @@ namespace XFS4IoT.Printer.Completions
                 /// The initial value of the field. When the form is printed (using
                 /// [Printer.PrintForm](#printer.printform)), this value will be used if another value is not
                 /// provided. This value will be omitted if the parameter is not specified in the field definition.
+                /// <example>This is Field 1</example>
                 /// </summary>
                 [DataMember(Name = "initialValue")]
                 public string InitialValue { get; init; }
@@ -167,6 +169,7 @@ namespace XFS4IoT.Printer.Completions
                 /// <summary>
                 /// Format string as defined in the form for this field. This value will be omitted if the parameter
                 /// is not specified in the field definition.
+                /// <example>Format 1</example>
                 /// </summary>
                 [DataMember(Name = "format")]
                 public string Format { get; init; }
@@ -181,7 +184,7 @@ namespace XFS4IoT.Printer.Completions
                 /// <summary>
                 /// Specifies the coercivity to be used for writing the magnetic stripe as one of the following:
                 /// 
-                /// * ```auto``` - The coercivity is decided by the Service Provider or the hardware.
+                /// * ```auto``` - The coercivity is decided by the Service or the hardware.
                 /// * ```low``` - A low coercivity is to be used for writing the magnetic stripe.
                 /// * ```high``` - A high coercivity is to be used for writing the magnetic stripe.
                 /// </summary>

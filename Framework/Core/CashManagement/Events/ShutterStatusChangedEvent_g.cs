@@ -17,11 +17,11 @@ namespace XFS4IoT.CashManagement.Events
 
     [DataContract]
     [Event(Name = "CashManagement.ShutterStatusChangedEvent")]
-    public sealed class ShutterStatusChangedEvent : Event<ShutterStatusChangedEvent.PayloadData>
+    public sealed class ShutterStatusChangedEvent : UnsolicitedEvent<ShutterStatusChangedEvent.PayloadData>
     {
 
-        public ShutterStatusChangedEvent(int RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public ShutterStatusChangedEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 

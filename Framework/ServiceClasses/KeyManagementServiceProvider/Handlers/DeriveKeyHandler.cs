@@ -39,7 +39,8 @@ namespace XFS4IoTFramework.KeyManagement
                 return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"No padding value specified.");
             }
-            if (string.IsNullOrEmpty(deriveKey.Payload.InputData))
+            if (deriveKey.Payload.InputData is null ||
+                deriveKey.Payload.InputData.Count == 0)
             {
                 return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No derive key data specified.");
@@ -61,20 +62,20 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             int ivKeySlot = -1;
-            if (!string.IsNullOrEmpty(deriveKey.Payload.StartValueKey))
+            if (!string.IsNullOrEmpty(deriveKey.Payload.IvKey))
             {
-                KeyDetail keyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.StartValueKey);
+                KeyDetail keyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.IvKey);
                 if (keyDetail is null)
                 {
                     return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key name is not found. {deriveKey.Payload.StartValueKey}",
+                                                               $"Specified IV key name is not found. {deriveKey.Payload.IvKey}",
                                                                DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
                 }
                 if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded &&
                     keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Construct)
                 {
                     return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key is not loaded. {deriveKey.Payload.StartValueKey}",
+                                                               $"Specified IV key is not loaded. {deriveKey.Payload.IvKey}",
                                                                DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
@@ -121,11 +122,11 @@ namespace XFS4IoTFramework.KeyManagement
                                                                      deriveKey.Payload.KeyGenKey,
                                                                      keyGenKeyDetail.KeySlot,
                                                                      (int)deriveKey.Payload.DerivationAlgorithm,
-                                                                     deriveKey.Payload.StartValue is not null && deriveKey.Payload.StartValue.Length > 0 ? Convert.FromBase64String(deriveKey.Payload.StartValue).ToList() : null,
-                                                                     deriveKey.Payload.StartValueKey,
+                                                                     deriveKey.Payload.Iv,
+                                                                     deriveKey.Payload.IvKey,
                                                                      ivKeySlot,
                                                                      (byte)deriveKey.Payload.Padding,
-                                                                     Convert.FromBase64String(deriveKey.Payload.InputData).ToList()), 
+                                                                     deriveKey.Payload.InputData), 
                                                 cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.DeriveKey() -> {result.CompletionCode}, {result.ErrorCode}");

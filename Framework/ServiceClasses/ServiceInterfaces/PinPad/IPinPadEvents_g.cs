@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.PinPad
     public interface IPinPadUnsolicitedEvents
     {
 
-        Task IllegalKeyAccessEvent(XFS4IoT.PinPad.Events.IllegalKeyAccessEvent.PayloadData Payload);
-
     }
 }

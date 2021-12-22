@@ -27,11 +27,11 @@ namespace XFS4IoT.Crypto.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, HashAlgorithmEnum? HashAlgorithm = null, string DigestInput = null)
+            public PayloadData(int Timeout, HashAlgorithmEnum? HashAlgorithm = null, List<byte> Data = null)
                 : base(Timeout)
             {
                 this.HashAlgorithm = HashAlgorithm;
-                this.DigestInput = DigestInput;
+                this.Data = Data;
             }
 
             public enum HashAlgorithmEnum
@@ -41,9 +41,9 @@ namespace XFS4IoT.Crypto.Commands
             }
 
             /// <summary>
-            /// Specifies which hash algorithm should be used to calculate the hash. 
-            /// See the [verifyAttributes](#common.capabilities.completion.properties.crypto.verifyattributes) capability for valid algorithms.
-            /// The following values are possible:
+            /// Specifies which hash algorithm should be used to calculate the hash. See the
+            /// [verifyAttributes](#common.capabilities.completion.properties.crypto.verifyattributes) capability for
+            /// valid algorithms. The following values are possible:
             /// 
             /// * ```sha1``` - The SHA-1 digest algorithm.
             /// * ```sha256``` - The SHA-256 digest algorithm, as defined in ISO/IEC 10118-3:2004 and FIPS 180-2.
@@ -52,10 +52,12 @@ namespace XFS4IoT.Crypto.Commands
             public HashAlgorithmEnum? HashAlgorithm { get; init; }
 
             /// <summary>
-            /// Contains Base64 encoded the length and the data to be hashed.
+            /// The data to be hashed.
+            /// <example>U2FtcGxlIERhdGE=</example>
             /// </summary>
-            [DataMember(Name = "digestInput")]
-            public string DigestInput { get; init; }
+            [DataMember(Name = "data")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
         }
     }

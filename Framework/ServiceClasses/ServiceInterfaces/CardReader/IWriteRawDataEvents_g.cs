@@ -22,7 +22,5 @@ namespace XFS4IoTFramework.CardReader
 
         Task InvalidMediaEvent();
 
-        Task InvalidTrackDataEvent(XFS4IoT.CardReader.Events.InvalidTrackDataEvent.PayloadData Payload);
-
     }
 }

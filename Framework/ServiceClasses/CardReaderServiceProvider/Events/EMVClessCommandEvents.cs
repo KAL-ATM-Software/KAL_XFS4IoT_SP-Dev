@@ -67,8 +67,7 @@ namespace XFS4IoTFramework.CardReader
                        ValueQualifier switch
                        {
                            ValueQualifierEnum.Amount => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.Amount,
-                           ValueQualifierEnum.Balance => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.Balance,
-                           _ => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.NotApplicable,
+                           _ => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.Balance,
                        },
                        Value,
                        CurrencyCode,

@@ -34,27 +34,27 @@ namespace XFS4IoT.KeyManagement.Completions
 
             public enum ErrorCodeEnum
             {
-                KeyNotFound,
                 AccessDenied,
-                InvalidId,
-                DuplicateKey,
+                KeyNotFound,
                 KeyNoValue,
+                AlgorithmNotSupported,
+                DuplicateKey,
                 UseViolation,
-                InvalidKeyLength,
-                AlgorithmNotSupported
+                InvalidKeyLength
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```keyNotFound``` - The specified key was not found.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
-            /// * ```invalidId``` - The ID passed was not valid.
-            /// * ```duplicateKey``` - A key exists with that name and cannot be overwritten.
-            /// * ```keyNoValue``` - The specified key is not loaded.
-            /// * ```useViolation``` - The specified use is not supported by this key.
-            /// * ```invalidKeyLength``` - The length of startValue is not supported or the length of an encryption key is not compatible 
-            /// with the encryption operation required.
-            /// * ```algorithmNotSupported``` - The specified algorithm is not supported.
+            /// 
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
+            /// * ```keyNotFound``` - The specified *keyGenKey* was not found.
+            /// * ```keyNoValue``` - The specified *keyGenKey* is not loaded.
+            /// * ```algorithmNotSupported``` - The specified *derivationAlgorithm* is not supported.
+            /// * ```duplicateKey``` - A *key* exists with that name and cannot be overwritten.
+            /// * ```useViolation``` - The specified *keyGenKey* usage does not support key derivation.
+            /// * ```invalidKeyLength``` - The length of *iv* is not supported or the length of an encryption key
+            /// is not compatible with the encryption operation required.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

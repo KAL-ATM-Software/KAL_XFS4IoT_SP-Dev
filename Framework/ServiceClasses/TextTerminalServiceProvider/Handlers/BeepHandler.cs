@@ -26,42 +26,23 @@ namespace XFS4IoTFramework.TextTerminal
             }
 
             BeepRequest.BeepActionEnum action = BeepRequest.BeepActionEnum.On;
-            if (beep.Payload.Beep.Continuous is not null &&
-                (bool)beep.Payload.Beep.Continuous)
+            if (beep.Payload.Beep.Continuous is not null)
             {
-                action = BeepRequest.BeepActionEnum.Continuous;
-            }
-            else if (beep.Payload.Beep.Off is not null &&
-                     (bool)beep.Payload.Beep.Off)
-            {
-                action = BeepRequest.BeepActionEnum.Off;
+                action = (bool)beep.Payload.Beep.Continuous ? BeepRequest.BeepActionEnum.Continuous : BeepRequest.BeepActionEnum.Off;
             }
 
             BeepRequest.BeepTypeEnum type = BeepRequest.BeepTypeEnum.None;
-            if (beep.Payload.Beep.KeyPress is not null &&
-                (bool)beep.Payload.Beep.KeyPress)
+            if (beep.Payload.Beep.BeepType is not null)
             {
-                type = BeepRequest.BeepTypeEnum.KeyPress;
-            }
-            else if (beep.Payload.Beep.Warning is not null &&
-                     (bool)beep.Payload.Beep.Warning)
-            {
-                type = BeepRequest.BeepTypeEnum.Warning;
-            }
-            else if (beep.Payload.Beep.Error is not null &&
-                     (bool)beep.Payload.Beep.Error)
-            {
-                type = BeepRequest.BeepTypeEnum.Error;
-            }
-            else if (beep.Payload.Beep.Exclamation is not null &&
-                     (bool)beep.Payload.Beep.Exclamation)
-            {
-                type = BeepRequest.BeepTypeEnum.Exclamation;
-            }
-            else if (beep.Payload.Beep.Critical is not null &&
-                    (bool)beep.Payload.Beep.Critical)
-            {
-                type = BeepRequest.BeepTypeEnum.Critical;
+                type = beep.Payload.Beep.BeepType switch
+                {
+                    BeepCommand.PayloadData.BeepClass.BeepTypeEnum.Critical => BeepRequest.BeepTypeEnum.Critical,
+                    BeepCommand.PayloadData.BeepClass.BeepTypeEnum.Error => BeepRequest.BeepTypeEnum.Error,
+                    BeepCommand.PayloadData.BeepClass.BeepTypeEnum.Exclamation => BeepRequest.BeepTypeEnum.Exclamation,
+                    BeepCommand.PayloadData.BeepClass.BeepTypeEnum.KeyPress => BeepRequest.BeepTypeEnum.KeyPress,
+                    BeepCommand.PayloadData.BeepClass.BeepTypeEnum.Warning => BeepRequest.BeepTypeEnum.Warning,
+                    _ => BeepRequest.BeepTypeEnum.None,
+                };
             }
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.BeepAsync()");

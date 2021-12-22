@@ -42,13 +42,13 @@ namespace XFS4IoT.CashManagement.Commands
             public RetractAreaEnum? RetractArea { get; init; }
 
             /// <summary>
-            /// If _retractArea_ is set to _retract_ this field defines the position inside the retract storage units into 
-            /// which the cash is to be retracted. _index_ starts with a value of one (1) for the first retract position 
+            /// If *retractArea* is set to *retract* this property defines the position inside the retract storage units into 
+            /// which the cash is to be retracted. *index* starts with a value of 1 for the first retract position 
             /// and increments by one for each subsequent position. If there are several retract storage units 
-            /// (of type _retractCassette_ in [Storage.GetStorage](#storage.getstorage)), _index_ would be incremented from the 
+            /// (of type *retractCassette* in [Storage.GetStorage](#storage.getstorage)), *index* would be incremented from the 
             /// first position of the first retract storage unit to the last position of the last retract storage unit. 
-            /// The maximum value of _index_ is the sum of _maximum_ of each retract storage unit. If _retractArea_ is not 
-            /// set to _retract_ the value of this field is ignored.
+            /// The maximum value of *index* is the sum of *maximum* of each retract storage unit. If *retractArea* is not 
+            /// set to *retract* the value of this property is ignored.
             /// </summary>
             [DataMember(Name = "index")]
             public int? Index { get; init; }

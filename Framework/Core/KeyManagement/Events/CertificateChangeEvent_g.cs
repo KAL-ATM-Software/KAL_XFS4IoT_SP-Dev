@@ -43,7 +43,8 @@ namespace XFS4IoT.KeyManagement.Events
             /// <summary>
             /// Specifies change of the certificate state inside of the KeyManagement.
             /// The following values are possible:
-            /// * ```secondary``` - The certificate state of the encryptor is now Secondary and Primary Certificates will no longer be accepted.
+            /// * ```secondary``` - The certificate state of the encryptor is now Secondary and Primary Certificates will
+            /// no longer be accepted.
             /// </summary>
             [DataMember(Name = "certificateChange")]
             public CertificateChangeEnum? CertificateChange { get; init; }

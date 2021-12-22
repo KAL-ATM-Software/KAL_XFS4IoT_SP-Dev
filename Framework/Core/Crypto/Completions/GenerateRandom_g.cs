@@ -26,7 +26,7 @@ namespace XFS4IoT.Crypto.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string RandomNumber = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> RandomNumber = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -35,23 +35,24 @@ namespace XFS4IoT.Crypto.Completions
 
             public enum ErrorCodeEnum
             {
-                ModeNotSupported,
                 AccessDenied
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```modeNotSupported``` - The mode specified by modeOfUse is not supported.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The generated random number.
+            /// The random number.
+            /// <example>VGhlIGdlbmVyYXRlZCBy ...</example>
             /// </summary>
             [DataMember(Name = "randomNumber")]
-            public string RandomNumber { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> RandomNumber { get; init; }
 
         }
     }

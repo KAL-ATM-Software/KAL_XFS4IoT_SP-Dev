@@ -39,8 +39,7 @@ namespace XFS4IoT.CashDispenser.Events
 
             /// <summary>
             /// List of currency and amount combinations for denomination requests or output. There will be one entry for 
-            /// each currency in the denomination. The property name is the ISO 4217 currency identifier. This list can be 
-            /// omitted on a request if _values_ specifies the entire request.
+            /// each currency in the denomination. This list can be omitted on a request if *values* specifies the entire request.
             /// </summary>
             [DataMember(Name = "currencies")]
             public Dictionary<string, double> Currencies { get; init; }

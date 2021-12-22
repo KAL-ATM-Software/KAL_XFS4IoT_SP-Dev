@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string DataToSign = null, SigningMethodEnum? Signers = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<byte> DataToSign = null, AuthenticationMethodEnum? Signers = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.DataToSign = DataToSign;
@@ -34,15 +34,17 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// The Base64 encoded data that must be signed by one of the authorities indicated by signers before the command referenced by 
-            /// execution command can be executed. If the command specified by execution command does not require authentication, 
-            /// then this property is omitted and the command result is success.
+            /// The data that must be authenticated by one of the authorities indicated by *methods* before the
+            /// *command* can be executed. If the *command* does not require authentication, this property is omitted
+            /// and the command result is success.
+            /// <example>QXV0aGVudGljYXRpb24g ...</example>
             /// </summary>
             [DataMember(Name = "dataToSign")]
-            public string DataToSign { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> DataToSign { get; init; }
 
             [DataMember(Name = "signers")]
-            public SigningMethodEnum? Signers { get; init; }
+            public AuthenticationMethodEnum? Signers { get; init; }
 
         }
     }

@@ -42,22 +42,24 @@ namespace XFS4IoT.CashManagement.Completions
                 ItemsTaken,
                 InvalidRetractPosition,
                 NotRetractArea,
-                ForeignItemsDetected
+                ForeignItemsDetected,
+                IncompleteRetract
             }
 
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a cash unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```noItems``` - There were no items to retract.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```shutterNotClosed``` - The shutter failed to close.
             /// * ```itemsTaken``` - Items were present at the output position at the start of the operation, but were 
             /// removed before the operation was complete - some or all of the items were not retracted.
-            /// * ```invalidRetractPosition``` - The _index_ is not supported.
-            /// * ```notRetractArea``` - The retract area specified in _retractArea_ is not supported.
+            /// * ```invalidRetractPosition``` - The *index* is not supported.
+            /// * ```notRetractArea``` - The retract area specified in *retractArea* is not supported.
             /// * ```foreignItemsDetected``` - Foreign items have been detected inside the input position.
+            /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by other error codes. The detail will be reported with the Dispenser.IncompleteRetractEvent.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

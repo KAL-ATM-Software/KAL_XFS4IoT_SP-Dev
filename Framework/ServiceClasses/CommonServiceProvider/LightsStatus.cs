@@ -82,7 +82,7 @@ namespace XFS4IoTFramework.Common
             /// * ```front``` -  The front position.
             /// * ```rear``` -  The rear position.
             /// </summary>
-            public PositionEnum Position { get; init; }
+            public PositionEnum Position { get; set; }
 
             /// <summary>
             /// The light flash rate as one of the following values:
@@ -92,7 +92,7 @@ namespace XFS4IoTFramework.Common
             /// * ```quick``` -  The light is flashing quickly.
             /// * ```continuous``` - The light is continuous (steady).
             /// </summary>
-            public FlashRateEnum FlashRate { get; init; }
+            public FlashRateEnum FlashRate { get; set; }
 
             /// <summary>
             /// The light color as one of the following values:
@@ -104,14 +104,14 @@ namespace XFS4IoTFramework.Common
             /// * ```magenta``` -  The light is magenta.
             /// * ```white``` - The light is white.
             /// </summary>
-            public ColourEnum Colour { get; init; }
+            public ColourEnum Colour { get; set; }
 
             /// <summary>
             /// The light direction as one of the following values:
             /// * ```entry``` -  The light is indicating entry.
             /// * ```exit``` -  The light is indicating exit.
             /// </summary>
-            public DirectionEnum Direction { get; init; }
+            public DirectionEnum Direction { get; set; }
         }
 
         /// <summary>

@@ -76,9 +76,9 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// Specifies the type of media as one of the following:
             /// 
-            /// * ```generic``` - The media is a generic media, i.e. a single sheet.
-            /// * ```passbook``` - The media is a passbook media.
-            /// * ```multipart``` - The media is a multi part media.
+            /// * ```generic``` - The media is generic, i.e. a single sheet.
+            /// * ```passbook``` - The media is a passbook.
+            /// * ```multipart``` - The media is a multi-part.
             /// </summary>
             [DataMember(Name = "mediaType")]
             public MediaTypeEnum? MediaType { get; init; }
@@ -106,6 +106,7 @@ namespace XFS4IoT.Printer.Completions
             /// the base unit *inch* means that the base horizontal resolution is 1/16th inch.
             /// </summary>
             [DataMember(Name = "unitX")]
+            [DataTypes(Minimum = 0)]
             public int? UnitX { get; init; }
 
             /// <summary>
@@ -113,30 +114,35 @@ namespace XFS4IoT.Printer.Completions
             /// value of 10 applied to the base unit *mm* means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")]
+            [DataTypes(Minimum = 0)]
             public int? UnitY { get; init; }
 
             /// <summary>
             /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "sizeWidth")]
+            [DataTypes(Minimum = 0)]
             public int? SizeWidth { get; init; }
 
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "sizeHeight")]
+            [DataTypes(Minimum = 0)]
             public int? SizeHeight { get; init; }
 
             /// <summary>
             /// Specifies the number of pages in a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "pageCount")]
+            [DataTypes(Minimum = 0)]
             public int? PageCount { get; init; }
 
             /// <summary>
             /// Specifies the number of lines on a page for a media of type *passbook*.
             /// </summary>
             [DataMember(Name = "lineCount")]
+            [DataTypes(Minimum = 0)]
             public int? LineCount { get; init; }
 
             /// <summary>
@@ -144,6 +150,7 @@ namespace XFS4IoT.Printer.Completions
             /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaX")]
+            [DataTypes(Minimum = 0)]
             public int? PrintAreaX { get; init; }
 
             /// <summary>
@@ -151,18 +158,21 @@ namespace XFS4IoT.Printer.Completions
             /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaY")]
+            [DataTypes(Minimum = 0)]
             public int? PrintAreaY { get; init; }
 
             /// <summary>
             /// Specifies the printable area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "printAreaWidth")]
+            [DataTypes(Minimum = 0)]
             public int? PrintAreaWidth { get; init; }
 
             /// <summary>
             /// Specifies the printable area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "printAreaHeight")]
+            [DataTypes(Minimum = 0)]
             public int? PrintAreaHeight { get; init; }
 
             /// <summary>
@@ -170,6 +180,7 @@ namespace XFS4IoT.Printer.Completions
             /// terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaX")]
+            [DataTypes(Minimum = 0)]
             public int? RestrictedAreaX { get; init; }
 
             /// <summary>
@@ -177,18 +188,21 @@ namespace XFS4IoT.Printer.Completions
             /// terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaY")]
+            [DataTypes(Minimum = 0)]
             public int? RestrictedAreaY { get; init; }
 
             /// <summary>
             /// Specifies the restricted area width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaWidth")]
+            [DataTypes(Minimum = 0)]
             public int? RestrictedAreaWidth { get; init; }
 
             /// <summary>
             /// Specifies the restricted area height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "restrictedAreaHeight")]
+            [DataTypes(Minimum = 0)]
             public int? RestrictedAreaHeight { get; init; }
 
             /// <summary>
@@ -196,6 +210,7 @@ namespace XFS4IoT.Printer.Completions
             /// *passbook*.
             /// </summary>
             [DataMember(Name = "stagger")]
+            [DataTypes(Minimum = 0)]
             public int? Stagger { get; init; }
 
             public enum FoldTypeEnum
@@ -216,8 +231,8 @@ namespace XFS4IoT.Printer.Completions
             public FoldTypeEnum? FoldType { get; init; }
 
             /// <summary>
-            /// Specifies the paper sources to use when printing forms using this media as a combination of the
-            /// following flags. If omitted, the Paper source is determined by the Service.
+            /// Specifies the paper sources to use when printing forms using this media. If omitted, the paper source
+            /// is determined by the Service.
             /// </summary>
             [DataMember(Name = "paperSources")]
             public PaperSourcesClass PaperSources { get; init; }

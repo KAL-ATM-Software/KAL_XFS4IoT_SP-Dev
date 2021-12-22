@@ -33,7 +33,7 @@ namespace XFS4IoT.Common.Completions
             }
 
             /// <summary>
-            /// A nonce that should be included in the authorisation token in a command used to provide 
+            /// A nonce that should be included in the Authorization Token in a command used to provide 
             /// end to end protection.
             /// 
             /// The nonce will be given as an integer string, or HEX (upper case.)

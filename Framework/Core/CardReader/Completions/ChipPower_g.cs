@@ -26,7 +26,7 @@ namespace XFS4IoT.CardReader.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipData = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> ChipData = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -58,9 +58,11 @@ namespace XFS4IoT.CardReader.Completions
 
             /// <summary>
             /// The Base64 encoded data received from the chip.
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> ChipData { get; init; }
 
         }
     }

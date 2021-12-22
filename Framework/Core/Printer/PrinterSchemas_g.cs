@@ -140,9 +140,8 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the state of paper supplies as one of the following values:
+        /// Specifies the state of paper supplies as one of the following values. Omitted if not applicable:
         /// 
-        /// * ```notSupported``` - Capability not supported by the device.
         /// * ```unknown``` - Status cannot be determined with device in its current state.
         /// * ```full``` - The paper supply is full.
         /// * ```low``` - The paper supply is low.
@@ -248,10 +247,11 @@ namespace XFS4IoT.Printer
             public StateEnum? State { get; init; }
 
             /// <summary>
-            /// The number of media retracted to this bin. This value is persistent; it may be reset to zero by the
+            /// The number of media retracted to this bin. This value is persistent; it may be reset to 0 by the
             /// [Printer.ResetCount](#printer.resetcount) command.
             /// </summary>
             [DataMember(Name = "count")]
+            [DataTypes(Minimum = 0)]
             public int? Count { get; init; }
 
         }
@@ -612,7 +612,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies whether the device can read data from media, as a combination of the following flags.
+        /// Specifies whether the device can read data from media.
         /// </summary>
         [DataMember(Name = "readForm")]
         public ReadFormClass ReadForm { get; init; }
@@ -676,7 +676,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies whether the device can write data to the media, as a combination of the following flags.
+        /// Specifies whether the device can write data to the media.
         /// </summary>
         [DataMember(Name = "writeForm")]
         public WriteFormClass WriteForm { get; init; }
@@ -705,7 +705,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies whether the device is able to measure the inserted media, as a combination of the following flags.
+        /// Specifies whether the device is able to measure the inserted media.
         /// </summary>
         [DataMember(Name = "extents")]
         public ExtentsClass Extents { get; init; }
@@ -838,7 +838,7 @@ namespace XFS4IoT.Printer
             public bool? Rotate180 { get; init; }
 
             /// <summary>
-            /// The Service Provider can clear buffered data.
+            /// The Service can clear buffered data.
             /// </summary>
             [DataMember(Name = "clearBuffer")]
             public bool? ClearBuffer { get; init; }
@@ -846,15 +846,17 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the manner in which media can be controlled, as a combination of the following flags.
+        /// Specifies the manner in which media can be controlled.
         /// </summary>
         [DataMember(Name = "control")]
         public ControlClass Control { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of media items that the stacker can hold (zero if not available).
+        /// Specifies the maximum number of media items that the stacker can hold. Omitted if not available.
+        /// <example>5</example>
         /// </summary>
         [DataMember(Name = "maxMediaOnStacker")]
+        [DataTypes(Minimum = 0)]
         public int? MaxMediaOnStacker { get; init; }
 
         /// <summary>
@@ -871,7 +873,7 @@ namespace XFS4IoT.Printer
         public bool? MultiPage { get; init; }
 
         /// <summary>
-        /// Specifies the paper sources available for this printer as a combination of the following flags.
+        /// Specifies the paper sources available for this printer.
         /// </summary>
         [DataMember(Name = "paperSources")]
         public PaperSourcesClass PaperSources { get; init; }
@@ -884,18 +886,21 @@ namespace XFS4IoT.Printer
         public bool? MediaTaken { get; init; }
 
         /// <summary>
-        /// Specifies the number of retract bins (zero if not supported).
+        /// Specifies the number of retract bins. Omitted if not available.
+        /// <example>1</example>
         /// </summary>
         [DataMember(Name = "retractBins")]
+        [DataTypes(Minimum = 0)]
         public int? RetractBins { get; init; }
 
         /// <summary>
         /// An array of the length [retractBins](#common.capabilities.completion.properties.printer.retractbins) with
         /// the maximum number of media items that each retract bin can hold (one count for each supported bin, starting
-        /// from zero for bin number one to retractBins - 1 for bin number retractBins). This will be omitted if there
+        /// from zero for bin number 1 to *retractBins* - 1 for bin number *retractBins*). This will be omitted if there
         /// are no retract bins.
         /// </summary>
         [DataMember(Name = "maxRetract")]
+        [DataTypes(Minimum = 0)]
         public List<int> MaxRetract { get; init; }
 
         [DataContract]
@@ -936,7 +941,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the image format supported by this device, as a combination of following flags.
+        /// Specifies the image format supported by this device.
         /// </summary>
         [DataMember(Name = "imageType")]
         public ImageTypeClass ImageType { get; init; }
@@ -973,7 +978,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the front image color formats supported by this device, as a combination of following flags.
+        /// Specifies the front image color formats supported by this device.
         /// </summary>
         [DataMember(Name = "frontImageColorFormat")]
         public FrontImageColorFormatClass FrontImageColorFormat { get; init; }
@@ -1010,7 +1015,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the back image color formats supported by this device, as a combination of following flags.
+        /// Specifies the back image color formats supported by this device.
         /// </summary>
         [DataMember(Name = "backImageColorFormat")]
         public BackImageColorFormatClass BackImageColorFormat { get; init; }
@@ -1046,7 +1051,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the code line (MICR data) formats supported by this device, as a combination of following flags.
+        /// Specifies the code line (MICR data) formats supported by this device.
         /// </summary>
         [DataMember(Name = "codelineFormat")]
         public CodelineFormatClass CodelineFormat { get; init; }
@@ -1082,8 +1087,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the source for the read image command supported by this device, as a combination of the following
-        /// flags.
+        /// Specifies the source for the read image command supported by this device.
         /// </summary>
         [DataMember(Name = "imageSource")]
         public ImageSourceClass ImageSource { get; init; }
@@ -1095,10 +1099,10 @@ namespace XFS4IoT.Printer
         public bool? DispensePaper { get; init; }
 
         /// <summary>
-        /// Specifies the name of the default logical operating system printer that is associated with this Service
-        /// Provider. Applications should use this printer name to generate native printer files to be printed through
+        /// Specifies the name of the default logical operating system printer that is associated with this Service.
+        /// Applications should use this printer name to generate native printer files to be printed through
         /// the [Printer.PrintNative](#printer.printnative) command. This value will be omitted if the Service
-        /// Provider does not support the *Printer.PrintNative* command.
+        /// does not support the *Printer.PrintNative* command.
         /// </summary>
         [DataMember(Name = "osPrinter")]
         public string OsPrinter { get; init; }
@@ -1114,7 +1118,7 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// Specifies the number of seconds before the device will automatically retract the presented media. If the
         /// command that generated the media is still active when the media is automatically retracted, the command will
-        /// complete with an error. If the device does not retract media automatically this value will be zero.
+        /// complete with an error. Omitted if the device does not retract media automatically.
         /// </summary>
         [DataMember(Name = "autoRetractPeriod")]
         public int? AutoRetractPeriod { get; init; }
@@ -1148,7 +1152,7 @@ namespace XFS4IoT.Printer
             public bool? High { get; init; }
 
             /// <summary>
-            /// The Service Provider or the device is capable of automatically determining whether low or high
+            /// The Service or the device is capable of automatically determining whether low or high
             /// coercivity magnetic stripe should be written.
             /// </summary>
             [DataMember(Name = "auto")]
@@ -1157,7 +1161,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the form write modes supported by this device, as a combination of the following flags.
+        /// Specifies the form write modes supported by this device.
         /// </summary>
         [DataMember(Name = "coercivityType")]
         public CoercivityTypeClass CoercivityType { get; init; }
@@ -1201,14 +1205,14 @@ namespace XFS4IoT.Printer
 
         /// <summary>
         /// Specifies how the passbook can be controlled with the [Printer.ControlPassbook](#printer.controlpassbook)
-        /// command, as a combination of the following flags.
+        /// command.
         /// </summary>
         [DataMember(Name = "controlPassbook")]
         public ControlPassbookClass ControlPassbook { get; init; }
 
         public enum PrintSidesEnum
         {
-            NotSupp,
+            NotSupported,
             Single,
             Dual
         }
@@ -1216,7 +1220,7 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// Specifies on which sides of the media this device can print as one of the following values.
         /// 
-        /// * ```notSupp``` - The device is not capable of printing on any sides of the media.
+        /// * ```notSupported``` - The device is not capable of printing on any sides of the media.
         /// * ```single``` - The device is capable of printing on one side of the media.
         /// * ```dual``` - The device is capable of printing on two sides of the media.
         /// </summary>

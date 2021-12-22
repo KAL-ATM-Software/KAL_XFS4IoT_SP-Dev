@@ -23,7 +23,8 @@ namespace XFS4IoTFramework.KeyManagement
     {
         private async Task<LoadCertificateCompletion.PayloadData> HandleLoadCertificate(ILoadCertificateEvents events, LoadCertificateCommand loadCertificate, CancellationToken cancel)
         {
-            if (string.IsNullOrEmpty(loadCertificate.Payload.CertificateData))
+            if (loadCertificate.Payload.CertificateData is null ||
+                loadCertificate.Payload.CertificateData.Count == 0)
             {
                 return new LoadCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                  $"No certificate data to be loaded specified.");
@@ -79,7 +80,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                                          LoadCertificateCommand.PayloadData.SignerEnum.Ca => ImportCertificateRequest.SignerEnum.CA,
                                                                                          _ => ImportCertificateRequest.SignerEnum.HL,
                                                                                      },
-                                                                                     Convert.FromBase64String(loadCertificate.Payload.CertificateData).ToList()),
+                                                                                     loadCertificate.Payload.CertificateData),
                                                         cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -93,7 +94,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                  ImportCertificateResult.RSAKeyCheckModeEnum.SHA256 => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.Sha256,
                                                                  _ => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.None,
                                                              },
-                                                             result.RSAData is not null && result.RSAData.Count > 0 ? Convert.ToBase64String(result.RSAData.ToArray()) : null);
+                                                             result.RSAData);
         }
     }
 }

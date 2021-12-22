@@ -46,9 +46,9 @@ namespace XFS4IoT.CashAcceptor.Commands
             public int? TellerID { get; init; }
 
             /// <summary>
-            /// Specifies whether or not the recycle cash units should be used when items are cashed in on a 
+            /// Specifies whether or not the recycle storage units should be used when items are cashed in on a 
             /// successful [CashAcceptor.CashInEnd](#cashacceptor.cashinend) command. This parameter will be ignored if 
-            /// there are no recycle cash units or the hardware does not support this.
+            /// there are no recycle storage units or the hardware does not support this.
             /// </summary>
             [DataMember(Name = "useRecycleUnits")]
             public bool? UseRecycleUnits { get; init; }
@@ -61,7 +61,7 @@ namespace XFS4IoT.CashAcceptor.Commands
 
             /// <summary>
             /// If set to a non-zero value, specifies a limit on the total number of items to be accepted during the cash-in
-            /// transaction. If set to a zero value, this limitation will not be performed. This limitation can only be used
+            /// transaction. If set to 0, there will be no limit on the number of items. This limitation can only be used
             /// if [byTotalItems](#common.capabilities.completion.properties.cashacceptor.cashinlimit.bytotalitems) is true.
             /// </summary>
             [DataMember(Name = "totalItemsLimit")]
@@ -78,11 +78,11 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// ISO 4217 currency.
+                /// ISO 4217 currency identifier [[Ref. cashmanagement-1](#ref-cashmanagement-1)].
                 /// <example>USD</example>
                 /// </summary>
                 [DataMember(Name = "currency")]
-                [DataTypes(Pattern = @"^[A-Z][A-Z][A-Z]$")]
+                [DataTypes(Pattern = @"^[A-Z]{3}$")]
                 public string Currency { get; init; }
 
                 /// <summary>

@@ -16,11 +16,5 @@ namespace XFS4IoTFramework.TextTerminal
     public interface ITextTerminalUnsolicitedEvents
     {
 
-        Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload);
-
-        Task FieldWarningEvent();
-
-        Task KeyEvent(XFS4IoT.TextTerminal.Events.KeyEvent.PayloadData Payload);
-
     }
 }

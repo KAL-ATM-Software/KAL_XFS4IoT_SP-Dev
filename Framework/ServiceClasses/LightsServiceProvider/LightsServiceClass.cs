@@ -58,6 +58,26 @@ namespace XFS4IoTServer
 
         #endregion
 
+        #region Common unsolicited events
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
+        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
+
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
+        #endregion
+
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "LightsDev.LightsStatus");

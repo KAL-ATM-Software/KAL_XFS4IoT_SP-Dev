@@ -17,11 +17,11 @@ namespace XFS4IoT.TextTerminal.Events
 
     [DataContract]
     [Event(Name = "TextTerminal.FieldWarningEvent")]
-    public sealed class FieldWarningEvent : UnsolicitedEvent<MessagePayloadBase>
+    public sealed class FieldWarningEvent : Event<MessagePayloadBase>
     {
 
-        public FieldWarningEvent()
-            : base()
+        public FieldWarningEvent(int RequestId)
+            : base(RequestId)
         { }
 
     }

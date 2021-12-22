@@ -43,15 +43,13 @@ namespace XFS4IoT.Keyboard.Commands
                 }
 
                 /// <summary>
-                /// Specifies that beeping should be enabled for active keys.
-                /// If this flag is not present then beeping is disabled for active keys.
+                /// Specifies whether beeping should be enabled for active keys.
                 /// </summary>
                 [DataMember(Name = "active")]
                 public bool? Active { get; init; }
 
                 /// <summary>
-                /// Specifies that beeping should be enabled for in-active keys.
-                /// If this flag is not present then beeping is disabled for in-active keys.
+                /// Specifies whether beeping should be enabled for inactive keys.
                 /// </summary>
                 [DataMember(Name = "inactive")]
                 public bool? Inactive { get; init; }
@@ -59,9 +57,9 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specifies whether automatic generation of key press beep tones should be activated for any active or 
-            /// in-active key subsequently pressed on the PIN. mode selectively turns beeping on and off for active, 
-            /// -active or both types of keys.
+            /// Specifies whether automatic generation of key press beep tones should be activated for any active or
+            /// inactive key subsequently pressed on the PIN. This selectively turns beeping on and off for active,
+            /// inactive or both types of keys.
             /// </summary>
             [DataMember(Name = "mode")]
             public ModeClass Mode { get; init; }

@@ -57,6 +57,7 @@ namespace XFS4IoT.Printer.Commands
             /// value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
             /// </summary>
             [DataMember(Name = "unitX")]
+            [DataTypes(Minimum = 0)]
             public int? UnitX { get; init; }
 
             /// <summary>
@@ -64,6 +65,7 @@ namespace XFS4IoT.Printer.Commands
             /// value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
             /// </summary>
             [DataMember(Name = "unitY")]
+            [DataTypes(Minimum = 0)]
             public int? UnitY { get; init; }
 
         }

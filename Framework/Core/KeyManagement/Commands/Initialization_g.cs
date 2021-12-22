@@ -36,7 +36,7 @@ namespace XFS4IoT.KeyManagement.Commands
             [DataContract]
             public sealed class AuthenticationClass
             {
-                public AuthenticationClass(SigningMethodEnum? Method = null, string Key = null, string Data = null)
+                public AuthenticationClass(AuthenticationMethodEnum? Method = null, string Key = null, List<byte> Data = null)
                 {
                     this.Method = Method;
                     this.Key = Key;
@@ -44,41 +44,66 @@ namespace XFS4IoT.KeyManagement.Commands
                 }
 
                 [DataMember(Name = "method")]
-                public SigningMethodEnum? Method { get; init; }
+                public AuthenticationMethodEnum? Method { get; init; }
 
                 /// <summary>
-                /// If the *signer* is cbcmac or mac are specified, then this _signatureKey_ property is the name of a key with the key usage of key attribute is M0 to M8.
-                /// If sigHost is specified for signer property, then this property signatureKey specifies the name of a previously loaded asymmetric key(i.e. an RSA Public Key).
-                /// The default Signature Issuer public key (installed in a secure environment during manufacture) will be used, 
-                /// if this signatureKey propery is omitted or contains the name of the default Signature Issuer as defined in the document [Default keys and securitry item loaded during manufacture](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity).
-                /// Otherwise, this property should be omitted.
+                /// If *method* is cbcmac or mac, then this is the name of a key which has a MAC key usage e.g.
+                /// M0.
+                /// 
+                /// If *method* is sigHost, then this specifies the name of a previously loaded asymmetric key (i.e. an RSA
+                /// Public Key).
+                /// 
+                /// If this contains the name of the
+                /// [default Signature Issuer](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity)
+                /// or if omitted, the default Signature Issuer public key (installed in a secure environment during
+                /// manufacture) will be used.
+                /// <example>Key01</example>
                 /// </summary>
                 [DataMember(Name = "key")]
                 public string Key { get; init; }
 
                 /// <summary>
-                /// This property contains the signed version of the base64 encoded data that was provided by the KeyManagement device during the previous call to the StartExchange command.
-                /// The signer specified by *signer* property is used to do the signing.
-                /// Both the signature and the data that was signed must be verified before the operation is performed.
-                /// If certHost, ca, or hl are specified for *signer* property, then _signedData_ is a PKCS #7 structure which includes the data that was returned by the StartAuthenticate command.
-                /// The optional CRL field may or may not be included in the PKCS #7 _signedData_ structure.
-                /// If the signer is certHostTr34, caTr34 or hlTr34, please refer to the X9 TR34-2012 [[Ref. 42](#ref-keymanagement-42)] for more details.
-                /// If sigHost is specified for the *signer* property specified, then s is a PKCS #7 structure which includes the data that was returned by the StartAuthenticate command.
-                /// If cmcmac or cmac are specified for the *signer* property specified, then _signatureKey_ must refer to a key loaded with the key usage of key attribute is M0 to M8.
+                /// This property contains the authenticated data (MAC, Signature) generated from the previous call to
+                /// either the KeyManagement device during the previous call to
+                /// [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate).
+                /// 
+                /// The authentication method specified by *method* is used to generate this data. Both this authentication
+                /// data and the data used to generate the authentication data must be verified before the operation is
+                /// performed.
+                /// 
+                /// If *certHost*, *ca*, or *hl* is specified in the *method* property, this contains a PKCS#7 signedData
+                /// structure which includes the data that was returned by
+                /// [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate). The optional CRL field may or may
+                /// not be included in the PKCS#7 signedData structure.
+                /// 
+                /// If *certHostTr34*, *caTr34* or *hlTr34* is specified in the *method* property, please refer to the X9
+                /// TR34-2019 [[Ref. keymanagement-9](#ref-keymanagement-9)] for more details.
+                /// 
+                /// If *sigHost* is specified in the *method* property, this is a PKCS#7 structure which includes the data
+                /// that was returned by the *KeyManagement.StartAuthenticate* command.
+                /// 
+                /// If *cmcmac* or *cmac* is specified in the *method* property, then *key* must refer to a key with a MAC
+                /// key usage key e.g. M0.
+                /// <example>QXV0aGVudGljYXRpb24g ...</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                public string Data { get; init; }
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
 
             }
 
             /// <summary>
-            /// This property can be used to add authentication to perform an authenticated action.
-            /// The [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command must be called before this property is used by the command required authenticated action. 
-            /// If this property set without first calling the [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command, then this command will fail and [sequenceError](#api.generalinformation.commandsequence.completioncodes) will be returned.
-            /// The [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command does not need to immediately precede the command with this property.
-            /// It is acceptable for other commands to be executed until this property is set since [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command is called, 
-            /// except for any command that will clear from the KeyManagement interface the data that is being saved in order to verify the signed data provided in the command with this property. 
-            /// If this occurs, then [sequenceError](#api.generalinformation.commandsequence.completioncodes) will be returned.
+            /// This property can be used to include authentication data if required by the command.
+            /// 
+            /// Additionally, if the command requires authentication:
+            /// 
+            /// * The [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command must be called before
+            ///   this command to.
+            /// * Commands which do not clear or modify the authentication data from the device may be executed between the
+            ///   *KeyManagement.StartAuthenticate* and *keyManagement.Authenticate* command requests.
+            /// * If prior to this command request, *KeyManagement.StartAuthenticate* is not called or a command clears the
+            ///   authentication data from the device,
+            ///   [sequenceError](#api.generalinformation.messagetypes.completionmessages.completioncodes) will be returned.
             /// </summary>
             [DataMember(Name = "authentication")]
             public AuthenticationClass Authentication { get; init; }

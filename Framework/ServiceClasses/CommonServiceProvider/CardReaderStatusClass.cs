@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.Common
         public enum SecurityEnum
         {
             NotSupported,
-            Ready,
+            NotReady,
             Open
         }
 

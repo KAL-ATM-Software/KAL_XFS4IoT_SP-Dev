@@ -29,13 +29,6 @@ namespace XFS4IoTFramework.KeyManagement
                                                                     $"No key name specified.");
             }
 
-            if (!KeyManagement.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RSAKeyPair))
-            {
-                return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"The device doesn't support to RSA signature scheme.",
-                                                                    GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum.KeyGenerationError);
-            }
-
             // Check key attributes supported
             List<string> keyUsages = new() { "S0", "S1", "S2" };
             for (int i = 0; i < 100; i++)

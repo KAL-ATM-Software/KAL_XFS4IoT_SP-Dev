@@ -34,15 +34,13 @@ namespace XFS4IoT.Auxiliaries.Completions
 
             public enum ErrorCodeEnum
             {
-                InvalidAuxiliary,
-                SyntaxError
+                InvalidAuxiliary
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```invalidAuxiliary``` - An attempt to register for or disable events to a auxiliary was invalid because the auxiliary does not exist.
-            /// * ```syntaxError``` - The command was invoked with incorrect input data. E.g. an attempt to both register and disable events to the same auxiliary was made.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

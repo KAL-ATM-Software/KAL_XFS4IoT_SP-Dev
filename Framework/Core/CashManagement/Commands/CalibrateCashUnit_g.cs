@@ -45,7 +45,7 @@ namespace XFS4IoT.CashManagement.Commands
 
             /// <summary>
             /// The number of bills to be dispensed during the calibration process. If not specified or 0, the 
-            /// service may decide how many bills are required. This may also be ignored if the device always dispenses a 
+            /// Service may decide how many bills are required. This may also be ignored if the device always dispenses a 
             /// default number of bills.
             /// <example>40</example>
             /// </summary>

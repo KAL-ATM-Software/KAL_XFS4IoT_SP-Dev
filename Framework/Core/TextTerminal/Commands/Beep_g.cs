@@ -36,63 +36,44 @@ namespace XFS4IoT.TextTerminal.Commands
             [DataContract]
             public sealed class BeepClass
             {
-                public BeepClass(bool? Off = null, bool? KeyPress = null, bool? Exclamation = null, bool? Warning = null, bool? Error = null, bool? Critical = null, bool? Continuous = null)
+                public BeepClass(bool? Continuous = null, BeepTypeEnum? BeepType = null)
                 {
-                    this.Off = Off;
-                    this.KeyPress = KeyPress;
-                    this.Exclamation = Exclamation;
-                    this.Warning = Warning;
-                    this.Error = Error;
-                    this.Critical = Critical;
                     this.Continuous = Continuous;
+                    this.BeepType = BeepType;
                 }
 
                 /// <summary>
-                /// The beeper is turned off.
-                /// </summary>
-                [DataMember(Name = "off")]
-                public bool? Off { get; init; }
-
-                /// <summary>
-                /// The beeper sounds a key click signal.
-                /// </summary>
-                [DataMember(Name = "keyPress")]
-                public bool? KeyPress { get; init; }
-
-                /// <summary>
-                /// The beeper sounds an exclamation signal.
-                /// </summary>
-                [DataMember(Name = "exclamation")]
-                public bool? Exclamation { get; init; }
-
-                /// <summary>
-                /// The beeper sounds a warning signal.
-                /// </summary>
-                [DataMember(Name = "warning")]
-                public bool? Warning { get; init; }
-
-                /// <summary>
-                /// The beeper sounds a error signal.
-                /// </summary>
-                [DataMember(Name = "error")]
-                public bool? Error { get; init; }
-
-                /// <summary>
-                /// The beeper sounds a critical error signal.
-                /// </summary>
-                [DataMember(Name = "critical")]
-                public bool? Critical { get; init; }
-
-                /// <summary>
-                /// The beeper sound is turned on continuously.
+                /// Specifies whether the beep is continuous.
                 /// </summary>
                 [DataMember(Name = "continuous")]
                 public bool? Continuous { get; init; }
 
+                public enum BeepTypeEnum
+                {
+                    KeyPress,
+                    Exclamation,
+                    Warning,
+                    Error,
+                    Critical
+                }
+
+                /// <summary>
+                /// Specifies the type of beep as one of the following:
+                /// 
+                /// * ```keyPress``` - The beeper sounds a key click signal.
+                /// * ```exclamation``` - The beeper sounds an exclamation signal.
+                /// * ```warning``` - The beeper sounds a warning signal.
+                /// * ```error``` - The beeper sounds an error signal.
+                /// * ```critical``` - The beeper sounds a critical signal.
+                /// </summary>
+                [DataMember(Name = "beepType")]
+                public BeepTypeEnum? BeepType { get; init; }
+
             }
 
             /// <summary>
-            /// Specifies whether the beeper should be turned on or off.
+            /// Specifies whether the beeper should be turned on or off. If omitted, the beeper is switched off,
+            /// otherwise the beep is specified as follows.
             /// </summary>
             [DataMember(Name = "beep")]
             public BeepClass Beep { get; init; }

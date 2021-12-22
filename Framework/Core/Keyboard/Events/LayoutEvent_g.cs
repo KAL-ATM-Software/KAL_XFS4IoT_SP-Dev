@@ -38,19 +38,34 @@ namespace XFS4IoT.Keyboard.Events
             }
 
             /// <summary>
-            /// The layout for the DataEntry command.
+            /// The layout for the [Keyboard.DataEntry](#keyboard.dataentry) command.
+            /// 
+            /// There can be one or more frames included.
+            /// 
+            /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+            /// see the diagram for an example.
             /// </summary>
             [DataMember(Name = "data")]
             public List<LayoutFrameClass> Data { get; init; }
 
             /// <summary>
-            /// The layout for the PinEntry command.
+            /// The layout for the [Keyboard.PinEntry](#keyboard.pinentry) command.
+            /// 
+            /// There can be one or more frames included.
+            /// 
+            /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+            /// see the diagram for an example.
             /// </summary>
             [DataMember(Name = "pin")]
             public List<LayoutFrameClass> Pin { get; init; }
 
             /// <summary>
-            /// The layout for the SecureKeyEntry command.
+            /// The layout for the [Keyboard.SecureKeyEntry](#keyboard.securekeyentry) command.
+            /// 
+            /// There can be one or more frames included.
+            /// 
+            /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+            /// see the diagram for an example.
             /// </summary>
             [DataMember(Name = "secure")]
             public List<LayoutFrameClass> Secure { get; init; }

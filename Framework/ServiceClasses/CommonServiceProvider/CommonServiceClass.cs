@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
@@ -130,6 +131,80 @@ namespace XFS4IoTServer
         /// Stores printer status
         /// </summary>
         public PrinterStatusClass PrinterStatus { get; set; } = null;
+
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => StatusChangedEvent(new StatusChangedEvent.PayloadData(Device: Device switch
+                                       {
+                                           CommonStatusClass.DeviceEnum.DeviceBusy => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.DeviceBusy,
+                                           CommonStatusClass.DeviceEnum.FraudAttempt => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.FraudAttempt,
+                                           CommonStatusClass.DeviceEnum.HardwareError => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.HardwareError,
+                                           CommonStatusClass.DeviceEnum.NoDevice => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.NoDevice,
+                                           CommonStatusClass.DeviceEnum.Offline => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.Offline,
+                                           CommonStatusClass.DeviceEnum.Online => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.Online,
+                                           CommonStatusClass.DeviceEnum.PotentialFraud => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.PotentialFraud,
+                                           CommonStatusClass.DeviceEnum.PowerOff => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.PowerOff,
+                                           CommonStatusClass.DeviceEnum.UserError => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.DeviceEnum.UserError,
+                                           _ => null,
+                                       },
+                                       DevicePosition: Position switch
+                                       {
+                                           CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
+                                           CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
+                                           CommonStatusClass.PositionStatusEnum.Unknown => XFS4IoT.Common.PositionStatusEnum.Unknown,
+                                           _ => null,
+                                       },
+                                       PowerSaveRecoveryTime: PowerSaveRecoveryTime,
+                                       AntiFraudModule: AntiFraudModule switch
+                                       {
+                                           CommonStatusClass.AntiFraudModuleEnum.DeviceDetected => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.AntiFraudModuleEnum.DeviceDetected,
+                                           CommonStatusClass.AntiFraudModuleEnum.Inoperable => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.AntiFraudModuleEnum.Inoperable,
+                                           CommonStatusClass.AntiFraudModuleEnum.Ok => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.AntiFraudModuleEnum.Ok,
+                                           CommonStatusClass.AntiFraudModuleEnum.Unknown => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.AntiFraudModuleEnum.Unknown,
+                                           _ => null,
+                                       },
+                                       Exchange: Exchange switch
+                                       {
+                                           CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
+                                           CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
+                                           CommonStatusClass.ExchangeEnum.NotSupported => XFS4IoT.Common.ExchangeEnum.NotSupported,
+                                           _ => null,
+                                       },
+                                       EndToEndSecurity: EndToEndSecurity switch
+                                       {
+                                           CommonStatusClass.EndToEndSecurityEnum.Enforced => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.EndToEndSecurityEnum.Enforced,
+                                           CommonStatusClass.EndToEndSecurityEnum.NotConfigured => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.EndToEndSecurityEnum.NotConfigured,
+                                           CommonStatusClass.EndToEndSecurityEnum.NotEnforced => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.EndToEndSecurityEnum.NotEnforced,
+                                           CommonStatusClass.EndToEndSecurityEnum.NotSupported => XFS4IoT.Common.Events.StatusChangedEvent.PayloadData.EndToEndSecurityEnum.NotSupported,
+                                           _ => null,
+                                       }));
+
+
+        public Task NonceClearedEvent(string ReasonDescription) => NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
+
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => ErrorEvent(new ErrorEvent.PayloadData(EventId: EventId switch
+                               {
+                                   CommonStatusClass.ErrorEventIdEnum.FraudAttempt => XFS4IoT.Common.Events.ErrorEvent.PayloadData.EventIdEnum.FraudAttempt,
+                                   CommonStatusClass.ErrorEventIdEnum.Hardware => XFS4IoT.Common.Events.ErrorEvent.PayloadData.EventIdEnum.Hardware,
+                                   CommonStatusClass.ErrorEventIdEnum.Software => XFS4IoT.Common.Events.ErrorEvent.PayloadData.EventIdEnum.Software,
+                                   _ => XFS4IoT.Common.Events.ErrorEvent.PayloadData.EventIdEnum.User,
+                               },
+                               Action: Action switch
+                               {
+                                   CommonStatusClass.ErrorActionEnum.Clear => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.Clear,
+                                   CommonStatusClass.ErrorActionEnum.Configuration => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.Configuration,
+                                   CommonStatusClass.ErrorActionEnum.Maintenance => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.Maintenance,
+                                   CommonStatusClass.ErrorActionEnum.Reset => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.Reset,
+                                   CommonStatusClass.ErrorActionEnum.SoftwareError => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.SoftwareError,
+                                   _ => XFS4IoT.Common.Events.ErrorEvent.PayloadData.ActionEnum.Suspend,
+                               },
+                               VendorDescription: VendorDescription));
+
 
         #endregion
 

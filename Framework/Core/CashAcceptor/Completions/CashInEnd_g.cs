@@ -44,9 +44,9 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a cash unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```noItems``` - There were no items to cash-in.
             /// * ```exchangeActive``` - The device is in an exchange state.
@@ -59,7 +59,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// List of storage units that have taken items and the type of items they have taken during the current 
+            /// List of storage units that have taken items, and the type of items they have taken, during the current 
             /// transaction. This only contains data related to the current transaction.
             /// </summary>
             [DataMember(Name = "storage")]

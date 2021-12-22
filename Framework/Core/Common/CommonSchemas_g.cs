@@ -31,7 +31,7 @@ namespace XFS4IoT.Common
         UnsupportedData,
         FraudAttempt,
         SequenceError,
-        AuthorisationRequired,
+        AuthorizationRequired,
         NoCommandNonce,
         InvalidToken,
         InvalidTokenNonce,
@@ -81,14 +81,15 @@ namespace XFS4IoT.Common
             UserError,
             DeviceBusy,
             FraudAttempt,
-            PotentialFraud
+            PotentialFraud,
+            Starting
         }
 
         /// <summary>
         /// Specifies the state of the device. Following values are possible:
         /// 
         /// * ```online``` - The device is online. This is returned when the device is present and operational.
-        /// * ```offline``` - The device is offline (e.g. the operator has taken the device offline by turning a switch).
+        /// * ```offline``` - The device is offline (e.g., the operator has taken the device offline by turning a switch or breaking an interlock).
         /// * ```powerOff``` - The device is powered off or physically not connected.
         /// * ```noDevice``` - The device is not intended to be there, e.g. this type of self service machine does not contain such a device or it is internally not configured.
         /// * ```hardwareError``` - The device is inoperable due to a hardware error.
@@ -96,6 +97,10 @@ namespace XFS4IoT.Common
         /// * ```deviceBusy``` - The device is busy and unable to process a command at this time.
         /// * ```fraudAttempt``` - The device is present but is inoperable because it has detected a fraud attempt.
         /// * ```potentialFraud``` - The device has detected a potential fraud attempt and is capable of remaining in service. In this case the application should make the decision as to whether to take the device offline.
+        /// * ```starting``` - The device is starting and performing whatever initialization is necessary. This can be
+        /// reported after the connection is made but before the device is ready to accept commands. This must only be a
+        /// temporary state, the Service must report a different state as soon as possible. If an error causes
+        /// initialization to fail then the state should change to *hardwareError*.
         /// </summary>
         [DataMember(Name = "device")]
         public DeviceEnum? Device { get; init; }
@@ -112,7 +117,7 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies the actual number of seconds required by the device to resume its normal operational state from
-        /// the current power saving mode. This value is zero if either the power saving mode has not been activated or
+        /// the current power saving mode. This value is 0 if either the power saving mode has not been activated or
         /// no power save control is supported.
         /// </summary>
         [DataMember(Name = "powerSaveRecoveryTime")]
@@ -120,7 +125,6 @@ namespace XFS4IoT.Common
 
         public enum AntiFraudModuleEnum
         {
-            NotSupported,
             Ok,
             Inoperable,
             DeviceDetected,
@@ -128,9 +132,8 @@ namespace XFS4IoT.Common
         }
 
         /// <summary>
-        /// Specifies the state of the anti-fraud module. Following values are possible:
+        /// Specifies the state of the anti-fraud module if available. Following values are possible:
         /// 
-        /// * ```notSupported``` - No anti-fraud module is available.
         /// * ```ok``` - Anti-fraud module is in a good state and no foreign device is detected.
         /// * ```inoperable``` - Anti-fraud module is inoperable.
         /// * ```deviceDetected``` - Anti-fraud module detected the presence of a foreign device.
@@ -196,7 +199,6 @@ namespace XFS4IoT.Common
             Keyboard,
             TextTerminal,
             Printer,
-            CardEmbosser,
             BarcodeReader,
             Camera,
             Lights,
@@ -220,7 +222,6 @@ namespace XFS4IoT.Common
         /// * ```Keyboard``` - Keyboard interface.
         /// * ```TextTerminal``` - TextTerminal interface.
         /// * ```Printer``` - Printer interface.
-        /// * ```CardEmbosser``` - CardEmbosser interface.
         /// * ```BarcodeReader``` - BarcodeReader interface.
         /// * ```Lights``` - Lights interface.
         /// * ```Auxiliaries``` - Auxiliaries interface.
@@ -241,7 +242,7 @@ namespace XFS4IoT.Common
 
             /// <summary>
             /// The versions of the command supported by the service. There will be one item for each major version
-            /// supported. The minor version number qualifies the exact version of the message the service supports. 
+            /// supported. The minor version number qualifies the exact version of the message the service supports.
             /// <example>["1.3", "2.1", "3.0"]</example>
             /// </summary>
             [DataMember(Name = "versions")]
@@ -283,10 +284,11 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies the maximum number of requests which can be queued by the Service. This will be omitted if not reported.
-        /// This will be zero if the maximum number of requests is unlimited.
+        /// This will be 0 if the maximum number of requests is unlimited.
         /// 
         /// </summary>
         [DataMember(Name = "maximumRequests")]
+        [DataTypes(Minimum = 0)]
         public int? MaximumRequests { get; init; }
 
     }
@@ -304,18 +306,21 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies the firmware name. The property is omitted, if the firmware name is unknown.
+        /// <example>Acme Firmware</example>
         /// </summary>
         [DataMember(Name = "firmwareName")]
         public string FirmwareName { get; init; }
 
         /// <summary>
         /// Specifies the firmware version. The property is omitted, if the firmware version is unknown.
+        /// <example>1.0.1.2</example>
         /// </summary>
         [DataMember(Name = "firmwareVersion")]
         public string FirmwareVersion { get; init; }
 
         /// <summary>
         /// Specifies the hardware revision. The property is omitted, if the hardware revision is unknown.
+        /// <example>4.3.0.5</example>
         /// </summary>
         [DataMember(Name = "hardwareRevision")]
         public string HardwareRevision { get; init; }
@@ -334,12 +339,14 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies the software name. The property is omitted, if the software name is unknown.
+        /// <example>Acme Software Name</example>
         /// </summary>
         [DataMember(Name = "softwareName")]
         public string SoftwareName { get; init; }
 
         /// <summary>
         /// Specifies the software version. The property is omitted, if the software version is unknown.
+        /// <example>1.3.0.2</example>
         /// </summary>
         [DataMember(Name = "softwareVersion")]
         public string SoftwareVersion { get; init; }
@@ -362,24 +369,28 @@ namespace XFS4IoT.Common
 
         /// <summary>
         /// Specifies the device model name. The property is omitted, if the device model name is unknown.
+        /// <example>AcmeModel42</example>
         /// </summary>
         [DataMember(Name = "modelName")]
         public string ModelName { get; init; }
 
         /// <summary>
         /// Specifies the unique serial number of the device. The property is omitted, if the serial number is unknown.
+        /// <example>1.0.12.05</example>
         /// </summary>
         [DataMember(Name = "serialNumber")]
         public string SerialNumber { get; init; }
 
         /// <summary>
         /// Specifies the device revision number. The property is omitted, if the device revision number is unknown.
+        /// <example>1.2.3</example>
         /// </summary>
         [DataMember(Name = "revisionNumber")]
         public string RevisionNumber { get; init; }
 
         /// <summary>
         /// Contains a description of the device. The property is omitted, if the model description is unknown.
+        /// <example>Acme Dispenser Model 3</example>
         /// </summary>
         [DataMember(Name = "modelDescription")]
         public string ModelDescription { get; init; }
@@ -428,7 +439,7 @@ namespace XFS4IoT.Common
         ///   security details will lead to errors. If E2E security is not correctly configured, for example because 
         ///   the required keys are not loaded, all secured commands will fail with an error.
         /// 
-        /// If end to end security is not supported this value will not be present. 
+        /// If end to end security is not supported this value will not be present.
         /// <example>always</example>
         /// </summary>
         [DataMember(Name = "required")]
@@ -474,8 +485,8 @@ namespace XFS4IoT.Common
         /// 
         /// Note that this only includes commands that _require_ a token. Commands that take a nonce and _return_ a 
         /// token will not be listed here. Those commands can be called without a nonce and will continue to operate 
-        /// in a compatible way. 
-        /// <example>["CashDispenser.Dispense", "AnotherService.SecureCommand"]</example>
+        /// in a compatible way.
+        /// <example>["CashDispenser.Dispense"]</example>
         /// </summary>
         [DataMember(Name = "commands")]
         [DataTypes(Pattern = @"^[A-Za-z][A-Za-z0-9]*\.[A-Za-z][A-Za-z0-9]*$")]
@@ -497,7 +508,7 @@ namespace XFS4IoT.Common
         /// 
         /// In all other cases, commandNonceTimeout will have a value of zero. Any command nonce will never 
         /// timeout. It may still become invalid, for example because of a power failure or when explicitly cleared 
-        /// using the ClearCommandNonce command. 
+        /// using the ClearCommandNonce command.
         /// <example>3600</example>
         /// </summary>
         [DataMember(Name = "commandNonceTimeout")]
@@ -510,18 +521,18 @@ namespace XFS4IoT.Common
     [DataContract]
     public sealed class CapabilityPropertiesClass
     {
-        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, List<string> SynchronizableCommands = null, EndToEndSecurityClass EndToEndSecurity = null)
+        public CapabilityPropertiesClass(string ServiceVersion = null, List<DeviceInformationClass> DeviceInformation = null, bool? PowerSaveControl = null, bool? AntiFraudModule = null, EndToEndSecurityClass EndToEndSecurity = null)
         {
             this.ServiceVersion = ServiceVersion;
             this.DeviceInformation = DeviceInformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
-            this.SynchronizableCommands = SynchronizableCommands;
             this.EndToEndSecurity = EndToEndSecurity;
         }
 
         /// <summary>
         /// Specifies the Service Version.
+        /// <example>1.3.42</example>
         /// </summary>
         [DataMember(Name = "serviceVersion")]
         public string ServiceVersion { get; init; }
@@ -546,18 +557,12 @@ namespace XFS4IoT.Common
         public bool? AntiFraudModule { get; init; }
 
         /// <summary>
-        /// List of commands that support synchronization.
-        /// </summary>
-        [DataMember(Name = "synchronizableCommands")]
-        public List<string> SynchronizableCommands { get; init; }
-
-        /// <summary>
         /// If this value is present then end to end security is supported. The sub-properties detail exactly 
         /// how it is supported and what level of support is enabled. Also see
         /// [common.StatusProperties.endToEndSecurity](#common.status.completion.properties.common.endtoendsecurity) for the current 
         /// status of end to end security, such as if it is being enforced, or if configuration is required. 
         /// 
-        /// If this value is not present then end to end security is not supported by this service. 
+        /// If this value is not present then end to end security is not supported by this service.
         /// </summary>
         [DataMember(Name = "endToEndSecurity")]
         public EndToEndSecurityClass EndToEndSecurity { get; init; }

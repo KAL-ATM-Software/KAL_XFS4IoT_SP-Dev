@@ -23,7 +23,7 @@ namespace XFS4IoTFramework.CardReader
                 {
                     ResetCommand.PayloadData.ToEnum.Exit => ResetDeviceRequest.ToEnum.Exit,
                     ResetCommand.PayloadData.ToEnum.Retain => ResetDeviceRequest.ToEnum.Retain,
-                    ResetCommand.PayloadData.ToEnum.Transport => ResetDeviceRequest.ToEnum.currentPosition,
+                    ResetCommand.PayloadData.ToEnum.CurrentPosition => ResetDeviceRequest.ToEnum.CurrentPosition,
                     _ => ResetDeviceRequest.ToEnum.Default
                 };
             }
@@ -31,7 +31,7 @@ namespace XFS4IoTFramework.CardReader
             if (CardReader.CardReaderCapabilities.Type != Common.CardReaderCapabilitiesClass.DeviceTypeEnum.Motor)
             {
                 if (to != ResetDeviceRequest.ToEnum.Default &&
-                    to != ResetDeviceRequest.ToEnum.currentPosition)
+                    to != ResetDeviceRequest.ToEnum.CurrentPosition)
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {CardReader.CardReaderCapabilities.Type} To:{reset.Payload.To}");

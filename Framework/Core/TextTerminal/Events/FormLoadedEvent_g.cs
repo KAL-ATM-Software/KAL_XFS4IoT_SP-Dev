@@ -37,6 +37,7 @@ namespace XFS4IoT.TextTerminal.Events
 
             /// <summary>
             /// Specifies the name of the form just loaded.
+            /// <example>Form 1</example>
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; init; }

@@ -121,7 +121,7 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// Specifies whether allthe left Cabinet Doors should be bolted or unbolted as one of the following values:
+            /// Specifies whether all the left Cabinet Doors should be bolted or unbolted as one of the following values:
             /// 
             /// * ```bolt``` - All left Cabinet Doors are bolted.
             /// * ```unbolt``` - All left Cabinet Doors are unbolted.

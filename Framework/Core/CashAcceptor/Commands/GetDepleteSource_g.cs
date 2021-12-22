@@ -34,7 +34,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) which would be used as the target of the depletion operation.
             /// <example>unit2</example>
             /// </summary>

@@ -33,36 +33,24 @@ namespace XFS4IoTFramework.Common
                 NotSupported
             }
 
-            public enum JammedShutterPositionEnum
-            {
-                NotSupported,
-                NotJammed,
-                Open,
-                PartiallyOpen,
-                Closed,
-                Unknown
-            }
-
             public enum TransportStatusEnum
             {
                 Empty,
                 NotEmpty,
                 NotEmptyCustomer,
-                NotEmptyUnknown,
+                Unknown,
                 NotSupported
             }
 
             public PositionStatusClass(CashManagementStatusClass.ShutterEnum Shutter, 
                                        PositionStatusEnum PositionStatus, 
                                        TransportEnum Transport, 
-                                       TransportStatusEnum TransportStatus, 
-                                       JammedShutterPositionEnum JammedShutterPosition)
+                                       TransportStatusEnum TransportStatus)
             {
                 this.Shutter = Shutter;
                 this.PositionStatus = PositionStatus;
                 this.Transport = Transport;
                 this.TransportStatus = TransportStatus;
-                this.JammedShutterPosition = JammedShutterPosition;
             }
 
             public PositionStatusClass()
@@ -71,7 +59,6 @@ namespace XFS4IoTFramework.Common
                 PositionStatus = PositionStatusEnum.Unknown;
                 Transport = TransportEnum.Unknown;
                 TransportStatus = TransportStatusEnum.NotSupported;
-                JammedShutterPosition = JammedShutterPositionEnum.Unknown;
             }
 
             /// <summary>
@@ -120,19 +107,6 @@ namespace XFS4IoTFramework.Common
             /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
             /// </summary>
             public TransportStatusEnum TransportStatus { get; set; }
-
-            /// <summary>
-            /// Returns information regarding the position of the jammed shutter.
-            /// Following values are possible:
-            /// 
-            /// * ```notSupported``` - The physical device has no shutter or the reporting of the position of a jammed shutter is not supported.
-            /// * ```notJammed``` - The shutter is not jammed.
-            /// * ```open``` - The shutter is jammed, but fully open.
-            /// * ```partiallyOpen``` - The shutter is jammed, but partially open.
-            /// * ```closed``` - The shutter is jammed, but fully closed.
-            /// * ```unknown``` - The position of the shutter is unknown.
-            /// </summary>
-            public JammedShutterPositionEnum JammedShutterPosition { get; set; }
 
         }
 

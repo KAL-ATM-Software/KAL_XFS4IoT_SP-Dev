@@ -34,7 +34,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// The name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) which would be used as the source of the replenishment operation.
             /// <example>unit2</example>
             /// </summary>

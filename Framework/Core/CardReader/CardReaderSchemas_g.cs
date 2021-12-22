@@ -45,7 +45,7 @@ namespace XFS4IoT.CardReader
         /// * ```notSupported``` - Capability to report media position is not supported by the device (e.g. a typical
         ///   swipe reader or contactless chip card reader).
         /// * ```unknown``` - The media state cannot be determined with the device in its current state (e.g. the value
-        ///   of device is *noDevice*, *powerOff*, *offline* or *hardwareError*.
+        ///   of [device](#common.status.completion.properties.common.device) is *noDevice*, *powerOff*, *offline* or *hardwareError*.
         /// * ```present``` - Media is present in the device, not in the entering position and not jammed. On the
         ///   latched dip device, this indicates that the card is present in the device and the card is unlatched.
         /// * ```notPresent``` - Media is not present in the device and not at the entering position.
@@ -60,7 +60,7 @@ namespace XFS4IoT.CardReader
         public enum SecurityEnum
         {
             NotSupported,
-            Ready,
+            NotReady,
             Open
         }
 
@@ -69,7 +69,7 @@ namespace XFS4IoT.CardReader
         /// 
         /// * ```notSupported``` - No security module is available.
         /// * ```notReady``` - The security module is not ready to process cards or is inoperable.
-        /// * ```notPresent``` - The security module is open and ready to process cards.
+        /// * ```open``` - The security module is open and ready to process cards.
         /// </summary>
         [DataMember(Name = "security")]
         public SecurityEnum? Security { get; init; }
@@ -96,7 +96,7 @@ namespace XFS4IoT.CardReader
         /// * ```unknown``` - The state of the chip cannot be determined with the device in its current state.
         /// * ```online``` - The chip is present, powered on and online (i.e. operational, not busy processing a request
         ///   and not in an error state).
-        /// * ```busy``` - The chip is present, powered on, and busy (unable to process an Execute command at this time).
+        /// * ```busy``` - The chip is present, powered on, and busy (unable to process a command at this time).
         /// * ```poweredOff``` - The chip is present, but powered off (i.e. not contacted).
         /// * ```noDevice``` - A card is currently present in the device, but has no chip.
         /// * ```hardwareError``` - The chip is present, but inoperable due to a hardware error that prevents it from
@@ -231,7 +231,7 @@ namespace XFS4IoT.CardReader
         /// * ```contactless``` - The ID card unit is a contactless card unit, i.e. no insertion of the card is required.
         /// * ```intelligentContactless``` - The ID card unit is an intelligent contactless card unit, i.e. no insertion
         ///   of the card is required and the card unit has built-in EMV or smart card application functionality that
-        ///   adheres to the EMVCo Contactless Specifications or individual payment system's specifications. The ID card
+        ///   adheres to the EMVCo Contactless Specifications [[Ref. cardreader-3](#ref-cardreader-3)] or individual payment system's specifications. The ID card
         ///   unit is capable of performing both magnetic stripe emulation and EMV-like transactions.
         /// * ```permanent``` - The ID card unit is dedicated to a permanently housed chip card (no user interaction is
         /// available with this type of card).
@@ -338,37 +338,37 @@ namespace XFS4IoT.CardReader
             }
 
             /// <summary>
-            /// The card reader can access track 1.
+            /// The card reader can write on track 1.
             /// </summary>
             [DataMember(Name = "track1")]
             public bool? Track1 { get; init; }
 
             /// <summary>
-            /// The card reader can access track 2.
+            /// The card reader can write on track 2.
             /// </summary>
             [DataMember(Name = "track2")]
             public bool? Track2 { get; init; }
 
             /// <summary>
-            /// The card reader can access track 3.
+            /// The card reader can write on track 3.
             /// </summary>
             [DataMember(Name = "track3")]
             public bool? Track3 { get; init; }
 
             /// <summary>
-            /// The card reader can access front track 1.
+            /// The card reader can write on front track 1.
             /// </summary>
             [DataMember(Name = "frontTrack1")]
             public bool? FrontTrack1 { get; init; }
 
             /// <summary>
-            /// The card reader can access JIS I track 1.
+            /// The card reader can write on JIS I track 1.
             /// </summary>
             [DataMember(Name = "track1JIS")]
             public bool? Track1JIS { get; init; }
 
             /// <summary>
-            /// The card reader can access JIS I track 3.
+            /// The card reader can write on JIS I track 3.
             /// </summary>
             [DataMember(Name = "track3JIS")]
             public bool? Track3JIS { get; init; }
@@ -376,7 +376,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the tracks that can be read by the card reader.
+        /// Specifies the tracks that can be written by the card reader.
         /// </summary>
         [DataMember(Name = "writeTracks")]
         public WriteTracksClass WriteTracks { get; init; }
@@ -402,7 +402,7 @@ namespace XFS4IoT.CardReader
             public bool? ChipT0 { get; init; }
 
             /// <summary>
-            /// The card reader can handle the T=0 protocol.
+            /// The card reader can handle the T=1 protocol.
             /// </summary>
             [DataMember(Name = "chipT1")]
             public bool? ChipT1 { get; init; }
@@ -458,7 +458,7 @@ namespace XFS4IoT.CardReader
         /// 
         /// * ```notSupported``` - The device has no security module.
         /// * ```mm``` - The security module is a MMBox.
-        /// * ```cim86```` - The security module is a CIM86.
+        /// * ```cim86``` - The security module is a CIM86.
         /// </summary>
         [DataMember(Name = "securityType")]
         public SecurityTypeEnum? SecurityType { get; init; }
@@ -476,9 +476,9 @@ namespace XFS4IoT.CardReader
         /// Specifies the power-on (or off) capabilities of the device hardware as one of the following options
         /// (applicable only to motor driven ID card units):
         /// 
-        /// * ```notSupported``` - The device does not support power on or off options.
+        /// * ```notSupported``` - The device does not support power on (or off) options.
         /// * ```exit``` - The card will be moved to the exit position.
-        /// * ```retain``` - The card will moved to a *retain* storage unit.
+        /// * ```retain``` - The card will be moved to a *retain* storage unit.
         /// * ```exitThenRetain``` - The card will be moved to the exit position for a finite time, then if not taken,
         ///   the card will be moved to a *retain* storage unit. The time for which the card remains at the exit
         ///   position is vendor dependent.
@@ -501,7 +501,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Specifies the power-off capabilities of the device hardware. See
-        /// [powerOnOption](#common.capabilities.completion.properties.cardreader.poweronoption).
+        /// [powerOnOption](#common.capabilities.completion.description.cardreader.poweronoption).
         /// </summary>
         [DataMember(Name = "powerOffOption")]
         public PowerOffOptionEnum? PowerOffOption { get; init; }
@@ -513,7 +513,7 @@ namespace XFS4IoT.CardReader
         public bool? FluxSensorProgrammable { get; init; }
 
         /// <summary>
-        /// Specifies whether a card may be read or written after having been moved to to the exit position with a
+        /// Specifies whether a card may be read or written after having been moved to the exit position with a
         /// [CardReader.Move](#cardreader.move) command. The card will be moved back into the card reader.
         /// </summary>
         [DataMember(Name = "readWriteAccessFromExit")]
@@ -522,19 +522,12 @@ namespace XFS4IoT.CardReader
         [DataContract]
         public sealed class WriteModeClass
         {
-            public WriteModeClass(bool? NotSupported = null, bool? Loco = null, bool? Hico = null, bool? Auto = null)
+            public WriteModeClass(bool? Loco = null, bool? Hico = null, bool? Auto = null)
             {
-                this.NotSupported = NotSupported;
                 this.Loco = Loco;
                 this.Hico = Hico;
                 this.Auto = Auto;
             }
-
-            /// <summary>
-            /// Does not support writing of magnetic stripes.
-            /// </summary>
-            [DataMember(Name = "notSupported")]
-            public bool? NotSupported { get; init; }
 
             /// <summary>
             /// Supports writing of loco magnetic stripes.
@@ -549,7 +542,7 @@ namespace XFS4IoT.CardReader
             public bool? Hico { get; init; }
 
             /// <summary>
-            /// Service Provider is capable of automatically determining whether loco or hico magnetic stripes should be
+            /// The Service is capable of automatically determining whether loco or hico magnetic stripes should be
             /// written.
             /// </summary>
             [DataMember(Name = "auto")]
@@ -559,7 +552,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The write capabilities, with respect to whether the device can write low coercivity (loco) and/or high
-        /// coercivity (hico) magnetic stripes as a combination of the following:
+        /// coercivity (hico) magnetic stripes.
         /// </summary>
         [DataMember(Name = "writeMode")]
         public WriteModeClass WriteMode { get; init; }
@@ -567,19 +560,12 @@ namespace XFS4IoT.CardReader
         [DataContract]
         public sealed class ChipPowerClass
         {
-            public ChipPowerClass(bool? NotSupported = null, bool? Cold = null, bool? Warm = null, bool? Off = null)
+            public ChipPowerClass(bool? Cold = null, bool? Warm = null, bool? Off = null)
             {
-                this.NotSupported = NotSupported;
                 this.Cold = Cold;
                 this.Warm = Warm;
                 this.Off = Off;
             }
-
-            /// <summary>
-            /// The card reader cannot handle chip power management.
-            /// </summary>
-            [DataMember(Name = "notSupported")]
-            public bool? NotSupported { get; init; }
 
             /// <summary>
             /// The card reader can power on the chip and reset it (Cold Reset).
@@ -603,7 +589,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The chip power management capabilities (in relation to the user or permanent chip controlled by the
-        /// service, as a combination of the following:
+        /// Service.
         /// </summary>
         [DataMember(Name = "chipPower")]
         public ChipPowerClass ChipPower { get; init; }
@@ -632,7 +618,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// The memory card protocols that are supported, as a combination of the following:
+        /// The memory card protocols that are supported:
         /// </summary>
         [DataMember(Name = "memoryChipProtocols")]
         public MemoryChipProtocolsClass MemoryChipProtocols { get; init; }
@@ -654,7 +640,7 @@ namespace XFS4IoT.CardReader
 
             /// <summary>
             /// The device can move a card to the transport. In this position, the card is not accessible to the user. A
-            /// service which supports this position must also support the *exit* position. 
+            /// service which supports this position must also support the *exit* position.
             /// </summary>
             [DataMember(Name = "transport")]
             public bool? Transport { get; init; }
@@ -662,7 +648,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the target positions that is supported for the [CardReader.MoveCard](#cardreader.movecard)
+        /// Specifies the target positions that is supported for the [CardReader.Move](#cardreader.move)
         /// command. This is independent of the storage units.
         /// </summary>
         [DataMember(Name = "positions")]
@@ -670,7 +656,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Specifies whether or not the card reader has the ability to detect when a card is taken from the exit slot
-        /// by a user. If true, a [CardReader.MediaTakenEvent](#cardreader.mediatakenevent) will be sent when the card
+        /// by a user. If true, a [CardReader.MediaRemovedEvent](#cardreader.mediaremovedevent) will be sent when the card
         /// is removed.
         /// </summary>
         [DataMember(Name = "cardTakenSensor")]
@@ -694,7 +680,7 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class CardDataClass
     {
-        public CardDataClass(CardDataStatusEnum? Status = null, string Data = null)
+        public CardDataClass(CardDataStatusEnum? Status = null, List<byte> Data = null)
         {
             this.Status = Status;
             this.Data = Data;
@@ -705,10 +691,11 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Base64 encoded representation of the data
-        /// <example>QmFzZTY0IGVuY29kZWQgZGF0YQ==</example>
+        /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
         /// </summary>
         [DataMember(Name = "data")]
-        public string Data { get; init; }
+        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        public List<byte> Data { get; init; }
 
     }
 
@@ -741,7 +728,7 @@ namespace XFS4IoT.CardReader
         public TypeEnum? Type { get; init; }
 
         /// <summary>
-        /// The storage unit has hardware sensors that can detect threshold states.
+        /// Indicates whether the storage unit has hardware sensors that can detect threshold states.
         /// </summary>
         [DataMember(Name = "hardwareSensors")]
         public bool? HardwareSensors { get; init; }
@@ -778,7 +765,7 @@ namespace XFS4IoT.CardReader
         /// * For [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type
         ///   storage units, a
         ///   [low](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus) threshold
-        ///   will be sent. 
+        ///   will be sent.
         /// </summary>
         [DataMember(Name = "threshold")]
         [DataTypes(Minimum = 0)]
@@ -854,7 +841,7 @@ namespace XFS4IoT.CardReader
         /// The state of the cards in the storage unit if it can be determined. Note that overall 
         /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be taken
         /// into account when deciding whether the storage unit is usable and whether replenishment status is
-        /// applicable. In particular, if the overall status is _missing_ this will be omitted.
+        /// applicable. In particular, if the overall status is *missing* this will be omitted.
         /// 
         /// The following values are possible:
         /// 
@@ -910,8 +897,8 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Represents the EMVCo defined message identifier that indicates the text string to be displayed, e.g., 0x1B
-        /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A,
-        /// Section 9.4).
+        /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A
+        /// [[Ref. cardreader-3](#ref-cardreader-3)], Section 9.4).
         /// </summary>
         [DataMember(Name = "messageId")]
         public int? MessageId { get; init; }
@@ -948,59 +935,57 @@ namespace XFS4IoT.CardReader
         /// before processing the next user interface data.
         /// </summary>
         [DataMember(Name = "holdTime")]
+        [DataTypes(Minimum = 0)]
         public int? HoldTime { get; init; }
 
         public enum ValueQualifierEnum
         {
             Amount,
-            Balance,
-            NotApplicable
+            Balance
         }
 
         /// <summary>
-        /// Qualifies
-        /// [value](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.value).
-        /// This data is defined by EMVCo as either “Amount” or “Balance” as one of the following:
-        /// 
+        /// Qualifies *value*. This data is defined by EMVCo as one of the following. If neither apply, this field and 
+        /// *value* are omitted:
         /// * ```amount``` - *value* is an Amount.
         /// * ```balance``` - *value* is a Balance.
-        /// * ```notApplicable``` - *value* is neither of the above.
         /// <example>amount</example>
         /// </summary>
         [DataMember(Name = "valueQualifier")]
         public ValueQualifierEnum? ValueQualifier { get; init; }
 
         /// <summary>
-        /// Represents the value of the amount or balance (as specified by
-        /// [valueQualifier](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.valuequalifier))
-        /// to be displayed where appropriate.
+        /// Represents the value of the amount or balance (as specified by *valueQualifier*)
+        /// to be displayed where appropriate. If *valueQualifier* is omitted, this property is omitted.
         /// <example>123.45</example>
         /// </summary>
         [DataMember(Name = "value")]
         public string Value { get; init; }
 
         /// <summary>
-        /// Represents the numeric value of currency code as per ISO 4217.
+        /// Represents the numeric value of currency code as per ISO 4217. If omitted, the currency code is not available.
         /// <example>GBP</example>
         /// </summary>
         [DataMember(Name = "currencyCode")]
+        [DataTypes(Pattern = @"^[A-Z]{3}$")]
         public string CurrencyCode { get; init; }
 
         /// <summary>
-        /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
-        /// data to display all messages in the specified language until the transaction concludes.
+        /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. If not returned, this property is omitted.
+        /// The application should use this data to display all messages in the specified language until the transaction concludes.
         /// <example>en</example>
         /// </summary>
         [DataMember(Name = "languagePreferenceData")]
+        [DataTypes(Pattern = @"^[a-z]{2}$")]
         public string LanguagePreferenceData { get; init; }
 
     }
 
 
     [DataContract]
-    public sealed class EMVClessTxOutputDataClass
+    public sealed class EMVClessPerformTransactionEMVClessTxOutputDataClass
     {
-        public EMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, CardholderActionEnum? CardholderAction = null, string DataRead = null, ClessOutcomeClass ClessOutcome = null)
+        public EMVClessPerformTransactionEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, CardholderActionEnum? CardholderAction = null, List<byte> DataRead = null, ClessOutcomeClass ClessOutcome = null)
         {
             this.TxOutcome = TxOutcome;
             this.CardholderAction = CardholderAction;
@@ -1022,8 +1007,8 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// If multiple data sources are returned, this parameter should be the same for each one. Specifies the
-        /// contactless transaction outcome as one of the following flags:
+        /// If multiple data sources are returned, this property is the same for each one. Specifies the
+        /// contactless transaction outcome as one of the following:
         /// 
         /// * ```multipleCards``` - Transaction could not be completed as more than one contactless card was tapped.
         /// * ```approve``` - Transaction was approved offline.
@@ -1039,13 +1024,12 @@ namespace XFS4IoT.CardReader
         /// * ```endApplication``` - Transaction cannot be completed on the contactless card due to an irrecoverable
         ///   error.
         /// * ```confirmationRequired``` - Transaction was not completed as a result of a requirement to allow entry of
-        ///   confirmation code on a mobile
-        /// device. Transaction should be completed by issuing the
-        /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) after a card removal and a
-        /// re-tap of the card.
+        ///   confirmation code on a mobile device. Transaction should be completed by issuing the
+        ///   [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) after a card removal and a
+        ///   re-tap of the card.
         /// 
-        /// NOTE: The values for outcome have been mapped against the EMV Entry Point Outcome structure values defined
-        /// in the EMVCo Specifications for Contactless Payment Systems (Book A and B).
+        /// **Note:** _The values for outcome have been mapped against the EMV Entry Point Outcome structure values defined
+        /// in the EMVCo Contactless Specifications for Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)]._
         /// </summary>
         [DataMember(Name = "txOutcome")]
         public TxOutcomeEnum? TxOutcome { get; init; }
@@ -1062,8 +1046,8 @@ namespace XFS4IoT.CardReader
         /// 
         /// * ```none``` - Transaction was completed. No further action is required.
         /// * ```retap``` - The contactless card should be re-tapped to complete the transaction. This value can be
-        ///   returned when [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.track1.txoutcome)
-        ///   is *onlineRequestCompletionRequired* or *confirmationRequired*.
+        ///   returned when [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome)
+        ///   is *onlineRequest*, *onlineRequestCompletionRequired* or *confirmationRequired*.
         /// * ```holdCard``` - The contactless card should not be removed from the field until the transaction is
         ///   completed.
         /// </summary>
@@ -1080,14 +1064,16 @@ namespace XFS4IoT.CardReader
         /// [track3](#cardreader.emvclessperformtransaction.completion.properties.track3) this contains the data read
         /// from the chip, i.e the value returned by the card reader device and no cryptogram tag (9F26). This value is
         /// terminated with a single null character and cannot contain UNICODE characters.
+        /// <example>fSfILqum6niI6jURWzeo ...</example>
         /// </summary>
         [DataMember(Name = "dataRead")]
-        public string DataRead { get; init; }
+        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        public List<byte> DataRead { get; init; }
 
         [DataContract]
         public sealed class ClessOutcomeClass
         {
-            public ClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, string DiscretionaryData = null)
+            public ClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, List<byte> DiscretionaryData = null)
             {
                 this.Cvm = Cvm;
                 this.AlternateInterface = AlternateInterface;
@@ -1129,8 +1115,8 @@ namespace XFS4IoT.CardReader
             }
 
             /// <summary>
-            /// If [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.track1.txoutcome) is not
-            /// *tryAnotherInterface*, this should be ignored. If *txOutcome* is *tryAnotherInterface*, this specifies
+            /// If [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome) is not
+            /// *tryAnotherInterface*, this is ignored and can be omitted. If *txOutcome* is *tryAnotherInterface*, this specifies
             /// the alternative interface to be used to complete a transaction as one of the following:
             /// 
             /// * ```contact``` - Contact chip interface should be used to complete a transaction.
@@ -1148,7 +1134,7 @@ namespace XFS4IoT.CardReader
             /// <summary>
             /// The user interface details required to be displayed to the card holder after processing the outcome of a
             /// contactless transaction. If no user interface details are required, this will be omitted. Please refer
-            /// to EMVCo Contactless Specifications for Payment Systems Book A, Section 6.2 for details of the data
+            /// to EMVCo Contactless Specifications for Payment Systems Book A [[Ref. cardreader-3](#ref-cardreader-3)], Section 6.2 for details of the data
             /// within this object.
             /// </summary>
             [DataMember(Name = "uiOutcome")]
@@ -1166,32 +1152,204 @@ namespace XFS4IoT.CardReader
             /// the contactless card reader by issuing either the
             /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command or the
             /// [CardReader.EMVClessIssuerUpdate](#cardreader.emvclessissuerupdate) command depending on the value of
-            /// [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.track1.txoutcome). For
+            /// [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome). For
             /// intelligent contactless card readers, the completion of this command ensures that the contactless chip
             /// card reader field is automatically turned off, so there is no need for the application to disable the
             /// field.
             /// </summary>
             [DataMember(Name = "fieldOffHoldTime")]
+            [DataTypes(Minimum = 0)]
             public int? FieldOffHoldTime { get; init; }
 
             /// <summary>
             /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
             /// </summary>
             [DataMember(Name = "cardRemovalTimeout")]
+            [DataTypes(Minimum = 0)]
             public int? CardRemovalTimeout { get; init; }
 
             /// <summary>
             /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
             /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
             /// present, this will be omitted.
+            /// <example>fSfILqum6niI6jURWzeo ...</example>
             /// </summary>
             [DataMember(Name = "discretionaryData")]
-            public string DiscretionaryData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> DiscretionaryData { get; init; }
 
         }
 
         /// <summary>
-        /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B).
+        /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)].
+        /// This can be omitted for contactless chip card readers that do not follow EMVCo Entry Point Specifications.
+        /// </summary>
+        [DataMember(Name = "clessOutcome")]
+        public ClessOutcomeClass ClessOutcome { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class EMVClessIssuerUpdateEMVClessTxOutputDataClass
+    {
+        public EMVClessIssuerUpdateEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, List<byte> DataRead = null, ClessOutcomeClass ClessOutcome = null)
+        {
+            this.TxOutcome = TxOutcome;
+            this.DataRead = DataRead;
+            this.ClessOutcome = ClessOutcome;
+        }
+
+        public enum TxOutcomeEnum
+        {
+            MultipleCards,
+            Approve,
+            Decline,
+            TryAgain,
+            TryAnotherInterface
+        }
+
+        /// <summary>
+        /// If multiple data sources are returned, this property is the same for each one. Specifies the
+        /// contactless transaction outcome as one of the following:
+        /// 
+        /// * ```multipleCards``` - Transaction could not be completed as more than one contactless card was tapped.
+        /// * ```approve``` - Transaction was approved offline.
+        /// * ```decline``` - Transaction was declined offline.
+        /// * ```tryAgain``` - Transaction could not be completed due to a card read error. The contactless card could
+        ///   be tapped again to re-attempt the transaction.
+        /// * ```tryAnotherInterface``` - Transaction could not be completed over the contactless interface. Another
+        ///   interface may be suitable for this transaction (for example contact).
+        /// 
+        /// **Note:** _The values for outcome have been mapped against the EMV Entry Point Outcome structure values defined
+        /// in the EMVCo Contactless Specifications for Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)]._
+        /// </summary>
+        [DataMember(Name = "txOutcome")]
+        public TxOutcomeEnum? TxOutcome { get; init; }
+
+        /// <summary>
+        /// The Base64 encoded representation of the data read from the chip after a contactless transaction has been
+        /// completed successfully. The BER-TLV formatted data contains cryptogram tag (9F26) after a contactless chip 
+        /// transaction has been completed successfully. This value is terminated with a single null character and 
+        /// cannot contain UNICODE characters.
+        /// <example>fSfILqum6niI6jURWzeo ...</example>
+        /// </summary>
+        [DataMember(Name = "dataRead")]
+        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        public List<byte> DataRead { get; init; }
+
+        [DataContract]
+        public sealed class ClessOutcomeClass
+        {
+            public ClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, List<byte> DiscretionaryData = null)
+            {
+                this.Cvm = Cvm;
+                this.AlternateInterface = AlternateInterface;
+                this.Receipt = Receipt;
+                this.UiOutcome = UiOutcome;
+                this.UiRestart = UiRestart;
+                this.FieldOffHoldTime = FieldOffHoldTime;
+                this.CardRemovalTimeout = CardRemovalTimeout;
+                this.DiscretionaryData = DiscretionaryData;
+            }
+
+            public enum CvmEnum
+            {
+                OnlinePIN,
+                ConfirmationCodeVerified,
+                Sign,
+                NoCVM,
+                NoCVMPreference
+            }
+
+            /// <summary>
+            /// Specifies the card holder verification method (CVM) to be performed as one of the following:
+            /// 
+            /// * ```onlinePIN``` - Online PIN should be entered by the card holder.
+            /// * ```confirmationCodeVerified``` - A confirmation code entry has been successfully done on a mobile
+            ///   device.
+            /// * ```sign``` - Application should obtain card holder signature.
+            /// * ```noCVM``` - No CVM is required for this transaction.
+            /// * ```noCVMPreference``` - There is no CVM preference, but application can follow the payment system's
+            ///   rules to process the transaction.
+            /// </summary>
+            [DataMember(Name = "cvm")]
+            public CvmEnum? Cvm { get; init; }
+
+            public enum AlternateInterfaceEnum
+            {
+                Contact,
+                MagneticStripe
+            }
+
+            /// <summary>
+            /// If [txOutcome](#cardreader.emvclessissuerupdate.completion.properties.chip.txoutcome) is not
+            /// *tryAnotherInterface*, this ignored and can be omitted. If *txOutcome* is *tryAnotherInterface*, this specifies
+            /// the alternative interface to be used to complete a transaction as one of the following:
+            /// 
+            /// * ```contact``` - Contact chip interface should be used to complete a transaction.
+            /// * ```magneticStripe``` - Magnetic stripe interface should be used to complete a transaction.
+            /// </summary>
+            [DataMember(Name = "alternateInterface")]
+            public AlternateInterfaceEnum? AlternateInterface { get; init; }
+
+            /// <summary>
+            /// Specifies whether a receipt should be printed. True indicates that a receipt is required.
+            /// </summary>
+            [DataMember(Name = "receipt")]
+            public bool? Receipt { get; init; }
+
+            /// <summary>
+            /// The user interface details required to be displayed to the card holder after processing the outcome of a
+            /// contactless transaction. If no user interface details are required, this will be omitted. Please refer
+            /// to EMVCo Contactless Specifications for Payment Systems Book A [[Ref. cardreader-3](#ref-cardreader-3)], Section 6.2 for details of the data
+            /// within this object.
+            /// </summary>
+            [DataMember(Name = "uiOutcome")]
+            public EMVClessUIClass UiOutcome { get; init; }
+
+            /// <summary>
+            /// The user interface details required to be displayed to the card holder when a transaction needs to be
+            /// completed with a re-tap. If no user interface details are required, this will be omitted.
+            /// </summary>
+            [DataMember(Name = "uiRestart")]
+            public EMVClessUIClass UiRestart { get; init; }
+
+            /// <summary>
+            /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
+            /// the contactless card reader by issuing either the
+            /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command or the
+            /// [CardReader.EMVClessIssuerUpdate](#cardreader.emvclessissuerupdate) command depending on the value of
+            /// [txOutcome](#cardreader.emvclessissuerupdate.completion.properties.chip.txoutcome). For
+            /// intelligent contactless card readers, the completion of this command ensures that the contactless chip
+            /// card reader field is automatically turned off, so there is no need for the application to disable the
+            /// field.
+            /// </summary>
+            [DataMember(Name = "fieldOffHoldTime")]
+            [DataTypes(Minimum = 0)]
+            public int? FieldOffHoldTime { get; init; }
+
+            /// <summary>
+            /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
+            /// </summary>
+            [DataMember(Name = "cardRemovalTimeout")]
+            [DataTypes(Minimum = 0)]
+            public int? CardRemovalTimeout { get; init; }
+
+            /// <summary>
+            /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
+            /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
+            /// present, this will be omitted.
+            /// <example>fSfILqum6niI6jURWzeo ...</example>
+            /// </summary>
+            [DataMember(Name = "discretionaryData")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> DiscretionaryData { get; init; }
+
+        }
+
+        /// <summary>
+        /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)].
         /// This can be omitted for contactless chip card readers that do not follow EMVCo Entry Point Specifications.
         /// </summary>
         [DataMember(Name = "clessOutcome")]

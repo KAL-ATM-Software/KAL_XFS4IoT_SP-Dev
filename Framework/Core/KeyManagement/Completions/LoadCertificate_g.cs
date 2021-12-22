@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, RsaKeyCheckModeEnum? RsaKeyCheckMode = null, string RsaData = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, RsaKeyCheckModeEnum? RsaKeyCheckMode = null, List<byte> RsaData = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -38,14 +38,22 @@ namespace XFS4IoT.KeyManagement.Completions
             {
                 AccessDenied,
                 FormatInvalid,
-                InvalidCertificateState
+                InvalidCertificateState,
+                SignatureInvalid,
+                RandomInvalid,
+                ModeNotSupported
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```formatInvalid``` - The format of the message is invalid.
             /// * ```invalidCertificateState``` - The certificate module is in a state in which the request is invalid.
+            /// * ```signatureInvalid``` - The verification data in the input data is invalid.
+            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously 
+            /// provided by the device.
+            /// * ```modeNotSupported``` - The *loadOption* and *signer* are not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -58,8 +66,8 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Defines algorithm/method used to generate the public key check value/thumb print.
-            /// The check value can be used to verify that the public key has been imported correctly.
+            /// Defines algorithm/method used to generate the public key check value/thumb print. The check value can
+            /// be used to verify that the public key has been imported correctly.
             /// 
             /// The following values are possible:
             /// * ```none``` - No check value is returned in *rsaData* property.
@@ -70,12 +78,14 @@ namespace XFS4IoT.KeyManagement.Completions
             public RsaKeyCheckModeEnum? RsaKeyCheckMode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) structure using a Digested-data content type.
-            /// The digest parameter should contain the thumb print value calculated by the algorithm 
-            /// specified by rsaKeyCheckMode. If rsaKeyCheckMode is none, then this field is not be set or an empty string.
+            /// The PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)]) structure using a Digested-data content
+            /// type. The digest parameter should contain the thumb print value calculated by the algorithm specified by
+            /// *rsaKeyCheckMode*. If *rsaKeyCheckMode* is none, this property is omitted.
+            /// <example>UEtDUyAjNyBkYXRh</example>
             /// </summary>
             [DataMember(Name = "rsaData")]
-            public string RsaData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> RsaData { get; init; }
 
         }
     }

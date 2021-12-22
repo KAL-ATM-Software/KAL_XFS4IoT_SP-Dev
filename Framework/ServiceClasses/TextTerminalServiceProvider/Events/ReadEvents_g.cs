@@ -21,5 +21,7 @@ namespace XFS4IoTFramework.TextTerminal
             : base(connection, requestId)
         { }
 
+        public async Task KeyEvent(XFS4IoT.TextTerminal.Events.KeyEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.KeyEvent(requestId, Payload));
+
     }
 }

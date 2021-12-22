@@ -35,6 +35,7 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Name of the key for which detailed information is requested.
+            /// <example>Key01</example>
             /// </summary>
             [DataMember(Name = "keyName")]
             public string KeyName { get; init; }

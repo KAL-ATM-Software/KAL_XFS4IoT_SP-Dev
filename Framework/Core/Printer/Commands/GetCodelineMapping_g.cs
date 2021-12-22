@@ -40,7 +40,7 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the code-line format that the mapping for the special characters is required for. This field
+            /// Specifies the code-line format that the mapping for the special characters is required for. This property
             /// can be one of the following values:
             /// 
             /// * ```cmc7``` - Report the CMC7 mapping.

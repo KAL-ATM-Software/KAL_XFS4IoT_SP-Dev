@@ -38,6 +38,7 @@ namespace XFS4IoT.Printer.Commands
 
             /// <summary>
             /// The name of the form.
+            /// <example>Form1</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
@@ -45,12 +46,14 @@ namespace XFS4IoT.Printer.Commands
             /// <summary>
             /// The field names from which to read input data. If this is omitted or empty, all input fields on the
             /// form will be read.
+            /// <example>["FieldName1"]</example>
             /// </summary>
             [DataMember(Name = "fieldNames")]
             public List<string> FieldNames { get; init; }
 
             /// <summary>
             /// The media name. If omitted or empty, no media definition applies.
+            /// <example>MediaName1</example>
             /// </summary>
             [DataMember(Name = "mediaName")]
             public string MediaName { get; init; }
@@ -109,8 +112,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Skip { get; init; }
 
                 /// <summary>
-                /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
+                /// Flush any data to the printer that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -191,8 +194,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Rotate180 { get; init; }
 
                 /// <summary>
-                /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintNative* commands.
+                /// Clear any data that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }
@@ -200,9 +203,9 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the manner in which the media should be handled after the reading was done and can be a
-            /// combination of the following flags. The
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) flag is not
+            /// Specifies the manner in which the media should be handled after the reading was done.
+            /// The
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
             /// applicable to this command.
             /// </summary>
             [DataMember(Name = "mediaControl")]

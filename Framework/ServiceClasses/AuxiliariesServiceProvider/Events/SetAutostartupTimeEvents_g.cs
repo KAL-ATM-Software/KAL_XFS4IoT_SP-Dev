@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutostartupTimeEvents_g.cs uses automatically generated parts.
+ * SetAutoStartupTimeEvents_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    internal class SetAutostartupTimeEvents : AuxiliariesEvents, ISetAutostartupTimeEvents
+    internal class SetAutoStartupTimeEvents : AuxiliariesEvents, ISetAutoStartupTimeEvents
     {
 
-        public SetAutostartupTimeEvents(IConnection connection, int requestId)
+        public SetAutoStartupTimeEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

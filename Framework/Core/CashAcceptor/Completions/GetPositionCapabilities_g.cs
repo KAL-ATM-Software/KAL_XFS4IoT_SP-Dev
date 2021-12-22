@@ -81,7 +81,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Indicates if an output position is used to reject or rollback.
+                /// Indicates if a position is used to input, reject or rollback.
                 /// </summary>
                 [DataMember(Name = "usage")]
                 public UsageClass Usage { get; init; }
@@ -94,7 +94,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// [CashManagement.CloseShutter](#cashmanagement.closeshutter) commands.
                 /// 
                 /// In either case the [CashAcceptor.PresentMedia](#cashacceptor.presentmedia) command may be used if
-                /// _presentControl_ is false. The _shutterControl_ field is always true if the described position has no 
+                /// *presentControl* is false. The *shutterControl* field is always true if the described position has no 
                 /// shutter.
                 /// </summary>
                 [DataMember(Name = "shutterControl")]
@@ -136,13 +136,13 @@ namespace XFS4IoT.CashAcceptor.Completions
                     }
 
                     /// <summary>
-                    /// Items may be retracted to a retract cash unit.
+                    /// Items may be retracted to a retract storage unit.
                     /// </summary>
                     [DataMember(Name = "retract")]
                     public bool? Retract { get; init; }
 
                     /// <summary>
-                    /// Items may be retracted to a reject cash unit.
+                    /// Items may be retracted to a reject storage unit.
                     /// </summary>
                     [DataMember(Name = "reject")]
                     public bool? Reject { get; init; }
@@ -160,13 +160,13 @@ namespace XFS4IoT.CashAcceptor.Completions
                     public bool? Stacker { get; init; }
 
                     /// <summary>
-                    /// Items may be retracted to item cassettes, i.e. cash-in and recycle cash units.
+                    /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
                     /// </summary>
                     [DataMember(Name = "billCassettes")]
                     public bool? BillCassettes { get; init; }
 
                     /// <summary>
-                    /// Items may be retracted to a cash-in cash unit.
+                    /// Items may be retracted to a cash-in storage unit.
                     /// </summary>
                     [DataMember(Name = "cashIn")]
                     public bool? CashIn { get; init; }
@@ -174,8 +174,8 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Specifies the areas to which items may be retracted from this position. If the device does not have a retract 
-                /// capability all values will be false.
+                /// Specifies the areas to which items may be retracted from this position. This is not reported if the device 
+                /// cannot retract.
                 /// </summary>
                 [DataMember(Name = "retractAreas")]
                 public RetractAreasClass RetractAreas { get; init; }
@@ -184,12 +184,12 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// Specifies how the presenting of media items is controlled. 
                 /// 
                 /// If true then the [CashAcceptor.PresentMedia](#cashacceptor.presentmedia) command is not supported and items 
-                /// are moved to the output position for removal as part of the relevant command, e.g. _CashAcceptor.CashIn_ or 
-                /// _CashAcceptor.CashInRollback_ where there is implicit shutter control. 
+                /// are moved to the output position for removal as part of the relevant command, e.g. *CashAcceptor.CashIn* or 
+                /// *CashAcceptor.CashInRollback* where there is implicit shutter control. 
                 /// 
                 /// If false then items returned or rejected can be moved to the output position using the 
-                /// _CashAcceptor.PresentMedia_ command, this includes items returned or rejected as part of a 
-                /// _CashAcceptor.CashIn_ or _CashAcceptor.CashInRollback_ operation. The _CashAcceptor.PresentMedia_
+                /// *CashAcceptor.PresentMedia* command, this includes items returned or rejected as part of a 
+                /// *CashAcceptor.CashIn* or *CashAcceptor.CashInRollback* operation. The *CashAcceptor.PresentMedia*
                 /// command will open and close the shutter implicitly.
                 /// </summary>
                 [DataMember(Name = "presentControl")]
@@ -198,10 +198,11 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// <summary>
                 /// Specifies how the presenting of items is controlled. 
                 /// 
-                /// If false then items to be removed are moved to the output position as part of the relevant command, e.g.,
-                /// _CashAcceptor.OpenShutter_, _CashAcceptor.PresentMedia_ or _CashAcceptor.CashInRollback_.
+                /// If false then items to be removed are moved to the output position as part of the relevant command. e.g.
+                /// *CashManagement.OpenShutter*, *CashAcceptor.PresentMedia* or *CashAcceptor.CashInRollback*.
                 /// 
-                /// If true then items are moved to the output position using the CashAcceptor.PreparePresent command.
+                /// If true then items are moved to the output position using the [CashAcceptor.PreparePresent](#cashacceptor.preparepresent)
+                /// command.
                 /// </summary>
                 [DataMember(Name = "preparePresent")]
                 public bool? PreparePresent { get; init; }

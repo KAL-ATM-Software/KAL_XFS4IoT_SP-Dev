@@ -41,7 +41,7 @@ namespace XFS4IoT.Common.Completions
             /// Specifies the error code if applicable. The following values are possible:
             /// 
             /// * ```noMatchingRequestIDs``` - No queued or executing command matches the 
-            ///   [requestIDs](#common.cancel.command.properties.requestids) property.
+            ///   [requestIds](#common.cancel.command.properties.requestids) property.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -123,7 +123,7 @@ namespace XFS4IoT.CardReader.Commands
 
             /// <summary>
             /// Track 3 of Japanese cash transfer card will be read. In some countries this track is known as JIS I
-            /// track 1 (8bits/char).
+            /// track 3 (8bits/char).
             /// </summary>
             [DataMember(Name = "track3JIS")]
             public bool? Track3JIS { get; init; }

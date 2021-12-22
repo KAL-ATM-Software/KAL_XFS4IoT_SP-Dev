@@ -43,35 +43,26 @@ namespace TextTerminalProvider
         private readonly TextTerminalServiceClass TextTerminal;
         private readonly CommonServiceClass CommonService;
 
-
-        #region TextTerminal unsolicited events
-        public Task FieldWarningEvent() => TextTerminal.FieldWarningEvent();
-
-        public Task KeyEvent(string Key, string CommandKey) => TextTerminal.KeyEvent(new KeyEvent.PayloadData(Key, CommandKey));
-        #endregion
-
         #region Common unsolicited events
-        public Task PowerSaveChangeEvent(int PowerSaveRecoveryTime) => CommonService.PowerSaveChangeEvent(new PowerSaveChangeEvent.PayloadData(PowerSaveRecoveryTime));
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
 
-        public Task DevicePositionEvent(CommonStatusClass.PositionStatusEnum Position) => CommonService.DevicePositionEvent(
-                                                                                                        new DevicePositionEvent.PayloadData(Position switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.PositionStatusEnum.InPosition => XFS4IoT.Common.PositionStatusEnum.InPosition,
-                                                                                                            CommonStatusClass.PositionStatusEnum.NotInPosition => XFS4IoT.Common.PositionStatusEnum.NotInPosition,
-                                                                                                            _ => XFS4IoT.Common.PositionStatusEnum.Unknown,
-                                                                                                        }
-                                                                                                    ));
 
-        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(new NonceClearedEvent.PayloadData(ReasonDescription));
+        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the TextTerminal Service.");
 
-        public Task ExchangeStateChangedEvent(CommonStatusClass.ExchangeEnum Exchange) => CommonService.ExchangeStateChangedEvent(
-                                                                                                        new ExchangeStateChangedEvent.PayloadData(Exchange switch
-                                                                                                        {
-                                                                                                            CommonStatusClass.ExchangeEnum.Active => XFS4IoT.Common.ExchangeEnum.Active,
-                                                                                                            CommonStatusClass.ExchangeEnum.Inactive => XFS4IoT.Common.ExchangeEnum.Inactive,
-                                                                                                            _ => XFS4IoT.Common.ExchangeEnum.NotSupported,
-                                                                                                        }
-                                                                                                    ));
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
         #endregion
 
 

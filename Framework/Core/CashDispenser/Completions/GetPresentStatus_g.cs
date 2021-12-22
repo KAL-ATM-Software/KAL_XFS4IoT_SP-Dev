@@ -75,9 +75,15 @@ namespace XFS4IoT.CashDispenser.Completions
             public PresentStateEnum? PresentState { get; init; }
 
             /// <summary>
-            /// The present status token that protects the present status. See 
-            /// the generic end to end document for more information. 
-            /// <example>NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0268,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=50.00EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.00EUR,RETRACTED1=NO,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83</example>
+            /// The present status token that protects the present status. See
+            /// [end-to-end security](#api.e2esecurity) for more information.
+            /// 
+            /// An example is
+            /// 
+            /// ```
+            /// NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0268,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=50.00EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.00EUR,RETRACTED1=NO,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83
+            /// ```
+            /// <example>NONCE=1414,TOKENFORMAT=1,TOKENLENGTH ...</example>
             /// </summary>
             [DataMember(Name = "token")]
             public string Token { get; init; }

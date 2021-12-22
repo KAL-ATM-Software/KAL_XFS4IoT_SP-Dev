@@ -38,14 +38,15 @@ namespace XFS4IoT.TextTerminal.Commands
             /// This contains the form definition in text format as described in
             /// [Form and Field Definitions](#textterminal.generalinformation.formfielddefinition).
             /// Only one form definition can be included in this property.
+            /// <example>See form description</example>
             /// </summary>
             [DataMember(Name = "definition")]
             public string Definition { get; init; }
 
             /// <summary>
-            /// Specifies if an existing form definition with the same name is to be replaced. If this flag
+            /// Specifies if an existing form definition with the same name is to be replaced. If this
             /// is true then an existing form definition with the same name will be replaced, unless the
-            /// command fails with an error, where the definition will remain unchanged. If this flag is false this
+            /// command fails with an error, where the definition will remain unchanged. If this is false this
             /// command will fail with an error if the form definition already exists.
             /// </summary>
             [DataMember(Name = "overwrite")]

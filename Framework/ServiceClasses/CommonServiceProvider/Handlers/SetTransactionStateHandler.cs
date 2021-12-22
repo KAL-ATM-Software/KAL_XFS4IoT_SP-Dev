@@ -39,8 +39,7 @@ namespace XFS4IoTFramework.Common
                                                                                              SetTransactionStateCommand.PayloadData.StateEnum.Active => SetTransactionStateRequest.StateEnum.Active,
                                                                                              _ => SetTransactionStateRequest.StateEnum.Inactive,
                                                                                          },
-                                                                                         setTransactionState.Payload.TransactionID,
-                                                                                         setTransactionState.Payload.Extra));
+                                                                                         setTransactionState.Payload.TransactionID));
             Logger.Log(Constants.DeviceClass, $"CommonDev.SetTransactionState() -> {result.CompletionCode}");
 
             return new SetTransactionStateCompletion.PayloadData(result.CompletionCode,

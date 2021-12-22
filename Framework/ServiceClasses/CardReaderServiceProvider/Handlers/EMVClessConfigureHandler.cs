@@ -37,7 +37,8 @@ namespace XFS4IoTFramework.CardReader
             List<AIDInfo> AIDs = new(); 
             foreach (EMVClessConfigureCommand.PayloadData.AidDataClass AID in eMVClessConfigure.Payload.AidData)
             {
-                if (string.IsNullOrEmpty(AID.Aid))
+                if (AID.Aid is null ||
+                    AID.Aid.Count == 0)
                 {
                     return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                        "No AID is supplied.");
@@ -52,11 +53,11 @@ namespace XFS4IoTFramework.CardReader
                     return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                        "No TransactionType is supplied.");
                 }
-                AIDs.Add(new AIDInfo(new List<byte>(Convert.FromBase64String(AID.Aid)), 
-                         (bool)AID.PartialSelection, 
-                         (int)AID.TransactionType, 
-                         string.IsNullOrEmpty(AID.KernelIdentifier) ? null : new List<byte>(Convert.FromBase64String(AID.KernelIdentifier)),
-                         string.IsNullOrEmpty(AID.ConfigData) ? null : new List<byte>(Convert.FromBase64String(AID.ConfigData))));
+                AIDs.Add(new AIDInfo(AID.Aid, 
+                                     (bool)AID.PartialSelection, 
+                                     (int)AID.TransactionType, 
+                                     AID.KernelIdentifier,
+                                     AID.ConfigData));
             }
 
             List<PublicKeyInfo> PublicKeys = new();
@@ -79,7 +80,7 @@ namespace XFS4IoTFramework.CardReader
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessConfigureAsync()");
-            var result = await Device.EMVContactlessConfigureAsync(new EMVContactlessConfigureRequest(string.IsNullOrEmpty(eMVClessConfigure.Payload.TerminalData) ? null : new List<byte>(Convert.FromBase64String(eMVClessConfigure.Payload.TerminalData)), 
+            var result = await Device.EMVContactlessConfigureAsync(new EMVContactlessConfigureRequest(eMVClessConfigure.Payload.TerminalData, 
                                                                    AIDs, 
                                                                    PublicKeys),
                                                                    cancel);

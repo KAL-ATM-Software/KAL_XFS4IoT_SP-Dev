@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.CardReader
         /// If no card has been inserted, and for all other categories of card readers, the card unit waits for the period of time specified in the call for a card to be either inserted or pulled through.
         /// The InsertCardEvent will be generated when there is no card in the cardreader and the device is ready to accept a card.
         /// </summary>
-        Task<AcceptCardResult> AcceptCardAsync(AcceptCardCommandEvents events,
+        Task<AcceptCardResult> AcceptCardAsync(CommonCardCommandEvents events,
                                                AcceptCardRequest acceptCardInfo,
                                                CancellationToken cancellation);
 
@@ -54,7 +54,7 @@ namespace XFS4IoTFramework.CardReader
         /// This procedure is followed by data verification.
         /// If power fails during a write the outcome of the operation will be vendor specific, there is no guarantee that thewrite will have succeeded.
         /// </summary>
-        Task<WriteCardResult> WriteCardAsync(WriteCardCommandEvents events,
+        Task<WriteCardResult> WriteCardAsync(CommonCardCommandEvents events,
                                              WriteCardRequest dataToWrite,
                                              CancellationToken cancellation);
 

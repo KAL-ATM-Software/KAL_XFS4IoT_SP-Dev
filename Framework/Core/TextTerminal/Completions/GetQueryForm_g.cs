@@ -26,7 +26,7 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string FormName = null, string Width = null, string Height = null, string VersionMajor = null, string VersionMinor = null, List<string> Fields = null, string LanguageId = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string FormName = null, int? Width = null, int? Height = null, int? VersionMajor = null, int? VersionMinor = null, List<string> Fields = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -36,7 +36,6 @@ namespace XFS4IoT.TextTerminal.Completions
                 this.VersionMajor = VersionMajor;
                 this.VersionMinor = VersionMinor;
                 this.Fields = Fields;
-                this.LanguageId = LanguageId;
             }
 
             public enum ErrorCodeEnum
@@ -55,46 +54,49 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the name of the form.
+            /// <example>Example form</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
             /// Specifies the width of the form in columns.
+            /// <example>40</example>
             /// </summary>
             [DataMember(Name = "width")]
-            public string Width { get; init; }
+            [DataTypes(Minimum = 0)]
+            public int? Width { get; init; }
 
             /// <summary>
-            /// Specifies the height of the form in rows. 
+            /// Specifies the height of the form in rows.
+            /// <example>20</example>
             /// </summary>
             [DataMember(Name = "height")]
-            public string Height { get; init; }
+            [DataTypes(Minimum = 0)]
+            public int? Height { get; init; }
 
             /// <summary>
-            /// Specifies the major version.If version is not specifies in the form then zero is returned.
+            /// Specifies the major version. Omitted if the version is not specified in the form.
+            /// <example>2</example>
             /// </summary>
             [DataMember(Name = "versionMajor")]
-            public string VersionMajor { get; init; }
+            [DataTypes(Minimum = 0)]
+            public int? VersionMajor { get; init; }
 
             /// <summary>
-            /// Specifies the minor version. 
-            /// If the version is not specified in the form then zero is returned.
+            /// Specifies the minor version. Omitted if the version is not specified in the form.
+            /// <example>1</example>
             /// </summary>
             [DataMember(Name = "versionMinor")]
-            public string VersionMinor { get; init; }
+            [DataTypes(Minimum = 0)]
+            public int? VersionMinor { get; init; }
 
             /// <summary>
-            /// Object to a list of the field names.
+            /// A list of the field names.
+            /// <example>["Field1", "Field2"]</example>
             /// </summary>
             [DataMember(Name = "fields")]
             public List<string> Fields { get; init; }
-
-            /// <summary>
-            /// Specifies the language identifier for the form.
-            /// </summary>
-            [DataMember(Name = "languageId")]
-            public string LanguageId { get; init; }
 
         }
     }

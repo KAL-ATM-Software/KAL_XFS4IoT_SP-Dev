@@ -26,7 +26,7 @@ namespace XFS4IoT.PinPad.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, string ChipData = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, List<byte> ChipData = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -44,26 +44,30 @@ namespace XFS4IoT.PinPad.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
-            /// * ```protocolNotSupported``` - The specified protocol is not supported by the Service Provider.
+            /// * ```protocolNotSupported``` - The specified protocol is not supported by the Service.
             /// * ```invalidData``` - An error occurred while communicating with the chip.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Identifies the protocol that was used to communicate with the chip. 
-            /// This property contains the same value as the corresponding property in the input.
+            /// Identifies the protocol that was used to communicate with the chip. This property contains the same
+            /// value as the corresponding property in the input.
+            /// <example>chipT0</example>
             /// </summary>
             [DataMember(Name = "chipProtocol")]
             public string ChipProtocol { get; init; }
 
             /// <summary>
-            /// The Base64 encoded data responded from the chip.
+            /// The data returned from the chip.
+            /// <example>Y2hpcCBkYXRhIHJlY2Vp ...</example>
             /// </summary>
             [DataMember(Name = "chipData")]
-            public string ChipData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> ChipData { get; init; }
 
         }
     }

@@ -13,20 +13,24 @@ using XFS4IoT.CardReader.Events;
 
 namespace XFS4IoTFramework.CardReader
 {
-    public sealed class ReadCardCommandEvents : AcceptCardCommandEvents
+    public sealed class ReadCardCommandEvents : CommonCardCommandEvents
     {
         public ReadCardCommandEvents(IReadRawDataEvents events) :
             base(events)
         { }
 
-        public Task TrackDetectedEvent(bool Track1, 
-                                       bool Track2, 
-                                       bool Track3, 
-                                       bool Watermark, 
-                                       bool FrontTrack1)
+        public Task TrackDetectedEvent(bool? Track1 = null,
+                                       bool? Track2 = null,
+                                       bool? Track3 = null,
+                                       bool? Watermark = null,
+                                       bool? FrontTrack1 = null)
         {
             ReadRawDataEvents.IsNotNull($"Unexpected interface specified. " + nameof(TrackDetectedEvent));
-            return ReadRawDataEvents.TrackDetectedEvent(new(Track1, Track2, Track3, Watermark, FrontTrack1));
+            return ReadRawDataEvents.TrackDetectedEvent(new TrackDetectedEvent.PayloadData(Track1,
+                                                                                           Track2,
+                                                                                           Track3,
+                                                                                           Watermark,
+                                                                                           FrontTrack1));
         }
     }
 }

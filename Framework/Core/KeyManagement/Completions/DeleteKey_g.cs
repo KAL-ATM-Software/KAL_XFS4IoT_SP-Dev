@@ -34,12 +34,18 @@ namespace XFS4IoT.KeyManagement.Completions
 
             public enum ErrorCodeEnum
             {
-                AccessDenied
+                AccessDenied,
+                KeyNotFound,
+                RandomInvalid
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
+            /// * ```keyNotFound``` - The specified key name is not found.
+            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously
+            ///  provided by the device. The key can not be deleted. 
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

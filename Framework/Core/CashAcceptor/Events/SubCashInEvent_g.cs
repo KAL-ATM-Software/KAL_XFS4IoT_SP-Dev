@@ -36,7 +36,7 @@ namespace XFS4IoT.CashAcceptor.Events
             }
 
             /// <summary>
-            /// Count of unrecognized items handled by the cash interface
+            /// Count of unrecognized items handled by the cash interface.
             /// </summary>
             [DataMember(Name = "unrecognized")]
             public int? Unrecognized { get; init; }

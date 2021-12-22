@@ -16,9 +16,9 @@ namespace XFS4IoTFramework.CashManagement
     public interface IResetEvents
     {
 
-        Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload);
-
         Task InfoAvailableEvent(XFS4IoT.CashManagement.Events.InfoAvailableEvent.PayloadData Payload);
+
+        Task MediaDetectedEvent(XFS4IoT.CashManagement.Events.MediaDetectedEvent.PayloadData Payload);
 
     }
 }

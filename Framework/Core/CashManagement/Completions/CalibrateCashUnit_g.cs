@@ -46,17 +46,17 @@ namespace XFS4IoT.CashManagement.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A cash unit caused an error. A 
+            /// * ```cashUnitError``` - A storage unit caused an error. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```unsupportedPosition``` - The position specified is not valid.
             /// * ```exchangeActive``` - The device is in an exchange state.
-            /// * ```invalidCashUnit``` - The cash unit number specified is not valid.
+            /// * ```invalidCashUnit``` - The storage unit number specified is not valid.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The object name of the cash unit which has been calibrated as stated by
+            /// The object name of the storage unit which has been calibrated as stated by
             /// [Storage.GetStorage](#storage.getstorage).
             /// <example>unit1</example>
             /// </summary>

@@ -22,7 +22,7 @@ namespace XFS4IoT
         /// </summary>
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
         {
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase), new Base64Converter() },
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 

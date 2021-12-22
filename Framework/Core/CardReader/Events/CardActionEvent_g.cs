@@ -55,7 +55,7 @@ namespace XFS4IoT.CardReader.Events
             /// 
             /// * ```unknown``` - The position of the card cannot be determined.
             /// * ```exit``` - The card was in the exit position.
-            /// * ```transport``` - The card was moved in the transport position. 
+            /// * ```transport``` - The card was in the transport position. 
             /// * ```&lt;storage unit identifier&gt;``` - The card was in a storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *park*.

@@ -35,11 +35,12 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
             /// command) from which items are to be removed.
-            /// <example>unit2</example>
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "source")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string Source { get; init; }
 
             [DataContract]
@@ -52,7 +53,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
                 /// command) to which items are to be moved.
                 /// <example>unit1</example>
                 /// </summary>
@@ -61,10 +62,10 @@ namespace XFS4IoT.CashAcceptor.Commands
                 public string Target { get; init; }
 
                 /// <summary>
-                /// The number of items to be moved to the target cash unit. If 0, all items will be moved.
+                /// The number of items to be moved to the target storage unit. If 0, all items will be moved.
                 /// Any items which are removed from the 
-                /// source cash unit that are not of the correct currency and value for the target cash unit 
-                /// during execution of this command will be returned to the source cash unit.
+                /// source storage unit that are not of the correct currency and value for the target storage unit 
+                /// during execution of this command will be returned to the source storage unit.
                 /// <example>100</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsToMove")]
@@ -74,7 +75,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Array of target elements specifying how many items are to be moved and where. There must be at least one
+            /// Array of target elements specifying how many items are to be moved and to where. There must be at least one
             /// array element.
             /// </summary>
             [DataMember(Name = "replenishTargets")]

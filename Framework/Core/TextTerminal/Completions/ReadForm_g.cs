@@ -46,7 +46,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```formNotFound``` - The specified form definition cannot be found.
             /// * ```formInvalid``` - The specified form definition is invalid.
-            /// * ```fieldSpecFailure``` - The syntax of the lpszFields member is invalid.
+            /// * ```fieldSpecFailure``` - The syntax of *fields* is invalid.
             /// * ```keyCanceled``` - The read operation was terminated by pressing the &lt;CANCEL&gt; key.
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
@@ -54,8 +54,15 @@ namespace XFS4IoT.TextTerminal.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Details of the field(s) requested. The key is the field name and value is file value containing all the printable characters (numeric and alphanumeric) 
-            /// read from the text terminal unit key pad for this field.
+            /// Details of the field(s) requested. Each property's name is the field name and value is field value containing all the printable characters (numeric and alphanumeric) 
+            /// read from the text terminal unit key pad for this field. An example shows two fields read.
+            /// 
+            ///   ``` json
+            ///   {
+            ///     "Field1": 123,
+            ///     "Field2": 456
+            ///   }
+            ///   ```
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }

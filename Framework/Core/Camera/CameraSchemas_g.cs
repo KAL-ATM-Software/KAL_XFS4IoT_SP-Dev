@@ -19,14 +19,14 @@ namespace XFS4IoT.Camera
         Ok,
         High,
         Full,
-        NotSupp,
+        NotSupported,
         Unknown
     }
 
 
     public enum CamerasStateEnum
     {
-        NotSupp,
+        NotSupported,
         Ok,
         Inop,
         Unknown
@@ -87,13 +87,12 @@ namespace XFS4IoT.Camera
 
         /// <summary>
         /// Specifies the state of the recording media of the cameras as one of the following. For a device which 
-        /// stores pictures on a hard disk drive or other general-purpose storage, the value of the media field should 
-        /// be notSupp.
+        /// stores pictures on a hard disk drive or other general-purpose storage, this will be *notSupported*.
         /// 
         /// * ```ok``` - The media is in a good state.
         /// * ```high``` - The media is almost full (threshold).
         /// * ```full``` - The media is full.
-        /// * ```notSupp``` - The device does not support sensing the media level.
+        /// * ```notSupported``` - The device does not support sensing the media level.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the media cannot be determined.
         /// </summary>
         [DataMember(Name = "media")]
@@ -117,7 +116,7 @@ namespace XFS4IoT.Camera
 
             /// <summary>
             /// Specifies the state of the camera that monitors the person standing in front of the 
-            /// self-service machine. 
+            /// self-service machine.
             /// </summary>
             [DataMember(Name = "person")]
             public CamerasStateEnum? Person { get; init; }
@@ -143,9 +142,9 @@ namespace XFS4IoT.Camera
         /// <summary>
         /// Specifies the state of the cameras as one of the following.
         /// 
-        /// * ```notSupp``` - The camera is not supported.
+        /// * ```notSupported``` - The camera is not supported.
         /// * ```ok``` - The camera is in a good state.
-        /// * ```inop``` - The camera is inoperative.
+        /// * ```inoperative``` - The camera is inoperative.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the camera cannot be determined.
         /// </summary>
         [DataMember(Name = "cameras")]
@@ -162,21 +161,21 @@ namespace XFS4IoT.Camera
             }
 
             /// <summary>
-            /// Specifies the number of pictures stored on the recording media of the room camera
+            /// Specifies the number of pictures stored on the recording media of the room camera.
             /// </summary>
             [DataMember(Name = "room")]
             [DataTypes(Minimum = 0)]
             public int? Room { get; init; }
 
             /// <summary>
-            /// Specifies the number of pictures stored on the recording media of the person camera
+            /// Specifies the number of pictures stored on the recording media of the person camera.
             /// </summary>
             [DataMember(Name = "person")]
             [DataTypes(Minimum = 0)]
             public int? Person { get; init; }
 
             /// <summary>
-            /// Specifies the number of pictures stored on the recording media of the exit slot camera
+            /// Specifies the number of pictures stored on the recording media of the exit slot camera.
             /// </summary>
             [DataMember(Name = "exitSlot")]
             [DataTypes(Minimum = 0)]
@@ -196,8 +195,7 @@ namespace XFS4IoT.Camera
 
         /// <summary>
         /// Specifies the number of pictures stored on the recording media of the cameras. For a device which 
-        /// stores pictures on a hard disk drive or other general-purpose storage, the value of the pictures 
-        /// field should be zero.
+        /// stores pictures on a hard disk drive or other general-purpose storage, the value of the property should be 0.
         /// </summary>
         [DataMember(Name = "pictures")]
         public PicturesClass Pictures { get; init; }
@@ -224,8 +222,7 @@ namespace XFS4IoT.Camera
         }
 
         /// <summary>
-        /// Specifies the type of the camera device; only current value is
-        /// 
+        /// Specifies the type of the camera device.
         /// * ```cam``` - Camera system.
         /// </summary>
         [DataMember(Name = "type")]
@@ -249,7 +246,7 @@ namespace XFS4IoT.Camera
 
             /// <summary>
             /// Specifies whether the camera that monitors the person standing in front of the self-service is 
-            /// available. 
+            /// available.
             /// </summary>
             [DataMember(Name = "person")]
             public bool? Person { get; init; }
@@ -273,8 +270,7 @@ namespace XFS4IoT.Camera
         }
 
         /// <summary>
-        /// Specifies whether cameras are available. The value of this parameter is either TRUE or FALSE. 
-        /// TRUE is available.
+        /// Specifies whether cameras are available.
         /// </summary>
         [DataMember(Name = "cameras")]
         public CamerasClass Cameras { get; init; }
@@ -302,7 +298,7 @@ namespace XFS4IoT.Camera
             public bool? AutoAdd { get; init; }
 
             /// <summary>
-            /// Specifies whether data can be added manually to the picture using the parameter 
+            /// Specifies whether data can be added manually to the picture using 
             /// [Camera.TakePicture.camData](#camera.takepicture.command.properties.camdata).
             /// </summary>
             [DataMember(Name = "manAdd")]
@@ -311,15 +307,14 @@ namespace XFS4IoT.Camera
         }
 
         /// <summary>
-        /// Specifies whether the methods are supported for adding data to the picture. Ture means the method is 
-        /// supported. False indicates that the method is not supported. If all methods are false, No data can be 
+        /// Specifies whether the methods are supported for adding data to the picture. If all methods are false, no data can be 
         /// added to the picture.
         /// </summary>
         [DataMember(Name = "camData")]
         public CamDataClass CamData { get; init; }
 
         /// <summary>
-        /// Specifies the maximum length of the data that is displayed on the photo. Zero, if data cannot be manually 
+        /// Specifies the maximum length of the data that is displayed on the photo. Omitted if data cannot be manually 
         /// added to the picture.
         /// </summary>
         [DataMember(Name = "maxDataLength")]
@@ -327,8 +322,8 @@ namespace XFS4IoT.Camera
         public int? MaxDataLength { get; init; }
 
         /// <summary>
-        /// Specifies whether the parameter [Camera.TakePicture.pictureFile](#camera.takepicture.command.properties.
-        /// picturefile) is supported. Ture means the parameter is supported. False indicates that the parameter is not 
+        /// Specifies whether the parameter [Camera.TakePicture.pictureFile](#camera.takepicture.command.properties.picturefile)
+        /// is supported.
         /// supported.
         /// </summary>
         [DataMember(Name = "pictureFile")]

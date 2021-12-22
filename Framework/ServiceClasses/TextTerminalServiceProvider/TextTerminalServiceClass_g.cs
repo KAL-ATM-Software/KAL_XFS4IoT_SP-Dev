@@ -23,15 +23,6 @@ namespace XFS4IoTServer
             this.Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(TextTerminalServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ITextTerminalDevice>();
         }
-        public async Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.TextTerminal.Events.FieldErrorEvent(Payload));
-
-        public async Task FieldWarningEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.TextTerminal.Events.FieldWarningEvent());
-
-        public async Task KeyEvent(XFS4IoT.TextTerminal.Events.KeyEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.TextTerminal.Events.KeyEvent(Payload));
-
         private readonly IServiceProvider ServiceProvider;
         private readonly ILogger Logger;
         private ITextTerminalDevice Device { get => ServiceProvider.Device.IsA<ITextTerminalDevice>(); }

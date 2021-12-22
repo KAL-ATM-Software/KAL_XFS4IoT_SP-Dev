@@ -34,8 +34,7 @@ namespace XFS4IoT.Auxiliaries.Completions
 
             public enum ErrorCodeEnum
             {
-                InvalidAuxiliary,
-                SyntaxError
+                InvalidAuxiliary
             }
 
             /// <summary>
@@ -43,7 +42,6 @@ namespace XFS4IoT.Auxiliaries.Completions
             /// 
             /// * ```invalidAuxiliary``` - An attempt to set a auxiliary to a new value was invalid because the auxiliary does not 
             ///   exist or the auxiliary is pre-configured as an input port.
-            /// * ```syntaxError``` - The command was invoked with incorrect input data.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

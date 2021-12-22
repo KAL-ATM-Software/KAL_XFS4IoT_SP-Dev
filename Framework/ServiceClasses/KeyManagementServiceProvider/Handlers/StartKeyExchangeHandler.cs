@@ -51,7 +51,7 @@ namespace XFS4IoTFramework.KeyManagement
             return new StartKeyExchangeCompletion.PayloadData(result.CompletionCode,
                                                               result.ErrorDescription,
                                                               result.ErrorCode,
-                                                              result.RandomItem is not null && result.RandomItem.Count > 0 ? Convert.ToBase64String(result.RandomItem.ToArray()) : null);
+                                                              result.RandomItem);
         }
     }
 }

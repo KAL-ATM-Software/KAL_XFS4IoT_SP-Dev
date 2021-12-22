@@ -36,7 +36,7 @@ namespace XFS4IoT.CardReader.Commands
             [DataContract]
             public sealed class DataClass
             {
-                public DataClass(DestinationEnum? Destination = null, string Data = null, WriteMethodEnum? WriteMethod = null)
+                public DataClass(DestinationEnum? Destination = null, List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
                 {
                     this.Destination = Destination;
                     this.Data = Data;
@@ -68,11 +68,12 @@ namespace XFS4IoT.CardReader.Commands
                 public DestinationEnum? Destination { get; init; }
 
                 /// <summary>
-                /// Base4 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQgZGF0YQ==</example>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                public string Data { get; init; }
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
                 {
@@ -87,7 +88,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
-                /// * ```auto``` - Service Provider will determine whether low or high coercivity is to be used.
+                /// * ```auto``` - Service will determine whether low or high coercivity is to be used.
                 /// </summary>
                 [DataMember(Name = "writeMethod")]
                 public WriteMethodEnum? WriteMethod { get; init; }
@@ -95,7 +96,7 @@ namespace XFS4IoT.CardReader.Commands
             }
 
             /// <summary>
-            /// An array of card data structures
+            /// An array of card data write instructions
             /// </summary>
             [DataMember(Name = "data")]
             public List<DataClass> Data { get; init; }

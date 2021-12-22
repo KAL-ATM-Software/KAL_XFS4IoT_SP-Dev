@@ -48,7 +48,7 @@ namespace XFS4IoT.CashManagement.Commands
 
                 /// <summary>
                 /// Specifies the zero based index for the item information required. If not specified, all items of the
-                /// specified _level_ will be returned.
+                /// specified *level* will be returned.
                 /// <example>1</example>
                 /// </summary>
                 [DataMember(Name = "index")]

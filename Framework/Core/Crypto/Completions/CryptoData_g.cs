@@ -26,51 +26,51 @@ namespace XFS4IoT.Crypto.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string CryptData = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Data = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.CryptData = CryptData;
+                this.Data = Data;
             }
 
             public enum ErrorCodeEnum
             {
-                KeyNotFound,
-                ModeNotSupported,
                 AccessDenied,
+                KeyNotFound,
                 KeyNoValue,
                 UseViolation,
+                ModeOfUseNotSupported,
                 InvalidKeyLength,
-                NoChipTransactionActive,
-                AlgorithmNotSupported,
-                CryptoMethodNotSupported
+                CryptoMethodNotSupported,
+                NoChipTransactionActive
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```keyNotFound``` - The specified key was not found.
-            /// * ```modeNotSupported``` - The mode specified by modeOfUse is not supported.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific
-            /// reason. 
-            /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been
-            /// loaded. 
-            /// * ```useViolation``` - The use specified by keyUsage is not supported. 
-            /// * ```invalidKeyLength``` - The length of startValue is not supported or the length of an encryption key is
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason. 
+            /// * ```keyNotFound``` - The *key* name does not exist.
+            /// * ```keyNoValue``` - The *key* name exists but the key is not loaded.
+            /// * ```useViolation``` - The *key* usage is not supported. 
+            /// * ```modeOfUseNotSupported``` - The *key* Mode of Use or the *modeOfUse* qualifier is not supported.
+            /// * ```invalidKeyLength``` - The length of *iv* is not supported or the length of an encryption key is
             /// not compatible with the encryption operation required. 
-            /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip transaction
-            /// active. 
-            /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported. 
-            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not supported.
+            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not
+            /// supported.
+            /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip
+            /// transaction active. 
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded encrypted or decrypted data.
+            /// The encrypted or decrypted data.
+            /// <example>U2FtcGxlIERhdGE=</example>
             /// </summary>
-            [DataMember(Name = "cryptData")]
-            public string CryptData { get; init; }
+            [DataMember(Name = "data")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
         }
     }

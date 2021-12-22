@@ -37,7 +37,7 @@ namespace XFS4IoT.TextTerminal.Completions
             {
                 FormNotFound,
                 FormInvalid,
-                FieldNotfound,
+                FieldNotFound,
                 FieldInvalid
             }
 
@@ -45,7 +45,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```formInvalid``` - The specified form is invalid.
-            /// * ```fieldNotfound``` - The specified field cannot be found.
+            /// * ```fieldNotFound``` - The specified field cannot be found.
             /// * ```fieldInvalid``` - The specified field is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]

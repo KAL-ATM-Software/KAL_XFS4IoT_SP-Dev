@@ -36,22 +36,24 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specifies the maximum number of digits which can be returned to the application in the output parameter. 
+            /// Specifies the maximum number of digits which can be returned to the application in the output parameter.
             /// </summary>
             [DataMember(Name = "maxLen")]
+            [DataTypes(Minimum = 0)]
             public int? MaxLen { get; init; }
 
             /// <summary>
-            /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of digits are entered.
-            /// Otherwise, the input is terminated by the user using one of the termination keys. 
-            /// autoEnd is ignored when maxLen is set to zero.
+            /// If *autoEnd* is set to true, the Service Provider terminates the command when the maximum number of
+            /// digits are entered.
+            /// Otherwise, the input is terminated by the user using one of the termination keys.
+            /// *autoEnd* is ignored when *maxLen* is set to zero.
             /// </summary>
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
 
             /// <summary>
             /// Specifies all Function Keys which are active during the execution of the command.
-            /// This should be the complete set or a subset of the keys returned in the payload of the 
+            /// This should be the complete set or a subset of the keys returned in the payload of the
             /// [Keyboard.GetLayout](#keyboard.getlayout) command.
             /// 
             /// The following standard names are defined:
@@ -78,7 +80,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// * ```tripleZero``` - 000
             /// * ```fdk[01-32]``` - 32 FDK keys
             /// 
-            /// Additional non standard key names are also allowed.
+            /// Additional non-standard key names are also allowed:
+            /// 
+            /// * ```oem[a-zA-Z0-9]*``` - A non-standard key name
             /// </summary>
             [DataMember(Name = "activeKeys")]
             public Dictionary<string, KeyClass> ActiveKeys { get; init; }

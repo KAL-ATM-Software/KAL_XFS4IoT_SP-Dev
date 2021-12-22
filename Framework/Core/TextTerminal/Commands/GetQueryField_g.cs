@@ -36,13 +36,15 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Specifies the form name.
+            /// <example>My form name</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
-            /// Specifies the name of the field about which to retrieve details. If this value is not set, 
+            /// Specifies the name of the field about which to retrieve details. If omitted, 
             /// then retrieve details for all fields on the form.
+            /// <example>My form field</example>
             /// </summary>
             [DataMember(Name = "fieldName")]
             public string FieldName { get; init; }

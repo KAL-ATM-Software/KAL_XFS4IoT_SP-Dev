@@ -21,7 +21,5 @@ namespace XFS4IoTFramework.CashManagement
             : base(connection, requestId)
         { }
 
-        public async Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent(requestId, Payload));
-
     }
 }

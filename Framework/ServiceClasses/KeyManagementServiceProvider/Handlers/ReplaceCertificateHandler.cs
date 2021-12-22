@@ -22,8 +22,8 @@ namespace XFS4IoTFramework.KeyManagement
     {
         private async Task<ReplaceCertificateCompletion.PayloadData> HandleReplaceCertificate(IReplaceCertificateEvents events, ReplaceCertificateCommand replaceCertificate, CancellationToken cancel)
         {
-            if (string.IsNullOrEmpty(replaceCertificate.Payload.ReplaceCertificate) ||
-                replaceCertificate.Payload.ReplaceCertificate.Length == 0)
+            if (replaceCertificate.Payload.ReplaceCertificate is null ||
+                replaceCertificate.Payload.ReplaceCertificate.Count == 0)
             {
                 return new ReplaceCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                     $"No certificate data specified.");
@@ -31,7 +31,7 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ReplaceCertificate()");
 
-            var result = await Device.ReplaceCertificate(new ReplaceCertificateRequest(Convert.FromBase64String(replaceCertificate.Payload.ReplaceCertificate).ToList()), 
+            var result = await Device.ReplaceCertificate(new ReplaceCertificateRequest(replaceCertificate.Payload.ReplaceCertificate), 
                                                          cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ReplaceCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -39,7 +39,7 @@ namespace XFS4IoTFramework.KeyManagement
             return new ReplaceCertificateCompletion.PayloadData(result.CompletionCode,
                                                                 result.ErrorDescription,
                                                                 result.ErrorCode,
-                                                                result.Digest is not null && result.Digest.Count > 0 ? Convert.ToBase64String(result.Digest.ToArray()) : null);
+                                                                result.Digest);
         }
     }
 }

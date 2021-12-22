@@ -51,22 +51,6 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Array specifying the command keys which are active during the execution of the next [TextTerminal.ReadForm](#textterminal.readform) command.                       
-            /// The following standard names are defined:
-            /// 
-            ///   * ```enter``` - Enter
-            ///   * ```cancel``` - Cancel
-            ///   * ```clear``` - Clear
-            ///   * ```backspace``` - Backspace
-            ///   * ```help``` - Help
-            ///   * ```doubleZero``` - 00
-            ///   * ```tripleZero``` - 000
-            ///   * ```arrowUp``` - up arrow
-            ///   * ```arrowDown``` - down arrow
-            ///   * ```arrowLeft``` - left arrow
-            ///   * ```arrowRight``` - right arrow
-            ///   * ```fdk[01-32]``` - 32 FDK keys
-            /// 
-            ///   Additional non standard key names are also allowed.
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
             public Dictionary<string, KeyClass> ActiveCommandKeys { get; init; }

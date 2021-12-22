@@ -47,8 +47,8 @@ namespace XFS4IoT.TextTerminal.Completions
             /// * ```formNotFound``` - The specified form definition cannot be found.
             /// * ```formInvalid``` - The specified form definition is invalid.
             /// * ```mediaOverflow``` - The form overflowed the media.
-            /// * ```fieldSpecFailure``` - The syntax of the lpszFields member is invalid.
-            /// * ```characterSetsData``` - Character set(s) supported by Service is inconsistent with use of fields value.
+            /// * ```fieldSpecFailure``` - The syntax of *fields* is invalid.
+            /// * ```characterSetsData``` - The character set(s) supported by the Service is inconsistent with *fields*.
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
             [DataMember(Name = "errorCode")]

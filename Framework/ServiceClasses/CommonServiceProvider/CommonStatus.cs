@@ -51,6 +51,32 @@ namespace XFS4IoTFramework.Common
             Unknown
         }
 
+        public enum EndToEndSecurityEnum
+        {
+            NotSupported,
+            NotEnforced,
+            NotConfigured,
+            Enforced
+        }
+
+        public enum ErrorEventIdEnum
+        {
+            Hardware,
+            Software,
+            User,
+            FraudAttempt
+        }
+
+        public enum ErrorActionEnum
+        {
+            Reset,
+            SoftwareError,
+            Configuration,
+            Clear,
+            Maintenance,
+            Suspend
+        }
+
         public CommonStatusClass()
         {
             Device = DeviceEnum.NoDevice;
@@ -58,18 +84,21 @@ namespace XFS4IoTFramework.Common
             PowerSaveRecoveryTime = 0;
             AntiFraudModule = AntiFraudModuleEnum.NotSupported;
             Exchange = ExchangeEnum.NotSupported;
+            EndToEndSecurity = EndToEndSecurityEnum.NotSupported;
         }
         public CommonStatusClass(DeviceEnum Device, 
                                  PositionStatusEnum DevicePosition, 
                                  int PowerSaveRecoveryTime, 
                                  AntiFraudModuleEnum AntiFraudModule, 
-                                 ExchangeEnum Exchange)
+                                 ExchangeEnum Exchange,
+                                 EndToEndSecurityEnum EndToEndSecurity)
         {
             this.Device = Device;
             this.DevicePosition = DevicePosition;
             this.PowerSaveRecoveryTime = PowerSaveRecoveryTime;
             this.AntiFraudModule = AntiFraudModule;
             this.Exchange = Exchange;
+            this.EndToEndSecurity = EndToEndSecurity;
         }
         
         /// <summary>
@@ -118,5 +147,22 @@ namespace XFS4IoTFramework.Common
         /// Exchange status for storage
         /// </summary>
         public ExchangeEnum Exchange { get; set; }
+
+        /// <summary>
+        /// Specifies the status of end to end security support on this device. 
+        /// 
+        /// Also see [Common.CapabilityProperties.endToEndSecurity](#common.capabilities.completion.properties.common.endtoendsecurity). 
+        /// 
+        /// * ```notSupported``` - E2E security is not supported by this hardware. Any command can be called without a 
+        /// token. 
+        /// * ```notEnforced``` - E2E security is supported by this hardware but it is not currently enforced, for 
+        /// example because required keys aren't loaded. It's currently possible to perform E2E commands without a 
+        /// token. 
+        /// * ```notConfigured``` - E2E security is supported but not correctly configured, for example because required
+        /// keys aren't loaded. Any attempt to perform any command protected by E2E security will fail.
+        /// * ```enforced``` - E2E security is supported and correctly configured. E2E security will be enforced. 
+        /// Calling E2E protected commands will only be possible if a valid token is given.
+        /// </summary>
+        public EndToEndSecurityEnum EndToEndSecurity { get; init; }
     }
 }

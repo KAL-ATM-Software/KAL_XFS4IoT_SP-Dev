@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessIssuerUpdateAsync()");
             var result = await Device.EMVContactlessIssuerUpdateAsync(new EMVClessCommandEvents(events),
-                                                                      new EMVContactlessIssuerUpdateRequest(string.IsNullOrEmpty(eMVClessIssuerUpdate.Payload.Data) ? null : new List<byte>(Convert.FromBase64String(eMVClessIssuerUpdate.Payload.Data)), eMVClessIssuerUpdate.Payload.Timeout),
+                                                                      new EMVContactlessIssuerUpdateRequest(eMVClessIssuerUpdate.Payload.Data, eMVClessIssuerUpdate.Payload.Timeout),
                                                                       cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessIssuerUpdateAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -36,29 +36,28 @@ namespace XFS4IoTFramework.CardReader
                 result.TransactionResult is not null)
             {
                 // Build transaction output data
-                EMVClessTxOutputDataClass chip = new((EMVClessTxOutputDataClass.TxOutcomeEnum)result.TransactionResult.TransactionOutcome,
-                                                    (EMVClessTxOutputDataClass.CardholderActionEnum)result.TransactionResult.CardholderAction,
-                                                    result.TransactionResult.DataRead.Count == 0 ? null : Convert.ToBase64String(result.TransactionResult.DataRead.ToArray()),
-                                                    new EMVClessTxOutputDataClass.ClessOutcomeClass((EMVClessTxOutputDataClass.ClessOutcomeClass.CvmEnum)result.TransactionResult.ClessOutcome.Cvm,
-                                                                                                    (EMVClessTxOutputDataClass.ClessOutcomeClass.AlternateInterfaceEnum)result.TransactionResult.ClessOutcome.AlternateInterface,
-                                                                                                    result.TransactionResult.ClessOutcome.Receipt,
-                                                                                                    new EMVClessUIClass(result.TransactionResult.ClessOutcome.UiOutcome.MessageId,
-                                                                                                                        (EMVClessUIClass.StatusEnum)result.TransactionResult.ClessOutcome.UiOutcome.Status,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiOutcome.HoldTime,
-                                                                                                                        (EMVClessUIClass.ValueQualifierEnum)result.TransactionResult.ClessOutcome.UiOutcome.ValueQualifier,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiOutcome.Value,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiOutcome.CurrencyCode,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiOutcome.LanguagePreferenceData),
-                                                                                                    new EMVClessUIClass(result.TransactionResult.ClessOutcome.UiRestart.MessageId,
-                                                                                                                        (EMVClessUIClass.StatusEnum)result.TransactionResult.ClessOutcome.UiRestart.Status,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiRestart.HoldTime,
-                                                                                                                        (EMVClessUIClass.ValueQualifierEnum)result.TransactionResult.ClessOutcome.UiRestart.ValueQualifier,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiRestart.Value,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiRestart.CurrencyCode,
-                                                                                                                        result.TransactionResult.ClessOutcome.UiRestart.LanguagePreferenceData),
-                                                                                                    result.TransactionResult.ClessOutcome.FieldOffHoldTime,
-                                                                                                    result.TransactionResult.ClessOutcome.CardRemovalTimeout,
-                                                                                                    result.TransactionResult.ClessOutcome.DiscretionaryData.Count == 0 ? null : Convert.ToBase64String(result.TransactionResult.ClessOutcome.DiscretionaryData.ToArray())));
+                EMVClessIssuerUpdateEMVClessTxOutputDataClass chip = new((EMVClessIssuerUpdateEMVClessTxOutputDataClass.TxOutcomeEnum)result.TransactionResult.TransactionOutcome,
+                                                                         result.TransactionResult.DataRead,
+                                                                         new EMVClessIssuerUpdateEMVClessTxOutputDataClass.ClessOutcomeClass((EMVClessIssuerUpdateEMVClessTxOutputDataClass.ClessOutcomeClass.CvmEnum)result.TransactionResult.ClessOutcome.Cvm,
+                                                                                                                                             (EMVClessIssuerUpdateEMVClessTxOutputDataClass.ClessOutcomeClass.AlternateInterfaceEnum)result.TransactionResult.ClessOutcome.AlternateInterface,
+                                                                                                                                             result.TransactionResult.ClessOutcome.Receipt,
+                                                                                                                                             new EMVClessUIClass(result.TransactionResult.ClessOutcome.UiOutcome.MessageId,
+                                                                                                                                                                 (EMVClessUIClass.StatusEnum)result.TransactionResult.ClessOutcome.UiOutcome.Status,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiOutcome.HoldTime,
+                                                                                                                                                                 (EMVClessUIClass.ValueQualifierEnum)result.TransactionResult.ClessOutcome.UiOutcome.ValueQualifier,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiOutcome.Value,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiOutcome.CurrencyCode,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiOutcome.LanguagePreferenceData),
+                                                                                                                                             new EMVClessUIClass(result.TransactionResult.ClessOutcome.UiRestart.MessageId,
+                                                                                                                                                                 (EMVClessUIClass.StatusEnum)result.TransactionResult.ClessOutcome.UiRestart.Status,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiRestart.HoldTime,
+                                                                                                                                                                 (EMVClessUIClass.ValueQualifierEnum)result.TransactionResult.ClessOutcome.UiRestart.ValueQualifier,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiRestart.Value,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiRestart.CurrencyCode,
+                                                                                                                                                                 result.TransactionResult.ClessOutcome.UiRestart.LanguagePreferenceData),
+                                                                                                                                             result.TransactionResult.ClessOutcome.FieldOffHoldTime,
+                                                                                                                                             result.TransactionResult.ClessOutcome.CardRemovalTimeout,
+                                                                                                                                             result.TransactionResult.ClessOutcome.DiscretionaryData));
                 return new EMVClessIssuerUpdateCompletion.PayloadData(result.CompletionCode, 
                                                                       result.ErrorDescription,
                                                                       result.ErrorCode,

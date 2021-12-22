@@ -39,14 +39,15 @@ namespace XFS4IoT.Printer.Commands
             /// described in
             /// [Form, Sub-Form, Field, Frame, Table and Media Definitions](#printer.generalinformation.formandmediadefinitions).
             /// Only one form or media definition can be included in this property.
+            /// <example>FormDefinition1</example>
             /// </summary>
             [DataMember(Name = "definition")]
             public string Definition { get; init; }
 
             /// <summary>
-            /// Specifies if an existing form or media definition with the same name is to be replaced. If this flag
+            /// Specifies if an existing form or media definition with the same name is to be replaced. If 
             /// is true then an existing form or media definition with the same name will be replaced, unless the
-            /// command fails with an error, where the definition will remain unchanged. If this flag is false this
+            /// command fails with an error, where the definition will remain unchanged. If false this
             /// command will fail with an error if the form or media definition already exists.
             /// </summary>
             [DataMember(Name = "overwrite")]

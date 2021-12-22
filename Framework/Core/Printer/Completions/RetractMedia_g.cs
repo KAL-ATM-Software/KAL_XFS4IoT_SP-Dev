@@ -53,9 +53,12 @@ namespace XFS4IoT.Printer.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The number of the retract bin where the media has actually been deposited.
+            /// The number of the retract bin where the media has actually been deposited. Omitted if no media was retracted.
+            /// See [retractBins](#common.capabilities.completion.properties.printer.retractbins).
+            /// <example>2</example>
             /// </summary>
             [DataMember(Name = "binNumber")]
+            [DataTypes(Minimum = 1)]
             public int? BinNumber { get; init; }
 
         }

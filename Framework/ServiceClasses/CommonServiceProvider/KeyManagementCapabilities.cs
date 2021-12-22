@@ -60,10 +60,9 @@ namespace XFS4IoTFramework.Common
         public enum SignatureSchemeEnum
         {
             NotSupported = 0,
-            RSAKeyPair = 0x0001,   // Specifies if the Service Provider supports the RSA Signature Scheme GenerateRSAKeyPair and ExportRSAEPPSignedItem commands.
-            RandomNumber = 0x0002, // Specifies if the Service Provider returns a random number from the StartKeyExchange command within the RSA Signature Scheme.
-            ExportEPPID = 0x0004,  // Specifies if the Service Provider supports exporting the EPP Security Item within the RSA Signature Scheme.
-            EnhancedRKL = 0x0008,  // Specifies that the Service Provider supports the Enhanced Signature Remote Key Scheme. This scheme allows the customer to manage their own public keys independently of the Signature Issuer. 
+            RandomNumber = 0x0001, // Specifies if the Service Provider returns a random number from the StartKeyExchange command within the RSA Signature Scheme.
+            ExportEPPID = 0x0002,  // Specifies if the Service Provider supports exporting the EPP Security Item within the RSA Signature Scheme.
+            EnhancedRKL = 0x0004,  // Specifies that the Service Provider supports the Enhanced Signature Remote Key Scheme. This scheme allows the customer to manage their own public keys independently of the Signature Issuer. 
         }
 
         [Flags]

@@ -16,5 +16,9 @@ namespace XFS4IoTFramework.TextTerminal
     public interface IReadFormEvents
     {
 
+        Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload);
+
+        Task FieldWarningEvent();
+
     }
 }

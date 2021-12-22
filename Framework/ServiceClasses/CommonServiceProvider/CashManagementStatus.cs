@@ -45,7 +45,10 @@ namespace XFS4IoTFramework.Common
         {
             Closed,
             Open,
-            Jammed,
+            JammedOpen,
+            JammedPartiallyOpen,
+            JammedClosed,
+            JammedUnknown,
             Unknown,
             NotSupported
         }

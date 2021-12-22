@@ -86,7 +86,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaTurnFail``` - The device was not able to turn the inserted media.
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
-            /// * ```charSetData``` - Character set(s) supported by Service Provider is inconsistent with use of
+            /// * ```charSetData``` - Character set(s) supported by the Service is inconsistent with use of
             ///   *fields*.
             /// * ```paperJammed``` - The paper is jammed.
             /// * ```paperOut``` - The paper supply is empty.

@@ -46,7 +46,7 @@ namespace XFS4IoT.CashDispenser.Completions
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```noItems``` - There were no items to reject.
             /// * ```exchangeActive``` - The device is in an exchange state (see
-            /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
+            /// [Storage.StartExchange](#storage.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

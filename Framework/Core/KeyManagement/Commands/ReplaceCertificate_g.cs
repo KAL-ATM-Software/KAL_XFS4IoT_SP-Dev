@@ -27,19 +27,22 @@ namespace XFS4IoT.KeyManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string ReplaceCertificate = null)
+            public PayloadData(int Timeout, List<byte> ReplaceCertificate = null)
                 : base(Timeout)
             {
                 this.ReplaceCertificate = ReplaceCertificate;
             }
 
             /// <summary>
-            /// The Base64 encoded PKCS # 7 (See [[Ref. 2](#ref-keymanagement-2)]) message that will replace the current Certificate Authority.
-            /// The outer content uses the signedData content type, the inner content is a degenerate certificate only content containing the new 
-            /// ca certificate and Inner Signed Data type The certificate should be in a format represented in DER encoded ASN.1 notation.
+            /// The PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)]) message that will replace the current
+            /// Certificate Authority. The outer content uses the Signed-data content type, the inner content is a
+            /// degenerate certificate only content containing the new CA certificate and Inner Signed Data type The
+            /// certificate should be in a format represented in DER encoded ASN.1 notation.
+            /// <example>UEtDUyAjNyBkYXRh</example>
             /// </summary>
             [DataMember(Name = "replaceCertificate")]
-            public string ReplaceCertificate { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> ReplaceCertificate { get; init; }
 
         }
     }

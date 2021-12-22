@@ -34,7 +34,7 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specify layouts to define.  
+            /// Specify layouts to define.
             /// </summary>
             [DataMember(Name = "layout")]
             public LayoutClass Layout { get; init; }

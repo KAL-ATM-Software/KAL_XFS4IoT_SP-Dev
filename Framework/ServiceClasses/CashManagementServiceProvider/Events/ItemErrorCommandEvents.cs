@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.CashManagement
 {
     public class ItemErrorCommandEvents : ItemInfoAvailableCommandEvent
     {
-        public enum ReasonEnum
+        public enum ItemErrorReasonEnum
         {
             DoubleNote,
             LongNote,
@@ -43,18 +43,18 @@ namespace XFS4IoTFramework.CashManagement
             base(events)
         { }
 
-        public Task NoteErrorEvent(ReasonEnum Reason)
+        public Task NoteErrorEvent(ItemErrorReasonEnum Reason)
         {
             XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData payload = new(
                     Reason switch
                     {
-                        ReasonEnum.DoubleNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.DoubleNote,
-                        ReasonEnum.IncorrectCount => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.IncorrectCount,
-                        ReasonEnum.LongNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.LongNote,
-                        ReasonEnum.NotesTooClose => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.NotesTooClose,
-                        ReasonEnum.OtherNoteError => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.OtherNoteError,
-                        ReasonEnum.ShortNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.ShortNote,
-                        ReasonEnum.SkewedNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.SkewedNote,
+                        ItemErrorReasonEnum.DoubleNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.DoubleNote,
+                        ItemErrorReasonEnum.IncorrectCount => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.IncorrectCount,
+                        ItemErrorReasonEnum.LongNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.LongNote,
+                        ItemErrorReasonEnum.NotesTooClose => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.NotesTooClose,
+                        ItemErrorReasonEnum.OtherNoteError => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.OtherNoteError,
+                        ItemErrorReasonEnum.ShortNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.ShortNote,
+                        ItemErrorReasonEnum.SkewedNote => XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData.ReasonEnum.SkewedNote,
                         _ => null,
                     }
                 );

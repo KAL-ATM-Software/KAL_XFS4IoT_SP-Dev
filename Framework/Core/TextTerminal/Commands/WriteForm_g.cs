@@ -37,19 +37,28 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Specifies the name of the form.
+            /// <example>My form</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
-            /// Specifies whether the screen is cleared before displaying the form (true) or not (false).
+            /// Specifies whether the screen is cleared before displaying the form.
             /// </summary>
             [DataMember(Name = "clearScreen")]
             public bool? ClearScreen { get; init; }
 
             /// <summary>
-            /// Details of the field(s) to write. The key is the field name and value is file value containing all the printable characters (numeric and alphanumeric) 
-            /// to display on the text terminal unit key pad for this field.
+            /// Details of the field(s) to write. The property is the field name and value is field value containing
+            /// all the printable characters (numeric and alphanumeric) to display on the text terminal unit key pad
+            /// for this field. An example shows two fields to be written.
+            /// 
+            /// ``` json
+            /// {
+            ///   "Field1": 123,
+            ///   "Field2": 456
+            /// }
+            /// ```
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }

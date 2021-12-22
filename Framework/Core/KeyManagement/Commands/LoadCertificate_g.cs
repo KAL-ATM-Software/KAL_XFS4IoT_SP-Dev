@@ -27,7 +27,7 @@ namespace XFS4IoT.KeyManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, LoadOptionEnum? LoadOption = null, SignerEnum? Signer = null, string CertificateData = null)
+            public PayloadData(int Timeout, LoadOptionEnum? LoadOption = null, SignerEnum? Signer = null, List<byte> CertificateData = null)
                 : base(Timeout)
             {
                 this.LoadOption = LoadOption;
@@ -44,7 +44,8 @@ namespace XFS4IoT.KeyManagement.Commands
             /// <summary>
             /// Specifies the method to use to load the certificate. The following values are possible:
             /// * ```newHost``` - Load a new Host certificate, where one has not already been loaded.
-            /// * ```replaceHost``` - Replace (or rebind) the device to a new Host certificate, where the new Host certificate is signed by *signer*.
+            /// * ```replaceHost``` - Replace (or rebind) the device to a new Host certificate, where the new Host
+            /// certificate is signed by *signer*.
             /// </summary>
             [DataMember(Name = "loadOption")]
             public LoadOptionEnum? LoadOption { get; init; }
@@ -58,7 +59,8 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Specifies the signer of the certificate to be loaded. The following values are possible:
-            /// * ```certHost``` - The certificate to be loaded is signed by the current Host. Cannot be combined with newHost.
+            /// * ```certHost``` - The certificate to be loaded is signed by the current Host. Cannot be combined with
+            /// *newHost*.
             /// * ```ca``` - The certificate to be loaded is signed by the Certificate Authority (CA).
             /// * ```hl``` - The certificate to be loaded is signed by the Higher Level (HL) Authority.
             /// </summary>
@@ -69,18 +71,21 @@ namespace XFS4IoT.KeyManagement.Commands
             /// The structure that contains the certificate that is to be loaded represented in DER encoded ASN.1
             /// notation. 
             /// 
-            /// For loadNewHost, this data should be in a binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the 'degenerate certificate only'
-            /// case of the signed-data content type in which the inner content's data file is omitted and there are no
-            /// signers.
+            /// For *loadNewHost*, this data should be in a binary encoded PKCS#7 (See
+            /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) using the 'degenerate certificate only' case of the
+            /// SignedData content type in which the inner content's data file is omitted and there are no signers.
             /// 
-            /// For replaceHost, the message has an outer signedData content type with the signerInfo encryptedDigest 
-            /// field containing the signature of signer. The inner content is binary encoded PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) using the
-            /// degenerate certificate.
+            /// For *replaceHost*, the message has an outer SignedData content type with the SignerInfo encryptedDigest 
+            /// field containing the signature of signer. The inner content is binary encoded PKCS#7 (See
+            /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) using the degenerate certificate.
             /// 
-            /// The optional CRL field may or may not be included in the PKCS #7 (See [[Ref. 2](#ref-keymanagement-2)]) signedData structure.
+            /// The optional CRL field may or may not be included in the PKCS#7 (See
+            /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) signed-data structure.
+            /// <example>Y2VydGlmaWNhdGUgaW4g ...</example>
             /// </summary>
             [DataMember(Name = "certificateData")]
-            public string CertificateData { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> CertificateData { get; init; }
 
         }
     }

@@ -58,6 +58,7 @@ namespace XFS4IoTServer
             }
         }
 
+        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
@@ -67,6 +68,28 @@ namespace XFS4IoTServer
         /// Stores Common interface capabilites internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
+
+        #endregion
+
+        #region Common unsolicited events
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
+        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
+
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
+        #endregion
 
         /// <summary>
         /// Common Status

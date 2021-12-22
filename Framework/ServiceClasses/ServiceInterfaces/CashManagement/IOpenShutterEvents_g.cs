@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.CashManagement
     public interface IOpenShutterEvents
     {
 
-        Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload);
-
     }
 }

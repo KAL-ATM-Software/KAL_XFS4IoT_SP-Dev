@@ -53,7 +53,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// * ```keyOverlap``` - Keys are overlapping.
             /// * ```tooManyFrames``` -There are more frames defined than allowed.
             /// * ```tooManyKeys``` - There are more keys defined than allowed.
-            /// * ```keyAlreadyDefined``` - The combination of the *keyType* and values for *fK* and *shiftFK* can only be used once per layout.
+            /// * ```keyAlreadyDefined``` - The values for *key* and *shiftKey* can only be used once per layout.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -26,7 +26,7 @@ namespace XFS4IoT.PinPad.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string PinBlock = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> PinBlock = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -44,33 +44,40 @@ namespace XFS4IoT.PinPad.Completions
                 InvalidKeyLength,
                 AlgorithmNotSupported,
                 DukptOverflow,
-                ModeNotSupported,
                 CryptoMethodNotSupported
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```keyNotFound``` - The specified key was not found.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
-            /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been loaded.
-            /// * ```useViolation``` - The use specified by keyUsage is not supported.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
+            /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been
+            /// loaded.
+            /// * ```useViolation``` - The use specified by
+            /// [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) is not
+            /// supported.
             /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
             /// * ```formatNotSupported``` - The specified format is not supported.
-            /// * ```invalidKeyLength``` - The length of secondEncKey or key is not supported by this key or the length of an encryption 
+            /// * ```invalidKeyLength``` - The length of *secondEncKey* or *key* is not supported by this key or the
+            /// length of an encryption 
             /// key is not compatible with the encryption operation required.
             /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported.
-            /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be loaded.
-            /// * ```modeNotSupported``` - The mode specified by bModeOfUse is not supported
-            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
+            /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be
+            /// loaded.
+            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not
+            /// supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded encrypted PIN block.
+            /// The encrypted PIN block.
+            /// <example>UGluYmxvY2sgZGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "pinBlock")]
-            public string PinBlock { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> PinBlock { get; init; }
 
         }
     }

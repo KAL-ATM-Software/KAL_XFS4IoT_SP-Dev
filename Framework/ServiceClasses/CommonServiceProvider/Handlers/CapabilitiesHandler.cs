@@ -45,11 +45,6 @@ namespace XFS4IoTFramework.Common
                                Common.CommonCapabilities.CommonInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                Common.CommonCapabilities.CommonInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                0));
-            if (Common.CommonCapabilities.CommonInterface?.SynchronizableCommands?.Count > 0)
-            {
-                synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CommonInterface.SynchronizableCommands
-                                                select $"{interfaceName}.{cmd}");
-            }
             if (Common.CommonCapabilities.CommonInterface.AuthenticationRequired?.Count > 0)
             {
                 authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CommonInterface.AuthenticationRequired
@@ -64,11 +59,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.CardReaderInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.CardReaderInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.CardReaderInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CardReaderInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.CardReaderInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CardReaderInterface.AuthenticationRequired
@@ -83,11 +73,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.CashDispenserInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.CashDispenserInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.CashDispenserInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CashDispenserInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.CashDispenserInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CashDispenserInterface.AuthenticationRequired
@@ -102,11 +87,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.CashManagementInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.CashManagementInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.CashManagementInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CashManagementInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.CashManagementInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CashManagementInterface.AuthenticationRequired
@@ -121,11 +101,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.CryptoInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.CryptoInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.CryptoInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.CryptoInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.CryptoInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CryptoInterface.AuthenticationRequired
@@ -140,11 +115,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.KeyboardInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.KeyboardInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.KeyboardInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.KeyboardInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.KeyboardInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.KeyboardInterface.AuthenticationRequired
@@ -159,11 +129,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.KeyManagementInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.KeyManagementInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.KeyManagementInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.KeyManagementInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.KeyManagementInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.KeyManagementInterface.AuthenticationRequired
@@ -178,11 +143,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.PinPadInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.PinPadInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.PinPadInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.PinPadInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.PinPadInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.PinPadInterface.AuthenticationRequired
@@ -197,11 +157,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.TextTerminalInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.TextTerminalInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.TextTerminalInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.TextTerminalInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.TextTerminalInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.TextTerminalInterface.AuthenticationRequired
@@ -216,11 +171,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.StorageInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.StorageInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.StorageInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.StorageInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.StorageInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.StorageInterface.AuthenticationRequired
@@ -235,11 +185,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.PrinterInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.PrinterInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.PrinterInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.PrinterInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.PrinterInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.PrinterInterface.AuthenticationRequired
@@ -254,11 +199,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.LightsInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.LightsInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.LightsInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.LightsInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.LightsInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.LightsInterface.AuthenticationRequired
@@ -273,11 +213,6 @@ namespace XFS4IoTFramework.Common
                                    Common.CommonCapabilities.AuxiliariesInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
                                    Common.CommonCapabilities.AuxiliariesInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
                                    0));
-                if (Common.CommonCapabilities.AuxiliariesInterface.SynchronizableCommands?.Count > 0)
-                {
-                    synchronizableCommands.AddRange(from cmd in Common.CommonCapabilities.AuxiliariesInterface.SynchronizableCommands
-                                                    select $"{interfaceName}.{cmd}");
-                }
                 if (Common.CommonCapabilities.AuxiliariesInterface.AuthenticationRequired?.Count > 0)
                 {
                     authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.AuxiliariesInterface.AuthenticationRequired
@@ -334,7 +269,6 @@ namespace XFS4IoTFramework.Common
                 DeviceInformation: deviceInformation,
                 PowerSaveControl: Common.CommonCapabilities.PowerSaveControl,
                 AntiFraudModule: Common.CommonCapabilities.AntiFraudModule,
-                SynchronizableCommands: synchronizableCommands,
                 EndToEndSecurity: Common.CommonCapabilities.EndToEndSecurity is null ? null :
                     new EndToEndSecurityClass(
                         Common.CommonCapabilities.EndToEndSecurity.Required switch
@@ -422,12 +356,10 @@ namespace XFS4IoTFramework.Common
                     Common.CardReaderCapabilities.FluxSensorProgrammable,
                     Common.CardReaderCapabilities.ReadWriteAccessFollowingExit,
                     WriteMode: new XFS4IoT.CardReader.CapabilitiesClass.WriteModeClass(
-                        Common.CardReaderCapabilities.WriteMode == CardReaderCapabilitiesClass.WriteMethodsEnum.NotSupported,
                         Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco),
                         Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico),
                         Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto)),
                     ChipPower: new XFS4IoT.CardReader.CapabilitiesClass.ChipPowerClass(
-                        Common.CardReaderCapabilities.ChipPower == CardReaderCapabilitiesClass.ChipPowerOptionsEnum.NotSupported,
                         Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold),
                         Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm),
                         Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off)),
@@ -497,7 +429,6 @@ namespace XFS4IoTFramework.Common
             if (Common.CashManagementCapabilities is not null)
             {
                 cashManagement = new XFS4IoT.CashManagement.CapabilitiesClass(
-                    SafeDoor: Common.CashManagementCapabilities.SafeDoor,
                     CashBox: Common.CashManagementCapabilities.CashBox,
                     ExchangeType: new XFS4IoT.CashManagement.CapabilitiesClass.ExchangeTypeClass(Common.CashManagementCapabilities.ExchangeTypes.HasFlag(CashManagementCapabilitiesClass.ExchangeTypesEnum.ByHand)),
                     ItemInfoTypes: new XFS4IoT.CashManagement.CapabilitiesClass.ItemInfoTypesClass(
@@ -719,7 +650,6 @@ namespace XFS4IoTFramework.Common
                         Common.KeyManagementCapabilities.RSAKeyCheckMode.HasFlag(KeyManagementCapabilitiesClass.RSAKeyCheckModeEnum.SHA1),
                         Common.KeyManagementCapabilities.RSAKeyCheckMode.HasFlag(KeyManagementCapabilitiesClass.RSAKeyCheckModeEnum.SHA256)),
                     SignatureScheme: new XFS4IoT.KeyManagement.CapabilitiesClass.SignatureSchemeClass(
-                        Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RSAKeyPair),
                         Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RandomNumber),
                         Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.ExportEPPID),
                         Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.EnhancedRKL)),
@@ -942,18 +872,20 @@ namespace XFS4IoTFramework.Common
                     ReceiptPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter] : null,
                     PassbookPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PassbookPrinter] : null,
                     EnvelopeDepository: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository] : null,
-                    ChequeUnit: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ChequeUnit) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ChequeUnit] : null,
                     BillAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor] : null,
                     EnvelopeDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser] : null,
                     DocumentPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.DocumentPrinter] : null,
                     CoinAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinAcceptor] : null,
                     Scanner: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Scanner) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Scanner] : null,
-                    CardUnit2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardUnit2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardUnit2] : null,
+                    Contactless: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Contactless) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Contactless] : null,
+                    CardReader2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardReader2] : null,
                     NotesDispenser2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser2] : null,
                     BillAcceptor2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor2] : null,
                     StatusGood: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator] : null,
                     StatusWarning: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator] : null,
                     StatusBad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator] : null,
+                    StatusSupervisor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator] : null,
+                    StatusInService: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator] : null,
                     FasciaLight: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.FasciaLight) ? stdLights[LightsCapabilitiesClass.DeviceEnum.FasciaLight] : null
                     );
             }

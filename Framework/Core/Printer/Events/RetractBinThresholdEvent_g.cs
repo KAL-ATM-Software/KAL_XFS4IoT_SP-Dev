@@ -38,8 +38,10 @@ namespace XFS4IoT.Printer.Events
 
             /// <summary>
             /// Number of the retract bin for which the status has changed.
+            /// <example>2</example>
             /// </summary>
             [DataMember(Name = "binNumber")]
+            [DataTypes(Minimum = 1)]
             public int? BinNumber { get; init; }
 
             public enum StateEnum

@@ -27,7 +27,7 @@ namespace XFS4IoT.CardReader.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string KeyValue = null)
+            public PayloadData(int Timeout, List<byte> KeyValue = null)
                 : base(Timeout)
             {
                 this.KeyValue = KeyValue;
@@ -36,9 +36,11 @@ namespace XFS4IoT.CardReader.Commands
             /// <summary>
             /// Contains the Base64 encoded payment containing the CIM86 DES key. This key is supplied by the vendor
             /// of the CIM86 module.
+            /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
             /// </summary>
             [DataMember(Name = "keyValue")]
-            public string KeyValue { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> KeyValue { get; init; }
 
         }
     }

@@ -50,8 +50,9 @@ namespace XFS4IoT.TextTerminal.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Specifies a zero terminated string containing all the printable characters (numeric and alphanumeric) 
+            /// Specifies a string containing all the printable characters (numeric and alphanumeric) 
             /// read from the text terminal unit key pad.
+            /// <example>12345</example>
             /// </summary>
             [DataMember(Name = "input")]
             public string Input { get; init; }

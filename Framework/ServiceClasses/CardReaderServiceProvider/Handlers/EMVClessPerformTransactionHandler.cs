@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessPerformTransactionAsync()");
             var result = await Device.EMVContactlessPerformTransactionAsync(new EMVClessCommandEvents(events),
-                                                                            new EMVContactlessPerformTransactionRequest(string.IsNullOrEmpty(eMVClessPerformTransaction.Payload.Data) ? null : new List<byte>(Convert.FromBase64String(eMVClessPerformTransaction.Payload.Data)), eMVClessPerformTransaction.Payload.Timeout),
+                                                                            new EMVContactlessPerformTransactionRequest(eMVClessPerformTransaction.Payload.Data, eMVClessPerformTransaction.Payload.Timeout),
                                                                             cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessPerformTransactionAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CardReader
                 result.TransactionResults is not null &&
                 result.TransactionResults.Count > 0)
             {
-                EMVClessTxOutputDataClass Chip = null, Track1 = null, Track2 = null, Track3 = null;
+                EMVClessPerformTransactionEMVClessTxOutputDataClass Chip = null, Track1 = null, Track2 = null, Track3 = null;
 
                 if (result.TransactionResults.ContainsKey(EMVContactlessPerformTransactionResult.DataSourceTypeEnum.Track1) &&
                     result.TransactionResults[EMVContactlessPerformTransactionResult.DataSourceTypeEnum.Track1] is not null)
@@ -78,13 +78,13 @@ namespace XFS4IoTFramework.CardReader
             }
         }
 
-        private EMVClessTxOutputDataClass ToOutputClass(EMVContactlessTransactionDataOutput track)
+        private EMVClessPerformTransactionEMVClessTxOutputDataClass ToOutputClass(EMVContactlessTransactionDataOutput track)
             => new(
-                (EMVClessTxOutputDataClass.TxOutcomeEnum)track.TransactionOutcome, 
-                (EMVClessTxOutputDataClass.CardholderActionEnum)track.CardholderAction, 
-                track.DataRead.Count == 0 ? null : Convert.ToBase64String(track.DataRead.ToArray()),
-                new((EMVClessTxOutputDataClass.ClessOutcomeClass.CvmEnum)track.ClessOutcome.Cvm,
-                    (EMVClessTxOutputDataClass.ClessOutcomeClass.AlternateInterfaceEnum)track.ClessOutcome.AlternateInterface,
+                (EMVClessPerformTransactionEMVClessTxOutputDataClass.TxOutcomeEnum)track.TransactionOutcome, 
+                (EMVClessPerformTransactionEMVClessTxOutputDataClass.CardholderActionEnum)track.CardholderAction, 
+                track.DataRead,
+                new((EMVClessPerformTransactionEMVClessTxOutputDataClass.ClessOutcomeClass.CvmEnum)track.ClessOutcome.Cvm,
+                    (EMVClessPerformTransactionEMVClessTxOutputDataClass.ClessOutcomeClass.AlternateInterfaceEnum)track.ClessOutcome.AlternateInterface,
                     track.ClessOutcome.Receipt,
                     new EMVClessUIClass (track.ClessOutcome.UiOutcome.MessageId,
                                          (EMVClessUIClass.StatusEnum)track.ClessOutcome.UiOutcome.Status,
@@ -102,6 +102,6 @@ namespace XFS4IoTFramework.CardReader
                                          track.ClessOutcome.UiRestart.LanguagePreferenceData),
                     track.ClessOutcome.FieldOffHoldTime,
                     track.ClessOutcome.CardRemovalTimeout,
-                    track.ClessOutcome.DiscretionaryData.Count == 0 ? null : Convert.ToBase64String(track.ClessOutcome.DiscretionaryData.ToArray())));
+                    track.ClessOutcome.DiscretionaryData));
     }
 }

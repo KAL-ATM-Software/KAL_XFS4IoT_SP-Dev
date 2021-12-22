@@ -44,8 +44,7 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// * ```formInvalid``` - The form is invalid.
             /// * ```mediaInvalid``` - The media definition is invalid.
-            /// * ```definitionExists``` - The specified form or media definition already exists and the *overwrite*
-            ///   flag was false.
+            /// * ```definitionExists``` - The specified form or media definition already exists and *overwrite* was false.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

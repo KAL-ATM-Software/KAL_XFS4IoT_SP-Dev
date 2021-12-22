@@ -40,31 +40,31 @@ namespace XFS4IoT.CardReader.Events
             }
 
             /// <summary>
-            /// The card reader has track 1.
+            /// The card has track 1.
             /// </summary>
             [DataMember(Name = "track1")]
             public bool? Track1 { get; init; }
 
             /// <summary>
-            /// The card reader has track 2.
+            /// The card has track 2.
             /// </summary>
             [DataMember(Name = "track2")]
             public bool? Track2 { get; init; }
 
             /// <summary>
-            /// The card reader has track 3.
+            /// The card has track 3.
             /// </summary>
             [DataMember(Name = "track3")]
             public bool? Track3 { get; init; }
 
             /// <summary>
-            /// The card reader has the Swedish watermark track.
+            /// The card has the Swedish watermark track.
             /// </summary>
             [DataMember(Name = "watermark")]
             public bool? Watermark { get; init; }
 
             /// <summary>
-            /// The card reader has front track 1.
+            /// The card has front track 1.
             /// </summary>
             [DataMember(Name = "frontTrack1")]
             public bool? FrontTrack1 { get; init; }

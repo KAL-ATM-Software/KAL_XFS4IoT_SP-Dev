@@ -130,7 +130,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
-                if (!string.IsNullOrEmpty(importKey.Payload.Value))
+                if (importKey.Payload.Value?.Count > 0)
                 {
                     Logger.Warning(Constants.Framework, "Key value is set to buffer key components. the key data is ignored.");
                 }
@@ -167,7 +167,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                                               importKey.Payload.KeyAttributes.KeyUsage,
                                                                                               importKey.Payload.KeyAttributes.Algorithm,
                                                                                               importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                                              importKey.Payload.KeyAttributes.Restricted),
+                                                                                              importKey.Payload.KeyAttributes.RestrictedKeyUsage),
                                                                      cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportKeyPart() -> {importKeyPartResult.CompletionCode}, {importKeyPartResult.ErrorCode}");
@@ -185,7 +185,7 @@ namespace XFS4IoTFramework.KeyManagement
                                          importKeyPartResult.KeyLength,
                                          KeyDetail.KeyStatusEnum.Construct,
                                          false,
-                                         importKey.Payload.KeyAttributes.Restricted);
+                                         importKey.Payload.KeyAttributes.RestrictedKeyUsage);
 
                     if (importKeyPartResult.VerifyAttribute is not null)
                     {
@@ -213,7 +213,7 @@ namespace XFS4IoTFramework.KeyManagement
                 return new ImportKeyCompletion.PayloadData(importKeyPartResult.CompletionCode,
                                                            importKeyPartResult.ErrorDescription,
                                                            importKeyPartResult.ErrorCode,
-                                                           importKeyPartResult.VerificationData is not null && importKeyPartResult.VerificationData.Count > 0 ? Convert.ToBase64String(importKeyPartResult.VerificationData.ToArray()) : null,
+                                                           importKeyPartResult.VerificationData,
                                                            verifyAttribute,
                                                            importKeyPartResult.KeyLength);
             }
@@ -224,7 +224,7 @@ namespace XFS4IoTFramework.KeyManagement
                 
                 if (assemblyParts)
                 {
-                    if (!string.IsNullOrEmpty(importKey.Payload.Value))
+                    if (importKey.Payload.Value?.Count > 0)
                     {
                         Logger.Warning(Constants.Framework, "Key value is set for assembly buffered key components. the key data is ignored.");
                     }
@@ -248,7 +248,8 @@ namespace XFS4IoTFramework.KeyManagement
                                                                    $"Invalid sequence for importing encryption key as the secure key entry process is enabled.");
                     }
 
-                    if (string.IsNullOrEmpty(importKey.Payload.Value))
+                    if (importKey.Payload.Value is null ||
+                        importKey.Payload.Value.Count == 0)
                     {
                         return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"No key value specified. {importKey.Payload.Key}");
@@ -500,7 +501,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                                    importKey.Payload.KeyAttributes.KeyUsage,
                                                                                    importKey.Payload.KeyAttributes.Algorithm,
                                                                                    importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                                   importKey.Payload.KeyAttributes.Restricted,
+                                                                                   importKey.Payload.KeyAttributes.RestrictedKeyUsage,
                                                                                    verifyKeyAttribute,
                                                                                    importKey.Payload.VendorAttributes),
                                                        cancel);
@@ -513,11 +514,11 @@ namespace XFS4IoTFramework.KeyManagement
 
                 result = await Device.ImportKey(new ImportKeyRequest(importKey.Payload.Key,
                                                                      keySlot,
-                                                                     Convert.FromBase64String(importKey.Payload.Value).ToList(),
+                                                                     importKey.Payload.Value,
                                                                      importKey.Payload.KeyAttributes.KeyUsage,
                                                                      importKey.Payload.KeyAttributes.Algorithm,
                                                                      importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                     importKey.Payload.KeyAttributes.Restricted,
+                                                                     importKey.Payload.KeyAttributes.RestrictedKeyUsage,
                                                                      verifyKeyAttribute,
                                                                      decryptKeyAttribute,
                                                                      importKey.Payload.VendorAttributes),
@@ -561,7 +562,7 @@ namespace XFS4IoTFramework.KeyManagement
                                      result.KeyLength,
                                      KeyDetail.KeyStatusEnum.Loaded,
                                      false,
-                                     importKey.Payload.KeyAttributes.Restricted,
+                                     importKey.Payload.KeyAttributes.RestrictedKeyUsage,
                                      result.KeyInformation?.KeyVersionNumber,
                                      result.KeyInformation?.Exportability,
                                      result.KeyInformation?.OptionalKeyBlockHeader,
@@ -574,7 +575,7 @@ namespace XFS4IoTFramework.KeyManagement
             return new ImportKeyCompletion.PayloadData(result.CompletionCode,
                                                        result.ErrorDescription,
                                                        result.ErrorCode,
-                                                       result.VerificationData is not null && result.VerificationData.Count > 0 ? Convert.ToBase64String(result.VerificationData.ToArray()) : null,
+                                                       result.VerificationData,
                                                        importKeyVerifyAttib,
                                                        result.KeyLength);
         }

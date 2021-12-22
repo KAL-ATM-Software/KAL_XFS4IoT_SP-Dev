@@ -35,7 +35,8 @@ namespace XFS4IoT.Common.Commands
             }
 
             /// <summary>
-            /// The command name to be synchronized and executed next. 
+            /// The command name to be synchronized and executed next.
+            /// <example>printForm</example>
             /// </summary>
             [DataMember(Name = "command")]
             public string Command { get; init; }

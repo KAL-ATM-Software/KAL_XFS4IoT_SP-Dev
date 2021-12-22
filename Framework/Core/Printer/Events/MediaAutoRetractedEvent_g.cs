@@ -52,11 +52,12 @@ namespace XFS4IoT.Printer.Events
             public RetractResultEnum? RetractResult { get; init; }
 
             /// <summary>
-            /// Number of the retract bin the media was retracted to or zero if the media is retracted to the transport.
-            /// This number has to be between zero and the number of bins supported by this device. This value is also
-            /// zero if [retractResult](#printer.mediaautoretractedevent.event.properties.retractresult) is *jammed*.
+            /// Number of the retract bin the media was retracted to or 0 if the media is retracted to the transport
+            /// or [retractResult](#printer.mediaautoretractedevent.event.properties.retractresult) is *jammed*.
+            /// <example>2</example>
             /// </summary>
             [DataMember(Name = "binNumber")]
+            [DataTypes(Minimum = 0)]
             public int? BinNumber { get; init; }
 
         }

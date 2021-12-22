@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Kcv = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Kcv = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -45,17 +45,20 @@ namespace XFS4IoT.KeyManagement.Completions
             /// Specifies the error code if applicable. The following values are possible:
             /// * ```keyNotFound``` - The specified key encryption key was not found.
             /// * ```keyNoValue``` - The specified key exists but has no value loaded.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// * ```modeNotSupported``` - The KCV mode is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains the Base64 encoded key check value data that can be used for verification of the key. 
+            /// Contains KCV data that can be used for verification of the key.
+            /// <example>a2N2</example>
             /// </summary>
             [DataMember(Name = "kcv")]
-            public string Kcv { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Kcv { get; init; }
 
         }
     }

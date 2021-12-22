@@ -39,7 +39,7 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```characterSetsData``` - Character set(s) supported by Service is inconsistent with use of text value.
+            /// * ```characterSetsData``` - The character set(s) supported by the Service is inconsistent with *text*.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

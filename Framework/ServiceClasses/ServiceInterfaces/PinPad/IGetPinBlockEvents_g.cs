@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.PinPad
     public interface IGetPinBlockEvents
     {
 
-        Task DUKPTKSNEvent(XFS4IoT.PinPad.Events.DUKPTKSNEvent.PayloadData Payload);
+        Task DUKPTKSNEvent(XFS4IoT.KeyManagement.Events.DUKPTKSNEvent.PayloadData Payload);
 
     }
 }

@@ -26,7 +26,7 @@ namespace XFS4IoT.Printer.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Data = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Data = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -63,11 +63,12 @@ namespace XFS4IoT.Printer.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// BASE64 encoded device dependent data received from the device.
+            /// Base64 encoded device dependent data received from the device.
             /// <example>UmF3RGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
         }
     }

@@ -38,17 +38,17 @@ namespace XFS4IoT.Biometric
         /// 
         /// * ```present```\t- The subject to be scanned is on the scanning position. 
         /// * ```notPresent``` - The subject to be scanned is not on the scanning position.
-        /// * ```subjectUnknown``` - The subject to be scanned cannot be determined with the device in its 
-        ///                          current state (e.g. the value of *device* is noDevice, powerOff, offline, or hwError). 
-        /// * ```subjectNotSupported``` - The physical device does not support the ability to report whether or not a subject is on the scanning position.
+        /// * ```unknown``` - The subject to be scanned cannot be determined with the device in its 
+        ///                          current state (e.g. the value of [device](#common.status.completion.properties.common.device) is noDevice, powerOff, offline, or hwError). 
+        /// * ```notSupported``` - The physical device does not support the ability to report whether a subject is on the scanning position.
         /// </summary>
         [DataMember(Name = "subject")]
         public SubjectEnum? Subject { get; init; }
 
         /// <summary>
-        /// Indicates whether or not scanned biometric data has been captured using the [Biometric.Read](#biometric.read) command 
+        /// Indicates whether or not scanned biometric data has been captured using the [Biometric.Read](#biometric.read) 
         /// and is currently stored and ready for comparison. true if data has been captured and is stored, false if no scanned data is present.
-        /// This will be set to false when scanned data is cleared using the [Biometric.Clear](#biometric.clear) command.
+        /// This will be set to false when scanned data is cleared using the [Biometric.Clear](#biometric.clear).
         /// </summary>
         [DataMember(Name = "capture")]
         public bool? Capture { get; init; }
@@ -61,24 +61,25 @@ namespace XFS4IoT.Biometric
 
         /// <summary>
         /// Specifies the current data persistence mode. The data persistence mode controls how biometric data that has been captured using the 
-        /// [Biometric.Read](#biometric.read) command will be handled.
+        /// [Biometric.Read](#biometric.read) will be handled.
         /// The following values are possible:
         /// 
-        ///   * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) command can persist until all 
-        ///                     sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) command 
+        ///   * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all 
+        ///                     sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) 
         ///                     is requested again. This captured biometric data can also be explicitly cleared using the 
-        ///                     [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset) commands.
+        ///                     [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
         ///   * ```clear``` - Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
-        ///                   command or used by the [Biometric.Match](#biometric.match) command, then the data is cleared from the device.
+        ///                   or used by the [Biometric.Match](#biometric.match), then the data is cleared from the device.
         /// </summary>
         [DataMember(Name = "dataPersistence")]
         public DataPersistenceEnum? DataPersistence { get; init; }
 
         /// <summary>
         /// Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes. 
-        /// This will be zero if not reported.
+        /// if omitted, this property is not supported.
         /// </summary>
         [DataMember(Name = "remainingStorage")]
+        [DataTypes(Minimum = 0)]
         public int? RemainingStorage { get; init; }
 
     }
@@ -87,7 +88,7 @@ namespace XFS4IoT.Biometric
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeClass Type = null, int? MaxCapture = null, string TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionalAlgorithmClass EncryptionalAlgorithm = null, StorageClass Storage = null, PersistenceModesClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModesClass CompareModes = null, ClearDataClass ClearData = null)
+        public CapabilitiesClass(TypeClass Type = null, int? MaxCapture = null, int? TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionalAlgorithmClass EncryptionalAlgorithm = null, StorageClass Storage = null, PersistenceModesClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModesClass CompareModes = null, ClearDataClass ClearData = null)
         {
             this.Type = Type;
             this.MaxCapture = MaxCapture;
@@ -175,7 +176,7 @@ namespace XFS4IoT.Biometric
             public bool? ThermalHand { get; init; }
 
             /// <summary>
-            /// The biometric device supports palm vein scanning. 
+            /// The biometric device supports palm vein scanning.
             /// </summary>
             [DataMember(Name = "palmVein")]
             public bool? PalmVein { get; init; }
@@ -189,24 +190,27 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the type of biometric device as a combination.
+        /// Specifies the type of biometric device.
         /// </summary>
         [DataMember(Name = "type")]
         public TypeClass Type { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of times that the device can attempt to capture biometric data during a 
-        /// [Biometric.Read](#biometric.read) command. If this is zero then the device or service provider determines 
+        /// [Biometric.Read](#biometric.read). If this is zero then the device or the Service determines 
         /// how many captures will be attempted.
         /// </summary>
         [DataMember(Name = "maxCapture")]
+        [DataTypes(Minimum = 0)]
         public int? MaxCapture { get; init; }
 
         /// <summary>
-        /// Specifies the storage space that is reserved on the device for the storage of templates in bytes. This will be set to zero if not reported or unknown.
+        /// Specifies the storage space that is reserved on the device for the storage of templates in bytes.
+        /// This will be set to zero if not reported or unknown.
         /// </summary>
         [DataMember(Name = "templateStorage")]
-        public string TemplateStorage { get; init; }
+        [DataTypes(Minimum = 0)]
+        public int? TemplateStorage { get; init; }
 
         [DataContract]
         public sealed class DataFormatsClass
@@ -228,37 +232,37 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// Raw ISO FID format [[Ref. biometric-4](#ref-biometric-4)].
+            /// Raw ISO FID format [[Ref. biometric-3](#ref-biometric-3)].
             /// </summary>
             [DataMember(Name = "isoFid")]
             public bool? IsoFid { get; init; }
 
             /// <summary>
-            /// ISO FMD template format [[Ref. biometric-5](#ref-biometric-5)].
+            /// ISO FMD template format [[Ref. biometric-4](#ref-biometric-4)].
             /// </summary>
             [DataMember(Name = "isoFmd")]
             public bool? IsoFmd { get; init; }
 
             /// <summary>
-            /// Raw ANSI FID format [[Ref. biometric-2](#ref-biometric-2)].
+            /// Raw ANSI FID format [[Ref. biometric-1](#ref-biometric-1)].
             /// </summary>
             [DataMember(Name = "ansiFid")]
             public bool? AnsiFid { get; init; }
 
             /// <summary>
-            /// ANSI FMD template format [[Ref. biometric-3](#ref-biometric-3)].
+            /// ANSI FMD template format [[Ref. biometric-2](#ref-biometric-2)].
             /// </summary>
             [DataMember(Name = "ansiFmd")]
             public bool? AnsiFmd { get; init; }
 
             /// <summary>
-            /// Raw QSO image format
+            /// Raw QSO image format.
             /// </summary>
             [DataMember(Name = "qso")]
             public bool? Qso { get; init; }
 
             /// <summary>
-            /// WSQ image format
+            /// WSQ image format.
             /// </summary>
             [DataMember(Name = "wso")]
             public bool? Wso { get; init; }
@@ -302,7 +306,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the supported biometric raw data and template data formats reported 
+        /// Specifies the supported biometric raw data and template data formats reported.
         /// </summary>
         [DataMember(Name = "dataFormats")]
         public DataFormatsClass DataFormats { get; init; }
@@ -325,7 +329,7 @@ namespace XFS4IoT.Biometric
             public bool? Ecb { get; init; }
 
             /// <summary>
-            /// Triple DES with Cipher Block Chaining
+            /// Triple DES with Cipher Block Chaining.
             /// </summary>
             [DataMember(Name = "cbc")]
             public bool? Cbc { get; init; }
@@ -345,7 +349,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Supported encryption algorithms or cryptNone if no encryption algorithms
+        /// Supported encryption algorithms. Omitted if no encryption algorithms.
         /// </summary>
         [DataMember(Name = "encryptionalAlgorithm")]
         public EncryptionalAlgorithmClass EncryptionalAlgorithm { get; init; }
@@ -374,7 +378,8 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Indicates whether or not biometric template data can be stored securely or none if Biometric template data is not stored in the device
+        /// Indicates whether or not biometric template data can be stored securely or 
+        /// none if Biometric template data is not stored in the device.
         /// </summary>
         [DataMember(Name = "storage")]
         public StorageClass Storage { get; init; }
@@ -389,17 +394,17 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// Biometric data captured using the [Biometric.Read](#biometric.read) command can persist until all 
-            /// sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) command 
+            /// Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all 
+            /// sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) 
             /// is requested again. This captured biometric data can also be explicitly cleared using the 
-            /// [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset) commands.
+            /// [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
             /// </summary>
             [DataMember(Name = "persist")]
             public bool? Persist { get; init; }
 
             /// <summary>
             /// Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
-            /// command or used by the [Biometric.Match](#biometric.match) command, then the data is cleared from the device.
+            /// or used by the [Biometric.Match](#biometric.match), then the data is cleared from the device.
             /// </summary>
             [DataMember(Name = "clear")]
             public bool? Clear { get; init; }
@@ -407,8 +412,8 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies which data persistence modes can be set using the [Biometric.SetDataPersistence](#biometric.setdatapersistence) command. 
-        /// This applies specifically to the biometric data that has been captured using the [Biometric.Read](#biometric.read) command.
+        /// Specifies which data persistence modes can be set using the [Biometric.SetDataPersistence](#biometric.setdatapersistence). 
+        /// This applies specifically to the biometric data that has been captured using the [Biometric.Read](#biometric.read).
         /// A value of none indicates that persistence is entirely under device control and cannot be set.
         /// </summary>
         [DataMember(Name = "persistenceModes")]
@@ -416,25 +421,23 @@ namespace XFS4IoT.Biometric
 
         public enum MatchSupportedEnum
         {
-            None,
             StoredMatch,
             CombinedMatch
         }
 
         /// <summary>
         /// Specifies if matching is supported using the [Biometric.Match](#biometric.match) 
-        /// and/or [Biometric.SetMatch](#biometric.setmatch) command. 
+        /// and/or [Biometric.SetMatch](#biometric.setmatch) command. Omitted if the device does not support matching.
         /// This will be one of the following values:
         /// 
-        ///   * ```none``` - The device does not support matching. 
         ///   * ```storedMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command 
         ///                         and stores it, then the scanned data can be compared with imported biometric data 
-        ///                         using the [Biometric.Match](#biometric.match) command 
+        ///                         using the [Biometric.Match](#biometric.match).
         ///   * ```combinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric 
-        ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch) command 
-        ///                           must be called before the [Biometric.Read](#biometric.read) command in order to set
-        ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) command can be 
-        ///                           called to return the result 
+        ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch) 
+        ///                           must be called before the [Biometric.Read](#biometric.read) in order to set
+        ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) can be 
+        ///                           called to return the result.
         /// </summary>
         [DataMember(Name = "matchSupported")]
         public MatchSupportedEnum? MatchSupported { get; init; }
@@ -449,15 +452,15 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// The [Biometric.Read](#biometric.read) command can be used to scan data only, for example to enroll a 
+            /// The [Biometric.Read](#biometric.read) can be used to scan data only, for example to enroll a 
             /// user or collect data for matching in an external biometric system.
             /// </summary>
             [DataMember(Name = "scan")]
             public bool? Scan { get; init; }
 
             /// <summary>
-            /// The [Biometric.Read](#biometric.read) command can be used to scan data for a match operation using 
-            /// the [Biometric.Match](#biometric.match) command.
+            /// The [Biometric.Read](#biometric.read) can be used to scan data for a match operation using 
+            /// the [Biometric.Match](#biometric.match).
             /// </summary>
             [DataMember(Name = "match")]
             public bool? Match { get; init; }
@@ -465,7 +468,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the modes that the [Biometric.Read](#biometric.read) command.
+        /// Specifies the scan modes that can be used through the [Biometric.Read](#biometric.read).
         /// </summary>
         [DataMember(Name = "scanModes")]
         public ScanModesClass ScanModes { get; init; }
@@ -486,7 +489,7 @@ namespace XFS4IoT.Biometric
             public bool? Verify { get; init; }
 
             /// <summary>
-            /// The biometric data can be compared as a one to many identification operation
+            /// The biometric data can be compared as a one to many identification operation.
             /// </summary>
             [DataMember(Name = "identity")]
             public bool? Identity { get; init; }
@@ -494,7 +497,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the type of match operations. A value of none indicates that matching is not supported
+        /// Specifies the type of match operations. A value of none indicates that matching is not supported.
         /// </summary>
         [DataMember(Name = "compareModes")]
         public CompareModesClass CompareModes { get; init; }
@@ -510,19 +513,19 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// Raw image data that has been scanned using the [Biometric.Read](#biometric.read) command can be cleared
+            /// Raw image data that has been scanned using the [Biometric.Read](#biometric.read) can be cleared.
             /// </summary>
             [DataMember(Name = "scannedData")]
             public bool? ScannedData { get; init; }
 
             /// <summary>
-            /// Template data that was imported using the [Biometric.Import](#biometric.import) command can be cleared.
+            /// Template data that was imported using the [Biometric.Import](#biometric.import) can be cleared.
             /// </summary>
             [DataMember(Name = "importedData")]
             public bool? ImportedData { get; init; }
 
             /// <summary>
-            /// Match criteria data that was set using the [Biometric.Match](#biometric.match) command can be cleared.
+            /// Match criteria data that was set using the [Biometric.Match](#biometric.match) can be cleared.
             /// </summary>
             [DataMember(Name = "setMatchedData")]
             public bool? SetMatchedData { get; init; }
@@ -531,7 +534,7 @@ namespace XFS4IoT.Biometric
 
         /// <summary>
         /// Specifies the type of data that can be cleared from storage using the [Biometric.Clear](#biometric.clear) 
-        /// or [Biometric.Reset](#biometric.reset) command as either none. 
+        /// or [Biometric.Reset](#biometric.reset) command.
         /// </summary>
         [DataMember(Name = "clearData")]
         public ClearDataClass ClearData { get; init; }
@@ -540,9 +543,9 @@ namespace XFS4IoT.Biometric
 
 
     [DataContract]
-    public sealed class TypeClass
+    public sealed class DataTypeClass
     {
-        public TypeClass(FormatEnum? Format = null, AlgorithmEnum? Algorithm = null, string KeyName = null)
+        public DataTypeClass(FormatEnum? Format = null, AlgorithmEnum? Algorithm = null, string KeyName = null)
         {
             this.Format = Format;
             this.Algorithm = Algorithm;
@@ -566,12 +569,14 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the format of the template data. The following values are possible:
+        /// Specifies the format of the template data. 
+        /// Available values are described in the [dataFormats](#common.capabilities.completion.description.biometric.dataformats).
+        /// The following values are possible:
         /// 
-        /// * ```isoFid```\t- Raw ISO FID format [[Ref. biometric-4](#ref-biometric-4)].
-        /// * ```isoFmd``` - ISO FMD template format [[Ref. biometric-5](#ref-biometric-5)].
-        /// * ```ansiFid```\t- Raw ANSI FID format [[Ref. biometric-2](#ref-biometric-2)].
-        /// * ```ansiFmd``` - ANSI FMD template format [[Ref. biometric-3](#ref-biometric-3)].
+        /// * ```isoFid```\t- Raw ISO FID format [[Ref. biometric-3](#ref-biometric-3)].
+        /// * ```isoFmd``` - ISO FMD template format [[Ref. biometric-4](#ref-biometric-4)].
+        /// * ```ansiFid```\t- Raw ANSI FID format [[Ref. biometric-1](#ref-biometric-1)].
+        /// * ```ansiFmd``` - ANSI FMD template format [[Ref. biometric-2](#ref-biometric-2)].
         /// * ```qso```\t- Raw QSO image format.
         /// * ```wso``` - WSQ image format.
         /// * ```reservedRaw1```\t- Reserved for a vendor-defined Raw format.
@@ -593,10 +598,12 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the encryption algorithm. The following values are possible:
+        /// Specifies the encryption algorithm. This value is omitted if the biometric data is not encrypted. 
+        /// Available values are described in the [encryptionalAlgorithm](#common.capabilities.completion.description.biometric.encryptionalalgorithm).
+        /// The following values are possible:
         /// 
         /// * ```ecb``` - Triple DES with Electronic Code Book.
-        /// * ```cbc``` - Triple DES with Cipher Block Chaining
+        /// * ```cbc``` - Triple DES with Cipher Block Chaining.
         /// * ```cfb``` - Triple DES with Cipher Feed Back.
         /// * ```rsa``` - RSA Encryption.
         /// </summary>
@@ -604,8 +611,10 @@ namespace XFS4IoT.Biometric
         public AlgorithmEnum? Algorithm { get; init; }
 
         /// <summary>
-        /// Specifies the name of the key that is used to encrypt the biometric data. This value is omitted if the biometric data is not encrypted.
+        /// Specifies the name of the key that is used to encrypt the biometric data. 
+        /// This property is omitted if the biometric data is not encrypted.
         /// The detailed key information is available through the [KeyManagement.GetKeyDetail](#keymanagement.getkeydetail).
+        /// <example>Key01</example>
         /// </summary>
         [DataMember(Name = "keyName")]
         public string KeyName { get; init; }
@@ -614,50 +623,27 @@ namespace XFS4IoT.Biometric
 
 
     [DataContract]
-    public sealed class StorageClass
+    public sealed class BioDataClass
     {
-        public StorageClass(int? Identifier = null, TypeClass Type = null)
-        {
-            this.Identifier = Identifier;
-            this.Type = Type;
-        }
-
-        /// <summary>
-        /// A unique number which identifies the template.
-        /// </summary>
-        [DataMember(Name = "identifier")]
-        public int? Identifier { get; init; }
-
-        /// <summary>
-        /// Specifies the biometric data type of the template data.
-        /// </summary>
-        [DataMember(Name = "type")]
-        public TypeClass Type { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class DataListClass
-    {
-        public DataListClass(TypeClass Type = null, string Data = null)
+        public BioDataClass(DataTypeClass Type = null, List<byte> Data = null)
         {
             this.Type = Type;
             this.Data = Data;
         }
 
         /// <summary>
-        /// This field is used to indicate the biometric data type of the template data contained in *data*.
+        /// This property is used to indicate the biometric data type of the template data contained in *data*.
         /// </summary>
         [DataMember(Name = "type")]
-        public TypeClass Type { get; init; }
+        public DataTypeClass Type { get; init; }
 
         /// <summary>
         /// It contains the individual binary data stream encoded in base64.
+        /// <example>1a987D000012Bb</example>
         /// </summary>
         [DataMember(Name = "data")]
         [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-        public string Data { get; init; }
+        public List<byte> Data { get; init; }
 
     }
 

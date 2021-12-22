@@ -34,7 +34,7 @@ namespace XFS4IoTFramework.PinPad
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Ap => PINBlockRequest.PINFormatEnum.AP,
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Banksys => PINBlockRequest.PINFormatEnum.BANKSYS,
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Diebold => PINBlockRequest.PINFormatEnum.DIEBOLD,
-                SetPinBlockDataCommand.PayloadData.FormatEnum.Dieboldco => PINBlockRequest.PINFormatEnum.DIEBOLDCO,
+                SetPinBlockDataCommand.PayloadData.FormatEnum.DieboldCo => PINBlockRequest.PINFormatEnum.DIEBOLDCO,
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Eci2 => PINBlockRequest.PINFormatEnum.ECI2,
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Eci3 => PINBlockRequest.PINFormatEnum.ECI3,
                 SetPinBlockDataCommand.PayloadData.FormatEnum.Emv => PINBlockRequest.PINFormatEnum.EMV,
@@ -132,15 +132,15 @@ namespace XFS4IoTFramework.PinPad
                                                                           format,
                                                                           setPinBlockData.Payload.Key,
                                                                           setPinBlockData.Payload.SecondEncKey,
-                                                                          setPinBlockData.Payload.PinBlockAttributes.CryptoMethod switch
+                                                                          setPinBlockData.Payload.CryptoMethod switch
                                                                           { 
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Cbc => PINBlockRequest.EncryptionAlgorithmEnum.CBC,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Cfb => PINBlockRequest.EncryptionAlgorithmEnum.CFB,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Ctr => PINBlockRequest.EncryptionAlgorithmEnum.CTR,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Ecb => PINBlockRequest.EncryptionAlgorithmEnum.ECB,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Ofb => PINBlockRequest.EncryptionAlgorithmEnum.OFB,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.Xts => PINBlockRequest.EncryptionAlgorithmEnum.XTS,
-                                                                              SetPinBlockDataCommand.PayloadData.PinBlockAttributesClass.CryptoMethodEnum.RsaesOaep => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_OAEP,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Cbc => PINBlockRequest.EncryptionAlgorithmEnum.CBC,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Cfb => PINBlockRequest.EncryptionAlgorithmEnum.CFB,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Ctr => PINBlockRequest.EncryptionAlgorithmEnum.CTR,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Ecb => PINBlockRequest.EncryptionAlgorithmEnum.ECB,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Ofb => PINBlockRequest.EncryptionAlgorithmEnum.OFB,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.Xts => PINBlockRequest.EncryptionAlgorithmEnum.XTS,
+                                                                              SetPinBlockDataCommand.PayloadData.CryptoMethodEnum.RsaesOaep => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_OAEP,
                                                                               _ => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_PKCS1_V1_5,
                                                                           }),
                                                        cancel);

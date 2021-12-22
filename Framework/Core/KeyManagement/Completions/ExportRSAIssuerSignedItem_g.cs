@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Value = null, RSASignatureAlgorithmEnum? RsaSignatureAlgorithm = null, string Signature = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Value = null, RSASignatureAlgorithmEnum? RsaSignatureAlgorithm = null, List<byte> Signature = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -52,12 +52,14 @@ namespace XFS4IoT.KeyManagement.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// If a public key was requested then value contains the PKCS #1 formatted RSA public key represented in
-            /// DER encoded ASN.1 format. If the security item was requested then value contains the PIN's Security
+            /// If a public key was requested then value contains the PKCS#1 formatted RSA public key represented in
+            /// DER encoded ASN.1 format. If the security item was requested then value contains the device's Security
             /// Item, which may be vendor specific.
+            /// <example>aXRlbSBkYXRhIHJlcXVl ...</example>
             /// </summary>
             [DataMember(Name = "value")]
-            public string Value { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Value { get; init; }
 
             /// <summary>
             /// Specifies the algorithm, used to generate the Signature returned in signature, as one of the following:
@@ -71,10 +73,14 @@ namespace XFS4IoT.KeyManagement.Completions
             public RSASignatureAlgorithmEnum? RsaSignatureAlgorithm { get; init; }
 
             /// <summary>
-            /// Specifies the RSA signature of the data item exported formatted in base64. An empty sting can be returned when key signature are not supported. 
+            /// The RSA signature of the data item exported.
+            /// 
+            /// This should be omitted when the key signature is not supported. 
+            /// <example>U2lnbmF0dXJlIGRhdGE=</example>
             /// </summary>
             [DataMember(Name = "signature")]
-            public string Signature { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Signature { get; init; }
 
         }
     }

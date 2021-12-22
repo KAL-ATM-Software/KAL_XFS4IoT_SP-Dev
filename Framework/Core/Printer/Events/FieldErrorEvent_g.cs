@@ -39,12 +39,14 @@ namespace XFS4IoT.Printer.Events
 
             /// <summary>
             /// The form name.
+            /// <example>Form1</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
             /// The field name.
+            /// <example>Field1</example>
             /// </summary>
             [DataMember(Name = "fieldName")]
             public string FieldName { get; init; }

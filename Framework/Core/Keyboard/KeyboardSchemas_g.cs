@@ -17,27 +17,40 @@ namespace XFS4IoT.Keyboard
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(AutoBeepModeEnum? AutoBeepMode = null)
+        public StatusClass(AutoBeepModeClass AutoBeepMode = null)
         {
             this.AutoBeepMode = AutoBeepMode;
         }
 
-        public enum AutoBeepModeEnum
+        [DataContract]
+        public sealed class AutoBeepModeClass
         {
-            Active,
-            InActive
+            public AutoBeepModeClass(bool? ActiveAvailable = null, bool? InactiveAvailable = null)
+            {
+                this.ActiveAvailable = ActiveAvailable;
+                this.InactiveAvailable = InactiveAvailable;
+            }
+
+            /// <summary>
+            /// Specifies whether an automatic tone will be generated for all active keys.
+            /// </summary>
+            [DataMember(Name = "activeAvailable")]
+            public bool? ActiveAvailable { get; init; }
+
+            /// <summary>
+            /// Specifies whether an automatic tone will be generated for all inactive keys.
+            /// </summary>
+            [DataMember(Name = "inactiveAvailable")]
+            public bool? InactiveAvailable { get; init; }
+
         }
 
         /// <summary>
-        /// Specifies whether automatic beep tone on key press is active or not. Active and in-active key beeping is reported 
-        /// independently. autoBeepMode can take a combination of the following values, if the flag is not set auto beeping 
-        /// is not activated (or not supported) for that key type (i.e. active or in-active keys).
-        /// The following values are possible:
-        /// * ```active``` - An automatic tone will be generated for all active keys.
-        /// * ```inActive``` - An automatic tone will be generated for all in-active keys.
+        /// Specifies whether automatic beep tone on key press is active or not. Active and inactive key beeping is
+        /// reported independently.
         /// </summary>
         [DataMember(Name = "autoBeepMode")]
-        public AutoBeepModeEnum? AutoBeepMode { get; init; }
+        public AutoBeepModeClass AutoBeepMode { get; init; }
 
     }
 
@@ -77,15 +90,15 @@ namespace XFS4IoT.Keyboard
             public bool? ActiveSelectable { get; init; }
 
             /// <summary>
-            /// Automatic beep tone on in-active key keypress is supported.
-            /// If this flag is not set then automatic beeping for in-active keys is not supported.
+            /// Automatic beep tone on inactive key keypress is supported.
+            /// If this flag is not set then automatic beeping for inactive keys is not supported.
             /// </summary>
             [DataMember(Name = "inactiveAvailable")]
             public bool? InactiveAvailable { get; init; }
 
             /// <summary>
-            /// Automatic beeping for in-active keys can be controlled turned on and off by the application.
-            /// If this flag is not set then automatic beeping for in-active keys cannot be controlled by an application.
+            /// Automatic beeping for inactive keys can be controlled turned on and off by the application.
+            /// If this flag is not set then automatic beeping for inactive keys cannot be controlled by an application.
             /// </summary>
             [DataMember(Name = "inactiveSelectable")]
             public bool? InactiveSelectable { get; init; }
@@ -93,7 +106,8 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// Specifies whether the device will emit a key beep tone on key presses of active keys or inactive keys, and if so, which mode it supports
+        /// Specifies whether the device will emit a key beep tone on key presses of active keys or inactive keys,
+        /// and if so, which mode it supports.
         /// </summary>
         [DataMember(Name = "autoBeep")]
         public AutoBeepClass AutoBeep { get; init; }
@@ -113,41 +127,48 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies the position of the left edge of the ets in Windows virtual screen coordinates.
+            /// Specifies the position of the left edge of the Encrypting Touch Screen in virtual screen coordinates.
             /// This value may be negative because the of the monitor position on the virtual desktop.
             /// </summary>
             [DataMember(Name = "xPos")]
+            [DataTypes(Minimum = 0)]
             public int? XPos { get; init; }
 
             /// <summary>
-            /// Specifies the position of the right edge of the ets in Windows virtual screen coordinates.
+            /// Specifies the position of the right edge of the Encrypting Touch Screen in virtual screen coordinates.
             /// This value may be negative because the of the monitor position on the virtual desktop.
             /// </summary>
             [DataMember(Name = "yPos")]
+            [DataTypes(Minimum = 0)]
             public int? YPos { get; init; }
 
             /// <summary>
-            /// Specifies the width of the ets in Windows virtual screen coordinates.
+            /// Specifies the width of the Encrypting Touch Screen in virtual screen coordinates.
             /// </summary>
             [DataMember(Name = "xSize")]
+            [DataTypes(Minimum = 0)]
             public int? XSize { get; init; }
 
             /// <summary>
-            /// Specifies the height of the ets in Windows virtual screen coordinates.
+            /// Specifies the height of the Encrypting Touch Screen in virtual screen coordinates.
             /// </summary>
             [DataMember(Name = "ySize")]
+            [DataTypes(Minimum = 0)]
             public int? YSize { get; init; }
 
             /// <summary>
-            /// Specifies the maximum number of Touch-Frames that the device can support in a touch keyboard definition.
+            /// Specifies the maximum number of Touch-Frames that the device can support in a touch keyboard
+            /// definition.
             /// </summary>
             [DataMember(Name = "maximumTouchFrames")]
+            [DataTypes(Minimum = 0)]
             public int? MaximumTouchFrames { get; init; }
 
             /// <summary>
-            /// Specifies the maximum number of Touch-Keys that the device can support within any a touchframe.
+            /// Specifies the maximum number of Touch-Keys that the device can support within a touch frame.
             /// </summary>
             [DataMember(Name = "maximumTouchKeys")]
+            [DataTypes(Minimum = 0)]
             public int? MaximumTouchKeys { get; init; }
 
             [DataContract]
@@ -160,13 +181,13 @@ namespace XFS4IoT.Keyboard
                 }
 
                 /// <summary>
-                /// Specifies that the device will randomly shift the layout in a horizontal direction
+                /// Specifies that the device will randomly shift the layout in a horizontal direction.
                 /// </summary>
                 [DataMember(Name = "x")]
                 public bool? X { get; init; }
 
                 /// <summary>
-                /// Specifies that the device will randomly shift the layout in a vertical direction. 
+                /// Specifies that the device will randomly shift the layout in a vertical direction.
                 /// </summary>
                 [DataMember(Name = "y")]
                 public bool? Y { get; init; }
@@ -174,7 +195,8 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies if the device can float the touch keyboards. Both properties *x* and *y* are false if the device cannot randomly shift the layout.
+            /// Specifies if the device can float the touch keyboards. Both properties *x* and *y* are false
+            /// if the device cannot randomly shift the layout.
             /// </summary>
             [DataMember(Name = "float")]
             public FloatClass Float { get; init; }
@@ -182,7 +204,7 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// Specifies the capabilities of the ets device.
+        /// Specifies the capabilities of the Encrypting Touch Screen device.
         /// </summary>
         [DataMember(Name = "etsCaps")]
         public List<EtsCapsClass> EtsCaps { get; init; }
@@ -204,29 +226,56 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// For [ETS](#keyboard.generalinformation.ets), specifies the left coordinate of the frame as an offset from the left edge of the screen. 
-        /// For all other device types, this value is ignored
+        /// If the frame contains Touch Keys, specifies the left edge of the frame as an offset from the left edge of
+        /// the screen in pixels and will be less than the width of the screen.
+        /// 
+        /// If the frame contains Physical Keys on the boundary of the screen, specifies the left coordinate of the
+        /// frame as an offset from the left edge of the screen in pixels and will be 0 or the width of the screen in
+        /// pixels.
+        /// 
+        /// If the frame contains Physical Keys not positioned on the screen boundary, this value is 0.
         /// </summary>
         [DataMember(Name = "xPos")]
+        [DataTypes(Minimum = 0)]
         public int? XPos { get; init; }
 
         /// <summary>
-        /// For [ETS](#keyboard.generalinformation.ets), specifies the top coordinate of the frame as an offset from the top edge of the screen. 
-        /// For all other device types, this value is ignored
+        /// If the frame contains Touch Keys, specifies the top edge of the frame as an offset from the top edge of
+        /// the screen in pixels and will be less than the height of the screen.
+        /// 
+        /// If the frame contains Physical Keys on the boundary of the screen, specifies the top edge of the frame as
+        /// an offset from the top edge of the screen in pixels and will be 0 or the height of the screen in pixels.
+        /// 
+        /// If the frame contains Physical Keys not positioned on the screen boundary, this value is 0.
         /// </summary>
         [DataMember(Name = "yPos")]
+        [DataTypes(Minimum = 0)]
         public int? YPos { get; init; }
 
         /// <summary>
-        /// For [ETS](#keyboard.generalinformation.ets), specifies the width of the frame. For all other device types, this value is ignored
+        /// If the frame contains Touch Keys, specifies the width of the frame in pixels and will be greater than 0
+        /// and less than the width of the screen minus the frame *xPos*.
+        /// 
+        /// If the frame contains Physical Keys on the boundary of the screen, specifies the width of the frame in
+        /// pixels and will be 0 or the width of the screen in pixels.
+        /// 
+        /// If the frame contains Physical Keys not positioned on the screen boundary, this value is 0.
         /// </summary>
         [DataMember(Name = "xSize")]
+        [DataTypes(Minimum = 0)]
         public int? XSize { get; init; }
 
         /// <summary>
-        /// For [ETS](#keyboard.generalinformation.ets), specifies the height of the frame. For all other device types, this value is ignored
+        /// If the frame contains Touch Keys, specifies the height of the frame in pixels and will be greater than 0
+        /// and less than the height of the screen minus the frame *yPos*.
+        /// 
+        /// If the frame contains Physical Keys on the boundary of the screen, specifies the height of the frame in
+        /// pixels and will be 0 or the height of the screen in pixels.
+        /// 
+        /// If the frame contains Physical Keys not positioned on the screen boundary, this value is 0.
         /// </summary>
         [DataMember(Name = "ySize")]
+        [DataTypes(Minimum = 0)]
         public int? YSize { get; init; }
 
         [DataContract]
@@ -239,13 +288,13 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies that the device will randomly shift the layout in a horizontal direction
+            /// Specifies that the device will randomly shift the layout in a horizontal direction.
             /// </summary>
             [DataMember(Name = "x")]
             public bool? X { get; init; }
 
             /// <summary>
-            /// Specifies that the device will randomly shift the layout in a vertical direction
+            /// Specifies that the device will randomly shift the layout in a vertical direction.
             /// </summary>
             [DataMember(Name = "y")]
             public bool? Y { get; init; }
@@ -253,7 +302,9 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// Specifies if the device can float the touch keyboards
+        /// Specifies if the device can float the touch keyboards.
+        /// 
+        /// This should be omitted not supported.
         /// </summary>
         [DataMember(Name = "float")]
         public FloatClass Float { get; init; }
@@ -272,27 +323,21 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies the position of the top left corner of the FK relative to the left hand side of the layout.
-            /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
-            /// For non-ETS devices, must be a value between 0 and 999, where 0 is the left edge and 999 is the right edge.
+            /// Specifies the position of the left edge of the key relative to the left side of the frame.
             /// </summary>
             [DataMember(Name = "xPos")]
             [DataTypes(Minimum = 0, Maximum = 999)]
             public int? XPos { get; init; }
 
             /// <summary>
-            /// Specifies the position of the top left corner of the Function Key (FK) relative to the left hand side of the layout.
-            /// For [ETS](#keyboard.generalinformation.ets) devices, must be in the range defined in the frame. 
-            /// For non-ETS devices, must be a value between 0 and 999, where 0 is the top edge and 999 is the bottom edge.
+            /// Specifies the position of the top edge of the key relative to the top edge of the frame.
             /// </summary>
             [DataMember(Name = "yPos")]
             [DataTypes(Minimum = 0, Maximum = 999)]
             public int? YPos { get; init; }
 
             /// <summary>
-            /// Specifies the Function Key (FK) width. 
-            /// For [ETS](#keyboard.generalinformation.ets), width is measured in pixels. For non-ETS devices, width is expressed as a value between 
-            /// 1 and 1000, where 1 is the smallest possible size and 1000 is the full width of the layout.
+            /// Specifies the Function Key (FK) width.
             /// </summary>
             [DataMember(Name = "xSize")]
             [DataTypes(Minimum = 1, Maximum = 1000)]
@@ -300,9 +345,6 @@ namespace XFS4IoT.Keyboard
 
             /// <summary>
             /// Specifies the Function Key (FK) height.
-            /// For [ETS](#keyboard.generalinformation.ets), height is measured in pixels. 
-            /// For non-ETS devices, height is expressed as a value between 1 and 1000, where 1 is the smallest 
-            /// possible size and 1000 is the full height of the layout.
             /// </summary>
             [DataMember(Name = "ySize")]
             [DataTypes(Minimum = 1, Maximum = 1000)]
@@ -310,20 +352,50 @@ namespace XFS4IoT.Keyboard
 
             /// <summary>
             /// Specifies the Function Key associated with the physical area in non-shifted mode.
-            /// This property is not required if the device doesn't support.
+            /// This property can be omitted if no keys are supported.
+            /// 
+            /// The following standard values are defined:
+            /// 
+            /// * ```zero``` - Numeric digit 0
+            /// * ```one``` - Numeric digit 1
+            /// * ```two``` - Numeric digit 2
+            /// * ```three``` - Numeric digit 3
+            /// * ```four``` - Numeric digit 4
+            /// * ```five``` - Numeric digit 5
+            /// * ```six``` - Numeric digit 6
+            /// * ```seven``` - Numeric digit 7
+            /// * ```eight``` - Numeric digit 8
+            /// * ```nine``` - Numeric digit 9
+            /// * ```[a-f]``` - Hex digit A to F for secure key entry
+            /// * ```enter``` - Enter
+            /// * ```cancel``` - Cancel
+            /// * ```clear``` - Clear
+            /// * ```backspace``` - Backspace
+            /// * ```help``` - Help
+            /// * ```decPoint``` - Decimal point
+            /// * ```shift``` - Shift key used during hex entry
+            /// * ```doubleZero``` - 00
+            /// * ```tripleZero``` - 000
+            /// * ```fdk[01-32]``` - 32 FDK keys
+            /// 
+            /// Additional non-standard values are also allowed:
+            /// 
+            /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
             /// <example>one</example>
             /// </summary>
             [DataMember(Name = "key")]
-            [DataTypes(Pattern = @"^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
             public string Key { get; init; }
 
             /// <summary>
             /// Specifies the Function Key associated with the physical key in shifted mode.
-            /// This property is not required if the device doesn't support.
+            /// This property can be omitted if no keys are supported.
+            /// 
+            /// See *key* for the valid property values.
             /// <example>a</example>
             /// </summary>
             [DataMember(Name = "shiftKey")]
-            [DataTypes(Pattern = @"^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
             public string ShiftKey { get; init; }
 
         }
@@ -348,19 +420,34 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// The layout for the DataEntry command.
+        /// The layout for the [Keyboard.DataEntry](#keyboard.dataentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
         /// </summary>
         [DataMember(Name = "data")]
         public List<LayoutFrameClass> Data { get; init; }
 
         /// <summary>
-        /// The layout for the PinEntry command.
+        /// The layout for the [Keyboard.PinEntry](#keyboard.pinentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
         /// </summary>
         [DataMember(Name = "pin")]
         public List<LayoutFrameClass> Pin { get; init; }
 
         /// <summary>
-        /// The layout for the SecureKeyEntry command.
+        /// The layout for the [Keyboard.SecureKeyEntry](#keyboard.securekeyentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
         /// </summary>
         [DataMember(Name = "secure")]
         public List<LayoutFrameClass> Secure { get; init; }
@@ -413,12 +500,42 @@ namespace XFS4IoT.Keyboard
         public EntryCompletionEnum? Completion { get; init; }
 
         /// <summary>
-        /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this property is omitted for the 
-        /// function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed, the corresponding key value is stored in this property. 
+        /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode
+        /// ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this
+        /// property is omitted for the function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed,
+        /// the corresponding key value is stored in this property.
+        /// 
+        /// The following standard values are defined:
+        /// 
+        /// * ```zero``` - Numeric digit 0
+        /// * ```one``` - Numeric digit 1
+        /// * ```two``` - Numeric digit 2
+        /// * ```three``` - Numeric digit 3
+        /// * ```four``` - Numeric digit 4
+        /// * ```five``` - Numeric digit 5
+        /// * ```six``` - Numeric digit 6
+        /// * ```seven``` - Numeric digit 7
+        /// * ```eight``` - Numeric digit 8
+        /// * ```nine``` - Numeric digit 9
+        /// * ```[a-f]``` - Hex digit A to F for secure key entry
+        /// * ```enter``` - Enter
+        /// * ```cancel``` - Cancel
+        /// * ```clear``` - Clear
+        /// * ```backspace``` - Backspace
+        /// * ```help``` - Help
+        /// * ```decPoint``` - Decimal point
+        /// * ```shift``` - Shift key used during hex entry
+        /// * ```doubleZero``` - 00
+        /// * ```tripleZero``` - 000
+        /// * ```fdk[01-32]``` - 32 FDK keys
+        /// 
+        /// Additional non-standard values are also allowed:
+        /// 
+        /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
         /// <example>five</example>
         /// </summary>
         [DataMember(Name = "digit")]
-        [DataTypes(Pattern = @"^(one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+        [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
         public string Digit { get; init; }
 
     }

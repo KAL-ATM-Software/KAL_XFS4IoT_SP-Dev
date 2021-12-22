@@ -6,12 +6,13 @@
 \***********************************************************************************************/
 
 using System;
-using System.Collections;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
+using XFS4IoT.KeyManagement.Events;
 
 namespace XFS4IoTServer
 {
@@ -35,6 +36,7 @@ namespace XFS4IoTServer
             GetCapabilities();
         }
 
+        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
@@ -59,6 +61,28 @@ namespace XFS4IoTServer
         /// Stores KeyManagement interface status internally
         /// </summary>
         public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
+
+        #endregion
+
+        #region Common unsolicited events
+        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
+                                       CommonStatusClass.PositionStatusEnum? Position,
+                                       int? PowerSaveRecoveryTime,
+                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
+                                       CommonStatusClass.ExchangeEnum? Exchange,
+                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
+                                                                                                                                     Position,
+                                                                                                                                     PowerSaveRecoveryTime,
+                                                                                                                                     AntiFraudModule,
+                                                                                                                                     Exchange,
+                                                                                                                                     EndToEndSecurity);
+        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
+
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
+        #endregion
 
         /// <summary>
         /// Persistent data storage access
@@ -211,6 +235,19 @@ namespace XFS4IoTServer
         /// The device specified class reset current status if the stored key components are claered except successful Initialization command.
         /// </summary>
         public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => SecureKeyEntryStatus;
+
+        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => IllegalKeyAccessEvent(new IllegalKeyAccessEvent.PayloadData(KeyName, ErrorCode switch
+        {
+            KeyAccessErrorCodeEnum.AlgorithmNotSupp => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.AlgorithmNotSupp,
+            KeyAccessErrorCodeEnum.KeyNotFound => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNotFound,
+            KeyAccessErrorCodeEnum.KeyNoValue => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNoValue,
+            _ => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.UseViolation,
+        }));
+
+        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => CertificateChangeEvent(new CertificateChangeEvent.PayloadData(CertificateChange switch
+        {
+            _ => XFS4IoT.KeyManagement.Events.CertificateChangeEvent.PayloadData.CertificateChangeEnum.Secondary
+        }));
 
         private void GetStatus()
         {

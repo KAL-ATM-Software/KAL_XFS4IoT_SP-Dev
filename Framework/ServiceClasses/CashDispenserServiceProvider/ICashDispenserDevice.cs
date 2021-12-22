@@ -31,7 +31,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// If a shutter exists, then it will be implicitly controlled during the present operation, even if the ShutterControl capability is set to false.
         /// The shutter will be closed when the user removes the items or the items are retracted. 
         /// </summary>
-        Task<PresentCashResult> PresentCashAsync(ShutterStatusChangedCommandEvents events, 
+        Task<PresentCashResult> PresentCashAsync(ItemInfoAvailableCommandEvent events, 
                                                  PresentCashRequest request, 
                                                  CancellationToken cancellation);
 
@@ -50,7 +50,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// The method completes with success if the device successfully manages to test all of the testable cash units regardless of the outcome of the test. 
         /// This is the case if all testable cash units could be tested and a dispense was possible from at least one of the cash units.
         /// </summary>
-        Task<TestCashUnitsResult> TestCashUnitsAsync(DispenserCommandEvents events, 
+        Task<TestCashUnitsResult> TestCashUnitsAsync(ItemErrorCommandEvents events, 
                                                      TestCashUnitsRequest request, 
                                                      CancellationToken cancellation);
 
@@ -59,7 +59,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// Perform count operation to empty the specified physical cash unit(s). 
         /// All items dispensed from the cash unit are counted and moved to the specified output location.
         /// </summary>
-        Task<CountResult> CountAsync(DispenserCommandEvents events, 
+        Task<CountResult> CountAsync(ItemErrorCommandEvents events, 
                                      CountRequest request,
                                      CancellationToken cancellation);
 

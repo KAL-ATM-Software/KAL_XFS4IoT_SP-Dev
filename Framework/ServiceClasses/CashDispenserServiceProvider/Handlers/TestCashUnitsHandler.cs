@@ -119,7 +119,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.TestCashUnitsAsync()");
 
-            var result = await Device.TestCashUnitsAsync(new DispenserCommandEvents(events),
+            var result = await Device.TestCashUnitsAsync(new ItemErrorCommandEvents(events),
                                                          new TestCashUnitsRequest(itemPosition),
                                                          cancel);
 

@@ -26,7 +26,7 @@ namespace XFS4IoT.CardReader.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CardDataClass Track1 = null, CardDataClass Track2 = null, CardDataClass Track3 = null, List<CardDataClass> Chip = null, SecurityClass Security = null, CardDataClass Watermark = null, MemoryChipClass MemoryChip = null, CardDataClass Track1Front = null, CardDataClass FrontImage = null, CardDataClass BackImage = null, CardDataClass Track1JIS = null, CardDataClass Track3JIS = null, CardDataClass Ddi = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CardDataClass Track1 = null, CardDataClass Track2 = null, CardDataClass Track3 = null, List<CardDataClass> Chip = null, SecurityClass Security = null, CardDataClass Watermark = null, MemoryChipClass MemoryChip = null, CardDataClass Track1Front = null, List<byte> FrontImage = null, List<byte> BackImage = null, CardDataClass Track1JIS = null, CardDataClass Track3JIS = null, CardDataClass Ddi = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -167,20 +167,20 @@ namespace XFS4IoT.CardReader.Completions
             [DataContract]
             public sealed class MemoryChipClass
             {
-                public MemoryChipClass(CardDataStatusEnum? Status = null, DataEnum? Data = null)
+                public MemoryChipClass(CardDataStatusEnum? Status = null, ProtocolEnum? Protocol = null, string Data = null)
                 {
                     this.Status = Status;
+                    this.Protocol = Protocol;
                     this.Data = Data;
                 }
 
                 [DataMember(Name = "status")]
                 public CardDataStatusEnum? Status { get; init; }
 
-                public enum DataEnum
+                public enum ProtocolEnum
                 {
                     ChipT0,
                     ChipT1,
-                    ChipProtocolNotRequired,
                     ChipTypeAPart3,
                     ChipTypeAPart4,
                     ChipTypeB,
@@ -188,24 +188,28 @@ namespace XFS4IoT.CardReader.Completions
                 }
 
                 /// <summary>
-                /// The memory card protocol used to communicate with the card followed by the data. The memory card
-                /// protocol can be one of the following:
+                /// The memory card protocol used to communicate with the card. It can be one of the following:
                 /// 
-                /// * ```chipT0``` - The card reader can handle the T=0 protocol.
-                /// * ```chipT1``` - The card reader can handle the T=0 protocol.
-                /// * ```chipProtocolNotRequired``` - The carder is capable of communicating with the chip without
-                ///   requiring the application to specify any protocol.
-                /// * ```chipTypeAPart3``` - The card reader can handle the ISO 14443 (Part3) Type A contactless chip
+                /// * ```chipT0``` - The card reader has used the T=0 protocol.
+                /// * ```chipT1``` - The card reader has used the T=1 protocol.
+                /// * ```chipTypeAPart3``` - The card reader has used the ISO 14443 (Part3) Type A contactless chip
                 ///   card protocol.
-                /// * ```chipTypeAPart4``` - The card reader can handle the ISO 14443 (Part4) Type A contactless chip
+                /// * ```chipTypeAPart4``` - The card reader has used the ISO 14443 (Part4) Type A contactless chip
                 ///   card protocol.
-                /// * ```chipTypeB``` - The card reader can handle the ISO 14443 Type B contactless chip card
+                /// * ```chipTypeB``` - The card reader has used the ISO 14443 Type B contactless chip card
                 ///   protocol.
-                /// * ```chipTypeNFC``` - The card reader can handle the ISO 18092 (106/212/424kbps) contactless chip
+                /// * ```chipTypeNFC``` - The card reader has used the ISO 18092 (106/212/424kbps) contactless chip
                 ///   card protocol.
                 /// </summary>
+                [DataMember(Name = "protocol")]
+                public ProtocolEnum? Protocol { get; init; }
+
+                /// <summary>
+                /// Contains the data read from the memory chip in Base64.
+                /// <example>O2gAUACFyEARAJAC</example>
+                /// </summary>
                 [DataMember(Name = "data")]
-                public DataEnum? Data { get; init; }
+                public string Data { get; init; }
 
             }
 
@@ -222,16 +226,18 @@ namespace XFS4IoT.CardReader.Completions
             public CardDataClass Track1Front { get; init; }
 
             /// <summary>
-            /// Contains the full path and file name of the BMP image file for the front of the card.
+            /// Base64 encoded representation of the BMP image file for the front of the card.
             /// </summary>
             [DataMember(Name = "frontImage")]
-            public CardDataClass FrontImage { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> FrontImage { get; init; }
 
             /// <summary>
-            /// Contains the the full path and file name of the BMP image file for the back of the card.
+            /// Base64 encoded representation of the BMP image file for the back of the card.
             /// </summary>
             [DataMember(Name = "backImage")]
-            public CardDataClass BackImage { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> BackImage { get; init; }
 
             /// <summary>
             /// Contains the data read from JIS I track 1 (8bits/char).
@@ -240,7 +246,7 @@ namespace XFS4IoT.CardReader.Completions
             public CardDataClass Track1JIS { get; init; }
 
             /// <summary>
-            /// data read from JIS I track 3 (8bits/char).
+            /// Contains the data read from JIS I track 3 (8bits/char).
             /// </summary>
             [DataMember(Name = "track3JIS")]
             public CardDataClass Track3JIS { get; init; }

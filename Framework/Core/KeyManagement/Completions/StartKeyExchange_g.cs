@@ -26,7 +26,7 @@ namespace XFS4IoT.KeyManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string RandomItem = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> RandomItem = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -40,18 +40,21 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded randomly generated number created by the encryptor.
-            /// If the device does not support random number generation and verification, a zero length random number is returned 
-            /// and an empty string is returned.
+            /// The randomly generated number created by the device.
+            /// 
+            /// This is omitted if the device does not support random number generation for data authentication.
+            /// <example>Tm9uY2U=</example>
             /// </summary>
             [DataMember(Name = "randomItem")]
-            public string RandomItem { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> RandomItem { get; init; }
 
         }
     }

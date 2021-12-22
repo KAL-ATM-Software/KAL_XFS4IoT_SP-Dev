@@ -28,8 +28,10 @@ namespace XFS4IoTFramework.Crypto
                 return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
                                                                       $"No key name is specified.");
             }
-            if (string.IsNullOrEmpty(verifyAuthentication.Payload.AuthenticationData) ||
-                string.IsNullOrEmpty(verifyAuthentication.Payload.VerifyData))
+            if ((verifyAuthentication.Payload.Data is null ||
+                 verifyAuthentication.Payload.Data.Count == 0) ||
+                (verifyAuthentication.Payload.VerifyData is null ||
+                 verifyAuthentication.Payload.VerifyData.Count == 0))
             {
                 return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                       $"No data specified to verify.");
@@ -57,9 +59,8 @@ namespace XFS4IoTFramework.Crypto
             }
 
             if (Regex.IsMatch(keyDetail.KeyUsage, "^S[0-2]$") &&
-                (verifyAuthentication.Payload.VerifyAttributes is null ||
-                (verifyAuthentication.Payload.VerifyAttributes.CryptoMethod is null &&
-                 verifyAuthentication.Payload.VerifyAttributes.HashAlgorithm is null)))
+                (verifyAuthentication.Payload.CryptoMethod is null &&
+                 verifyAuthentication.Payload.HashAlgorithm is null))
             {
                 return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No hash algorith, or cryptoMethod specified.");
             }
@@ -71,21 +72,21 @@ namespace XFS4IoTFramework.Crypto
             }
 
             KeyDetail ivKeyDetail = null;
-            if (!string.IsNullOrEmpty(verifyAuthentication.Payload.StartValueKey))
+            if (!string.IsNullOrEmpty(verifyAuthentication.Payload.IvKey))
             {
                 // Check stored IV key attributes
-                ivKeyDetail = Crypto.GetKeyDetail(verifyAuthentication.Payload.StartValueKey);
+                ivKeyDetail = Crypto.GetKeyDetail(verifyAuthentication.Payload.IvKey);
 
                 if (ivKeyDetail is null)
                 {
                     return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"No IV key is found. {verifyAuthentication.Payload.StartValueKey}",
+                                                                            $"No IV key is found. {verifyAuthentication.Payload.IvKey}",
                                                                             VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
                 }
                 if (ivKeyDetail is null)
                 {
                     return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"No IV key loaded. {verifyAuthentication.Payload.StartValueKey}",
+                                                                            $"No IV key loaded. {verifyAuthentication.Payload.IvKey}",
                                                                             VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
@@ -107,7 +108,7 @@ namespace XFS4IoTFramework.Crypto
                 {
                     return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                 $"The key {ivKeyDetail.KeyName} doesn't support mode of use for IV decryption.",
-                                                                VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
+                                                                VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported);
                 }
             }
 
@@ -121,16 +122,16 @@ namespace XFS4IoTFramework.Crypto
                 {
                     if (Crypto.CryptoCapabilities.VerifyAttributes[keyDetail.KeyUsage][keyDetail.Algorithm].ContainsKey(keyDetail.ModeOfUse))
                     {
-                        sigAlgorithm = verifyAuthentication.Payload.VerifyAttributes.CryptoMethod switch
+                        sigAlgorithm = verifyAuthentication.Payload.CryptoMethod switch
                         {
-                            VerifyAuthenticationCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15 => VerifySignatureRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
-                            VerifyAuthenticationCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPss => VerifySignatureRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
+                            VerifyAuthenticationCommand.PayloadData.CryptoMethodEnum.RsassaPkcs1V15 => VerifySignatureRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
+                            VerifyAuthenticationCommand.PayloadData.CryptoMethodEnum.RsassaPss => VerifySignatureRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
                             _ => null
                         };
                         if (sigAlgorithm is not null)
                         {
                             return new VerifyAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                    $"Specified crypto method is not supported. {verifyAuthentication.Payload.VerifyAttributes.CryptoMethod}",
+                                                                                    $"Specified crypto method is not supported. {verifyAuthentication.Payload.CryptoMethod}",
                                                                                     VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
                         }
 
@@ -160,10 +161,10 @@ namespace XFS4IoTFramework.Crypto
 
             List<byte> ivData = null;
             string ivKeyName = string.Empty;
-            if (!string.IsNullOrEmpty(verifyAuthentication.Payload.StartValueKey) ||
-                !string.IsNullOrEmpty(verifyAuthentication.Payload.StartValue))
+            if (!string.IsNullOrEmpty(verifyAuthentication.Payload.IvKey) ||
+                verifyAuthentication.Payload.Iv?.Count > 0)
             {
-                if (!string.IsNullOrEmpty(verifyAuthentication.Payload.StartValueKey))
+                if (!string.IsNullOrEmpty(verifyAuthentication.Payload.IvKey))
                 {
                     // First to check capabilities of ECB decryption
                     bool verifyIVAttrib = false;
@@ -192,14 +193,14 @@ namespace XFS4IoTFramework.Crypto
                 ivData = (new byte[8]).Select(x => x = 0).ToList();
 
                 // Need an IV
-                if (string.IsNullOrEmpty(verifyAuthentication.Payload.StartValueKey) &&
-                    !string.IsNullOrEmpty(verifyAuthentication.Payload.StartValue))
+                if (string.IsNullOrEmpty(verifyAuthentication.Payload.IvKey) &&
+                    verifyAuthentication.Payload.Iv?.Count > 0)
                 {
                     // ClearIV;
-                    ivData = new(Convert.FromBase64String(verifyAuthentication.Payload.StartValue));
+                    ivData = verifyAuthentication.Payload.Iv;
                 }
-                else if (!string.IsNullOrEmpty(verifyAuthentication.Payload.StartValueKey) &&
-                         !string.IsNullOrEmpty(verifyAuthentication.Payload.StartValue))
+                else if (!string.IsNullOrEmpty(verifyAuthentication.Payload.IvKey) &&
+                         verifyAuthentication.Payload.Iv?.Count > 0)
                 {
                     // In this last mode, the data is encrypted, so we have to decrypt
                     // it then send it as a clear IV
@@ -208,9 +209,9 @@ namespace XFS4IoTFramework.Crypto
                     var decryptResult = await Device.Crypto(null,
                                                             new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
                                                             CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                            verifyAuthentication.Payload.StartValueKey,
-                                                            Crypto.GetKeyDetail(verifyAuthentication.Payload.StartValueKey).KeySlot,
-                                                            new(Convert.FromBase64String(verifyAuthentication.Payload.StartValue)),
+                                                            verifyAuthentication.Payload.IvKey,
+                                                            Crypto.GetKeyDetail(verifyAuthentication.Payload.IvKey).KeySlot,
+                                                            verifyAuthentication.Payload.Iv,
                                                             0),
                                                      cancel);
 
@@ -223,12 +224,11 @@ namespace XFS4IoTFramework.Crypto
                                                                               decryptResult.ErrorCode switch
                                                                               {
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.AccessDenied => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                                                  CryptoDataCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported,
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported,
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength,
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue,
-                                                                                  CryptoDataCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported,
+                                                                                  CryptoDataCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported,
                                                                                   CryptoDataCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive,
                                                                                   _ => VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation,
                                                                                 });
@@ -238,7 +238,7 @@ namespace XFS4IoTFramework.Crypto
                 }
                 else
                 {
-                    ivKeyName = verifyAuthentication.Payload.StartValueKey;
+                    ivKeyName = verifyAuthentication.Payload.IvKey;
                 }
             }
 
@@ -252,8 +252,8 @@ namespace XFS4IoTFramework.Crypto
                 result = await Device.VerifySignature(new CryptoCommandEvents(events),
                                                       new VerifySignatureRequest(verifyAuthentication.Payload.Key,
                                                                                  Crypto.GetKeyDetail(verifyAuthentication.Payload.Key).KeySlot,
-                                                                                 Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
-                                                                                 Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
+                                                                                 verifyAuthentication.Payload.Data,
+                                                                                 verifyAuthentication.Payload.VerifyData,
                                                                                  (VerifySignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm,
                                                                                   padding),
                                                       cancel);
@@ -268,8 +268,8 @@ namespace XFS4IoTFramework.Crypto
                 result = await Device.VerifyMAC(new CryptoCommandEvents(events),
                                                 new VerifyMACRequest(keyDetail.KeyName,
                                                                      keyDetail.KeySlot,
-                                                                     Convert.FromBase64String(verifyAuthentication.Payload.AuthenticationData).ToList(),
-                                                                     Convert.FromBase64String(verifyAuthentication.Payload.VerifyData).ToList(),
+                                                                     verifyAuthentication.Payload.Data,
+                                                                     verifyAuthentication.Payload.VerifyData,
                                                                      padding,
                                                                      ivKeyName,
                                                                      ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,

@@ -170,7 +170,7 @@ namespace XFS4IoTFramework.CardReader
             /// <param name="DataStatus">Status of reading the card data</param>
             /// <param name="MemcoryChipDataStatus">Status of reading the memory chip data</param>
             public CardData(DataStatusEnum? DataStatus = null,
-                            ReadRawDataCompletion.PayloadData.MemoryChipClass.DataEnum? MemcoryChipDataStatus = null)
+                            ReadRawDataCompletion.PayloadData.MemoryChipClass.ProtocolEnum? MemcoryChipDataStatus = null)
             {
                 this.DataStatus = DataStatus;
                 this.MemcoryChipDataStatus = MemcoryChipDataStatus;
@@ -198,7 +198,7 @@ namespace XFS4IoTFramework.CardReader
             /// <summary>
             /// This field must be set if the card data type MemoryChip is requested to be read, otherwise omitted.
             /// </summary>
-            public ReadRawDataCompletion.PayloadData.MemoryChipClass.DataEnum? MemcoryChipDataStatus { get; init; }
+            public ReadRawDataCompletion.PayloadData.MemoryChipClass.ProtocolEnum? MemcoryChipDataStatus { get; init; }
 
             /// <summary>
             /// This field must be set if the card data type Security is requested to be read, otherwise omitted.
@@ -437,12 +437,13 @@ namespace XFS4IoTFramework.CardReader
         /// </summary>
         public enum ChipProtocolEnum
         {
-            chipT0,
-            chipT1,
-            chipTypeAPart3,
-            chipTypeAPart4,
-            chipTypeB,
-            chipTypeNFC,
+            ChipT0,
+            ChipT1,
+            ChipTypeAPart3,
+            ChipTypeAPart4,
+            ChipTypeB,
+            ChipTypeNFC,
+            ChipProtocolNotRequired,
         }
 
         /// <summary>
@@ -537,7 +538,7 @@ namespace XFS4IoTFramework.CardReader
             Default,
             Exit,
             Retain,
-            currentPosition,
+            CurrentPosition,
         }
 
         /// <summary>
@@ -1183,18 +1184,26 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class IFMIdentifierInfo
     {
-        public IFMIdentifierInfo(QueryIFMIdentifierCompletion.PayloadData.IfmAuthorityEnum IFMAuthority,
-                                 List<byte> IFMIdentifier)
+        public enum IFMAuthorityEnum
+        {
+            EMV,
+            EuroPay,
+            Visa,
+            GIECB,
+        }
+
+        public IFMIdentifierInfo(IFMAuthorityEnum IFMAuthority,
+                                 string IFMIdentifier)
         {
             this.IFMAuthority = IFMAuthority;
             this.IFMIdentifier = IFMIdentifier;
         }
 
-        public QueryIFMIdentifierCompletion.PayloadData.IfmAuthorityEnum IFMAuthority { get; init; }
+        public IFMAuthorityEnum IFMAuthority { get; init; }
         /// <summary>
         /// The IFM Identifier of the chip card reader (or IFM) as assigned by the specified authority.
         /// </summary>
-        public List<byte> IFMIdentifier { get; init; }
+        public string IFMIdentifier { get; init; }
     }
 
     /// <summary>

@@ -17,11 +17,11 @@ namespace XFS4IoT.TextTerminal.Events
 
     [DataContract]
     [Event(Name = "TextTerminal.KeyEvent")]
-    public sealed class KeyEvent : UnsolicitedEvent<KeyEvent.PayloadData>
+    public sealed class KeyEvent : Event<KeyEvent.PayloadData>
     {
 
-        public KeyEvent(PayloadData Payload)
-            : base(Payload)
+        public KeyEvent(int RequestId, PayloadData Payload)
+            : base(RequestId, Payload)
         { }
 
 
@@ -38,7 +38,7 @@ namespace XFS4IoT.TextTerminal.Events
 
             /// <summary>
             /// On a numeric or alphanumeric key press this parameter holds the value of the key pressed. 
-            /// This property is not required if no numeric or alphanumeric key was pressed.
+            /// This is omitted when no numeric or alphanumeric key was pressed.
             /// <example>0</example>
             /// </summary>
             [DataMember(Name = "key")]
@@ -46,11 +46,11 @@ namespace XFS4IoT.TextTerminal.Events
 
             /// <summary>
             /// On a Command key press this parameter holds the value of the Command key pressed, e.g. 'enter'.
-            /// This property is not required when no command key was pressed.
-            /// <example>"enter"</example>
+            /// This is omitted when no command key was pressed.
+            /// <example>enter</example>
             /// </summary>
             [DataMember(Name = "commandKey")]
-            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[A-Za-z0-9]*)$")]
             public string CommandKey { get; init; }
 
         }

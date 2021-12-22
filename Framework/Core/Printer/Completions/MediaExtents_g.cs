@@ -61,12 +61,14 @@ namespace XFS4IoT.Printer.Completions
             /// Specifies the width of the media in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "sizeX")]
+            [DataTypes(Minimum = 0)]
             public int? SizeX { get; init; }
 
             /// <summary>
             /// Specifies the height of the media in terms of the base vertical resolution.
             /// </summary>
             [DataMember(Name = "sizeY")]
+            [DataTypes(Minimum = 0)]
             public int? SizeY { get; init; }
 
         }

@@ -45,7 +45,7 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specifies the number of digits which must be entered for the encryption key, 16 for a singlelength key, 
+            /// Specifies the number of digits which must be entered for the encryption key, 16 for a single-length key,
             /// 32 for a double-length key and 48 for a triple-length key.
             /// The only valid values are 16, 32 and 48.
             /// </summary>
@@ -53,22 +53,26 @@ namespace XFS4IoT.Keyboard.Commands
             public KeyLenEnum? KeyLen { get; init; }
 
             /// <summary>
-            /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of encryption 
-            /// key digits are entered. Otherwise, the input is terminated by the user using Enter, Cancel or any terminating key. 
-            /// When keyLen is reached, the Service Provider will disable all keys associated with an encryption key digit.
+            /// If *autoEnd* is set to true, the Service Provider terminates the command when the maximum number of
+            /// encryption key digits are entered. Otherwise, the input is terminated by the user using Enter, Cancel or
+            /// any terminating key.
+            /// When *keyLen* is reached, the Service Provider will disable all keys associated with an encryption key
+            /// digit.
             /// </summary>
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
 
             /// <summary>
             /// Specifies all Function Keys which are active during the execution of the command.
-            /// This should be the complete set or a subset of the keys returned in the payload of the 
+            /// This should be the complete set or a subset of the keys returned in the payload of the
             /// [Keyboard.GetLayout](#keyboard.getlayout) command.
-            /// This should include 'zero' to 'nine' and 'a' to 'f' for all modes of secure key entry, 
-            /// but should also include 'shift' on shift based systems. 
-            /// The 'doubleZero', 'tripleZero' and 'decPoint' function keys must not be included in the list of active or terminate keys.
+            /// This should include 'zero' to 'nine' and 'a' to 'f' for all modes of secure key entry, but should also
+            /// include 'shift' on shift based systems.
+            /// The 'doubleZero', 'tripleZero' and 'decPoint' function keys must not be included in the list of active
+            /// or terminate keys.
             /// 
-            /// For FDKs which must terminate the execution of the command. This should include the FDKs associated with Cancel and Enter.
+            /// For FDKs which must terminate the execution of the command. This should include the FDKs associated with
+            /// Cancel and Enter.
             /// 
             /// The following standard names are defined:
             /// 
@@ -94,7 +98,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// * ```tripleZero``` - 000
             /// * ```fdk[01-32]``` - 32 FDK keys
             /// 
-            /// Additional non standard key names are also allowed for terminating the execution of the command.
+            /// Additional non-standard key names are also allowed:
+            /// 
+            /// * ```oem[a-zA-Z0-9]*``` - A non-standard key name
             /// </summary>
             [DataMember(Name = "activeKeys")]
             public Dictionary<string, KeyClass> ActiveKeys { get; init; }
@@ -109,8 +115,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// Specifies the type of verification to be done on the entered key.
             /// The following values are possible:
             /// 
-            /// * ```self``` - The key check value is created by an encryption of the key with itself. 
-            ///                For a double-length or triple-length key the kcv is generated using 3DES encryption using the first 8 bytes of the key as the source data for the encryption.
+            /// * ```self``` - The key check value is created by an encryption of the key with itself.
+            ///                For a double-length or triple-length key the KCV is generated using 3DES encryption using
+            ///                the first 8 bytes of the key as the source data for the encryption.
             /// * ```zero``` - The key check value is created by encrypting a zero value with the key.
             /// </summary>
             [DataMember(Name = "verificationType")]
@@ -125,12 +132,12 @@ namespace XFS4IoT.Keyboard.Commands
 
             /// <summary>
             /// Specifies the cryptographic method to be used for the verification.
-            /// If this property is omitted, *keyLen* will determine the cryptographic method used. 
-            /// If *keyLen* is 16, the cryptographic method will be Single DES. 
+            /// If this property is omitted, *keyLen* will determine the cryptographic method used.
+            /// If *keyLen* is 16, the cryptographic method will be Single DES.
             /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES
             /// The following values are possible:
             /// 
-            /// * ```des``` - Single DES     
+            /// * ```des``` - Single DES
             /// * ```tripleDes``` - Triple DES
             /// * ```aes``` - AES
             /// </summary>

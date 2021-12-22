@@ -42,10 +42,11 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Specifies which public key certificate is requested.
-            /// If the [KeyManagement.Status](#common.status) command indicates Primary Certificates are accepted, then the Primary Public Encryption Key or the 
-            /// Primary Public Verification Key will be read out. If the [KeyManagement.Status](#common.status) command indicates Secondary Certificates are 
-            /// accepted, then the Secondary Public Encryption Key or the Secondary Public Verification Key will be read out.
-            /// The following values are possible:
+            /// If the [KeyManagement.Status](#common.status) command indicates Primary Certificates are accepted, then
+            /// the Primary Public Encryption Key or the Primary Public Verification Key will be read out. If the
+            /// [KeyManagement.Status](#common.status) command indicates Secondary Certificates are accepted, then the
+            /// Secondary Public Encryption Key or the Secondary Public Verification Key will be read out. The following
+            /// values are possible:
             /// 
             /// * ```enckey``` - The corresponding encryption key is to be returned.
             /// * ```verificationkey``` - The corresponding verification key is to be returned.

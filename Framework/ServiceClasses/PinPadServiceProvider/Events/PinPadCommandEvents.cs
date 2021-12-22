@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.PinPad
             GetPinBlockEvents = events;
         }
 
-        public Task DUKPTKSNEvent(string Key, string KSN)
+        public Task DUKPTKSNEvent(string Key, List<byte> KSN)
         {
             GetPinBlockEvents.IsNotNull($"Invalid interface specified. " + nameof(DUKPTKSNEvent));
             return GetPinBlockEvents.DUKPTKSNEvent(new(Key, KSN));

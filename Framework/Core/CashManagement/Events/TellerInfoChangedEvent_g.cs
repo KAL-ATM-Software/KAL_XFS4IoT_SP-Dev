@@ -17,11 +17,11 @@ namespace XFS4IoT.CashManagement.Events
 
     [DataContract]
     [Event(Name = "CashManagement.TellerInfoChangedEvent")]
-    public sealed class TellerInfoChangedEvent : UnsolicitedEvent<TellerInfoChangedEvent.PayloadData>
+    public sealed class TellerInfoChangedEvent : Event<TellerInfoChangedEvent.PayloadData>
     {
 
-        public TellerInfoChangedEvent(PayloadData Payload)
-            : base(Payload)
+        public TellerInfoChangedEvent(int RequestId, PayloadData Payload)
+            : base(RequestId, Payload)
         { }
 
 
@@ -39,6 +39,7 @@ namespace XFS4IoT.CashManagement.Events
             /// Integer holding the ID of the teller whose counts have changed.
             /// </summary>
             [DataMember(Name = "tellerID")]
+            [DataTypes(Minimum = 0)]
             public int? TellerID { get; init; }
 
         }

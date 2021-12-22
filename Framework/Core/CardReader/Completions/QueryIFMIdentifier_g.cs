@@ -26,37 +26,14 @@ namespace XFS4IoT.CardReader.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, IfmAuthorityEnum? IfmAuthority = null, string IfmIdentifier = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, Dictionary<string, string> IfmIdentifiers = null)
                 : base(CompletionCode, ErrorDescription)
             {
-                this.IfmAuthority = IfmAuthority;
-                this.IfmIdentifier = IfmIdentifier;
+                this.IfmIdentifiers = IfmIdentifiers;
             }
 
-            public enum IfmAuthorityEnum
-            {
-                Emv,
-                Europay,
-                Visa,
-                Giecb
-            }
-
-            /// <summary>
-            /// Specifies the IFM authority that issued the IFM identifier:
-            /// 
-            /// * ```emv``` - The Level 1 Type Approval IFM identifier assigned by EMVCo.
-            /// * ```europay``` - The Level 1 Type Approval IFM identifier assigned by Europay.
-            /// * ```visa``` - The Level 1 Type Approval IFM identifier assigned by VISA.
-            /// * ```giecb``` - The IFM identifier assigned by GIE Cartes Bancaires.
-            /// </summary>
-            [DataMember(Name = "ifmAuthority")]
-            public IfmAuthorityEnum? IfmAuthority { get; init; }
-
-            /// <summary>
-            /// The IFM Identifier of the chip card reader (or IFM) as assigned by the specified authority.
-            /// </summary>
-            [DataMember(Name = "ifmIdentifier")]
-            public string IfmIdentifier { get; init; }
+            [DataMember(Name = "ifmIdentifiers")]
+            public Dictionary<string, string> IfmIdentifiers { get; init; }
 
         }
     }

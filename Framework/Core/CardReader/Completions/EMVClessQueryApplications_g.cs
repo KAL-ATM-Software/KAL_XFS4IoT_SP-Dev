@@ -35,7 +35,7 @@ namespace XFS4IoT.CardReader.Completions
             [DataContract]
             public sealed class AppDataClass
             {
-                public AppDataClass(string Aid = null, string KernelIdentifier = null)
+                public AppDataClass(List<byte> Aid = null, List<byte> KernelIdentifier = null)
                 {
                     this.Aid = Aid;
                     this.KernelIdentifier = KernelIdentifier;
@@ -44,22 +44,26 @@ namespace XFS4IoT.CardReader.Completions
                 /// <summary>
                 /// Contains the Base64 encoded payment system application identifier (AID) supported by the
                 /// intelligent contactless card unit.
+                /// <example>oAAAAAMQEA==</example>
                 /// </summary>
                 [DataMember(Name = "aid")]
-                public string Aid { get; init; }
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Aid { get; init; }
 
                 /// <summary>
                 /// Contains the Base64 encoded Kernel Identifier associated with the *aid*. This data may be empty
                 /// if the reader does not support Kernel Identifiers for example in the case of legacy approved
                 /// contactless readers.
+                /// <example>Ag==</example>
                 /// </summary>
                 [DataMember(Name = "kernelIdentifier")]
-                public string KernelIdentifier { get; init; }
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> KernelIdentifier { get; init; }
 
             }
 
             /// <summary>
-            /// An array of application data objects which specifies a supported identifier (AID) and associated
+            /// An array of application data objects which specifies a supported application identifier (AID) and associated
             /// Kernel Identifier.
             /// </summary>
             [DataMember(Name = "appData")]

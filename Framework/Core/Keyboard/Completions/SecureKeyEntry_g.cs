@@ -26,7 +26,7 @@ namespace XFS4IoT.Keyboard.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null, string Kcv = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null, List<byte> Kcv = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -52,38 +52,46 @@ namespace XFS4IoT.Keyboard.Completions
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            ///                        specific reason.
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
-            /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the Service Provider.
-            /// * ```noActiveKeys``` - There are no active function keys specified, or there is no defined layout definition.
-            /// * ```noTerminatekeys``` - There are no terminate keys specified and autoEnd is false.
+            /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
+            ///                           Service Provider.
+            /// * ```noActiveKeys``` - There are no active function keys specified, or there is no defined layout
+            ///                        definition.
+            /// * ```noTerminatekeys``` - There are no terminate keys specified and *autoEnd* is false.
             /// * ```invalidKeyLength``` - The keyLen key length is not supported.
             /// * ```modeNotSupported``` - The KCV mode is not supported.
             /// * ```tooManyFrames``` - The device requires that only one frame is used for this command.
             /// * ```partialFrame``` - The single Touch Frame does not cover the entire monitor.
             /// * ```missingKeys``` - The single frame does not contain a full set of hexadecimal key definitions.
-            /// * ```entryTimeout``` - The timeout for entering data has been reached. This is a timeout which may be due to hardware 
-            /// limitations or legislative requirements (for example PCI).
+            /// * ```entryTimeout``` - The timeout for entering data has been reached. This is a timeout which may be
+            ///                        due to hardware limitations or legislative requirements (for example PCI).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Specifies the number of key digits entered. Applications must ensure all required digits have been entered before trying to store the key.
+            /// Specifies the number of key digits entered. Applications must ensure all required digits have been
+            /// entered before trying to store the key.
             /// </summary>
             [DataMember(Name = "digits")]
+            [DataTypes(Minimum = 0)]
             public int? Digits { get; init; }
 
             [DataMember(Name = "completion")]
             public EntryCompletionEnum? Completion { get; init; }
 
             /// <summary>
-            /// Contains the key check value data that can be used for verification of the entered key formatted in base 64. 
-            /// This property it omitted if device does not have this capability, or the key entry was not fully entered, e.g. 
-            /// the entry was terminated by Enter before the required number of digits was entered.
+            /// Contains the key check value data that can be used for verification of the entered key formatted in
+            /// Base64.
+            /// This property it omitted if device does not have this capability, or the key entry was not fully
+            /// entered, e.g. the entry was terminated by Enter before the required number of digits was entered.
+            /// <example>S2V5IENoZWNrIFZhbHVl</example>
             /// </summary>
             [DataMember(Name = "kcv")]
-            public string Kcv { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Kcv { get; init; }
 
         }
     }

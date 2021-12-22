@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.CardReader.Commands;
@@ -20,19 +21,26 @@ namespace XFS4IoTFramework.CardReader
             var result = Device.QueryIFMIdentifier();
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.QueryIFMIdentifier() -> {result.CompletionCode}");
 
-            // XFS4IoT spec has a BUG, only one output structure allows for the IFM information and should be array. April 2021 preview
-            if (result.IFMIdentifiers is not null && 
-                result.IFMIdentifiers.Count > 0 &&
-                result.IFMIdentifiers[0].IFMIdentifier.Count > 0)
+            Dictionary<string, string> IfmIdentifiers = null;
+            if (result.IFMIdentifiers?.Count > 0)
             {
-                return Task.FromResult(new QueryIFMIdentifierCompletion.PayloadData(result.CompletionCode,
-                                                                                    result.ErrorDescription,
-                                                                                    result.IFMIdentifiers[0].IFMAuthority,
-                                                                                    Convert.ToBase64String(result.IFMIdentifiers[0].IFMIdentifier.ToArray())));
+                IfmIdentifiers = new();
+                foreach (var identifier in result.IFMIdentifiers)
+                {
+                    IfmIdentifiers.Add(identifier.IFMAuthority switch
+                                       {
+                                           IFMIdentifierInfo.IFMAuthorityEnum.EMV => "emv",
+                                           IFMIdentifierInfo.IFMAuthorityEnum.EuroPay => "europay",
+                                           IFMIdentifierInfo.IFMAuthorityEnum.GIECB => "giecb",
+                                           _ => "visa",
+                                       },
+                                       identifier.IFMIdentifier);
+                }
             }
 
             return Task.FromResult(new QueryIFMIdentifierCompletion.PayloadData(result.CompletionCode,
-                                                                                result.ErrorDescription));
+                                                                                result.ErrorDescription,
+                                                                                IfmIdentifiers));
         }
     }
 }

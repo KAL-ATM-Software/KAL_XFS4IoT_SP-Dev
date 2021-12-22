@@ -99,13 +99,11 @@ namespace XFS4IoTFramework.CashManagement
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                await events.ShutterStatusChangedEvent(new ShutterStatusChangedEvent.PayloadData(closeShutter.Payload.Position,
-                                                                                                 ShutterEnum.Closed));
+                await CashManagement.ShutterStatusChangedEvent(position, CashManagementStatusClass.ShutterEnum.Closed);
             }
             else if (result.CompletionCode == MessagePayload.CompletionCodeEnum.HardwareError)
             {
-                await events.ShutterStatusChangedEvent(new ShutterStatusChangedEvent.PayloadData(closeShutter.Payload.Position,
-                                                                                                 result.Jammed ? ShutterEnum.Jammed : ShutterEnum.Unknown));
+                await CashManagement.ShutterStatusChangedEvent(position, result.Jammed ? CashManagementStatusClass.ShutterEnum.JammedClosed : CashManagementStatusClass.ShutterEnum.Unknown);
             }
 
             CloseShutterCompletion.PayloadData.ErrorCodeEnum? errorCode = null;

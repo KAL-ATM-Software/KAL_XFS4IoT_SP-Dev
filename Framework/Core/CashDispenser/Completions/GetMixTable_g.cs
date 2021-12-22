@@ -43,7 +43,7 @@ namespace XFS4IoT.CashDispenser.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```invalidMix``` - The _mix_ property does not correspond to a defined mix table.
+            /// * ```invalidMix``` - The *mix* property does not correspond to a defined mix table.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

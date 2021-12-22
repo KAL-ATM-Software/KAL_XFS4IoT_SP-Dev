@@ -38,9 +38,10 @@ namespace XFS4IoTFramework.KeyManagement
                     return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No authentication method specified.");
                 }
-                if (deleteKey.Payload.Authentication.Method != SigningMethodEnum.None)
+                if (deleteKey.Payload.Authentication.Method != AuthenticationMethodEnum.None)
                 {
-                    if (string.IsNullOrEmpty(deleteKey.Payload.Authentication.Data))
+                    if (deleteKey.Payload.Authentication.Data is null ||
+                        deleteKey.Payload.Authentication.Data.Count == 0)
                     {
                         return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"No authentication data specified.");
@@ -60,18 +61,18 @@ namespace XFS4IoTFramework.KeyManagement
 
                     authData = new AuthenticationData(deleteKey.Payload.Authentication.Method switch
                                                       {
-                                                          SigningMethodEnum.Ca => AuthenticationData.SigningMethodEnum.CA,
-                                                          SigningMethodEnum.Cbcmac => AuthenticationData.SigningMethodEnum.CBCMAC,
-                                                          SigningMethodEnum.Certhost => AuthenticationData.SigningMethodEnum.CertHost,
-                                                          SigningMethodEnum.Cmac => AuthenticationData.SigningMethodEnum.CMAC,
-                                                          SigningMethodEnum.Hl => AuthenticationData.SigningMethodEnum.HL,
-                                                          SigningMethodEnum.Reserved1 => AuthenticationData.SigningMethodEnum.Reserved1,
-                                                          SigningMethodEnum.Reserved2 => AuthenticationData.SigningMethodEnum.Reserved2,
-                                                          SigningMethodEnum.Reserved3 => AuthenticationData.SigningMethodEnum.Reserved3,
+                                                          AuthenticationMethodEnum.Ca => AuthenticationData.SigningMethodEnum.CA,
+                                                          AuthenticationMethodEnum.Cbcmac => AuthenticationData.SigningMethodEnum.CBCMAC,
+                                                          AuthenticationMethodEnum.Certhost => AuthenticationData.SigningMethodEnum.CertHost,
+                                                          AuthenticationMethodEnum.Cmac => AuthenticationData.SigningMethodEnum.CMAC,
+                                                          AuthenticationMethodEnum.Hl => AuthenticationData.SigningMethodEnum.HL,
+                                                          AuthenticationMethodEnum.Reserved1 => AuthenticationData.SigningMethodEnum.Reserved1,
+                                                          AuthenticationMethodEnum.Reserved2 => AuthenticationData.SigningMethodEnum.Reserved2,
+                                                          AuthenticationMethodEnum.Reserved3 => AuthenticationData.SigningMethodEnum.Reserved3,
                                                           _ => AuthenticationData.SigningMethodEnum.None,
                                                       },
                                                       deleteKey.Payload.Authentication.Key,
-                                                      Convert.FromBase64String(deleteKey.Payload.Authentication.Data).ToList());
+                                                      deleteKey.Payload.Authentication.Data);
                 }
             }
 

@@ -34,37 +34,38 @@ namespace XFS4IoT.Crypto.Completions
 
             public enum ErrorCodeEnum
             {
-                KeyNotFound,
-                ModeNotSupported,
                 AccessDenied,
+                KeyNotFound,
                 KeyNoValue,
                 UseViolation,
+                ModeOfUseNotSupported,
                 InvalidKeyLength,
-                NoChipTransactionActive,
                 AlgorithmNotSupported,
+                CryptoMethodNotSupported,
+                NoChipTransactionActive,
                 MacInvalid,
-                SignatureInvalid,
-                CryptoMethodNotSupported
+                SignatureInvalid
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible: 
             /// 
-            /// * ```keyNotFound``` - The specified key was not found.
-            /// * ```modeNotSupported``` - The mode specified by modeOfUse is not supported.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific
-            /// reason.
-            /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been
-            /// loaded.
-            /// * ```useViolation``` - The use specified by keyUsage is not supported.
-            /// * ```invalidKeyLength``` - The length of startValue is not supported or the length of an encryption key is
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason. 
+            /// * ```keyNotFound``` - The *key* name does not exist.
+            /// * ```keyNoValue``` - The *key* name exists but the key is not loaded.
+            /// * ```useViolation``` - The *key* usage is not supported. 
+            /// * ```modeOfUseNotSupported``` - The *key* Mode of Use is not supported.
+            /// * ```invalidKeyLength``` - The length of *iv* is not supported or the length of an encryption key is
             /// not compatible with the encryption operation required.
-            /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip transaction
-            /// active. 
-            /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported.
+            /// * ```algorithmNotSupported``` - The hash algorithm ins not supported.
+            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not
+            /// supported.
+            /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip
+            /// transaction active. 
+            /// active.
             /// * ```macInvalid``` - The MAC verification failed.
             /// * ```signatureInvalid``` - The signature verification failed.
-            /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

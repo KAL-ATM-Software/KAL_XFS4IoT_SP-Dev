@@ -54,11 +54,13 @@ namespace XFS4IoT.Printer.Commands
             public ActionEnum? Action { get; init; }
 
             /// <summary>
-            /// Specifies the number of pages to be turned. In the case where
-            /// [action](#printer.controlpassbook.command.properties.action) is *closeForward* or closeBackward*, this
-            /// field will be ignored.
+            /// Specifies the number of pages to be turned. If
+            /// [action](#printer.controlpassbook.command.properties.action) is *closeForward* or *closeBackward*,
+            /// this will be ignored.
+            /// <example>3</example>
             /// </summary>
             [DataMember(Name = "count")]
+            [DataTypes(Minimum = 1)]
             public int? Count { get; init; }
 
         }

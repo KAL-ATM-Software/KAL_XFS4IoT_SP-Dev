@@ -34,16 +34,14 @@ namespace XFS4IoT.Lights.Completions
 
             public enum ErrorCodeEnum
             {
-                InvalidAuxiliary,
-                SyntaxError
+                InvalidLight,
+                LightError
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```invalidAuxiliary``` - An attempt to set an auxiliary to a new value was invalid because the auxiliary does not 
-            ///   exist or the auxiliary is pre-configured as an input port.
-            /// * ```AuxiliaryError``` - A hardware error occurred while executing the command.
-            /// * ```syntaxError``` - The command was invoked with incorrect input data.
+            /// * ```invalidLight``` - An attempt to set a light to a new value was invalid because the light does not exist.
+            /// * ```lightError``` - A hardware error occurred while executing the command.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

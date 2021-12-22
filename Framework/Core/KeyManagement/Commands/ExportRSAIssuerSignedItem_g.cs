@@ -42,8 +42,11 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// Specifies the name of the public key to be exported.
-            /// The private/public key pair was installed during manufacture; see section 8.1.8 (Default Keys and Security Item loaded during manufacture) 
-            /// for a definition of these default keys. If name is an empty string, then the default EPP public key that is used for symmetric key encryption is exported.
+            /// 
+            /// The private/public key pair was installed during manufacture; see section [Default Keys and Security 
+            /// Item loaded during manufacture](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity) 
+            /// for a definition of these default keys.
+            /// <example>PKey01</example>
             /// </summary>
             [DataMember(Name = "name")]
             public string Name { get; init; }

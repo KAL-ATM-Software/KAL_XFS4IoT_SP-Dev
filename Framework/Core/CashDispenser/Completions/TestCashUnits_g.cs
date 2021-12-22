@@ -48,15 +48,15 @@ namespace XFS4IoT.CashDispenser.Completions
             /// <summary>
             /// Specifies the error code if applicable. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A cash unit caused a problem that meant all cash units could not be tested or 
-            /// no cash units were testable. One or more [Storage.StorageErrorEvent](#storage.storageerrorevent) 
+            /// * ```cashUnitError``` - A storage unit caused a problem that meant all storage units could not be tested or 
+            /// no storage units were testable. One or more [Storage.StorageErrorEvent](#storage.storageerrorevent) 
             /// events will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```shutterNotOpen``` - The shutter is not open or did not open when it should have. No items presented.
             /// * ```shutterOpen``` - The shutter is open when it should be closed. No items presented.
-            /// * ```invalidCashUnit``` - The cash unit number specified is not valid.
+            /// * ```invalidCashUnit``` - The storage unit number specified is not valid.
             /// * ```exchangeActive``` - The device is in an exchange state (see
-            /// [CashManagement.StartExchange](#cashmanagement.startexchange)).
+            /// [Storage.StartExchange](#storage.startexchange)).
             /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were presented.
             /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the items 
             /// were presented.

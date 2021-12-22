@@ -23,17 +23,14 @@ namespace XFS4IoTServer
             this.Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CommonServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICommonDevice>();
         }
-        public async Task PowerSaveChangeEvent(XFS4IoT.Common.Events.PowerSaveChangeEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.PowerSaveChangeEvent(Payload));
+        public async Task StatusChangedEvent(XFS4IoT.Common.Events.StatusChangedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.StatusChangedEvent(Payload));
 
-        public async Task DevicePositionEvent(XFS4IoT.Common.Events.DevicePositionEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.DevicePositionEvent(Payload));
+        public async Task ErrorEvent(XFS4IoT.Common.Events.ErrorEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.ErrorEvent(Payload));
 
         public async Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.NonceClearedEvent(Payload));
-
-        public async Task ExchangeStateChangedEvent(XFS4IoT.Common.Events.ExchangeStateChangedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.ExchangeStateChangedEvent(Payload));
 
         private readonly IServiceProvider ServiceProvider;
         private readonly ILogger Logger;

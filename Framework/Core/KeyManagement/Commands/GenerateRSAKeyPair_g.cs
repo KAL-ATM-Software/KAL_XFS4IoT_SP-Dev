@@ -37,8 +37,9 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the name of the new key-pair to be generated. Details of the generated key-pair can be obtained 
-            /// through the [KeyManagement.KeyDetail](#keymanagement.getkeydetail) command.
+            /// Specifies the name of the new key-pair to be generated. Details of the generated key-pair can be
+            /// obtained through the [KeyManagement.GetKeyDetail](#keymanagement.getkeydetail) command.
+            /// <example>Key02</example>
             /// </summary>
             [DataMember(Name = "key")]
             public string Key { get; init; }
@@ -50,14 +51,14 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// Specifies what the private key component of the key pair can be used for.
-            /// The public key part can only be used for the inverse function.
-            /// For example, if the rsaPrivateSign use is specified, then the private key can only be used for signature 
-            /// generation and the partner public key can only be used for verification.
-            /// The following values are possible:
+            /// Specifies what the private key component of the key pair can be used for. The public key part can only
+            /// be used for the inverse function. For example, if the *rsaPrivateSign* use is specified, then the
+            /// private key can only be used for signature  generation and the partner public key can only be used for
+            /// verification. The following values are possible:
             /// 
             /// * ```rsaPrivate``` - Key is used as a private key for RSA decryption.
-            /// * ```rsaPrivateSign``` - Key is used as a private key for RSA Signature generation. Only data generated within the device can be signed.
+            /// * ```rsaPrivateSign``` - Key is used as a private key for RSA Signature generation. Only data generated
+            /// within the device can be signed.
             /// </summary>
             [DataMember(Name = "use")]
             public UseEnum? Use { get; init; }
@@ -67,6 +68,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// When zero is specified then the device will be responsible for defining the length.
             /// </summary>
             [DataMember(Name = "modulusLength")]
+            [DataTypes(Minimum = 0)]
             public int? ModulusLength { get; init; }
 
             public enum ExponentValueEnum

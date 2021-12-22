@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.KeyManagement
 
 
             RSASignedItemResult result;
-            if (exportRSAIssuerSignedItem.Payload.ExportItemType == XFS4IoT.KeyManagement.TypeDataItemToExportEnum.EppId)
+            if (exportRSAIssuerSignedItem.Payload.ExportItemType == XFS4IoT.KeyManagement.TypeDataItemToExportEnum.DeviceId)
             {
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.ExportEPPId()");
 
@@ -56,14 +56,14 @@ namespace XFS4IoTFramework.KeyManagement
                                                                            RSASignedItemResult.ErrorCodeEnum.KeyNotFound => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
                                                                            _ => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair,
                                                                        } : null,
-                                                                       result.Data is not null && result.Data.Count > 0 ? Convert.ToBase64String(result.Data.ToArray()) : null,
+                                                                       result.Data,
                                                                        result.SignatureAlgorithm switch
                                                                        {
                                                                            RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5 => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15,
                                                                            RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PSS => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss,
                                                                            _ => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.Na,
                                                                        },
-                                                                       result.Signature is not null && result.Signature.Count > 0 ? Convert.ToBase64String(result.Signature.ToArray()) : null);
+                                                                       result.Signature);
         }
     }
 }

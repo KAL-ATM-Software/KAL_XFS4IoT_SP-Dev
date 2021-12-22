@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, InputDataEnum? InputData = null, string Data = null)
+            public PayloadData(int Timeout, InputDataEnum? InputData = null, List<byte> Data = null)
                 : base(Timeout)
             {
                 this.InputData = InputData;
@@ -51,11 +51,12 @@ namespace XFS4IoT.Printer.Commands
             public InputDataEnum? InputData { get; init; }
 
             /// <summary>
-            /// BASE64 encoded device dependent data to be sent to the device.
+            /// Base64 encoded device dependent data to be sent to the device.
             /// <example>UmF3RGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
         }
     }

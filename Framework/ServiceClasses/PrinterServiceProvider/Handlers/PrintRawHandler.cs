@@ -25,7 +25,8 @@ namespace XFS4IoTFramework.Printer
                                                           $"No InputData is specified.");
             }
 
-            if (string.IsNullOrEmpty(printRaw.Payload.Data))
+            if (printRaw.Payload.Data is null || 
+                printRaw.Payload.Data.Count == 0)
             {
                 return new PrintRawCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                           $"No raw data is specified.");
@@ -34,14 +35,14 @@ namespace XFS4IoTFramework.Printer
             Logger.Log(Constants.DeviceClass, "PrinterDev.RawPrintAsync()");
             var result = await Device.RawPrintAsync(new MediaPresentedCommandEvent(events),
                                                     new RawPrintRequest(printRaw.Payload.InputData == PrintRawCommand.PayloadData.InputDataEnum.Yes,
-                                                                        Convert.FromBase64String(printRaw.Payload.Data).ToList()), 
+                                                                        printRaw.Payload.Data), 
                                                     cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.RawPrintAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             return new PrintRawCompletion.PayloadData(result.CompletionCode,
                                                       result.ErrorDescription,
                                                       result.ErrorCode,
-                                                      result.Data?.Count > 0 ? Convert.ToBase64String(result.Data.ToArray()) : null);
+                                                      result.Data);
         }
     }
 }

@@ -25,17 +25,16 @@ namespace XFS4IoTFramework.CardReader
                                                         $"This device doesn't support CIM86 module. {CardReader.CardReaderCapabilities.SecurityType}");
             }
 
-            if (string.IsNullOrEmpty(setKey.Payload.KeyValue))
+            if (setKey.Payload.KeyValue is null ||
+                setKey.Payload.KeyValue.Count == 0)
             {
                 return new SetKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         "No key data supplied.",
                                                         SetKeyCompletion.PayloadData.ErrorCodeEnum.InvalidKey);
             }
 
-            List<byte> keyValue = new(Convert.FromBase64String(setKey.Payload.KeyValue));
-
             Logger.Log(Constants.DeviceClass, "CardReaderDev.SetCIM86KeyAsync()");
-            var result = await Device.SetCIM86KeyAsync(new SetCIM86KeyRequest(keyValue),
+            var result = await Device.SetCIM86KeyAsync(new SetCIM86KeyRequest(setKey.Payload.KeyValue),
                                                        cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.SetCIM86KeyAsync() -> {result.CompletionCode}");
 

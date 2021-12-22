@@ -47,7 +47,7 @@ namespace XFS4IoT.TextTerminal.Completions
             /// <example>["enter", "cancel"]</example>
             /// </summary>
             [DataMember(Name = "commandKeys")]
-            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight)$|^fdk(0[1-9]|[12][0-9]|3[0-2])$|.+")]
+            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[A-Za-z0-9]*)$")]
             public List<string> CommandKeys { get; init; }
 
         }

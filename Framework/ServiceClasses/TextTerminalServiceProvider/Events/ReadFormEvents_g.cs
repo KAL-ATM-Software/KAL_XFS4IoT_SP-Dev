@@ -21,5 +21,9 @@ namespace XFS4IoTFramework.TextTerminal
             : base(connection, requestId)
         { }
 
+        public async Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.FieldErrorEvent(requestId, Payload));
+
+        public async Task FieldWarningEvent() => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.FieldWarningEvent(requestId));
+
     }
 }

@@ -35,7 +35,7 @@ namespace XFS4IoT.PinPad.Commands
 
             /// <summary>
             /// Specifies if the PIN should be maintained after a PIN processing command. Once set, this setting 
-            /// applies until changed through another call to this command
+            /// applies until changed through another call to this command.
             /// </summary>
             [DataMember(Name = "maintainPIN")]
             public bool? MaintainPIN { get; init; }

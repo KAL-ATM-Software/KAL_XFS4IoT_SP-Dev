@@ -36,7 +36,7 @@ namespace XFS4IoT.Common.Events
             }
 
             /// <summary>
-            /// optional text describing why the nonce was cleared. The value of this text shouldn't be relied on.
+            /// Optional text describing why the nonce was cleared. The value of this text should not be relied on.
             /// <example>Nonce cleared by timeout</example>
             /// </summary>
             [DataMember(Name = "reasonDescription")]

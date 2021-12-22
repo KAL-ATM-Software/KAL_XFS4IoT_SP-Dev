@@ -45,9 +45,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// If this property is omitted, all supported layouts will be returned.
             /// The following values are possible:
             /// 
-            /// * ```data``` - Get the layout for the DataEntry command.
-            /// * ```pin``` - Get the layout for the PinEntry command.
-            /// * ```secure``` - Get the layout for the SecureKeyEntry command.
+            /// * ```data``` - Get the layout for the [Keyboard.DataEntry](#keyboard.dataentry) command.
+            /// * ```pin``` - Get the layout for the [Keyboard.PinEntry](#keyboard.pinentry) command.
+            /// * ```secure``` - Get the layout for the [Keyboard.SecureKeyEntry](#keyboard.securekeyentry) command.
             /// </summary>
             [DataMember(Name = "entryMode")]
             public EntryModeEnum? EntryMode { get; init; }

@@ -27,15 +27,16 @@ namespace XFS4IoT.TextTerminal.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, List<string> FieldNames = null)
+            public PayloadData(int Timeout, string FormName = null, List<string> Fields = null)
                 : base(Timeout)
             {
                 this.FormName = FormName;
-                this.FieldNames = FieldNames;
+                this.Fields = Fields;
             }
 
             /// <summary>
             /// Specifies the name of the form.
+            /// <example>My form</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
@@ -43,12 +44,13 @@ namespace XFS4IoT.TextTerminal.Commands
             /// <summary>
             /// Specifies the field names from which to read input data. The fields 
             /// are edited by the user in the order that the fields are specified 
-            /// within this parameter. If fieldNames value is not set, then data is read 
+            /// within this parameter. If omitted, data is read 
             /// from all input fields on the form in the order they appear in the 
-            /// form file (independent of the field screen position).
+            /// form (independent of the field screen position).
+            /// <example>'["Field1", "Field2"]'</example>
             /// </summary>
-            [DataMember(Name = "fieldNames")]
-            public List<string> FieldNames { get; init; }
+            [DataMember(Name = "fields")]
+            public List<string> Fields { get; init; }
 
         }
     }

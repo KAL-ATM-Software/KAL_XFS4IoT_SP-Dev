@@ -52,16 +52,18 @@ namespace XFS4IoT.TextTerminal.Commands
 
             /// <summary>
             /// Specifies the width position of the area to be cleared.
+            /// <example>10</example>
             /// </summary>
             [DataMember(Name = "width")]
-            [DataTypes(Minimum = 0)]
+            [DataTypes(Minimum = 1)]
             public int? Width { get; init; }
 
             /// <summary>
             /// Specifies the height position of the area to be cleared.
+            /// <example>15</example>
             /// </summary>
             [DataMember(Name = "height")]
-            [DataTypes(Minimum = 0)]
+            [DataTypes(Minimum = 1)]
             public int? Height { get; init; }
 
         }

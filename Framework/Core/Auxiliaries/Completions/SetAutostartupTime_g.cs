@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutostartupTime_g.cs uses automatically generated parts.
+ * SetAutoStartupTime_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -15,10 +15,10 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Auxiliaries.Completions
 {
     [DataContract]
-    [Completion(Name = "Auxiliaries.SetAutostartupTime")]
-    public sealed class SetAutostartupTimeCompletion : Completion<SetAutostartupTimeCompletion.PayloadData>
+    [Completion(Name = "Auxiliaries.SetAutoStartupTime")]
+    public sealed class SetAutoStartupTimeCompletion : Completion<SetAutoStartupTimeCompletion.PayloadData>
     {
-        public SetAutostartupTimeCompletion(int RequestId, SetAutostartupTimeCompletion.PayloadData Payload)
+        public SetAutoStartupTimeCompletion(int RequestId, SetAutoStartupTimeCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 

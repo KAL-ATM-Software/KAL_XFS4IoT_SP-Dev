@@ -44,14 +44,15 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a cash unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will 
             /// be sent with the details. If appropriate a [CashAcceptor.IncompleteDepleteEvent](#cashacceptor.incompletedepleteevent) 
             /// will also be sent.
-            /// * ```invalidCashUnit``` - The source or target cash unit specified is invalid for this operation. 
-            /// The [CashAcceptor.DepleteSource](#cashacceptor.depletesource) command can be used to determine which source or target is valid.
+            /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation. 
+            /// The [CashAcceptor.GetDepleteSource](#cashacceptor.getdepletesource) command can be used to determine which 
+            /// source or target is valid.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// </summary>
@@ -59,7 +60,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Total number of items received in the target cash unit during execution of this command.
+            /// Total number of items received in the target storage unit during execution of this command.
             /// <example>100</example>
             /// </summary>
             [DataMember(Name = "numberOfItemsReceived")]
@@ -85,8 +86,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-                /// command) from which items have been removed.
+                /// Name of the storage unit (as stated by the *Storage.GetStorage* command) from which items have been removed.
                 /// <example>unit1</example>
                 /// </summary>
                 [DataMember(Name = "cashUnitSource")]
@@ -94,8 +94,8 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string CashUnitSource { get; init; }
 
                 /// <summary>
-                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
-                /// not identified as a cash item.
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
+                /// specified if the item was not identified as a cash item.
                 /// <example>type20USD1</example>
                 /// </summary>
                 [DataMember(Name = "cashItem")]
@@ -103,9 +103,9 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string CashItem { get; init; }
 
                 /// <summary>
-                /// Total number of items removed from this source cash unit of the _noteId_ item type. 
-                /// Zero will be returned if this source cash unit did not move any items of this item type, 
-                /// for example due to a cash unit or transport jam.
+                /// Total number of items removed from this source storage unit of the *cashItem* item type. 
+                /// Not reported if this source storage unit did not move any items of this item type, 
+                /// for example due to a storage unit or transport jam.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRemoved")]
                 [DataTypes(Minimum = 0)]
@@ -115,7 +115,7 @@ namespace XFS4IoT.CashAcceptor.Completions
 
             /// <summary>
             /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved, 
-            /// or where items are moved from a multi denomination cash unit to a multi denomination cash unit, each source 
+            /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source 
             /// can move several note types. 
             /// 
             /// For example:

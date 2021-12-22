@@ -35,13 +35,15 @@ namespace XFS4IoT.KeyManagement.Completions
             public enum ErrorCodeEnum
             {
                 AccessDenied,
-                InvalidId
+                RandomInvalid
             }
 
             /// <summary>
             /// Specifies the error code if applicable. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor specific reason.
-            /// * ```invalidId``` - The ID passed was not valid.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
+            /// specific reason.
+            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously
+            ///  provided by the device. 
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

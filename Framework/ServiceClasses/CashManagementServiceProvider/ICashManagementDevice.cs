@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetDeviceAsync
         /// Perform a hardware reset which will attempt to return the CashDispenser device to a known good state.
         /// </summary>
-        Task<ResetDeviceResult> ResetDeviceAsync(ShutterStatusChangedCommandEvents events,
+        Task<ResetDeviceResult> ResetDeviceAsync(ResetCommandEvents events,
                                                  ResetDeviceRequest request,
                                                  CancellationToken cancellation);
 

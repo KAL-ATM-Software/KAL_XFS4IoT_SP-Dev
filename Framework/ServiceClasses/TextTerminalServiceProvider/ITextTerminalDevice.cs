@@ -62,7 +62,7 @@ namespace XFS4IoTFramework.TextTerminal
         /// A KeyPress event should be triggered for each valid key.
         /// The method will return once a termination key is pressed or if the numChars is reached when AutoEnd is true.
         /// </summary>
-        Task<ReadResult> ReadAsync(ReadRequest readInfo, CancellationToken cancellation);
+        Task<ReadResult> ReadAsync(ReadCommandEvents events, ReadRequest readInfo, CancellationToken cancellation);
 
 
         /// <summary>

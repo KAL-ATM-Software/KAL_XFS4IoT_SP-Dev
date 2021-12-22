@@ -27,7 +27,8 @@ namespace XFS4IoTFramework.Crypto
             {
                 return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No hash algorithm specified.");
             }
-            if (string.IsNullOrEmpty(digest.Payload.DigestInput))
+            if (digest.Payload.Data is null ||
+                digest.Payload.Data.Count == 0)
             {
                 return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No data specified to generate hash.");
             }
@@ -46,16 +47,16 @@ namespace XFS4IoTFramework.Crypto
                                                                                {
                                                                                    DigestCommand.PayloadData.HashAlgorithmEnum.Sha1=> HashAlgorithmEnum.SHA1,
                                                                                    _ => HashAlgorithmEnum.SHA256 
-                                                                               }, Convert.FromBase64String(digest.Payload.DigestInput).ToList<byte>()),
-                                                                               cancel);
+                                                                               }, 
+                                                                               digest.Payload.Data),
+                                                     cancel);
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateDigest() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            byte[] genDigest = result?.Digest.ToArray();
             return new DigestCompletion.PayloadData(result.CompletionCode,
                                                     result.ErrorDescription,
                                                     result.ErrorCode,
-                                                    digest is null ? string.Empty : Convert.ToBase64String(genDigest));
+                                                    result.Digest);
         }
     }
 }

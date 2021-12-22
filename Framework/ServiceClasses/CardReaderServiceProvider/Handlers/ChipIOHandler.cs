@@ -19,7 +19,8 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<ChipIOCompletion.PayloadData> HandleChipIO(IChipIOEvents events, ChipIOCommand chipIO, CancellationToken cancel)
         {
-            if (string.IsNullOrEmpty(chipIO.Payload.ChipData))
+            if (chipIO.Payload.ChipData is null ||
+                chipIO.Payload.ChipData.Count == 0)
             {
                 return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                         "No chip IO data supplied.",
@@ -28,13 +29,13 @@ namespace XFS4IoTFramework.CardReader
 
             ChipIORequest.ChipProtocolEnum? chipProtocol = chipIO.Payload.ChipProtocol switch
             {
-                "chipT0" => ChipIORequest.ChipProtocolEnum.chipT0,
-                "chipT1" => ChipIORequest.ChipProtocolEnum.chipT1,
-                "chipTypeAPart3" => ChipIORequest.ChipProtocolEnum.chipTypeAPart3,
-                "chipTypeAPart4" => ChipIORequest.ChipProtocolEnum.chipTypeAPart4,
-                "chipTypeB" => ChipIORequest.ChipProtocolEnum.chipTypeB,
-                "chipTypeNFC" => ChipIORequest.ChipProtocolEnum.chipTypeNFC,
-                _ => null
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipT0 => ChipIORequest.ChipProtocolEnum.ChipT0,
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipT1 => ChipIORequest.ChipProtocolEnum.ChipT1,
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeAPart3 => ChipIORequest.ChipProtocolEnum.ChipTypeAPart3,
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeAPart4 => ChipIORequest.ChipProtocolEnum.ChipTypeAPart4,
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeB => ChipIORequest.ChipProtocolEnum.ChipTypeB,
+                ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeNFC => ChipIORequest.ChipProtocolEnum.ChipTypeNFC,
+                _ => ChipIORequest.ChipProtocolEnum.ChipProtocolNotRequired,
             };
 
             if (chipProtocol is null)
@@ -45,17 +46,17 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // check capability for the protocol
-            if (chipProtocol == ChipIORequest.ChipProtocolEnum.chipT0 &&
+            if (chipProtocol == ChipIORequest.ChipProtocolEnum.ChipT0 &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T0) ||
-                chipProtocol == ChipIORequest.ChipProtocolEnum.chipT1 &&
+                chipProtocol == ChipIORequest.ChipProtocolEnum.ChipT1 &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T1) ||
-                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeAPart3 &&
+                chipProtocol == ChipIORequest.ChipProtocolEnum.ChipTypeAPart3 &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart3) ||
-                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeAPart4 &&
+                chipProtocol == ChipIORequest.ChipProtocolEnum.ChipTypeAPart4 &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart4) ||
-                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeB &&
+                chipProtocol == ChipIORequest.ChipProtocolEnum.ChipTypeB &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeB) ||
-                chipProtocol == ChipIORequest.ChipProtocolEnum.chipTypeNFC &&
+                chipProtocol == ChipIORequest.ChipProtocolEnum.ChipTypeNFC &&
                 !CardReader.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeNFC))
             {
                 return new ChipIOCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -63,18 +64,25 @@ namespace XFS4IoTFramework.CardReader
                                                         ChipIOCompletion.PayloadData.ErrorCodeEnum.InvalidData);
             }
             
-            List<byte> chipData = new(Convert.FromBase64String(chipIO.Payload.ChipData));
-
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ChipIOAsync()");
-            var result = await Device.ChipIOAsync(new ChipIORequest((ChipIORequest.ChipProtocolEnum)chipProtocol, chipData),
+            var result = await Device.ChipIOAsync(new ChipIORequest((ChipIORequest.ChipProtocolEnum)chipProtocol, chipIO.Payload.ChipData),
                                                   cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ChipIOAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             return new ChipIOCompletion.PayloadData(result.CompletionCode,
                                                     result.ErrorDescription,
                                                     result.ErrorCode,
-                                                    chipIO.Payload.ChipProtocol,
-                                                    result.ChipData == null ? null : Convert.ToBase64String(result.ChipData.ToArray()));
+                                                    chipIO.Payload.ChipProtocol switch
+                                                    {
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipT0 => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipT0,
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipT1 => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipT1,
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeAPart3 => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipTypeAPart3,
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeAPart4 => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipTypeAPart4,
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeB => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipTypeB,
+                                                        ChipIOCommand.PayloadData.ChipProtocolEnum.ChipTypeNFC => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipTypeNFC,
+                                                        _ => ChipIOCompletion.PayloadData.ChipProtocolEnum.ChipProtocolNotRequired,
+                                                    },
+                                                    result.ChipData);
         }
 
     }

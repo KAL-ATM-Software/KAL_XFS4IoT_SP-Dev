@@ -27,7 +27,7 @@ namespace XFS4IoT.CardReader.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Data = null)
+            public PayloadData(int Timeout, List<byte> Data = null)
                 : base(Timeout)
             {
                 this.Data = Data;
@@ -50,9 +50,11 @@ namespace XFS4IoT.CardReader.Commands
             /// *Tags 9A and 9F21 could be managed internally by the reader. If tags are not supplied, tag values may
             /// be used from the configuration sent previously in the
             /// [CardReader.EMVClessConfigure](#cardreader.emvclessconfigure) command.
+            /// <example>XyoCCXiaAxcICJwBAJ8C ...</example>
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
         }
     }

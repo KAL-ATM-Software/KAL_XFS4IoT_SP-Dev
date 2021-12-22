@@ -17,11 +17,11 @@ namespace XFS4IoT.Lights
     [DataContract]
     public sealed class LightStateClass
     {
-        public LightStateClass(PositionEnum? Position = null, FlashRateEnum? FlashRate = null, ColourEnum? Colour = null, DirectionEnum? Direction = null)
+        public LightStateClass(PositionEnum? Position = null, FlashRateEnum? FlashRate = null, ColorEnum? Color = null, DirectionEnum? Direction = null)
         {
             this.Position = Position;
             this.FlashRate = FlashRate;
-            this.Colour = Colour;
+            this.Color = Color;
             this.Direction = Direction;
         }
 
@@ -37,14 +37,15 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// The light position. If omitted then the default position is used. One of the following values:
-        /// * ```left``` -  The left position.
-        /// * ```right``` -  The right position.
-        /// * ```center``` -  The center position.
-        ///  * ```top``` -  The top position.
-        /// * ```bottom``` -  The bottom position.
-        /// * ```front``` -  The front position.
-        /// * ```rear``` -  The rear position.
+        /// The light position. Can be used for devices which have multiple input and output positions, omitted if not
+        /// required. One of the following values:
+        /// * ```left``` - The left position.
+        /// * ```right``` - The right position.
+        /// * ```center``` - The center position.
+        /// * ```top``` - The top position.
+        /// * ```bottom``` - The bottom position.
+        /// * ```front``` - The front position.
+        /// * ```rear``` - The rear position.
         /// </summary>
         [DataMember(Name = "position")]
         public PositionEnum? Position { get; init; }
@@ -60,16 +61,16 @@ namespace XFS4IoT.Lights
 
         /// <summary>
         /// The light flash rate as one of the following values:
-        /// * ```off``` -  The light is turned off.
-        /// * ```slow``` -  The light is flashing slowly.
-        /// * ```medium``` -  The light is flashing medium frequency.
-        /// * ```quick``` -  The light is flashing quickly.
+        /// * ```off``` - The light is turned off.
+        /// * ```slow``` - The light is flashing slowly.
+        /// * ```medium``` - The light is flashing medium frequency.
+        /// * ```quick``` - The light is flashing quickly.
         /// * ```continuous``` - The light is continuous (steady).
         /// </summary>
         [DataMember(Name = "flashRate")]
         public FlashRateEnum? FlashRate { get; init; }
 
-        public enum ColourEnum
+        public enum ColorEnum
         {
             Red,
             Green,
@@ -82,16 +83,16 @@ namespace XFS4IoT.Lights
 
         /// <summary>
         /// The light color as one of the following values:
-        /// * ```red``` -  The light is red.
-        /// * ```green``` -  The light is green.
-        /// * ```yellow``` -  The light us yellow.
-        /// * ```blue``` -  The light is blue.
+        /// * ```red``` - The light is red.
+        /// * ```green``` - The light is green.
+        /// * ```yellow``` - The light is yellow.
+        /// * ```blue``` - The light is blue.
         /// * ```cyan``` - The light is cyan.
-        /// * ```magenta``` -  The light is magenta.
+        /// * ```magenta``` - The light is magenta.
         /// * ```white``` - The light is white.
         /// </summary>
-        [DataMember(Name = "colour")]
-        public ColourEnum? Colour { get; init; }
+        [DataMember(Name = "color")]
+        public ColorEnum? Color { get; init; }
 
         public enum DirectionEnum
         {
@@ -113,7 +114,7 @@ namespace XFS4IoT.Lights
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(LightStateClass CardReader = null, LightStateClass PinPad = null, LightStateClass NotesDispenser = null, LightStateClass CoinDispenser = null, LightStateClass ReceiptPrinter = null, LightStateClass PassbookPrinter = null, LightStateClass EnvelopeDepository = null, LightStateClass ChequeUnit = null, LightStateClass BillAcceptor = null, LightStateClass EnvelopeDispenser = null, LightStateClass DocumentPrinter = null, LightStateClass CoinAcceptor = null, LightStateClass Scanner = null, LightStateClass Contactless = null, LightStateClass CardUnit2 = null, LightStateClass NotesDispenser2 = null, LightStateClass BillAcceptor2 = null, LightStateClass StatusGood = null, LightStateClass StatusWarning = null, LightStateClass StatusBad = null, LightStateClass StatusSupervisor = null, LightStateClass StatusInService = null, LightStateClass FasciaLight = null)
+        public StatusClass(LightStateClass CardReader = null, LightStateClass PinPad = null, LightStateClass NotesDispenser = null, LightStateClass CoinDispenser = null, LightStateClass ReceiptPrinter = null, LightStateClass PassbookPrinter = null, LightStateClass EnvelopeDepository = null, LightStateClass BillAcceptor = null, LightStateClass EnvelopeDispenser = null, LightStateClass DocumentPrinter = null, LightStateClass CoinAcceptor = null, LightStateClass Scanner = null, LightStateClass Contactless = null, LightStateClass CardReader2 = null, LightStateClass NotesDispenser2 = null, LightStateClass BillAcceptor2 = null, LightStateClass StatusGood = null, LightStateClass StatusWarning = null, LightStateClass StatusBad = null, LightStateClass StatusSupervisor = null, LightStateClass StatusInService = null, LightStateClass FasciaLight = null)
         {
             this.CardReader = CardReader;
             this.PinPad = PinPad;
@@ -122,14 +123,13 @@ namespace XFS4IoT.Lights
             this.ReceiptPrinter = ReceiptPrinter;
             this.PassbookPrinter = PassbookPrinter;
             this.EnvelopeDepository = EnvelopeDepository;
-            this.ChequeUnit = ChequeUnit;
             this.BillAcceptor = BillAcceptor;
             this.EnvelopeDispenser = EnvelopeDispenser;
             this.DocumentPrinter = DocumentPrinter;
             this.CoinAcceptor = CoinAcceptor;
             this.Scanner = Scanner;
             this.Contactless = Contactless;
-            this.CardUnit2 = CardUnit2;
+            this.CardReader2 = CardReader2;
             this.NotesDispenser2 = NotesDispenser2;
             this.BillAcceptor2 = BillAcceptor2;
             this.StatusGood = StatusGood;
@@ -141,7 +141,7 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// Card Unit Light.
+        /// Card Reader Light.
         /// </summary>
         [DataMember(Name = "cardReader")]
         public LightStateClass CardReader { get; init; }
@@ -183,12 +183,6 @@ namespace XFS4IoT.Lights
         public LightStateClass EnvelopeDepository { get; init; }
 
         /// <summary>
-        /// Cheque Unit Light.
-        /// </summary>
-        [DataMember(Name = "chequeUnit")]
-        public LightStateClass ChequeUnit { get; init; }
-
-        /// <summary>
         /// Bill Acceptor Light.
         /// </summary>
         [DataMember(Name = "billAcceptor")]
@@ -213,22 +207,22 @@ namespace XFS4IoT.Lights
         public LightStateClass CoinAcceptor { get; init; }
 
         /// <summary>
-        /// scanner Light.
+        /// Scanner Light.
         /// </summary>
         [DataMember(Name = "scanner")]
         public LightStateClass Scanner { get; init; }
 
         /// <summary>
-        /// Contactless Light.
+        /// Contactless Reader Light.
         /// </summary>
         [DataMember(Name = "contactless")]
         public LightStateClass Contactless { get; init; }
 
         /// <summary>
-        /// Card Unit 2 Light.
+        /// Card Reader 2 Light.
         /// </summary>
-        [DataMember(Name = "cardUnit2")]
-        public LightStateClass CardUnit2 { get; init; }
+        [DataMember(Name = "cardReader2")]
+        public LightStateClass CardReader2 { get; init; }
 
         /// <summary>
         /// Notes Dispenser 2 Light.
@@ -243,31 +237,31 @@ namespace XFS4IoT.Lights
         public LightStateClass BillAcceptor2 { get; init; }
 
         /// <summary>
-        /// Status indicator light - Good.
+        /// Status Indicator light - Good.
         /// </summary>
         [DataMember(Name = "statusGood")]
         public LightStateClass StatusGood { get; init; }
 
         /// <summary>
-        /// Status indicator light - Warning.
+        /// Status Indicator light - Warning.
         /// </summary>
         [DataMember(Name = "statusWarning")]
         public LightStateClass StatusWarning { get; init; }
 
         /// <summary>
-        /// Status indicator light - Bad.
+        /// Status Indicator light - Bad.
         /// </summary>
         [DataMember(Name = "statusBad")]
         public LightStateClass StatusBad { get; init; }
 
         /// <summary>
-        /// Status indicator light - Supervisor.
+        /// Status Indicator light - Supervisor.
         /// </summary>
         [DataMember(Name = "statusSupervisor")]
         public LightStateClass StatusSupervisor { get; init; }
 
         /// <summary>
-        /// Status indicator light - In Service.
+        /// Status Indicator light - In Service.
         /// </summary>
         [DataMember(Name = "statusInService")]
         public LightStateClass StatusInService { get; init; }
@@ -403,7 +397,7 @@ namespace XFS4IoT.Lights
             public bool? Magenta { get; init; }
 
             /// <summary>
-            /// The light can be white .
+            /// The light can be white.
             /// </summary>
             [DataMember(Name = "white")]
             public bool? White { get; init; }
@@ -426,13 +420,13 @@ namespace XFS4IoT.Lights
             }
 
             /// <summary>
-            /// The light can  indicate entry.
+            /// The light can indicate entry.
             /// </summary>
             [DataMember(Name = "entry")]
             public bool? Entry { get; init; }
 
             /// <summary>
-            /// The light can  indicate exit.
+            /// The light can indicate exit.
             /// </summary>
             [DataMember(Name = "exit")]
             public bool? Exit { get; init; }
@@ -515,7 +509,7 @@ namespace XFS4IoT.Lights
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(LightCapabilitiesClass CardReader = null, LightCapabilitiesClass PinPad = null, LightCapabilitiesClass NotesDispenser = null, LightCapabilitiesClass CoinDispenser = null, LightCapabilitiesClass ReceiptPrinter = null, LightCapabilitiesClass PassbookPrinter = null, LightCapabilitiesClass EnvelopeDepository = null, LightCapabilitiesClass ChequeUnit = null, LightCapabilitiesClass BillAcceptor = null, LightCapabilitiesClass EnvelopeDispenser = null, LightCapabilitiesClass DocumentPrinter = null, LightCapabilitiesClass CoinAcceptor = null, LightCapabilitiesClass Scanner = null, LightCapabilitiesClass Contactless = null, LightCapabilitiesClass CardUnit2 = null, LightCapabilitiesClass NotesDispenser2 = null, LightCapabilitiesClass BillAcceptor2 = null, LightCapabilitiesClass StatusGood = null, LightCapabilitiesClass StatusWarning = null, LightCapabilitiesClass StatusBad = null, LightCapabilitiesClass StatusSupervisor = null, LightCapabilitiesClass StatusInService = null, LightCapabilitiesClass FasciaLight = null)
+        public CapabilitiesClass(LightCapabilitiesClass CardReader = null, LightCapabilitiesClass PinPad = null, LightCapabilitiesClass NotesDispenser = null, LightCapabilitiesClass CoinDispenser = null, LightCapabilitiesClass ReceiptPrinter = null, LightCapabilitiesClass PassbookPrinter = null, LightCapabilitiesClass EnvelopeDepository = null, LightCapabilitiesClass BillAcceptor = null, LightCapabilitiesClass EnvelopeDispenser = null, LightCapabilitiesClass DocumentPrinter = null, LightCapabilitiesClass CoinAcceptor = null, LightCapabilitiesClass Scanner = null, LightCapabilitiesClass Contactless = null, LightCapabilitiesClass CardReader2 = null, LightCapabilitiesClass NotesDispenser2 = null, LightCapabilitiesClass BillAcceptor2 = null, LightCapabilitiesClass StatusGood = null, LightCapabilitiesClass StatusWarning = null, LightCapabilitiesClass StatusBad = null, LightCapabilitiesClass StatusSupervisor = null, LightCapabilitiesClass StatusInService = null, LightCapabilitiesClass FasciaLight = null)
         {
             this.CardReader = CardReader;
             this.PinPad = PinPad;
@@ -524,14 +518,13 @@ namespace XFS4IoT.Lights
             this.ReceiptPrinter = ReceiptPrinter;
             this.PassbookPrinter = PassbookPrinter;
             this.EnvelopeDepository = EnvelopeDepository;
-            this.ChequeUnit = ChequeUnit;
             this.BillAcceptor = BillAcceptor;
             this.EnvelopeDispenser = EnvelopeDispenser;
             this.DocumentPrinter = DocumentPrinter;
             this.CoinAcceptor = CoinAcceptor;
             this.Scanner = Scanner;
             this.Contactless = Contactless;
-            this.CardUnit2 = CardUnit2;
+            this.CardReader2 = CardReader2;
             this.NotesDispenser2 = NotesDispenser2;
             this.BillAcceptor2 = BillAcceptor2;
             this.StatusGood = StatusGood;
@@ -581,14 +574,8 @@ namespace XFS4IoT.Lights
         /// <summary>
         /// Envelope Depository Light.
         /// </summary>
-        [DataMember(Name = "EnvelopeDepository")]
+        [DataMember(Name = "envelopeDepository")]
         public LightCapabilitiesClass EnvelopeDepository { get; init; }
-
-        /// <summary>
-        /// Cheque Unit Light.
-        /// </summary>
-        [DataMember(Name = "chequeUnit")]
-        public LightCapabilitiesClass ChequeUnit { get; init; }
 
         /// <summary>
         /// Bill Acceptor Light.
@@ -621,16 +608,16 @@ namespace XFS4IoT.Lights
         public LightCapabilitiesClass Scanner { get; init; }
 
         /// <summary>
-        /// Contactless Light.
+        /// Contactless Reader Light.
         /// </summary>
         [DataMember(Name = "contactless")]
         public LightCapabilitiesClass Contactless { get; init; }
 
         /// <summary>
-        /// Card Unit 2 Light.
+        /// Card Reader 2 Light.
         /// </summary>
-        [DataMember(Name = "cardUnit2")]
-        public LightCapabilitiesClass CardUnit2 { get; init; }
+        [DataMember(Name = "cardReader2")]
+        public LightCapabilitiesClass CardReader2 { get; init; }
 
         /// <summary>
         /// Notes Dispenser 2 Light.

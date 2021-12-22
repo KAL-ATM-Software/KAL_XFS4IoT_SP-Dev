@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Data = null, MediaControlClass MediaControl = null, string PaperSource = null)
+            public PayloadData(int Timeout, List<byte> Data = null, MediaControlClass MediaControl = null, string PaperSource = null)
                 : base(Timeout)
             {
                 this.Data = Data;
@@ -40,7 +40,8 @@ namespace XFS4IoT.Printer.Commands
             /// <example>UmF3RGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "data")]
-            public string Data { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> Data { get; init; }
 
             [DataContract]
             public sealed class MediaControlClass
@@ -96,8 +97,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Skip { get; init; }
 
                 /// <summary>
-                /// Flush any data to the printer that has not yet been physically printed from previous *Printer.PrintForm* or
-                /// *Printer.PrintNative* commands. This will synchronize the application with the device to ensure that all
+                /// Flush any data to the printer that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands. This will synchronize the application with the device to ensure that all
                 /// data has been physically printed.
                 /// </summary>
                 [DataMember(Name = "flush")]
@@ -178,8 +179,8 @@ namespace XFS4IoT.Printer.Commands
                 public bool? Rotate180 { get; init; }
 
                 /// <summary>
-                /// Clear any data that has not yet been physically printed from previous *Pinter.PrintForm* or
-                /// *Printer.PrintNative* commands.
+                /// Clear any data that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
+                /// [Printer.PrintNative](#printer.printnative) commands.
                 /// </summary>
                 [DataMember(Name = "clearBuffer")]
                 public bool? ClearBuffer { get; init; }
@@ -187,10 +188,10 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the manner in which the media should be handled after each page is printed, as a combination
-            /// of the following flags. If no flags are set, no actions will be performed, as when printing multiple
+            /// Specifies the manner in which the media should be handled after each page is printed.
+            /// If no options are set, no actions will be performed, as when printing multiple
             /// pages on a single media item. Note that the
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) flag is not
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
             /// applicable to this this command and will be ignored.
             /// </summary>
             [DataMember(Name = "mediaControl")]
@@ -209,6 +210,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
             /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]
             [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]

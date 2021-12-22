@@ -29,12 +29,12 @@ namespace XFS4IoT.Auxiliaries.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, IntTamperSensorStateEnum? IntTamperSensor = null, SeismicSensorStateEnum? SeismicSensorState = null, HeatSensorStateEnum? HeatSensorState = null, ProximitySensorStateEnum? ProximitySensorState = null, AmbientLightSensorStateEnum? AmbientLightSensorState = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensorState = null, BootSwitchSensorStateEnum? BootSwitchSensorState = null, DisplaySensorStateEnum? DisplaySensorState = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensorState = null, HandsetSensorStateEnum? HandsetSensorState = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensorState = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensorState = null, SafeDoorStateEnum? SafeDoorState = null, VandalShieldStateEnum? VandalShieldState = null, CabinetFrontDoorStateEnum? CabinetFrontDoorState = null, CabinetRearDoorStateEnum? CabinetRearDoorState = null, CabinetLeftDoorStateEnum? CabinetLeftDoorState = null, CabinetRightDoorStateEnum? CabinetRightDoorState = null, OpenClosedIndicatorStateEnum? OpenClosedIndicatorState = null, AudioStateClass AudioState = null, HeatingStateEnum? HeatingState = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklightState = null, SignageDisplayStateEnum? SignageDisplayState = null, VolumeStateClass VolumeState = null, UPSStateClass UPSState = null, AudibleAlarmStateEnum? AudibleAlarmState = null, EnhancedAudioControlStateEnum? EnhancedAudioControlState = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControlState = null, MicrophoneVolumeStateClass MicrophoneVolumeState = null)
+            public PayloadData(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, InternalTamperSensorStateEnum? InternalTamperSensor = null, SeismicSensorStateEnum? SeismicSensorState = null, HeatSensorStateEnum? HeatSensorState = null, ProximitySensorStateEnum? ProximitySensorState = null, AmbientLightSensorStateEnum? AmbientLightSensorState = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensorState = null, BootSwitchSensorStateEnum? BootSwitchSensorState = null, DisplaySensorStateEnum? DisplaySensorState = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensorState = null, HandsetSensorStateEnum? HandsetSensorState = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensorState = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensorState = null, SafeDoorStateEnum? SafeDoorState = null, VandalShieldStateEnum? VandalShieldState = null, CabinetFrontDoorStateEnum? CabinetFrontDoorState = null, CabinetRearDoorStateEnum? CabinetRearDoorState = null, CabinetLeftDoorStateEnum? CabinetLeftDoorState = null, CabinetRightDoorStateEnum? CabinetRightDoorState = null, OpenClosedIndicatorStateEnum? OpenClosedIndicatorState = null, AudioStateClass AudioState = null, HeatingStateEnum? HeatingState = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklightState = null, SignageDisplayStateEnum? SignageDisplayState = null, VolumeStateClass VolumeState = null, UPSStateClass UpsState = null, AudibleAlarmStateEnum? AudibleAlarmState = null, EnhancedAudioControlStateEnum? EnhancedAudioControlState = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControlState = null, MicrophoneVolumeStateClass MicrophoneVolumeState = null)
                 : base()
             {
                 this.OperatorSwitch = OperatorSwitch;
                 this.TamperSensor = TamperSensor;
-                this.IntTamperSensor = IntTamperSensor;
+                this.InternalTamperSensor = InternalTamperSensor;
                 this.SeismicSensorState = SeismicSensorState;
                 this.HeatSensorState = HeatSensorState;
                 this.ProximitySensorState = ProximitySensorState;
@@ -58,7 +58,7 @@ namespace XFS4IoT.Auxiliaries.Events
                 this.ConsumerDisplayBacklightState = ConsumerDisplayBacklightState;
                 this.SignageDisplayState = SignageDisplayState;
                 this.VolumeState = VolumeState;
-                this.UPSState = UPSState;
+                this.UpsState = UpsState;
                 this.AudibleAlarmState = AudibleAlarmState;
                 this.EnhancedAudioControlState = EnhancedAudioControlState;
                 this.EnhancedMicrophoneControlState = EnhancedMicrophoneControlState;
@@ -71,8 +71,8 @@ namespace XFS4IoT.Auxiliaries.Events
             [DataMember(Name = "tamperSensor")]
             public TamperSensorStateEnum? TamperSensor { get; init; }
 
-            [DataMember(Name = "intTamperSensor")]
-            public IntTamperSensorStateEnum? IntTamperSensor { get; init; }
+            [DataMember(Name = "internalTamperSensor")]
+            public InternalTamperSensorStateEnum? InternalTamperSensor { get; init; }
 
             [DataMember(Name = "seismicSensorState")]
             public SeismicSensorStateEnum? SeismicSensorState { get; init; }
@@ -104,7 +104,7 @@ namespace XFS4IoT.Auxiliaries.Events
             [DataMember(Name = "headsetMicrophoneSensorState")]
             public HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensorState { get; init; }
 
-            [DataMember(Name = "FasciaMicrophoneSensorState")]
+            [DataMember(Name = "fasciaMicrophoneSensorState")]
             public FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensorState { get; init; }
 
             [DataMember(Name = "safeDoorState")]
@@ -143,8 +143,8 @@ namespace XFS4IoT.Auxiliaries.Events
             [DataMember(Name = "volumeState")]
             public VolumeStateClass VolumeState { get; init; }
 
-            [DataMember(Name = "UPSState")]
-            public UPSStateClass UPSState { get; init; }
+            [DataMember(Name = "upsState")]
+            public UPSStateClass UpsState { get; init; }
 
             [DataMember(Name = "audibleAlarmState")]
             public AudibleAlarmStateEnum? AudibleAlarmState { get; init; }

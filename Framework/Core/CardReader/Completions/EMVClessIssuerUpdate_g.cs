@@ -26,7 +26,7 @@ namespace XFS4IoT.CardReader.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, EMVClessTxOutputDataClass Chip = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, EMVClessIssuerUpdateEMVClessTxOutputDataClass Chip = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -48,7 +48,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   contactless storage cards or a different card than what was used to complete the
             ///   [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command).
             /// * ```transactionNotInitiated``` - This command was issued before calling the
-            ///   CardReader.EMVClessPerformTransaction command.
+            ///   *CardReader.EMVClessPerformTransaction* command.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -58,7 +58,7 @@ namespace XFS4IoT.CardReader.Completions
             /// returned.
             /// </summary>
             [DataMember(Name = "chip")]
-            public EMVClessTxOutputDataClass Chip { get; init; }
+            public EMVClessIssuerUpdateEMVClessTxOutputDataClass Chip { get; init; }
 
         }
     }

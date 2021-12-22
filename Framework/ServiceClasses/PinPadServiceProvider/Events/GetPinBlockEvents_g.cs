@@ -21,7 +21,7 @@ namespace XFS4IoTFramework.PinPad
             : base(connection, requestId)
         { }
 
-        public async Task DUKPTKSNEvent(XFS4IoT.PinPad.Events.DUKPTKSNEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.PinPad.Events.DUKPTKSNEvent(requestId, Payload));
+        public async Task DUKPTKSNEvent(XFS4IoT.KeyManagement.Events.DUKPTKSNEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.KeyManagement.Events.DUKPTKSNEvent(requestId, Payload));
 
     }
 }

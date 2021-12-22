@@ -46,7 +46,7 @@ namespace XFS4IoT.CashAcceptor.Events
                 }
 
                 /// <summary>
-                /// Total number of items received in the target cash unit during execution of this command.
+                /// Total number of items received in the target storage unit during execution of this command.
                 /// <example>100</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsReceived")]
@@ -72,8 +72,7 @@ namespace XFS4IoT.CashAcceptor.Events
                     }
 
                     /// <summary>
-                    /// Object name of the cash unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
-                    /// command) from which items have been removed.
+                    /// Name of the storage unit (as stated by the *Storage.GetStorage* command) from which items have been removed.
                     /// <example>unit1</example>
                     /// </summary>
                     [DataMember(Name = "cashUnitSource")]
@@ -81,8 +80,8 @@ namespace XFS4IoT.CashAcceptor.Events
                     public string CashUnitSource { get; init; }
 
                     /// <summary>
-                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). Not specified if
-                    /// not identified as a cash item.
+                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
+                    /// specified if the item was not identified as a cash item.
                     /// <example>type20USD1</example>
                     /// </summary>
                     [DataMember(Name = "cashItem")]
@@ -90,9 +89,9 @@ namespace XFS4IoT.CashAcceptor.Events
                     public string CashItem { get; init; }
 
                     /// <summary>
-                    /// Total number of items removed from this source cash unit of the _noteId_ item type. 
-                    /// Zero will be returned if this source cash unit did not move any items of this item type, 
-                    /// for example due to a cash unit or transport jam.
+                    /// Total number of items removed from this source storage unit of the *cashItem* item type. 
+                    /// Not reported if this source storage unit did not move any items of this item type, 
+                    /// for example due to a storage unit or transport jam.
                     /// </summary>
                     [DataMember(Name = "numberOfItemsRemoved")]
                     [DataTypes(Minimum = 0)]
@@ -102,7 +101,7 @@ namespace XFS4IoT.CashAcceptor.Events
 
                 /// <summary>
                 /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved, 
-                /// or where items are moved from a multi denomination cash unit to a multi denomination cash unit, each source 
+                /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source 
                 /// can move several note types. 
                 /// 
                 /// For example:

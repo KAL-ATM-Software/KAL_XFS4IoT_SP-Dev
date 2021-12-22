@@ -42,9 +42,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable. The following values are possible:
             /// 
-            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for this command.
+            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for
+            /// this command.
             /// * ```shutterNotOpen``` - Shutter failed to open.
             /// * ```noItems``` - There were no items to present at the specified position.
             /// * ```exchangeActive``` - The device is in the exchange state.

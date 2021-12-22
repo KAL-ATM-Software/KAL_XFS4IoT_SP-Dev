@@ -30,7 +30,7 @@ namespace XFS4IoT.VendorMode
         }
 
         /// <summary>
-        /// Specifies the status of the Vendor Mode Service Provider. Status will be one of the following
+        /// Specifies the status of the Vendor Mode Service. Status will be one of the following
         /// values:
         /// 
         /// * ```online``` - The Vendor Mode service is available.

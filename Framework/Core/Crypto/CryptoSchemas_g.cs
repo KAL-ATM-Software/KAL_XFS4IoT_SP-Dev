@@ -41,8 +41,9 @@ namespace XFS4IoT.Crypto
             public bool? Sha1Digest { get; init; }
 
             /// <summary>
-            /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)], is supported 
-            /// by the [Crypto.Digest](#crypto.digest) command.
+            /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. crypto-1](#ref-crypto-1)] and
+            /// FIPS 180-2 [[Ref. crypto-2](#ref-crypto-2)], is supported by the [Crypto.Digest](#crypto.digest)
+            /// command.
             /// </summary>
             [DataMember(Name = "sha256Digest")]
             public bool? Sha256Digest { get; init; }
@@ -79,37 +80,37 @@ namespace XFS4IoT.Crypto
                 }
 
                 /// <summary>
-                /// The ECB encryption method. 
+                /// The ECB encryption method.
                 /// </summary>
                 [DataMember(Name = "ecb")]
                 public bool? Ecb { get; init; }
 
                 /// <summary>
-                /// The CBC encryption method. 
+                /// The CBC encryption method.
                 /// </summary>
                 [DataMember(Name = "cbc")]
                 public bool? Cbc { get; init; }
 
                 /// <summary>
-                /// The CFB encryption method. 
+                /// The CFB encryption method.
                 /// </summary>
                 [DataMember(Name = "cfb")]
                 public bool? Cfb { get; init; }
 
                 /// <summary>
-                /// The The OFB encryption method. 
+                /// The OFB encryption method.
                 /// </summary>
                 [DataMember(Name = "ofb")]
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-crypto-49)]) 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. crypto-4](#ref-crypto-4)]) 
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
 
                 /// <summary>
-                /// The XTS method defined in NIST SP800-38E. (See [[Ref. 50](#ref-crypto-50)])
+                /// The XTS method defined in NIST SP800-38E. (See [[Ref. crypto-5](#ref-crypto-5)])
                 /// </summary>
                 [DataMember(Name = "xts")]
                 public bool? Xts { get; init; }
@@ -121,7 +122,7 @@ namespace XFS4IoT.Crypto
                 public bool? RsaesPkcs1V15 { get; init; }
 
                 /// <summary>
-                /// The RSAES OAEP algorithm. 
+                /// The RSAES OAEP algorithm.
                 /// </summary>
                 [DataMember(Name = "rsaesOaep")]
                 public bool? RsaesOaep { get; init; }
@@ -129,20 +130,24 @@ namespace XFS4IoT.Crypto
             }
 
             /// <summary>
-            /// Specifies the cryptographic method supported by the [Crypto.CryptoData](#crypto.cryptodata) command.
-            /// If the key usage is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then the following properties can be true. 
+            /// Specifies the cryptographic method supported by the [Crypto.CryptoData](#crypto.cryptodata)
+            /// command. If the key usage is any of the MAC usages (i.e.
+            /// ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then the
+            /// following properties can be true. 
             /// 
             /// * ```ecb``` - The ECB encryption method.
             /// * ```cbc``` - The CBC encryption method.
             /// * ```cfb``` - The CFB encryption method.
             /// * ```ofb``` - The OFB encryption method.
-            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. 49](#ref-crypto-49)])
-            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. 50](#ref-crypto-50)])
+            /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. crypto-4](#ref-crypto-4)])
+            /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. crypto-5](#ref-crypto-5)])
             /// 
-            /// If the algorithm is 'R' and the key usage is ['D0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0), then the following properties can be true. 
+            /// If the algorithm is 'R' and the key usage is
+            /// ['D0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0), then the
+            /// following properties can be true. 
             /// 
             /// * ```rsaesPkcs1V15``` - RSAES_PKCS1-v1.5 algorithm.
-            /// * ```rsaesOaep``` - The RSAES OAEP algorithm. 
+            /// * ```rsaesOaep``` - The RSAES OAEP algorithm.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodClass CryptoMethod { get; init; }
@@ -150,8 +155,8 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [Crypto.CryptoData](#crypto.cryptodata) command to encrypt
-        /// or decrypt data.
+        /// Key-value pair of attributes supported by the [Crypto.CryptoData](#crypto.cryptodata) command to encrypt or
+        /// decrypt data.
         /// </summary>
         [DataMember(Name = "cryptoAttributes")]
         public Dictionary<string, Dictionary<string, Dictionary<string, CryptoAttributesClass>>> CryptoAttributes { get; init; }
@@ -175,13 +180,13 @@ namespace XFS4IoT.Crypto
                 }
 
                 /// <summary>
-                /// The RSASSA-PKCS1-v1.5 algorithm. 
+                /// The RSASSA-PKCS1-v1.5 algorithm.
                 /// </summary>
                 [DataMember(Name = "rsassaPkcs1V15")]
                 public bool? RsassaPkcs1V15 { get; init; }
 
                 /// <summary>
-                /// The the RSASSA-PSS algorithm.
+                /// The RSASSA-PSS algorithm.
                 /// </summary>
                 [DataMember(Name = "rsassaPss")]
                 public bool? RsassaPss { get; init; }
@@ -189,8 +194,12 @@ namespace XFS4IoT.Crypto
             }
 
             /// <summary>
-            /// Specifies the asymmetric signature verification method supported by the [Crypto.GenerateAuthentication](#crypto.generateauthentication) command.
-            /// If the key usage is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then following properties are false.
+            /// Specifies the asymmetric signature verification method supported by the
+            /// [Crypto.GenerateAuthentication](#crypto.generateauthentication) command.
+            /// 
+            /// If the key usage is one of the MAC usages (e.g.
+            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
+            /// following properties are false.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodClass CryptoMethod { get; init; }
@@ -206,13 +215,13 @@ namespace XFS4IoT.Crypto
 
                 /// <summary>
                 /// The SHA 1 digest algorithm.
-                /// If the key usage is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then following properties are false.
                 /// </summary>
                 [DataMember(Name = "sha1")]
                 public bool? Sha1 { get; init; }
 
                 /// <summary>
-                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)].
+                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004
+                /// [[Ref. crypto-1](#ref-crypto-1)] and FIPS 180-2 [[Ref. crypto-2](#ref-crypto-2)].
                 /// </summary>
                 [DataMember(Name = "sha256")]
                 public bool? Sha256 { get; init; }
@@ -221,6 +230,10 @@ namespace XFS4IoT.Crypto
 
             /// <summary>
             /// Specifies the hash algorithm supported.
+            /// 
+            /// If the *key* usage is one of the MAC usages (e.g.
+            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
+            /// following properties are false.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmClass HashAlgorithm { get; init; }
@@ -228,8 +241,8 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [Crypto.GenerateAuthentication](#crypto.generateauthentication) command
-        /// to generate authentication data.
+        /// Key-value pair of attributes supported by the
+        /// [Crypto.GenerateAuthentication](#crypto.generateauthentication) command to generate authentication data.
         /// </summary>
         [DataMember(Name = "authenticationAttributes")]
         public Dictionary<string, Dictionary<string, Dictionary<string, AuthenticationAttributesClass>>> AuthenticationAttributes { get; init; }
@@ -253,13 +266,13 @@ namespace XFS4IoT.Crypto
                 }
 
                 /// <summary>
-                /// The RSASSA-PKCS1-v1.5 algorithm. 
+                /// The RSASSA-PKCS1-v1.5 algorithm.
                 /// </summary>
                 [DataMember(Name = "rsassaPkcs1V15")]
                 public bool? RsassaPkcs1V15 { get; init; }
 
                 /// <summary>
-                /// The the RSASSA-PSS algorithm.
+                /// The RSASSA-PSS algorithm.
                 /// </summary>
                 [DataMember(Name = "rsassaPss")]
                 public bool? RsassaPss { get; init; }
@@ -267,8 +280,12 @@ namespace XFS4IoT.Crypto
             }
 
             /// <summary>
-            /// Specifies the asymmetric signature verification method supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command.
-            /// If the key usage is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then following properties are false.
+            /// Specifies the asymmetric signature verification method supported by the
+            /// [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command.
+            /// 
+            /// If the key usage is one of the MAC usages (e.g.
+            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
+            /// following properties are false.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodClass CryptoMethod { get; init; }
@@ -289,7 +306,8 @@ namespace XFS4IoT.Crypto
                 public bool? Sha1 { get; init; }
 
                 /// <summary>
-                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [[Ref. 40](#ref-crypto-40)] and FIPS 180-2 [[Ref. 41](#ref-crypto-41)].
+                /// The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004
+                /// [[Ref. crypto-1](#ref-crypto-1)] and FIPS 180-2 [[Ref. crypto-2](#ref-crypto-2)].
                 /// </summary>
                 [DataMember(Name = "sha256")]
                 public bool? Sha256 { get; init; }
@@ -297,8 +315,11 @@ namespace XFS4IoT.Crypto
             }
 
             /// <summary>
-            /// Specifies the hash algorithm supported. 
-            /// If the key usage is any of the MAC usages (i.e. ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then following properties are false.
+            /// Specifies the hash algorithm supported.
+            /// 
+            /// If the key usage is one of the MAC usages (e.g.
+            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
+            /// following properties are false.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmClass HashAlgorithm { get; init; }
@@ -306,8 +327,8 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command
-        /// to verify authentication data.
+        /// Key-value pair of attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication)
+        /// command to verify authentication data.
         /// </summary>
         [DataMember(Name = "verifyAttributes")]
         public Dictionary<string, Dictionary<string, Dictionary<string, VerifyAttributesClass>>> VerifyAttributes { get; init; }

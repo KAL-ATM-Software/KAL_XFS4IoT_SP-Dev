@@ -41,16 +41,16 @@ namespace XFS4IoT.TextTerminal.Commands
             public ModesEnum? Mode { get; init; }
 
             /// <summary>
-            /// If mode is set to absolute, this specifies the absolute horizontal position. If mode is set to relative 
-            /// this specifies a horizontal offset relative to the current cursor position as a zero (0) based value.
+            /// If mode is set to absolute, this specifies the absolute horizontal position. If mode is *relative*,
+            /// this specifies a horizontal offset relative to the current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posX")]
             [DataTypes(Minimum = 0)]
             public int? PosX { get; init; }
 
             /// <summary>
-            /// If mode is set to absolute, this specifies the absolute vertical position. If mode is set to relative 
-            /// this specifies a vertical offset relative to the current cursor position as a zero (0) based value.
+            /// If mode is set to absolute, this specifies the absolute vertical position. If mode is *relative*,
+            /// this specifies a vertical offset relative to the current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posY")]
             [DataTypes(Minimum = 0)]
@@ -67,7 +67,7 @@ namespace XFS4IoT.TextTerminal.Commands
                 }
 
                 /// <summary>
-                /// The displayed text will be unerlined.
+                /// The displayed text will be underlined.
                 /// </summary>
                 [DataMember(Name = "underline")]
                 public bool? Underline { get; init; }
@@ -87,14 +87,15 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the text attributes used for displaying the text. If none of the following attribute flags 
-            /// are selected then the text will be displayed as normal text.
+            /// Specifies the text attributes used for displaying the text. If omitted or none are set to true
+            /// then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "textAttr")]
             public TextAttrClass TextAttr { get; init; }
 
             /// <summary>
             /// Specifies the text that will be displayed.
+            /// <example>Text to display</example>
             /// </summary>
             [DataMember(Name = "text")]
             public string Text { get; init; }

@@ -34,7 +34,8 @@ namespace XFS4IoTFramework.PinPad
                                                             $"No chipProtocol specified to talk to the card chip.");
             }
 
-            if (string.IsNullOrEmpty(presentIDC.Payload.ChipData))
+            if (presentIDC.Payload.ChipData is null ||
+                presentIDC.Payload.ChipData.Count == 0)
             {
                 return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                             $"No chipData specified to send a card chip.");
@@ -68,7 +69,7 @@ namespace XFS4IoTFramework.PinPad
             Logger.Log(Constants.DeviceClass, "PinPadDev.PresentIDC()");
 
             var result = await Device.PresentIDC(new PresentIDCRequest(presentIDC.Payload.ChipProtocol,
-                                                                       Convert.FromBase64String(presentIDC.Payload.ChipData).ToList(),
+                                                                       presentIDC.Payload.ChipData,
                                                                        presentIDC.Payload.PresentAlgorithm == PresentIDCCommand.PayloadData.PresentAlgorithmEnum.PresentClear ? new PresentIDCRequest.PresentClearClass((int)presentIDC.Payload.AlgorithmData.PinOffset, (int)presentIDC.Payload.AlgorithmData.PinPointer) : null), 
                                                  cancel);
 
@@ -78,7 +79,7 @@ namespace XFS4IoTFramework.PinPad
                                                         result.ErrorDescription,
                                                         result.ErrorCode,
                                                         result.ChipProtocol,
-                                                        result.ChipData is not null & result.ChipData.Count > 0 ? Convert.ToBase64String(result.ChipData.ToArray()) : null);
+                                                        result.ChipData);
         }
     }
 }

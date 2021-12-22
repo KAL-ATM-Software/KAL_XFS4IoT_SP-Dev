@@ -35,9 +35,9 @@ namespace XFS4IoT.CashAcceptor.Commands
 
             /// <summary>
             /// Array containing the [identifiers](#storage.getstorage.completion.properties.storage) of the individual 
-            /// cash storage units to be counted. 
-            /// If an invalid storage unit is contained in this list, the command will fail with a ```cashUnitError```
-            /// [errorCode](#cashacceptor.cashunitcount.completion.properties.errorcode).
+            /// storage units to be counted. 
+            /// If an invalid storage unit is contained in this list, the command will fail with a *cashUnitError*
+            /// *errorCode*.
             /// 
             /// <example>'["unit1", "unit2"]'</example>
             /// </summary>

@@ -43,8 +43,8 @@ namespace XFS4IoT.CardReader.Events
 
             /// <summary>
             /// Represents the EMVCo defined message identifier that indicates the text string to be displayed, e.g., 0x1B
-            /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A,
-            /// Section 9.4).
+            /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A
+            /// [[Ref. cardreader-3](#ref-cardreader-3)], Section 9.4).
             /// </summary>
             [DataMember(Name = "messageId")]
             public int? MessageId { get; init; }
@@ -81,50 +81,48 @@ namespace XFS4IoT.CardReader.Events
             /// before processing the next user interface data.
             /// </summary>
             [DataMember(Name = "holdTime")]
+            [DataTypes(Minimum = 0)]
             public int? HoldTime { get; init; }
 
             public enum ValueQualifierEnum
             {
                 Amount,
-                Balance,
-                NotApplicable
+                Balance
             }
 
             /// <summary>
-            /// Qualifies
-            /// [value](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.value).
-            /// This data is defined by EMVCo as either “Amount” or “Balance” as one of the following:
-            /// 
+            /// Qualifies *value*. This data is defined by EMVCo as one of the following. If neither apply, this field and 
+            /// *value* are omitted:
             /// * ```amount``` - *value* is an Amount.
             /// * ```balance``` - *value* is a Balance.
-            /// * ```notApplicable``` - *value* is neither of the above.
             /// <example>amount</example>
             /// </summary>
             [DataMember(Name = "valueQualifier")]
             public ValueQualifierEnum? ValueQualifier { get; init; }
 
             /// <summary>
-            /// Represents the value of the amount or balance (as specified by
-            /// [valueQualifier](#cardreader.emvclessperformtransaction.completion.properties.track1.clessoutcome.uioutcome.valuequalifier))
-            /// to be displayed where appropriate.
+            /// Represents the value of the amount or balance (as specified by *valueQualifier*)
+            /// to be displayed where appropriate. If *valueQualifier* is omitted, this property is omitted.
             /// <example>123.45</example>
             /// </summary>
             [DataMember(Name = "value")]
             public string Value { get; init; }
 
             /// <summary>
-            /// Represents the numeric value of currency code as per ISO 4217.
+            /// Represents the numeric value of currency code as per ISO 4217. If omitted, the currency code is not available.
             /// <example>GBP</example>
             /// </summary>
             [DataMember(Name = "currencyCode")]
+            [DataTypes(Pattern = @"^[A-Z]{3}$")]
             public string CurrencyCode { get; init; }
 
             /// <summary>
-            /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
-            /// data to display all messages in the specified language until the transaction concludes.
+            /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. If not returned, this property is omitted.
+            /// The application should use this data to display all messages in the specified language until the transaction concludes.
             /// <example>en</example>
             /// </summary>
             [DataMember(Name = "languagePreferenceData")]
+            [DataTypes(Pattern = @"^[a-z]{2}$")]
             public string LanguagePreferenceData { get; init; }
 
         }
