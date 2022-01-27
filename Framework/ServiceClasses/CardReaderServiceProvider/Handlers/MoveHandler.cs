@@ -14,6 +14,8 @@ using XFS4IoTServer;
 using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
+using XFS4IoTFramework.Storage;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -33,7 +35,7 @@ namespace XFS4IoTFramework.CardReader
             if (move.Payload.From != "exit" &&
                 move.Payload.From != "transport")
             {
-                if (!CardReader.CardUnits.ContainsKey(move.Payload.From))
+                if (!Storage.CardUnits.ContainsKey(move.Payload.From))
                 {
                     return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                           $"Invalid StorageId supplied for From property. {move.Payload.From}");
@@ -57,7 +59,7 @@ namespace XFS4IoTFramework.CardReader
             if (move.Payload.To != "exit" &&
                 move.Payload.To != "transport")
             {
-                if (!CardReader.CardUnits.ContainsKey(move.Payload.To))
+                if (!Storage.CardUnits.ContainsKey(move.Payload.To))
                 {
                     return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                           $"Invalid StorageId supplied for To property. {move.Payload.To}");
@@ -72,9 +74,9 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // Check parameters for the type of card reader
-            if (CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.Contactless ||
-                CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless ||
-                CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.LatchedDip)
+            if (Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Contactless ||
+                Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless ||
+                Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.LatchedDip)
             {
                 if (toPos == MovePosition.MovePositionEnum.Storage ||
                     fromPos == MovePosition.MovePositionEnum.Storage)
@@ -84,15 +86,15 @@ namespace XFS4IoTFramework.CardReader
                 }
                 // passing other cases to the device class as may need to turn off RFID or unlatch card
             }
-            else if (CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.Swipe ||
-                     CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.Dip ||
-                     CardReader.CardReaderCapabilities.Type == Common.CardReaderCapabilitiesClass.DeviceTypeEnum.Permanent)
+            else if (Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Swipe ||
+                     Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Dip ||
+                     Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Permanent)
             {
                 if (!string.IsNullOrEmpty(move.Payload.To) ||
                     !string.IsNullOrEmpty(move.Payload.From))
                 {
                     return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {CardReader.CardReaderCapabilities.Type} To:{move.Payload.To} From:{move.Payload.From}");
+                                                          $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {Common.CardReaderCapabilities.Type} To:{move.Payload.To} From:{move.Payload.From}");
                 }
             }
 
@@ -125,7 +127,7 @@ namespace XFS4IoTFramework.CardReader
                     }
                     else
                     {
-                        await CardReader.UpdateCardStorageCount(result.StorageId, result.CountMoved);
+                        await Storage.UpdateCardStorageCount(result.StorageId, result.CountMoved);
                     }
                 }
             }
@@ -134,5 +136,7 @@ namespace XFS4IoTFramework.CardReader
                                                   result.ErrorDescription,
                                                   result.ErrorCode);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

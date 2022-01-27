@@ -680,6 +680,272 @@ namespace XFS4IoTFramework.Common
                     _ => XFS4IoT.Printer.StatusClass.BlackMarkModeEnum.NotSupported
                 });
             }
+			
+			XFS4IoT.Auxiliaries.StatusClass auxiliaries = null;
+            if (Common.AuxiliariesStatus is not null)
+            {
+                auxiliaries = new(
+                    Common.AuxiliariesStatus.OperatorSwitch switch
+                    {
+                        AuxiliariesStatus.OperatorSwitchEnum.Run => XFS4IoT.Auxiliaries.OperatorSwitchStateEnum.Run,
+                        AuxiliariesStatus.OperatorSwitchEnum.Maintenance => XFS4IoT.Auxiliaries.OperatorSwitchStateEnum.Maintenance,
+                        AuxiliariesStatus.OperatorSwitchEnum.Supervisor => XFS4IoT.Auxiliaries.OperatorSwitchStateEnum.Supervisor,
+                        _ => XFS4IoT.Auxiliaries.OperatorSwitchStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.TamperSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.TamperSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.TamperSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.TamperSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.InternalTamperSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.InternalTamperSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.InternalTamperSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.InternalTamperSensorStateEnum.NotAvailable,
+                    },
+                    Common.AuxiliariesStatus.SeismicSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.SeismicSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.SeismicSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.SeismicSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.HeatSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.HeatSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.HeatSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.HeatSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.ProximitySensor switch
+                    {
+                        AuxiliariesStatus.PresenceSensorEnum.Present => XFS4IoT.Auxiliaries.ProximitySensorStateEnum.Present,
+                        AuxiliariesStatus.PresenceSensorEnum.NotPresent => XFS4IoT.Auxiliaries.ProximitySensorStateEnum.NotPresent,
+                        _ => XFS4IoT.Auxiliaries.ProximitySensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.AmbientLightSensor switch
+                    {
+                        AuxiliariesStatus.AmbientLightSensorEnum.VeryDark => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.VeryDark,
+                        AuxiliariesStatus.AmbientLightSensorEnum.Dark => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.Dark,
+                        AuxiliariesStatus.AmbientLightSensorEnum.MediumLight => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.MediumLight,
+                        AuxiliariesStatus.AmbientLightSensorEnum.Light => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.Light,
+                        AuxiliariesStatus.AmbientLightSensorEnum.VeryLight => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.VeryLight,
+                        _ => XFS4IoT.Auxiliaries.AmbientLightSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.EnhancedAudioSensor switch
+                    {
+                        AuxiliariesStatus.PresenceSensorEnum.Present => XFS4IoT.Auxiliaries.EnhancedAudioSensorStateEnum.Present,
+                        AuxiliariesStatus.PresenceSensorEnum.NotPresent => XFS4IoT.Auxiliaries.EnhancedAudioSensorStateEnum.NotPresent,
+                        _ => XFS4IoT.Auxiliaries.EnhancedAudioSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.BootSwitchSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.BootSwitchSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.BootSwitchSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.BootSwitchSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.DisplaySensor switch
+                    {
+                        AuxiliariesStatus.DisplaySensorEnum.Off => XFS4IoT.Auxiliaries.DisplaySensorStateEnum.Off,
+                        AuxiliariesStatus.DisplaySensorEnum.On => XFS4IoT.Auxiliaries.DisplaySensorStateEnum.On,
+                        AuxiliariesStatus.DisplaySensorEnum.DisplayError => XFS4IoT.Auxiliaries.DisplaySensorStateEnum.DisplayError,
+                        _ => XFS4IoT.Auxiliaries.DisplaySensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.OperatorCallButtonSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.OperatorCallButtonSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.OperatorCallButtonSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.OperatorCallButtonSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.HandsetSensor switch
+                    {
+                        AuxiliariesStatus.HandsetSensorStatusEnum.OnTheHook => XFS4IoT.Auxiliaries.HandsetSensorStateEnum.OnTheHook,
+                        AuxiliariesStatus.HandsetSensorStatusEnum.OffTheHook => XFS4IoT.Auxiliaries.HandsetSensorStateEnum.OffTheHook,
+                        _ => XFS4IoT.Auxiliaries.HandsetSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.HeadsetMicrophoneSensor switch
+                    {
+                        AuxiliariesStatus.PresenceSensorEnum.Present => XFS4IoT.Auxiliaries.HeadsetMicrophoneSensorStateEnum.Present,
+                        AuxiliariesStatus.PresenceSensorEnum.NotPresent => XFS4IoT.Auxiliaries.HeadsetMicrophoneSensorStateEnum.NotPresent,
+                        _ => XFS4IoT.Auxiliaries.HeadsetMicrophoneSensorStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.FasciaMicrophoneSensor switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.FasciaMicrophoneSensorStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.FasciaMicrophoneSensorStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.FasciaMicrophoneSensorStateEnum.NotAvailable
+                    },
+                    (Common.AuxiliariesStatus.Doors?.ContainsKey(AuxiliariesCapabilities.DoorType.Safe) is true ?
+                        Common.AuxiliariesStatus.Doors[AuxiliariesCapabilities.DoorType.Safe] switch
+                        {
+                            AuxiliariesStatus.DoorStatusEnum.Closed => XFS4IoT.Auxiliaries.SafeDoorStateEnum.Closed,
+                            AuxiliariesStatus.DoorStatusEnum.Open => XFS4IoT.Auxiliaries.SafeDoorStateEnum.Open,
+                            AuxiliariesStatus.DoorStatusEnum.Locked => XFS4IoT.Auxiliaries.SafeDoorStateEnum.Locked,
+                            AuxiliariesStatus.DoorStatusEnum.Bolted => XFS4IoT.Auxiliaries.SafeDoorStateEnum.Bolted,
+                            AuxiliariesStatus.DoorStatusEnum.Tampered => XFS4IoT.Auxiliaries.SafeDoorStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.SafeDoorStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.SafeDoorStateEnum.NotAvailable),
+                    (Common.AuxiliariesStatus.VandalShield != AuxiliariesStatus.VandalShieldStatusEnum.NotAvailable ?
+                        Common.AuxiliariesStatus.VandalShield switch
+                        {
+                            AuxiliariesStatus.VandalShieldStatusEnum.Closed => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Closed,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Open => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Open,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Locked => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Locked,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Service => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Service,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Keyboard => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Keyboard,
+                            AuxiliariesStatus.VandalShieldStatusEnum.PartiallyOpen => XFS4IoT.Auxiliaries.VandalShieldStateEnum.PartiallyOpen,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Jammed => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Jammed,
+                            AuxiliariesStatus.VandalShieldStatusEnum.Tampered => XFS4IoT.Auxiliaries.VandalShieldStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.VandalShieldStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.VandalShieldStateEnum.NotAvailable),
+                    (Common.AuxiliariesStatus.Doors?.ContainsKey(AuxiliariesCapabilities.DoorType.FrontCabinet) is true ?
+                        Common.AuxiliariesStatus.Doors[AuxiliariesCapabilities.DoorType.FrontCabinet] switch
+                        {
+                            AuxiliariesStatus.DoorStatusEnum.Closed => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.Closed,
+                            AuxiliariesStatus.DoorStatusEnum.Open => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.Open,
+                            AuxiliariesStatus.DoorStatusEnum.Locked => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.Locked,
+                            AuxiliariesStatus.DoorStatusEnum.Bolted => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.Bolted,
+                            AuxiliariesStatus.DoorStatusEnum.Tampered => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.CabinetFrontDoorStateEnum.NotAvailable),
+                    (Common.AuxiliariesStatus.Doors?.ContainsKey(AuxiliariesCapabilities.DoorType.RearCabinet) is true ?
+                        Common.AuxiliariesStatus.Doors[AuxiliariesCapabilities.DoorType.RearCabinet] switch
+                        {
+                            AuxiliariesStatus.DoorStatusEnum.Closed => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.Closed,
+                            AuxiliariesStatus.DoorStatusEnum.Open => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.Open,
+                            AuxiliariesStatus.DoorStatusEnum.Locked => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.Locked,
+                            AuxiliariesStatus.DoorStatusEnum.Bolted => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.Bolted,
+                            AuxiliariesStatus.DoorStatusEnum.Tampered => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.CabinetRearDoorStateEnum.NotAvailable),
+                    (Common.AuxiliariesStatus.Doors?.ContainsKey(AuxiliariesCapabilities.DoorType.LeftCabinet) is true ?
+                        Common.AuxiliariesStatus.Doors[AuxiliariesCapabilities.DoorType.LeftCabinet] switch
+                        {
+                            AuxiliariesStatus.DoorStatusEnum.Closed => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.Closed,
+                            AuxiliariesStatus.DoorStatusEnum.Open => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.Open,
+                            AuxiliariesStatus.DoorStatusEnum.Locked => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.Locked,
+                            AuxiliariesStatus.DoorStatusEnum.Bolted => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.Bolted,
+                            AuxiliariesStatus.DoorStatusEnum.Tampered => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.CabinetLeftDoorStateEnum.NotAvailable),
+                    (Common.AuxiliariesStatus.Doors?.ContainsKey(AuxiliariesCapabilities.DoorType.RightCabinet) is true ?
+                        Common.AuxiliariesStatus.Doors[AuxiliariesCapabilities.DoorType.RightCabinet] switch
+                        {
+                            AuxiliariesStatus.DoorStatusEnum.Closed => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.Closed,
+                            AuxiliariesStatus.DoorStatusEnum.Open => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.Open,
+                            AuxiliariesStatus.DoorStatusEnum.Locked => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.Locked,
+                            AuxiliariesStatus.DoorStatusEnum.Bolted => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.Bolted,
+                            AuxiliariesStatus.DoorStatusEnum.Tampered => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.Tampered,
+                            _ => XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.NotAvailable
+                        }
+                        : XFS4IoT.Auxiliaries.CabinetRightDoorStateEnum.NotAvailable),
+                    Common.AuxiliariesStatus.OpenClosedIndicator switch
+                    {
+                        AuxiliariesStatus.OpenClosedIndicatorEnum.Closed => XFS4IoT.Auxiliaries.OpenClosedIndicatorStateEnum.Closed,
+                        AuxiliariesStatus.OpenClosedIndicatorEnum.Open => XFS4IoT.Auxiliaries.OpenClosedIndicatorStateEnum.Open,
+                        _ => XFS4IoT.Auxiliaries.OpenClosedIndicatorStateEnum.NotAvailable
+                    }, 
+                    new XFS4IoT.Auxiliaries.AudioStateClass(
+                        Common.AuxiliariesStatus.AudioRate switch
+                        {
+                            AuxiliariesStatus.AudioRateEnum.On => XFS4IoT.Auxiliaries.AudioStateClass.RateEnum.On,
+                            _ => XFS4IoT.Auxiliaries.AudioStateClass.RateEnum.Off
+                        },
+                        Common.AuxiliariesStatus.AudioSignal switch
+                        {
+                            AuxiliariesStatus.AudioSignalEnum.Exclamation => XFS4IoT.Auxiliaries.AudioStateClass.SignalEnum.Exclamation,
+                            AuxiliariesStatus.AudioSignalEnum.Warning => XFS4IoT.Auxiliaries.AudioStateClass.SignalEnum.Warning,
+                            AuxiliariesStatus.AudioSignalEnum.Error => XFS4IoT.Auxiliaries.AudioStateClass.SignalEnum.Error,
+                            AuxiliariesStatus.AudioSignalEnum.Critical => XFS4IoT.Auxiliaries.AudioStateClass.SignalEnum.Critical,
+                            _ => XFS4IoT.Auxiliaries.AudioStateClass.SignalEnum.Keypress,
+                        }),
+                    Common.AuxiliariesStatus.Heating switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.HeatingStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.HeatingStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.HeatingStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.ConsumerDisplayBacklight switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.ConsumerDisplayBacklightStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.ConsumerDisplayBacklightStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.ConsumerDisplayBacklightStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.SignageDisplay switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.SignageDisplayStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.SignageDisplayStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.SignageDisplayStateEnum.NotAvailable
+                    },
+                    new XFS4IoT.Auxiliaries.VolumeStateClass(Common.AuxiliariesStatus.Volume),
+                    new XFS4IoT.Auxiliaries.UPSStateClass(Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatus.UpsStatusEnum.Low),
+                                                              Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatus.UpsStatusEnum.Engaged),
+                                                              Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatus.UpsStatusEnum.Powering),
+                                                              Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatus.UpsStatusEnum.Recovered)
+                    ),
+                    Common.AuxiliariesStatus.AudibleAlarm switch
+                    {
+                        AuxiliariesStatus.SensorEnum.On => XFS4IoT.Auxiliaries.AudibleAlarmStateEnum.On,
+                        AuxiliariesStatus.SensorEnum.Off => XFS4IoT.Auxiliaries.AudibleAlarmStateEnum.Off,
+                        _ => XFS4IoT.Auxiliaries.AudibleAlarmStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.EnhancedAudioControl switch
+                    {
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioManual => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PublicAudioManual,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioAuto => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PublicAudioAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioSemiAuto => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PublicAudioSemiAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioManual => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PrivateAudioManual,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioAuto => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PrivateAudioAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.PrivateAudioSemiAuto,
+                        _ => XFS4IoT.Auxiliaries.EnhancedAudioControlStateEnum.NotAvailable
+                    },
+                    Common.AuxiliariesStatus.EnhancedMicrophoneControl switch
+                    {
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioManual => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PublicAudioManual,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioAuto => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PublicAudioAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioSemiAuto => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PublicAudioSemiAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioManual => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PrivateAudioManual,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioAuto => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PrivateAudioAuto,
+                        AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.PrivateAudioSemiAuto,
+                        _ => XFS4IoT.Auxiliaries.EnhancedMicrophoneControlStateEnum.NotAvailable
+                    },
+                    new XFS4IoT.Auxiliaries.MicrophoneVolumeStateClass(Common.AuxiliariesStatus.MicrophoneVolume?.Available ?? false, Common.AuxiliariesStatus.MicrophoneVolume?.VolumeLevel ?? 1)
+                );
+            }
+
+            XFS4IoT.VendorApplication.StatusClass vendorApplication = null;
+            if (Common.VendorApplicationStatus is not null)
+            {
+                vendorApplication = new XFS4IoT.VendorApplication.StatusClass(Common.VendorApplicationStatus.AccessLevel switch
+                                                                              {
+                                                                                  VendorApplicationStatusClass.AccessLevelEnum.Basic => XFS4IoT.VendorApplication.StatusClass.AccessLevelEnum.Basic,
+                                                                                  VendorApplicationStatusClass.AccessLevelEnum.Intermediate => XFS4IoT.VendorApplication.StatusClass.AccessLevelEnum.Intermediate,
+                                                                                  VendorApplicationStatusClass.AccessLevelEnum.Full => XFS4IoT.VendorApplication.StatusClass.AccessLevelEnum.Full,
+                                                                                  _ => XFS4IoT.VendorApplication.StatusClass.AccessLevelEnum.NotActive,
+                                                                              });
+            }
+
+            XFS4IoT.VendorMode.StatusClass vendorMode = null;
+            if (Common.VendorModeStatus is not null)
+            {
+                vendorMode = new XFS4IoT.VendorMode.StatusClass(Common.VendorModeStatus.DeviceStatus switch
+                                                                {
+                                                                    VendorModeStatusClass.DeviceStatusEnum.Offline => XFS4IoT.VendorMode.StatusClass.DeviceEnum.Offline,
+                                                                    VendorModeStatusClass.DeviceStatusEnum.Online => XFS4IoT.VendorMode.StatusClass.DeviceEnum.Online,
+                                                                    _ => null,
+                                                                },
+                                                                Common.VendorModeStatus.ServiceStatus switch
+                                                                {
+                                                                    VendorModeStatusClass.ServiceStatusEnum.Active => XFS4IoT.VendorMode.StatusClass.ServiceEnum.Active,
+                                                                    VendorModeStatusClass.ServiceStatusEnum.EnterPending => XFS4IoT.VendorMode.StatusClass.ServiceEnum.EnterPending,
+                                                                    VendorModeStatusClass.ServiceStatusEnum.ExitPending => XFS4IoT.VendorMode.StatusClass.ServiceEnum.ExitPending,
+                                                                    _ => XFS4IoT.VendorMode.StatusClass.ServiceEnum.Inactive,
+                                                                });
+            }
 
             return Task.FromResult(
                 new StatusCompletion.PayloadData(
@@ -693,7 +959,10 @@ namespace XFS4IoTFramework.Common
                     Keyboard: keyboard,
                     TextTerminal: textTerminal,
                     Printer: printer,
-                    Lights: lights)
+                    Lights: lights,
+					Auxiliaries: auxiliaries,
+                    VendorApplication: vendorApplication,
+                    VendorMode: vendorMode)
                 );
         }
     }

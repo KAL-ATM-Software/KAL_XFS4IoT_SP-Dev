@@ -16,6 +16,7 @@ using XFS4IoT.CashManagement;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -34,7 +35,7 @@ namespace XFS4IoTFramework.CashDispenser
             else
             {
                 if (!string.IsNullOrEmpty(testCashUnits.Payload.Unit) &&
-                    !CashDispenser.CashUnits.ContainsKey(testCashUnits.Payload.Unit))
+                    !Storage.CashUnits.ContainsKey(testCashUnits.Payload.Unit))
                 {
                     return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Specified CashUnit location is unknown.");
@@ -72,7 +73,7 @@ namespace XFS4IoTFramework.CashDispenser
                             };
 
                             if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                                !CashDispenser.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
+                                !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                             {
                                 return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                                $"Specified unsupported retract area. {retractArea}",
@@ -106,7 +107,7 @@ namespace XFS4IoTFramework.CashDispenser
                         };
 
                         if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                            !CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+                            !Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
                         {
                             return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                            $"Specified unsupported output position. {position}");
@@ -126,12 +127,14 @@ namespace XFS4IoTFramework.CashDispenser
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.TestCashUnitsAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
 
-            await CashDispenser.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
 
             return new TestCashUnitsCompletion.PayloadData(result.CompletionCode,
                                                            result.ErrorDescription,
                                                            result.ErrorCode);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

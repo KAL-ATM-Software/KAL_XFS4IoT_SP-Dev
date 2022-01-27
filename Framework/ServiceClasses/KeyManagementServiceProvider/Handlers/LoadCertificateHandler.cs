@@ -43,7 +43,7 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             bool certOptionOK = false;
-            foreach (var loadOption in KeyManagement.KeyManagementCapabilities.LoadCertificationOptions)
+            foreach (var loadOption in Common.KeyManagementCapabilities.LoadCertificationOptions)
             {
                 if ((loadCertificate.Payload.LoadOption == LoadCertificateCommand.PayloadData.LoadOptionEnum.NewHost &&
                      loadOption.Option.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateOptionEnum.NewHost)) ||

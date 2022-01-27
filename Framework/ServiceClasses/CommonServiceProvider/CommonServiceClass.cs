@@ -84,6 +84,16 @@ namespace XFS4IoTServer
         /// </summary>
         public PrinterCapabilitiesClass PrinterCapabilities { get; set; } = null;
 
+        /// <summary>
+        /// Stores auxiliaries capabilites
+        /// </summary>
+        public AuxiliariesCapabilities AuxiliariesCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores vendor application capabilites
+        /// </summary>
+        public VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get; set; } = null;
+
         #endregion
 
         #region Device Status
@@ -131,6 +141,23 @@ namespace XFS4IoTServer
         /// Stores printer status
         /// </summary>
         public PrinterStatusClass PrinterStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores auxiliaries status
+        /// </summary>
+        public AuxiliariesStatus AuxiliariesStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores vendor mode status
+        /// </summary>
+        public VendorModeStatusClass VendorModeStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores vendor application status
+        /// </summary>
+        public VendorApplicationStatusClass VendorApplicationStatus { get; set; } = null;
+
+        #endregion
 
         public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
                                        CommonStatusClass.PositionStatusEnum? Position,
@@ -205,8 +232,6 @@ namespace XFS4IoTServer
                                },
                                VendorDescription: VendorDescription));
 
-
-        #endregion
 
         private void GetCapabilities()
         {

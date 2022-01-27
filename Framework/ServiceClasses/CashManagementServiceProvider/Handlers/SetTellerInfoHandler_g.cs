@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.CashManagement
                            .IsA<ICashManagementDevice>();
 
             CashManagement = Provider.IsA<ICashManagementService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetTellerInfoHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetTellerInfoHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.CashManagement
         private ICashManagementDevice Device { get => Provider.Device.IsA<ICashManagementDevice>(); }
         private IServiceProvider Provider { get; }
         private ICashManagementService CashManagement { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

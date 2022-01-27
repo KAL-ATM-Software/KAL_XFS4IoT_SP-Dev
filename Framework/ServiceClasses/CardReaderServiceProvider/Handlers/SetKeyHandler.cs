@@ -19,10 +19,10 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<SetKeyCompletion.PayloadData> HandleSetKey(ISetKeyEvents events, SetKeyCommand setKey, CancellationToken cancel)
         {
-            if (CardReader.CardReaderCapabilities.SecurityType != CardReaderCapabilitiesClass.SecurityTypeEnum.Cim86)
+            if (Common.CardReaderCapabilities.SecurityType != CardReaderCapabilitiesClass.SecurityTypeEnum.Cim86)
             {
                 return new SetKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                        $"This device doesn't support CIM86 module. {CardReader.CardReaderCapabilities.SecurityType}");
+                                                        $"This device doesn't support CIM86 module. {Common.CardReaderCapabilities.SecurityType}");
             }
 
             if (setKey.Payload.KeyValue is null ||

@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                            $"No item type specified to export.");
             }
 
-            if (!KeyManagement.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.ExportEPPID))
+            if (!Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.ExportEPPID))
             {
                 return new ExportRSADeviceSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                            $"The device doesn't support to RSA signature scheme.",

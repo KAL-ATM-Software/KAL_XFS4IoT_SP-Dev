@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT PinPad interface.
- * PinPadServiceProvider.cs.cs uses automatically generated parts.
+ * PinPadServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,14 +17,9 @@ namespace XFS4IoTServer
 {
     public partial class PinPadServiceClass : IPinPadServiceClass
     {
-        public PinPadServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(PinPadServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IPinPadDevice>();
-        }
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private IPinPadDevice Device { get => ServiceProvider.Device.IsA<IPinPadDevice>(); }
     }
 }

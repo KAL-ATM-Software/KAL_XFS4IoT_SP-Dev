@@ -32,9 +32,9 @@ namespace XFS4IoTFramework.Printer
                 codelineFormat = CodelineFormatEnum.E13B;
 
             if ((codelineFormat == CodelineFormatEnum.CMC7 &&
-                !Printer.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.CMC7)) ||
+                !Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.CMC7)) ||
                 (codelineFormat == CodelineFormatEnum.E13B &&
-                !Printer.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.E13B)))
+                !Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.E13B)))
             {
                 return Task.FromResult(new GetCodelineMappingCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                                     $"Specified codeline format is not supported by the device."));

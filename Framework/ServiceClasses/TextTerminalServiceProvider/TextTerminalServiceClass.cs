@@ -17,65 +17,22 @@ namespace XFS4IoTServer
 {
     public partial class TextTerminalServiceClass
     {
-        public TextTerminalServiceClass(IServiceProvider ServiceProvider,
-                                        ICommonService CommonService,
-                                        ILogger logger)
-            : this(ServiceProvider, logger)
+        public TextTerminalServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
-            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(TextTerminalServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid common interface specified in the " + nameof(TextTerminalServiceClass));
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(TextTerminalServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ITextTerminalDevice>();
+
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(TextTerminalServiceClass)}");
 
             GetStatus();
             GetCapabilities();
         }
 
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
-
-        /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        /// <summary>
-        /// Stores TexTerminal interface capabilites internally
-        /// </summary>
-        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
-
-        /// <summary>
-        /// Stores TexTerminal interface status internally
-        /// </summary>
-        public TextTerminalStatusClass TextTerminalStatus { get => CommonService.TextTerminalStatus; set => CommonService.TextTerminalStatus = value; }
-
-        #endregion
-
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the TextTerminal Service.");
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
 
         /// <summary>
         /// True when the SP process gets started and return false once the first GetKeyDetail command is handled.
@@ -109,19 +66,19 @@ namespace XFS4IoTServer
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalStatus");
-            TextTerminalStatus = Device.TextTerminalStatus;
+            CommonService.TextTerminalStatus = Device.TextTerminalStatus;
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalStatus=");
 
-            TextTerminalStatus.IsNotNull($"The device class set TextTerminalStatus property to null. The device class must report device status.");
+            CommonService.TextTerminalStatus.IsNotNull($"The device class set TextTerminalStatus property to null. The device class must report device status.");
         }
 
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalCapabilities");
-            TextTerminalCapabilities = Device.TextTerminalCapabilities;
+            CommonService.TextTerminalCapabilities = Device.TextTerminalCapabilities;
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.TextTerminalCapabilities=");
 
-            TextTerminalCapabilities.IsNotNull($"The device class set TextTerminalCapabilities property to null. The device class must report device capabilities.");
+            CommonService.TextTerminalCapabilities.IsNotNull($"The device class set TextTerminalCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

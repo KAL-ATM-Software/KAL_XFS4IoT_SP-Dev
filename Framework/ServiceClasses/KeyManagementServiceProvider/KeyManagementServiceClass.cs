@@ -19,70 +19,29 @@ namespace XFS4IoTServer
     public partial class KeyManagementServiceClass
     {
         public KeyManagementServiceClass(IServiceProvider ServiceProvider,
-                                         ICommonService CommonService,
                                          ILogger logger,
                                          IPersistentData PersistentData)
-        : this(ServiceProvider, logger)
         {
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(KeyManagementServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IKeyManagementDevice>();
+
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(KeyManagementServiceClass)}");
+            
+
             this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set in the " + typeof(KeyManagementServiceClass));
             KeyDetails = PersistentData.Load< Dictionary<string, KeyDetail>> (ServiceProvider.Name + typeof(KeyDetail).FullName);
             if (KeyDetails is null)
                 KeyDetails = new();
 
-            CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(KeyManagementServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(KeyManagementServiceClass));
-
             GetStatus();
             GetCapabilities();
         }
 
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
-
-        /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        /// <summary>
-        /// Stores KeyManagement interface capabilites internally
-        /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
-
-        /// <summary>
-        /// Stores KeyManagement interface status internally
-        /// </summary>
-        public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
-
-        #endregion
-
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
 
         /// <summary>
         /// Persistent data storage access
@@ -252,19 +211,19 @@ namespace XFS4IoTServer
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementStatus");
-            KeyManagementStatus = Device.KeyManagementStatus;
+            CommonService.KeyManagementStatus = Device.KeyManagementStatus;
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementStatus=");
 
-            KeyManagementStatus.IsNotNull($"The device class set KeyManagementStatus property to null. The device class must report device status.");
+            CommonService.KeyManagementStatus.IsNotNull($"The device class set KeyManagementStatus property to null. The device class must report device status.");
         }
 
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementCapabilities");
-            KeyManagementCapabilities = Device.KeyManagementCapabilities;
+            CommonService.KeyManagementCapabilities = Device.KeyManagementCapabilities;
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementCapabilities=");
 
-            KeyManagementCapabilities.IsNotNull($"The device class set KeyManagementCapabilities property to null. The device class must report device capabilities.");
+            CommonService.KeyManagementCapabilities.IsNotNull($"The device class set KeyManagementCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

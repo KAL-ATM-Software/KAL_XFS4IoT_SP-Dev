@@ -11,7 +11,7 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
-    public interface IPinPadService : IKeyManagementService, ICommonService
+    public interface IPinPadService
     {
         /// <summary>
         /// List of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device

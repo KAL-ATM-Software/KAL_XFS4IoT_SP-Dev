@@ -19,17 +19,14 @@ namespace XFS4IoTServer
 {
     public partial class KeyboardServiceClass
     {
-        public KeyboardServiceClass(IServiceProvider ServiceProvider,
-                                    IKeyManagementServiceClass KeyManagementService,
-                                    ICommonService CommonService,
-                                    ILogger logger)
-        : this(ServiceProvider, logger)
+        public KeyboardServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
-            KeyManagementService.IsNotNull($"Unexpected parameter set for key management service in the " + nameof(KeyboardServiceClass));
-            this.KeyManagementService = KeyManagementService.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. " + nameof(KeyboardServiceClass));
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(KeyboardServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IKeyboardDevice>();
 
-            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(KeyboardServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(KeyboardServiceClass));
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(KeyboardServiceClass)}");
+            KeyManagementService = ServiceProvider.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. {nameof(KeyboardServiceClass)}");
 
             SupportedFunctionKeys = new();
             SupportedFunctionKeysWithShift = new();
@@ -72,66 +69,15 @@ namespace XFS4IoTServer
             GetCapabilities();
         }
 
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
 
         /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        /// <summary>
-        /// Stores KeyManagement interface capabilites internally
-        /// </summary>
-        public KeyboardCapabilitiesClass KeyboardCapabilities { get => CommonService.KeyboardCapabilities; set => CommonService.KeyboardCapabilities = value; }
-
-        /// <summary>
-        /// Stores KeyManagement status internally
-        /// </summary>
-        public KeyboardStatusClass KeyboardStatus { get => CommonService.KeyboardStatus; set => CommonService.KeyboardStatus = value; }
-
-        #endregion
-
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
-
-        #region Key Management Service
-        /// <summary>
         /// KeyManagement service interface
         /// </summary>
         private IKeyManagementService KeyManagementService { get; init; }
-
-        /// <summary>
-        /// Return secure key entry component status
-        /// </summary>
-        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => KeyManagementService.GetSecureKeyEntryStatus();
-
-        #endregion
 
         /// <summary>
         /// Function keys device supported
@@ -151,19 +97,19 @@ namespace XFS4IoTServer
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardStatus");
-            KeyboardStatus = Device.KeyboardStatus;
+            CommonService.KeyboardStatus = Device.KeyboardStatus;
             Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardStatus=");
 
-            KeyboardStatus.IsNotNull($"The device class set KeyboardStatus property to null. The device class must report device status.");
+            CommonService.KeyboardStatus.IsNotNull($"The device class set KeyboardStatus property to null. The device class must report device status.");
         }
 
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardCapabilities");
-            KeyboardCapabilities = Device.KeyboardCapabilities;
+            CommonService.KeyboardCapabilities = Device.KeyboardCapabilities;
             Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardCapabilities=");
 
-            KeyboardCapabilities.IsNotNull($"The device class set KeyboardCapabilities property to null. The device class must report device capabilities.");
+            CommonService.KeyboardCapabilities.IsNotNull($"The device class set KeyboardCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

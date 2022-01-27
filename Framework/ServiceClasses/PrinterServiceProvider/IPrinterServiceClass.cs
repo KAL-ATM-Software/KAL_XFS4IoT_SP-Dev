@@ -10,7 +10,7 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
-    public interface IPrinterService : ICommonService
+    public interface IPrinterService
     {
         /// <summary>
         /// Load form or media definition 

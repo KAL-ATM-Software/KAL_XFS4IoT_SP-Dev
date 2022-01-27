@@ -36,7 +36,7 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            PrinterService = new PrinterServiceClass(this, CommonService, logger, persistentData);
+            PrinterService = new PrinterServiceClass(this, logger, persistentData);
         }
 
         private readonly PrinterServiceClass PrinterService;
@@ -171,9 +171,6 @@ namespace XFS4IoTServer
         /// </summary>
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
-        #endregion
-
-        #region Printer Service
         /// <summary>
         /// Stores Printer interface capabilites internally
         /// </summary>
@@ -183,6 +180,8 @@ namespace XFS4IoTServer
         /// Stores Printer interface status internally
         /// </summary>
         public PrinterStatusClass PrinterStatus { get => CommonService.PrinterStatus; set => CommonService.PrinterStatus = value; }
+
+
         #endregion
 
         /// <summary>

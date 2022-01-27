@@ -34,9 +34,9 @@ namespace XFS4IoTFramework.Crypto
             }
 
             if ((digest.Payload.HashAlgorithm == DigestCommand.PayloadData.HashAlgorithmEnum.Sha1 &&
-                !Crypto.CryptoCapabilities.EMVHashAlgorithms.HasFlag(CryptoCapabilitiesClass.EMVHashAlgorithmEnum.SHA1_Digest)) ||
+                !Common.CryptoCapabilities.EMVHashAlgorithms.HasFlag(CryptoCapabilitiesClass.EMVHashAlgorithmEnum.SHA1_Digest)) ||
                 (digest.Payload.HashAlgorithm == DigestCommand.PayloadData.HashAlgorithmEnum.Sha256 &&
-                !Crypto.CryptoCapabilities.EMVHashAlgorithms.HasFlag(CryptoCapabilitiesClass.EMVHashAlgorithmEnum.SHA256_Digest)))
+                !Common.CryptoCapabilities.EMVHashAlgorithms.HasFlag(CryptoCapabilitiesClass.EMVHashAlgorithmEnum.SHA256_Digest)))
             {
                 return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"Specified EMV has algorith is not supported. {digest.Payload.HashAlgorithm}. See capabilities");
             }

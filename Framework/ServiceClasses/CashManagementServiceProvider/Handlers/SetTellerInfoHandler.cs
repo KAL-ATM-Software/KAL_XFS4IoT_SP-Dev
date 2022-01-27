@@ -36,19 +36,19 @@ namespace XFS4IoTFramework.CashManagement
                 if (setTellerInfo.Payload.TellerDetails.InputPosition is not null)
                 {
                     if ((setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InBottom &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InBottom)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InBottom)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InCenter &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InCenter)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InCenter)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InFront &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InFront)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InFront)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InLeft &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InLeft)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InLeft)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InRear &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRear)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRear)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InRight &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRight)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRight)) ||
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InTop &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InTop)))
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InTop)))
                     {
                         return new SetTellerInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                        $"Specified input position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}",
@@ -59,19 +59,19 @@ namespace XFS4IoTFramework.CashManagement
                 if (setTellerInfo.Payload.TellerDetails.OutputPosition is not null)
                 {
                     if ((setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutBottom &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutBottom)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutBottom)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutCenter &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutCenter)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutCenter)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutFront &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutFront)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutFront)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutLeft &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutLeft)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutLeft)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutRear &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRear)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRear)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutRight &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRight)) ||
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRight)) ||
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutTop &&
-                         !CashManagement.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutTop)))
+                         !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutTop)))
                     {
                         return new SetTellerInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                        $"Specified output position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}",

@@ -22,13 +22,6 @@ namespace XFS4IoTFramework.Common
         Task<DeviceResult> PowerSaveControl(int MaxPowerSaveRecoveryTime, CancellationToken cancel);
 
         /// <summary>
-        /// This method is used to reduce response time of a command 
-        /// (e.g. for synchronization with display) as well as to synchronize actions of the different services.
-        /// This method is intended to be used only on hardware which is capable of synchronizing functionality within a single device service or with other device services.
-        /// </summary>
-        Task<DeviceResult> SynchronizeCommand(SynchronizeCommandRequest request);
-
-        /// <summary>
         /// This method allows the application to specify the transaction state, which the Service Provider can then utilize in order to optimize performance. After receiving this command, this Service Provider can perform the necessary processing to start or end the customer transaction. This command should be called for every Service Provider that could be used in a customer transaction. The transaction state applies to every session.
         /// </summary>
         Task<DeviceResult> SetTransactionState(SetTransactionStateRequest request);

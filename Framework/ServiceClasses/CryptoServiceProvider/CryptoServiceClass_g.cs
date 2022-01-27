@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Crypto interface.
- * CryptoServiceProvider.cs.cs uses automatically generated parts.
+ * CryptoServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,14 +17,9 @@ namespace XFS4IoTServer
 {
     public partial class CryptoServiceClass : ICryptoServiceClass
     {
-        public CryptoServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CryptoServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICryptoDevice>();
-        }
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private ICryptoDevice Device { get => ServiceProvider.Device.IsA<ICryptoDevice>(); }
     }
 }

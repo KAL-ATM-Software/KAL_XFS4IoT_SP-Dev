@@ -180,17 +180,17 @@ namespace XFS4IoTFramework.Printer
                     printForm.Payload.PaperSource == "park")
                 {
                     if ((printForm.Payload.PaperSource == "aux" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX)) ||
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX)) ||
                         (printForm.Payload.PaperSource == "aux2" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX2)) ||
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.AUX2)) ||
                         (printForm.Payload.PaperSource == "external" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.External)) ||
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.External)) ||
                         (printForm.Payload.PaperSource == "lower" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Lower)) ||
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Lower)) ||
                         (printForm.Payload.PaperSource == "upper" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Upper)) ||
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Upper)) ||
                         (printForm.Payload.PaperSource == "park" &&
-                        !Printer.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Park)))
+                        !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Park)))
                     {
                         return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Specified paper source is not supported by the device. {printForm.Payload.PaperSource}");
@@ -208,7 +208,7 @@ namespace XFS4IoTFramework.Printer
                 }
                 else
                 {
-                    if (!Printer.PrinterCapabilities.CustomPaperSources.ContainsKey(printForm.Payload.PaperSource))
+                    if (!Common.PrinterCapabilities.CustomPaperSources.ContainsKey(printForm.Payload.PaperSource))
                     {
                         return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Specified paper source is not supported by the device. {printForm.Payload.PaperSource}");
@@ -531,7 +531,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Alarm is not null &&
                 (bool)payload.MediaControl.Alarm)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Alarm))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Alarm))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Alarm}");
@@ -541,7 +541,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Backward is not null &&
                 (bool)payload.MediaControl.Backward)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Backward))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Backward))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Backward}");
@@ -551,7 +551,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.ClearBuffer is not null &&
                 (bool)payload.MediaControl.ClearBuffer)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.ClearBuffer))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.ClearBuffer))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.ClearBuffer}");
@@ -562,7 +562,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Cut is not null &&
                 (bool)payload.MediaControl.Cut)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Cut))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Cut))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Cut}");
@@ -573,7 +573,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Eject is not null &&
                 (bool)payload.MediaControl.Eject)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Eject}");
@@ -597,7 +597,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.EjectToTransport is not null &&
                 (bool)payload.MediaControl.EjectToTransport)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.EjectToTransport}");
@@ -621,7 +621,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Flush is not null &&
                 (bool)payload.MediaControl.Flush)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Flush))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Flush))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Flush}");
@@ -632,7 +632,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Forward is not null &&
                 (bool)payload.MediaControl.Forward)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Forward))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Forward))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Forward}");
@@ -643,7 +643,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Park is not null &&
                 (bool)payload.MediaControl.Park)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Park}");
@@ -667,7 +667,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.PartialCut is not null &&
                 (bool)payload.MediaControl.PartialCut)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PartialCut))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PartialCut))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.PartialCut}");
@@ -678,7 +678,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Perforate is not null &&
                 (bool)payload.MediaControl.Perforate)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Perforate))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Perforate))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Perforate}");
@@ -689,7 +689,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Retract is not null &&
                 (bool)payload.MediaControl.Retract)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Retract}");
@@ -712,7 +712,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Rotate180 is not null &&
                 (bool)payload.MediaControl.Rotate180)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Rotate180))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Rotate180))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Rotate180}");
@@ -723,7 +723,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Skip is not null &&
                 (bool)payload.MediaControl.Skip)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Skip))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Skip))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Skip}");
@@ -734,7 +734,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Stack is not null &&
                 (bool)payload.MediaControl.Stack)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Stack}");
@@ -744,7 +744,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Stamp is not null &&
                 (bool)payload.MediaControl.Stamp)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stamp))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stamp))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Stamp}");
@@ -755,7 +755,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.TurnMedia is not null &&
                 (bool)payload.MediaControl.TurnMedia)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.TurnMedia))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.TurnMedia))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.TurnMedia}");
@@ -767,7 +767,7 @@ namespace XFS4IoTFramework.Printer
             if (payload.MediaControl.Expel is not null &&
                 (bool)payload.MediaControl.Expel)
             {
-                if (!Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel))
+                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel))
                 {
                     return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Unsupported control media specified. {payload.MediaControl.Expel}");

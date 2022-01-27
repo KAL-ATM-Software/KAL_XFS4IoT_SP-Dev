@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             // Find reject unit
             bool foundDestination = false;
-            foreach (var _ in from unit in CashDispenser.CashUnits
+            foreach (var _ in from unit in Storage.CashUnits
                               where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
                               select new { })
             {
@@ -44,11 +44,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.RejectAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            await CashDispenser.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             return new RejectCompletion.PayloadData(result.CompletionCode, 
                                                     result.ErrorDescription, 
                                                     result.ErrorCode);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

@@ -16,6 +16,8 @@ using XFS4IoT.Crypto.Completions;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTFramework.Common;
+using XFS4IoT;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.Crypto
 {
@@ -37,7 +39,7 @@ namespace XFS4IoTFramework.Crypto
             }
 
             // Check key is stored and available
-            KeyDetail keyDetail = Crypto.GetKeyDetail(generateAuthentication.Payload.Key);
+            KeyDetail keyDetail = KeyManagement.GetKeyDetail(generateAuthentication.Payload.Key);
             if (keyDetail is null)
             {
                 return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -79,7 +81,7 @@ namespace XFS4IoTFramework.Crypto
             if (!string.IsNullOrEmpty(generateAuthentication.Payload.IvKey))
             {
                 // Check stored IV key attributes
-                ivKeyDetail = Crypto.GetKeyDetail(generateAuthentication.Payload.IvKey);
+                ivKeyDetail = KeyManagement.GetKeyDetail(generateAuthentication.Payload.IvKey);
 
                 if (ivKeyDetail is null)
                 {
@@ -125,9 +127,9 @@ namespace XFS4IoTFramework.Crypto
             {
                 if ((keyDetail.ModeOfUse == "S" ||
                      keyDetail.ModeOfUse == "T") &&
-                    (Crypto.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage].ContainsKey(keyDetail.Algorithm)))
+                    (Common.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage].ContainsKey(keyDetail.Algorithm)))
                 {
-                    if (Crypto.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm].ContainsKey(keyDetail.ModeOfUse))
+                    if (Common.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm].ContainsKey(keyDetail.ModeOfUse))
                     {
                         sigAlgorithm = generateAuthentication.Payload.CryptoMethod switch
                         {
@@ -148,7 +150,7 @@ namespace XFS4IoTFramework.Crypto
                             _ => CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass.RSASignatureAlgorithmEnum.RSASSA_PSS
                         };
 
-                        verifyCryptAttrib = Crypto.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm][keyDetail.ModeOfUse].CryptoMethods.HasFlag(algorithmFlag);
+                        verifyCryptAttrib = Common.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm][keyDetail.ModeOfUse].CryptoMethods.HasFlag(algorithmFlag);
                     }
                 }
             }
@@ -156,9 +158,9 @@ namespace XFS4IoTFramework.Crypto
             {
                 if ((keyDetail.ModeOfUse == "C" ||
                     (keyDetail.ModeOfUse == "G") &&
-                    Crypto.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage].ContainsKey(keyDetail.Algorithm)))
+                    Common.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage].ContainsKey(keyDetail.Algorithm)))
                 {
-                    verifyCryptAttrib = (Crypto.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm].ContainsKey(keyDetail.ModeOfUse));
+                    verifyCryptAttrib = (Common.CryptoCapabilities.AuthenticationAttributes[keyDetail.KeyUsage][keyDetail.Algorithm].ContainsKey(keyDetail.ModeOfUse));
                 }
             }
             if (!verifyCryptAttrib)
@@ -178,17 +180,17 @@ namespace XFS4IoTFramework.Crypto
                 {
                     // First to check capabilities of ECB decryption
                     bool verifyIVAttrib = false;
-                    if (Crypto.CryptoCapabilities.CryptoAttributes.ContainsKey("D0"))
+                    if (Common.CryptoCapabilities.CryptoAttributes.ContainsKey("D0"))
                     {
-                        if (Crypto.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("D"))
+                        if (Common.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("D"))
                         {
-                            if (Crypto.CryptoCapabilities.CryptoAttributes["D0"]["D"].ContainsKey("D"))
-                                verifyIVAttrib = Crypto.CryptoCapabilities.CryptoAttributes["D0"]["D"]["D"].CryptoMethods.HasFlag(Common.CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
+                            if (Common.CryptoCapabilities.CryptoAttributes["D0"]["D"].ContainsKey("D"))
+                                verifyIVAttrib = Common.CryptoCapabilities.CryptoAttributes["D0"]["D"]["D"].CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
                         }
-                        else if (Crypto.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("T"))
+                        else if (Common.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("T"))
                         {
-                            if (Crypto.CryptoCapabilities.CryptoAttributes["D0"]["T"].ContainsKey("D"))
-                                verifyIVAttrib = Crypto.CryptoCapabilities.CryptoAttributes["D0"]["T"]["D"].CryptoMethods.HasFlag(Common.CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
+                            if (Common.CryptoCapabilities.CryptoAttributes["D0"]["T"].ContainsKey("D"))
+                                verifyIVAttrib = Common.CryptoCapabilities.CryptoAttributes["D0"]["T"]["D"].CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
                         }
                     }
 
@@ -220,7 +222,7 @@ namespace XFS4IoTFramework.Crypto
                                                             new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
                                                                                   CryptoDataRequest.CryptoAlgorithmEnum.ECB,
                                                                                   generateAuthentication.Payload.IvKey,
-                                                                                  Crypto.GetKeyDetail(generateAuthentication.Payload.IvKey).KeySlot,
+                                                                                  KeyManagement.GetKeyDetail(generateAuthentication.Payload.IvKey).KeySlot,
                                                                                   generateAuthentication.Payload.Iv,
                                                                                   0),
                                                             cancel);
@@ -261,7 +263,7 @@ namespace XFS4IoTFramework.Crypto
 
                 result = await Device.GenerateSignature(new CryptoCommandEvents(events),
                                                         new GenerateSignatureRequest(generateAuthentication.Payload.Key,
-                                                                                     Crypto.GetKeyDetail(generateAuthentication.Payload.Key).KeySlot,
+                                                                                     KeyManagement.GetKeyDetail(generateAuthentication.Payload.Key).KeySlot,
                                                                                      generateAuthentication.Payload.Data,
                                                                                      padding,
                                                                                      (GenerateSignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm),
@@ -293,5 +295,7 @@ namespace XFS4IoTFramework.Crypto
                                                                     result.ErrorCode,
                                                                     result.AuthenticationData);
         }
+
+        private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }
     }
 }

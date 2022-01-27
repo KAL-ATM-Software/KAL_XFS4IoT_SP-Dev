@@ -3,10 +3,7 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT VendorApplication interface.
- * GetActiveInterfaceHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
 
 using System;
 using System.Threading.Tasks;
@@ -20,17 +17,21 @@ namespace XFS4IoTFramework.VendorApplication
 {
     public partial class GetActiveInterfaceHandler
     {
-
         private Task<GetActiveInterfaceCompletion.PayloadData> HandleGetActiveInterface(IGetActiveInterfaceEvents events, GetActiveInterfaceCommand getActiveInterface, CancellationToken cancel)
         {
-            //ToDo: Implement HandleGetActiveInterface for VendorApplication.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleGetActiveInterface for VendorApplication is not implemented in GetActiveInterfaceHandler.cs");
-            #else
-                #error HandleGetActiveInterface for VendorApplication is not implemented in GetActiveInterfaceHandler.cs
-            #endif
-        }
+            Logger.Log(Constants.DeviceClass, "PrinterDev.GetActiveInterface()");
+            var result = Device.GetActiveInterface();
 
+            Logger.Log(Constants.DeviceClass, $"PrinterDev.GetActiveInterface() -> {result.CompletionCode}");
+
+            return Task.FromResult(new GetActiveInterfaceCompletion.PayloadData(result.CompletionCode,
+                                                                                result.ErrorDescription,
+                                                                                result.ActiveInterface switch
+                                                                                {
+                                                                                    ActiveInterfaceEnum.Consumer => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Consumer,
+                                                                                    ActiveInterfaceEnum.Operator => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Operator,
+                                                                                    _ => null,
+                                                                                }));
+        }
     }
 }

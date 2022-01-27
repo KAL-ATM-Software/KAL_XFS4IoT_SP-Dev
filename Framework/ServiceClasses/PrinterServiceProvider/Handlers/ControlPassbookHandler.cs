@@ -30,13 +30,13 @@ namespace XFS4IoTFramework.Printer
 
             // Capability check
             if ((controlPassbook.Payload.Action == ControlPassbookCommand.PayloadData.ActionEnum.Backward &&
-                !Printer.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.TurnBackward)) ||
+                !Common.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.TurnBackward)) ||
                 (controlPassbook.Payload.Action == ControlPassbookCommand.PayloadData.ActionEnum.Forward &&
-                !Printer.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.TurnForward)) ||
+                !Common.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.TurnForward)) ||
                 (controlPassbook.Payload.Action == ControlPassbookCommand.PayloadData.ActionEnum.CloseBackward &&
-                !Printer.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.CloseBackward)) ||
+                !Common.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.CloseBackward)) ||
                 (controlPassbook.Payload.Action == ControlPassbookCommand.PayloadData.ActionEnum.CloseForward &&
-                !Printer.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.CloseForward)))
+                !Common.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.CloseForward)))
             {
                 return new ControlPassbookCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                  $"Specified action is not supported by the device. {controlPassbook.Payload.Action}");

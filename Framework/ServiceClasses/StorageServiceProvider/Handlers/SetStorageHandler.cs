@@ -212,7 +212,7 @@ namespace XFS4IoTFramework.Storage
                         {
                             foreach (var item in storage.Value.Cash.Configuration.CashItems)
                             {
-                                if (!Storage.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item))
+                                if (!Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item))
                                 {
                                     return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                                 $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");

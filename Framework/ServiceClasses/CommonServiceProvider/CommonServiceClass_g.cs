@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Common interface.
- * CommonServiceProvider.cs.cs uses automatically generated parts.
+ * CommonServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,12 +17,7 @@ namespace XFS4IoTServer
 {
     public partial class CommonServiceClass : ICommonServiceClass
     {
-        public CommonServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CommonServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICommonDevice>();
-        }
+
         public async Task StatusChangedEvent(XFS4IoT.Common.Events.StatusChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.StatusChangedEvent(Payload));
 
@@ -32,8 +27,8 @@ namespace XFS4IoTServer
         public async Task NonceClearedEvent(XFS4IoT.Common.Events.NonceClearedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Common.Events.NonceClearedEvent(Payload));
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private ICommonDevice Device { get => ServiceProvider.Device.IsA<ICommonDevice>(); }
     }
 }

@@ -22,12 +22,16 @@ namespace XFS4IoTServer
     public partial class CashDispenserServiceClass
     {
         public CashDispenserServiceClass(IServiceProvider ServiceProvider,
-                                         ICashManagementService CashManagementService,
-                                         ICommonService CommonService,
                                          ILogger logger, 
                                          IPersistentData PersistentData)
-            : this(ServiceProvider, logger)
         {
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CashDispenserServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICashDispenserDevice>();
+
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(CashDispenserServiceClass)}");
+            CashManagementService = ServiceProvider.IsA<ICashManagementService>($"Invalid interface parameter specified for cash management service. {nameof(CashDispenserServiceClass)}");
+
             this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set. " + typeof(Mix).FullName);
 
             // Load persistent data
@@ -39,12 +43,6 @@ namespace XFS4IoTServer
                     AddMix(t.Key, t.Value);
             }
 
-            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(CashDispenserServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(CashDispenserServiceClass));
-
-            CashManagementService.IsNotNull($"Unexpected parameter set for cash management service in the " + nameof(CashDispenserServiceClass));
-            this.CashManagementService = CashManagementService.IsA<ICashManagementService>($"Invalid interface parameter specified for cash management service. " + nameof(CashDispenserServiceClass));
-
             Mixes = new()
             {
                 { "mix1", new MinNumberMix(logger) },
@@ -55,116 +53,15 @@ namespace XFS4IoTServer
             GetCapabilities();
         }
 
-        #region CashManagement unsolicited events
-
-        public Task ItemsTakenEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
-
-        public Task ItemsInsertedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Postion) => CashManagementService.ItemsInsertedEvent(Postion);
-
-        public Task ItemsPresentedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
-
-        public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
-
-        #endregion
-
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-
-
-        public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(ReasonDescription);
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
-
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
 
         /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        /// <summary>
-        /// Stores CashDispenser interface capabilites internally
-        /// </summary>
-        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
-
-        /// <summary>
-        /// Stores CashManagement interface capabilites internally
-        /// </summary>
-        public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
-
-        /// <summary>
-        /// CashDispenser Status
-        /// </summary>
-        public CashDispenserStatusClass CashDispenserStatus { get => CommonService.CashDispenserStatus; set => CommonService.CashDispenserStatus = value; }
-
-        /// <summary>
-        /// CashManagement Status
-        /// </summary>
-        public CashManagementStatusClass CashManagementStatus { get => CommonService.CashManagementStatus; set => CommonService.CashManagementStatus = value; }
-
-        #endregion
-
-        #region Cash Management Service
-        /// <summary>
-        /// Common service interface
+        /// CashManagement service interface
         /// </summary>
         private ICashManagementService CashManagementService { get; init; }
-
-        /// <summary>
-        /// Update storage count from the framework after media movement command is processed
-        /// </summary>
-        public Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage) => throw new NotSupportedException($"The CashManagement interface doesn't aupport card unit information.");
-
-        /// <summary>
-        /// UpdateCashAccounting
-        /// Update cash unit status and counts managed by the device specific class.
-        /// </summary>
-        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await CashManagementService.UpdateCashAccounting(countDelta, preservedStorage);
-
-        /// <summary>
-        /// Return which type of storage SP is using
-        /// </summary>
-        public StorageTypeEnum StorageType { get => CashManagementService.StorageType; set { } }
-
-        /// <summary>
-        /// Store CardUnits and CashUnits persistently
-        /// </summary>
-        public void StorePersistent() => CashManagementService.StorePersistent();
-
-        /// <summary>
-        /// Card storage structure information of this device
-        /// </summary>
-        public Dictionary<string, CardUnitStorage> CardUnits { get => CashManagementService.CardUnits; set { } }
-
-        /// <summary>
-        /// Cash storage structure information of this device
-        /// </summary>
-        public Dictionary<string, CashUnitStorage> CashUnits { get => CashManagementService.CashUnits; set { } }
-
-        #endregion
 
         /// <summary>
         /// Add vendor specific mix algorithm
@@ -244,19 +141,19 @@ namespace XFS4IoTServer
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserStatus");
-            CashDispenserStatus = Device.CashDispenserStatus;
+            CommonService.CashDispenserStatus = Device.CashDispenserStatus;
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserStatus=");
 
-            CashDispenserStatus.IsNotNull($"The device class set CashDispenserStatus property to null. The device class must report device status.");
+            CommonService.CashDispenserStatus.IsNotNull($"The device class set CashDispenserStatus property to null. The device class must report device status.");
         }
 
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserCapabilities");
-            CashDispenserCapabilities = Device.CashDispenserCapabilities;
+            CommonService.CashDispenserCapabilities = Device.CashDispenserCapabilities;
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserCapabilities=");
 
-            CashDispenserCapabilities.IsNotNull($"The device class set CashDispenserCapabilities property to null. The device class must report device capabilities.");
+            CommonService.CashDispenserCapabilities.IsNotNull($"The device class set CashDispenserCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

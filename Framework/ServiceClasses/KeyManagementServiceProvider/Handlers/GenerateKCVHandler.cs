@@ -48,7 +48,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                              $"No key name specified to KCV mode specified.");
             }
 
-            if (KeyManagement.KeyManagementCapabilities.KeyCheckModes == KeyManagementCapabilitiesClass.KeyCheckModeEnum.NotSupported)
+            if (Common.KeyManagementCapabilities.KeyCheckModes == KeyManagementCapabilitiesClass.KeyCheckModeEnum.NotSupported)
             {
                 return new GenerateKCVCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              $"Key check mode is not supported.",
@@ -56,9 +56,9 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             if (generateKCV.Payload.KeyCheckMode == GenerateKCVCommand.PayloadData.KeyCheckModeEnum.Zero &&
-                !KeyManagement.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Zero) ||
+                !Common.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Zero) ||
                 generateKCV.Payload.KeyCheckMode == GenerateKCVCommand.PayloadData.KeyCheckModeEnum.Self &&
-                !KeyManagement.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Self))
+                !Common.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Self))
             {
                 return new GenerateKCVCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              $"Specified Key check mode is not supported. {generateKCV.Payload.KeyCheckMode}",

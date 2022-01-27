@@ -92,17 +92,17 @@ namespace XFS4IoTFramework.KeyManagement
 
                 // First to check capabilities of ECB decryption
                 bool verifyIVAttrib = false;
-                if (KeyManagement.CryptoCapabilities.CryptoAttributes.ContainsKey("D0"))
+                if (Common.CryptoCapabilities.CryptoAttributes.ContainsKey("D0"))
                 {
-                    if (KeyManagement.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("D"))
+                    if (Common.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("D"))
                     {
-                        if (KeyManagement.CryptoCapabilities.CryptoAttributes["D0"]["D"].ContainsKey("D"))
-                            verifyIVAttrib = KeyManagement.CryptoCapabilities.CryptoAttributes["D0"]["D"]["D"].CryptoMethods.HasFlag(Common.CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
+                        if (Common.CryptoCapabilities.CryptoAttributes["D0"]["D"].ContainsKey("D"))
+                            verifyIVAttrib = Common.CryptoCapabilities.CryptoAttributes["D0"]["D"]["D"].CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
                     }
-                    else if (KeyManagement.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("T"))
+                    else if (Common.CryptoCapabilities.CryptoAttributes["D0"].ContainsKey("T"))
                     {
-                        if (KeyManagement.CryptoCapabilities.CryptoAttributes["D0"]["T"].ContainsKey("D"))
-                            verifyIVAttrib = KeyManagement.CryptoCapabilities.CryptoAttributes["D0"]["T"]["D"].CryptoMethods.HasFlag(Common.CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
+                        if (Common.CryptoCapabilities.CryptoAttributes["D0"]["T"].ContainsKey("D"))
+                            verifyIVAttrib = Common.CryptoCapabilities.CryptoAttributes["D0"]["T"]["D"].CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB);
                     }
                 }
 

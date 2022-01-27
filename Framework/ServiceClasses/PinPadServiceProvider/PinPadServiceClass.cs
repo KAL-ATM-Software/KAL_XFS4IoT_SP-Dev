@@ -19,17 +19,14 @@ namespace XFS4IoTServer
 {
     public partial class PinPadServiceClass
     {
-        public PinPadServiceClass(IServiceProvider ServiceProvider,
-                                  IKeyManagementService KeyManagementService,
-                                  ICommonService CommonService,
-                                  ILogger logger)
-        : this(ServiceProvider, logger)
+        public PinPadServiceClass(IServiceProvider ServiceProvider, ILogger logger)
         {
-            KeyManagementService.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
-            this.KeyManagementService = KeyManagementService.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. " + nameof(PinPadServiceClass));
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(PinPadServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IPinPadDevice>();
 
-            CommonService.IsNotNull($"Unexpected parameter set in the " + nameof(PinPadServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(PinPadServiceClass));
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(PinPadServiceClass)}");
+            KeyManagementService = ServiceProvider.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. {nameof(PinPadServiceClass)}");
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()");
 
@@ -42,120 +39,15 @@ namespace XFS4IoTServer
             GetCapabilities();
         }
 
-        #region KeyManagement unsolicited events
-        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService.IllegalKeyAccessEvent(KeyName, ErrorCode);
-
-        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService.CertificateChangeEvent(CertificateChange);
-
-        #endregion
-
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
-
-
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         private ICommonService CommonService { get; init; }
 
         /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        #endregion
-
-        #region Key Management Service
-        /// <summary>
         /// KeyManagement service interface
         /// </summary>
         private IKeyManagementService KeyManagementService { get; init; }
-
-        /// <summary>
-        /// Stores KeyManagement interface capabilites internally
-        /// </summary>
-        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set { } }
-
-        /// <summary>
-        /// Stores PinPad interface capabilites internally
-        /// </summary>
-        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set => CommonService.PinPadCapabilities = value; }
-
-        /// <summary>
-        /// Find keyslot available or being used
-        /// </summary>
-        public int FindKeySlot(string KeyName) => throw new NotSupportedException("The UpdateKeyStatus method is not supported in the PinPad interface.");
-
-        /// <summary>
-        /// Stored key information of this device
-        /// </summary>
-        public List<KeyDetail> GetKeyTable() => KeyManagementService.GetKeyTable();
-
-        /// <summary>
-        /// Return detailed stored key information
-        /// </summary>
-        public KeyDetail GetKeyDetail(string KeyName) => KeyManagementService.GetKeyDetail(KeyName);
-
-        /// <summary>
-        /// Add new key into the collection and return key slot
-        /// </summary>
-        public void AddKey(string KeyName,
-                           int KeySlot,
-                           string KeyUsage,
-                           string Algorithm,
-                           string ModeOfUse,
-                           int KeyLength,
-                           KeyDetail.KeyStatusEnum KeyStatus,
-                           bool Preloaded,
-                           string RestrictedKeyUsage,
-                           string KeyVersionNumber,
-                           string Exportability,
-                           List<byte> OptionalKeyBlockHeader,
-                           int? Generation,
-                           DateTime? ActivatingDate,
-                           DateTime? ExpiryDate,
-                           int? Version) => throw new NotSupportedException("The AddKey method is not supported in the PinPad interface.");
-
-        /// <summary>
-        /// Delete specified key from the collection and return key slot
-        /// </summary>
-        public void DeleteKey(string KeyName) => throw new NotSupportedException("The DeleteKey method is not supported in the PinPad interface.");
-
-        /// <summary>
-        /// Update key status
-        /// </summary>
-        public void UpdateKeyStatus(string KeyName, KeyDetail.KeyStatusEnum Status) => throw new NotSupportedException("The UpdateKeyStatus method is not supported in the PinPad interface.");
-
-        /// <summary>
-        /// Return secure key entry component status
-        /// </summary>
-        /// <returns></returns>
-        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus() => throw new NotSupportedException("The GetSecureKeyEntryStatus method is not supported in the PinPad interface.");
-
-        #endregion
 
         /// <summary>
         /// List of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device
@@ -165,10 +57,10 @@ namespace XFS4IoTServer
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "PinPadDev.PinPadCapabilities");
-            PinPadCapabilities = Device.PinPadCapabilities;
+            CommonService.PinPadCapabilities = Device.PinPadCapabilities;
             Logger.Log(Constants.DeviceClass, "PinPadDev.PinPadCapabilities=");
 
-            PinPadCapabilities.IsNotNull($"The device class set PinPadCapabilities property to null. The device class must report device capabilities.");
+            CommonService.PinPadCapabilities.IsNotNull($"The device class set PinPadCapabilities property to null. The device class must report device capabilities.");
         }
     }
 }

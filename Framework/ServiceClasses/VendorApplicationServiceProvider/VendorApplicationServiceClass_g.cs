@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT VendorApplication interface.
- * VendorApplicationServiceProvider.cs.cs uses automatically generated parts.
+ * VendorApplicationServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,20 +17,15 @@ namespace XFS4IoTServer
 {
     public partial class VendorApplicationServiceClass : IVendorApplicationServiceClass
     {
-        public VendorApplicationServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(VendorApplicationServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IVendorApplicationDevice>();
-        }
+
         public async Task InterfaceChangedEvent(XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorApplication.Events.InterfaceChangedEvent(Payload));
 
         public async Task VendorAppExitedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorApplication.Events.VendorAppExitedEvent());
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private IVendorApplicationDevice Device { get => ServiceProvider.Device.IsA<IVendorApplicationDevice>(); }
     }
 }

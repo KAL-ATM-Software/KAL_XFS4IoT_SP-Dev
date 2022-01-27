@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Text.RegularExpressions;
 using XFS4IoT;
+using System.Threading;
 
 namespace XFS4IoTServer
 {
@@ -100,7 +101,12 @@ namespace XFS4IoTServer
 
         public Task BroadcastEvent(object payload)
         {
-            throw Contracts.Fail<Exception>("No broadcast events defined for the service publisher. Do not call BroadcastEvent on this class.");
+            throw Contracts.Fail<Exception>($"No broadcast events defined for the service publisher. Do not call {nameof(BroadcastEvent)} on this class.");
+        }
+
+        public Task BroadcastEvent(IEnumerable<IConnection> connections, object payload)
+        {
+            throw Contracts.Fail<Exception>($"No broadcast events defined for the service publisher. Do not call {nameof(BroadcastEvent)} on this class.");
         }
 
         public IEnumerable<IServiceProvider> Services { get => _Services; } 

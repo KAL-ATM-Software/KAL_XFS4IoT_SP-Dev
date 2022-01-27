@@ -76,21 +76,21 @@ namespace XFS4IoTFramework.KeyManagement
             bool keyAttribSupported = false;
             foreach (string keyUsage in keyUsages)
             {
-                if (KeyManagement.KeyManagementCapabilities.KeyAttributes.ContainsKey(keyUsage))
+                if (Common.KeyManagementCapabilities.KeyAttributes.ContainsKey(keyUsage))
                 {
                     List<string> algorithms = new() { importKey.Payload.KeyAttributes.Algorithm };
                     for (int i = 0; i < 10; i++)
                         algorithms.Add(i.ToString("0"));
                     foreach (string algorithm in algorithms)
                     {
-                        if (KeyManagement.KeyManagementCapabilities.KeyAttributes[keyUsage].ContainsKey(algorithm))
+                        if (Common.KeyManagementCapabilities.KeyAttributes[keyUsage].ContainsKey(algorithm))
                         {
                             List<string> modes = new() { importKey.Payload.KeyAttributes.ModeOfUse };
                             for (int i = 0; i < 10; i++)
                                 modes.Add(i.ToString("0"));
                             foreach (string mode in modes)
                             {
-                                keyAttribSupported = KeyManagement.KeyManagementCapabilities.KeyAttributes[keyUsage][algorithm].ContainsKey(mode);
+                                keyAttribSupported = Common.KeyManagementCapabilities.KeyAttributes[keyUsage][algorithm].ContainsKey(mode);
                                 if (keyAttribSupported)
                                     break;
                             }
@@ -117,7 +117,7 @@ namespace XFS4IoTFramework.KeyManagement
             if (importKey.Payload.Constructing is not null &&
                 (bool)importKey.Payload.Constructing)
             {
-                if (!KeyManagement.KeyManagementCapabilities.KeyImportThroughParts)
+                if (!Common.KeyManagementCapabilities.KeyImportThroughParts)
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"The constructing property is enabled, but the device doesn't support secure key entry.");
@@ -276,14 +276,14 @@ namespace XFS4IoTFramework.KeyManagement
                                                            ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
-                if (!KeyManagement.KeyManagementCapabilities.DecryptAttributes.ContainsKey(decryptKeyDetail.Algorithm))
+                if (!Common.KeyManagementCapabilities.DecryptAttributes.ContainsKey(decryptKeyDetail.Algorithm))
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                $"Specified decrypt key doesn't support required algorithm. {importKey.Payload.DecryptKey}",
                                                                ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
                 }
 
-                KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum decryptMethodCap = KeyManagement.KeyManagementCapabilities.DecryptAttributes[decryptKeyDetail.Algorithm].DecryptMethods;
+                KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum decryptMethodCap = Common.KeyManagementCapabilities.DecryptAttributes[decryptKeyDetail.Algorithm].DecryptMethods;
                 if (decryptMethodCap == KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum.NotSupported)
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -374,21 +374,21 @@ namespace XFS4IoTFramework.KeyManagement
                                                                $"No verification data and verify attribute specified.");
                 }
 
-                if (!KeyManagement.KeyManagementCapabilities.VerifyAttributes.ContainsKey(verifyKeyDetail.KeyUsage))
+                if (!Common.KeyManagementCapabilities.VerifyAttributes.ContainsKey(verifyKeyDetail.KeyUsage))
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                $"Specified verify key doesn't support required key usage. {importKey.Payload.VerifyKey}",
                                                                ImportKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation);
                 }
 
-                if (!KeyManagement.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage].ContainsKey(verifyKeyDetail.Algorithm))
+                if (!Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage].ContainsKey(verifyKeyDetail.Algorithm))
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                $"Specified verify key doesn't support required algorithm. {importKey.Payload.VerifyKey}",
                                                                ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
                 }
 
-                if (KeyManagement.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm].ContainsKey("V"))
+                if (Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm].ContainsKey("V"))
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                $"Specified verify key doesn't support required mode of use. {importKey.Payload.VerifyKey}",
@@ -407,7 +407,7 @@ namespace XFS4IoTFramework.KeyManagement
                                                                $"No cryptoMethod specified when verify key name is specified. {importKey.Payload.VerifyKey}");
                 }
 
-                KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum cryptoMethodCap = KeyManagement.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].CryptoMethod;
+                KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum cryptoMethodCap = Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].CryptoMethod;
                 if (cryptoMethodCap == KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.NotSupported)
                 {
                     return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -468,7 +468,7 @@ namespace XFS4IoTFramework.KeyManagement
 
                     if (verifyMethod != ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.SignatureNone)
                     {
-                        KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum hashAlgorithmCap = KeyManagement.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].HashAlgorithm;
+                        KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum hashAlgorithmCap = Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].HashAlgorithm;
                         if (hashAlgorithmCap == KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.NotSupported)
                         {
                             return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,

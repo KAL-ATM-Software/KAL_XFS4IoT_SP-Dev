@@ -12,6 +12,7 @@ using System.Threading;
 using XFS4IoT.Completions;
 using XFS4IoT.Storage.Commands;
 using XFS4IoT.Storage.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Storage
 {
@@ -21,21 +22,21 @@ namespace XFS4IoTFramework.Storage
         {
             if (Storage.StorageType == StorageTypeEnum.Cash)
             {
-                if (Storage.CashManagementCapabilities is null ||
-                    Storage.CashManagementCapabilities.ExchangeTypes == Common.CashManagementCapabilitiesClass.ExchangeTypesEnum.NotSupported)
+                if (Common.CashManagementCapabilities is null ||
+                    Common.CashManagementCapabilities.ExchangeTypes == CashManagementCapabilitiesClass.ExchangeTypesEnum.NotSupported)
                 {
                     return new EndExchangeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
                                                                  $"No capabilites reported via CashManagement for the exchange operation.");
                 }
             }
 
-            if (Storage.CommonStatus.Exchange == Common.CommonStatusClass.ExchangeEnum.NotSupported)
+            if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.NotSupported)
             {
                 return new EndExchangeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
                                                              $"The exchange command is not supported.");
             }
 
-            if (Storage.CommonStatus.Exchange == Common.CommonStatusClass.ExchangeEnum.Inactive)
+            if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Inactive)
             {
                 return new EndExchangeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                              $"The exchange state is already in active.");
@@ -47,7 +48,7 @@ namespace XFS4IoTFramework.Storage
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                Storage.CommonStatus.Exchange = Common.CommonStatusClass.ExchangeEnum.Inactive;
+                Common.CommonStatus.Exchange = CommonStatusClass.ExchangeEnum.Inactive;
             }
 
             return new EndExchangeCompletion.PayloadData(result.CompletionCode,

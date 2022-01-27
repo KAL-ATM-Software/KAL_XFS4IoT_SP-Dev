@@ -16,6 +16,7 @@ using XFS4IoT.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoT.Completions;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -46,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                          $"Invalid position specified. {position}");
             }
 
-            if (!CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+            if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
                 return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                          $"Unsupported position specified. {position}",
@@ -95,7 +96,7 @@ namespace XFS4IoTFramework.CashDispenser
                 CashDispenser.LastPresentStatus[position].Token = presentStatus.Token;
             }
 
-            await CashDispenser.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             PositionEnum resPostion = position switch
             {
@@ -115,5 +116,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                      resPostion,
                                                      result.NumBunchesRemaining < 0 ? "unknown" : result.NumBunchesRemaining.ToString());
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

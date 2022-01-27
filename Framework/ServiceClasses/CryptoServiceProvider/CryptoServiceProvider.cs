@@ -36,8 +36,8 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            KeyManagementService = new KeyManagementServiceClass(this, CommonService, logger, persistentData);
-            CryptoService = new CryptoServiceClass(this, KeyManagementService, CommonService, logger);
+            KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);
+            CryptoService = new CryptoServiceClass(this, logger);
         }
 
         private readonly CryptoServiceClass CryptoService;
@@ -89,6 +89,11 @@ namespace XFS4IoTServer
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
+
+        /// <summary>
+        /// KeyManagement Status
+        /// </summary>
+        public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
 
         /// <summary>
         /// Stores Crypto interface capabilites internally

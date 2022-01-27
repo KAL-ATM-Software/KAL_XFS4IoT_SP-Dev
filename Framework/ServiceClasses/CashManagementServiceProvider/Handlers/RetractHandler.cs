@@ -48,7 +48,7 @@ namespace XFS4IoTFramework.CashManagement
                 };
 
                 if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                    !CashManagement.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
+                    !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                 {
                     return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              $"Specified unsupported retract area. {retractArea}",
@@ -66,7 +66,7 @@ namespace XFS4IoTFramework.CashManagement
                     int index = (int)retract.Payload.Index;
 
                     // Check the index is valid
-                    int totalRetractUnits = (from unit in CashManagement.CashUnits
+                    int totalRetractUnits = (from unit in Storage.CashUnits
                                              where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract) ||
                                                    unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract)
                                              select unit).Count();
@@ -96,7 +96,7 @@ namespace XFS4IoTFramework.CashManagement
 
                 };
 
-                if (!CashManagement.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+                if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
                 {
                     return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                 $"Specified unsupported output position. {position}");
@@ -159,7 +159,7 @@ namespace XFS4IoTFramework.CashManagement
                 }
             }
 
-            await CashManagement.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             return new RetractCompletion.PayloadData(result.CompletionCode,
                                                      result.ErrorDescription,
@@ -167,5 +167,6 @@ namespace XFS4IoTFramework.CashManagement
                                                      itemMovementResult);
         }
 
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

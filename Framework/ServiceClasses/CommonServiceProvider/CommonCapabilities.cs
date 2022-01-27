@@ -31,7 +31,6 @@ namespace XFS4IoTFramework.Common
                 PowerSaveControl,
                 SetTransactionState,
                 SetVersions,
-                SynchronizeCommand,
             }
 
             public enum EventEnum
@@ -494,6 +493,67 @@ namespace XFS4IoTFramework.Common
             public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
+        public sealed class VendorModeInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                EnterModeAcknowledge,
+                EnterModeRequest,
+                ExitModeAcknowledge,
+                ExitModeRequest,
+                Register,
+            }
+
+            public enum EventEnum
+            {
+                EnterModeRequestEvent,
+                ExitModeRequestEvent,
+                ModeEnteredEvent,
+                ModeExitedEvent,
+            }
+            public VendorModeInterfaceClass(List<CommandEnum> Commands = null,
+                                        List<EventEnum> Events = null,
+                                        List<CommandEnum> AuthenticationRequired = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+                this.AuthenticationRequired = AuthenticationRequired;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
+            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
+
+        public sealed class VendorApplicationInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                StartLocalApplication,
+                GetActiveInterface,
+                SetActiveInterface,
+            }
+
+            public enum EventEnum
+            {
+                VendorAppExitedEvent,
+                InterfaceChangedEvent,
+            }
+            public VendorApplicationInterfaceClass(List<CommandEnum> Commands = null,
+                                                   List<EventEnum> Events = null,
+                                                   List<CommandEnum> AuthenticationRequired = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+                this.AuthenticationRequired = AuthenticationRequired;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
+            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
+
+
         public CommonCapabilitiesClass(CommonInterfaceClass CommonInterface,
                                        CardReaderInterfaceClass CardReaderInterface = null,
                                        CashDispenserInterfaceClass CashDispenserInterface = null,
@@ -507,6 +567,8 @@ namespace XFS4IoTFramework.Common
                                        LightsInterfaceClass LightsInterface = null,
                                        AuxiliariesInterfaceClass AuxiliariesInterface = null,
                                        PrinterInterfaceClass PrinterInterface = null,
+                                       VendorModeInterfaceClass VendorModeInterface = null,
+                                       VendorApplicationInterfaceClass VendorApplicationInterface = null,
                                        List<DeviceInformationClass> DeviceInformation = null, 
                                        bool? PowerSaveControl = null, 
                                        bool? AntiFraudModule = null,
@@ -525,6 +587,8 @@ namespace XFS4IoTFramework.Common
             this.LightsInterface = LightsInterface;
             this.AuxiliariesInterface = AuxiliariesInterface;
             this.PrinterInterface = PrinterInterface;
+            this.VendorModeInterface = VendorModeInterface;
+            this.VendorApplicationInterface = VendorApplicationInterface;
             this.DeviceInformation = DeviceInformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
@@ -547,7 +611,8 @@ namespace XFS4IoTFramework.Common
         public LightsInterfaceClass LightsInterface { get; init; }
         public AuxiliariesInterfaceClass AuxiliariesInterface { get; init; }
         public PrinterInterfaceClass PrinterInterface { get; init; }
-
+        public VendorModeInterfaceClass VendorModeInterface { get; init; }
+        public VendorApplicationInterfaceClass VendorApplicationInterface { get; init; }
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
         /// element for each device.

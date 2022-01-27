@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace XFS4IoTFramework.TextTerminal
 {
-    public interface ITextTerminalService : ICommonService
+    public interface ITextTerminalService
     {
         /// <summary>
         /// True when the SP process gets started and return false once the first GetKeyDetail command is handled.

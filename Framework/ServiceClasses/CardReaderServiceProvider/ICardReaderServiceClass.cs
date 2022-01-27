@@ -11,7 +11,7 @@ using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CardReader
 {
-    public interface ICardReaderService : ICommonService, IStorageService
+    public interface ICardReaderService
     {
     }
 

@@ -40,8 +40,8 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            StorageService = new StorageServiceClass(this, CommonService, logger, persistentData, StorageTypeEnum.Card);
-            CardReader = new CardReaderServiceClass(this, CommonService, StorageService, logger);
+            StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Card);
+            CardReader = new CardReaderServiceClass(this, logger);
         }
 
         private readonly CardReaderServiceClass CardReader;

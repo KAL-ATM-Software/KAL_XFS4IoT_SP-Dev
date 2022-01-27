@@ -13,7 +13,7 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
-    public interface IKeyManagementService : ICommonService
+    public interface IKeyManagementService
     {
         /// <summary>
         /// Find keyslot available or being used

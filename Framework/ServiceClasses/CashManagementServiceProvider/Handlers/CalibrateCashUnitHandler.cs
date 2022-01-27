@@ -16,6 +16,7 @@ using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -24,7 +25,7 @@ namespace XFS4IoTFramework.CashManagement
         private async Task<CalibrateCashUnitCompletion.PayloadData> HandleCalibrateCashUnit(ICalibrateCashUnitEvents events, CalibrateCashUnitCommand calibrateCashUnit, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(calibrateCashUnit.Payload.Unit) ||
-                !CashManagement.CashUnits.ContainsKey(calibrateCashUnit.Payload.Unit))
+                !Storage.CashUnits.ContainsKey(calibrateCashUnit.Payload.Unit))
             {
                 return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"The CashUnit property is specified null or empty. the application should specify items to be dispensed from which unit.");
@@ -42,7 +43,7 @@ namespace XFS4IoTFramework.CashManagement
             else
             {
                 if (!string.IsNullOrEmpty(calibrateCashUnit.Payload.Position.Unit) &&
-                    !CashManagement.CashUnits.ContainsKey(calibrateCashUnit.Payload.Position.Unit))
+                    !Storage.CashUnits.ContainsKey(calibrateCashUnit.Payload.Position.Unit))
                 {
                     return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                        $"Specified CashUnit location is unknown.");
@@ -81,7 +82,7 @@ namespace XFS4IoTFramework.CashManagement
                             };
 
                             if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                                !CashManagement.CashDispenserCapabilities.RetractAreas.HasFlag(retractArea))
+                                !Common.CashDispenserCapabilities.RetractAreas.HasFlag(retractArea))
                             {
                                 return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                                    $"Specified unsupported retract area. {retractArea}",
@@ -115,7 +116,7 @@ namespace XFS4IoTFramework.CashManagement
                         };
 
                         if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                            !CashManagement.CashManagementCapabilities.Positions.HasFlag(position))
+                            !Common.CashManagementCapabilities.Positions.HasFlag(position))
                         {
                             return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                                $"Specified unsupported output position. {position}");
@@ -135,7 +136,7 @@ namespace XFS4IoTFramework.CashManagement
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.CalibrateCashUnitAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
 
-            await CashManagement.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
             {
@@ -192,5 +193,7 @@ namespace XFS4IoTFramework.CashManagement
                                                                total,
                                                                resItemPosition);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

@@ -39,10 +39,10 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            KeyManagementService = new KeyManagementServiceClass(this, CommonService, logger, persistentData);
-            CryptoService = new CryptoServiceClass(this, KeyManagementService, CommonService, logger);
-            KeyboardService = new KeyboardServiceClass(this, KeyManagementService, CommonService, logger);
-            PinPadService = new PinPadServiceClass(this, KeyManagementService, CommonService, logger);
+            KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);
+            CryptoService = new CryptoServiceClass(this, logger);
+            KeyboardService = new KeyboardServiceClass(this, logger);
+            PinPadService = new PinPadServiceClass(this, logger);
         }
 
         private readonly PinPadServiceClass PinPadService;
@@ -91,13 +91,39 @@ namespace XFS4IoTServer
         /// </summary>
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
-        #endregion
-
-        #region Key Management Service
         /// <summary>
         /// Stores KeyManagement interface capabilites internally
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
+
+        /// <summary>
+        /// KeyManagement Status
+        /// </summary>
+        public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
+
+        /// <summary>
+        /// Stores PinPad interface capabilites internally
+        /// </summary>
+        public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set => CommonService.PinPadCapabilities = value; }
+
+        /// <summary>
+        /// Stores Crypto interface capabilites internally
+        /// </summary>
+        public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set => CommonService.CryptoCapabilities = value; }
+
+        /// <summary>
+        /// Stores Keyboard interface capabilites internally
+        /// </summary>
+        public KeyboardCapabilitiesClass KeyboardCapabilities { get => CommonService.KeyboardCapabilities; set => CommonService.KeyboardCapabilities = value; }
+
+        /// <summary>
+        /// Keyboard Status
+        /// </summary>
+        public KeyboardStatusClass KeyboardStatus { get => CommonService.KeyboardStatus; set => CommonService.KeyboardStatus = value; }
+
+        #endregion
+
+        #region Key Management Service
 
         /// <summary>
         /// Find keyslot available or being used

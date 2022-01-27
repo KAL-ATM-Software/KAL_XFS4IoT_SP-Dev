@@ -34,7 +34,7 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            Lights = new LightsServiceClass(this, CommonService, logger);
+            Lights = new LightsServiceClass(this, logger);
         }
 
         private readonly LightsServiceClass Lights;
@@ -73,12 +73,12 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Lights interface capabilites internally
+        /// Stores Light capabilities
         /// </summary>
         public LightsCapabilitiesClass LightsCapabilities { get => CommonService.LightsCapabilities; set => CommonService.LightsCapabilities = value; }
 
         /// <summary>
-        /// Lights Status
+        /// Stores Light Status
         /// </summary>
         public LightsStatusClass LightsStatus { get => CommonService.LightsStatus; set => CommonService.LightsStatus = value; }
 

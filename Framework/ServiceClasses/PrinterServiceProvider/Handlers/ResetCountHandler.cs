@@ -21,14 +21,14 @@ namespace XFS4IoTFramework.Printer
     {
         private async Task<ResetCountCompletion.PayloadData> HandleResetCount(IResetCountEvents events, ResetCountCommand resetCount, CancellationToken cancel)
         {
-            if (Printer.PrinterCapabilities.RetractBins == 0)
+            if (Common.PrinterCapabilities.RetractBins == 0)
             {
                 return new ResetCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                             $"Invalid bin number specifid.");
             }
 
             if (resetCount.Payload.BinNumber is not null &&
-                resetCount.Payload.BinNumber > Printer.PrinterCapabilities.RetractBins)
+                resetCount.Payload.BinNumber > Common.PrinterCapabilities.RetractBins)
             {
                 return new ResetCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                             $"Specified an invalid retract bin number.{resetCount.Payload.BinNumber}");

@@ -55,20 +55,20 @@ namespace XFS4IoTFramework.Printer
                                                                $"No front image type specified.");
                 }
 
-                if (!Printer.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageFront))
+                if (!Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageFront))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No front image source supported by the device.");
                 }
 
                 if (readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Bmp &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
                     readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Jpg &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
                     readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Tif &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
                     readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Wmf &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Specified front image type supported by the device. {readImage.Payload.FrontImageType}");
@@ -77,11 +77,11 @@ namespace XFS4IoTFramework.Printer
                 if (readImage.Payload.FrontImageColorFormat is not null)
                 {
                     if ((readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Binary &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Binary)) ||
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Binary)) ||
                         (readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Fullcolor &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Full)) ||
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Full)) ||
                         (readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Grayscale &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.GrayScale)))
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.GrayScale)))
                     {
                         return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Unsupported color image format specified.");
@@ -113,20 +113,20 @@ namespace XFS4IoTFramework.Printer
                                                                $"No back image type specified.");
                 }
 
-                if (!Printer.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageBack))
+                if (!Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageBack))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No back image source supported by the device.");
                 }
 
                 if (readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Bmp &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
                     readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Jpg &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
                     readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Tif &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
                     readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Wmf &&
-                    !Printer.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
+                    !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Specified back image type supported by the device. {readImage.Payload.FrontImageType}");
@@ -135,11 +135,11 @@ namespace XFS4IoTFramework.Printer
                 if (readImage.Payload.FrontImageColorFormat is not null)
                 {
                     if ((readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Binary &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Binary)) ||
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Binary)) ||
                         (readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Fullcolor &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Full)) ||
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Full)) ||
                         (readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Grayscale &&
-                        !Printer.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.GrayScale)))
+                        !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.GrayScale)))
                     {
                         return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Unsupported color image format specified.");
@@ -172,18 +172,18 @@ namespace XFS4IoTFramework.Printer
                                                                $"No codeline format specified.");
                 }
 
-                if (!Printer.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.CodeLine))
+                if (!Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.CodeLine))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No codeline supported by the device.");
                 }
 
                 if (readImage.Payload.CodelineFormat == ReadImageCommand.PayloadData.CodelineFormatEnum.Cmc7 &&
-                    !Printer.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.CMC7) ||
+                    !Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.CMC7) ||
                     readImage.Payload.CodelineFormat == ReadImageCommand.PayloadData.CodelineFormatEnum.E13b &&
-                    !Printer.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.E13B) ||
+                    !Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.E13B) ||
                     readImage.Payload.CodelineFormat == ReadImageCommand.PayloadData.CodelineFormatEnum.Ocr &&
-                    !Printer.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.OCR))
+                    !Common.PrinterCapabilities.CodelineFormats.HasFlag(PrinterCapabilitiesClass.CodelineFormatEnum.OCR))
                 {
                     return new ReadImageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Specified codeline format is not supported by the device. {readImage.Payload.CodelineFormat}");

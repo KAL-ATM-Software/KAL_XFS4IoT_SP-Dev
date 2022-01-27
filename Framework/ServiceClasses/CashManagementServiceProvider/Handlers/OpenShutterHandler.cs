@@ -48,7 +48,7 @@ namespace XFS4IoTFramework.CashManagement
             }
 
             // Check the shutter capabilites
-            if (CashManagement.CashManagementCapabilities.ShutterControl)
+            if (Common.CashManagementCapabilities.ShutterControl)
             {
                 Logger.Log(Constants.Framework, "The application requested shutter command even if the device support implicit shutter control.");
             }
@@ -56,14 +56,14 @@ namespace XFS4IoTFramework.CashManagement
             // Check supported position for this device
 
             if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                !CashManagement.CashManagementCapabilities.Positions.HasFlag(position))
+                !Common.CashManagementCapabilities.Positions.HasFlag(position))
             {
                 return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                              $"Specified unsupported position {position}",
                                                              OpenShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
             }
 
-            if (CashManagement.CashDispenserCapabilities is not null &&
+            if (Common.CashDispenserCapabilities is not null &&
                 position != CashManagementCapabilitiesClass.PositionEnum.InBottom &&
                 position != CashManagementCapabilitiesClass.PositionEnum.InCenter &&
                 position != CashManagementCapabilitiesClass.PositionEnum.InDefault &&
@@ -85,7 +85,7 @@ namespace XFS4IoTFramework.CashManagement
                     _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
                 };
 
-                if (CashManagement.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Open)
+                if (Common.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Open)
                 {
                     return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                  $"The shutter is already opened.");

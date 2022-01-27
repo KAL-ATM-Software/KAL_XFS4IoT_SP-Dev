@@ -13,6 +13,7 @@ using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.KeyManagement;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.PinPad
 {
@@ -32,7 +33,7 @@ namespace XFS4IoTFramework.PinPad
                                                           $"No key name specified to verify PIN locally.");
             }
 
-            KeyDetail key = PinPad.GetKeyDetail(localDES.Payload.Key);
+            KeyDetail key = KeyManagement.GetKeyDetail(localDES.Payload.Key);
             if (key is null)
             {
                 return new LocalDESCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -49,7 +50,7 @@ namespace XFS4IoTFramework.PinPad
 
             if (!string.IsNullOrEmpty(localDES.Payload.KeyEncKey))
             {
-                KeyDetail keyEncKey = PinPad.GetKeyDetail(localDES.Payload.KeyEncKey);
+                KeyDetail keyEncKey = KeyManagement.GetKeyDetail(localDES.Payload.KeyEncKey);
                 if (keyEncKey is null)
                 {
                     return new LocalDESCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -191,5 +192,7 @@ namespace XFS4IoTFramework.PinPad
                                                       },
                                                       result.Verified);
         }
+
+        private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }
     }
 }

@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Storage interface.
- * StorageServiceProvider.cs.cs uses automatically generated parts.
+ * StorageServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,12 +17,7 @@ namespace XFS4IoTServer
 {
     public partial class StorageServiceClass : IStorageServiceClass
     {
-        public StorageServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(StorageServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IStorageDevice>();
-        }
+
         public async Task StorageThresholdEvent(XFS4IoT.Storage.Events.StorageThresholdEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageThresholdEvent(Payload));
 
@@ -32,8 +27,8 @@ namespace XFS4IoTServer
         public async Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageErrorEvent(Payload));
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private IStorageDevice Device { get => ServiceProvider.Device.IsA<IStorageDevice>(); }
     }
 }

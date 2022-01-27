@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.TextTerminal
 
             // Ensure the selected resolution is valid 
             bool found = false;
-            foreach (var supportedRes in TextTerminal.TextTerminalCapabilities.Resolutions)
+            foreach (var supportedRes in Common.TextTerminalCapabilities.Resolutions)
             {
                 if(supportedRes.Width == setResolution.Payload.Resolution.SizeX && supportedRes.Height == setResolution.Payload.Resolution.SizeY)
                 {

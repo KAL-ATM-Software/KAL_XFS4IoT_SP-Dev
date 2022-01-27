@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.KeyManagement
                            .IsA<IKeyManagementDevice>();
 
             KeyManagement = Provider.IsA<IKeyManagementService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ReplaceCertificateHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ReplaceCertificateHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.KeyManagement
         private IKeyManagementDevice Device { get => Provider.Device.IsA<IKeyManagementDevice>(); }
         private IServiceProvider Provider { get; }
         private IKeyManagementService KeyManagement { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

@@ -19,7 +19,7 @@ namespace XFS4IoTFramework.Storage
         Card,
     }
 
-    public interface IStorageService : ICommonService
+    public interface IStorageService
     {
         /// <summary>
         /// Update storage count from the framework after media movement command is processed

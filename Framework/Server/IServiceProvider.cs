@@ -5,6 +5,8 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -29,5 +31,11 @@ namespace XFS4IoTServer
         /// <param name="payload">The XFS payload for the message</param>
         Task BroadcastEvent(object payload);
 
+        /// <summary>
+        /// Broadcast an unsolicited event to specified connections.
+        /// </summary>
+        /// <param name="connections">The connections to broadcast to</param>
+        /// <param name="payload">The XFS payload for the message</param>
+        Task BroadcastEvent(IEnumerable<IConnection> connections, object payload);
     }
 }

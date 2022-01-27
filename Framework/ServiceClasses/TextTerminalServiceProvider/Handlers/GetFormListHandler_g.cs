@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.TextTerminal
                            .IsA<ITextTerminalDevice>();
 
             TextTerminal = Provider.IsA<ITextTerminalService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetFormListHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetFormListHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.TextTerminal
         private ITextTerminalDevice Device { get => Provider.Device.IsA<ITextTerminalDevice>(); }
         private IServiceProvider Provider { get; }
         private ITextTerminalService TextTerminal { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

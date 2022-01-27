@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.PinPad
                 }
             }
 
-            KeyDetail key = PinPad.GetKeyDetail(setPinBlockData.Payload.Key);
+            KeyDetail key = KeyManagement.GetKeyDetail(setPinBlockData.Payload.Key);
             if (key is null)
             {
                 return new SetPinBlockDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -73,7 +73,7 @@ namespace XFS4IoTFramework.PinPad
 
             if (!string.IsNullOrEmpty(setPinBlockData.Payload.SecondEncKey))
             {
-                KeyDetail pinblockEncKey = PinPad.GetKeyDetail(setPinBlockData.Payload.SecondEncKey);
+                KeyDetail pinblockEncKey = KeyManagement.GetKeyDetail(setPinBlockData.Payload.SecondEncKey);
                 if (pinblockEncKey is null)
                 {
                     return new SetPinBlockDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -150,5 +150,7 @@ namespace XFS4IoTFramework.PinPad
             return new SetPinBlockDataCompletion.PayloadData(result.CompletionCode,
                                                              result.ErrorDescription);
         }
+
+        private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }
     }
 }

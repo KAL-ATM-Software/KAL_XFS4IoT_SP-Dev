@@ -21,12 +21,12 @@ namespace XFS4IoTFramework.CashManagement
         private Task<GetBankNoteTypesCompletion.PayloadData> HandleGetBankNoteTypes(IGetBankNoteTypesEvents events, GetBankNoteTypesCommand getBankNoteTypes, CancellationToken cancel)
         {
             Dictionary<string, BankNoteClass> items = null;
-            if (CashManagement.CashManagementCapabilities.AllBanknoteItems.Count > 0)
+            if (Common.CashManagementCapabilities.AllBanknoteItems.Count > 0)
             {
-                foreach (var item in CashManagement.CashManagementCapabilities.AllBanknoteItems)
+                foreach (var item in Common.CashManagementCapabilities.AllBanknoteItems)
                 {
-                    if (CashManagement.CashManagementStatus.AllBanknoteItems is null ||
-                        CashManagement.CashManagementStatus.AllBanknoteItems.ContainsKey(item.Key))
+                    if (Common.CashManagementStatus.AllBanknoteItems is null ||
+                        Common.CashManagementStatus.AllBanknoteItems.ContainsKey(item.Key))
                     {
                         return Task.FromResult(new GetBankNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
                                                                                           $"The device specific class doesn't report status of the banknote type is enabled or not. {item.Key}"));
@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CashManagement
                                                                item.Value.Currency,
                                                                item.Value.Value,
                                                                item.Value.Release),
-                                                          CashManagement.CashManagementStatus.AllBanknoteItems[item.Key]));
+                                                          Common.CashManagementStatus.AllBanknoteItems[item.Key]));
                 }
             }
 

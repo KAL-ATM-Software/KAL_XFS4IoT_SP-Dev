@@ -70,6 +70,16 @@ namespace XFS4IoTFramework.Common
         PrinterCapabilitiesClass PrinterCapabilities { get => null; set { } }
 
         /// <summary>
+        /// Stores Auxiliaries capabilities for an internal use
+        /// </summary>
+        AuxiliariesCapabilities AuxiliariesCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores vendor application capabilites
+        /// </summary>
+        VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get => null; set { } }
+
+        /// <summary>
         /// Stores Commons status
         /// </summary>
         CommonStatusClass CommonStatus { get; set; }
@@ -113,7 +123,21 @@ namespace XFS4IoTFramework.Common
         /// Stores printer status
         /// </summary>
         PrinterStatusClass PrinterStatus { get => null; set { } }
+		
+		/// <summary>
+        /// Stores auxiliaries status
+        /// </summary>
+        AuxiliariesStatus AuxiliariesStatus { get => null; set { } }
 
+        /// <summary>
+        /// Stores vendor mode status
+        /// </summary>
+        VendorModeStatusClass VendorModeStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores vendor application status
+        /// </summary>
+        VendorApplicationStatusClass VendorApplicationStatus { get => null; set { } }
 
         /// <summary>
         /// Status changed event

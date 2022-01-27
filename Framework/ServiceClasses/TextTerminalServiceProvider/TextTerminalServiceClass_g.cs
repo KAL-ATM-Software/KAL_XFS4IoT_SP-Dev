@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT TextTerminal interface.
- * TextTerminalServiceProvider.cs.cs uses automatically generated parts.
+ * TextTerminalServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,14 +17,9 @@ namespace XFS4IoTServer
 {
     public partial class TextTerminalServiceClass : ITextTerminalServiceClass
     {
-        public TextTerminalServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(TextTerminalServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ITextTerminalDevice>();
-        }
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private ITextTerminalDevice Device { get => ServiceProvider.Device.IsA<ITextTerminalDevice>(); }
     }
 }

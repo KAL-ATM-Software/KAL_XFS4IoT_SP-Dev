@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.Printer
                            .IsA<IPrinterDevice>();
 
             Printer = Provider.IsA<IPrinterService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetQueryFieldHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetQueryFieldHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.Printer
         private IPrinterDevice Device { get => Provider.Device.IsA<IPrinterDevice>(); }
         private IServiceProvider Provider { get; }
         private IPrinterService Printer { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

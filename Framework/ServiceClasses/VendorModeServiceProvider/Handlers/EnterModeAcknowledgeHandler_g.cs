@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.VendorMode.Commands;
 using XFS4IoT.VendorMode.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.VendorMode
                            .IsA<IVendorModeDevice>();
 
             VendorMode = Provider.IsA<IVendorModeService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(EnterModeAcknowledgeHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(EnterModeAcknowledgeHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.VendorMode
         private IVendorModeDevice Device { get => Provider.Device.IsA<IVendorModeDevice>(); }
         private IServiceProvider Provider { get; }
         private IVendorModeService VendorMode { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

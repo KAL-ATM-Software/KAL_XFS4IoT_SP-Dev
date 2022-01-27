@@ -15,7 +15,7 @@ using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
-    public interface ICashManagementService : ICommonService, IStorageService
+    public interface ICashManagementService
     {
 
         Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status);

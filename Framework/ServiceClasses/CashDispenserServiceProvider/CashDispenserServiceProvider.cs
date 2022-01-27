@@ -41,9 +41,9 @@ namespace XFS4IoTServer
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            StorageService = new StorageServiceClass(this, CommonService, logger, persistentData, StorageTypeEnum.Cash);
-            CashManagementService = new CashManagementServiceClass(this, CommonService, StorageService, logger);
-            CashDispenserService = new CashDispenserServiceClass(this, CashManagementService, CommonService, logger, persistentData);
+            StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);
+            CashManagementService = new CashManagementServiceClass(this, logger);
+            CashDispenserService = new CashDispenserServiceClass(this, logger, persistentData);
         }
 
         private readonly CashDispenserServiceClass CashDispenserService;
@@ -255,7 +255,7 @@ namespace XFS4IoTServer
 
         #endregion
 
-        #region Cash Management Service
+        #region Storage Service
 
         /// <summary>
         /// Update storage count from the framework after media movement command is processed
@@ -266,27 +266,27 @@ namespace XFS4IoTServer
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await CashManagementService.UpdateCashAccounting(countDelta, preservedStorage);
+        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await StorageService.UpdateCashAccounting(countDelta, preservedStorage);
 
         /// <summary>
         /// Return which type of storage SP is using
         /// </summary>
-        public StorageTypeEnum StorageType { get => CashManagementService.StorageType; set => CashManagementService.StorageType = value; }
+        public StorageTypeEnum StorageType { get => StorageService.StorageType; set => StorageService.StorageType = value; }
 
         /// <summary>
         /// Store CardUnits and CashUnits persistently
         /// </summary>
-        public void StorePersistent() => CashManagementService.StorePersistent();
+        public void StorePersistent() => StorageService.StorePersistent();
 
         /// <summary>
         /// Card storage structure information of this device
         /// </summary>
-        public Dictionary<string, CardUnitStorage> CardUnits { get => CashManagementService.CardUnits; set => CashManagementService.CardUnits = value; }
+        public Dictionary<string, CardUnitStorage> CardUnits { get => StorageService.CardUnits; set => StorageService.CardUnits = value; }
 
         /// <summary>
         /// Cash storage structure information of this device
         /// </summary>
-        public Dictionary<string, CashUnitStorage> CashUnits { get => CashManagementService.CashUnits; set => CashManagementService.CashUnits = value; }
+        public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; set => StorageService.CashUnits = value; }
 
         #endregion
 

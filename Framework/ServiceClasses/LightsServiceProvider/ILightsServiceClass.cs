@@ -13,7 +13,7 @@ using XFS4IoTFramework.Lights;
 
 namespace XFS4IoTServer
 {
-    public interface ILightsService : ICommonService
+    public interface ILightsService
     {
     }
 

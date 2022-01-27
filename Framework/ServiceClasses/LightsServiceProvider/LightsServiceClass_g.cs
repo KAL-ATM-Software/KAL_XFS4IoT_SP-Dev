@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Lights interface.
- * LightsServiceProvider.cs.cs uses automatically generated parts.
+ * LightsServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,14 +17,9 @@ namespace XFS4IoTServer
 {
     public partial class LightsServiceClass : ILightsServiceClass
     {
-        public LightsServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(LightsServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ILightsDevice>();
-        }
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private ILightsDevice Device { get => ServiceProvider.Device.IsA<ILightsDevice>(); }
     }
 }

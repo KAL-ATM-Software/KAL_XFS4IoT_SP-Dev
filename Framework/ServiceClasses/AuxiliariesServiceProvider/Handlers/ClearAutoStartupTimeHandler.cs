@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.Auxiliaries.Commands;
 using XFS4IoT.Auxiliaries.Completions;
 
@@ -21,15 +22,19 @@ namespace XFS4IoTFramework.Auxiliaries
     public partial class ClearAutoStartupTimeHandler
     {
 
-        private Task<ClearAutoStartupTimeCompletion.PayloadData> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartupTimeCommand clearAutoStartupTime, CancellationToken cancel)
+        private async Task<ClearAutoStartupTimeCompletion.PayloadData> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartupTimeCommand clearAutoStartupTime, CancellationToken cancel)
         {
-            //ToDo: Implement HandleClearAutoStartupTime for Auxiliaries.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleClearAutoStartupTime for Auxiliaries is not implemented in ClearAutoStartupTimeHandler.cs");
-            #else
-                #error HandleClearAutoStartupTime for Auxiliaries is not implemented in ClearAutoStartupTimeHandler.cs
-            #endif
+            if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilities.AutoStartupModes.NotAvailable)
+                return new ClearAutoStartupTimeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
+
+            Logger.Log(Constants.DeviceClass, "AuxiliariesDev.ClearAutoStartupTime()");
+
+            var result = await Device.ClearAutoStartupTime(cancel);
+
+            Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.ClearAutoStartupTime() -> {result.CompletionCode}");
+
+            return new ClearAutoStartupTimeCompletion.PayloadData(result.CompletionCode,
+                                                                  result.ErrorDescription);
         }
 
     }

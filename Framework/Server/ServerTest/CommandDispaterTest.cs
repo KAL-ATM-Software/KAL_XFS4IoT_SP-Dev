@@ -38,6 +38,7 @@ namespace XFS4IoTServer.Test
         public Uri WSUri { get; } = new Uri(string.Empty);
         public IDevice Device { get => throw new NotImplementedException(); }
         public Task BroadcastEvent(object payload) => throw new NotImplementedException();
+        public Task BroadcastEvent(IEnumerable<IConnection> connections, object payload) => throw new NotImplementedException();
         public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds) => throw new NotImplementedException();
         public Task Dispatch(IConnection Connection, MessageBase Command) => throw new NotImplementedException();
         public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();

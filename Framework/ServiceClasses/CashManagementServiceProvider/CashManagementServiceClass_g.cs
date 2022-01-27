@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT CashManagement interface.
- * CashManagementServiceProvider.cs.cs uses automatically generated parts.
+ * CashManagementServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,12 +17,7 @@ namespace XFS4IoTServer
 {
     public partial class CashManagementServiceClass : ICashManagementServiceClass
     {
-        public CashManagementServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CashManagementServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICashManagementDevice>();
-        }
+
         public async Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.ItemsTakenEvent(Payload));
 
@@ -41,8 +36,8 @@ namespace XFS4IoTServer
         public async Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent(Payload));
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private ICashManagementDevice Device { get => ServiceProvider.Device.IsA<ICashManagementDevice>(); }
     }
 }

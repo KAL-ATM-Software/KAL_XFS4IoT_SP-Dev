@@ -41,7 +41,7 @@ namespace XFS4IoTFramework.CashDispenser
                 };
             }
 
-            if (!CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+            if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
                 return new CountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                        $"Unsupported position. {position}");
@@ -53,7 +53,7 @@ namespace XFS4IoTFramework.CashDispenser
                 List<string> storageFrom = new();
                 if (string.Compare(count.Payload.Unit, "all", ignoreCase: true) == 0)
                 {
-                    foreach (var unit in CashDispenser.CashUnits)
+                    foreach (var unit in Storage.CashUnits)
                     {
                         if (unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
                             storageFrom.Add(unit.Key);
@@ -61,7 +61,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
                 else
                 {
-                    if (CashDispenser.CashUnits.ContainsKey(count.Payload.Unit))
+                    if (Storage.CashUnits.ContainsKey(count.Payload.Unit))
                     {
                         return new CountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Specified storage id is invalid. {count.Payload.Unit}");
@@ -78,11 +78,13 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.CountAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            await CashDispenser.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             return new CountCompletion.PayloadData(result.CompletionCode, 
                                                    result.ErrorDescription, 
                                                    result.ErrorCode);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.Keyboard.Commands;
 using XFS4IoT.Keyboard.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.Keyboard
                            .IsA<IKeyboardDevice>();
 
             Keyboard = Provider.IsA<IKeyboardService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DefineLayoutHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DefineLayoutHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.Keyboard
         private IKeyboardDevice Device { get => Provider.Device.IsA<IKeyboardDevice>(); }
         private IServiceProvider Provider { get; }
         private IKeyboardService Keyboard { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

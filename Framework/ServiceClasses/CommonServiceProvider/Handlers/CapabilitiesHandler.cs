@@ -219,6 +219,34 @@ namespace XFS4IoTFramework.Common
                                                             select $"{interfaceName}.{cmd}");
                 }
             }
+            // VendorMode interface
+            if (Common.CommonCapabilities.VendorModeInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.VendorMode;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.VendorModeInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.VendorModeInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.VendorModeInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.VendorModeInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // VendorApplication interface
+            if (Common.CommonCapabilities.VendorApplicationInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.VendorApplication;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.VendorApplicationInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.VendorApplicationInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.VendorApplicationInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.VendorApplicationInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
 
             List<DeviceInformationClass> deviceInformation = null;
             if (Common.CommonCapabilities.DeviceInformation?.Count > 0)
@@ -986,6 +1014,112 @@ namespace XFS4IoTFramework.Common
                     Common.PrinterCapabilities.AutoRetractPeriod,
                     Common.PrinterCapabilities.RetractToTransport);
             }
+			
+			XFS4IoT.Auxiliaries.CapabilitiesClass auxiliaries = null;
+            if(Common.AuxiliariesCapabilities is not null)
+            {
+                auxiliaries = new(
+                    new(Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilities.OperatorSwitchEnum.Run),
+                        Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilities.OperatorSwitchEnum.Maintenance),
+                        Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilities.OperatorSwitchEnum.Supervisor)),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.TamperSensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.InternalTamperSensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.SeismicSensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.HeatSensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.ProximitySensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.AmbientLightSensor),
+                    new (Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilities.EnhancedAudioCapabilitiesEnum.Manual),
+                        Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilities.EnhancedAudioCapabilitiesEnum.Auto),
+                        Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilities.EnhancedAudioCapabilitiesEnum.SemiAuto),
+                        Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilities.EnhancedAudioCapabilitiesEnum.Bidirectional)),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.BootSwitchSensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.ConsumerDisplaySensor),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.OperatorCallButtonSensor),
+                    new(Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilities.HandsetSensorCapabilities.Manual),
+                        Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilities.HandsetSensorCapabilities.Auto),
+                        Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilities.HandsetSensorCapabilities.SemiAuto),
+                        Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilities.HandsetSensorCapabilities.Microphone)),
+                    new(Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilities.HeadsetMicrophoneSensorCapabilities.Manual),
+                        Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilities.HeadsetMicrophoneSensorCapabilities.Auto),
+                        Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilities.HeadsetMicrophoneSensorCapabilities.SemiAuto)),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.FasciaMicrophoneSensor),
+                    (Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilities.DoorType.Safe) is true ?
+                        new XFS4IoT.Auxiliaries.DoorCapsClass(Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Closed),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Open),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Locked),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false, false)),
+                    Common.AuxiliariesCapabilities.VandalShield == AuxiliariesCapabilities.VandalShieldCapabilities.NotAvailable ?
+                        new XFS4IoT.Auxiliaries.CapabilitiesClass.VandalShieldClass(Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Closed),
+                                                                                    Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Open),
+                                                                                    Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Locked),
+                                                                                    Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Service),
+                                                                                    Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Keyboard),
+                                                                                    Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.CapabilitiesClass.VandalShieldClass(false, false, false, false, false, false),
+                    (Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilities.DoorType.FrontCabinet) is true ?
+                        new XFS4IoT.Auxiliaries.DoorCapsClass(Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Closed),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Open),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Locked),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false, false)),
+                    (Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilities.DoorType.RearCabinet) is true ?
+                        new XFS4IoT.Auxiliaries.DoorCapsClass(Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Closed),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Open),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Locked),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false, false)),
+                    (Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilities.DoorType.LeftCabinet) is true ?
+                        new XFS4IoT.Auxiliaries.DoorCapsClass(Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Closed),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Open),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Locked),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false, false)),
+                    (Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilities.DoorType.RightCabinet) is true ?
+                        new XFS4IoT.Auxiliaries.DoorCapsClass(Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Closed),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Open),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Locked),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
+                                                              Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
+                        : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false)),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.OpenCloseIndicator),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.Audio),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.Heating),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.ConsumerDisplayBacklight),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.SignageDisplay),
+                    Common.AuxiliariesCapabilities.Volume,
+                        new(Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilities.UpsEnum.Low),
+                            Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilities.UpsEnum.Engaged),
+                            Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilities.UpsEnum.Powering),
+                            Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilities.UpsEnum.Recovered)),
+                    Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.AudibleAlarm),
+                        new(Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.HeadsetDetection),
+                            Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.ModeControllable)),
+                        new(Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.HeadsetDetection),
+                            Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.ModeControllable)), 
+                    Common.AuxiliariesCapabilities.MicrophoneVolume,
+                        new XFS4IoT.Auxiliaries.CapabilitiesClass.AutoStartupModeClass(Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilities.AutoStartupModes.Specific),
+                            Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilities.AutoStartupModes.Daily),
+                            Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilities.AutoStartupModes.Weekly))
+                    );
+            }
+
+            XFS4IoT.VendorApplication.CapabilitiesClass vendorApplication = null;
+            if (Common.VendorApplicationCapabilities is not null)
+            {
+                vendorApplication = new XFS4IoT.VendorApplication.CapabilitiesClass(
+                    new XFS4IoT.VendorApplication.CapabilitiesClass.SupportedAccessLevelsClass(
+                        Common.VendorApplicationCapabilities.SupportedAccessLevels.HasFlag(VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.Basic),
+                        Common.VendorApplicationCapabilities.SupportedAccessLevels.HasFlag(VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.Intermediate),
+                        Common.VendorApplicationCapabilities.SupportedAccessLevels.HasFlag(VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.Full),
+                        Common.VendorApplicationCapabilities.SupportedAccessLevels == VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.NotSupported
+                        )
+                    );
+            }
 
             return Task.FromResult(
                 new CapabilitiesCompletion.PayloadData(
@@ -1002,7 +1136,9 @@ namespace XFS4IoTFramework.Common
                     Keyboard: keyboard,
                     TextTerminal: textTerminal,
                     Lights: lights,
-                    Printer: printer)
+                    Printer: printer,
+					Auxiliaries: auxiliaries,
+                    VendorApplication: vendorApplication)
                 );
         }
     }

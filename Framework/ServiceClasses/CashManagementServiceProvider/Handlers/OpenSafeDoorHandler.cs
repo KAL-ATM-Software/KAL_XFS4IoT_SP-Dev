@@ -14,6 +14,7 @@ using XFS4IoTServer;
 using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.Completions;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -21,13 +22,13 @@ namespace XFS4IoTFramework.CashManagement
     {
         private async Task<OpenSafeDoorCompletion.PayloadData> HandleOpenSafeDoor(IOpenSafeDoorEvents events, OpenSafeDoorCommand openSafeDoor, CancellationToken cancel)
         {
-            if (CashManagement.CashManagementStatus.SafeDoor == Common.CashManagementStatusClass.SafeDoorEnum.NotSupported)
+            if (Common.CashManagementStatus.SafeDoor == CashManagementStatusClass.SafeDoorEnum.NotSupported)
             {
                 return new OpenSafeDoorCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"OpenSafeDoor command received when the SP reported SafeDoor status {CashManagement.CashManagementStatus.SafeDoor}");
+                                                              $"OpenSafeDoor command received when the SP reported SafeDoor status {Common.CashManagementStatus.SafeDoor}");
             }
 
-            if (CashManagement.CashManagementStatus.SafeDoor == Common.CashManagementStatusClass.SafeDoorEnum.Open)
+            if (Common.CashManagementStatus.SafeDoor == CashManagementStatusClass.SafeDoorEnum.Open)
             {
                 return new OpenSafeDoorCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                               $"The safe door is already opened.");

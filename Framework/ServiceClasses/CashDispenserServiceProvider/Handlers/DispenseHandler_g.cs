@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.CashDispenser
                            .IsA<ICashDispenserDevice>();
 
             CashDispenser = Provider.IsA<ICashDispenserService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(DispenseHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(DispenseHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.CashDispenser
         private ICashDispenserDevice Device { get => Provider.Device.IsA<ICashDispenserDevice>(); }
         private IServiceProvider Provider { get; }
         private ICashDispenserService CashDispenser { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -54,9 +55,21 @@ namespace XFS4IoTServer
             // Create all the send tasks at once so that we can send in parallel. 
             var sendTasks = from connection in EndPoint.Connections
                             select connection.SendMessageAsync(payload);
-            await Task.WhenAll(sendTasks.ToArray());
+            await Task.WhenAll(sendTasks);
 
             logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event");
+        }
+
+        public async Task BroadcastEvent(IEnumerable<IConnection> connections, object payload)
+        {
+            logger.Log(nameof(ServiceProvider), $"Broadcasting unsolicited event to specified connections");
+
+            var sendTasks = from connection in EndPoint.Connections
+                            where connections.Contains(connection)
+                            select connection.SendMessageAsync(payload);
+            await Task.WhenAll(sendTasks);
+
+            logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event to specified connections");
         }
     }
 }

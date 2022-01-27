@@ -31,17 +31,17 @@ namespace XFS4IoTFramework.CardReader
                 }
                 
                 if (data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1 &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1) ||
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1) ||
                     data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track2 &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2) ||
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2) ||
                     data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3 &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3) ||
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3) ||
                     data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1Front &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front) ||
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front) ||
                     data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1JIS &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS) ||
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS) ||
                     data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3JIS &&
-                    !CardReader.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS))
+                    !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                   $"Specified destination is not supported. {data.Destination}");
@@ -50,11 +50,11 @@ namespace XFS4IoTFramework.CardReader
                 if (data.WriteMethod is not null)
                 {
                     if (data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Auto &&
-                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto) ||
+                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto) ||
                         data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Loco &&
-                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco) ||
+                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco) ||
                         data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Hico &&
-                        !CardReader.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
+                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
                     {
                         return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                       $"Specified write methods is not supported. {data.WriteMethod}");
@@ -108,9 +108,9 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader before writing data.
-            if (CardReader.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Motor &&
-                (CardReader.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.Present &&
-                 CardReader.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.NotSupported))
+            if (Common.CardReaderCapabilities.Type == CardReaderCapabilitiesClass.DeviceTypeEnum.Motor &&
+                (Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.Present &&
+                 Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.NotSupported))
             {
                 return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.HardwareError,
                                                               "Accept operation is completed successfully, but the media is not present.",

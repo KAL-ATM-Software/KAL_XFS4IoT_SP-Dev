@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.CashManagement
             else
             {
                 if (!string.IsNullOrEmpty(reset.Payload.Unit) &&
-                    !CashManagement.CashUnits.ContainsKey(reset.Payload.Unit))
+                    !Storage.CashUnits.ContainsKey(reset.Payload.Unit))
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Specified CashUnit location is unknown. {reset.Payload.Unit}");
@@ -73,7 +73,7 @@ namespace XFS4IoTFramework.CashManagement
                             };
 
                             if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                                !CashManagement.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
+                                !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                             {
                                 return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                        $"Specified unsupported retract area. {retractArea}",
@@ -107,7 +107,7 @@ namespace XFS4IoTFramework.CashManagement
                         };
 
                         if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                            !CashManagement.CashManagementCapabilities.Positions.HasFlag(position))
+                            !Common.CashManagementCapabilities.Positions.HasFlag(position))
                         {
                             return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    $"Specified unsupported output position. {position}");
@@ -126,11 +126,13 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            await CashManagement.UpdateCashAccounting(result.MovementResult);
+            await Storage.UpdateCashAccounting(result.MovementResult);
 
             return new ResetCompletion.PayloadData(result.CompletionCode,
                                                    result.ErrorDescription,
                                                    result.ErrorCode);
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

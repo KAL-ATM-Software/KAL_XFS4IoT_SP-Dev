@@ -25,11 +25,11 @@ namespace XFS4IoTFramework.CardReader
 
             // check capability
             if (chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Cold &&
-                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold) ||
+                !Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold) ||
                 chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Warm &&
-                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm) ||
+                !Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm) ||
                 chipPower.Payload.ChipPower == ChipPowerCommand.PayloadData.ChipPowerEnum.Off &&
-                !CardReader.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off))
+                !Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off))
             {
                 return new ChipPowerCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Supplied chip power action supported. {chipPower.Payload.ChipPower}");

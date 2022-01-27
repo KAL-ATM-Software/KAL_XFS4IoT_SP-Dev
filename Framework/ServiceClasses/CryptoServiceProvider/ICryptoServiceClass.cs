@@ -10,7 +10,7 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
-    public interface ICryptoService : IKeyManagementService, ICommonService
+    public interface ICryptoService
     {
     }
 

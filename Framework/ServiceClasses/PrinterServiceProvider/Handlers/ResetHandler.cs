@@ -25,11 +25,11 @@ namespace XFS4IoTFramework.Printer
             if (reset.Payload.MediaControl is not null)
             {
                 if ((reset.Payload.MediaControl == ResetCommand.PayloadData.MediaControlEnum.Eject &&
-                    !Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject)) ||
+                    !Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject)) ||
                     (reset.Payload.MediaControl == ResetCommand.PayloadData.MediaControlEnum.Retract &&
-                    !Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract)) ||
+                    !Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract)) ||
                     (reset.Payload.MediaControl == ResetCommand.PayloadData.MediaControlEnum.Expel &&
-                    !Printer.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel)))
+                    !Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel)))
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Specified media control is not supported by the device.{reset.Payload.MediaControl}");
@@ -37,7 +37,7 @@ namespace XFS4IoTFramework.Printer
 
                 if (reset.Payload.MediaControl == ResetCommand.PayloadData.MediaControlEnum.Retract &&
                     reset.Payload.RetractBinNumber is not null &&
-                    reset.Payload.RetractBinNumber > Printer.PrinterCapabilities.RetractBins)
+                    reset.Payload.RetractBinNumber > Common.PrinterCapabilities.RetractBins)
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Specified an invalid retract bin number.{reset.Payload.RetractBinNumber}");

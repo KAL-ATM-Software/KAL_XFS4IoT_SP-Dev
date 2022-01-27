@@ -18,13 +18,15 @@ namespace XFS4IoTServer
     public partial class PrinterServiceClass
     {
         public PrinterServiceClass(IServiceProvider ServiceProvider,
-                                   ICommonService CommonService,
                                    ILogger logger,
                                    IPersistentData PersistentData)
-            : this(ServiceProvider, logger)
         {
-            CommonService.IsNotNull($"Unexpected parameter set for common service in the " + nameof(PrinterServiceClass));
-            this.CommonService = CommonService.IsA<ICommonService>($"Invalid interface parameter specified for common service. " + nameof(PrinterServiceClass));
+
+            this.ServiceProvider = ServiceProvider.IsNotNull();
+            Logger = logger;
+            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(PrinterServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IPrinterDevice>();
+
+            CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(PrinterServiceClass)}");
 
             this.PersistentData = PersistentData;
             
@@ -44,56 +46,10 @@ namespace XFS4IoTServer
             GetStatus();
         }
 
-        #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-        public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
-
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
-
-        #endregion
-
-        #region Common Service
         /// <summary>
         /// Common service interface
         /// </summary>
         public ICommonService CommonService { get; init; }
-
-        /// <summary>
-        /// Stores Common interface capabilites internally
-        /// </summary>
-        public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
-
-        /// <summary>
-        /// Common Status
-        /// </summary>
-        public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
-
-        #endregion
-
-        #region Printer Service
-        /// <summary>
-        /// Stores Printer interface capabilites internally
-        /// </summary>
-        public PrinterCapabilitiesClass PrinterCapabilities { get => CommonService.PrinterCapabilities; set => CommonService.PrinterCapabilities = value; }
-
-        /// <summary>
-        /// Stores Printer interface status internally
-        /// </summary>
-        public PrinterStatusClass PrinterStatus { get => CommonService.PrinterStatus; set => CommonService.PrinterStatus = value; }
-
-        #endregion
 
         /// <summary>
         /// Persistent data storage access
@@ -103,19 +59,19 @@ namespace XFS4IoTServer
         private void GetCapabilities()
         {
             Logger.Log(Constants.DeviceClass, "PrinterrDev.PrinterCapabilities");
-            PrinterCapabilities = Device.PrinterCapabilities;
+            CommonService.PrinterCapabilities = Device.PrinterCapabilities;
             Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterCapabilities=");
 
-            PrinterCapabilities.IsNotNull($"The device class set PrinterCapabilities property to null. The device class must report device capabilities.");
+            CommonService.PrinterCapabilities.IsNotNull($"The device class set PrinterCapabilities property to null. The device class must report device capabilities.");
         }
 
         private void GetStatus()
         {
             Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterStatus");
-            PrinterStatus = Device.PrinterStatus;
+            CommonService.PrinterStatus = Device.PrinterStatus;
             Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterStatus=");
 
-            PrinterStatus.IsNotNull($"The device class set PrinterStatus property to null. The device class must report device status.");
+            CommonService.PrinterStatus.IsNotNull($"The device class set PrinterStatus property to null. The device class must report device status.");
         }
 
         /// <summary>

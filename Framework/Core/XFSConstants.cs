@@ -54,7 +54,9 @@ namespace XFS4IoT
             KeyManagement, 
             Storage, 
             Lights,
-            Auxiliaries
+            Auxiliaries,
+            VendorApplication,
+            VendorMode,
         }
 
         /// <summary>

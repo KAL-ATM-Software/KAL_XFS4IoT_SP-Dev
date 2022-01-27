@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT VendorMode interface.
- * VendorModeServiceProvider.cs.cs uses automatically generated parts.
+ * VendorModeServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,12 +17,7 @@ namespace XFS4IoTServer
 {
     public partial class VendorModeServiceClass : IVendorModeServiceClass
     {
-        public VendorModeServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(VendorModeServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IVendorModeDevice>();
-        }
+
         public async Task ExitModeRequestEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.ExitModeRequestEvent());
 
@@ -35,8 +30,8 @@ namespace XFS4IoTServer
         public async Task EnterModeRequestEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.EnterModeRequestEvent());
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private IVendorModeDevice Device { get => ServiceProvider.Device.IsA<IVendorModeDevice>(); }
     }
 }

@@ -37,7 +37,7 @@ namespace TextTerminalProvider
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
-            TextTerminal = new TextTerminalServiceClass(this, CommonService, logger);
+            TextTerminal = new TextTerminalServiceClass(this, logger);
         }
 
         private readonly TextTerminalServiceClass TextTerminal;
@@ -77,6 +77,17 @@ namespace TextTerminalProvider
         /// </summary>
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
+        /// <summary>
+        /// Stores TexTerminal interface capabilites internally
+        /// </summary>
+        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
+
+        /// <summary>
+        /// Stores TexTerminal interface status internally
+        /// </summary>
+        public TextTerminalStatusClass TextTerminalStatus { get => CommonService.TextTerminalStatus; set => CommonService.TextTerminalStatus = value; }
+
+
         #endregion
 
         public ITextTerminalService.KeyDetails SupportedKeys { get => TextTerminal.SupportedKeys; set => TextTerminal.SupportedKeys = value; }
@@ -84,6 +95,5 @@ namespace TextTerminalProvider
 
         public void UpdateKeyDetails() => TextTerminal.UpdateKeyDetails();
 
-        public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
     }
 }

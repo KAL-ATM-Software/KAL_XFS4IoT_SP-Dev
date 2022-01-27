@@ -16,6 +16,7 @@ using XFS4IoTServer;
 using XFS4IoT.CashDispenser.Commands;
 using XFS4IoT.CashDispenser.Completions;
 using XFS4IoT.Completions;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -58,7 +59,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                 "No counts specified to dispense items from the cash units."));
                 }
 
-                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(CashDispenser.CashUnits);
+                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(Storage.CashUnits);
                 switch (Result)
                 {
                     case Denominate.DispensableResultEnum.Good:
@@ -117,7 +118,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                 $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well."));
                 }
 
-                denomToDispense.Denomination = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
+                denomToDispense.Denomination = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
 
                 if (denomToDispense.Values is null)
                 {
@@ -137,7 +138,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                 $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well."));
                 }
 
-                Denomination mixDenom = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, CashDispenser.CashUnits, CashDispenser.CashDispenserCapabilities.MaxDispenseItems);
+                Denomination mixDenom = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
                 if (mixDenom.Values != denomToDispense.Values)
                 {
                     return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -157,5 +158,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                         denomToDispense.Values,
                                                                         denominate.Payload.Denomination.CashBox));
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

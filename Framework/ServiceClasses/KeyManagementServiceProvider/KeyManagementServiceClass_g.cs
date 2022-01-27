@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT KeyManagement interface.
- * KeyManagementServiceProvider.cs.cs uses automatically generated parts.
+ * KeyManagementServiceClass_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Collections.Generic;
@@ -17,12 +17,7 @@ namespace XFS4IoTServer
 {
     public partial class KeyManagementServiceClass : IKeyManagementServiceClass
     {
-        public KeyManagementServiceClass(IServiceProvider ServiceProvider, ILogger logger)
-        {
-            this.ServiceProvider = ServiceProvider.IsNotNull();
-            this.Logger = logger;
-            this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(KeyManagementServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IKeyManagementDevice>();
-        }
+
         public async Task InitializedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.KeyManagement.Events.InitializedEvent());
 
@@ -32,8 +27,8 @@ namespace XFS4IoTServer
         public async Task CertificateChangeEvent(XFS4IoT.KeyManagement.Events.CertificateChangeEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.KeyManagement.Events.CertificateChangeEvent(Payload));
 
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        private IServiceProvider ServiceProvider { get; init; }
+        private ILogger Logger { get; init; }
         private IKeyManagementDevice Device { get => ServiceProvider.Device.IsA<IKeyManagementDevice>(); }
     }
 }

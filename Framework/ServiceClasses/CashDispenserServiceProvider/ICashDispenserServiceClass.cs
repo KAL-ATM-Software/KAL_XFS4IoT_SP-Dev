@@ -17,7 +17,7 @@ using XFS4IoTFramework.CashManagement;
 
 namespace XFS4IoTFramework.CashDispenser
 {
-    public interface ICashDispenserService : ICashManagementService, ICommonService
+    public interface ICashDispenserService
     {
         /// <summary>
         /// Adding mix algorithm to an internal object held in the framework

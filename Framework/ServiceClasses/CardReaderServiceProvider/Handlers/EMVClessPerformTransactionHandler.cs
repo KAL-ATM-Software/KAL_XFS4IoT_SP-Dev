@@ -20,10 +20,10 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<EMVClessPerformTransactionCompletion.PayloadData> HandleEMVClessPerformTransaction(IEMVClessPerformTransactionEvents events, EMVClessPerformTransactionCommand eMVClessPerformTransaction, CancellationToken cancel)
         {
-            if (CardReader.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
+            if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
             {
                 return new EMVClessPerformTransactionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                            $"This device is not an intelligent contactless CardReader. {CardReader.CardReaderCapabilities.Type}");
+                                                                            $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessPerformTransactionAsync()");

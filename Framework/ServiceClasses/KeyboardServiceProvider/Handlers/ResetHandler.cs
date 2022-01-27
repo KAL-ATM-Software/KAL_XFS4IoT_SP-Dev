@@ -28,12 +28,14 @@ namespace XFS4IoTFramework.Keyboard
 
             if (result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
             {
-                SecureKeyEntryStatusClass status = Keyboard.GetSecureKeyEntryStatus();
+                SecureKeyEntryStatusClass status = KeyManagement.GetSecureKeyEntryStatus();
                 status.ResetSecureKeyBuffered();
             }
 
             return new ResetCompletion.PayloadData(result.CompletionCode,
                                                    result.ErrorDescription);
         }
+
+        private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }
     }
 }

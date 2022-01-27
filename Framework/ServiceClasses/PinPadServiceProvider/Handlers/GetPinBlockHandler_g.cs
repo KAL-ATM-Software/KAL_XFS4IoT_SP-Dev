@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoTFramework.Common;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
 using IServiceProvider = XFS4IoTServer.IServiceProvider;
@@ -31,6 +32,7 @@ namespace XFS4IoTFramework.PinPad
                            .IsA<IPinPadDevice>();
 
             PinPad = Provider.IsA<IPinPadService>();
+            Common = Provider.IsA<ICommonService>();
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(GetPinBlockHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(GetPinBlockHandler)} constructor. {nameof(Connection)}");
@@ -70,6 +72,7 @@ namespace XFS4IoTFramework.PinPad
         private IPinPadDevice Device { get => Provider.Device.IsA<IPinPadDevice>(); }
         private IServiceProvider Provider { get; }
         private IPinPadService PinPad { get; }
+        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
 

@@ -3,18 +3,30 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT VendorApplication interface.
- * VendorApplicationServiceClass.cs.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System.Threading.Tasks;
 
 using XFS4IoTFramework.VendorApplication;
-using XFS4IoT.VendorApplication.Events;
+using XFS4IoTFramework.Common;
 
 namespace XFS4IoTServer
 {
-    public interface IVendorApplicationServiceClass : IVendorApplicationUnsolicitedEvents
+    public interface IVendorApplicationService
+    {
+        /// <summary>
+        /// This event is used to indicate the vendor dependent application has exited, 
+        /// allowing an application the opportunity to exit Vendor Mode.
+        /// </summary>
+        Task VendorAppExitedEvent();
+
+        /// <summary>
+        /// This event is used to indicate that the required interface has changed. 
+        /// </summary>
+        Task InterfaceChangedEvent(ActiveInterfaceEnum ActiveInterface);
+    }
+
+    public interface IVendorApplicationServiceClass : IVendorApplicationService, IVendorApplicationUnsolicitedEvents
     {
     }
 }

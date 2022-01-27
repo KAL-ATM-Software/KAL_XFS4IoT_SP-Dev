@@ -19,10 +19,10 @@ namespace XFS4IoTFramework.KeyManagement
     {
         private async Task<StartKeyExchangeCompletion.PayloadData> HandleStartKeyExchange(IStartKeyExchangeEvents events, StartKeyExchangeCommand startKeyExchange, CancellationToken cancel)
         {
-            if (!KeyManagement.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RandomNumber))
+            if (!Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RandomNumber))
             {
                 bool certOptionOK = false;
-                foreach (var loadOption in KeyManagement.KeyManagementCapabilities.LoadCertificationOptions)
+                foreach (var loadOption in Common.KeyManagementCapabilities.LoadCertificationOptions)
                 {
                     if (loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHost) ||
                         loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA) ||

@@ -54,7 +54,7 @@ namespace XFS4IoTFramework.Keyboard
                 keys.Add(new ActiveKeyCalss(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }
 
-            Keyboard.GetSecureKeyEntryStatus().ResetSecureKeyBuffered();
+            KeyManagement.GetSecureKeyEntryStatus().ResetSecureKeyBuffered();
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.SecureKeyEntry()");
 
@@ -84,7 +84,7 @@ namespace XFS4IoTFramework.Keyboard
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                Keyboard.GetSecureKeyEntryStatus().SecureKeyBuffered();
+                KeyManagement.GetSecureKeyEntryStatus().SecureKeyBuffered();
             }
 
             return new SecureKeyEntryCompletion.PayloadData(result.CompletionCode,
@@ -107,5 +107,7 @@ namespace XFS4IoTFramework.Keyboard
                                                             },
                                                             result.KeyCheckValue);
         }
+
+        private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }
     }
 }

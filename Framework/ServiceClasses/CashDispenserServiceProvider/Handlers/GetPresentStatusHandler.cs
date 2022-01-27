@@ -47,7 +47,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                   $"Specified invalid position {position}"));
             }
 
-            if (!CashDispenser.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+            if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
                 return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                                   $"Specified unsupported position {position}",

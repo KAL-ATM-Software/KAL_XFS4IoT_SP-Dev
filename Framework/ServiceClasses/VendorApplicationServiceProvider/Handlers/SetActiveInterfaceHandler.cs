@@ -3,16 +3,12 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT VendorApplication interface.
- * SetActiveInterfaceHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
 
 using System;
 using System.Threading.Tasks;
 using System.Threading;
-using XFS4IoT;
-using XFS4IoTServer;
+using XFS4IoT.Completions;
 using XFS4IoT.VendorApplication.Commands;
 using XFS4IoT.VendorApplication.Completions;
 
@@ -21,16 +17,39 @@ namespace XFS4IoTFramework.VendorApplication
     public partial class SetActiveInterfaceHandler
     {
 
-        private Task<SetActiveInterfaceCompletion.PayloadData> HandleSetActiveInterface(ISetActiveInterfaceEvents events, SetActiveInterfaceCommand setActiveInterface, CancellationToken cancel)
+        private async Task<SetActiveInterfaceCompletion.PayloadData> HandleSetActiveInterface(ISetActiveInterfaceEvents events, SetActiveInterfaceCommand setActiveInterface, CancellationToken cancel)
         {
-            //ToDo: Implement HandleSetActiveInterface for VendorApplication.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleSetActiveInterface for VendorApplication is not implemented in SetActiveInterfaceHandler.cs");
-            #else
-                #error HandleSetActiveInterface for VendorApplication is not implemented in SetActiveInterfaceHandler.cs
-            #endif
-        }
+            // Supported active interfaces in capabilites are missing in the specification
 
+            ActiveInterfaceEnum requestedInterface = setActiveInterface.Payload.ActiveInterface switch
+            {
+                SetActiveInterfaceCommand.PayloadData.ActiveInterfaceEnum.Consumer => ActiveInterfaceEnum.Consumer,
+                _ => ActiveInterfaceEnum.Operator,
+            };
+
+            Logger.Log(Constants.DeviceClass, "PrinterDev.GetActiveInterface()");
+            var current = Device.GetActiveInterface();
+
+            Logger.Log(Constants.DeviceClass, $"PrinterDev.GetActiveInterface() -> {current.CompletionCode}");
+
+            if (current.ActiveInterface == requestedInterface)
+            {
+                // No need to change active interface
+                return new SetActiveInterfaceCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+            }
+
+            Logger.Log(Constants.DeviceClass, "PrinterDev.SetActiveInterface()");
+            var result = await Device.SetActiveInterface(new SetActiveInterfaceRequest(requestedInterface),
+                                                         cancel);
+            Logger.Log(Constants.DeviceClass, $"PrinterDev.SetActiveInterface() -> {result.CompletionCode}");
+
+            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            {
+                await VendorApplication.InterfaceChangedEvent(requestedInterface);
+            }
+
+            return new SetActiveInterfaceCompletion.PayloadData(result.CompletionCode,
+                                                                result.ErrorDescription);
+        }
     }
 }
