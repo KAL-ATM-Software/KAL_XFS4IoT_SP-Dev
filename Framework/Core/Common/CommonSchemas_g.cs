@@ -205,7 +205,8 @@ namespace XFS4IoT.Common
             Auxiliaries,
             VendorMode,
             VendorApplication,
-            Storage
+            Storage,
+            Biometric
         }
 
         /// <summary>
@@ -228,6 +229,7 @@ namespace XFS4IoT.Common
         /// * ```VendorMode``` - VendorMode interface.
         /// * ```VendorApplication``` - VendorApplication interface.
         /// * ```Storage``` - Storage interface
+        /// * ```Biometric``` - Biometric interface
         /// </summary>
         [DataMember(Name = "name")]
         public NameEnum? Name { get; init; }

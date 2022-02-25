@@ -947,6 +947,38 @@ namespace XFS4IoTFramework.Common
                                                                 });
             }
 
+            XFS4IoT.BarcodeReader.StatusClass barcodeReader = null;
+            if (Common.BarcodeReaderStatus is not null)
+            {
+                barcodeReader = new XFS4IoT.BarcodeReader.StatusClass(Common.BarcodeReaderStatus.ScannerStatus switch
+                {
+                    BarcodeReaderStatusClass.ScannerStatusEnum.Inoperative => XFS4IoT.BarcodeReader.StatusClass.ScannerEnum.Inoperative,
+                    BarcodeReaderStatusClass.ScannerStatusEnum.Off => XFS4IoT.BarcodeReader.StatusClass.ScannerEnum.Off,
+                    BarcodeReaderStatusClass.ScannerStatusEnum.On => XFS4IoT.BarcodeReader.StatusClass.ScannerEnum.On,
+                    _ => XFS4IoT.BarcodeReader.StatusClass.ScannerEnum.Unknown,
+                });
+            }
+
+            XFS4IoT.Biometric.StatusClass biometric = null;
+            if(Common.BiometricStatus is not null)
+            {
+                biometric = new XFS4IoT.Biometric.StatusClass(Common.BiometricStatus.Subject switch
+                {
+                    BiometricStatusClass.SubjectStatusEnum.NotSupported => XFS4IoT.Biometric.StatusClass.SubjectEnum.NotSupported,
+                    BiometricStatusClass.SubjectStatusEnum.NotPresent => XFS4IoT.Biometric.StatusClass.SubjectEnum.NotPresent,
+                    BiometricStatusClass.SubjectStatusEnum.Present => XFS4IoT.Biometric.StatusClass.SubjectEnum.Present,
+                    _ => XFS4IoT.Biometric.StatusClass.SubjectEnum.Unknown,
+                },
+                Common.BiometricStatus.Capture,
+                Common.BiometricStatus.DataPersistence switch
+                {
+                    BiometricCapabilitiesClass.PersistenceModesEnum.Persist => XFS4IoT.Biometric.StatusClass.DataPersistenceEnum.Persist,
+                    BiometricCapabilitiesClass.PersistenceModesEnum.Clear => XFS4IoT.Biometric.StatusClass.DataPersistenceEnum.Clear,
+                    _ => throw Contracts.Fail<NotImplementedException>($"Unexpected value for Common.BiometricStatus.DataPersistence. {Common.BiometricStatus.DataPersistence}")
+                },
+                Common.BiometricStatus.RemainingStorage);
+            }
+
             return Task.FromResult(
                 new StatusCompletion.PayloadData(
                     MessagePayload.CompletionCodeEnum.Success,
@@ -962,7 +994,9 @@ namespace XFS4IoTFramework.Common
                     Lights: lights,
 					Auxiliaries: auxiliaries,
                     VendorApplication: vendorApplication,
-                    VendorMode: vendorMode)
+                    VendorMode: vendorMode,
+                    BarcodeReader: barcodeReader,
+                    Biometric: biometric)
                 );
         }
     }

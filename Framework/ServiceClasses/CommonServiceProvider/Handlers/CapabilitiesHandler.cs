@@ -247,6 +247,34 @@ namespace XFS4IoTFramework.Common
                                                             select $"{interfaceName}.{cmd}");
                 }
             }
+            // BarcodeReader interface
+            if (Common.CommonCapabilities.BarcodeReaderInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.BarcodeReader;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.BarcodeReaderInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.BarcodeReaderInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.BarcodeReaderInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.BarcodeReaderInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
+            // Biometric interface
+            if (Common.CommonCapabilities.BiometricInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.Biometric;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.BiometricInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.BiometricInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.BiometricInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.BiometricInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
 
             List<DeviceInformationClass> deviceInformation = null;
             if (Common.CommonCapabilities.DeviceInformation?.Count > 0)
@@ -1121,6 +1149,143 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
+            XFS4IoT.BarcodeReader.CapabilitiesClass barcodeReader = null;
+            if (Common.BarcodeReaderCapabilities is not null)
+            {
+                barcodeReader = new XFS4IoT.BarcodeReader.CapabilitiesClass(
+                    Common.BarcodeReaderCapabilities.CanFilterSymbologies,
+                    new XFS4IoT.BarcodeReader.SymbologiesPropertiesClass(
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN128),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_2),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_2),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JAN13),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_2),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_2),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_2),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODABAR),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ITF),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE11),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE39),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE49),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE93),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE128),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MSI),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PLESSEY),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5_IATA),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PDF_417),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MICROPDF_417),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.DataMatrix),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MAXICODE),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODEONE),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CHANNELCODE),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_ORIGINAL),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_AIM),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_EXPANDED),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_RESTRICTED),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeA),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeB),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeC),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeA),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeB),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TriopticCode39),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CodablockF),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.Code16K),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.QRCode),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AztecCodes),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UKPost),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPlanet),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPostnet),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CanadianPost), 
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.NetherlandsPost),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AustralianPost),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JapanesePost),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ChinesePost),
+                        Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.KoreanPost)
+                        )
+                    );
+            }
+
+            XFS4IoT.Biometric.CapabilitiesClass biometric = null;
+            if(Common.BiometricCapabilities is not null)
+            {
+                biometric = new XFS4IoT.Biometric.CapabilitiesClass(
+                    new XFS4IoT.Biometric.CapabilitiesClass.TypeClass(
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.FacialFeatures),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.Voice),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.FingerPrint),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.FingerVein),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.Iris),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.Retina),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.HandGeometry),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.ThermalFace),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.ThermalHand),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.PalmVein),
+                        Common.BiometricCapabilities.Type.HasFlag(BiometricCapabilitiesClass.DeviceTypeEnum.Signature)
+                        ),
+                    Common.BiometricCapabilities.MaxCaptures,
+                    Common.BiometricCapabilities.TemplateStorageSpace,
+                    new XFS4IoT.Biometric.CapabilitiesClass.DataFormatsClass(
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.IsoFid),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.IsoFmd),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.AnsiFid),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.AnsiFmd),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.Qso),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.Wso),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedRaw1),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedTemplate1),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedRaw2),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedTemplate2),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedRaw3),
+                        Common.BiometricCapabilities.DataFormats.HasFlag(BiometricCapabilitiesClass.FormatEnum.ReservedTemplate3)
+                        ),
+                    new XFS4IoT.Biometric.CapabilitiesClass.EncryptionalAlgorithmClass(
+                        Common.BiometricCapabilities.EncryptionAlgorithms.HasFlag(BiometricCapabilitiesClass.AlgorithmEnum.Ecb),
+                        Common.BiometricCapabilities.EncryptionAlgorithms.HasFlag(BiometricCapabilitiesClass.AlgorithmEnum.Cbc),
+                        Common.BiometricCapabilities.EncryptionAlgorithms.HasFlag(BiometricCapabilitiesClass.AlgorithmEnum.Cfb),
+                        Common.BiometricCapabilities.EncryptionAlgorithms.HasFlag(BiometricCapabilitiesClass.AlgorithmEnum.Rsa)
+                        ),
+                    new XFS4IoT.Biometric.CapabilitiesClass.StorageClass(
+                        Common.BiometricCapabilities.Storage.HasFlag(BiometricCapabilitiesClass.StorageEnum.Secure),
+                        Common.BiometricCapabilities.Storage.HasFlag(BiometricCapabilitiesClass.StorageEnum.Clear)
+                        ),
+                    new XFS4IoT.Biometric.CapabilitiesClass.PersistenceModesClass(
+                        Common.BiometricCapabilities.PersistenceModes.HasFlag(BiometricCapabilitiesClass.PersistenceModesEnum.Persist),
+                        Common.BiometricCapabilities.PersistenceModes.HasFlag(BiometricCapabilitiesClass.PersistenceModesEnum.Clear)
+                        ),
+                    Common.BiometricCapabilities.MatchSupported switch
+                    {
+                        BiometricCapabilitiesClass.MatchModesEnum.StoredMatch => XFS4IoT.Biometric.CapabilitiesClass.MatchSupportedEnum.StoredMatch,
+                        BiometricCapabilitiesClass.MatchModesEnum.CombinedMatch => XFS4IoT.Biometric.CapabilitiesClass.MatchSupportedEnum.CombinedMatch,
+                        _ => null
+                    },
+                    new XFS4IoT.Biometric.CapabilitiesClass.ScanModesClass(
+                        Common.BiometricCapabilities.ScanModes.HasFlag(BiometricCapabilitiesClass.ScanModesEnum.Scan),
+                        Common.BiometricCapabilities.ScanModes.HasFlag(BiometricCapabilitiesClass.ScanModesEnum.Match)
+                        ),
+                    new XFS4IoT.Biometric.CapabilitiesClass.CompareModesClass(
+                        Common.BiometricCapabilities.CompareModes.HasFlag(BiometricCapabilitiesClass.CompareModesEnum.Verify),
+                        Common.BiometricCapabilities.CompareModes.HasFlag(BiometricCapabilitiesClass.CompareModesEnum.Identity)
+                        ),
+                    new XFS4IoT.Biometric.CapabilitiesClass.ClearDataClass(
+                        Common.BiometricCapabilities.ClearData.HasFlag(BiometricCapabilitiesClass.ClearModesEnum.ScannedData),
+                        Common.BiometricCapabilities.ClearData.HasFlag(BiometricCapabilitiesClass.ClearModesEnum.ImportedData),
+                        Common.BiometricCapabilities.ClearData.HasFlag(BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData)
+                        )
+                    );
+            }
+
             return Task.FromResult(
                 new CapabilitiesCompletion.PayloadData(
                     MessagePayload.CompletionCodeEnum.Success,
@@ -1138,7 +1303,9 @@ namespace XFS4IoTFramework.Common
                     Lights: lights,
                     Printer: printer,
 					Auxiliaries: auxiliaries,
-                    VendorApplication: vendorApplication)
+                    VendorApplication: vendorApplication,
+                    BarcodeReader: barcodeReader,
+                    Biometric: biometric)
                 );
         }
     }

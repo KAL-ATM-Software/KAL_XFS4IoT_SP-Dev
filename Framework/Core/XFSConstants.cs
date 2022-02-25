@@ -57,6 +57,10 @@ namespace XFS4IoT
             Auxiliaries,
             VendorApplication,
             VendorMode,
+            BarcodeReader,
+            Biometric,
+            Camera,
+            CashAcceptor,
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    /// The classes used by the device interface for an Input/Output parameters
+    // The classes used by the device interface for an Input/Output parameters
 
     public enum AutoStartupTimeModeEnum
     {

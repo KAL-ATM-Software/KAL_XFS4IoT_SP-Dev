@@ -80,6 +80,26 @@ namespace XFS4IoTFramework.Common
         VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get => null; set { } }
 
         /// <summary>
+        /// Stores BarcodeReader capabilites
+        /// </summary>
+        BarcodeReaderCapabilitiesClass BarcodeReaderCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Biometric capabilites
+        /// </summary>
+        BiometricCapabilitiesClass BiometricCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Camera capabilites
+        /// </summary>
+        CameraCapabilitiesClass CameraCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores CashAcceptor capabilites
+        /// </summary>
+        CashAcceptorCapabilitiesClass CashAcceptorCapabilities { get => null; set { } }
+
+        /// <summary>
         /// Stores Commons status
         /// </summary>
         CommonStatusClass CommonStatus { get; set; }
@@ -138,6 +158,26 @@ namespace XFS4IoTFramework.Common
         /// Stores vendor application status
         /// </summary>
         VendorApplicationStatusClass VendorApplicationStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores BarcodeReader status
+        /// </summary>
+        BarcodeReaderStatusClass BarcodeReaderStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores Biometric status
+        /// </summary>
+        BiometricStatusClass BiometricStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores Camera status
+        /// </summary>
+        CameraStatusClass CameraStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores CashAcceptor status
+        /// </summary>
+        CashAcceptorStatusClass CashAcceptorStatus { get => null; set { } }
 
         /// <summary>
         /// Status changed event

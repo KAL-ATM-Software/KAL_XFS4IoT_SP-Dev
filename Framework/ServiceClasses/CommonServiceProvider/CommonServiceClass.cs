@@ -94,6 +94,26 @@ namespace XFS4IoTServer
         /// </summary>
         public VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get; set; } = null;
 
+        /// <summary>
+        /// Stores BarcodeReader capabilites
+        /// </summary>
+        public BarcodeReaderCapabilitiesClass BarcodeReaderCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores Biometric capabilites
+        /// </summary>
+        public BiometricCapabilitiesClass BiometricCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores Camera capabilites
+        /// </summary>
+        public CameraCapabilitiesClass CameraCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores CashAcceptor capabilites
+        /// </summary>
+        public CashAcceptorCapabilitiesClass CashAcceptorCapabilities { get; set; } = null;
+
         #endregion
 
         #region Device Status
@@ -156,6 +176,26 @@ namespace XFS4IoTServer
         /// Stores vendor application status
         /// </summary>
         public VendorApplicationStatusClass VendorApplicationStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores BarcodeReader status
+        /// </summary>
+        public BarcodeReaderStatusClass BarcodeReaderStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores Biometric status
+        /// </summary>
+        public BiometricStatusClass BiometricStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores Camera status
+        /// </summary>
+        public CameraStatusClass CameraStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores CashAcceptor status
+        /// </summary>
+        public CashAcceptorStatusClass CashAcceptorStatus { get; set; } = null;
 
         #endregion
 

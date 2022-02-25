@@ -553,6 +553,69 @@ namespace XFS4IoTFramework.Common
             public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
+        public sealed class BarcodeReaderInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                Read,
+                Reset,
+            }
+
+            public enum EventEnum
+            {
+            }
+
+            public BarcodeReaderInterfaceClass(List<CommandEnum> Commands = null,
+                                               List<EventEnum> Events = null,
+                                               List<CommandEnum> AuthenticationRequired = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+                this.AuthenticationRequired = AuthenticationRequired;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
+            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
+
+        public sealed class BiometricInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                Clear,
+                GetStorageInfo,
+                Import,
+                Match,
+                Read,
+                Reset,
+                SetDataPersistence,
+                SetMatch,
+            }
+
+            public enum EventEnum
+            {
+                PresentSubjectEvent,
+                SubjectDetectedEvent,
+                RemoveSubjectEvent,
+                SubjectRemovedEvent,
+                DataClearedEvent,
+                OrientationEvent
+            }
+
+            public BiometricInterfaceClass(List<CommandEnum> Commands = null,
+                                          List<EventEnum> Events = null,
+                                          List<CommandEnum> AuthenticationRequired = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+                this.AuthenticationRequired = AuthenticationRequired;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
+            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
 
         public CommonCapabilitiesClass(CommonInterfaceClass CommonInterface,
                                        CardReaderInterfaceClass CardReaderInterface = null,
@@ -569,6 +632,8 @@ namespace XFS4IoTFramework.Common
                                        PrinterInterfaceClass PrinterInterface = null,
                                        VendorModeInterfaceClass VendorModeInterface = null,
                                        VendorApplicationInterfaceClass VendorApplicationInterface = null,
+                                       BarcodeReaderInterfaceClass BarcodeReaderInterface = null,
+                                       BiometricInterfaceClass BiometricInterface = null,
                                        List<DeviceInformationClass> DeviceInformation = null, 
                                        bool? PowerSaveControl = null, 
                                        bool? AntiFraudModule = null,
@@ -589,6 +654,8 @@ namespace XFS4IoTFramework.Common
             this.PrinterInterface = PrinterInterface;
             this.VendorModeInterface = VendorModeInterface;
             this.VendorApplicationInterface = VendorApplicationInterface;
+            this.BarcodeReaderInterface = BarcodeReaderInterface;
+            this.BiometricInterface = BiometricInterface;
             this.DeviceInformation = DeviceInformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
@@ -613,6 +680,8 @@ namespace XFS4IoTFramework.Common
         public PrinterInterfaceClass PrinterInterface { get; init; }
         public VendorModeInterfaceClass VendorModeInterface { get; init; }
         public VendorApplicationInterfaceClass VendorApplicationInterface { get; init; }
+        public BarcodeReaderInterfaceClass BarcodeReaderInterface { get; init; }
+        public BiometricInterfaceClass BiometricInterface { get; init; }
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
         /// element for each device.

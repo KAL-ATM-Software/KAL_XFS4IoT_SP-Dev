@@ -110,7 +110,7 @@ namespace XFS4IoTFramework.CardReader
             if (acceptCardResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success ||
                 dataTypes == ReadCardRequest.CardDataTypesEnum.NoDataRead)
             {
-                // Map to XFS erro code
+                // Map to XFS error code
                 ReadRawDataCompletion.PayloadData.ErrorCodeEnum? errorCode = acceptCardResult.ErrorCode switch
                 {
                     AcceptCardResult.ErrorCodeEnum.MediaJam => ReadRawDataCompletion.PayloadData.ErrorCodeEnum.MediaJam,
