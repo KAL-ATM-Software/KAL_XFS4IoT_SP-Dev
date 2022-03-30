@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -20,11 +20,43 @@ namespace XFS4IoTFramework.CashManagement
 
         Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status);
 
-        Task ItemsTakenEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches);
+        Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches);
 
-        Task ItemsInsertedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Postion);
+        Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Postion);
 
-        Task ItemsPresentedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches);
+        Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches);
+
+
+        /// <summary>
+        /// The framework maintains cash-in status
+        /// </summary>
+        CashInStatusClass CashInStatusManaged { get; init; }
+
+        /// <summary>
+        /// Store cash-in in status persistently
+        /// </summary>
+        void StoreCashInStatus();
+
+        /// <summary>
+        /// The last status of the most recent attempt to present or return items to the customer. 
+        /// </summary>
+        Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementPresentStatus> LastCashManagementPresentStatus { get; init; }
+
+        /// <summary>
+        /// Store present status persistently
+        /// </summary>
+        void StoreCashManagementPresentStatus();
+
+        /// <summary>
+        /// This list provides the functionality to blacklist notes and allows additional flexibility, for example to specify that notes can be taken out of circulation
+        /// by specifying them as unfit.Any items not returned in this list will be handled according to normal classification rules.
+        /// </summary>
+        ItemClassificationListClass ItemClassificationList { get; init; }
+
+        /// <summary>
+        /// Store classification list persistently
+        /// </summary>
+        void StoreItemClassificationList();
     }
 
     public interface ICashManagementServiceClass : ICashManagementService, ICashManagementUnsolicitedEvents

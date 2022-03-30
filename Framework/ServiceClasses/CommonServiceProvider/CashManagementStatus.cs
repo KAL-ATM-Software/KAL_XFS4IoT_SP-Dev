@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,6 +15,101 @@ namespace XFS4IoTFramework.Common
 {
     public sealed class CashManagementStatusClass
     {
+        public sealed class PositionStatusClass
+        {
+            public PositionStatusClass(ShutterEnum Shutter,
+                                       PositionStatusEnum PositionStatus,
+                                       TransportEnum Transport,
+                                       TransportStatusEnum TransportStatus)
+            {
+                this.Shutter = Shutter;
+                this.PositionStatus = PositionStatus;
+                this.Transport = Transport;
+                this.TransportStatus = TransportStatus;
+            }
+
+            public PositionStatusClass()
+            {
+                Shutter = ShutterEnum.Unknown;
+                PositionStatus = PositionStatusEnum.Unknown;
+                Transport = TransportEnum.Unknown;
+                TransportStatus = TransportStatusEnum.NotSupported;
+            }
+
+            /// <summary>
+            /// Supplies the state of the shutter. Following values are possible:
+            /// 
+            /// * ```closed``` - The shutter is operational and is closed.
+            /// * ```open``` - The shutter is operational and is open.
+            /// * ```jammed``` - The shutter is jammed and is not operational. The field jammedShutterPosition provides the positional state of the shutter.
+            /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
+            /// * ```notSupported``` - The physical device has no shutter or shutter state reporting is not supported.
+            /// </summary>
+            public ShutterEnum Shutter { get; set; }
+
+            /// <summary>
+            /// Returns information regarding items which may be at the output position. 
+            /// If the device is a recycler it is possible that the output position will not be empty due to a previous cash-in operation.
+            /// Following values are possible:
+            /// 
+            /// * ```empty``` - The output position is empty.
+            /// * ```notEmpty``` - The output position is not empty.
+            /// * ```unknown``` - Due to a hardware error or other condition, the state of the output position cannot be determined.
+            /// * ```notSupported``` - The device is not capable of reporting whether or not items are at the output position.
+            /// </summary>
+            public PositionStatusEnum PositionStatus { get; set; }
+
+            /// <summary>
+            /// Supplies the state of the transport mechanism. The transport is defined as any area leading to or from the position.
+            /// Following values are possible:
+            /// 
+            /// * ```ok``` - The transport is in a good state.
+            /// * ```inoperative``` - The transport is inoperative due to a hardware failure or media jam.
+            /// * ```unknown``` -Due to a hardware error or other condition the state of the transport cannot be determined.
+            /// * ```notSupported``` - The physical device has no transport or transport state reporting is not supported.
+            /// </summary>
+            public TransportEnum Transport { get; set; }
+
+            /// <summary>
+            /// Returns information regarding items which may be on the transport. If the device is a recycler 
+            /// device it is possible that the transport will not be empty due to a previous cash-in operation. 
+            /// Following values are possible:
+            /// 
+            /// * ```empty``` - The transport is empty.
+            /// * ```notEmpty``` - The transport is not empty.
+            /// * ```notEmptyCustomer``` - Items which a customer has had access to are on the transport.
+            /// * ```notEmptyUnknown``` - Due to a hardware error or other condition it is not known whether there are items on the transport.
+            /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
+            /// </summary>
+            public TransportStatusEnum TransportStatus { get; set; }
+
+        }
+
+        public enum PositionStatusEnum
+        {
+            Empty,
+            NotEmpty,
+            Unknown,
+            NotSupported,
+        }
+
+        public enum TransportEnum
+        {
+            Ok,
+            Inoperative,
+            Unknown,
+            NotSupported,
+        }
+
+        public enum TransportStatusEnum
+        {
+            Empty,
+            NotEmpty,
+            NotEmptyCustomer,
+            Unknown,
+            NotSupported,
+        }
+
         public enum SafeDoorEnum
         {
             NotSupported,
@@ -50,7 +145,7 @@ namespace XFS4IoTFramework.Common
             JammedClosed,
             JammedUnknown,
             Unknown,
-            NotSupported
+            NotSupported,
         }
 
         public CashManagementStatusClass()
@@ -58,20 +153,15 @@ namespace XFS4IoTFramework.Common
             SafeDoor = SafeDoorEnum.NotSupported;
             Dispenser = DispenserEnum.Unknown;
             Acceptor =  AcceptorEnum.Unknown;
-            AllBanknoteItems = null;
         }
         public CashManagementStatusClass(SafeDoorEnum SafeDoor,
                                          DispenserEnum Dispenser,
-                                         AcceptorEnum Acceptor,
-                                         Dictionary<string, bool> AllBanknoteItems)
+                                         AcceptorEnum Acceptor)
         {
             this.SafeDoor = SafeDoor;
             this.Dispenser = Dispenser;
             this.Acceptor = Acceptor;
-            this.AllBanknoteItems = AllBanknoteItems;
         }
-
-
 
         /// <summary>
         /// Supplies the state of the safe door. Following values are possible:
@@ -114,10 +204,5 @@ namespace XFS4IoTFramework.Common
         /// determined.
         /// </summary>
         public AcceptorEnum Acceptor { get; set; }
-
-        /// <summary>
-        /// Cash item can be recognised and enabled or enabled
-        /// </summary>
-        public Dictionary<string, bool> AllBanknoteItems { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text.RegularExpressions;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.CashDispenser.Commands;
@@ -27,25 +28,25 @@ namespace XFS4IoTFramework.CashDispenser
         private async Task<DispenseCompletion.PayloadData> HandleDispense(IDispenseEvents events, DispenseCommand dispense, CancellationToken cancel)
         {
             bool present = false;
-            CashDispenserCapabilitiesClass.OutputPositionEnum position = CashDispenserCapabilitiesClass.OutputPositionEnum.Default;
+            CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
             if (dispense.Payload.Position is not null)
             {
                 present = true;
                 position = dispense.Payload.Position switch
                 {
-                    OutputPositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    OutputPositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    OutputPositionEnum.OutDefault => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
-                    OutputPositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    OutputPositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    OutputPositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    OutputPositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    OutputPositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported
+                    OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,
+                    OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.OutputPositionEnum.Center,
+                    OutputPositionEnum.OutDefault => CashManagementCapabilitiesClass.OutputPositionEnum.Default,
+                    OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.OutputPositionEnum.Front,
+                    OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.OutputPositionEnum.Left,
+                    OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.OutputPositionEnum.Rear,
+                    OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.OutputPositionEnum.Right,
+                    OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported
                 };
             }
 
-            if (position == CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported ||
+            if (position == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported ||
                 !Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
                 return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -54,8 +55,8 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             // Reset an internal present status
-            CashDispenser.LastPresentStatus[position].Status = PresentStatus.PresentStatusEnum.NotPresented;
-            CashDispenser.LastPresentStatus[position].LastDenomination = new (new Dictionary<string, double>(), new Dictionary<string, int>());
+            CashDispenser.LastCashDispenserPresentStatus[position].Status = CashDispenserPresentStatus.PresentStatusEnum.NotPresented;
+            CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = new (new Dictionary<string, double>(), new Dictionary<string, int>());
 
             if (dispense.Payload.Denomination.Denomination.Currencies is null &&
                 dispense.Payload.Denomination.Denomination.Values is null)
@@ -63,6 +64,13 @@ namespace XFS4IoTFramework.CashDispenser
                 return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
                                                           $"Invalid amounts and values specified. either amount or values dispensing from each cash units required.",
                                                           DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+            }
+
+            if (dispense.Payload.Denomination.Denomination.Currencies.Select(c => string.IsNullOrEmpty(c.Key) || Regex.IsMatch(c.Key, "^[A-Z]{3}$")).ToList().Count == 0)
+            {
+                return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                          $"Invalid currency specified.",
+                                                          DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency);
             }
 
             if (!string.IsNullOrEmpty(dispense.Payload.Denomination.Mix) &&
@@ -197,7 +205,7 @@ namespace XFS4IoTFramework.CashDispenser
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.DispenseAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
 
-            PresentStatus presentStatus = null;
+            CashDispenserPresentStatus presentStatus = null;
             try
             {
                 Logger.Log(Constants.DeviceClass, "CashDispenserDev.GetPresentStatus()");
@@ -217,19 +225,21 @@ namespace XFS4IoTFramework.CashDispenser
 
             // Update an internal present status
             if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
-                CashDispenser.LastPresentStatus[position].Status = PresentStatus.PresentStatusEnum.Unknown;
+                CashDispenser.LastCashDispenserPresentStatus[position].Status = CashDispenserPresentStatus.PresentStatusEnum.Unknown;
             else
-                CashDispenser.LastPresentStatus[position].LastDenomination = denomToDispense.Denomination;
+                CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = denomToDispense.Denomination;
 
             if (presentStatus is not null)
             {
-                CashDispenser.LastPresentStatus[position].Status = (PresentStatus.PresentStatusEnum)presentStatus.Status;
+                CashDispenser.LastCashDispenserPresentStatus[position].Status = (CashDispenserPresentStatus.PresentStatusEnum)presentStatus.Status;
 
                 if (presentStatus.LastDenomination is not null)
-                    CashDispenser.LastPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
 
-                CashDispenser.LastPresentStatus[position].Token = presentStatus.Token;
+                CashDispenser.LastCashDispenserPresentStatus[position].Token = presentStatus.Token;
             }
+
+            CashDispenser.StoreCashDispenserPresentStatus();
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 

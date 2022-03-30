@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -25,8 +25,8 @@ namespace XFS4IoTFramework.Keyboard
     public enum KeyboardBeepEnum
     {
         Off = 0,
-        Active = 0x1,
-        InActive = 0x2,
+        Active = 1 << 0,
+        InActive = 1 << 1,
     }
 
     public enum EntryCompletionEnum

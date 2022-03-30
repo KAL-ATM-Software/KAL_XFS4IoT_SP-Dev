@@ -1,12 +1,9 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * ConfigureNoteReaderHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
 
 using System;
 using System.Threading.Tasks;
@@ -15,22 +12,40 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.CashAcceptor.Commands;
 using XFS4IoT.CashAcceptor.Completions;
+using XFS4IoT.Completions;
+using XFS4IoTFramework.Common;
+using XFS4IoTFramework.CashManagement;
+
 
 namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class ConfigureNoteReaderHandler
     {
-
-        private Task<ConfigureNoteReaderCompletion.PayloadData> HandleConfigureNoteReader(IConfigureNoteReaderEvents events, ConfigureNoteReaderCommand configureNoteReader, CancellationToken cancel)
+        private async Task<ConfigureNoteReaderCompletion.PayloadData> HandleConfigureNoteReader(IConfigureNoteReaderEvents events, ConfigureNoteReaderCommand configureNoteReader, CancellationToken cancel)
         {
-            //ToDo: Implement HandleConfigureNoteReader for CashAcceptor.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleConfigureNoteReader for CashAcceptor is not implemented in ConfigureNoteReaderHandler.cs");
-            #else
-                #error HandleConfigureNoteReader for CashAcceptor is not implemented in ConfigureNoteReaderHandler.cs
-            #endif
-        }
+            if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
+            {
+                return new ConfigureNoteReaderCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                     $"The exchange state is already in active.",
+                                                                     ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+            }
 
+            if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
+            {
+                return new ConfigureNoteReaderCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                     $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
+                                                                     ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+            }
+
+            Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ConfigureNoteReader()");
+
+            var result = await Device.ConfigureNoteReader(new ConfigureNoteReaderRequest(configureNoteReader.Payload.LoadAlways is not null && (bool)configureNoteReader.Payload.LoadAlways), cancel);
+
+            Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.ConfigureNoteReader() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            return new ConfigureNoteReaderCompletion.PayloadData(result.CompletionCode,
+                                                                 result.ErrorDescription,
+                                                                 result.ErrorCode);
+        }
     }
 }

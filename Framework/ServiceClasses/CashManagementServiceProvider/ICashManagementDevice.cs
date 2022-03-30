@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -57,7 +57,6 @@ namespace XFS4IoTFramework.CashManagement
         /// These counts represent the total amount of currency dispensed by the teller in all transactions.
         /// This command also enables the application to obtain the position assigned to each teller. The teller information is persistent.
         /// </summary>
-        /// <returns></returns>
         Task<GetTellerInfoResult> GetTellerInfoAsync(GetTellerInfoRequest request,
                                                      CancellationToken cancellation);
 
@@ -66,9 +65,41 @@ namespace XFS4IoTFramework.CashManagement
         /// This command allows the application to initialize counts for each currency assigned to the teller.The values set by this command
         /// are persistent.This command only applies to Teller ATMs.
         /// </summary>
-        /// <returns></returns>
         Task<SetTellerInfoResult> SetTellerInfoAsync(SetTellerInfoRequest request,
                                                      CancellationToken cancellation);
+
+        /// <summary>
+        /// This command is used to get information about detected items. It can be used to get information about individual items,
+        /// all items of a certain classification, or all items that have information available.This information is available from
+        /// the point where the first CashManagement.InfoAvailableEvent is generated until a
+        /// transaction or replenishment command is executed including the following:
+        /// 
+        /// CashAcceptor.CashInStart
+        /// CashAcceptor.CashIn
+        /// CashAcceptor.CashInEnd
+        /// CashAcceptor.CashInRollback
+        /// CashAcceptor.CreateSignature
+        /// CashAcceptor.Replenish
+        /// CashAcceptor.CashUnitCount
+        /// CashAcceptor.Deplete
+        /// CashManagement.Retract
+        /// CashManagement.Reset
+        /// CashManagement.OpenShutter
+        /// CashManagement.CloseShutter
+        /// CashManagement.CalibrateCashUnit
+        /// CashDispenser.Dispense
+        /// CashDispenser.Present
+        /// CashDispenser.Reject
+        /// CashDispenser.Count
+        /// CashDispenser.TestCashUnits
+        /// Storage.StartExchange
+        /// Storage.EndExchange
+        /// 
+        /// In addition, since the item information is not cumulative and can be replaced by any command that can move notes, it is
+        /// recommended that applications that are interested in the available information should query for it following the
+        /// CashManagement.InfoAvailableEvent* but before any other command is executed.
+        /// </summary>
+        GetItemInfoResult GetItemInfoInfo(GetItemInfoRequest request);
 
         /// <summary>
         /// CashManagement Status

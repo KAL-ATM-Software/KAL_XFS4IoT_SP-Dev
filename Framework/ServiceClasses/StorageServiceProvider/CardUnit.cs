@@ -1,4 +1,10 @@
-﻿using System;
+﻿/***********************************************************************************************\
+ * (C) KAL ATM Software GmbH, 2022
+ * KAL ATM Software GmbH licenses this file to you under the MIT license.
+ * See the LICENSE file in the project root for more information.
+\***********************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -67,9 +73,9 @@ namespace XFS4IoTFramework.Storage
         [Flags]
         public enum TypeEnum
         {
-            Retain = 0x0001,
-            Dispense = 0x0002,
-            Pard = 0x0004,
+            Retain = 1 << 0,
+            Dispense = 1 << 1,
+            Pard = 1 << 2,
         }
 
         public CardCapabilitiesClass(TypeEnum Type, 

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -31,8 +31,8 @@ namespace XFS4IoTFramework.Keyboard
         public enum FloatEnum
         {
             NotSupported = 0,
-            X = 0x0001,
-            Y = 0x0002,
+            X = 1 << 0,
+            Y = 1 << 1,
         }
 
         public FrameClass(int XPos, 

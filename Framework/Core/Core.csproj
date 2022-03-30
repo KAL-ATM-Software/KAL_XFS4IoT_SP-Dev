@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -11,7 +11,7 @@
 
   <PropertyGroup>
     <PackageId>KAL.XFS4IoT.SP-Dev.Framework.Core</PackageId>
-    <Copyright>Copyright (C) KAL ATM Software GmbH, 2021</Copyright>
+    <Copyright>Copyright (C) KAL ATM Software GmbH, 2022</Copyright>
     <Description>KAL.XFS4IoT.SP-Dev.Framework.Core Pre-Release</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
@@ -36,10 +36,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\bin\Debug\</OutputPath>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\bin\Release\</OutputPath>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>

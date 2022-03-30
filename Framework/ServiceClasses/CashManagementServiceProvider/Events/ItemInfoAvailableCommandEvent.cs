@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTFramework.CashDispenser;
+using XFS4IoTFramework.CashAcceptor;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -63,7 +64,54 @@ namespace XFS4IoTFramework.CashManagement
             events.IsA<ICalibrateCashUnitEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
             CalibrateCashUnitEvents = events;
         }
-
+        public ItemInfoAvailableCommandEvent(ICashInEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<ICashInEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            CashInEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(ICashInEndEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<ICashInEndEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            CashInEndEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(ICashInRollbackEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<ICashInRollbackEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            CashInRollbackEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(ICreateSignatureEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<ICreateSignatureEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            CreateSignatureEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(IPreparePresentEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<IPreparePresentEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            PreparePresentEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(ICashUnitCountEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<ICashUnitCountEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            CashUnitCountEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(IDepleteEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<IDepleteEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            DepleteEvents = events;
+        }
+        public ItemInfoAvailableCommandEvent(IReplenishEvents events)
+        {
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(ItemInfoAvailableCommandEvent));
+            events.IsA<IReplenishEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(ItemInfoAvailableCommandEvent));
+            ReplenishEvents = events;
+        }
 
         public Task InfoAvailableEvent(List<ItemInfoSummary> ItemInfoSummary)
         {
@@ -114,6 +162,38 @@ namespace XFS4IoTFramework.CashManagement
             {
                 return CalibrateCashUnitEvents.InfoAvailableEvent(new(itemInfo));
             }
+            if (CashInEvents is not null)
+            {
+                return CashInEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (CashInEndEvents is not null)
+            {
+                return CashInEndEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (CashInRollbackEvents is not null)
+            {
+                return CashInRollbackEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (CreateSignatureEvents is not null)
+            {
+                return CreateSignatureEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (PreparePresentEvents is not null)
+            {
+                return PreparePresentEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (CashUnitCountEvents is not null)
+            {
+                return CashUnitCountEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (DepleteEvents is not null)
+            {
+                return DepleteEvents.InfoAvailableEvent(new(itemInfo));
+            }
+            if (ReplenishEvents is not null)
+            {
+                return ReplenishEvents.InfoAvailableEvent(new(itemInfo));
+            }
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(InfoAvailableEvent));
         }
@@ -126,5 +206,13 @@ namespace XFS4IoTFramework.CashManagement
         protected IRetractEvents RetractEvents { get; init; } = null;
         protected IResetEvents ResetEvents { get; init; } = null;
         protected ICalibrateCashUnitEvents CalibrateCashUnitEvents { get; init; } = null;
+        protected ICashInEvents CashInEvents { get; init; } = null;
+        protected ICashInEndEvents CashInEndEvents { get; init; } = null;
+        protected ICashInRollbackEvents CashInRollbackEvents { get; init; } = null;
+        protected ICreateSignatureEvents CreateSignatureEvents { get; init; } = null;
+        protected IPreparePresentEvents PreparePresentEvents { get; init; } = null;
+        protected ICashUnitCountEvents CashUnitCountEvents { get; init; } = null;
+        protected IDepleteEvents DepleteEvents { get; init; } = null;
+        protected IReplenishEvents ReplenishEvents { get; init; } = null;
     }
 }

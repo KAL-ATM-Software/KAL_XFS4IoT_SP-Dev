@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -19,100 +19,100 @@ namespace XFS4IoTFramework.Common
         public enum KeyCheckModeEnum
         {
             NotSupported = 0,
-            Self = 0x0001,
-            Zero = 0x0002,
+            Self = 1 << 0,
+            Zero = 1 << 1,
         }
 
         [Flags]
         public enum RSAAuthenticationSchemeEnum
         {
             NotSupported = 0,
-            SecondPartySignature = 0x0001,      // Two-party Signature based authentication.
-            ThirdPartyCertificate = 0x0002,     // Three-party Certificate based authentication.
-            ThirdPartyCertificateTR34 = 0x0004, // Three-party Certificate based authentication described by X9 TR34-2012 
+            SecondPartySignature = 1 << 0,      // Two-party Signature based authentication.
+            ThirdPartyCertificate = 1 << 1,     // Three-party Certificate based authentication.
+            ThirdPartyCertificateTR34 = 1 << 2, // Three-party Certificate based authentication described by X9 TR34-2012 
         }
 
         [Flags]
         public enum RSASignatureAlgorithmEnum
         {
             NotSupported = 0,
-            RSASSA_PKCS1_V1_5 = 0x0001,     // SSA_PKCS_V1_5 Signatures supported
-            RSASSA_PSS = 0x0002,            // SSA_PSS Signatures supported
+            RSASSA_PKCS1_V1_5 = 1 << 0,     // SSA_PKCS_V1_5 Signatures supported
+            RSASSA_PSS = 1 << 1,            // SSA_PSS Signatures supported
         }
 
         [Flags]
         public enum RSACryptAlgorithmEnum
         {
             NotSupported = 0,
-            RSAES_PKCS1_V1_5 = 0x0001,      // AES_PKCS_V1_5 algorithm supported
-            RSAES_OAEP = 0x0002,            // AES_OAEP algorithm supported
+            RSAES_PKCS1_V1_5 = 1 << 0,      // AES_PKCS_V1_5 algorithm supported
+            RSAES_OAEP = 1 << 1,            // AES_OAEP algorithm supported
         }
 
         [Flags]
         public enum RSAKeyCheckModeEnum
         {
             NotSupported = 0,
-            SHA1 = 0x0001,
-            SHA256 = 0x0002,
+            SHA1 = 1 << 0,
+            SHA256 = 1 << 1,
         }
 
         [Flags]
         public enum SignatureSchemeEnum
         {
             NotSupported = 0,
-            RandomNumber = 0x0001, // Specifies if the Service Provider returns a random number from the StartKeyExchange command within the RSA Signature Scheme.
-            ExportEPPID = 0x0002,  // Specifies if the Service Provider supports exporting the EPP Security Item within the RSA Signature Scheme.
-            EnhancedRKL = 0x0004,  // Specifies that the Service Provider supports the Enhanced Signature Remote Key Scheme. This scheme allows the customer to manage their own public keys independently of the Signature Issuer. 
+            RandomNumber = 1 << 0, // Specifies if the Service Provider returns a random number from the StartKeyExchange command within the RSA Signature Scheme.
+            ExportEPPID = 1 << 1,  // Specifies if the Service Provider supports exporting the EPP Security Item within the RSA Signature Scheme.
+            EnhancedRKL = 1 << 2,  // Specifies that the Service Provider supports the Enhanced Signature Remote Key Scheme. This scheme allows the customer to manage their own public keys independently of the Signature Issuer. 
         }
 
         [Flags]
         public enum EMVImportSchemeEnum
         {
             NotSupported = 0,
-            PlainCA = 0x0001,    //A plain text CA public key is imported with no verification
-            ChecksumCA = 0x0002, //A plain text CA public key is imported using the EMV 2000 verification algorithm
-            EPICA = 0x0004,      //A CA public key is imported using the self-sign scheme defined in the Europay International, EPI CA Module Technical - Interface specification Version 
-            Issuer = 0x0008,     //An Issuer public key is imported as defined in EMV 2000 Book II
-            ICC = 0x0010,        //An ICC public key is imported as defined in EMV 2000 Book II
-            ICCPIN = 0x0020,     //An ICC PIN public key is imported as defined in EMV 2000 Book II
-            PKCSV1_5CA = 0x0040, //A CA public key is imported and verified using a signature generated with a private key for which the public key is already loaded
+            PlainCA = 1 << 0,    //A plain text CA public key is imported with no verification
+            ChecksumCA = 1 << 1, //A plain text CA public key is imported using the EMV 2000 verification algorithm
+            EPICA = 1 << 2,      //A CA public key is imported using the self-sign scheme defined in the Europay International, EPI CA Module Technical - Interface specification Version 
+            Issuer = 1 << 3,     //An Issuer public key is imported as defined in EMV 2000 Book II
+            ICC = 1 << 4,        //An ICC public key is imported as defined in EMV 2000 Book II
+            ICCPIN = 1 << 5,     //An ICC PIN public key is imported as defined in EMV 2000 Book II
+            PKCSV1_5CA = 1 << 6, //A CA public key is imported and verified using a signature generated with a private key for which the public key is already loaded
         }
 
         [Flags]
         public enum KeyBlockImportFormatEmum
         {
             NotSupported = 0,
-            KEYBLOCKA = 0x0001, //ANSI X9.143 version ID A of the keyblock
-            KEYBLOCKB = 0x0002, //ANSI X9.143 version ID B of the keyblock
-            KEYBLOCKC = 0x0004, //ANSI X9.143 version ID C of the keyblock
-            KEYBLOCKD = 0x0008, //ANSI X9.143 version ID D of the keyblock
+            KEYBLOCKA = 1 << 0, //ANSI X9.143 version ID A of the keyblock
+            KEYBLOCKB = 1 << 1, //ANSI X9.143 version ID B of the keyblock
+            KEYBLOCKC = 1 << 2, //ANSI X9.143 version ID C of the keyblock
+            KEYBLOCKD = 1 << 3, //ANSI X9.143 version ID D of the keyblock
         }
 
         [Flags]
         public enum DESKeyLengthEmum
         {
             NotSupported = 0,
-            Single = 0x0001,
-            Double = 0x0002,
-            Triple = 0x0004,
+            Single = 1 << 0,
+            Double = 1 << 1,
+            Triple = 1 << 2,
         }
 
         [Flags]
         public enum CertificateTypeEnum
         {
             NotSupported = 0,
-            EncKey = 0x0001,
-            VerificationKey = 0x0002,
-            HostKey = 0x0004,
+            EncKey = 1 << 0,
+            VerificationKey = 1 << 1,
+            HostKey = 1 << 2,
         }
 
         [Flags]
         public enum SignerEnum
         {
             NotSupported = 0,
-            EncKey = 0x0001,           //Supports the EPP public encryption certificate
-            VerificationKey = 0x0002,  //Supports the EPP public verification certificate
-            HostKey = 0x0004,          //Supports the Host public certificate
+            EncKey = 1 << 0,           //Supports the EPP public encryption certificate
+            VerificationKey = 1 << 1,  //Supports the EPP public verification certificate
+            HostKey = 1 << 2,          //Supports the Host public certificate
         }
 
         [Flags]
@@ -129,27 +129,27 @@ namespace XFS4IoTFramework.Common
         public enum LoadCertificateOptionEnum
         {
             NotSupported = 0,
-            NewHost = 0x0001, //The current Host RSA Private Key is used to sign the token
-            ReplaceHost = 0x0002,  //The current Host RSA Private Key is used to sign the token, signature format is used.
+            NewHost = 1 << 0,     //The current Host RSA Private Key is used to sign the token
+            ReplaceHost = 1 << 1, //The current Host RSA Private Key is used to sign the token, signature format is used.
         }
 
         [Flags]
         public enum CRKLLoadOptionEnum
         {
             NotSupported = 0,
-            NoRandom = 0x0001,        //Import a Key Transport Key without generating and using a random number.
-            NoRandomCRL = 0x0002,       //Import a Key Transport Key with a Certificate Revocation List appended to the input message. A random number is not generated nor used.
-            Random = 0x0004,  //Import a Key Transport Key by generating and using a random number.
-            RandomCRL = 0x0008,  //Import a Key Transport Key with a Certificate Revocation List appended to the input parameter. A random number is generated and used.
+            NoRandom = 1 << 0,        //Import a Key Transport Key without generating and using a random number.
+            NoRandomCRL = 1 << 1,     //Import a Key Transport Key with a Certificate Revocation List appended to the input message. A random number is not generated nor used.
+            Random = 1 << 2,          //Import a Key Transport Key by generating and using a random number.
+            RandomCRL = 1 << 3,       //Import a Key Transport Key with a Certificate Revocation List appended to the input parameter. A random number is generated and used.
         }
 
         [Flags]
         public enum SymmetricKeyManagementMethodEnum
         {
             NotSupported = 0,
-            FixedKey = 0x0001,        //This method of key management uses fixed keys for transaction processing
-            MasterKey = 0x0002,       //This method uses a hierarchy of Key Encrypting Keys and Transaction Keys. The highest level of Key Encrypting Key is known as a Master Key. Transaction Keys are distributed and replaced encrypted under a Key Encrypting Key
-            TripleDESDUKPT = 0x0004,  //This method uses TDES Derived Unique Key Per Transaction
+            FixedKey = 1 << 0,        //This method of key management uses fixed keys for transaction processing
+            MasterKey = 1 << 1,       //This method uses a hierarchy of Key Encrypting Keys and Transaction Keys. The highest level of Key Encrypting Key is known as a Master Key. Transaction Keys are distributed and replaced encrypted under a Key Encrypting Key
+            TripleDESDUKPT = 1 << 2,  //This method uses TDES Derived Unique Key Per Transaction
         }
 
         /// <summary>
@@ -374,14 +374,14 @@ namespace XFS4IoTFramework.Common
             public enum DecryptMethodEnum
             {
                 NotSupported = 0,
-                ECB = 0x0001,
-                CBC = 0x0002,
-                CFB = 0x0004,
-                OFB = 0x0008,
-                CTR = 0x0010,
-                XTS = 0x0020,
-                RSAES_PKCS1_V1_5 = 0x0040,
-                RSAES_OAEP = 0x0080,
+                ECB = 1 << 0,
+                CBC = 1 << 1,
+                CFB = 1 << 2,
+                OFB = 1 << 3,
+                CTR = 1 << 4,
+                XTS = 1 << 5,
+                RSAES_PKCS1_V1_5 = 1 << 6,
+                RSAES_OAEP = 1 << 7,
             }
 
             public DecryptMethodClass(DecryptMethodEnum DecryptMethods)
@@ -421,20 +421,20 @@ namespace XFS4IoTFramework.Common
             public enum CryptoMethodEnum
             {
                 NotSupported = 0,
-                KCVNone = 0x0001,
-                KCVSelf = 0x0002,
-                KCVZero = 0x0004,
-                SignatureNone = 0x0008,
-                RSASSA_PKCS1_V1_5 = 0x0010,
-                RSASSA_PSS = 0x0020,
+                KCVNone = 1 << 0,
+                KCVSelf = 1 << 1,
+                KCVZero = 1 << 2,
+                SignatureNone = 1 << 3,
+                RSASSA_PKCS1_V1_5 = 1 << 4,
+                RSASSA_PSS = 1 << 5,
             }
 
             [Flags]
             public enum HashAlgorithmEnum
             {
                 NotSupported = 0,
-                SHA1 = 0x0001,
-                SHA256 = 0x0002,
+                SHA1 = 1 << 0,
+                SHA256 = 1 << 1,
             }
 
             public VerifyMethodClass(CryptoMethodEnum CryptoMethod, HashAlgorithmEnum HashAlgorithm = HashAlgorithmEnum.NotSupported)

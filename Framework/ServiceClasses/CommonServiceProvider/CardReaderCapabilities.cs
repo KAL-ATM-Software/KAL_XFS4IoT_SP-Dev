@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -65,41 +65,41 @@ namespace XFS4IoTFramework.Common
         public enum ReadableDataTypesEnum
         {
             NotSupported = 0,
-            Track1 = 0x0001,
-            Track2 = 0x0002,
-            Track3 = 0x0004,
-            Track1Front = 0x0080,
-            FrontImage = 0x0100,
-            BackImage = 0x0200,
-            Track1JIS = 0x0400,
-            Track3JIS = 0x0800,
-            Ddi = 0x4000,
-            Watermark = 0x8000,
+            Track1 = 1 << 0,
+            Track2 = 1 << 1,
+            Track3 = 1 << 2,
+            Track1Front = 1 << 3,
+            FrontImage = 1 << 4,
+            BackImage = 1 << 5,
+            Track1JIS = 1 << 6,
+            Track3JIS = 1 << 7,
+            Ddi = 1 << 8,
+            Watermark = 1 << 9,
         }
 
         [Flags]
         public enum WritableDataTypesEnum
         {
             NotSupported = 0,
-            Track1 = 0x0001,
-            Track2 = 0x0002,
-            Track3 = 0x0004,
-            Track1Front = 0x0080,
-            Track1JIS = 0x0400,
-            Track3JIS = 0x0800,
+            Track1 = 1 << 0,
+            Track2 = 1 << 1,
+            Track3 = 1 << 2,
+            Track1Front = 1 << 3,
+            Track1JIS = 1 << 4,
+            Track3JIS = 1 << 5,
         }
 
         [Flags]
         public enum ChipProtocolsEnum
         {
             NotSupported = 0,
-            T0 = 0x0001,
-            T1 = 0x0002,
-            NotRequired = 0x0004,
-            TypeAPart3 = 0x0008,
-            TypeAPart4 = 0x0010,
-            TypeB = 0x0020,
-            TypeNFC = 0x0040,
+            T0 = 1 << 0,
+            T1 = 1 << 1,
+            NotRequired = 1 << 2,
+            TypeAPart3 = 1 << 3,
+            TypeAPart4 = 1 << 4,
+            TypeB = 1 << 5,
+            TypeNFC = 1 << 6,
         }
 
         public enum SecurityTypeEnum
@@ -122,34 +122,34 @@ namespace XFS4IoTFramework.Common
         public enum WriteMethodsEnum
         {
             NotSupported = 0,
-            Loco = 0x0002,
-            Hico = 0x0004,
-            Auto = 0x0008,
+            Loco = 1 << 0,
+            Hico = 1 << 1,
+            Auto = 1 << 2,
         }
 
         [Flags]
         public enum ChipPowerOptionsEnum
         {
             NotSupported = 0,
-            Cold = 0x0002,
-            Warm = 0x0004,
-            Off = 0x0008,
+            Cold = 1 << 0,
+            Warm = 1 << 1,
+            Off = 1 << 2,
         }
 
         [Flags]
         public enum MemoryChipProtocolsEnum
         {
             NotSupported = 0,
-            Siemens4442 = 0x0001,
-            Gpm896 = 0x0002,
+            Siemens4442 = 1 << 0,
+            Gpm896 = 1 << 1,
         }
 
         [Flags]
         public enum PositionsEnum
         {
             NotSupported = 0,
-            Exit = 0x0001,
-            Transport = 0x0002,
+            Exit = 1 << 0,
+            Transport = 1 << 1,
         }
 
         /// <summary>

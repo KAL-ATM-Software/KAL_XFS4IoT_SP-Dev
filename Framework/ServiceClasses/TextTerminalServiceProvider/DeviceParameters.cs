@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -19,7 +19,6 @@ namespace XFS4IoTFramework.TextTerminal
 {
     public sealed class BeepRequest
     {
-        [Flags]
         public enum BeepTypeEnum
         {
             None,
@@ -111,9 +110,9 @@ namespace XFS4IoTFramework.TextTerminal
         public enum TextAttributesEnum
         {
             None = 0,
-            Underline,
-            Inverted,
-            Flash
+            Underline = 1 << 0,
+            Inverted = 1 << 1,
+            Flash = 1 << 2
         }
 
         public WriteRequest(int PosX, int PosY, string Text, TextAttributesEnum TextAttributes)
@@ -150,9 +149,9 @@ namespace XFS4IoTFramework.TextTerminal
         public enum TextAttributesEnum
         {
             None = 0,
-            Underline,
-            Inverted,
-            Flash
+            Underline = 1 << 0,
+            Inverted = 1 << 1,
+            Flash = 1 << 2,
         }
 
         public enum EchoModeEnum

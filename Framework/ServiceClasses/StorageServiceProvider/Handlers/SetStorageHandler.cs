@@ -1,11 +1,12 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
@@ -207,16 +208,14 @@ namespace XFS4IoTFramework.Storage
                         if (storage.Value.Cash.Configuration.Items?.Unrecognized is not null && (bool)storage.Value.Cash.Configuration.Items?.Unrecognized)
                             items |= CashCapabilitiesClass.ItemsEnum.Unrecognized;
 
-                        if (storage.Value.Cash.Configuration.CashItems is not null &&
-                            storage.Value.Cash.Configuration.CashItems.Count > 0)
+                        if (storage.Value.Cash.Configuration.CashItems?.Count > 0)
                         {
-                            foreach (var item in storage.Value.Cash.Configuration.CashItems)
+                            foreach (var item in from item in storage.Value.Cash.Configuration.CashItems
+                                                 where !Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item)
+                                                 select item)
                             {
-                                if (!Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item))
-                                {
-                                    return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");
-                                }
+                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                            $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");
                             }
                         }
 
@@ -234,16 +233,56 @@ namespace XFS4IoTFramework.Storage
                     }
 
                     StorageCashCountClass newInitialCounts = null;
-                    if (storage.Value.Cash.Status is not null &&
-                        storage.Value.Cash.Status.Initial is not null)
+                    if (storage.Value.Cash.Status?.Initial is not null)
                     {
                         Dictionary<string, CashItemCountClass> itemCounts = null;
-                        if (storage.Value.Cash.Status.Initial is not null &&
-                            storage.Value.Cash.Status.Initial.ExtendedProperties.Count > 0)
+                        if (storage.Value.Cash.Status.Initial?.ExtendedProperties?.Count > 0)
                         {
                             itemCounts = new();
                             foreach (var item in storage.Value.Cash.Status.Initial.ExtendedProperties)
                             {
+                                if (storage.Value.Cash.Configuration?.CashItems is not null)
+                                {
+                                    if (!storage.Value.Cash.Configuration.CashItems.Contains(item.Key))
+                                    {
+                                        return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                                    $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                    }
+                                }
+
+                                if (Storage.CashUnits[storage.Key].Unit.Status.InitialCounts?.ItemCounts?.Count != 0)
+                                {
+                                    // Initial count is setup already
+                                    if (!Storage.CashUnits[storage.Key].Unit.Status.InitialCounts.ItemCounts.ContainsKey(item.Key))
+                                    {
+                                        return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                                    $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                    }
+                                }
+                                else
+                                {
+                                    if (Storage.CashUnits[storage.Key].Unit.Configuration.BanknoteItems is null ||
+                                        Storage.CashUnits[storage.Key].Unit.Configuration.BanknoteItems.Count == 0)
+                                    {
+                                        // New banknote types should be assigned to this unit
+                                        if (storage.Value.Cash.Configuration?.CashItems is not null &&
+                                            !storage.Value.Cash.Configuration.CashItems.Contains(item.Key))
+                                        {
+                                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                                        $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                        }
+                                    }
+                                    else
+                                    { 
+                                        // No initial counts are set in an internal structure and check denomination assiged to this unit
+                                        if (!Storage.CashUnits[storage.Key].Unit.Configuration.BanknoteItems.Contains(item.Key))
+                                        {
+                                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                                        $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                        }
+                                    }
+                                }
+
                                 itemCounts.Add(item.Key, new CashItemCountClass(item.Value.Fit is null ? 0 : (int)item.Value.Fit,
                                                                                 item.Value.Unfit is null ? 0 : (int)item.Value.Unfit,
                                                                                 item.Value.Suspect is null ? 0 : (int)item.Value.Suspect,
@@ -314,13 +353,12 @@ namespace XFS4IoTFramework.Storage
                         if (storageToUpdate.Value.InitialCounts is not null)
                         {
                             Storage.CashUnits[storageToUpdate.Key].Unit.Status.InitialCounts.Unrecognized = storageToUpdate.Value.InitialCounts.Unrecognized;
-                            if (storageToUpdate.Value.InitialCounts.ItemCounts is not null &&
-                                storageToUpdate.Value.InitialCounts.ItemCounts.Count > 0)
+                            if (storageToUpdate.Value.InitialCounts.ItemCounts?.Count > 0)
                             {
                                 Storage.CashUnits[storageToUpdate.Key].Unit.Status.InitialCounts.ItemCounts = storageToUpdate.Value.InitialCounts.ItemCounts;
                                 Storage.CashUnits[storageToUpdate.Key].Unit.Status.Count = Storage.CashUnits[storageToUpdate.Key].Unit.Status.InitialCounts.Total;
-                                Storage.CashUnits[storageToUpdate.Key].Unit.Status.StorageCashInCount = new StorageCashInCountClass();
-                                Storage.CashUnits[storageToUpdate.Key].Unit.Status.StorageCashOutCount = new StorageCashOutCountClass();
+                                Storage.CashUnits[storageToUpdate.Key].Unit.Status.StorageCashInCount = new();
+                                Storage.CashUnits[storageToUpdate.Key].Unit.Status.StorageCashOutCount = new();
                             }
                         }
                     }

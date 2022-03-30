@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -104,7 +104,7 @@ namespace XFS4IoT.KeyManagement.Commands
             ///   *KeyManagement.StartAuthenticate* and *keyManagement.Authenticate* command requests.
             /// * If prior to this command request, *KeyManagement.StartAuthenticate* is not called or a command clears the
             ///   authentication data from the device,
-            ///   [sequenceError](#api.generalinformation.messagetypes.completionmessages.completioncodes) will be returned.
+            ///   [sequenceError](#api.messagetypes.completionmessages.completioncodes) will be returned.
             /// </summary>
             [DataMember(Name = "authentication")]
             public AuthenticationClass Authentication { get; init; }

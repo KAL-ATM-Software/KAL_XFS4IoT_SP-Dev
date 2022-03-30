@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -19,43 +19,43 @@ namespace XFS4IoTFramework.Common
         public enum PINFormatEnum
         {
             NotSupported = 0,
-            IBM3624 = 0x0001,
-            ANSI = 0x0002,
-            ISO0 = 0x0004,
-            ISO1 = 0x0008,
-            ECI2 = 0x0010,
-            ECI3 = 0x0020,
-            VISA = 0x0040,
-            DIEBOLD = 0x0080,
-            DIEBOLDCO = 0x0100,
-            VISA3 = 0x0200,
-            BANKSYS = 0x0400,
-            EMV = 0x0800,
-            ISO3 = 0x1000,
-            AP = 0x2000,
+            IBM3624 = 1 << 0,
+            ANSI = 1 << 1,
+            ISO0 = 1 << 2,
+            ISO1 = 1 << 3,
+            ECI2 = 1 << 4,
+            ECI3 = 1 << 5,
+            VISA = 1 << 6,
+            DIEBOLD = 1 << 7,
+            DIEBOLDCO = 1 << 8,
+            VISA3 = 1 << 9,
+            BANKSYS = 1 << 10,
+            EMV = 1 << 11,
+            ISO3 = 1 << 12,
+            AP = 1 << 13,
         }
 
         [Flags]
         public enum PresentationAlgorithmEnum
         {
             NotSupported = 0,
-            PresentClear = 0x0001,
+            PresentClear = 1 << 0,
         }
 
         [Flags]
         public enum DisplayTypeEnum
         {
             NotSupported = 0,
-            LEDThrough = 0x0001,
-            Display = 0x0002,
+            LEDThrough = 1 << 0,
+            Display = 1 << 1,
         }
 
         [Flags]
         public enum ValidationAlgorithmEnum
         {
             NotSupported = 0,
-            DES = 0x0001,
-            VISA = 0x0002,
+            DES = 1 << 0,
+            VISA = 1 << 1,
         }
 
         public PinPadCapabilitiesClass(PINFormatEnum PINFormat,
@@ -127,14 +127,14 @@ namespace XFS4IoTFramework.Common
             public enum EncryptionAlgorithmEnum
             {
                 NotSupported = 0,
-                ECB = 0x0001,
-                CBC = 0x0002,
-                CFB = 0x0004,
-                OFB = 0x0008,
-                CTR = 0x0010,
-                XTS = 0x0020,
-                RSAES_PKCS1_V1_5 = 0x0040,
-                RSAES_OAEP = 0x0080,
+                ECB = 1 << 0,
+                CBC = 1 << 1,
+                CFB = 1 << 2,
+                OFB = 1 << 3,
+                CTR = 1 << 4,
+                XTS = 1 << 5,
+                RSAES_PKCS1_V1_5 = 1 << 6,
+                RSAES_OAEP = 1 << 7,
             }
 
             public PinBlockEncryptionAlgorithm(EncryptionAlgorithmEnum EncryptionAlgorithm)

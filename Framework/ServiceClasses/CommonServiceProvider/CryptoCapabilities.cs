@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -19,8 +19,8 @@ namespace XFS4IoTFramework.Common
         public enum EMVHashAlgorithmEnum
         {
             NotSupported = 0,
-            SHA1_Digest = 0x0001, //The SHA 1 digest algorithm is supported by the Digest command
-            SHA256_Digest = 0x0002, //The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [Ref. 40] and FIPS 180-2 [Ref. 41], is supported by the Digest command
+            SHA1_Digest = 1 << 0,   //The SHA 1 digest algorithm is supported by the Digest command
+            SHA256_Digest = 1 << 1, //The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004 [Ref. 40] and FIPS 180-2 [Ref. 41], is supported by the Digest command
         }
 
 
@@ -28,8 +28,8 @@ namespace XFS4IoTFramework.Common
         public enum HashAlgorithmEnum
         {
             NotSupported = 0,
-            SHA1 = 0x0001, //The SHA 1 digest algorithm 
-            SHA256 = 0x0002, //The SHA 256 digest algorithm
+            SHA1 = 1 << 0,   //The SHA 1 digest algorithm 
+            SHA256 = 1 << 1, //The SHA 256 digest algorithm
         }
 
         public CryptoCapabilitiesClass(EMVHashAlgorithmEnum EMVHashAlgorithms,
@@ -55,14 +55,14 @@ namespace XFS4IoTFramework.Common
             public enum CryptoMethodEnum
             {
                 NotSupported = 0,
-                ECB = 0x0001,
-                CBC = 0x0002,
-                CFB = 0x0004,
-                OFB = 0x0008,
-                CTR = 0x0010,
-                XTS = 0x0020,
-                RSAES_PKCS1_V1_5 = 0x0040,
-                RSAES_OAEP = 0x0080,
+                ECB = 1 << 0,
+                CBC = 1 << 1,
+                CFB = 1 << 2,
+                OFB = 1 << 3,
+                CTR = 1 << 4,
+                XTS = 1 << 5,
+                RSAES_PKCS1_V1_5 = 1 << 6,
+                RSAES_OAEP = 1 << 7,
             }
 
             public CryptoAttributesClass(CryptoMethodEnum CryptoMethods)
@@ -102,8 +102,8 @@ namespace XFS4IoTFramework.Common
             public enum RSASignatureAlgorithmEnum
             {
                 NotSupported = 0,
-                RSASSA_PKCS1_V1_5 = 0x0001,     // SSA_PKCS_V1_5 Signatures supported
-                RSASSA_PSS = 0x0002,            // SSA_PSS Signatures supported
+                RSASSA_PKCS1_V1_5 = 1 << 0,     // SSA_PKCS_V1_5 Signatures supported
+                RSASSA_PSS = 1 << 1,            // SSA_PSS Signatures supported
             }
 
             public VerifyAuthenticationAttributesClass(RSASignatureAlgorithmEnum CryptoMethods, 

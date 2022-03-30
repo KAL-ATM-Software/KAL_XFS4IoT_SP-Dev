@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -18,157 +18,157 @@ namespace XFS4IoTFramework.Common
         [Flags]
         public enum TypeEnum
         {
-            Receipt = 0x0001,
-            Passbook = 0x0002,
-            Journal = 0x0004,
-            Document = 0x0008,
-            Scanner = 0x0010,
+            Receipt = 1 << 0,
+            Passbook = 1 << 1,
+            Journal = 1 << 2,
+            Document = 1 << 3,
+            Scanner = 1 << 4,
         }
 
         [Flags]
         public enum ResolutionEnum
         {
-            Low = 0x0001,
-            Medium = 0x0002,
-            High = 0x0004,
-            VeryHigh = 0x0008,
+            Low = 1 << 0,
+            Medium = 1 << 1,
+            High = 1 << 2,
+            VeryHigh = 1 << 3,
         }
 
         [Flags]
         public enum ReadFormEnum
         {
             NotSupported = 0,
-            OCR = 0x0001,
-            MICR = 0x0002,
-            MSF = 0x0004,
-            Barcode = 0x0008,
-            PageMark = 0x0010,
-            Image = 0x0020,
-            EmptyLine = 0x0040,
+            OCR = 1 << 0,
+            MICR = 1 << 1,
+            MSF = 1 << 2,
+            Barcode = 1 << 3,
+            PageMark = 1 << 4,
+            Image = 1 << 5,
+            EmptyLine = 1 << 6,
         }
 
         [Flags]
         public enum WriteFormEnum
         {
             NotSupported = 0,
-            Text = 0x0001,
-            Graphics = 0x0002,
-            OCR = 0x0004,
-            MICR = 0x0008,
-            MSF = 0x0010,
-            Barcode = 0x0020,
-            Stamp = 0x0040,
+            Text = 1 << 0,
+            Graphics = 1 << 1,
+            OCR = 1 << 2,
+            MICR = 1 << 3,
+            MSF = 1 << 4,
+            Barcode = 1 << 5,
+            Stamp = 1 << 6,
         }
 
         [Flags]
         public enum ExtentEnum
         {
             NotSupported = 0,
-            Horizontal = 0x0001,
-            Vertical = 0x0002,
+            Horizontal = 1 << 0,
+            Vertical = 1 << 1,
         }
 
         [Flags]
         public enum ControlEnum
         {
             NotSupported = 0,
-            Eject = 0x00000001,
-            Perforate = 0x00000002,
-            Cut = 0x00000004,
-            Skip = 0x00000008,
-            Flush = 0x00000010,
-            Retract = 0x00000020,
-            Stack = 0x00000040,
-            PartialCut = 0x00000080,
-            Alarm = 0x00000100,
-            PageForward = 0x00000200,
-            PageBackward = 0x00000400,
-            TurnMedia = 0x00000800,
-            Stamp = 0x00001000,
-            Park = 0x00002000,
-            Expel = 0x00004000,
-            EjectToTransport = 0x00008000,
-            Rotate180 = 0x00010000,
-            ClearBuffer = 0x00020000,
-            Backward = 0x00040000,
-            Forward = 0x00080000,
+            Eject = 1 << 0,
+            Perforate = 1 << 1,
+            Cut = 1 << 2,
+            Skip = 1 << 3,
+            Flush = 1 << 4,
+            Retract = 1 << 5,
+            Stack = 1 << 6,
+            PartialCut = 1 << 7,
+            Alarm = 1 << 8,
+            PageForward = 1 << 9,
+            PageBackward = 1 << 10,
+            TurnMedia = 1 << 11,
+            Stamp = 1 << 12,
+            Park = 1 << 13,
+            Expel = 1 << 14,
+            EjectToTransport = 1 << 15,
+            Rotate180 = 1 << 16,
+            ClearBuffer = 1 << 17,
+            Backward = 1 << 18,
+            Forward = 1 << 19,
         }
 
         [Flags]
         public enum PaperSourceEnum
         {
             NotSupported = 0,
-            Upper = 0x0001,
-            Lower = 0x0002,
-            External = 0x0004,
-            AUX = 0x0008,
-            AUX2 = 0x0010,
-            Park = 0x0020,
+            Upper = 1 << 0,
+            Lower = 1 << 1,
+            External = 1 << 2,
+            AUX = 1 << 3,
+            AUX2 = 1 << 4,
+            Park = 1 << 5,
         }
 
         [Flags]
         public enum ImageTypeEnum
         {
             NotSupported = 0,
-            TIF = 0x0001,
-            WMF = 0x0002,
-            BMP = 0x0004,
-            JPG = 0x0008,
+            TIF = 1 << 0,
+            WMF = 1 << 1,
+            BMP = 1 << 2,
+            JPG = 1 << 3,
         }
 
         [Flags]
         public enum FrontImageColorFormatEnum
         {
             NotSupported = 0,
-            Binary = 0x0001,
-            GrayScale = 0x0002,
-            Full = 0x0004,
+            Binary = 1 << 0,
+            GrayScale = 1 << 1,
+            Full = 1 << 2,
         }
 
         [Flags]
         public enum BackImageColorFormatEnum
         {
             NotSupported = 0,
-            Binary = 0x0001,
-            GrayScale = 0x0002,
-            Full = 0x0004,
+            Binary = 1 << 0,
+            GrayScale = 1 << 1,
+            Full = 1 << 2,
         }
 
         [Flags]
         public enum CodelineFormatEnum
         {
             NotSupported = 0,
-            CMC7 = 0x0001,
-            E13B = 0x0002,
-            OCR = 0x0004,
+            CMC7 = 1 << 0,
+            E13B = 1 << 1,
+            OCR = 1 << 2,
         }
 
         [Flags]
         public enum ImageSourceTypeEnum
         {
             NotSupported = 0,
-            ImageFront = 0x0001,
-            ImageBack = 0x0002,
-            CodeLine = 0x0004,
+            ImageFront = 1 << 0,
+            ImageBack = 1 << 1,
+            CodeLine = 1 << 2,
         }
 
         [Flags]
         public enum CoercivityTypeEnum
         {
             NotSupported = 0,
-            Low = 0x0001,
-            High = 0x0002,
-            Auto = 0x0004,
+            Low = 1 << 0,
+            High = 1 << 1,
+            Auto = 1 << 2,
         }
 
         [Flags]
         public enum ControlPassbookEnum
         {
             NotSupported = 0,
-            TurnForward = 0x0001,
-            TurnBackward = 0x0002,
-            CloseForward = 0x0004,
-            CloseBackward = 0x0008,
+            TurnForward = 1 << 0,
+            TurnBackward = 1 << 1,
+            CloseForward = 1 << 2,
+            CloseBackward = 1 << 3,
         }
 
         public enum PrintSidesEnum

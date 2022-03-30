@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -138,13 +138,13 @@ namespace XFS4IoTFramework.Common
                         positions.Add(new XFS4IoT.CashDispenser.OutPosClass(
                             Position: position.Key switch
                             {
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => XFS4IoT.CashManagement.OutputPositionEnum.OutBottom,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => XFS4IoT.CashManagement.OutputPositionEnum.OutCenter,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => XFS4IoT.CashManagement.OutputPositionEnum.OutFront,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => XFS4IoT.CashManagement.OutputPositionEnum.OutLeft,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => XFS4IoT.CashManagement.OutputPositionEnum.OutRear,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => XFS4IoT.CashManagement.OutputPositionEnum.OutRight,
-                                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => XFS4IoT.CashManagement.OutputPositionEnum.OutTop,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Bottom => XFS4IoT.CashManagement.OutputPositionEnum.OutBottom,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Center => XFS4IoT.CashManagement.OutputPositionEnum.OutCenter,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Front => XFS4IoT.CashManagement.OutputPositionEnum.OutFront,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Left => XFS4IoT.CashManagement.OutputPositionEnum.OutLeft,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Rear => XFS4IoT.CashManagement.OutputPositionEnum.OutRear,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Right => XFS4IoT.CashManagement.OutputPositionEnum.OutRight,
+                                CashManagementCapabilitiesClass.OutputPositionEnum.Top => XFS4IoT.CashManagement.OutputPositionEnum.OutTop,
                                 _ => XFS4IoT.CashManagement.OutputPositionEnum.OutDefault
                             },
                             Shutter: position.Value.Shutter switch
@@ -160,24 +160,24 @@ namespace XFS4IoTFramework.Common
                             },
                             PositionStatus: position.Value.PositionStatus switch
                             {
-                                CashDispenserStatusClass.PositionStatusClass.PositionStatusEnum.Empty => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.Empty,
-                                CashDispenserStatusClass.PositionStatusClass.PositionStatusEnum.NotEmpty => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.NotEmpty,
-                                CashDispenserStatusClass.PositionStatusClass.PositionStatusEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.Unknown,
+                                CashManagementStatusClass.PositionStatusEnum.Empty => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.Empty,
+                                CashManagementStatusClass.PositionStatusEnum.NotEmpty => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.NotEmpty,
+                                CashManagementStatusClass.PositionStatusEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.Unknown,
                                 _ => XFS4IoT.CashDispenser.OutPosClass.PositionStatusEnum.NotSupported,
                             },
                             Transport: position.Value.Transport switch
                             {
-                                CashDispenserStatusClass.PositionStatusClass.TransportEnum.Inoperative => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Inoperative,
-                                CashDispenserStatusClass.PositionStatusClass.TransportEnum.Ok => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Ok,
-                                CashDispenserStatusClass.PositionStatusClass.TransportEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Unknown,
+                                CashManagementStatusClass.TransportEnum.Inoperative => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Inoperative,
+                                CashManagementStatusClass.TransportEnum.Ok => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Ok,
+                                CashManagementStatusClass.TransportEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.Unknown,
                                 _ => XFS4IoT.CashDispenser.OutPosClass.TransportEnum.NotSupported,
                             },
                             TransportStatus: position.Value.TransportStatus switch
                             {
-                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.Empty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Empty,
-                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.NotEmpty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmpty,
-                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.NotEmptyCustomer => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmptyCustomer,
-                                CashDispenserStatusClass.PositionStatusClass.TransportStatusEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Unknown,
+                                CashManagementStatusClass.TransportStatusEnum.Empty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Empty,
+                                CashManagementStatusClass.TransportStatusEnum.NotEmpty => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmpty,
+                                CashManagementStatusClass.TransportStatusEnum.NotEmptyCustomer => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotEmptyCustomer,
+                                CashManagementStatusClass.TransportStatusEnum.Unknown => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.Unknown,
                                 _ => XFS4IoT.CashDispenser.OutPosClass.TransportStatusEnum.NotSupported,
                             }
                             ));
@@ -256,14 +256,11 @@ namespace XFS4IoTFramework.Common
             XFS4IoT.Keyboard.StatusClass keyboard = null;
             if (Common.KeyboardStatus is not null)
             {
-                /*
                 keyboard = new XFS4IoT.Keyboard.StatusClass(
-                    AutoBeepMode: Common.KeyboardStatus.AutoBeepMode == KeyboardStatusClass.AutoBeepModeEnum.NotSupported ? null :
-                        Common.KeyboardStatus.AutoBeepMode switch
-                        {
-                            KeyboardStatusClass.AutoBeepModeEnum.Active => XFS4IoT.Keyboard.StatusClass.AutoBeepModeEnum.Active,
-                            _ => XFS4IoT.Keyboard.StatusClass.AutoBeepModeEnum.InActive
-                        });*/
+                    new XFS4IoT.Keyboard.StatusClass.AutoBeepModeClass(
+                        Common.KeyboardStatus.AutoBeepMode.HasFlag(KeyboardStatusClass.AutoBeepModeEnum.Active),
+                        Common.KeyboardStatus.AutoBeepMode.HasFlag(KeyboardStatusClass.AutoBeepModeEnum.InActive)
+                        ));
             }
 
             XFS4IoT.TextTerminal.StatusClass textTerminal = null;
@@ -979,6 +976,102 @@ namespace XFS4IoTFramework.Common
                 Common.BiometricStatus.RemainingStorage);
             }
 
+            XFS4IoT.CashAcceptor.StatusClass cashAcceptor = null;
+            if (Common.CashAcceptorStatus is not null)
+            {
+                List<XFS4IoT.CashAcceptor.PositionClass> positions = null;
+                if (Common.CashAcceptorStatus.Positions is not null &&
+                    Common.CashAcceptorStatus.Positions.Count > 0)
+                {
+                    positions = new();
+                    foreach (var position in Common.CashAcceptorStatus.Positions)
+                    {
+                        positions.Add(new XFS4IoT.CashAcceptor.PositionClass(
+                            Position: position.Key switch
+                            {
+                                CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
+                                CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
+                                CashManagementCapabilitiesClass.PositionEnum.InDefault => XFS4IoT.CashManagement.PositionEnum.InDefault,
+                                CashManagementCapabilitiesClass.PositionEnum.InFront => XFS4IoT.CashManagement.PositionEnum.InFront,
+                                CashManagementCapabilitiesClass.PositionEnum.InLeft => XFS4IoT.CashManagement.PositionEnum.InLeft,
+                                CashManagementCapabilitiesClass.PositionEnum.InRear => XFS4IoT.CashManagement.PositionEnum.InRear,
+                                CashManagementCapabilitiesClass.PositionEnum.InRight => XFS4IoT.CashManagement.PositionEnum.InRight,
+                                CashManagementCapabilitiesClass.PositionEnum.InTop => XFS4IoT.CashManagement.PositionEnum.InTop,
+                                CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
+                                CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.PositionEnum.OutCenter,
+                                CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.PositionEnum.OutDefault,
+                                CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.PositionEnum.OutFront,
+                                CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.PositionEnum.OutLeft,
+                                CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
+                                CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
+                                CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
+                                _ => null
+                            },
+                            Shutter: position.Value.Shutter switch
+                            {
+                                CashManagementStatusClass.ShutterEnum.Closed => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.Closed,
+                                CashManagementStatusClass.ShutterEnum.JammedOpen => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.JammedOpen,
+                                CashManagementStatusClass.ShutterEnum.JammedPartiallyOpen => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.JammedPartiallyOpen,
+                                CashManagementStatusClass.ShutterEnum.JammedClosed => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.JammedClosed,
+                                CashManagementStatusClass.ShutterEnum.JammedUnknown => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.JammedUnknown,
+                                CashManagementStatusClass.ShutterEnum.Open => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.Open,
+                                CashManagementStatusClass.ShutterEnum.Unknown => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.Unknown,
+                                _ => XFS4IoT.CashAcceptor.PositionClass.ShutterEnum.NotSupported,
+                            },
+                            PositionStatus: position.Value.PositionStatus switch
+                            {
+                                CashManagementStatusClass.PositionStatusEnum.Empty => XFS4IoT.CashAcceptor.PositionClass.PositionStatusEnum.Empty,
+                                CashManagementStatusClass.PositionStatusEnum.NotEmpty => XFS4IoT.CashAcceptor.PositionClass.PositionStatusEnum.NotEmpty,
+                                CashManagementStatusClass.PositionStatusEnum.Unknown => XFS4IoT.CashAcceptor.PositionClass.PositionStatusEnum.Unknown,
+                                _ => XFS4IoT.CashAcceptor.PositionClass.PositionStatusEnum.NotSupported,
+                            },
+                            Transport: position.Value.Transport switch
+                            {
+                                CashManagementStatusClass.TransportEnum.Inoperative => XFS4IoT.CashAcceptor.PositionClass.TransportEnum.Inoperative,
+                                CashManagementStatusClass.TransportEnum.Ok => XFS4IoT.CashAcceptor.PositionClass.TransportEnum.Ok,
+                                CashManagementStatusClass.TransportEnum.Unknown => XFS4IoT.CashAcceptor.PositionClass.TransportEnum.Unknown,
+                                _ => XFS4IoT.CashAcceptor.PositionClass.TransportEnum.NotSupported,
+                            },
+                            TransportStatus: position.Value.TransportStatus switch
+                            {
+                                CashManagementStatusClass.TransportStatusEnum.Empty => XFS4IoT.CashAcceptor.PositionClass.TransportStatusEnum.Empty,
+                                CashManagementStatusClass.TransportStatusEnum.NotEmpty => XFS4IoT.CashAcceptor.PositionClass.TransportStatusEnum.NotEmpty,
+                                CashManagementStatusClass.TransportStatusEnum.NotEmptyCustomer => XFS4IoT.CashAcceptor.PositionClass.TransportStatusEnum.NotEmptyCustomer,
+                                CashManagementStatusClass.TransportStatusEnum.Unknown => XFS4IoT.CashAcceptor.PositionClass.TransportStatusEnum.Unknown,
+                                _ => XFS4IoT.CashAcceptor.PositionClass.TransportStatusEnum.NotSupported,
+                            }
+                            ));
+                    }
+                }
+
+                cashAcceptor = new(
+                    IntermediateStacker: Common.CashAcceptorStatus.IntermediateStacker switch
+                    {
+                        CashAcceptorStatusClass.IntermediateStackerEnum.Empty => XFS4IoT.CashAcceptor.StatusClass.IntermediateStackerEnum.Empty,
+                        CashAcceptorStatusClass.IntermediateStackerEnum.NotEmpty => XFS4IoT.CashAcceptor.StatusClass.IntermediateStackerEnum.NotEmpty,
+                        CashAcceptorStatusClass.IntermediateStackerEnum.Full => XFS4IoT.CashAcceptor.StatusClass.IntermediateStackerEnum.Full,
+                        CashAcceptorStatusClass.IntermediateStackerEnum.Unknown => XFS4IoT.CashAcceptor.StatusClass.IntermediateStackerEnum.Unknown,
+                        _ => XFS4IoT.CashAcceptor.StatusClass.IntermediateStackerEnum.NotSupported,
+                    },
+                    StackerItems: Common.CashAcceptorStatus.StackerItems switch
+                    {
+                        CashAcceptorStatusClass.StackerItemsEnum.AccessUnknown => XFS4IoT.CashAcceptor.StatusClass.StackerItemsEnum.AccessUnknown,
+                        CashAcceptorStatusClass.StackerItemsEnum.CustomerAccess => XFS4IoT.CashAcceptor.StatusClass.StackerItemsEnum.CustomerAccess,
+                        CashAcceptorStatusClass.StackerItemsEnum.NoCustomerAccess => XFS4IoT.CashAcceptor.StatusClass.StackerItemsEnum.NoCustomerAccess,
+                        CashAcceptorStatusClass.StackerItemsEnum.NoItems => XFS4IoT.CashAcceptor.StatusClass.StackerItemsEnum.NoItems,
+                        _ => null,
+                    },
+                    BanknoteReader: Common.CashAcceptorStatus.BanknoteReader switch
+                    {
+                        CashAcceptorStatusClass.BanknoteReaderEnum.Inoperable => XFS4IoT.CashAcceptor.StatusClass.BanknoteReaderEnum.Inoperable,
+                        CashAcceptorStatusClass.BanknoteReaderEnum.Ok => XFS4IoT.CashAcceptor.StatusClass.BanknoteReaderEnum.Ok,
+                        CashAcceptorStatusClass.BanknoteReaderEnum.Unknown => XFS4IoT.CashAcceptor.StatusClass.BanknoteReaderEnum.Unknown,
+                        _ => XFS4IoT.CashAcceptor.StatusClass.BanknoteReaderEnum.NotSupported,
+                    },
+                    DropBox: Common.CashAcceptorStatus.DropBox,
+                    Positions: positions);
+            }
+
             return Task.FromResult(
                 new StatusCompletion.PayloadData(
                     MessagePayload.CompletionCodeEnum.Success,
@@ -996,7 +1089,8 @@ namespace XFS4IoTFramework.Common
                     VendorApplication: vendorApplication,
                     VendorMode: vendorMode,
                     BarcodeReader: barcodeReader,
-                    Biometric: biometric)
+                    Biometric: biometric,
+                    CashAcceptor: cashAcceptor)
                 );
         }
     }

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/***********************************************************************************************\
+ * (C) KAL ATM Software GmbH, 2022
+ * KAL ATM Software GmbH licenses this file to you under the MIT license.
+ * See the LICENSE file in the project root for more information.
+\***********************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,37 +53,37 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The switch can be set in Run mode.
             /// </summary>
-            Run = 1,
+            Run = 1 << 0,
             /// <summary>
             /// The switch can be set in Maintenance mode.
             /// </summary>
-            Maintenance = 2,
+            Maintenance = 1 << 1,
             /// <summary>
             /// The switch can be set in Supervisor mode.
             /// </summary> 
-            Supervisor = 4
+            Supervisor = 1 << 2,
         }
 
         [Flags]
         public enum AuxiliariesSupportedEnum
         {
             None = 0, 
-            TamperSensor = 1, 
-            InternalTamperSensor = 2, 
-            SeismicSensor = 4, 
-            HeatSensor = 8, 
-            ProximitySensor = 16, 
-            AmbientLightSensor = 32, 
-            BootSwitchSensor = 64,
-            ConsumerDisplaySensor = 128, 
-            OperatorCallButtonSensor = 256, 
-            FasciaMicrophoneSensor = 512, 
-            OpenCloseIndicator = 1024, 
-            Audio = 2048,
-            Heating = 4096, 
-            ConsumerDisplayBacklight = 8192, 
-            SignageDisplay = 16384, 
-            AudibleAlarm = 32768
+            TamperSensor = 1 << 0,
+            InternalTamperSensor = 1 << 1,
+            SeismicSensor = 1 << 2,
+            HeatSensor = 1 << 3,
+            ProximitySensor = 1 << 4,
+            AmbientLightSensor = 1 << 5,
+            BootSwitchSensor = 1 << 6,
+            ConsumerDisplaySensor = 1 << 7,
+            OperatorCallButtonSensor = 1 << 8,
+            FasciaMicrophoneSensor = 1 << 9,
+            OpenCloseIndicator = 1 << 10,
+            Audio = 1 << 11,
+            Heating = 1 << 12,
+            ConsumerDisplayBacklight = 1 << 13,
+            SignageDisplay = 1 << 14,
+            AudibleAlarm = 1 << 15,
         }
 
         /// <summary>
@@ -100,20 +106,20 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The Audio Jack is available and supports manual mode.
             /// </summary>
-            Manual = 1,
+            Manual = 1 << 0,
             /// <summary>
             /// The Audio Jack is available and supports auto mode.
             /// </summary>
-            Auto = 2,
+            Auto = 1 << 1,
             /// <summary>
             /// The Audio Jack is available and supports semi-auto mode.
             /// </summary>
-            SemiAuto = 4,
+            SemiAuto = 1 << 2,
             /// <summary>
             /// The Audio Jack is available and can support headphones that have an integrated microphone via a
             /// single jack.
             /// </summary>
-            Bidirectional = 8
+            Bidirectional = 1 << 3,
         }
 
         /// <summary>
@@ -131,19 +137,19 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The Handset is available and it supports manual mode.
             /// </summary>
-            Manual = 1,
+            Manual = 1 << 0,
             /// <summary>
             /// The Handset is available and it supports auto mode.
             /// </summary>
-            Auto = 2,
+            Auto = 1 << 1,
             /// <summary>
             /// The Handset is available and it supports semi-auto mode.
             /// </summary>
-            SemiAuto = 4,
+            SemiAuto = 1 << 2,
             /// <summary>
             /// The Handset is available and contains an embedded microphone for audio input.
             /// </summary>
-            Microphone = 8 
+            Microphone = 1 << 3,
         }
 
         /// <summary>
@@ -161,15 +167,15 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The Microphone Jack is available and it supports manual mode.
             /// </summary>
-            Manual = 1,
+            Manual = 1 << 0,
             /// <summary>
             /// The Microphone Jack is available and it supports auto mode.
             /// </summary>
-            Auto = 2,
+            Auto = 1 << 1,
             /// <summary>
             /// The Microphone Jack is available and it supports semi-auto mode.
             /// </summary>
-            SemiAuto = 4 
+            SemiAuto = 1 << 2,
         }
 
         /// <summary>
@@ -189,27 +195,27 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The Vandal Shield can be closed.
             /// </summary>
-            Closed = 1,
+            Closed = 1 << 0,
             /// <summary>
             /// The Vandal Shield can be open.
             /// </summary>
-            Open = 2,
+            Open = 1 << 1,
             /// <summary>
             /// The Vandal Shield can be locked.
             /// </summary>
-            Locked = 4,
+            Locked = 1 << 2,
             /// <summary>
             /// The Vandal Shield can be in the service position.
             /// </summary>
-            Service = 8,
+            Service = 1 << 3,
             /// <summary>
             /// The Vandal Shield can be in a position that permits access to the keyboard.
             /// </summary>
-            Keyboard = 16,
+            Keyboard = 1 << 4,
             /// <summary>
             /// The Vandal Shield can detect potential tampering.
             /// </summary>
-            Tampered = 32
+            Tampered = 1 << 5,
         }
 
         /// <summary>
@@ -236,19 +242,19 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The door can report the open state.
             /// </summary>
-            Open = 1,
+            Open = 1 << 0,
             /// <summary>
             /// The door can report the locked state.
             /// </summary>
-            Locked = 2,
+            Locked = 1 << 1,
             /// <summary>
             /// The door can report the bolted state.
             /// </summary>
-            Bolted = 4,
+            Bolted = 1 << 2,
             /// <summary>
             /// The door can report the tampered state.
             /// </summary>
-            Tampered = 8
+            Tampered = 1 << 3,
         }
 
         /// <summary>
@@ -271,19 +277,19 @@ namespace XFS4IoTFramework.Common
             /// <summary>
             /// The UPS can indicate that its charge level is low.
             /// </summary>
-            Low = 1,
+            Low = 1 << 0,
             /// <summary>
             /// The UPS can be engaged and disengaged by the application.
             /// </summary>
-            Engaged = 2,
+            Engaged = 1 << 1,
             /// <summary>
             /// The UPS can indicate that it is powering the system while the main power supply is off.
             /// </summary>
-            Powering = 4,
+            Powering = 1 << 2,
             /// <summary>
             /// The UPS can indicate that it was engaged when the main power went off.
             /// </summary>
-            Recovered = 8
+            Recovered = 1 << 3,
         }
 
         /// <summary>
@@ -302,12 +308,12 @@ namespace XFS4IoTFramework.Common
             /// The Enhanced Audio/Microphone Controller is supports Privacy Device activation/deactivation. The device is able 
             /// to report events to indicate Privacy Device activation/deactivation.
             /// </summary>
-            HeadsetDetection = 1,
+            HeadsetDetection = 1 << 0,
             /// <summary>
             /// The Enhanced Audio/Microphone Controller supports application control of the Privacy Device mode via the 
             /// setAuxiliaries command.
             /// </summary>
-            ModeControllable = 2
+            ModeControllable = 1 << 1,
         }
 
         /// <summary>

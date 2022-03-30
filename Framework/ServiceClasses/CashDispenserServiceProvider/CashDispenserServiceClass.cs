@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,6 +41,13 @@ namespace XFS4IoTServer
                 // merge table mix set by the application
                 foreach (var t in tableMixes)
                     AddMix(t.Key, t.Value);
+            }
+
+            LastCashDispenserPresentStatus = PersistentData.Load<Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus>>(ServiceProvider.Name + typeof(CashDispenserPresentStatus).FullName);
+            if (LastCashDispenserPresentStatus is null)
+            {
+                LastCashDispenserPresentStatus = _LastCashDispenserPresentStatus;
+                StoreCashDispenserPresentStatus();
             }
 
             Mixes = new()
@@ -111,21 +118,21 @@ namespace XFS4IoTServer
         /// <summary>
         /// Keep last present status
         /// </summary>
-        public Dictionary<CashDispenserCapabilitiesClass.OutputPositionEnum, PresentStatus> LastPresentStatus { get => _LastPresentStatus; set => _LastPresentStatus = value; }
+        public Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus> LastCashDispenserPresentStatus { get; init; }
 
         /// <summary>
         /// Keep last present status per position
         /// </summary>
-        private Dictionary<CashDispenserCapabilitiesClass.OutputPositionEnum, PresentStatus> _LastPresentStatus = new()
+        private readonly Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus> _LastCashDispenserPresentStatus = new()
         {
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,  new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Center,  new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Default, new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Front,   new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Left,    new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,    new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Right,   new PresentStatus() },
-            { CashDispenserCapabilitiesClass.OutputPositionEnum.Top,     new PresentStatus() }
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,  new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Center,  new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Default, new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Front,   new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Left,    new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Rear,    new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Right,   new CashDispenserPresentStatus() },
+            { CashManagementCapabilitiesClass.OutputPositionEnum.Top,     new CashDispenserPresentStatus() }
         };
 
         /// <summary>
@@ -154,6 +161,17 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserCapabilities=");
 
             CommonService.CashDispenserCapabilities.IsNotNull($"The device class set CashDispenserCapabilities property to null. The device class must report device capabilities.");
+        }
+
+        /// <summary>
+        /// Store present status persistently
+        /// </summary>
+        public void StoreCashDispenserPresentStatus()
+        {
+            if (!PersistentData.Store<Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus>>(ServiceProvider.Name + typeof(CashDispenserPresentStatus).FullName, LastCashDispenserPresentStatus))
+            {
+                Logger.Warning(Constants.Framework, $"Failed to save persistent data. {ServiceProvider.Name + typeof(CashDispenserPresentStatus).FullName}");
+            }
         }
     }
 }

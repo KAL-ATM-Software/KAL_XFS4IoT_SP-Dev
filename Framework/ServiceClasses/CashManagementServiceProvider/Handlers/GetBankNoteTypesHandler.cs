@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -21,12 +21,12 @@ namespace XFS4IoTFramework.CashManagement
         private Task<GetBankNoteTypesCompletion.PayloadData> HandleGetBankNoteTypes(IGetBankNoteTypesEvents events, GetBankNoteTypesCommand getBankNoteTypes, CancellationToken cancel)
         {
             Dictionary<string, BankNoteClass> items = null;
-            if (Common.CashManagementCapabilities.AllBanknoteItems.Count > 0)
+            if (Common.CashManagementCapabilities.AllBanknoteItems?.Count > 0)
             {
                 foreach (var item in Common.CashManagementCapabilities.AllBanknoteItems)
                 {
-                    if (Common.CashManagementStatus.AllBanknoteItems is null ||
-                        Common.CashManagementStatus.AllBanknoteItems.ContainsKey(item.Key))
+                    if (Common.CashManagementCapabilities.AllBanknoteItems is null ||
+                        Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item.Key))
                     {
                         return Task.FromResult(new GetBankNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
                                                                                           $"The device specific class doesn't report status of the banknote type is enabled or not. {item.Key}"));
@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.CashManagement
                                                                item.Value.Currency,
                                                                item.Value.Value,
                                                                item.Value.Release),
-                                                          Common.CashManagementStatus.AllBanknoteItems[item.Key]));
+                                                          Common.CashManagementCapabilities.AllBanknoteItems[item.Key].Enabled));
                 }
             }
 

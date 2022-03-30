@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -19,10 +19,10 @@ namespace XFS4IoTFramework.Common
         public enum KeyboardBeepEnum
         {
             NotSupported = 0,
-            ActiveAvailable = 0x0001,
-            ActiveSelectable = 0x0002,
-            InActiveAvailable = 0x0004,
-            InActiveSelectable = 0x0010,
+            ActiveAvailable = 1 << 0,
+            ActiveSelectable = 1 << 1,
+            InActiveAvailable = 1 << 2,
+            InActiveSelectable = 1 << 3,
         }
 
         public sealed class ETSCap
@@ -31,8 +31,8 @@ namespace XFS4IoTFramework.Common
             public enum FloatPositionEnum
             {
                 NotSupported = 0,
-                FloatX = 0x0001,
-                FloatY = 0x0002,
+                FloatX = 1 << 0,
+                FloatY = 1 << 1,
             }
 
             public ETSCap(int XPos,

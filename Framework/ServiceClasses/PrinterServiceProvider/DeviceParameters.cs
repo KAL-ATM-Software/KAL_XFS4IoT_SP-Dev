@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -473,13 +473,13 @@ namespace XFS4IoTFramework.Printer
         public enum SupplyEnum
         {
             NotSupported = 0,
-            AUX = 0x0001,
-            AUX2 = 0x0002,
-            Upper = 0x0004,
-            Lower = 0x0008,
-            Ink = 0x0010,
-            Toner = 0x0020,
-            Lamp = 0x0040,
+            AUX = 1 << 0,
+            AUX2 = 1 << 1,
+            Upper = 1 << 2,
+            Lower = 1 << 3,
+            Ink = 1 << 4,
+            Toner = 1 << 5,
+            Lamp = 1 << 6,
         }
         /// <summary>
         /// Replenish media

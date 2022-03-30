@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -87,10 +87,11 @@ namespace XFS4IoTFramework.KeyManagement
                 // Delete internal key information
                 if (string.IsNullOrEmpty(deleteKey.Payload.Key))
                 {
-                    foreach (var key in KeyManagement.GetKeyTable())
+                    foreach (var key in from key in KeyManagement.GetKeyTable()
+                                        where !key.Preloaded
+                                        select key)
                     {
-                        if (!key.Preloaded)
-                            KeyManagement.DeleteKey(key.KeyName);
+                        KeyManagement.DeleteKey(key.KeyName);
                     }
                 }
                 else

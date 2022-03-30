@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
+using XFS4IoTFramework.KeyManagement;
 
 namespace XFS4IoTServer
 {
@@ -19,26 +20,28 @@ namespace XFS4IoTServer
     /// Default implimentation of a biometric service provider. 
     /// </summary>
     /// <remarks> 
-    /// This represents a typical biometric device, which only implements the Biometric and Common interfaces. 
+    /// This represents a typical biometric device, which only implements the Biometric, KeyManagement and Common interfaces. 
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class BiometricServiceProvider : ServiceProvider, IBiometricService, ICommonService
+    public class BiometricServiceProvider : ServiceProvider, IBiometricService, ICommonService, IKeyManagementService
     {
-        public BiometricServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
+        public BiometricServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Biometric },
+                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Biometric, XFSConstants.ServiceClass.KeyManagement },
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             Biometric = new BiometricServiceClass(this, logger);
+            KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);
         }
 
         private readonly BiometricServiceClass Biometric;
         private readonly CommonServiceClass CommonService;
+        private readonly KeyManagementServiceClass KeyManagementService;
 
         #region Common unsolicited events
         public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
@@ -84,6 +87,16 @@ namespace XFS4IoTServer
         /// </summary>
         public BiometricStatusClass BiometricStatus { get => CommonService.BiometricStatus; set => CommonService.BiometricStatus = value; }
 
+        /// <summary>
+        /// Stores KeyManagement interface capabilites internally
+        /// </summary>
+        public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
+
+        /// <summary>
+        /// KeyManagement Status
+        /// </summary>
+        public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
+
         #endregion
 
         #region Biometric unsolicited events
@@ -112,5 +125,37 @@ namespace XFS4IoTServer
         public Task OrientationEvent()
             => Biometric.OrientationEvent();
         #endregion
+
+        #region KeyManagement unsolicited events
+        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode)
+            => KeyManagementService.IllegalKeyAccessEvent(KeyName, ErrorCode);
+
+        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange)
+            => KeyManagementService.CertificateChangeEvent(CertificateChange);
+        #endregion
+
+        #region KeyManagement Service
+        public int FindKeySlot(string KeyName)
+            => KeyManagementService.FindKeySlot(KeyName);
+
+        public List<KeyDetail> GetKeyTable()
+            => KeyManagementService.GetKeyTable();
+
+        public KeyDetail GetKeyDetail(string KeyName)
+            => KeyManagementService.GetKeyDetail(KeyName);
+
+        public void AddKey(string KeyName, int KeySlot, string KeyUsage, string Algorithm, string ModeOfUse, int KeyLength, KeyDetail.KeyStatusEnum KeyStatus, bool Preloaded = false, string RestrictedKeyUsage = null, string KeyVersionNumber = null, string Exportability = null, List<byte> OptionalKeyBlockHeader = null, int? Generation = null, DateTime? ActivatingDate = null, DateTime? ExpiryDate = null, int? Version = null)
+            => KeyManagementService.AddKey(KeyName, KeySlot, KeyUsage, Algorithm, ModeOfUse, KeyLength, KeyStatus, Preloaded, RestrictedKeyUsage, KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version);
+
+        public void DeleteKey(string KeyName)
+            => KeyManagementService.DeleteKey(KeyName);
+
+        public void UpdateKeyStatus(string KeyName, KeyDetail.KeyStatusEnum Status)
+            => KeyManagementService.UpdateKeyStatus(KeyName, Status);
+
+        public SecureKeyEntryStatusClass GetSecureKeyEntryStatus()
+            => KeyManagementService.GetSecureKeyEntryStatus();
+        #endregion
+
     }
 }

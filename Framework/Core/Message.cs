@@ -1,11 +1,11 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
 using System.Runtime.Serialization;
-
+using System.Text.Json.Serialization;
 
 namespace XFS4IoT
 {
@@ -33,6 +33,7 @@ namespace XFS4IoT
         /// Payload of the message for response and this set by the derived class
         /// </summary>
         [DataMember(IsRequired = true, Name = "payload")]
+        [JsonPropertyOrder(1)]
         public T Payload { get; protected set; }
 
         /// <summary>

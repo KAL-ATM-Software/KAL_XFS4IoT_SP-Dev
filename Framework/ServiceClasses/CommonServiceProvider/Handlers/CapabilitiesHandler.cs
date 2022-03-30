@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -275,6 +275,20 @@ namespace XFS4IoTFramework.Common
                                                             select $"{interfaceName}.{cmd}");
                 }
             }
+            // CashAcceptor interface
+            if (Common.CommonCapabilities.CashAcceptorInterface is not null)
+            {
+                interfaceName = InterfaceClass.NameEnum.CashAcceptor;
+                interfaces.Add(new(interfaceName,
+                                   Common.CommonCapabilities.CashAcceptorInterface.Commands?.ToDictionary(cmd => $"{interfaceName}.{cmd}", v => commandVersion),
+                                   Common.CommonCapabilities.CashAcceptorInterface.Events?.ToDictionary(ev => $"{interfaceName}.{ev}", v => eventVersion),
+                                   0));
+                if (Common.CommonCapabilities.CashAcceptorInterface.AuthenticationRequired?.Count > 0)
+                {
+                    authenticationRequiredCommands.AddRange(from cmd in Common.CommonCapabilities.CashAcceptorInterface.AuthenticationRequired
+                                                            select $"{interfaceName}.{cmd}");
+                }
+            }
 
             List<DeviceInformationClass> deviceInformation = null;
             if (Common.CommonCapabilities.DeviceInformation?.Count > 0)
@@ -435,9 +449,9 @@ namespace XFS4IoTFramework.Common
                 cashDispenser = new XFS4IoT.CashDispenser.CapabilitiesClass(
                     Type: Common.CashDispenserCapabilities.Type switch
                     {
-                        CashDispenserCapabilitiesClass.TypeEnum.SelfServiceBill => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceBill,
-                        CashDispenserCapabilitiesClass.TypeEnum.SelfServiceCoin => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceCoin,
-                        CashDispenserCapabilitiesClass.TypeEnum.TellerBill => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.TellerBill,
+                        CashManagementCapabilitiesClass.TypeEnum.SelfServiceBill => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceBill,
+                        CashManagementCapabilitiesClass.TypeEnum.SelfServiceCoin => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.SelfServiceCoin,
+                        CashManagementCapabilitiesClass.TypeEnum.TellerBill => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.TellerBill,
                         _ => XFS4IoT.CashDispenser.CapabilitiesClass.TypeEnum.TellerCoin
                     },
                     MaxDispenseItems: Common.CashDispenserCapabilities.MaxDispenseItems,
@@ -464,13 +478,13 @@ namespace XFS4IoTFramework.Common
                     IntermediateStacker: Common.CashDispenserCapabilities.IntermediateStacker,
                     ItemsTakenSensor: Common.CashDispenserCapabilities.ItemsTakenSensor,
                     Positions: new XFS4IoT.CashDispenser.CapabilitiesClass.PositionsClass(
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Left),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Right),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Center),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Top),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Front),
-                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashDispenserCapabilitiesClass.OutputPositionEnum.Rear)
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Left),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Right),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Center),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Top),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Bottom),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Front),
+                        Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Rear)
                         ),
                     MoveItems: new XFS4IoT.CashDispenser.CapabilitiesClass.MoveItemsClass(
                         Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.FromCashUnit),
@@ -1286,6 +1300,74 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
+            XFS4IoT.CashAcceptor.CapabilitiesClass cashAcceptor = null;
+            if (Common.CashAcceptorCapabilities is not null)
+            {
+                cashAcceptor = new XFS4IoT.CashAcceptor.CapabilitiesClass(
+                    Type: Common.CashAcceptorCapabilities.Type switch
+                    {
+                        CashManagementCapabilitiesClass.TypeEnum.SelfServiceBill => XFS4IoT.CashAcceptor.CapabilitiesClass.TypeEnum.SelfServiceBill,
+                        CashManagementCapabilitiesClass.TypeEnum.SelfServiceCoin => XFS4IoT.CashAcceptor.CapabilitiesClass.TypeEnum.SelfServiceCoin,
+                        CashManagementCapabilitiesClass.TypeEnum.TellerBill => XFS4IoT.CashAcceptor.CapabilitiesClass.TypeEnum.TellerBill,
+                        _ => XFS4IoT.CashAcceptor.CapabilitiesClass.TypeEnum.TellerCoin
+                    },
+                    MaxCashInItems: Common.CashAcceptorCapabilities.MaxCashInItems,
+                    Shutter: Common.CashAcceptorCapabilities.Shutter,
+                    ShutterControl: Common.CashAcceptorCapabilities.ShutterControl,
+                    IntermediateStacker: Common.CashAcceptorCapabilities.IntermediateStacker,
+                    ItemsInsertedSensor: Common.CashAcceptorCapabilities.ItemsTakenSensor,
+                    Positions: new XFS4IoT.CashAcceptor.CapabilitiesClass.PositionsClass(
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InLeft),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRight),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InCenter),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InTop),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InBottom),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InFront),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InRear),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutLeft),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRight),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutCenter),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutTop),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutBottom),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutFront),
+                        Common.CashAcceptorCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutRear)
+                        ),
+                    RetractAreas: new XFS4IoT.CashAcceptor.CapabilitiesClass.RetractAreasClass(
+                        Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
+                        Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
+                        Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Stacker),
+                        Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Reject),
+                        Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette)
+                        ),
+                    RetractTransportActions: new XFS4IoT.CashAcceptor.CapabilitiesClass.RetractTransportActionsClass(
+                        Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Present),
+                        Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract),
+                        Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Reject),
+                        Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.ItemCassette)
+                        ),
+                    RetractStackerActions: new XFS4IoT.CashAcceptor.CapabilitiesClass.RetractStackerActionsClass(
+                        Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Present),
+                        Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract),
+                        Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject),
+                        Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.ItemCassette)
+                        ),
+                    CashInLimit: new XFS4IoT.CashAcceptor.CapabilitiesClass.CashInLimitClass(
+                        Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByTotalItems),
+                        Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByAmount)
+                        ),
+                    CountActions: new XFS4IoT.CashAcceptor.CapabilitiesClass.CountActionsClass(
+                        Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.Individual),
+                        Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.All)
+                        ),
+                    CounterfeitAction: Common.CashAcceptorCapabilities.CounterfeitAction switch
+                    {
+                        CashAcceptorCapabilitiesClass.CounterfeitActionEnum.Level2 => XFS4IoT.CashAcceptor.CapabilitiesClass.CounterfeitActionEnum.Level2,
+                        CashAcceptorCapabilitiesClass.CounterfeitActionEnum.Level23 => XFS4IoT.CashAcceptor.CapabilitiesClass.CounterfeitActionEnum.Level23,
+                        _ => XFS4IoT.CashAcceptor.CapabilitiesClass.CounterfeitActionEnum.None,
+                    }
+                );
+            }
+
             return Task.FromResult(
                 new CapabilitiesCompletion.PayloadData(
                     MessagePayload.CompletionCodeEnum.Success,
@@ -1305,7 +1387,8 @@ namespace XFS4IoTFramework.Common
 					Auxiliaries: auxiliaries,
                     VendorApplication: vendorApplication,
                     BarcodeReader: barcodeReader,
-                    Biometric: biometric)
+                    Biometric: biometric,
+                    CashAcceptor: cashAcceptor)
                 );
         }
     }

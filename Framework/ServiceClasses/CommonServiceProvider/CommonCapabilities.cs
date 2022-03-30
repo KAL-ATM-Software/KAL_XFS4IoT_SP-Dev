@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -617,6 +617,55 @@ namespace XFS4IoTFramework.Common
             public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
+        public sealed class CashAcceptorInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                CashIn,
+                CashInEnd,
+                CashInRollback,
+                CashInStart,
+                CashUnitCount,
+                CompareSignature,
+                ConfigureNoteReader,
+                ConfigureNoteTypes,
+                CreateSignature,
+                Deplete,
+                DeviceLockControl,
+                GetCashInStatus,
+                GetDepleteSource,
+                GetDeviceLockStatus,
+                GetPositionCapabilities,
+                GetPresentStatus,
+                GetReplenishTarget,
+                PreparePresent,
+                PresentMedia,
+                Replenish,
+            }
+
+            public enum EventEnum
+            {
+                IncompleteDepleteEvent,
+                IncompleteReplenishEvent,
+                InputRefuseEvent,
+                InsertItemsEvent,
+                SubCashInEvent,
+            }
+
+            public CashAcceptorInterfaceClass(List<CommandEnum> Commands = null,
+                                              List<EventEnum> Events = null,
+                                              List<CommandEnum> AuthenticationRequired = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+                this.AuthenticationRequired = AuthenticationRequired;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
+            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
+
         public CommonCapabilitiesClass(CommonInterfaceClass CommonInterface,
                                        CardReaderInterfaceClass CardReaderInterface = null,
                                        CashDispenserInterfaceClass CashDispenserInterface = null,
@@ -634,6 +683,7 @@ namespace XFS4IoTFramework.Common
                                        VendorApplicationInterfaceClass VendorApplicationInterface = null,
                                        BarcodeReaderInterfaceClass BarcodeReaderInterface = null,
                                        BiometricInterfaceClass BiometricInterface = null,
+                                       CashAcceptorInterfaceClass CashAcceptorInterface = null,
                                        List<DeviceInformationClass> DeviceInformation = null, 
                                        bool? PowerSaveControl = null, 
                                        bool? AntiFraudModule = null,
@@ -656,6 +706,7 @@ namespace XFS4IoTFramework.Common
             this.VendorApplicationInterface = VendorApplicationInterface;
             this.BarcodeReaderInterface = BarcodeReaderInterface;
             this.BiometricInterface = BiometricInterface;
+            this.CashAcceptorInterface = CashAcceptorInterface;
             this.DeviceInformation = DeviceInformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
@@ -682,6 +733,7 @@ namespace XFS4IoTFramework.Common
         public VendorApplicationInterfaceClass VendorApplicationInterface { get; init; }
         public BarcodeReaderInterfaceClass BarcodeReaderInterface { get; init; }
         public BiometricInterfaceClass BiometricInterface { get; init; }
+        public CashAcceptorInterfaceClass CashAcceptorInterface { get; init; }
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
         /// element for each device.

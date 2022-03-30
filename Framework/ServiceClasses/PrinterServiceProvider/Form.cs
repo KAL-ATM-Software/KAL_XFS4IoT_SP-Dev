@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -22,8 +22,8 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FormOrientationEnum
     {
-        PORTRAIT = 0x0001,
-        LANDSCAPE = 0x0002,
+        PORTRAIT = 1 << 0,
+        LANDSCAPE = 1 <<1,
     }
 
     /// <summary>
@@ -40,32 +40,32 @@ namespace XFS4IoTFramework.Printer
     /// Style of field
     /// </summary>
     [Flags]
-    public enum FieldStyleEnum
+    public enum FieldStyleEnum : long
     {
-        NORMAL = 0x00000001,
-        BOLD = 0x00000002,
-        ITALIC = 0x00000004,
-        UNDER = 0x00000008,
-        DOUBLEUNDER = 0x00000010,
-        DOUBLE = 0x00000020,
-        TRIPLE = 0x00000040,
-        QUADRUPLE = 0x00000080,
-        STRIKETHROUGH = 0x00000100,
-        ROTATE90 = 0x00000200,
-        ROTATE270 = 0x00000400,
-        UPSIDEDOWN = 0x00000800,
-        PROPORTIONAL = 0x00001000,
-        DOUBLEHIGH = 0x00002000,
-        TRIPLEHIGH = 0x00004000,
-        QUADRUPLEHIGH = 0x00008000,
-        CONDENSED = 0x00010000,
-        SUPERSCRIPT = 0x00020000,
-        SUBSCRIPT = 0x00040000,
-        OVERSCORE = 0x00080000,
-        LETTERQUALITY = 0x00100000,
-        NEARLETTERQUALITY = 0x00200000,
-        DOUBLESTRIKE = 0x00400000,
-        OPAQUE = 0x00800000,
+        NORMAL = 1 << 0,
+        BOLD = 1 << 1,
+        ITALIC = 1 << 2,
+        UNDER = 1 << 3,
+        DOUBLEUNDER = 1 << 4,
+        DOUBLE = 1 << 5,
+        TRIPLE = 1 << 6,
+        QUADRUPLE = 1 << 7,
+        STRIKETHROUGH = 1 << 8,
+        ROTATE90 = 1 << 9,
+        ROTATE270 = 1 << 10,
+        UPSIDEDOWN = 1 << 11,
+        PROPORTIONAL = 1 << 12,
+        DOUBLEHIGH = 1 << 13,
+        TRIPLEHIGH = 1 << 14,
+        QUADRUPLEHIGH = 1 << 15,
+        CONDENSED = 1 << 16,
+        SUPERSCRIPT = 1 << 17,
+        SUBSCRIPT = 1 << 18,
+        OVERSCORE = 1 << 19,
+        LETTERQUALITY = 1 << 20,
+        NEARLETTERQUALITY = 1 << 21,
+        DOUBLESTRIKE = 1 << 22,
+        OPAQUE = 1 << 23,
     }
 
     /// <summary>
@@ -74,13 +74,13 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FieldTypeEnum
     {
-        TEXT = 0x0001,
-        MICR = 0x0002,
-        OCR = 0x0004,
-        MSF = 0x0008,
-        BARCODE = 0x0010,
-        GRAPHIC = 0x0020,
-        PAGEMARK = 0x0040,
+        TEXT = 1 << 0,
+        MICR = 1 << 1,
+        OCR = 1 << 2,
+        MSF = 1 << 3,
+        BARCODE = 1 << 4,
+        GRAPHIC = 1 << 5,
+        PAGEMARK = 1 << 6,
     }
 
     /// <summary>
@@ -89,9 +89,9 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FieldAccessEnum
     {
-        WRITE = 0x0001,
-        READ = 0x0002,
-        READWRITE = 0x0004,
+        WRITE = 1 << 0,
+        READ = 1 << 1,
+        READWRITE = 1 << 2,
     }
 
     /// <summary>
@@ -100,9 +100,9 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FieldScalingEnum
     {
-        BESTFIT = 0x0001,
-        ASIS = 0x0002,
-        MAINTAINASPECT = 0x0004
+        BESTFIT = 1 << 0,
+        ASIS = 1 << 1,
+        MAINTAINASPECT = 1 << 2
     }
 
     /// <summary>
@@ -111,10 +111,10 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FieldBarcodeEnum
     {
-        NONE = 0x0001,
-        ABOVE = 0x002,
-        BELOW = 0x0004,
-        BOTH = 0x0008,
+        NONE = 0,
+        ABOVE = 1 << 0,
+        BELOW = 1 << 1,
+        BOTH = 1 << 2,
     }
 
     /// <summary>
@@ -123,13 +123,13 @@ namespace XFS4IoTFramework.Printer
     [Flags]
     public enum FieldColorEnum
     {
-        BLACK = 0x0001,
-        WHITE = 0x0002,
-        GRAY = 0x0004,
-        RED = 0x0008,
-        BLUE = 0x0010,
-        GREEN = 0x0020,
-        YELLOW = 0x0040,
+        BLACK = 1 << 0,
+        WHITE = 1 << 1,
+        GRAY = 1 << 2,
+        RED = 1 << 3,
+        BLUE = 1 << 4,
+        GREEN = 1 << 5,
+        YELLOW = 1 << 6,
     }
 
     // This class represents one printer form definition.

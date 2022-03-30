@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.Storage
 {
@@ -78,25 +79,25 @@ namespace XFS4IoTFramework.Storage
         [Flags]
         public enum TypesEnum
         {
-            CashIn = 0x0001,
-            CashOut = 0x0002,
-            Replenishment = 0x0004,
-            CashInRetract = 0x0008,
-            CashOutRetract = 0x0010,
-            Reject = 0x0020,
+            CashIn = 1 << 0,
+            CashOut = 1 << 1,
+            Replenishment = 1 << 2,
+            CashInRetract = 1 << 3,
+            CashOutRetract = 1 << 4,
+            Reject = 1 << 5,
         }
 
         [Flags]
         public enum ItemsEnum
         {
-            Fit = 0x0001,
-            Unfit = 0x0002,
-            Unrecognized = 0x0004,
-            Conterfeit = 0x0008,
-            Suspect = 0x0010,
-            Inked = 0x0020,
-            Coupon = 0x0040,
-            Document = 0x0080,
+            Fit = 1 << 0,
+            Unfit = 1 << 1,
+            Unrecognized = 1 << 2,
+            Conterfeit = 1 << 3,
+            Suspect = 1 << 4,
+            Inked = 1 << 5,
+            Coupon = 1 << 6,
+            Document = 1 << 7,
         }
 
         public CashCapabilitiesClass(TypesEnum Types,
@@ -319,7 +320,14 @@ namespace XFS4IoTFramework.Storage
                                      Dictionary<string, CashItemCountClass> ItemCounts)
         {
             this.Unrecognized = Unrecognized;
-            this.ItemCounts = ItemCounts;
+            this.ItemCounts = new(ItemCounts);
+        }
+
+        public StorageCashCountClass(StorageCashCountClass StorageCashCount)
+        {
+            StorageCashCount.IsNotNull("Copy constructure used with null reference. " + nameof(StorageCashCountClass));
+            Unrecognized = StorageCashCount.Unrecognized;
+            ItemCounts = new(StorageCashCount.ItemCounts);
         }
 
         /// <summary>
@@ -406,6 +414,16 @@ namespace XFS4IoTFramework.Storage
             this.Inked = Inked;
         }
 
+        public CashItemCountClass(CashItemCountClass CashItemCount)
+        {
+            CashItemCount.IsNotNull("Copy constructure used with null reference. " + nameof(CashItemCountClass));
+            Fit = CashItemCount.Fit;
+            Unfit = CashItemCount.Unfit;
+            Suspect = CashItemCount.Suspect;
+            Counterfeit = CashItemCount.Counterfeit;
+            Inked = CashItemCount.Inked;
+        }
+
         /// <summary>
         /// Count of genuine cash items which are fit for recycling.
         /// </summary>
@@ -438,7 +456,7 @@ namespace XFS4IoTFramework.Storage
     public sealed record StorageCashOutCountClass
     {
         public StorageCashOutCountClass()
-        {
+        { 
             Presented = new();
             Rejected = new();
             Distributed = new();
@@ -446,6 +464,18 @@ namespace XFS4IoTFramework.Storage
             Stacked = new();
             Diverted = new();
             Transport = new();
+        }
+
+        public StorageCashOutCountClass(StorageCashOutCountClass StorageCashOutCount)
+        {
+            StorageCashOutCount.IsNotNull("Copy constructure used with null reference. " + nameof(StorageCashOutCountClass));
+            Presented = new(StorageCashOutCount.Presented);
+            Rejected = new(StorageCashOutCount.Rejected);
+            Distributed = new(StorageCashOutCount.Distributed);
+            Unknown = new(StorageCashOutCount.Unknown);
+            Stacked = new(StorageCashOutCount.Stacked);
+            Diverted = new(StorageCashOutCount.Diverted);
+            Transport = new(StorageCashOutCount.Transport);
         }
 
         /// <summary>
@@ -505,6 +535,17 @@ namespace XFS4IoTFramework.Storage
             Transport = new();
         }
 
+        public StorageCashInCountClass(StorageCashInCountClass StorageCashInCount)
+        {
+            StorageCashInCount.IsNotNull("Copy constructure used with null reference. " + nameof(StorageCashInCountClass));
+            RetractOperations = StorageCashInCount.RetractOperations;
+            Deposited = new(StorageCashInCount.Deposited);
+            Retracted = new(StorageCashInCount.Retracted);
+            Rejected = new(StorageCashInCount.Rejected);
+            Distributed = new(StorageCashInCount.Distributed);
+            Transport = new(StorageCashInCount.Transport);
+        }
+
         /// <summary>
         /// Number of cash retract operations which resulted in items entering this storage unit. This can be 
         /// used where devices do not have the capability to count or validate items after presentation.
@@ -554,7 +595,7 @@ namespace XFS4IoTFramework.Storage
         {
             this.Capabilities = Capabilities;
             this.Configuration = Configuration;
-            this.Status = new CashStatusClass(AdditionalInfo);
+            Status = new(AdditionalInfo);
         }
 
 
@@ -657,8 +698,10 @@ namespace XFS4IoTFramework.Storage
                                   StorageCashInCountClass StorageCashInCount,
                                   int Count)
         {
-            this.StorageCashOutCount = StorageCashOutCount;
-            this.StorageCashInCount = StorageCashInCount;
+            if (StorageCashOutCount is not null)
+                this.StorageCashOutCount = new(StorageCashOutCount);
+            if (StorageCashInCount is not null)
+                this.StorageCashInCount = new(StorageCashInCount);
             this.Count = Count;
         }
 
@@ -666,13 +709,13 @@ namespace XFS4IoTFramework.Storage
         /// The items moved from this storage unit by cash commands to another destination since the last 
         /// replenishment of this unit.
         /// </summary>
-        public StorageCashOutCountClass StorageCashOutCount { get; set; }
+        public StorageCashOutCountClass StorageCashOutCount { get; set; } = null;
 
         /// <summary>
         /// List of items inserted in this storage unit by cash commands from another source since the last 
         /// replenishment of this unit.
         /// </summary>
-        public StorageCashInCountClass StorageCashInCount { get; set; }
+        public StorageCashInCountClass StorageCashInCount { get; set; } = null;
 
         /// <summary>
         /// Total count of the items in the unit

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -32,13 +32,13 @@ namespace XFS4IoTFramework.Printer
         [Flags]
         public enum SourceEnum
         {
-            ANY = 0x0000,
-            UPPER = 0x0002,
-            LOWER = 0x0004,
-            EXTERNAL = 0x0008,
-            AUX = 0x0010,
-            AUX2 = 0x0020,
-            PARK = 0x0040,
+            ANY = 0,
+            UPPER = 1 << 0,
+            LOWER = 1 << 1,
+            EXTERNAL = 1 << 2,
+            AUX = 1 << 3,
+            AUX2 = 1 << 4,
+            PARK = 1 << 5,
         }
 
         public enum BaseEnum

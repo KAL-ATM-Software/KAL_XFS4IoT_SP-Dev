@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -24,24 +24,24 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private async Task<PresentCompletion.PayloadData> HandlePresent(IPresentEvents events, PresentCommand present, CancellationToken cancel)
         {
-            CashDispenserCapabilitiesClass.OutputPositionEnum position = CashDispenserCapabilitiesClass.OutputPositionEnum.Default;
+            CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
             if (present.Payload.Position is not null)
             {
                 position = present.Payload.Position switch
                 {
-                    OutputPositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    OutputPositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    OutputPositionEnum.OutDefault => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
-                    OutputPositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    OutputPositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    OutputPositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    OutputPositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    OutputPositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported
+                    OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,
+                    OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.OutputPositionEnum.Center,
+                    OutputPositionEnum.OutDefault => CashManagementCapabilitiesClass.OutputPositionEnum.Default,
+                    OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.OutputPositionEnum.Front,
+                    OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.OutputPositionEnum.Left,
+                    OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.OutputPositionEnum.Rear,
+                    OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.OutputPositionEnum.Right,
+                    OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported
                 };
             }
 
-            if (position == CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported)
+            if (position == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported)
             {
                 return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                          $"Invalid position specified. {position}");
@@ -61,7 +61,7 @@ namespace XFS4IoTFramework.CashDispenser
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.PresentCashAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
 
-            PresentStatus presentStatus = null;
+            CashDispenserPresentStatus presentStatus = null;
             try
             {
                 Logger.Log(Constants.DeviceClass, "CashDispenserDev.GetPresentStatus()");
@@ -80,33 +80,35 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             // Update an internal present status
-            CashDispenser.LastPresentStatus[position].Status = result.CompletionCode switch
+            CashDispenser.LastCashDispenserPresentStatus[position].Status = result.CompletionCode switch
             {
-                MessagePayload.CompletionCodeEnum.Success => PresentStatus.PresentStatusEnum.Presented,
-                _ => PresentStatus.PresentStatusEnum.Unknown
+                MessagePayload.CompletionCodeEnum.Success => CashDispenserPresentStatus.PresentStatusEnum.Presented,
+                _ => CashDispenserPresentStatus.PresentStatusEnum.Unknown
             };
 
             if (presentStatus is not null)
             {
-                CashDispenser.LastPresentStatus[position].Status = (PresentStatus.PresentStatusEnum)presentStatus.Status;
+                CashDispenser.LastCashDispenserPresentStatus[position].Status = (CashDispenserPresentStatus.PresentStatusEnum)presentStatus.Status;
 
                 if (presentStatus.LastDenomination is not null)
-                    CashDispenser.LastPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
 
-                CashDispenser.LastPresentStatus[position].Token = presentStatus.Token;
+                CashDispenser.LastCashDispenserPresentStatus[position].Token = presentStatus.Token;
             }
+
+            CashDispenser.StoreCashDispenserPresentStatus();
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
             PositionEnum resPostion = position switch
             {
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom => PositionEnum.OutBottom,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Center => PositionEnum.OutCenter,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Front => PositionEnum.OutFront,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Left => PositionEnum.OutLeft,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Rear => PositionEnum.OutRear,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Right => PositionEnum.OutRight,
-                CashDispenserCapabilitiesClass.OutputPositionEnum.Top => PositionEnum.OutTop,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Bottom => PositionEnum.OutBottom,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Center => PositionEnum.OutCenter,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Front => PositionEnum.OutFront,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Left => PositionEnum.OutLeft,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Rear => PositionEnum.OutRear,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Right => PositionEnum.OutRight,
+                CashManagementCapabilitiesClass.OutputPositionEnum.Top => PositionEnum.OutTop,
                 _ => PositionEnum.OutDefault
             };
 

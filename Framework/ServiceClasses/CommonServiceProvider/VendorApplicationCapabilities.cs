@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -20,9 +20,9 @@ namespace XFS4IoTFramework.Common
         public enum SupportedAccessLevelEnum
         {
             NotSupported = 0,
-            Basic = 0x000001,
-            Intermediate = 0x000002,
-            Full = 0x000004,
+            Basic = 1 << 0,
+            Intermediate = 1 << 1,
+            Full = 1 << 2,
         }
 
         

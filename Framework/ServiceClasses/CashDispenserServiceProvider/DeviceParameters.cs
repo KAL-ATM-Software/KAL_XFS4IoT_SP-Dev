@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -233,7 +233,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// </summary>
         /// <param name="Position">Cash to move</param>
         /// <param name="StorageUnitIds">Count from specified storage id</param>
-        public CountRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position, List<string> StorageUnitIds)
+        public CountRequest(CashManagementCapabilitiesClass.OutputPositionEnum Position, List<string> StorageUnitIds)
         {
             this.Position = Position;
             this.StorageUnitIds = StorageUnitIds;
@@ -243,7 +243,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// Count cash from all physical units
         /// </summary>
         /// <param name="Position">Cash to move</param>
-        public CountRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position)
+        public CountRequest(CashManagementCapabilitiesClass.OutputPositionEnum Position)
         {
             this.Position = Position;
             this.StorageUnitIds = null;
@@ -252,7 +252,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Position of moving notes
         /// </summary>
-        public CashDispenserCapabilitiesClass.OutputPositionEnum Position { get; init; }
+        public CashManagementCapabilitiesClass.OutputPositionEnum Position { get; init; }
 
         /// <summary>
         /// Specifies which storage to empty and count. This identifier reported by the storage GetStorage command.
@@ -310,7 +310,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// Present operation to perform
         /// </summary>
         /// <param name="Position">Output position where cash are presented.</param>
-        public PresentCashRequest(CashDispenserCapabilitiesClass.OutputPositionEnum Position)
+        public PresentCashRequest(CashManagementCapabilitiesClass.OutputPositionEnum Position)
         {
             this.Position = Position;
         }
@@ -318,7 +318,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Position of moving cash
         /// </summary>
-        public CashDispenserCapabilitiesClass.OutputPositionEnum Position { get; init; }
+        public CashManagementCapabilitiesClass.OutputPositionEnum Position { get; init; }
     }
 
     /// <summary>
@@ -523,7 +523,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// </summary>
         public DispenseRequest(Dictionary<string, int> Values,
                                bool Present,
-                               CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition = null,
+                               CashManagementCapabilitiesClass.OutputPositionEnum? OutputPosition = null,
                                string E2EToken = null,
                                int? CashBox = null)
         {
@@ -535,7 +535,7 @@ namespace XFS4IoTFramework.CashDispenser
         }
         public DispenseRequest(Dictionary<string, int> Values,
                                bool Present,
-                               CashDispenserCapabilitiesClass.OutputPositionEnum OutputPosition,
+                               CashManagementCapabilitiesClass.OutputPositionEnum OutputPosition,
                                string E2EToken = null)
         {
             this.Values = Values;
@@ -561,7 +561,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// - intermediate stacker if the device has one
         /// - the default position if there is no intermediate stacker.
         /// </summary>
-        public CashDispenserCapabilitiesClass.OutputPositionEnum? OutputPosition { get; init; }
+        public CashManagementCapabilitiesClass.OutputPositionEnum? OutputPosition { get; init; }
 
         public int? CashBox { get; init; }
 

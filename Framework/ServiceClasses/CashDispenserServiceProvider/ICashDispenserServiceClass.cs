@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -37,7 +37,12 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Keep last present status
         /// </summary>
-        Dictionary<CashDispenserCapabilitiesClass.OutputPositionEnum, PresentStatus> LastPresentStatus { get; set; }
+        Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus> LastCashDispenserPresentStatus { get; init; }
+
+        /// <summary>
+        /// Store present status persistently
+        /// </summary>
+        public void StoreCashDispenserPresentStatus();
     }
 
     public interface ICashDispenserServiceClass : ICashDispenserService, ICashDispenserUnsolicitedEvents

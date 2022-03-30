@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -31,7 +31,7 @@ namespace XFS4IoTCoreTest.Command
 
             string result = command.Serialise();
 
-            AreEqual(@"{""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""}}", result);
+            AreEqual(@"{""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""},""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000}}", result);
 
         }
 
@@ -41,7 +41,7 @@ namespace XFS4IoTCoreTest.Command
             var mediaInserted = new MediaInsertedEvent(123456);
 
             string result = mediaInserted.Serialise();
-            AreEqual(@"{""payload"":{},""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""}}", result);
+            AreEqual(@"{""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""},""payload"":{}}", result);
         }
     }
 }

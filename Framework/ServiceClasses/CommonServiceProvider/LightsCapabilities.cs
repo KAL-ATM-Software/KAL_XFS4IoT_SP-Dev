@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,45 +48,45 @@ namespace XFS4IoTFramework.Common
         [Flags]
         public enum FlashRateEnum
         {
-            Off = 0x0001,
-            Slow = 0x0002,
-            Medium = 0x0004,
-            Quick = 0x0008,
-            Continuous = 0x0010,
+            Off = 1 << 0,
+            Slow = 1 << 1,
+            Medium = 1 << 2,
+            Quick = 1 << 3,
+            Continuous = 1 << 4,
         }
 
         [Flags]
         public enum ColorEnum
         {
             Default = 0,
-            Red = 0x0001,
-            Green = 0x0002,
-            Yellow = 0x0004,
-            Blue = 0x0008,
-            Cyan = 0x0010,
-            Magenta = 0x0020,
-            White = 0x0040,
+            Red = 1 << 0,
+            Green = 1 << 1,
+            Yellow = 1 << 2,
+            Blue = 1 << 3,
+            Cyan = 1 << 4,
+            Magenta = 1 << 5,
+            White = 1 << 6,
         }
 
         [Flags]
         public enum DirectionEnum
         {
             NotSupported = 0,
-            Entry = 0x0001,
-            Exit = 0x0002,
+            Entry = 1 << 0,
+            Exit = 1 << 1,
         }
 
         [Flags]
         public enum LightPostionEnum
         {
             Default = 0,
-            Left = 0x0001,
-            Right = 0x0002,
-            Center = 00004,
-            Top = 0x0008,
-            Bottom = 0x0010,
-            Front = 0x0020,
-            Rear = 0x0040,
+            Left = 1 << 0,
+            Right = 1 << 1,
+            Center = 1 << 2,
+            Top = 1 << 3,
+            Bottom = 1 << 4,
+            Front = 1 << 5,
+            Rear = 1 << 6,
         }
 
         public LightsCapabilitiesClass(Dictionary<DeviceEnum, Light> Lights,

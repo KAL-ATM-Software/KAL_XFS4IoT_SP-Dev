@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -74,10 +74,10 @@ namespace XFS4IoTFramework.CashDispenser
 
         /// <summary>
         /// GetPresentStatus
-        /// This method returns the status of the most recent attempt to dispense and/or present items to the customer from a specified output position.
+        /// This method returns the status of the most recent attempt to dispense and/or present items to the customer from a specified output position for CashDispenser Service.
         /// Throw NotImplementedException if the device specific class doesn't support to manage present status.
         /// </summary>
-       PresentStatus GetPresentStatus(CashDispenserCapabilitiesClass.OutputPositionEnum position);
+        CashDispenserPresentStatus GetPresentStatus(CashManagementCapabilitiesClass.OutputPositionEnum position);
 
         /// <summary>
         /// CashDispenser Status

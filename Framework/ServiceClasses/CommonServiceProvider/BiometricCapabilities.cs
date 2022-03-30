@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -23,61 +23,61 @@ namespace XFS4IoTFramework.Common
         [Flags]
         public enum DeviceTypeEnum
         {
-            FacialFeatures = 1,
-            Voice = 2,
-            FingerPrint = 4, 
-            FingerVein = 8,
-            Iris = 16,
-            Retina = 32,
-            HandGeometry = 64,
-            ThermalFace = 128,
-            ThermalHand = 256,
-            PalmVein = 512,
-            Signature = 1024,
+            FacialFeatures = 1 << 0,
+            Voice = 1 << 1,
+            FingerPrint = 1 << 2,
+            FingerVein = 1 << 3,
+            Iris = 1 << 4,
+            Retina = 1 << 5,
+            HandGeometry = 1 << 6,
+            ThermalFace = 1 << 7,
+            ThermalHand = 1 << 8,
+            PalmVein = 1 << 9,
+            Signature = 1 << 10,
         }
 
         [Flags]
         public enum FormatEnum
         {
             None = 0,
-            IsoFid = 1,
-            IsoFmd = 2,
-            AnsiFid = 4,
-            AnsiFmd = 8,
-            Qso = 16,
-            Wso = 32,
-            ReservedRaw1 = 64,
-            ReservedTemplate1 = 128,
-            ReservedRaw2 = 256,
-            ReservedTemplate2 = 512,
-            ReservedRaw3 = 1024,
-            ReservedTemplate3 = 2048,
+            IsoFid = 1 << 0,
+            IsoFmd = 1 << 1,
+            AnsiFid = 1 << 2,
+            AnsiFmd = 1 << 3,
+            Qso = 1 << 4,
+            Wso = 1 << 5,
+            ReservedRaw1 = 1 << 6,
+            ReservedTemplate1 = 1 << 7,
+            ReservedRaw2 = 1 << 8,
+            ReservedTemplate2 = 1 << 9,
+            ReservedRaw3 = 1 << 10,
+            ReservedTemplate3 = 1 << 11,
         }
 
         [Flags]
         public enum AlgorithmEnum
         {
             None = 0,
-            Ecb = 1,
-            Cbc = 2,
-            Cfb = 4,
-            Rsa = 8,
+            Ecb = 1 << 0,
+            Cbc = 1 << 1,
+            Cfb = 1 << 2,
+            Rsa = 1 << 3,
         }
 
         [Flags]
         public enum StorageEnum
         {
             None = 0,
-            Secure = 1, 
-            Clear = 2,
+            Secure = 1 << 0,
+            Clear = 1 << 1,
         }
 
         [Flags]
         public enum PersistenceModesEnum
         {
             None = 0,
-            Persist = 1, 
-            Clear = 2,
+            Persist = 1 << 0,
+            Clear = 1 << 1,
         }
 
         public enum MatchModesEnum
@@ -91,25 +91,25 @@ namespace XFS4IoTFramework.Common
         public enum ScanModesEnum
         {
             None = 0,
-            Scan = 1,
-            Match = 2,
+            Scan = 1 << 0,
+            Match = 1 << 1,
         }
 
         [Flags]
         public enum CompareModesEnum
         {
             None = 0,
-            Verify = 1,
-            Identity = 2,
+            Verify = 1 << 0,
+            Identity = 1 << 1,
         }
 
         [Flags]
         public enum ClearModesEnum
         {
             None = 0,
-            ScannedData = 1,
-            ImportedData = 2,
-            SetMatchedData = 4,
+            ScannedData = 1 << 0,
+            ImportedData = 1 << 1,
+            SetMatchedData = 1 << 2,
         }
 
         public BiometricCapabilitiesClass(DeviceTypeEnum DeviceType,

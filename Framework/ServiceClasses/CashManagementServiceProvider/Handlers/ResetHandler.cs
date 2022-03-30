@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -7,6 +7,7 @@
 
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
@@ -118,6 +119,12 @@ namespace XFS4IoTFramework.CashManagement
                 }
             }
 
+            // Clear TotalReturnedItems for the present status
+            foreach (var presentStatus in CashManagement.LastCashManagementPresentStatus)
+            {
+                presentStatus.Value.TotalReturnedItems = new();
+            }
+
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.ResetDeviceAsync()");
 
             var result = await Device.ResetDeviceAsync(new ResetCommandEvents(events),
@@ -125,6 +132,10 @@ namespace XFS4IoTFramework.CashManagement
                                                        cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            // Ending cash-in operation
+            CashManagement.CashInStatusManaged.Status = CashInStatusClass.StatusEnum.Reset;
+            CashManagement.StoreCashInStatus();
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 

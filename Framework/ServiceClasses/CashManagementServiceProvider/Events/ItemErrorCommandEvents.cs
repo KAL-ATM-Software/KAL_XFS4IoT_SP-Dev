@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashDispenser;
+using XFS4IoTFramework.CashAcceptor;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -42,7 +43,24 @@ namespace XFS4IoTFramework.CashManagement
         public ItemErrorCommandEvents(IRetractEvents events) :
             base(events)
         { }
-
+        public ItemErrorCommandEvents(ICashInEvents events) :
+            base(events)
+        { }
+        public ItemErrorCommandEvents(ICashInEndEvents events) :
+            base(events)
+        { }
+        public ItemErrorCommandEvents(ICreateSignatureEvents events) :
+            base(events)
+        { }
+        public ItemErrorCommandEvents(ICashUnitCountEvents events) :
+            base(events)
+        { }
+        public ItemErrorCommandEvents(IDepleteEvents events) :
+            base(events)
+        { }
+        public ItemErrorCommandEvents(IReplenishEvents events) :
+            base(events)
+        { }
         public Task NoteErrorEvent(ItemErrorReasonEnum Reason)
         {
             XFS4IoT.CashManagement.Events.NoteErrorEvent.PayloadData payload = new(
@@ -78,6 +96,26 @@ namespace XFS4IoTFramework.CashManagement
             if (RetractEvents is not null)
             {
                 return RetractEvents.NoteErrorEvent(payload);
+            }
+            if (CashInEvents is not null)
+            {
+                return CashInEvents.NoteErrorEvent(payload);
+            }
+            if (CreateSignatureEvents is not null)
+            {
+                return CreateSignatureEvents.NoteErrorEvent(payload);
+            }
+            if (CashUnitCountEvents is not null)
+            {
+                CashUnitCountEvents.NoteErrorEvent(payload);
+            }
+            if (DepleteEvents is not null)
+            {
+                DepleteEvents.NoteErrorEvent(payload);
+            }
+            if (ReplenishEvents is not null)
+            {
+                ReplenishEvents.NoteErrorEvent(payload);
             }
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(NoteErrorEvent));

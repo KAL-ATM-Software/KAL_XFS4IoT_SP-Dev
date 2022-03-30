@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -17,46 +17,6 @@ namespace XFS4IoTFramework.Common
     public sealed class CashDispenserCapabilitiesClass
     {
         /// <summary>
-        /// tellerBill - The Dispenser is a Teller Bill Dispenser.
-        /// selfServiceBill - The Dispenser is a Self-Service Bill Dispenser.
-        /// tellerCoin - The Dispenser is a Teller Coin Dispenser.
-        /// selfServiceCoin - The Dispenser is a Self-Service Coin Dispenser.
-        /// </summary>
-        public enum TypeEnum
-        {
-            TellerBill,
-            SelfServiceBill,
-            TellerCoin,
-            SelfServiceCoin,
-        }
-
-        /// <summary>
-        /// Common output shutter position
-        /// default - Output location is determined by Service.
-        /// left - Present items to left side of device.
-        /// right - Present items to right side of device.
-        /// center - Present items to center output position.
-        /// top - Present items to the top output position.
-        /// bottom - Present items to the bottom output position.
-        /// front - Present items to the front output position.
-        /// rear - Present items to the rear output position.
-        /// reject - Reject bin is used as output location.
-        /// </summary>
-        [Flags]
-        public enum OutputPositionEnum
-        {
-            NotSupported = 0,
-            Default = 0x0001,
-            Left = 0x0002,
-            Right = 0x0004,
-            Center = 0x0008,
-            Top = 0x0010,
-            Bottom = 0x0020,
-            Front = 0x0040,
-            Rear = 0x0080,
-        }
-
-        /// <summary>
         /// FromCashUnit - The Dispenser can dispense items from the cash units to the intermediate stacker while there are items on the transport.
         /// ToCashUnit - The Dispenser can retract items to the cash units while there are items on the intermediate stacker.
         /// ToTransport - The Dispenser can retract items to the transport while there are items on the intermediate stacker.
@@ -68,13 +28,13 @@ namespace XFS4IoTFramework.Common
         public enum MoveItemEnum
         {
             NotSupported = 0,
-            FromCashUnit = 0x0001,
-            ToCashUnit = 0x0002,
-            ToTransport = 0x0004,
-            ToStacker = 0x0008,
+            FromCashUnit = 1 << 0,
+            ToCashUnit = 1 << 1,
+            ToTransport = 1 << 2,
+            ToStacker = 1 << 3,
         }
 
-        public CashDispenserCapabilitiesClass(TypeEnum Type,
+        public CashDispenserCapabilitiesClass(CashManagementCapabilitiesClass.TypeEnum Type,
                                               int MaxDispenseItems,
                                               bool ShutterControl,
                                               CashManagementCapabilitiesClass.RetractAreaEnum RetractAreas,
@@ -82,7 +42,7 @@ namespace XFS4IoTFramework.Common
                                               CashManagementCapabilitiesClass.RetractStackerActionEnum RetractStackerActions,
                                               bool IntermediateStacker,
                                               bool ItemsTakenSensor,
-                                              OutputPositionEnum OutputPositions,
+                                              CashManagementCapabilitiesClass.OutputPositionEnum OutputPositions,
                                               MoveItemEnum MoveItems)
         {
             this.Type = Type;
@@ -100,7 +60,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Supplies the type of CDM
         /// </summary>
-        public TypeEnum Type { get; init; }
+        public CashManagementCapabilitiesClass.TypeEnum Type { get; init; }
 
         /// <summary>
         /// Supplies the maximum number of items that can be dispensed in a single dispense operation. 
@@ -143,7 +103,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Supported output positions
         /// </summary>
-        public OutputPositionEnum OutputPositions { get; init; }
+        public CashManagementCapabilitiesClass.OutputPositionEnum OutputPositions { get; init; }
 
         /// <summary>
         /// Move items from stacker or transport to the unit

@@ -1,36 +1,95 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * CashInHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
 
-
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.CashAcceptor.Commands;
 using XFS4IoT.CashAcceptor.Completions;
+using XFS4IoT.Completions;
+using XFS4IoTFramework.Storage;
+using XFS4IoTFramework.Common;
+using XFS4IoTFramework.CashManagement;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CashInHandler
     {
-
-        private Task<CashInCompletion.PayloadData> HandleCashIn(ICashInEvents events, CashInCommand cashIn, CancellationToken cancel)
+        private async Task<CashInCompletion.PayloadData> HandleCashIn(ICashInEvents events, CashInCommand cashIn, CancellationToken cancel)
         {
-            //ToDo: Implement HandleCashIn for CashAcceptor.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleCashIn for CashAcceptor is not implemented in CashInHandler.cs");
-            #else
-                #error HandleCashIn for CashAcceptor is not implemented in CashInHandler.cs
-            #endif
+            if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
+            {
+                return new CashInCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                        $"The exchange state is already in active.",
+                                                        CashInCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+            }
+
+            if (CashAcceptor.CashInStatus.Status != CashInStatusClass.StatusEnum.Active)
+            {
+                return new CashInCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                        $"The cash-in state is not in active. {CashAcceptor.CashInStatus.Status}",
+                                                        CashInCompletion.PayloadData.ErrorCodeEnum.NoCashInActive);
+            }
+
+            // Clear TotalReturnedItems for the present status
+            foreach (var presentStatus in CashManagement.LastCashManagementPresentStatus)
+            {
+                presentStatus.Value.TotalReturnedItems = new();
+            }
+
+            Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashIn()");
+
+            var result = await Device.CashIn(new CashInCommandEvents(events), 
+                                             new CashInRequest(cashIn.Payload.Timeout), 
+                                             cancel);
+
+            Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashIn() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            await Storage.UpdateCashAccounting(result.MovementResult);
+
+            CashInCompletion.PayloadData payload = new(result.CompletionCode,
+                                                       result.ErrorDescription,
+                                                       result.ErrorCode,
+                                                       result.CompletionCode == MessagePayload.CompletionCodeEnum.Success ? result.Unrecognized : null);
+
+            if (result.ItemCounts?.Count > 0)
+            {
+                Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> itemAcceptedResult = new();
+                foreach (var itemCount in result.ItemCounts)
+                {
+                    itemAcceptedResult.Add(itemCount.Key, new XFS4IoT.CashManagement.StorageCashCountClass(itemCount.Value.Fit, itemCount.Value.Unfit, itemCount.Value.Suspect, itemCount.Value.Counterfeit, itemCount.Value.Inked));
+
+                    if (CashManagement.CashInStatusManaged.CashCounts.ItemCounts.ContainsKey(itemCount.Key))
+                    {
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Counterfeit += itemCount.Value.Counterfeit;
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Fit += itemCount.Value.Fit;
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Inked += itemCount.Value.Inked;
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Suspect += itemCount.Value.Suspect;
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Unfit += itemCount.Value.Unfit;
+                    }
+                    else
+                    {
+                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts.Add(itemCount.Key, new(itemCount.Value));
+                    }
+                }
+                payload.ExtendedProperties = itemAcceptedResult;
+            }
+
+            CashManagement.CashInStatusManaged.CashCounts.Unrecognized = result.Unrecognized;
+            CashManagement.StoreCashInStatus();
+
+            return payload;
         }
 
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
+        private ICashManagementService CashManagement { get => Provider.IsA<ICashManagementService>(); }
     }
 }

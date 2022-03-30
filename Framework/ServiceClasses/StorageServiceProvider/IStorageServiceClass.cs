@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// Return which type of storage SP is using
         /// </summary>
-        StorageTypeEnum StorageType { get; set; }
+        StorageTypeEnum StorageType { get; init; }
 
         /// <summary>
         /// Store CardUnits and CashUnits persistently
@@ -45,12 +45,12 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// Card storage structure information of this device
         /// </summary>
-        Dictionary<string, CardUnitStorage> CardUnits { get; set; }
+        Dictionary<string, CardUnitStorage> CardUnits { get; init; }
 
         /// <summary>
         /// Cash storage structure information of this device
         /// </summary>
-        Dictionary<string, CashUnitStorage> CashUnits { get; set; }
+        Dictionary<string, CashUnitStorage> CashUnits { get; init; }
     }
 
     public interface IStorageServiceClass : IStorageService, IStorageUnsolicitedEvents

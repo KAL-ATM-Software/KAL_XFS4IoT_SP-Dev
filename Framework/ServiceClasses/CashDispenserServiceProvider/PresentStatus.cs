@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -18,11 +18,11 @@ namespace XFS4IoTFramework.CashDispenser
     /// Representing the last dispense / presented status
     /// </summary>
     [Serializable()]
-    public class PresentStatus
+    public class CashDispenserPresentStatus
     {
-        public PresentStatus(PresentStatusEnum Status = PresentStatusEnum.Unknown,
-                             Denomination LastDenomination = null,
-                             string Token = null)
+        public CashDispenserPresentStatus(PresentStatusEnum Status = PresentStatusEnum.Unknown,
+                                          Denomination LastDenomination = null,
+                                          string Token = null)
         {
             this.Status = Status;
             this.LastDenomination = LastDenomination;

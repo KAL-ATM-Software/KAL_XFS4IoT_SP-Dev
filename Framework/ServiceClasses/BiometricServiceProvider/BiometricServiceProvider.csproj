@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>XFS4IoT.SP.Framework.Biometric</AssemblyName>
   </PropertyGroup>
 
@@ -32,10 +32,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\Release\</OutputPath>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,6 +47,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Server\Server.csproj" />
     <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
+    <ProjectReference Include="..\KeyManagementServiceProvider\KeyManagementServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -42,7 +42,7 @@ namespace XFS4IoTServer
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);
-            CashManagementService = new CashManagementServiceClass(this, logger);
+            CashManagementService = new CashManagementServiceClass(this, logger, persistentData);
             CashDispenserService = new CashDispenserServiceClass(this, logger, persistentData);
         }
 
@@ -57,11 +57,11 @@ namespace XFS4IoTServer
 
         public Task SafeDoorClosedEvent() => CashManagementService.SafeDoorClosedEvent();
 
-        public Task ItemsTakenEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
+        public Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
 
-        public Task ItemsInsertedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Postion) => CashManagementService.ItemsInsertedEvent(Postion);
+        public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Postion) => CashManagementService.ItemsInsertedEvent(Postion);
 
-        public Task ItemsPresentedEvent(CashDispenserCapabilitiesClass.OutputPositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
+        public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
 
@@ -83,8 +83,8 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(ReasonDescription);
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId, 
-                               CommonStatusClass.ErrorActionEnum Action, 
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
                                string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
@@ -104,7 +104,7 @@ namespace XFS4IoTServer
             return StorageService.StorageChangedEvent(paylod);
         }
 
-        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds) 
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds)
         {
             Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = GetStorages(CashUnitIds);
             return StorageService.StorageErrorEvent(new StorageErrorEvent.PayloadData(Failure switch
@@ -260,7 +260,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update storage count from the framework after media movement command is processed
         /// </summary>
-        public Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage) => throw new NotSupportedException($"CashManagement service class doesn't support card storage.");
+        public Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage) => throw new NotSupportedException($"CashDispenser service class doesn't support card storage.");
 
         /// <summary>
         /// UpdateCashAccounting
@@ -271,7 +271,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Return which type of storage SP is using
         /// </summary>
-        public StorageTypeEnum StorageType { get => StorageService.StorageType; set => StorageService.StorageType = value; }
+        public StorageTypeEnum StorageType { get => StorageService.StorageType; init { } }
 
         /// <summary>
         /// Store CardUnits and CashUnits persistently
@@ -281,12 +281,12 @@ namespace XFS4IoTServer
         /// <summary>
         /// Card storage structure information of this device
         /// </summary>
-        public Dictionary<string, CardUnitStorage> CardUnits { get => StorageService.CardUnits; set => StorageService.CardUnits = value; }
+        public Dictionary<string, CardUnitStorage> CardUnits { get => StorageService.CardUnits; init { } }
 
         /// <summary>
         /// Cash storage structure information of this device
         /// </summary>
-        public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; set => StorageService.CashUnits = value; }
+        public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
 
         #endregion
 
@@ -311,7 +311,47 @@ namespace XFS4IoTServer
         /// <summary>
         /// Keep last present status
         /// </summary>
-        public Dictionary<CashDispenserCapabilitiesClass.OutputPositionEnum, PresentStatus> LastPresentStatus { get => CashDispenserService.LastPresentStatus; set => CashDispenserService.LastPresentStatus = value; }
+        public Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus> LastCashDispenserPresentStatus { get => CashDispenserService.LastCashDispenserPresentStatus; init { } }
+
+        /// <summary>
+        /// Store present status for CashDispenser service persistently
+        /// </summary>
+        public void StoreCashDispenserPresentStatus() => CashDispenserService.StoreCashDispenserPresentStatus();
+
+        #endregion
+
+        #region CashManagement Service
+
+        /// <summary>
+        /// The framework maintains cash-in status
+        /// </summary>
+        public CashInStatusClass CashInStatusManaged { get => CashManagementService.CashInStatusManaged; init { } }
+
+        /// <summary>
+        /// Store cash-in in status persistently
+        /// </summary>
+        public void StoreCashInStatus() => CashManagementService.StoreCashInStatus();
+
+        /// <summary>
+        /// The last status of the most recent attempt to present or return items to the customer. 
+        /// </summary>
+        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementPresentStatus> LastCashManagementPresentStatus { get => CashManagementService.LastCashManagementPresentStatus; init { } }
+
+        /// <summary>
+        /// Store present status for CashManagement Service persistently
+        /// </summary>
+        public void StoreCashManagementPresentStatus() => CashManagementService.StoreCashManagementPresentStatus();
+
+        /// <summary>
+        /// This list provides the functionality to blacklist notes and allows additional flexibility, for example to specify that notes can be taken out of circulation
+        /// by specifying them as unfit.Any items not returned in this list will be handled according to normal classification rules.
+        /// </summary>
+        public ItemClassificationListClass ItemClassificationList { get => CashManagementService.ItemClassificationList; init { } }
+
+        /// <summary>
+        /// Store classification list persistently
+        /// </summary>
+        public void StoreItemClassificationList() => CashManagementService.StoreItemClassificationList();
 
         #endregion
     }

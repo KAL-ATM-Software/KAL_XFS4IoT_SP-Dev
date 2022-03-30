@@ -1,4 +1,10 @@
-﻿using System;
+﻿/***********************************************************************************************\
+ * (C) KAL ATM Software GmbH, 2022
+ * KAL ATM Software GmbH licenses this file to you under the MIT license.
+ * See the LICENSE file in the project root for more information.
+\***********************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,40 +21,40 @@ namespace XFS4IoTFramework.Auxiliaries
     [Flags]
     public enum EventTypesEnum : long
     {
-        None = 0x0,
-        OperatorSwitch = 0x1,
-        TamperSensor = 0x2,
-        InternalTamperSensor = 0x4,
-        SeismicSensor = 0x8,
-        HeatSensor = 0x10,
-        ProximitySensor = 0x20,
-        AmbientLightSensor = 0x40,
-        EnhancedAudio = 0x80,
-        BootSwitch = 0x100,
-        ConsumerDisplay = 0x200,
-        OperatorCallButton = 0x400,
-        HandsetSensor = 0x800,
-        HeadsetMicrophone = 0x1000,
-        SafeDoor = 0x2000,
-        VandalShield = 0x4000,
-        CabinetFront = 0x8000,
-        CabinetRear = 0x10000,
-        CabinetRight = 0x20000,
-        CabinetLeft = 0x40000,
-        OpenCloseIndicator = 0x80000,
-        FasciaLight = 0x100000,
-        AudioIndicator = 0x200000,
-        HeatingIndicator = 0x400000,
-        ConsumerDisplayBacklight = 0x800000,
-        SignageDisplay = 0x1000000,
-        VolumeControl = 0x2000000,
-        Ups = 0x4000000,
-        RemoteStatusMonitor = 0x8000000,
-        AudibleAlarm = 0x10000000,
-        EnhancedAudioControl = 0x20000000,
-        EnhancedMicrophoneControl = 0x40000000,
-        MicrophoneVolume = 0x80000000,
-        FasciaMicrophone = 0x100000000
+        None = 0,
+        OperatorSwitch = 1 << 0,
+        TamperSensor = 1 << 1,
+        InternalTamperSensor = 1 << 2,
+        SeismicSensor = 1 << 3,
+        HeatSensor = 1 << 4,
+        ProximitySensor = 1 << 5,
+        AmbientLightSensor = 1 << 6,
+        EnhancedAudio = 1 << 7,
+        BootSwitch = 1 << 8,
+        ConsumerDisplay = 1 << 9,
+        OperatorCallButton = 1 << 10,
+        HandsetSensor = 1 << 11,
+        HeadsetMicrophone = 1 << 12,
+        SafeDoor = 1 << 13,
+        VandalShield = 1 << 14,
+        CabinetFront = 1 << 15,
+        CabinetRear = 1 << 16,
+        CabinetRight = 1 << 17,
+        CabinetLeft = 1 << 18,
+        OpenCloseIndicator = 1 << 19,
+        FasciaLight = 1 << 20,
+        AudioIndicator = 1 << 21,
+        HeatingIndicator = 1 << 22,
+        ConsumerDisplayBacklight = 1 << 23,
+        SignageDisplay = 1 << 24,
+        VolumeControl = 1 << 25,
+        Ups = 1 << 26,
+        RemoteStatusMonitor = 1 << 27,
+        AudibleAlarm = 1 << 28,
+        EnhancedAudioControl = 1 << 29,
+        EnhancedMicrophoneControl = 1 << 30,
+        MicrophoneVolume = 1 << 31,
+        FasciaMicrophone = 1 << 32,
     }
 
 

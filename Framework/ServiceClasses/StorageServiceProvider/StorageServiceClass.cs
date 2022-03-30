@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -662,23 +662,23 @@ namespace XFS4IoTServer
 
                     if (delta.Value.StorageCashOutCount is not null)
                     {
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Distributed, delta.Value.StorageCashOutCount.Distributed);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Diverted, delta.Value.StorageCashOutCount.Diverted);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Presented, delta.Value.StorageCashOutCount.Presented);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Rejected, delta.Value.StorageCashOutCount.Rejected);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Stacked, delta.Value.StorageCashOutCount.Stacked);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Transport, delta.Value.StorageCashOutCount.Transport);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Unknown, delta.Value.StorageCashOutCount.Unknown);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Distributed, delta.Value.StorageCashOutCount.Distributed);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Diverted, delta.Value.StorageCashOutCount.Diverted);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Presented, delta.Value.StorageCashOutCount.Presented);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Rejected, delta.Value.StorageCashOutCount.Rejected);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Stacked, delta.Value.StorageCashOutCount.Stacked);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Transport, delta.Value.StorageCashOutCount.Transport);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashOutCount.Unknown, delta.Value.StorageCashOutCount.Unknown);
                     }
 
                     if (delta.Value.StorageCashInCount is not null)
                     {
                         CashUnits[delta.Key].Unit.Status.StorageCashInCount.RetractOperations += delta.Value.StorageCashInCount.RetractOperations;
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashInCount.Deposited, delta.Value.StorageCashInCount.Deposited);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashInCount.Distributed, delta.Value.StorageCashInCount.Distributed);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashInCount.Rejected, delta.Value.StorageCashInCount.Rejected);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashInCount.Retracted, delta.Value.StorageCashInCount.Retracted);
-                        UpdateDeltaStorageCashCount(CashUnits[delta.Key].Unit.Status.StorageCashInCount.Transport, delta.Value.StorageCashInCount.Transport);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashInCount.Deposited, delta.Value.StorageCashInCount.Deposited);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashInCount.Distributed, delta.Value.StorageCashInCount.Distributed);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashInCount.Rejected, delta.Value.StorageCashInCount.Rejected);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashInCount.Retracted, delta.Value.StorageCashInCount.Retracted);
+                        UpdateDeltaStorageCashCount(delta.Key, CashUnits[delta.Key].Unit.Status.StorageCashInCount.Transport, delta.Value.StorageCashInCount.Transport);
                     }
                 }
             }
@@ -1041,51 +1041,58 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update delta counts to the destination of the StorageCashCountClass object and return total amount increased or decreased.
         /// </summary>
-        private void UpdateDeltaStorageCashCount(StorageCashCountClass storageCashCount, StorageCashCountClass storageDeltaCount)
+        /// <param name="storageId">Storage ID to update cash counts</param>
+        /// <param name="storageCashCount">Storage count to update</param>
+        /// <param name="storageDeltaCount">Delta count to set the storage</param>
+        private void UpdateDeltaStorageCashCount(string storageId, StorageCashCountClass storageCashCount, StorageCashCountClass storageDeltaCount)
         {
             if (storageDeltaCount is null)
                 return;
 
             // update counts
             if (storageDeltaCount.Unrecognized >= 0 ||
-                (storageDeltaCount.ItemCounts is not null &&
-                 storageDeltaCount.ItemCounts.Count > 0))
+                storageDeltaCount.ItemCounts?.Count > 0)
             {
                 storageCashCount.Unrecognized += storageDeltaCount.Unrecognized;
-                if (storageDeltaCount.ItemCounts is not null)
+                foreach (var item in storageDeltaCount?.ItemCounts)
                 {
-                    foreach (var item in storageDeltaCount.ItemCounts)
+                    if (!storageCashCount.ItemCounts.ContainsKey(item.Key))
                     {
-                        if (!storageCashCount.ItemCounts.ContainsKey(item.Key))
-                        {
-                            Logger.Warning(Constants.Framework, $"Unknown banknote item id supplied in the UpdateDeltaStorageCashCount. {item.Key}");
-                            continue;
-                        }
+                        CashUnits.ContainsKey(storageId).IsTrue($"Invalid storage Id passed in {item.Key} " + nameof(UpdateDeltaStorageCashCount));
 
-                        if (item.Value.Counterfeit > 0)
+                        if (CashUnits[storageId].Unit.Configuration.BanknoteItems.Contains(item.Key))
                         {
-                            storageCashCount.ItemCounts[item.Key].Counterfeit += item.Value.Counterfeit;
+                            storageCashCount.ItemCounts.Add(item.Key, new());
                         }
+                        else
+                        {
+                            Contracts.Assert(false, $"Unexpected banknote ID provided by the device class. {item.Key} for the storage {storageId}");
+                        }
+                    }
 
-                        if (item.Value.Fit > 0)
-                        {
-                            storageCashCount.ItemCounts[item.Key].Fit += item.Value.Fit;
-                        }
+                    if (item.Value.Counterfeit > 0)
+                    {
+                        storageCashCount.ItemCounts[item.Key].Counterfeit += item.Value.Counterfeit;
+                    }
 
-                        if (item.Value.Inked > 0)
-                        {
-                            storageCashCount.ItemCounts[item.Key].Inked += item.Value.Inked;
-                        }
+                    if (item.Value.Fit > 0)
+                    {
+                        storageCashCount.ItemCounts[item.Key].Fit += item.Value.Fit;
+                    }
 
-                        if (item.Value.Suspect > 0)
-                        {
-                            storageCashCount.ItemCounts[item.Key].Suspect += item.Value.Suspect;
-                        }
+                    if (item.Value.Inked > 0)
+                    {
+                        storageCashCount.ItemCounts[item.Key].Inked += item.Value.Inked;
+                    }
 
-                        if (item.Value.Unfit > 0)
-                        {
-                            storageCashCount.ItemCounts[item.Key].Unfit += item.Value.Unfit;
-                        }
+                    if (item.Value.Suspect > 0)
+                    {
+                        storageCashCount.ItemCounts[item.Key].Suspect += item.Value.Suspect;
+                    }
+
+                    if (item.Value.Unfit > 0)
+                    {
+                        storageCashCount.ItemCounts[item.Key].Unfit += item.Value.Unfit;
                     }
                 }
             }
@@ -1114,16 +1121,16 @@ namespace XFS4IoTServer
         /// <summary>
         /// Type of storage
         /// </summary>
-        public StorageTypeEnum StorageType { get; set; }
+        public StorageTypeEnum StorageType { get; init; }
 
         /// <summary>
         /// Card storage structure information of this device
         /// </summary>
-        public Dictionary<string, CardUnitStorage> CardUnits { get; set; }
+        public Dictionary<string, CardUnitStorage> CardUnits { get; init; }
 
         /// <summary>
         /// Cash storage structure information of this device
         /// </summary>
-        public Dictionary<string, CashUnitStorage> CashUnits { get; set; }
+        public Dictionary<string, CashUnitStorage> CashUnits { get; init; }
     }
 }

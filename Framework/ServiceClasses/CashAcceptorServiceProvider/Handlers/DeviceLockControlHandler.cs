@@ -1,36 +1,89 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT CashAcceptor interface.
- * DeviceLockControlHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
 
-
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
+using XFS4IoT.Completions;
 using XFS4IoT.CashAcceptor.Commands;
 using XFS4IoT.CashAcceptor.Completions;
+using XFS4IoTFramework.Common;
+using XFS4IoTFramework.CashManagement;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class DeviceLockControlHandler
     {
-
-        private Task<DeviceLockControlCompletion.PayloadData> HandleDeviceLockControl(IDeviceLockControlEvents events, DeviceLockControlCommand deviceLockControl, CancellationToken cancel)
+        private async Task<DeviceLockControlCompletion.PayloadData> HandleDeviceLockControl(IDeviceLockControlEvents events, DeviceLockControlCommand deviceLockControl, CancellationToken cancel)
         {
-            //ToDo: Implement HandleDeviceLockControl for CashAcceptor.
-            
-            #if DEBUG
-                throw new NotImplementedException("HandleDeviceLockControl for CashAcceptor is not implemented in DeviceLockControlHandler.cs");
-            #else
-                #error HandleDeviceLockControl for CashAcceptor is not implemented in DeviceLockControlHandler.cs
-            #endif
+            if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
+            {
+                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"The exchange state is already in active.",
+                                                                   DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+            }
+
+            if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
+            {
+                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
+                                                                   DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+            }
+
+            if ((deviceLockControl.Payload.DeviceAction is null &&
+                 deviceLockControl.Payload.CashUnitAction is null) ||
+                (deviceLockControl.Payload.DeviceAction == DeviceLockControlCommand.PayloadData.DeviceActionEnum.NoLockAction &&
+                 deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.NoLockAction))
+            {
+                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+            }
+
+            if (deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual &&
+                (deviceLockControl.Payload.UnitLockControl is null ||
+                 deviceLockControl.Payload.UnitLockControl.Count == 0))
+            {
+                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                   $"Specified cash unit action is {deviceLockControl.Payload.CashUnitAction}, but no cash unit specific action being specified.");
+            }
+
+            Logger.Log(Constants.DeviceClass, "CashAcceptorDev.DeviceLockControl()");
+
+            var result = await Device.DeviceLockControl(new DeviceLockRequest(deviceLockControl.Payload.DeviceAction switch
+                                                                              {
+                                                                                  DeviceLockControlCommand.PayloadData.DeviceActionEnum.Lock => DeviceLockRequest.DeviceActionEnum.Lock,
+                                                                                  DeviceLockControlCommand.PayloadData.DeviceActionEnum.Unlock => DeviceLockRequest.DeviceActionEnum.Unlock,
+                                                                                  _ => DeviceLockRequest.DeviceActionEnum.NoLockAction,
+                                                                              },
+                                                                              deviceLockControl.Payload.CashUnitAction switch
+                                                                              {
+                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockAll => DeviceLockRequest.CashUnitActionEnum.LockAll,
+                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual => DeviceLockRequest.CashUnitActionEnum.LockIndividual,
+                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.UnlockAll => DeviceLockRequest.CashUnitActionEnum.UnlockAll,
+                                                                                  _ => DeviceLockRequest.CashUnitActionEnum.NoLockAction,
+                                                                              },
+                                                                              deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual ? 
+                                                                                  deviceLockControl.Payload.UnitLockControl.ToDictionary(c => c.StorageUnit, c => c.UnitAction switch
+                                                                                  {
+                                                                                      DeviceLockControlCommand.PayloadData.UnitLockControlClass.UnitActionEnum.Lock => DeviceLockRequest.UnitActionEnum.Lock,
+                                                                                      _ => DeviceLockRequest.UnitActionEnum.Unlock
+                                                                                  }) : null),
+                                                        cancel);
+
+            Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.DeviceLockControl() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            return new DeviceLockControlCompletion.PayloadData(result.CompletionCode,
+                                                               result.ErrorDescription,
+                                                               result.ErrorCode);
         }
 
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

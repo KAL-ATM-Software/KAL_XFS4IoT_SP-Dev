@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -102,19 +102,19 @@ namespace XFS4IoTFramework.CardReader
         public enum CardDataTypesEnum
         {
             NoDataRead = 0,
-            Track1 = 0x0001,
-            Track2 = 0x0002,
-            Track3 = 0x0004,
-            Chip = 0x0008,
-            Security = 0x0010,
-            MemoryChip = 0x0040,
-            Track1Front = 0x0080,
-            FrontImage = 0x0100,
-            BackImage = 0x0200,
-            Track1JIS = 0x0400,
-            Track3JIS = 0x0800,
-            Ddi = 0x4000,
-            Watermark = 0x8000,
+            Track1 = 1 << 0,
+            Track2 = 1 << 1,
+            Track3 = 1 << 2,
+            Chip = 1 << 3,
+            Security = 1 << 4,
+            MemoryChip = 1 << 5,
+            Track1Front = 1 << 6,
+            FrontImage = 1 << 7,
+            BackImage = 1 << 8,
+            Track1JIS = 1 << 9,
+            Track3JIS = 1 << 10,
+            Ddi = 1 << 11,
+            Watermark = 1 << 12,
         }
 
         /// <summary>

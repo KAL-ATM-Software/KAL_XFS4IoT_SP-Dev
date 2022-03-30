@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -25,11 +25,12 @@ namespace XFS4IoTFramework.Common
             this.AutoBeepMode = AutoBeepMode;
         }
 
+        [Flags]
         public enum AutoBeepModeEnum
         {
-            Active,
-            InActive,
-            NotSupported,
+            NotSupported = 0,
+            Active = 1 << 0 ,
+            InActive = 1 << 1,
         }
 
         /// <summary>

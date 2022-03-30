@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text.RegularExpressions;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.CashDispenser.Commands;
@@ -38,6 +39,13 @@ namespace XFS4IoTFramework.CashDispenser
                 return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                             $"Invalid amounts and values specified. either amount or values dispensing from each cash units required.",
                                                                             DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination));
+            }
+
+            if (denominate.Payload.Denomination.Currencies.Select(c => string.IsNullOrEmpty(c.Key) || Regex.IsMatch(c.Key, "^[A-Z]{3}$")).ToList().Count == 0)
+            {
+                return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                            $"Invalid currency specified.",
+                                                                            DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency));
             }
 
             double totalAmount = 0;

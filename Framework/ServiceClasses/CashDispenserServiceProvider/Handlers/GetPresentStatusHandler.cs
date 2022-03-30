@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -24,24 +24,24 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private Task<GetPresentStatusCompletion.PayloadData> HandleGetPresentStatus(IGetPresentStatusEvents events, GetPresentStatusCommand getPresentStatus, CancellationToken cancel)
         {
-            CashDispenserCapabilitiesClass.OutputPositionEnum position = CashDispenserCapabilitiesClass.OutputPositionEnum.Default;
+            CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
             if (getPresentStatus.Payload.Position is not null)
             {
                 position = getPresentStatus.Payload.Position switch
                 {
-                    OutputPositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    OutputPositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    OutputPositionEnum.OutDefault => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
-                    OutputPositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    OutputPositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    OutputPositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    OutputPositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    OutputPositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported
+                    OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,
+                    OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.OutputPositionEnum.Center,
+                    OutputPositionEnum.OutDefault => CashManagementCapabilitiesClass.OutputPositionEnum.Default,
+                    OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.OutputPositionEnum.Front,
+                    OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.OutputPositionEnum.Left,
+                    OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.OutputPositionEnum.Rear,
+                    OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.OutputPositionEnum.Right,
+                    OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported
                 };
             }
 
-            if (position == CashDispenserCapabilitiesClass.OutputPositionEnum.NotSupported)
+            if (position == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported)
             {
                 return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                                   $"Specified invalid position {position}"));
@@ -54,21 +54,21 @@ namespace XFS4IoTFramework.CashDispenser
                                                                                   GetPresentStatusCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition));
             }
 
-            CashDispenser.LastPresentStatus.ContainsKey(position).IsTrue($"Unexpected position is specified. {position}");
+            CashDispenser.LastCashDispenserPresentStatus.ContainsKey(position).IsTrue($"Unexpected position is specified. {position}");
 
             return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                               null,
                                                                               null,
                                                                               new DenominationClass(
-                                                                                  CashDispenser.LastPresentStatus[position].LastDenomination?.CurrencyAmounts,
-                                                                                  CashDispenser.LastPresentStatus[position].LastDenomination?.Values),
-                                                                              CashDispenser.LastPresentStatus[position].Status switch
+                                                                                  CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.CurrencyAmounts,
+                                                                                  CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.Values),
+                                                                              CashDispenser.LastCashDispenserPresentStatus[position].Status switch
                                                                               {
-                                                                                  PresentStatus.PresentStatusEnum.NotPresented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.NotPresented,
-                                                                                  PresentStatus.PresentStatusEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
+                                                                                  CashDispenserPresentStatus.PresentStatusEnum.NotPresented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.NotPresented,
+                                                                                  CashDispenserPresentStatus.PresentStatusEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
                                                                                   _ => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Unknown
                                                                               },
-                                                                              CashDispenser.LastPresentStatus[position].Token));
+                                                                              CashDispenser.LastCashDispenserPresentStatus[position].Token));
         }
     }
 }

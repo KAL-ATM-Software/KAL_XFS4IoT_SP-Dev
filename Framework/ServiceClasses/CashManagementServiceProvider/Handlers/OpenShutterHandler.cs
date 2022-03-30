@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -73,16 +73,16 @@ namespace XFS4IoTFramework.CashManagement
                 position != CashManagementCapabilitiesClass.PositionEnum.InRight &&
                 position != CashManagementCapabilitiesClass.PositionEnum.InTop)
             {
-                CashDispenserCapabilitiesClass.OutputPositionEnum outPos = position switch
+                CashManagementCapabilitiesClass.OutputPositionEnum outPos = position switch
                 {
-                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => CashDispenserCapabilitiesClass.OutputPositionEnum.Bottom,
-                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => CashDispenserCapabilitiesClass.OutputPositionEnum.Center,
-                    CashManagementCapabilitiesClass.PositionEnum.OutFront => CashDispenserCapabilitiesClass.OutputPositionEnum.Front,
-                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => CashDispenserCapabilitiesClass.OutputPositionEnum.Left,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRear => CashDispenserCapabilitiesClass.OutputPositionEnum.Rear,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRight => CashDispenserCapabilitiesClass.OutputPositionEnum.Right,
-                    CashManagementCapabilitiesClass.PositionEnum.OutTop => CashDispenserCapabilitiesClass.OutputPositionEnum.Top,
-                    _ => CashDispenserCapabilitiesClass.OutputPositionEnum.Default,
+                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,
+                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => CashManagementCapabilitiesClass.OutputPositionEnum.Center,
+                    CashManagementCapabilitiesClass.PositionEnum.OutFront => CashManagementCapabilitiesClass.OutputPositionEnum.Front,
+                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => CashManagementCapabilitiesClass.OutputPositionEnum.Left,
+                    CashManagementCapabilitiesClass.PositionEnum.OutRear => CashManagementCapabilitiesClass.OutputPositionEnum.Rear,
+                    CashManagementCapabilitiesClass.PositionEnum.OutRight => CashManagementCapabilitiesClass.OutputPositionEnum.Right,
+                    CashManagementCapabilitiesClass.PositionEnum.OutTop => CashManagementCapabilitiesClass.OutputPositionEnum.Top,
+                    _ => CashManagementCapabilitiesClass.OutputPositionEnum.Default,
                 };
 
                 if (Common.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Open)

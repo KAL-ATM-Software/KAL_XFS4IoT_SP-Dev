@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2021
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 
@@ -20,18 +20,47 @@ namespace XFS4IoTFramework.CashManagement
 {
     public enum NoteLevelEnum
     {
+        All,
         Unrecognized,
         Counterfeit,
         Suspect,
         Fit,
         Unfit,
-        Inked
+        Inked,
+    }
+
+    public enum OrientationEnum
+    {
+        NotSupported,
+        FrontTop,
+        FrontBottom,
+        BackTop,
+        BackBottom,
+        Unknown,
+    }
+
+    public enum ClassificationListEnum
+    {
+        NotSupported,
+        OnClassificationList,
+        NotOnClassificationList,
+        ClassificationListUnknown,
+    }
+
+    [Flags]
+    public enum ItemInfoTypeEnum
+    {
+        All = 0,
+        SerialNumber = 1 << 0,
+        Signature = 1 << 1,
+        Image = 1 << 2,
     }
 
     /// <summary>
-    /// 
+    /// ItemInfoSummary
+    /// Store information for the item type and counts
     /// </summary>
-    public sealed class ItemInfoSummary
+    public sealed record ItemInfoSummary
     {
         public ItemInfoSummary(NoteLevelEnum Level, int NumOfItems)
         {
@@ -55,24 +84,24 @@ namespace XFS4IoTFramework.CashManagement
     /// This field is used if items are to be moved to internal areas of the device, including cash units, 
     /// the intermediate stacker, or the transport.
     /// </summary>
-    public class Retract
+    public sealed record Retract
     {
-        public CashManagementCapabilitiesClass.RetractAreaEnum RetractArea { get; init; }
-
-        /// <summary>
-        /// Index is valid if the RetractArea is set to Retract, otherwise this value can be omitted
-        /// </summary>
-        public int? Index { get; init; }
-
         public Retract(CashManagementCapabilitiesClass.RetractAreaEnum RetractArea,
                        int? Index = null)
         {
             this.RetractArea = RetractArea;
             this.Index = Index;
         }
+
+        public CashManagementCapabilitiesClass.RetractAreaEnum RetractArea { get; init; }
+
+        /// <summary>
+        /// Index is valid if the RetractArea is set to Retract, otherwise this value can be omitted
+        /// </summary>
+        public int? Index { get; init; }
     }
 
-    public sealed class ItemPosition
+    public sealed record ItemPosition
     {
         /// <summary>
         /// ItemPosition
@@ -81,19 +110,19 @@ namespace XFS4IoTFramework.CashManagement
          public ItemPosition(string CashUnit)
         {
             this.CashUnit = CashUnit;
-            this.RetractArea = null;
-            this.OutputPosition = null;
+            RetractArea = null;
+            OutputPosition = null;
         }
         public ItemPosition(Retract RetractArea)
         {
-            this.CashUnit = string.Empty;
+            CashUnit = string.Empty;
             this.RetractArea = RetractArea;
-            this.OutputPosition = null;
+            OutputPosition = null;
         }
         public ItemPosition(CashManagementCapabilitiesClass.PositionEnum? OutputPosition)
         {
-            this.CashUnit = string.Empty;
-            this.RetractArea = null;
+            CashUnit = string.Empty;
+            RetractArea = null;
             this.OutputPosition = OutputPosition;
         }
 
@@ -120,6 +149,72 @@ namespace XFS4IoTFramework.CashManagement
         /// * ```OutRear``` - The rear output position.
         /// </summary>
         public CashManagementCapabilitiesClass.PositionEnum? OutputPosition { get; init; }
+    }
+
+    public sealed record ItemInfoClass
+    {
+        public ItemInfoClass(OrientationEnum Orientation, 
+                             List<byte> Signature, 
+                             NoteLevelEnum Level, 
+                             string SerialNumber, 
+                             List<byte> Image, 
+                             ClassificationListEnum ClassificationList,
+                             string ItemLocation)
+        {
+            this.Orientation = Orientation;
+            this.Signature = new(Signature);
+            this.Level = Level;
+            this.SerialNumber = SerialNumber;
+            this.Image = new(Image);
+            this.ClassificationList = ClassificationList;
+            this.ItemLocation = ItemLocation;
+        }
+
+        /// <summary>
+        /// Orientation of the item
+        /// </summary>
+        public OrientationEnum Orientation { get; init; }
+
+        /// <summary>
+        /// Vendor specific signature data.
+        /// </summary>
+        public List<byte> Signature { get; init; }
+
+        /// <summary>
+        /// Level of note
+        /// </summary>
+        public NoteLevelEnum Level { get; init; }
+
+        /// <summary>
+        /// This property contains the serial number of the item as a string. A '?' character is used 
+        /// to represent any serial number character that cannot be recognized. If no serial number is available or 
+        /// has not been requested then this is omitted.
+        /// </summary>
+        public string SerialNumber { get; init; }
+
+        /// <summary>
+        /// Binary image data
+        /// </summary>
+        public List<byte> Image { get; init; }
+
+        /// <summary>
+        /// Specifies if the item is on the classification list. If the classification list reporting capability is not 
+        /// supported this property can be set to NotSupported
+        /// </summary>
+        public ClassificationListEnum ClassificationList { get; init; }
+
+        /// <summary>
+        /// Specifies the location of the item. Following values are possible:
+        /// 
+        /// * ```customer``` - The item has been presented to the customer.
+        /// * ```unknown``` - The item location is unknown, for example, it may have been removed manually.
+        /// * ```stacker``` - The item is in the intermediate stacker.
+        /// * ```output``` - The item is at the output position. The items have not been in customer access.
+        /// * ```transport``` - The item is in an intermediate location in the device.
+        /// * ```deviceUnknown``` - The item is in the device but its location is unknown.
+        /// * ```storage unit identifier``` - The item is in a storage unit with matching
+        /// </summary>
+        public string ItemLocation { get; init; }
     }
 
     /// <summary>
@@ -621,5 +716,63 @@ namespace XFS4IoTFramework.CashManagement
         /// Specifies the error code on setting teller info
         /// </summary>
         public SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+    }
+
+    public sealed class GetItemInfoRequest
+    {
+        /// <summary>
+        /// GetItemInfoRequest
+        /// Which item information to be retrieved.
+        /// </summary>
+        public GetItemInfoRequest(int Index,
+                                  NoteLevelEnum NoteLevel,
+                                  ItemInfoTypeEnum ItemInfoType)
+        {
+            this.Index = Index;
+            this.ItemInfoType = ItemInfoType;
+        }
+
+        /// <summary>
+        /// The index being used for sending InfoAvailableEvent.
+        /// If the NoteLevel is specified to zero, this value is ignored.
+        /// </summary>
+        public int Index { get; init; }
+
+        /// <summary>
+        /// Note level to be reported. if the value is zero, all types are reported.
+        /// </summary>
+        public NoteLevelEnum NoteLevel { get; init; }
+
+        /// <summary>
+        /// Specifies the type of information required. if the value is zero, all types to be reported
+        /// </summary>
+        public ItemInfoTypeEnum ItemInfoType { get; init; }
+    }
+
+    public sealed class GetItemInfoResult : DeviceResult
+    {
+        /// <summary>
+        /// GetitemInfoResult
+        /// Return item infomation requested by the client.
+        /// </summary>
+        public GetItemInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ItemInfos = null;
+        }
+
+        public GetItemInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 Dictionary<string, ItemInfoClass> ItemInfos)
+            : base(CompletionCode, null)
+        {
+            this.ItemInfos = ItemInfos;
+        }
+
+        /// <summary>
+        /// Reported requested item information.
+        /// Key is note type Id.
+        /// </summary>
+        public Dictionary<string, ItemInfoClass> ItemInfos { get; init; }
     }
 }
