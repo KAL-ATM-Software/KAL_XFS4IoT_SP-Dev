@@ -24,16 +24,16 @@ jobs:
       run: dotnet restore Framework
 
     - name: Build 
-      run: dotnet build Framework --no-restore
+      run: dotnet build Framework --no-restore --configuration Release
     
     - name: Run Tests
-      run: dotnet test Framework --no-build --verbosity normal
+      run: dotnet test Framework --no-build --verbosity normal --configuration Release
     
     - name: Create release
       run: |
         set -x
         
-        dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build
+        dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build --configuration Release
 
         assets=()
         for asset in ./nuget/*.nupkg; do
@@ -42,7 +42,7 @@ jobs:
         for asset in ./nuget/*.snupkg; do
           assets+=("-a" "$asset")
         done
-        hub release create -p "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
+        hub release create "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
