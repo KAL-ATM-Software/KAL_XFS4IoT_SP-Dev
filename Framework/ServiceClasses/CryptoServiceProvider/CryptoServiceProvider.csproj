@@ -8,7 +8,7 @@
   <PropertyGroup>
     <PackageId>KAL.XFS4IoT.SP-Dev.Framework.Crypto</PackageId>
     <Copyright>Copyright (C) KAL ATM Software GmbH, 2022</Copyright>
-    <Description>KAL.XFS4IoT.SP-Dev.Framework.Crypto Pre-Release</Description>
+    <Description>KAL.XFS4IoT.SP-Dev.Framework.Crypto</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <!--Include Repository URL in package. -->
