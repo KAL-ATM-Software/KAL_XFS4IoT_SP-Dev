@@ -10,12 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Common.Commands;
-using XFS4IoT.Common.Completions;
+using XFS4IoT.ServicePublisher.Commands;
+using XFS4IoT.ServicePublisher.Completions;
 
 namespace Server
 {
-    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(XFS4IoT.Common.Commands.GetServicesCommand))]
+    [CommandHandler(XFSConstants.ServiceClass.Publisher, typeof(XFS4IoT.ServicePublisher.Commands.GetServicesCommand))]
     public class GetServiceHandler : ICommandHandler
     {
 
@@ -38,7 +38,7 @@ namespace Server
             command.IsNotNull($"Invalid parameter received in the {nameof(Handle)} method. {nameof(command)}");
             Contracts.IsNotNull(cancel, $"Invalid parameter received in the {nameof(Handle)} method. {nameof(cancel)}");
 
-            XFS4IoT.Common.Commands.GetServicesCommand getServiceCommand = command as XFS4IoT.Common.Commands.GetServicesCommand;
+            XFS4IoT.ServicePublisher.Commands.GetServicesCommand getServiceCommand = command as XFS4IoT.ServicePublisher.Commands.GetServicesCommand;
             getServiceCommand.IsNotNull($"Unexpected command received in the {nameof(Handle)} method. {nameof(command)}");
             getServiceCommand.Header.RequestId.HasValue.IsTrue();
 
@@ -46,7 +46,7 @@ namespace Server
             GetServicesCompletion.PayloadData payLoad = new(GetServicesCompletion.PayloadData.CompletionCodeEnum.Success,
                                                             "ok",
                                                             "KAL",
-                                                            ServicePublisher.Services.Select(c => new GetServicesCompletion.PayloadData.ServicesClass(c.WSUri.AbsoluteUri)).ToList());
+                                                            ServicePublisher.Services.Select(c => new XFS4IoT.ServicePublisher.ServiceClass(c.WSUri.AbsoluteUri)).ToList());
 
             await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, payLoad));
         }

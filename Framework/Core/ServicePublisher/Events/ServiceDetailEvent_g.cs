@@ -3,7 +3,7 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT Common interface.
+ * This file was created automatically as part of the XFS4IoT ServicePublisher interface.
  * ServiceDetailEvent_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
@@ -12,11 +12,11 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using XFS4IoT.Events;
 
-namespace XFS4IoT.Common.Events
+namespace XFS4IoT.ServicePublisher.Events
 {
 
     [DataContract]
-    [Event(Name = "Common.ServiceDetailEvent")]
+    [Event(Name = "ServicePublisher.ServiceDetailEvent")]
     public sealed class ServiceDetailEvent : Event<ServiceDetailEvent.PayloadData>
     {
 
@@ -29,7 +29,7 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(string VendorName = null, List<ServicesClass> Services = null)
+            public PayloadData(string VendorName = null, List<ServiceClass> Services = null)
                 : base()
             {
                 this.VendorName = VendorName;
@@ -37,29 +37,17 @@ namespace XFS4IoT.Common.Events
             }
 
             /// <summary>
-            /// Freeform string naming the hardware vendor
+            /// Freeform string naming the hardware vendor.
+            /// <example>ACME ATM Hardware GmbH</example>
             /// </summary>
             [DataMember(Name = "vendorName")]
             public string VendorName { get; init; }
 
-            [DataContract]
-            public sealed class ServicesClass
-            {
-                public ServicesClass(string ServiceURI = null)
-                {
-                    this.ServiceURI = ServiceURI;
-                }
-
-                /// <summary>
-                /// The URI which can be used to contact this individual service
-                /// </summary>
-                [DataMember(Name = "serviceURI")]
-                public string ServiceURI { get; init; }
-
-            }
-
+            /// <summary>
+            /// Array of one or more services exposed by the publisher.
+            /// </summary>
             [DataMember(Name = "services")]
-            public List<ServicesClass> Services { get; init; }
+            public List<ServiceClass> Services { get; init; }
 
         }
 

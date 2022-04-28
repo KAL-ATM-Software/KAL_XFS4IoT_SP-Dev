@@ -53,7 +53,7 @@ namespace XFS4IoTServer
 
             // Double check that command handler classes were declared with the right constructor so that we'll be able to use them. 
             // Would be nice to be able to test this at compile time. 
-            foreach (Type handlerClass in from x in MessageHandlers.Values select x.Type)
+            foreach (Type handlerClass in from x in MessageHandlers.Values select x.Type )
             {
                 try
                 {
@@ -113,7 +113,7 @@ namespace XFS4IoTServer
             CommandErrorexception.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(CommandErrorexception)}");
 
             var (handler, _) = CreateHandler(Command.GetType(), Connection);
-            return handler.HandleError(Command, CommandErrorexception) ?? Task.CompletedTask;
+            return handler.HandleError( Command, CommandErrorexception ) ?? Task.CompletedTask;
         }
 
         private (ICommandHandler handler, bool async) CreateHandler(Type type, IConnection Connection)
@@ -128,7 +128,7 @@ namespace XFS4IoTServer
 
             // Create a new handler object. Effectively the same as: 
             // ICommandHandler handler = new handlerClass( this, Logger );
-            var handler = handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) })
+            var handler =  handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) })
                                .IsNotNull($"Failed to find constructor for {handlerClass}")
                                .Invoke(parameters: new object[] { Connection, this, Logger })
                                .IsA<ICommandHandler>();
@@ -156,7 +156,7 @@ namespace XFS4IoTServer
                 MessageHandlers.Add(Message, new HandlerDetails(Handler, async));
         }
 
-        private readonly Dictionary<Type, HandlerDetails> MessageHandlers = new();
+        private readonly Dictionary<Type, HandlerDetails > MessageHandlers = new();
 
         private record HandlerDetails(Type Type, bool Async);
 

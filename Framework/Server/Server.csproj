@@ -9,7 +9,7 @@
   <PropertyGroup>
     <PackageId>KAL.XFS4IoT.SP-Dev.Framework.Server</PackageId>
     <Copyright>Copyright (C) KAL ATM Software GmbH, 2022</Copyright>
-    <Description>KAL.XFS4IoT.SP-Dev.Framework.Server Pre-Release</Description>
+    <Description>KAL.XFS4IoT.SP-Dev.Framework.Server</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     
     <!--Include Repository URL in package. -->
