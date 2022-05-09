@@ -127,7 +127,7 @@ namespace XFS4IoTFramework.Printer
         /// may be given as zero - since that's a valid media length.
         /// In XFS the value zero means an infinite roll which is never cut
         /// so if page size is set to zero and a cut instruction sent
-        /// the SP can decide what to do: either cut at current postion
+        /// the SP can decide what to do: either cut at current position
         /// or go into black mark mode for instance.
         /// </summary>
         bool SetPageSize(int pageSize);

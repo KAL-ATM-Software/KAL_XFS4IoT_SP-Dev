@@ -861,7 +861,7 @@ namespace XFS4IoTFramework.CashAcceptor
         }
 
         /// <summary>
-        /// Postion to present media
+        /// Position to present media
         /// </summary>
         public CashManagementCapabilitiesClass.PositionEnum Position { get; init; }
 
