@@ -46,13 +46,21 @@ namespace XFS4IoTServer
 
                     var receivedBuffer = new ArraySegment<byte>(new byte[MAX_BUFFER]);
 
-                    // Wait for data from the client
-                    var res = await socket.ReceiveAsync(receivedBuffer, CancellationToken.None);
+                    // a single message could be delivered in multiple chunks
+                    WebSocketReceiveResult res;
+                    int ReceivedBufferReceived = 0;
+                    do
+                    {
+                        var BufferSlice = receivedBuffer.Slice(ReceivedBufferReceived, receivedBuffer.Count - ReceivedBufferReceived);
+                        // Wait for data from the client
+                        res = await socket.ReceiveAsync(BufferSlice, CancellationToken.None);
+                        ReceivedBufferReceived += res.Count;
+                    } while (!res.EndOfMessage);
 
                     if (res.MessageType == WebSocketMessageType.Text ||
                         res.MessageType == WebSocketMessageType.Binary)
                     {
-                        string message = Encoding.UTF8.GetString(receivedBuffer.Take(res.Count).ToArray());
+                        string message = Encoding.UTF8.GetString(receivedBuffer.Take(ReceivedBufferReceived).ToArray());
 
                         await HandleIncommingMessage(message);
                     }
@@ -73,10 +81,10 @@ namespace XFS4IoTServer
                 Debugger.Break();
                 throw;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Warning(Constants.Component, $"Unexpected exception: {ex.Message}");
-                throw; 
+                throw;
             }
             finally
             {
@@ -282,7 +290,7 @@ namespace XFS4IoTServer
 
         private readonly WebSocket socket;
         private readonly ILogger Logger;
-        private const int MAX_BUFFER = 4096;
+        private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
         private readonly ICommandDispatcher CommandDispatcher;
     }
 }
