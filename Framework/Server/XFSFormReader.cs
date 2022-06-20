@@ -129,6 +129,9 @@ namespace XFS4IoTServer
                 ReadNextToken();
             if (CurrentTokenType == Expected)
                 return;
+            // accept BARCODE as both Keyword and Enum
+            if (CurrentToken.Keyword == FormKeyword.BARCODE && Expected == TokenType.ENUM)
+                return;
 
             throw BuildParseException($"Expected token type {Expected} but got {CurrentTokenType}");
         }
