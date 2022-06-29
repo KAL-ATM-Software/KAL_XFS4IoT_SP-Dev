@@ -55,7 +55,7 @@ namespace XFS4IoTServer
 
         public Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
 
-        public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Postion) => CashManagementService.ItemsInsertedEvent(Postion);
+        public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position) => CashManagementService.ItemsInsertedEvent(Position);
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 

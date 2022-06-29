@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashManagement
 
         Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches);
 
-        Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Postion);
+        Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position);
 
         Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches);
 

@@ -129,6 +129,9 @@ namespace XFS4IoTServer
                 ReadNextToken();
             if (CurrentTokenType == Expected)
                 return;
+            // accept BARCODE as both Keyword and Enum
+            if (CurrentToken.Keyword == FormKeyword.BARCODE && Expected == TokenType.ENUM)
+                return;
 
             throw BuildParseException($"Expected token type {Expected} but got {CurrentTokenType}");
         }
@@ -227,6 +230,14 @@ namespace XFS4IoTServer
 
             //Get the rest of the line as a span
             ReadOnlySpan<char> lineSpan = form[lineNum].AsSpan()[peekLinePos..];
+
+            // text between comment start and the end of the line is ignored
+            if (lineSpan.StartsWith("//"))
+            {
+                peekLineNum++; peekLinePos = 0;
+                return InternalGetNextToken(ref peekLineNum, ref peekLinePos, ref peekNode);
+            }
+
 
             //If the token is a string surrounded by quotes
             if (lineSpan.StartsWith(CONST_QUOTE))

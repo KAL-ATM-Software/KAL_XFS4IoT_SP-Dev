@@ -333,7 +333,7 @@ namespace XFS4IoTFramework.CashManagement
         /// Open or Close shutter for the specified output position
         /// </summary>
         /// <param name="Action">Either Open or Close for the shutter operation</param>
-        /// <param name="ShutterPosition">Postion of shutter to control.</param>
+        /// <param name="ShutterPosition">Position of shutter to control.</param>
         public OpenCloseShutterRequest(ActionEnum Action, CashManagementCapabilitiesClass.PositionEnum ShutterPosition)
         {
             this.Action = Action;

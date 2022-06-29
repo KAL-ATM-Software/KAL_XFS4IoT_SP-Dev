@@ -98,8 +98,8 @@ namespace XFS4IoTServer
                             AdditionalBunches))
                     );
 
-        public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Postion) => ItemsInsertedEvent(
-            new ItemsInsertedEvent.PayloadData(Postion switch
+        public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position) => ItemsInsertedEvent(
+            new ItemsInsertedEvent.PayloadData(Position switch
             {
                 CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
                 CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,

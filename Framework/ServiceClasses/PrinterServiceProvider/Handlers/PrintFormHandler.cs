@@ -428,7 +428,7 @@ namespace XFS4IoTFramework.Printer
             // Loop through assignments processing according to field type.
             foreach (var fieldAssignment in fieldAssignments)
             {
-                PrintFormResult result = null;
+                PrintFormResult result;
                 switch (fieldAssignment.Field.Type)
                 {
                     case FieldTypeEnum.TEXT:
@@ -445,6 +445,11 @@ namespace XFS4IoTFramework.Printer
                         break;
 
                     case FieldTypeEnum.BARCODE:
+                        {
+                            // Check format of the barcode is valid or not
+                            result = ConvertBarcodeFieldAssignment(fieldAssignment);
+                        }
+                        break;
                     default:
                         {
                             return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -896,7 +901,7 @@ namespace XFS4IoTFramework.Printer
                 }
             }
 
-            // Check BARCODE for BAhResultODE fields
+            // Check BARCODE for BARCODE fields
             if (field.Type == FieldTypeEnum.BARCODE)
             {
                 if (!rules.ValidBarcode.HasFlag(field.Barcode))
@@ -2096,6 +2101,30 @@ namespace XFS4IoTFramework.Printer
             {
                 Logger.Warning(Constants.Framework, $"Error in printer specific class: GetTaskDimensions returned Width and Height that were not multiples of ROWCOLUMN size for a ROWCOLUMN text task.");
             }
+
+            return new PrintFormResult(MessagePayload.CompletionCodeEnum.Success);
+        }
+
+        /// <summary>
+        /// Assign barcode field
+        /// </summary>
+        private PrintFormResult ConvertBarcodeFieldAssignment(FieldAssignment fieldAssignment)
+        {
+
+            /*
+              BarcodeFontName
+             */
+            BarcodeTask task = new(
+                            fieldAssignment.X,
+                            fieldAssignment.Y,
+                            fieldAssignment.Value,
+                            fieldAssignment.Field.Barcode,
+                            fieldAssignment.Field.Font,
+                            fieldAssignment.Width,
+                            fieldAssignment.Height);
+           
+            // Add the task to the task manager.
+            Printer.PrintJob.Tasks.Add(task);
 
             return new PrintFormResult(MessagePayload.CompletionCodeEnum.Success);
         }
