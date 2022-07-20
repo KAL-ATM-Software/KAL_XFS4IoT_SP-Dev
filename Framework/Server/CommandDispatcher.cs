@@ -67,7 +67,7 @@ namespace XFS4IoTServer
             }
         }
 
-        public async Task Dispatch(IConnection Connection, MessageBase Command)
+        public async Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken token)
         {
             try
             {
@@ -77,21 +77,35 @@ namespace XFS4IoTServer
                 await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, Command.Header.Name, new(Acknowledge.PayloadData.StatusEnum.Ok)));
 
                 //Get timeout if available
-                CancellationTokenSource cts;
+                //Use linked cancellation token to ensure we cancel if the parent token is cancelled.
+                CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(token);
                 var payload = Command.GetType().GetProperty("Payload").GetValue(Command);
 
                 //Use timeout if it is not infinite
                 if (payload is XFS4IoT.Commands.MessagePayload payloadBase && payloadBase.Timeout > 0)
-                    cts = new(payloadBase.Timeout);
-                else
-                    cts = new();
+                    cts.CancelAfter(payloadBase.Timeout);
 
                 (ICommandHandler handler, bool async) = CreateHandler(Command.GetType(), Connection);
                 if (async)
                 {
-                    Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
-                    await handler.Handle(Command, cts.Token);
-                    Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
+                    try
+                    {
+                        Logger.Log("Dispatcher", $"Running {Command.Header.Name} id:{Command.Header.RequestId}");
+                        await handler.Handle(Command, cts.Token);
+                        Logger.Log("Dispatcher", $"Completed {Command.Header.Name} id:{Command.Header.RequestId}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log("Dispatcher", $"Caught exception running async command {Command.Header.Name} id:{Command.Header.RequestId}.{Environment.NewLine}{ex}");
+
+                        if (ex is TaskCanceledException or OperationCanceledException)
+                        {
+                            ex = new TimeoutCanceledException(ex.Message, ex, false);
+                        }
+
+                        await handler.HandleError(Command, ex);
+                    }
+
                     cts.Dispose();
                 }
                 else
@@ -103,6 +117,15 @@ namespace XFS4IoTServer
             catch (Exception e) when (e.InnerException is System.Net.WebSockets.WebSocketException we)
             {
                 Logger.Log("Dispatcher", $"Exception responding to client - assume the client went away. {we}");
+            }
+            catch(Exception e) when (e is TaskCanceledException or OperationCanceledException)
+            {
+                Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
+                Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
+
+                Exception ex = new TimeoutCanceledException(e.Message, e, false);
+                var (handler, _) = CreateHandler(Command.GetType(), Connection);
+                await handler.HandleError(Command, ex);
             }
         }
 
@@ -137,15 +160,15 @@ namespace XFS4IoTServer
 
         private readonly CommandQueue CommandQueue;
 
-        public virtual Task RunAsync() => CommandQueue.RunAsync();
+        public virtual Task RunAsync(CancellationSource cancellationSource) => CommandQueue.RunAsync(cancellationSource.Token);
 
-        public virtual async Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds)
+        public virtual async Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token)
         {
-            bool retVal = await CommandQueue.AnyValidRequestID(Connection, RequestIds);
+            bool retVal = await CommandQueue.AnyValidRequestID(Connection, RequestIds, token);
             if (retVal)
             {
                 //Cancel command completes before trying to cancel the running commands.
-                _ = Task.Run(async () => await CommandQueue.TryCancelItemsAsync(Connection, RequestIds));
+                _ = CommandQueue.TryCancelItemsAsync(Connection, RequestIds, token);
             }
             return retVal;
         }

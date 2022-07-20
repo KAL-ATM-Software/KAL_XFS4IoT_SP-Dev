@@ -232,6 +232,16 @@ namespace XFS4IoTFramework.Printer
 
                 if (result.CompletionCode != MessagePayload.CompletionCodeEnum.UnsupportedCommand)
                 {
+                    if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success && printForm.Payload.MediaControl is not null)
+                    {
+                        // Now do any other media control requested
+                        var mediaControlResult = await ExecuteControlMedia(events, printForm.Payload, cancel);
+                        if (mediaControlResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                        {
+                            return mediaControlResult;
+                        }
+                    }
+
                     return new PrintFormCompletion.PayloadData(result.CompletionCode,
                                                                result.ErrorDescription,
                                                                result.ErrorCode);

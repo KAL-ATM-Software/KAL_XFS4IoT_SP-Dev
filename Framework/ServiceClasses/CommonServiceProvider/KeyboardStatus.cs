@@ -41,6 +41,6 @@ namespace XFS4IoTFramework.Common
         /// * ```active``` - An automatic tone will be generated for all active keys.
         /// * ```inActive``` - An automatic tone will be generated for all in-active keys.
         /// </summary>
-        public AutoBeepModeEnum AutoBeepMode { get; init; }
+        public AutoBeepModeEnum AutoBeepMode { get; set; }
     }
 }

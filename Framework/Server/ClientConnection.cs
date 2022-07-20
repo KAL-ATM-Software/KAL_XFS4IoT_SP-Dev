@@ -34,11 +34,11 @@ namespace XFS4IoTServer
             this.Logger = Logger;
         }
 
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken token)
         {
             try
             {
-                while (true)
+                while (!token.IsCancellationRequested)
                 {
                     // client is no longer connected
                     if (socket.State != WebSocketState.Open)
@@ -62,7 +62,7 @@ namespace XFS4IoTServer
                     {
                         string message = Encoding.UTF8.GetString(receivedBuffer.Take(ReceivedBufferReceived).ToArray());
 
-                        await HandleIncommingMessage(message);
+                        await HandleIncommingMessage(message, token);
                     }
                     else if (res.MessageType == WebSocketMessageType.Close)
                     {
@@ -81,10 +81,10 @@ namespace XFS4IoTServer
                 Debugger.Break();
                 throw;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Logger.Warning(Constants.Component, $"Unexpected exception: {ex.Message}");
-                throw;
+                throw; 
             }
             finally
             {
@@ -95,7 +95,7 @@ namespace XFS4IoTServer
 
         private readonly IMessageDecoder CommandDecoder;
 
-        private async Task HandleIncommingMessage(string messageString)
+        private async Task HandleIncommingMessage(string messageString, CancellationToken token)
         {
             bool rc = CommandDecoder.TryUnserialise(messageString, out object command);
             Contracts.IsTrue(rc, $"Invalid JSON or unknown command received in the {nameof(HandleIncommingMessage)} method.");
@@ -119,7 +119,7 @@ namespace XFS4IoTServer
 
             try
             {
-                await CommandDispatcher.Dispatch(this, commandBase);
+                await CommandDispatcher.Dispatch(this, commandBase, token);
             }
             catch (NotImplementedException ex) // Add more exception can be thrown by the device specific class
             {

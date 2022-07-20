@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Configuration;
 using System.Text.RegularExpressions;
 using XFS4IoT;
 using System.Threading;
@@ -32,10 +31,16 @@ namespace XFS4IoTServer
         /// (as defined by XFS4IoT.) 
         /// </remarks>
         /// <param name="Logger">To use for all logging</param>
-        public ServicePublisher(ILogger Logger)
+        /// <param name="serviceConfiguration">To get service configuration</param>
+        public ServicePublisher(ILogger Logger, IServiceConfiguration serviceConfiguration)
             : base(new[] { XFSConstants.ServiceClass.Publisher }, Logger)
         {
             Logger.IsNotNull($"Invalid parameter received in the {nameof(ServicePublisher)} constructor. {nameof(Logger)}");
+            
+            if (serviceConfiguration is null)
+            {
+                Logger.Log(Constants.Framework, $"No configuration object is set and use default value. {Configurations.ServerAddressUri}");
+            }
 
             foreach (int port in XFSConstants.PortRanges)
             {
@@ -47,9 +52,10 @@ namespace XFS4IoTServer
                     // We're going to open a HTTP connection first, then upgrade to WSS, hence http://
 
                     // Service URI is configuration parameter
-                    string serverAddressUri = ConfigurationManager.AppSettings.Get(Configurations.ServerAddressUri);
+                    string serverAddressUri = serviceConfiguration?.Get(Configurations.ServerAddressUri);
                     if (string.IsNullOrEmpty(serverAddressUri))
                     {
+                        Logger.Log(Constants.Framework, $"No configuration value '{serverAddressUri}' exists and use default value. {Configurations.ServerAddressUri}");
                         serverAddressUri = Configurations.Default.ServerAddressUri;
                     }
                     else
@@ -84,11 +90,11 @@ namespace XFS4IoTServer
             Contracts.Fail($"Can't find an XFS4IoT port to listen on");
         }
 
-        public async override Task RunAsync()
+        public async override Task RunAsync(CancellationSource cancellationSource)
         {
-            var thisTask = Task.WhenAll( EndPoint.RunAsync(), base.RunAsync() );
+            var thisTask = Task.WhenAll( EndPoint.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource) );
             var otherTasks = from service in _Services
-                             select service.RunAsync();
+                             select service.RunAsync(cancellationSource);
 
             var allTasks = Enumerable.Append(otherTasks, thisTask);
 

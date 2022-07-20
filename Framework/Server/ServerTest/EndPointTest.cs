@@ -43,7 +43,7 @@ namespace XFS4IoTServerTest
                 CommandDispatcher: CommandDispatcher,
                 Logger: Logger);
 
-            test.RunAsync().Wait();
+            test.RunAsync(CancellationToken.None).Wait();
 
             Inconclusive();
         }
@@ -81,11 +81,11 @@ namespace XFS4IoTServerTest
 
         private class TestCommandDispatcher : ICommandDispatcher
         {
-            public Task Dispatch(IConnection Connection, MessageBase Command) => throw new System.NotImplementedException();
+            public Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken Token) => throw new System.NotImplementedException();
             public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new System.NotImplementedException();
-            public Task RunAsync() => throw new System.NotImplementedException();
+            public Task RunAsync(CancellationSource cancellationSource) => throw new System.NotImplementedException();
             public IEnumerator GetEnumerator() => throw new System.NotImplementedException();
-            public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds) => throw new NotImplementedException();
+            public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
 
             public IEnumerable<Type> Commands { get => throw new NotImplementedException(); }
         }

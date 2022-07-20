@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
+using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -50,10 +51,11 @@ namespace XFS4IoTServer
         private readonly List<(Task task, IConnection socket)> ConnectionDetails = new();
         public IEnumerable<IConnection> Connections { get => from d in ConnectionDetails select d.socket; }
 
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken token)
         {
             Task<HttpListenerContext> listenerTask = HttpListener.GetContextAsync();
-            while (true)
+            Task cancelTask = Task.Delay(-1, token);
+            while (!token.IsCancellationRequested)
             {
                 // Wait until client connects
                 // We need to let client connections keep running, so await everything. 
@@ -63,10 +65,15 @@ namespace XFS4IoTServer
                 // And wait for something to happen. Note that multiple things can happen at the 
                 // same time. 
                 var tasks = from c in ConnectionDetails select c.task; 
-                Task completedTask = await Task.WhenAny(Enumerable.Append(tasks, listenerTask ));
+                Task completedTask = await Task.WhenAny(Enumerable.Append(Enumerable.Append(tasks, listenerTask), cancelTask));
 
                 // If it's one of the client connection tasks ending then we just need to stop waiting for it.  
-                if (completedTask != listenerTask)
+                if(completedTask == cancelTask)
+                {
+                    HttpListener.Stop();
+                    HttpListener.Close();
+                }
+                else if (completedTask != listenerTask)
                 {
                     ConnectionDetails.Remove( ConnectionDetails.Find( x => x.task == completedTask) );
                 }
@@ -87,7 +94,7 @@ namespace XFS4IoTServer
                                                                 CommandDecoder,
                                                                 CommandDispatcher,
                                                                 Logger);
-                        var task = clientConnection.RunAsync();
+                        var task = clientConnection.RunAsync(token);
 
                         // Remember the connection and the task that's running it so 
                         // that we can send events to it later, and clean up when it's finished. 
@@ -105,6 +112,8 @@ namespace XFS4IoTServer
                     listenerTask = HttpListener.GetContextAsync();
                 }
             }
+            HttpListener.Stop();
+            HttpListener.Close();
         }
 
         private readonly IMessageDecoder CommandDecoder;

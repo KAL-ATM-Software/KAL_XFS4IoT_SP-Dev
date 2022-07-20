@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.Common
 
             var dispatcher = Provider.IsA<ICommandDispatcher>();
 
-            bool result = await dispatcher.CancelCommandsAsync(Connection, cancelCmd.Payload.RequestIds);
+            bool result = await dispatcher.CancelCommandsAsync(Connection, cancelCmd.Payload.RequestIds, cancel);
 
             return result ?
                 new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null)

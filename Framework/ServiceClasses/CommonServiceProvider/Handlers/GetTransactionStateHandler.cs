@@ -29,8 +29,8 @@ namespace XFS4IoTFramework.Common
                                                                  result.ErrorDescription,
                                                                  result.State switch
                                                                  {
-                                                                     GetTransactionStateResult.StateEnum.Active => GetTransactionStateCompletion.PayloadData.StateEnum.Active,
-                                                                     GetTransactionStateResult.StateEnum.Inactive => GetTransactionStateCompletion.PayloadData.StateEnum.Inactive,
+                                                                     TransactionStateEnum.Active => GetTransactionStateCompletion.PayloadData.StateEnum.Active,
+                                                                     TransactionStateEnum.Inactive => GetTransactionStateCompletion.PayloadData.StateEnum.Inactive,
                                                                      _ => null,
                                                                  },
                                                                  result.TransactionID);

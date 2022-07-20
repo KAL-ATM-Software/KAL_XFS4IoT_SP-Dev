@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.Common
                 return new SetTransactionStateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                      $"No transaction state specified.");
             }
-            if (string.IsNullOrEmpty(setTransactionState.Payload.TransactionID))
+            if (setTransactionState.Payload.State is SetTransactionStateCommand.PayloadData.StateEnum.Active && string.IsNullOrEmpty(setTransactionState.Payload.TransactionID))
             {
                 return new SetTransactionStateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                      $"No transaction ID specified.");
@@ -36,10 +36,11 @@ namespace XFS4IoTFramework.Common
             Logger.Log(Constants.DeviceClass, "CommonDev.SetTransactionState()");
             var result = await Device.SetTransactionState(new SetTransactionStateRequest(setTransactionState.Payload.State switch
                                                                                          {
-                                                                                             SetTransactionStateCommand.PayloadData.StateEnum.Active => SetTransactionStateRequest.StateEnum.Active,
-                                                                                             _ => SetTransactionStateRequest.StateEnum.Inactive,
+                                                                                             SetTransactionStateCommand.PayloadData.StateEnum.Active => TransactionStateEnum.Active,
+                                                                                             SetTransactionStateCommand.PayloadData.StateEnum.Inactive => TransactionStateEnum.Inactive,
+                                                                                             _ => throw Contracts.Fail<NotImplementedException>($"Unexpected StateEnum in {nameof(HandleSetTransactionState)}. {setTransactionState.Payload.State}")
                                                                                          },
-                                                                                         setTransactionState.Payload.TransactionID));
+                                                                                         setTransactionState.Payload.TransactionID ?? String.Empty));
             Logger.Log(Constants.DeviceClass, $"CommonDev.SetTransactionState() -> {result.CompletionCode}");
 
             return new SetTransactionStateCompletion.PayloadData(result.CompletionCode,

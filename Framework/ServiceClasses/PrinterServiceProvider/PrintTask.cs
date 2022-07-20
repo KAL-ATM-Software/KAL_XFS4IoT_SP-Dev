@@ -16,8 +16,8 @@ namespace XFS4IoTFramework.Printer
 {
     /// <summary>
     /// A Task represents a small bit of data to be printed (or scanned).
-    /// Different classes are derived from KXTask for different types or
-    /// data.For instance KXTextTask represents a line of text to print.
+    /// Different classes are derived from <see cref="PrintTask"/> for different types or
+    /// data.For instance <see cref="TextTask"/> represents a line of text to print.
     /// </summary>
     public abstract class PrintTask
     {
@@ -207,7 +207,7 @@ namespace XFS4IoTFramework.Printer
     }
 
     /// <summary>
-    /// A KXPrintJob is basically a collection of KXTasks that together
+    /// A <see cref="PrintJobClass"/> is basically a collection of <see cref="PrintTask"/>s that together
     /// define a complete document to be printed or scanned.
     /// The class also provides a method for converting the job to a bitmap.
     /// </summary>

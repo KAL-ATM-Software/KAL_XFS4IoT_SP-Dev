@@ -47,6 +47,21 @@ namespace XFS4IoTFramework.Common
     }
 
     /// <summary>
+    /// Transaction state
+    /// </summary>
+    public enum TransactionStateEnum
+    {
+        /// <summary>
+        /// A customer transaction is in progress.
+        /// </summary>
+        Active,
+        /// <summary>
+        /// No customer transaction is in progress.
+        /// </summary>
+        Inactive,
+    }
+
+    /// <summary>
     /// GetCommandRandomNumberResult
     /// Return transaction state
     /// </summary>
@@ -56,23 +71,16 @@ namespace XFS4IoTFramework.Common
                                          string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
         {
-            this.State = StateEnum.None;
-            this.TransactionID = string.Empty;
+            this.State = null;
+            this.TransactionID = null;
         }
         public GetTransactionStateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                         StateEnum State,
+                                         TransactionStateEnum State,
                                          string TransactionID)
-            : base(CompletionCode, string.Empty)
+            : base(CompletionCode, null)
         {
             this.State = State;
             this.TransactionID = TransactionID;
-        }
-
-        public enum StateEnum
-        {
-            None,
-            Active,
-            Inactive,
         }
 
         /// <summary>
@@ -82,7 +90,7 @@ namespace XFS4IoTFramework.Common
         /// 
         /// "inactive": No customer transaction is in progress.
         /// </summary>
-        public StateEnum State { get; init; }
+        public TransactionStateEnum? State { get; init; }
 
         /// <summary>
         /// Specifies a string which identifies the transaction ID. The value returned in this 
@@ -97,17 +105,11 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class SetTransactionStateRequest
     {
-        public SetTransactionStateRequest(StateEnum State,
+        public SetTransactionStateRequest(TransactionStateEnum State,
                                           string TransactionID)
         {
             this.State = State;
             this.TransactionID = TransactionID;
-        }
-
-        public enum StateEnum
-        {
-            Active,
-            Inactive,
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace XFS4IoTFramework.Common
         /// 
         /// "inactive": No customer transaction is in progress.
         /// </summary>
-        public StateEnum State { get; init; }
+        public TransactionStateEnum State { get; init; }
 
         /// <summary>
         /// Specifies a string which identifies the transaction ID. The value returned in this 

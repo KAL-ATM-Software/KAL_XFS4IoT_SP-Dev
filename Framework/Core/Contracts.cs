@@ -5,6 +5,8 @@
 \***********************************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace XFS4IoT
 {
@@ -40,12 +42,13 @@ namespace XFS4IoT
         /// </summary>
         /// <param name="Predicate">Value that must be true</param>
         /// <param name="Message">Message to report in error reporting</param>
+        /// <param name="expression">Predicate expression this method is called with. Filled in by the compiler automatically.</param>
         [Contract]
-        public static void Assert(bool Predicate, string Message = null)
+        public static void Assert(bool Predicate, string Message = null, [CallerArgumentExpression("Predicate")] string expression = null)
         {
             if (!Predicate)
             {
-                ErrorHandling.ErrorHandler(GetFailedAssertionMessage(Message));
+                ErrorHandling.ErrorHandler(GetFailedAssertionMessage(Message ?? $"Expression \"{expression}\" should be true."));
                 // This is mainly here so that code analysers can know that this method will never 
                 // 'return' in this case. 
                 throw new Exception("Invalid error handling in XFS4IoT Core - Error handler must never return");
@@ -132,13 +135,13 @@ namespace XFS4IoT
         /// Assert value must be null
         /// </summary>
         [Contract]
-        public static T IsNull<T>(this T v, string message = "Value should be null") where T:class => v.Is(x => x == null, message);
+        public static T IsNull<T>(this T v, string message = null, [CallerArgumentExpression("v")] string expression = null) where T:class => v.Is(x => x == null, message ?? $"Expression \"{expression}\" should be null.");
 
         /// <summary>
         /// Assert value must be null
         /// </summary>
         [Contract]
-        public static void IsNull( object v, string message = "Value should be null") => v.Is(x => x == null, message);
+        public static void IsNull( object v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x == null, message ?? $"Expression \"{expression}\" should be null.");
 
         /// <summary>
         /// Assert value must be not null 
@@ -147,7 +150,8 @@ namespace XFS4IoT
         /// ]]></code>
         /// </summary>
         [Contract]
-        public static T IsNotNull<T>(this T v, string message = "Value should not be null") where T:class => v.Is(x => x != null, message);
+        [return: NotNull]
+        public static T IsNotNull<T>(this T v, string message = null, [CallerArgumentExpression("v")] string expression = null) where T:class => v.Is(x => x != null, message ?? $"Expression \"{expression}\" should not be null.");
         
         /// <summary>
         /// Assert value must be not null 
@@ -156,37 +160,39 @@ namespace XFS4IoT
         /// ]]></code>
         /// </summary>
         [Contract]
-        public static T IsNotNull<T>(this T? v, string message = "Value should not be null") where T:struct => v.Is(x => x is not null && x.HasValue, message).Value;
+        [return: NotNull]
+        public static T IsNotNull<T>(this T? v, string message = null, [CallerArgumentExpression("v")] string expression = null) where T:struct => v.Is(x => x is not null && x.HasValue, message ?? $"Expression \"{expression}\" should not be null.").Value;
 
         /// <summary>
         /// Assert value must be not null 
         /// </summary>
         [Contract]
-        public static void IsNotNull(object v, string Message = "Value should not be null") => v.Is(x => x != null, Message);
+        public static void IsNotNull(object v, string Message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x != null, Message ?? $"Expression \"{expression}\" should not be null.");
 
         /// <summary>
         /// Assert value must be true
         /// </summary>
         [Contract]
-        public static bool IsTrue(this bool v, string message = "Value should be true") => v.Is(x => x == true, message);
+        public static bool IsTrue(this bool v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x == true, message ?? $"Expression \"{expression}\" should be false.");
 
         /// <summary>
         /// Assert value must be false
         /// </summary>
         [Contract]
-        public static bool IsFalse(this bool v, string message = "Value should be false") => v.Is(x => x == false, message);
+        public static bool IsFalse(this bool v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x == false, message ?? $"Expression \"{expression}\" should be false.");
 
         /// <summary>
         /// Assert string should be null or empty.
         /// </summary>
         [Contract]
-        public static void IsNullOrWhitespace(this string v, string message = "Value should be a null or empty string" ) => v.Is( x => string.IsNullOrWhiteSpace(x), message );
+        public static void IsNullOrWhitespace(this string v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is( x => string.IsNullOrWhiteSpace(x), message ?? $"Expression \"{expression}\" should be a null or empty string.");
 
         /// <summary>
         /// Assert string should not be null or empty.
         /// </summary>
         [Contract]
-        public static string IsNotNullOrWhitespace(this string v, string message = "Value should be a non-empty string" ) => v.Is( x => !string.IsNullOrWhiteSpace(x), message );
+        [return: NotNull]
+        public static string IsNotNullOrWhitespace(this string v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is( x => !string.IsNullOrWhiteSpace(x), message ?? $"Expression \"{expression}\" should be a non-empty string.");
 
         /// <summary>
         /// Assert that any value is acceptable
@@ -202,7 +208,7 @@ namespace XFS4IoT
         /// Assert object is specified type.
         /// </summary>
         [Contract]
-        public static T IsA<T>(this object o, string message = "Value is incorrect type") where T : class => (o as T).Is(x => x != null, message);
-
+        [return: NotNull]
+        public static T IsA<T>(this object o, string message = null, [CallerArgumentExpression("o")] string expression = null) where T : class => (o as T).Is(x => x != null, message ?? $"Expression \"{expression}\" is not an instance of required type {typeof(T).Name}.");
     }
 }

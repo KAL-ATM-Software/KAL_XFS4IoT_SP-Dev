@@ -220,5 +220,22 @@ namespace XFS4IoT
             var newValue = value.Ignore();
             Assert.AreEqual(value, newValue);
         }
+
+        class ClassA { }
+        class ClassB : ClassA { }
+        class ClassC : ClassA { }
+
+        [TestMethod]
+        public void TestIsA()
+        {
+            var classb = new ClassB();
+            var classc = new ClassC();
+
+            Assert.IsNotNull(classb.IsA<ClassA>());
+            Assert.IsNotNull(classc.IsA<ClassA>());
+
+            Assert.ThrowsException<TestFatalErrorException>(() => classc.IsA<ClassB>());
+            Assert.ThrowsException<TestFatalErrorException>(() => classb.IsA<ClassC>());
+        }
     }
 }

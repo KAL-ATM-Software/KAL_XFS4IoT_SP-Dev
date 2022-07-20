@@ -142,6 +142,7 @@ namespace XFS4IoTFramework.BarcodeReader
             JapanesePost,
             ChinesePost,
             KoreanPost,
+            SymbologyUnknown
         }
 
         public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode,

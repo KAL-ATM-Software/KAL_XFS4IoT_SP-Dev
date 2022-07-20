@@ -8,15 +8,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using XFS4IoT;
 
 namespace XFS4IoTServer
 {
-    public interface IDevice
+    public interface IServiceConfiguration
     {
-        Task RunAsync(CancellationToken token);
-
-        IServiceProvider SetServiceProvider { get;  set; }
+        /// <summary>
+        /// Get configuration value associated with the key specified.
+        /// Returns null if specified value doesn't exist in the configuration. 
+        /// </summary>
+        /// <param name="name">Name of the configuration value</param>
+        /// <returns>Configuration value</returns>
+        public string Get(string name);
     }
 }
+

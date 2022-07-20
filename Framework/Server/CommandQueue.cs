@@ -28,18 +28,11 @@ namespace XFS4IoTServer
         /// </summary>
         public async Task EnqueueCommandAsync(ICommandHandler CommandHandler, IConnection Connection, MessageBase Command, CancellationTokenSource cts)
         {
-            try
-            {
-                await syncObject.WaitAsync();
+            using var sync = await DisposableLock.Create(syncObject, cts.Token);
 
-                Contents.Add(new(CommandHandler, Connection, Command, cts));
-                // Signal RunAsync if we are waiting for a command.
-                NewItemEvent.Set();
-            }
-            finally
-            {
-                syncObject.Release();
-            }
+            Contents.Add(new(CommandHandler, Connection, Command, cts));
+            // Signal RunAsync if we are waiting for a command.
+            NewItemEvent.Set();
         }
 
         /// <summary>
@@ -47,28 +40,22 @@ namespace XFS4IoTServer
         /// </summary>
         /// <param name="Connection">Connection requesting the cancel operation.</param>
         /// <param name="RequestIds">RequestIDs to check.</param>
+        /// <param name="token">CancellationToken to use while waiting for our SyncObject.</param>
         /// <returns>True if any specified ids are valid or RequestIds is null.</returns>
-        public async Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds)
+        public async Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token)
         {
             //Any commands
             if (RequestIds is null)
                 return true;
 
-            try
-            {
-                await syncObject.WaitAsync();
+            using var sync = await DisposableLock.Create(syncObject, token);
 
-                //Check current command
-                if (CurrentCommand != null &&CurrentCommand.Connection == Connection && RequestIds.Contains(CurrentCommand.Command.Header.RequestId.Value))
-                    return true;
+            //Check current command
+            if (CurrentCommand != null && CurrentCommand.Connection == Connection && RequestIds.Contains(CurrentCommand.Command.Header.RequestId.Value))
+                return true;
 
-                //Check queued commands
-                return Contents.Any(c => c.Connection == Connection && RequestIds.Contains(c.Command.Header.RequestId.Value));
-            }
-            finally
-            {
-                syncObject.Release();
-            }
+            //Check queued commands
+            return Contents.Any(c => c.Connection == Connection && RequestIds.Contains(c.Command.Header.RequestId.Value));
         }
 
         /// <summary>
@@ -76,16 +63,25 @@ namespace XFS4IoTServer
         /// </summary>
         /// <param name="Connection">Connection requesting the cancel operation.</param>
         /// <param name="RequestIds">RequestIDs to cancel.</param>
+        /// <param name="token">CancellationToken to use while waiting for our SyncObject.</param>
         /// <returns>True if any specified ids are cancelled or RequestIds is null.</returns>
-        public async Task TryCancelItemsAsync(IConnection Connection, List<int> RequestIds)
+        public async Task TryCancelItemsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token)
         {
-            if(RequestIds is null || RequestIds.Count == 0)
+            try
             {
-                await TryCancelAllAsync(Connection);
+                if (RequestIds is null || RequestIds.Count == 0)
+                {
+                    await TryCancelAllAsync(Connection, token);
+                }
+                else
+                {
+                    await TryCancelSpecificAsync(Connection, RequestIds, token);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                await TryCancelSpecificAsync(Connection, RequestIds);
+                Logger.Warning("CommandQueue", "Caught exception inside TryCancelItemsAsync. \n" + ex);
+                throw;
             }
         }
 
@@ -93,29 +89,23 @@ namespace XFS4IoTServer
         /// Attempt to cancel all commands for the connection.
         /// </summary>
         /// <param name="Connection">The connection to cancel commands for.</param>
-        private async Task TryCancelAllAsync(IConnection Connection)
+        /// <param name="token">CancellationToken to use while waiting for our SyncObject.</param>
+        private async Task TryCancelAllAsync(IConnection Connection, CancellationToken token)
         {
-            try
+            using var sync = await DisposableLock.Create(syncObject, token);
+
+            //Request Cancel for running command
+            if (CurrentCommand != null && CurrentCommand.Connection == Connection)
             {
-                await syncObject.WaitAsync();
-                
-                //Request Cancel for running command
-                if (CurrentCommand != null && CurrentCommand.Connection == Connection)
-                {
-                    CurrentCommand.cts.Cancel();
-                    CurrentCommandCancelRequested = true;
-                }
-                foreach (var cmd in Contents.Where(c => c.Connection == Connection).ToList())
-                {
-                    //Complete command with Cancelled response
-                    await cmd.CommandHandler.HandleError(cmd.Command, new TimeoutCanceledException(true));
-                    cmd.cts.Dispose();
-                    Contents.Remove(cmd);
-                }
+                CurrentCommand.cts.Cancel();
+                CurrentCommandCancelRequested = true;
             }
-            finally
+            foreach (var cmd in Contents.Where(c => c.Connection == Connection).ToList())
             {
-                syncObject.Release();
+                //Complete command with Cancelled response
+                await cmd.CommandHandler.HandleError(cmd.Command, new TimeoutCanceledException(true));
+                cmd.cts.Dispose();
+                Contents.Remove(cmd);
             }
         }
 
@@ -124,92 +114,62 @@ namespace XFS4IoTServer
         /// </summary>
         /// <param name="Connection">The connection to cancel commands for.</param>
         /// <param name="RequestIds">RequestIDs to cancel.</param>
+        /// <param name="token">CancellationToken to use while waiting for our SyncObject.</param>
         /// <returns>True if any specified ids are cancelled.</returns>
-        private async Task TryCancelSpecificAsync(IConnection Connection, List<int> RequestIds)
+        private async Task TryCancelSpecificAsync(IConnection Connection, List<int> RequestIds, CancellationToken token)
         {
-            try
-            {
-                await syncObject.WaitAsync();
+            using var sync = await DisposableLock.Create(syncObject, token);
 
-                //Cancel specified commands
-                foreach (int id in RequestIds)
+            //Cancel specified commands
+            foreach (int id in RequestIds)
+            {
+                if (CurrentCommand is not null && CurrentCommand.Command.Header.RequestId == id && CurrentCommand.Connection == Connection)
                 {
-                    if (CurrentCommand is not null && CurrentCommand.Command.Header.RequestId == id && CurrentCommand.Connection == Connection)
+                    //Request Cancel for running command
+                    CurrentCommand.cts.Cancel();
+                    CurrentCommandCancelRequested = true;
+                }
+                else
+                {
+                    var foundID = Contents.Find(c => c.Command.Header.RequestId == id && c.Connection == Connection);
+                    if (foundID is not null)
                     {
-                        //Request Cancel for running command
-                        CurrentCommand.cts.Cancel();
-                        CurrentCommandCancelRequested = true;
-                    }
-                    else
-                    {
-                        var foundID = Contents.Find(c => c.Command.Header.RequestId == id && c.Connection == Connection);
-                        if (foundID is not null)
-                        {
-                            //Complete command with Cancelled response
-                            await foundID.CommandHandler.HandleError(foundID.Command, new TimeoutCanceledException(true));
-                            foundID.cts.Dispose();
-                            Contents.Remove(foundID);
-                        }
+                        //Complete command with Cancelled response
+                        await foundID.CommandHandler.HandleError(foundID.Command, new TimeoutCanceledException(true));
+                        foundID.cts.Dispose();
+                        Contents.Remove(foundID);
                     }
                 }
-            }
-            finally
-            {
-                syncObject.Release();
             }
         }
 
         /// <summary>
         /// Retrieve the next item in the queue.
         /// </summary>
-        private async Task<QueueItem> ReceiveItemAsync()
+        private async Task<QueueItem> ReceiveItemAsync(CancellationToken token)
         {
-            try
-            {
-                await syncObject.WaitAsync();
-                NewItemEvent.Reset();
-                if (Contents.Count > 0)
-                {
-                    CurrentCommand.IsNull($"Expected {nameof(CurrentCommand)} to be null.");
-                    CurrentCommand = Contents[0];
-                    Contents.RemoveAt(0);
-                    return CurrentCommand.IsNotNull($"{nameof(CurrentCommand)} was null."); ;
-                }
-            }
-            finally
-            {
-                syncObject.Release();
-            }
+            await NewItemEvent.WaitAsync(token);
 
-            await Task.Run(() =>
-            {
-                NewItemEvent.WaitOne();
-                try
-                {
-                    syncObject.Wait();
-                    Contracts.IsTrue(Contents.Count > 0, "No item found after NewItemEvent signaled.");
-                    CurrentCommand.IsNull($"Expected {nameof(CurrentCommand)} to be null.");
-                    CurrentCommand = Contents[0];
-                    Contents.RemoveAt(0);
-                }
-                finally
-                {
-                    syncObject.Release();
-                }
-            });
+            using var sync = await DisposableLock.Create(syncObject, token);
+
+            Contracts.IsTrue(Contents.Count > 0, "No item found after NewItemEvent signaled.");
+            CurrentCommand.IsNull($"Expected {nameof(CurrentCommand)} to be null.");
+            CurrentCommand = Contents[0];
+            Contents.RemoveAt(0);
+
             return CurrentCommand.IsNotNull($"{nameof(CurrentCommand)} was null.");
         }
 
         /// <summary>
         /// Run the command queue
         /// </summary>
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken token)
         {
             // Execute queued commands
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 //Wait for item to be received.
-                var (handler, _, command, cts) = await ReceiveItemAsync();
+                var (handler, _, command, cts) = await ReceiveItemAsync(token);
 
                 try
                 {
@@ -218,26 +178,20 @@ namespace XFS4IoTServer
                     //Throw OperationCanceledException if command timeout has already been reached.
                     cts.Token.ThrowIfCancellationRequested();
                     await handler.Handle(command, cts.Token);
-                    
+
                     Logger.Log("Dispatcher", $"Completed {command.Header.Name} id:{command.Header.RequestId}");
                 }
                 catch (Exception ex)
                 {
                     Logger.Log("Dispatcher", $"Caught exception running {command.Header.Name} id:{command.Header.RequestId}.{Environment.NewLine}{ex}");
 
-                    if(ex is TaskCanceledException or OperationCanceledException)
+                    if (ex is TaskCanceledException or OperationCanceledException)
                     {
                         //Check if cancel was requested.
                         bool cancelRequested = false;
-                        try
-                        {
-                            await syncObject.WaitAsync();
-                            cancelRequested = CurrentCommandCancelRequested;
-                        }
-                        finally
-                        {
-                            syncObject.Release();
-                        }
+
+                        using var sync = await DisposableLock.Create(syncObject, token);
+                        cancelRequested = CurrentCommandCancelRequested;
                         ex = new TimeoutCanceledException(ex.Message, ex, cancelRequested);
                     }
 
@@ -245,15 +199,10 @@ namespace XFS4IoTServer
                 }
 
                 //Command is complete - unassign CurrentCommand.
-                try
                 {
-                    await syncObject.WaitAsync();
+                    using var sync = await DisposableLock.Create(syncObject, token);
                     CurrentCommand = null;
                     CurrentCommandCancelRequested = false;
-                }
-                finally
-                {
-                    syncObject.Release();
                 }
 
                 cts.Dispose();
@@ -262,9 +211,77 @@ namespace XFS4IoTServer
 
         private readonly SemaphoreSlim syncObject = new(1, 1);
         private readonly List<QueueItem> Contents = new();
-        private readonly AutoResetEvent NewItemEvent = new(false);
+        private readonly AsyncAutoResetEvent NewItemEvent = new();
         private QueueItem CurrentCommand = null;
         private bool CurrentCommandCancelRequested = false;
         private readonly ILogger Logger;
+
+        private class DisposableLock : IDisposable
+        {
+            private readonly SemaphoreSlim Semaphore;
+
+            public DisposableLock(SemaphoreSlim semaphore)
+            {
+                Semaphore = semaphore;
+            }
+
+            public async Task Aquire(CancellationToken token)
+            {
+                await Semaphore.WaitAsync(token);
+            }
+
+            public void Dispose()
+            {
+                Semaphore.Release();
+            }
+
+            public static async Task<DisposableLock> Create(SemaphoreSlim semaphore, CancellationToken token)
+            {
+                DisposableLock disposableLock = new(semaphore);
+                await disposableLock.Aquire(token);
+                return disposableLock;
+            }
+        }
+
+        private class AsyncAutoResetEvent
+        {
+            public Task WaitAsync(CancellationToken token)
+            {
+                lock (WaitingTaskCompletionSources)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (Signaled)
+                    {
+                        Signaled = false;
+                        return CompletedTask;
+                    }
+                    else
+                    {
+                        var tcs = new TaskCompletionSource<bool>();
+                        using var _ = token.Register(() => tcs.TrySetCanceled());
+                        WaitingTaskCompletionSources.Enqueue(tcs);
+                        return tcs.Task;
+                    }
+                }
+            }
+
+            public void Set()
+            {
+                TaskCompletionSource<bool> sourceToSignal = null;
+                lock (WaitingTaskCompletionSources)
+                {
+                    if (WaitingTaskCompletionSources.Count > 0)
+                        sourceToSignal = WaitingTaskCompletionSources.Dequeue();
+                    else if (!Signaled)
+                        Signaled = true;
+                }
+                if (sourceToSignal != null)
+                    sourceToSignal.SetResult(true);
+            }
+
+            private readonly static Task CompletedTask = Task.FromResult(true);
+            private readonly Queue<TaskCompletionSource<bool>> WaitingTaskCompletionSources = new Queue<TaskCompletionSource<bool>>();
+            private bool Signaled;
+        }
     }
 }
