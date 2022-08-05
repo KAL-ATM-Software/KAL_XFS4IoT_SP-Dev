@@ -453,9 +453,9 @@ namespace XFS4IoTFramework.Common
                             _ => XFS4IoT.Printer.PaperSupplyEnum.NotSupported,
                         };
                     }
-                    if (Common.PrinterStatus.Paper.ContainsKey(PrinterStatusClass.PaperSourceEnum.Lower))
+                    if (Common.PrinterStatus.Paper.ContainsKey(PrinterStatusClass.PaperSourceEnum.External))
                     {
-                        externalSupplyStatus = Common.PrinterStatus.Paper[PrinterStatusClass.PaperSourceEnum.Lower].PaperSupply switch
+                        externalSupplyStatus = Common.PrinterStatus.Paper[PrinterStatusClass.PaperSourceEnum.External].PaperSupply switch
                         {
                             PrinterStatusClass.PaperSupplyEnum.Full => XFS4IoT.Printer.PaperSupplyEnum.Full,
                             PrinterStatusClass.PaperSupplyEnum.Jammed => XFS4IoT.Printer.PaperSupplyEnum.Jammed,
@@ -552,9 +552,9 @@ namespace XFS4IoTFramework.Common
                             _ => XFS4IoT.Printer.PaperTypeEnum.Unknown,
                         };
                     }
-                    if (Common.PrinterStatus.Paper.ContainsKey(PrinterStatusClass.PaperSourceEnum.Lower))
+                    if (Common.PrinterStatus.Paper.ContainsKey(PrinterStatusClass.PaperSourceEnum.External))
                     {
-                        externalTypeStatus = Common.PrinterStatus.Paper[PrinterStatusClass.PaperSourceEnum.Lower].PaperType switch
+                        externalTypeStatus = Common.PrinterStatus.Paper[PrinterStatusClass.PaperSourceEnum.External].PaperType switch
                         {
                             PrinterStatusClass.PaperTypeEnum.Dual => XFS4IoT.Printer.PaperTypeEnum.Dual,
                             PrinterStatusClass.PaperTypeEnum.Single => XFS4IoT.Printer.PaperTypeEnum.Single,
