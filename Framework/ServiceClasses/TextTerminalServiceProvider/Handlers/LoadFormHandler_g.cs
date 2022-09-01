@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.TextTerminal
             LoadFormCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => LoadFormCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => LoadFormCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => LoadFormCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => LoadFormCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => LoadFormCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => LoadFormCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => LoadFormCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => LoadFormCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => LoadFormCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => LoadFormCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => LoadFormCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => LoadFormCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => LoadFormCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => LoadFormCompletion.PayloadData.CompletionCodeEnum.TimeOut,

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashManagement
             GetTellerInfoCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetTellerInfoCompletion.PayloadData.CompletionCodeEnum.TimeOut,

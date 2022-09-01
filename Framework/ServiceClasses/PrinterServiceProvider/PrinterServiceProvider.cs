@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 using XFS4IoT;
 using XFS4IoT.Common.Events;
 using XFS4IoT.Printer.Events;
@@ -210,5 +211,24 @@ namespace XFS4IoTServer
         /// The printer service stores all printing in this KXPrintJob until the application requests a flush.
         /// </summary>
         public PrintJobClass PrintJob => PrinterService.PrintJob;
+
+        /// <summary>
+        /// The method can be called in the device class to convert print job to a single image that can be sent to the printer.
+        /// </summary>
+        /// <param name="job"></param>
+        /// <param name="bitCount">Bits per pixel in returned data</param>
+        /// <param name="UpsideDown"></param>
+        /// <param name="imageInfo">Information bitmap created</param>
+        [SupportedOSPlatform("windows")]
+        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo) => PrinterService.PrintToBitmap(job, bitCount, UpsideDown, out imageInfo);
+
+        /// <summary>
+        /// This method can be called in the device class to obtain the dimensions of a task object when printed using PrintToImage
+        /// </summary>
+        /// <param name="task">Task to print data</param>
+        /// <param name="width">Width of rectangle needed to contain the task</param>
+        /// <param name="height">Height of rectangle needed to contain the task</param>
+        [SupportedOSPlatform("windows")]
+        public bool GetBitmapPrintDimensions(PrintTask task, out int width, out int height) => PrinterService.GetBitmapPrintDimensions(task, out width, out height);
     }
 }

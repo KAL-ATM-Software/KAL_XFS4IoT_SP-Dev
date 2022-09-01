@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Crypto
             CryptoDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => CryptoDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.TimeOut,

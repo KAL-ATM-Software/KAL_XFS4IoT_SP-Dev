@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.KeyManagement
             ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.TimeOut,

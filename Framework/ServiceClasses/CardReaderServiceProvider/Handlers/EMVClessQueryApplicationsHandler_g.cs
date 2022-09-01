@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CardReader
             EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.TimeOut,

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.KeyManagement
             DeriveKeyCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => DeriveKeyCompletion.PayloadData.CompletionCodeEnum.TimeOut,

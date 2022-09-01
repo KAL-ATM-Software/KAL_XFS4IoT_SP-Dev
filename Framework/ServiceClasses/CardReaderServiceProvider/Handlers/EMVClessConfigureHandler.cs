@@ -26,9 +26,9 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // Data check
-            if ((eMVClessConfigure.Payload.AidData is null || eMVClessConfigure.Payload.AidData.Count == 0) &&
+            if (eMVClessConfigure.Payload.AidData is not { Count: > 0 } &&
                 eMVClessConfigure.Payload.TerminalData is null &&
-                (eMVClessConfigure.Payload.KeyData is null || eMVClessConfigure.Payload.KeyData.Count == 0))
+                eMVClessConfigure.Payload.KeyData is not { Count: > 0 })
             {
                 return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                    "No terminal configuration data supplied.");
@@ -37,8 +37,7 @@ namespace XFS4IoTFramework.CardReader
             List<AIDInfo> AIDs = new(); 
             foreach (EMVClessConfigureCommand.PayloadData.AidDataClass AID in eMVClessConfigure.Payload.AidData)
             {
-                if (AID.Aid is null ||
-                    AID.Aid.Count == 0)
+                if (AID.Aid is not { Count: > 0 })
                 {
                     return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                        "No AID is supplied.");
@@ -63,7 +62,7 @@ namespace XFS4IoTFramework.CardReader
             List<PublicKeyInfo> PublicKeys = new();
             foreach (EMVClessConfigureCommand.PayloadData.KeyDataClass PKs in eMVClessConfigure.Payload.KeyData)
             {
-                if (string.IsNullOrEmpty(PKs.Rid))
+                if (PKs.Rid is not { Count: > 0})
                 {
                     return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                        "No RID is supplied.");
@@ -74,9 +73,42 @@ namespace XFS4IoTFramework.CardReader
                                                                        "No CA Public Key is supplied.");
                 }
 
-                // MISSING PKs.CaPublicKey structure
-                PublicKeys.Add(new PublicKeyInfo(new List<byte>(Convert.FromBase64String(PKs.Rid)),
-                                                 null));
+                if (PKs.CaPublicKey.Index is null)
+                {
+                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                       "No index of the CA Public Key is supplied.");
+                }
+
+                if (PKs.CaPublicKey.AlgorithmIndicator is null)
+                {
+                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                       "No algorithm indicator of the CA Public Key is supplied.");
+                }
+
+                if (PKs.CaPublicKey.Exponent is not { Count: > 0 })
+                {
+                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                       "No exponents of the CA Public Key is supplied.");
+                }
+
+                if (PKs.CaPublicKey.Modulus is not { Count: > 0 })
+                {
+                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                       "No modules of the CA Public Key is supplied.");
+                }
+
+                if (PKs.CaPublicKey.Checksum is not { Count: > 0 })
+                {
+                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                       "No checksum of the CA Public Key is supplied.");
+                }
+
+                PublicKeys.Add(new PublicKeyInfo(PKs.Rid,
+                                                 new PublicKey(AlgorithmIndicator: (int)PKs.CaPublicKey.AlgorithmIndicator,
+                                                               Index: (int)PKs.CaPublicKey.Index,
+                                                               Exponent: PKs.CaPublicKey.Exponent,
+                                                               Modulus: PKs.CaPublicKey.Modulus,
+                                                               Checksum: PKs.CaPublicKey.Checksum)));
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessConfigureAsync()");

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashAcceptor
             CashInCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => CashInCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => CashInCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => CashInCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => CashInCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => CashInCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => CashInCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => CashInCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => CashInCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => CashInCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => CashInCompletion.PayloadData.CompletionCodeEnum.TimeOut,

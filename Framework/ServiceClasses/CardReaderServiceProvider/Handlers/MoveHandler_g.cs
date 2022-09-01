@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CardReader
             MoveCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => MoveCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MoveCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MoveCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MoveCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MoveCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MoveCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => MoveCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => MoveCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MoveCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MoveCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MoveCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => MoveCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => MoveCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => MoveCompletion.PayloadData.CompletionCodeEnum.TimeOut,

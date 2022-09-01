@@ -33,6 +33,7 @@ namespace XFS4IoTFramework.Common
             EMV = 1 << 11,
             ISO3 = 1 << 12,
             AP = 1 << 13,
+            ISO4 = 1 << 14,
         }
 
         [Flags]

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Biometric
             GetStorageInfoCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.TimeOut,

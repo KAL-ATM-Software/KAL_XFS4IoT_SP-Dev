@@ -203,7 +203,7 @@ namespace XFS4IoTServer
 
             // Update counts first by framework
             if (CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain ||
-                CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Pard)
+                CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Park)
             {
                 CardUnits[storageId].Unit.Status.Count += countDelta;
             }

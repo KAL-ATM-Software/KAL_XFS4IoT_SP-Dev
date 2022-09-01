@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Printer
             ResetCountCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ResetCountCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => ResetCountCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => ResetCountCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => ResetCountCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => ResetCountCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => ResetCountCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => ResetCountCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => ResetCountCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => ResetCountCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => ResetCountCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => ResetCountCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => ResetCountCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => ResetCountCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => ResetCountCompletion.PayloadData.CompletionCodeEnum.TimeOut,

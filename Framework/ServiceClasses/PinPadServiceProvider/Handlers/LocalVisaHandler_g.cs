@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.PinPad
             LocalVisaCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => LocalVisaCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.TimeOut,

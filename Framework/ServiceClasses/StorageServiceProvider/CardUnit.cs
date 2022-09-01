@@ -75,7 +75,7 @@ namespace XFS4IoTFramework.Storage
         {
             Retain = 1 << 0,
             Dispense = 1 << 1,
-            Pard = 1 << 2,
+            Park = 1 << 2,
         }
 
         public CardCapabilitiesClass(TypeEnum Type, 

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Printer
             SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.TimeOut,

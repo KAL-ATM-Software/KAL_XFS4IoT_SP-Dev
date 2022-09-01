@@ -679,6 +679,19 @@ namespace XFS4IoTFramework.CardReader
 
     public sealed class PublicKey
     {
+        public PublicKey(int AlgorithmIndicator,
+                         int Index,
+                         List<byte> Exponent,
+                         List<byte> Modulus,
+                         List<byte> Checksum)
+        {
+            this.AlgorithmIndicator = AlgorithmIndicator;
+            this.Index = Index;
+            this.Exponent = new(Exponent);
+            this.Modulus = new(Modulus);
+            this.Checksum = new(Checksum);
+        }
+
         /// <summary>
         /// The algorithm used in the calculation of the CA Public Key checksum.A detailed
         /// description of secure hash algorithm values is given in EMV Book 2, Annex B3; see reference
@@ -694,22 +707,27 @@ namespace XFS4IoTFramework.CardReader
         /// representing value ‘216 + 1’ requires 3 bytes in hexadecimal(0x01, 0x00, 0x01), while value
         /// ‘3’ is coded as 0x03.
         /// </summary>
-        public List<byte> Exponent;
+        public List<byte> Exponent { get; init; }
 
         /// <summary>
         /// The CA Public Key Modulus for the specific RID.
         /// </summary>
-        public List<byte> Modulus;
+        public List<byte> Modulus { get; init; }
 
         /// <summary>
         /// The 20 byte checksum value for the CA Public Key
         /// </summary>
-        public List<byte> Checksum;
+        public List<byte> Checksum { get; init; }
+
+        /// <summary>
+        /// Specifies the CA Public Key Index for the specific RID
+        /// </summary>
+        public int Index { get; init; }
     }
 
     public sealed class PublicKeyInfo
     {
-        public PublicKeyInfo(List<byte> RID, List<PublicKeyInfo> CAPublicKey)
+        public PublicKeyInfo(List<byte> RID, PublicKey CAPublicKey)
         {
             this.RID = RID;
             this.CAPublicKey = CAPublicKey;
@@ -724,7 +742,7 @@ namespace XFS4IoTFramework.CardReader
         /// <summary>
         /// CA Public Key information for the specified RID
         /// </summary>
-        public List<PublicKeyInfo> CAPublicKey { get; init; }
+        public PublicKey CAPublicKey { get; init; }
 
     }
 

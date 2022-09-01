@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashManagement
             GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.TimeOut,

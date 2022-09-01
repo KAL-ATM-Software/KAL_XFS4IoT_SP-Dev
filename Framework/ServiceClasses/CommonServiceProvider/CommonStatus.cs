@@ -163,6 +163,6 @@ namespace XFS4IoTFramework.Common
         /// * ```enforced``` - E2E security is supported and correctly configured. E2E security will be enforced. 
         /// Calling E2E protected commands will only be possible if a valid token is given.
         /// </summary>
-        public EndToEndSecurityEnum EndToEndSecurity { get; init; }
+        public EndToEndSecurityEnum EndToEndSecurity { get; set; }
     }
 }

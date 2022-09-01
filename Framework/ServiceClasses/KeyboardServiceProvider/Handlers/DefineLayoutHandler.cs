@@ -150,8 +150,8 @@ namespace XFS4IoTFramework.Keyboard
 
                 foreach (var entryType in Keyboard.KeyboardLayouts)
                 {
-                    List<string> keys = null;
-                    List<string> shiftKeys = null;
+                    List<string> keys = new();
+                    List<string> shiftKeys = new();
 
                     foreach (var frame in entryType.Value)
                     {
@@ -164,13 +164,11 @@ namespace XFS4IoTFramework.Keyboard
                         }
                     }
 
-                    if (keys is not null &&
-                        keys.Count != 0)
+                    if (keys is { Count: > 0})
                     {
                         Keyboard.SupportedFunctionKeys.Add(entryType.Key, keys);
                     }
-                    if (shiftKeys is not null &&
-                        shiftKeys.Count != 0)
+                    if (shiftKeys is { Count: > 0})
                     {
                         Keyboard.SupportedFunctionKeysWithShift.Add(entryType.Key, shiftKeys);
                     }

@@ -184,6 +184,7 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         public sealed class BanknoteItem
         {
+            [System.Text.Json.Serialization.JsonConstructor]
             public BanknoteItem(int NoteId,
                                 string Currency,
                                 double Value,

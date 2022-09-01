@@ -114,7 +114,7 @@ namespace XFS4IoTFramework.Biometric
                                 BiometricCapabilitiesClass.AlgorithmEnum.Cbc => XFS4IoT.Biometric.DataTypeClass.AlgorithmEnum.Cbc,
                                 BiometricCapabilitiesClass.AlgorithmEnum.Cfb => XFS4IoT.Biometric.DataTypeClass.AlgorithmEnum.Cfb,
                                 BiometricCapabilitiesClass.AlgorithmEnum.Rsa => XFS4IoT.Biometric.DataTypeClass.AlgorithmEnum.Rsa,
-                                null => null,
+                                BiometricCapabilitiesClass.AlgorithmEnum.None or null => null,
                                 _ => throw Contracts.Fail<NotImplementedException>($"Unexpected Algorithm supplied by the device. {item.DataType.Format}")
                             },
                             item.DataType.KeyName),

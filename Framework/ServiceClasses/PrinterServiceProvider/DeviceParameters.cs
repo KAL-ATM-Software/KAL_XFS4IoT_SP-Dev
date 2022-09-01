@@ -631,5 +631,90 @@ namespace XFS4IoTFramework.Printer
         /// </summary>
         public List<byte> Data { get; init; }
     }
+
+    /// <summary>
+    /// Image information class can be used for the PrintToImage method for the device class in the ExecutePrintTasksAsync
+    /// </summary>
+    public sealed class ImageInfo
+    {
+        public ImageInfo(int OffsetX,
+                         int OffsetY,
+                         ImageData Data)
+        {
+            this.OffsetX = OffsetX;
+            this.OffsetY = OffsetY;
+            this.Data = Data;
+        }
+
+        /// <summary>
+        /// X Offset of bitmap relative to left of media
+        /// </summary>
+        public int OffsetX { get; init; }
+
+        /// <summary>
+        /// Y Offset of bitmap relative to top of media
+        /// </summary>
+        public int OffsetY { get; init; }
+
+        /// <summary>
+        /// Image data
+        /// </summary>
+        public ImageData Data { get; init; }
+    }
+
+    /// <summary>
+    /// Image data information stored
+    /// </summary>
+    public sealed class ImageData
+    {
+        public ImageData(int Width,
+                         int Height,
+                         int BitCount,
+                         int Stride,
+                         List<uint> Palette,
+                         List<byte> Data)
+        {
+            this.Width = Width;
+            this.Height = Height;
+            this.BitCount = BitCount;
+            this.Stride = Stride;
+            this.Palette = Palette;
+            this.Data = Data;
+        }
+
+        /// <summary>
+        /// Height of image relative to left of media
+        /// </summary>
+        public int Height { get; init; }
+
+        /// <summary>
+        /// Width of image relative to top of media
+        /// </summary>
+        public int Width { get; init; }
+
+        /// <summary>
+        /// Bit count is representing how many bits required for one pixel. i.e. 1 for 2 color black and white
+        /// </summary>
+        public int BitCount { get; init; }
+
+        /// <summary>
+        /// Number of bytes in a row
+        /// </summary>
+        public int Stride { get; init; }
+
+        /// <summary>
+        /// List of indexed color to be mapped
+        /// </summary>
+        public List<uint> Palette { get; init; }
+
+        /// <summary>
+        /// Image data
+        /// The bit data format is: (Device-Independent Bitmaps without header)
+        /// every scanline is 4 bytes aligned and the scanlines are stored upside down, 
+        /// with the first scan in memory being the bottommost scan in the image. if the device needs to have format first scanline to be topmost, 
+        /// need to re-order bit format to suits your printer device.
+        /// </summary>
+        public List<byte> Data { get; init; }
+    }
 }
 

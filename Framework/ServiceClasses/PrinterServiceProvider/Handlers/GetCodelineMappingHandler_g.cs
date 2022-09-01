@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Printer
             GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetCodelineMappingCompletion.PayloadData.CompletionCodeEnum.TimeOut,

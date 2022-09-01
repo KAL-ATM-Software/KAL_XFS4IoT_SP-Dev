@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Printer
             MediaExtentsCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => MediaExtentsCompletion.PayloadData.CompletionCodeEnum.TimeOut,

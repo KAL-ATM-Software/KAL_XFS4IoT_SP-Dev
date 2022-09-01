@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Crypto
             DigestCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => DigestCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => DigestCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => DigestCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => DigestCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => DigestCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => DigestCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => DigestCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => DigestCompletion.PayloadData.CompletionCodeEnum.TimeOut,

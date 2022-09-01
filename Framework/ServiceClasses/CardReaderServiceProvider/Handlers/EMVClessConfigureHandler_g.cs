@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CardReader
             EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => EMVClessConfigureCompletion.PayloadData.CompletionCodeEnum.TimeOut,

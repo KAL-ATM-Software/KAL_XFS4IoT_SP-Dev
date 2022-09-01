@@ -826,11 +826,36 @@ namespace XFS4IoTFramework.Common
                 }
 
                 pinPad = new XFS4IoT.PinPad.CapabilitiesClass(
-                    PinFormats: new XFS4IoT.PinPad.CapabilitiesClass.PinFormatsClass(),
-                    PresentationAlgorithms: new XFS4IoT.PinPad.CapabilitiesClass.PresentationAlgorithmsClass(),
-                    Display: new XFS4IoT.PinPad.CapabilitiesClass.DisplayClass(),
+                    PinFormats: new XFS4IoT.PinPad.CapabilitiesClass.PinFormatsClass(
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.IBM3624),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ANSI),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ISO0),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ISO1),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ECI2),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ECI3),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.VISA),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.DIEBOLD),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.DIEBOLDCO),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.VISA3),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.BANKSYS),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.EMV),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ISO3),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.AP),
+                        Common.PinPadCapabilities.PINFormat.HasFlag(PinPadCapabilitiesClass.PINFormatEnum.ISO4)
+                        ),
+                    PresentationAlgorithms: new XFS4IoT.PinPad.CapabilitiesClass.PresentationAlgorithmsClass(
+                        Common.PinPadCapabilities.PresentationAlgorithm.HasFlag(PinPadCapabilitiesClass.PresentationAlgorithmEnum.PresentClear)
+                        ),
+                    Display: new XFS4IoT.PinPad.CapabilitiesClass.DisplayClass(
+                        Common.PinPadCapabilities.DisplayType == PinPadCapabilitiesClass.DisplayTypeEnum.NotSupported,
+                        Common.PinPadCapabilities.DisplayType.HasFlag(PinPadCapabilitiesClass.DisplayTypeEnum.LEDThrough),
+                        Common.PinPadCapabilities.DisplayType.HasFlag(PinPadCapabilitiesClass.DisplayTypeEnum.Display)
+                        ),
                     IdcConnect: Common.PinPadCapabilities.IDConnect,
-                    ValidationAlgorithms: new XFS4IoT.PinPad.CapabilitiesClass.ValidationAlgorithmsClass(),
+                    ValidationAlgorithms: new XFS4IoT.PinPad.CapabilitiesClass.ValidationAlgorithmsClass(
+                        Common.PinPadCapabilities.ValidationAlgorithm.HasFlag(PinPadCapabilitiesClass.ValidationAlgorithmEnum.DES),
+                        Common.PinPadCapabilities.ValidationAlgorithm.HasFlag(PinPadCapabilitiesClass.ValidationAlgorithmEnum.VISA)
+                        ),
                     PinCanPersistAfterUse: Common.PinPadCapabilities.PinCanPersistAfterUse,
                     TypeCombined: Common.PinPadCapabilities.TypeCombined,
                     SetPinblockDataRequired: Common.PinPadCapabilities.SetPinblockDataRequired,

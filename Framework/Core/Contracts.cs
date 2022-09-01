@@ -173,7 +173,7 @@ namespace XFS4IoT
         /// Assert value must be true
         /// </summary>
         [Contract]
-        public static bool IsTrue(this bool v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x == true, message ?? $"Expression \"{expression}\" should be false.");
+        public static bool IsTrue(this bool v, string message = null, [CallerArgumentExpression("v")] string expression = null) => v.Is(x => x == true, message ?? $"Expression \"{expression}\" should be true.");
 
         /// <summary>
         /// Assert value must be false

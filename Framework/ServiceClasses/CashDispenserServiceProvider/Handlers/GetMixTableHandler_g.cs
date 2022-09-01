@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashDispenser
             GetMixTableCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetMixTableCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.TimeOut,

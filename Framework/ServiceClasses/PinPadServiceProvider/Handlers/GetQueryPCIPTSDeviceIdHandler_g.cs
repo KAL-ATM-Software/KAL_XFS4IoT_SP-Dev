@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.PinPad
             GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.TimeOut,

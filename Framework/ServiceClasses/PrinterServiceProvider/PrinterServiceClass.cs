@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 using XFS4IoT;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
@@ -198,6 +199,39 @@ namespace XFS4IoTServer
         public Dictionary<string, Media> GetMedias() => Medias.ToDictionary(x => x.Key, x => x.Value);
 
         /// <summary>
+        /// The method can convert print job to a single image that can be sent to the printer.
+        /// </summary>
+        /// <param name="job"></param>
+        /// <param name="bitCount">Bits per pixel in returned data</param>
+        /// <param name="UpsideDown"></param>
+        /// <param name="imageInfo">Information image created</param>
+        [SupportedOSPlatform("windows")]
+        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo)
+        {
+            if (ImageConverter is null)
+            {
+                ImageConverter = new PrintToBitmapHandler(Device, Logger);
+            }
+            return ImageConverter.IsNotNull($"Failed to create {nameof(PrintToBitmapHandler)} object.").Convert(job, bitCount, UpsideDown, out imageInfo);
+        }
+
+        /// <summary>
+        /// This method can be called in the device class to obtain the dimensions of a task object when printed using PrintToImage
+        /// </summary>
+        /// <param name="task">Task to print data</param>
+        /// <param name="width">Width of rectangle needed to contain the task</param>
+        /// <param name="height">Height of rectangle needed to contain the task</param>
+        [SupportedOSPlatform("windows")]
+        public bool GetBitmapPrintDimensions(PrintTask task, out int width, out int height)
+        {
+            if (ImageConverter is null)
+            {
+                ImageConverter = new PrintToBitmapHandler(Device, Logger);
+            }
+            return ImageConverter.IsNotNull($"Failed to create {nameof(PrintToBitmapHandler)} object.").GetTaskDimensions(task, out width, out height);
+        }
+
+        /// <summary>
         /// Job containing print tasks that have not been flushed.
         /// The printer service stores all printing in this KXPrintJob until the application requests a flush.
         /// </summary>
@@ -211,6 +245,11 @@ namespace XFS4IoTServer
         /// <summary>
         /// The key value pair of media name and media class representing XFS media 
         /// </summary>
-        public Dictionary<string, Media> Medias { get; init; }
+        private Dictionary<string, Media> Medias { get; init; }
+
+        /// <summary>
+        /// This class used to convert from XFS form into image
+        /// </summary>
+        private PrintToBitmapHandler ImageConverter { get; set; }
     }
 }

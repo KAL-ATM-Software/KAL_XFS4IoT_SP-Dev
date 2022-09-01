@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashManagement
             OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => OpenSafeDoorCompletion.PayloadData.CompletionCodeEnum.TimeOut,

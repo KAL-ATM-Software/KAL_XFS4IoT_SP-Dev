@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Camera
             TakePictureCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => TakePictureCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => TakePictureCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => TakePictureCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => TakePictureCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => TakePictureCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => TakePictureCompletion.PayloadData.CompletionCodeEnum.TimeOut,

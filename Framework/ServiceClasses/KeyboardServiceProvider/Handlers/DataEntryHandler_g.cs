@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Keyboard
             DataEntryCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => DataEntryCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => DataEntryCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => DataEntryCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => DataEntryCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => DataEntryCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => DataEntryCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => DataEntryCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => DataEntryCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => DataEntryCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => DataEntryCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => DataEntryCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => DataEntryCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => DataEntryCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => DataEntryCompletion.PayloadData.CompletionCodeEnum.TimeOut,

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Biometric
             MatchCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => MatchCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MatchCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MatchCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MatchCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MatchCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MatchCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => MatchCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => MatchCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MatchCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MatchCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MatchCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => MatchCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => MatchCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => MatchCompletion.PayloadData.CompletionCodeEnum.TimeOut,

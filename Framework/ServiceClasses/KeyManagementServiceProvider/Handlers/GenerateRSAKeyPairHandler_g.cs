@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.KeyManagement
             GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.TimeOut,

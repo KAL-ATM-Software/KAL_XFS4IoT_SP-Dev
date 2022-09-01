@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CardReader
             QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.TimeOut,

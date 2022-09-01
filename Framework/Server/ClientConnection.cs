@@ -53,7 +53,7 @@ namespace XFS4IoTServer
                     {
                         var BufferSlice = receivedBuffer.Slice(ReceivedBufferReceived, receivedBuffer.Count - ReceivedBufferReceived);
                         // Wait for data from the client
-                        res = await socket.ReceiveAsync(BufferSlice, CancellationToken.None);
+                        res = await socket.ReceiveAsync(BufferSlice, token);
                         ReceivedBufferReceived += res.Count;
                     } while (!res.EndOfMessage);
 

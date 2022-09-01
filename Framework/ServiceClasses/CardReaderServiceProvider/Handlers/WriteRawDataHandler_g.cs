@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CardReader
             WriteRawDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => WriteRawDataCompletion.PayloadData.CompletionCodeEnum.TimeOut,

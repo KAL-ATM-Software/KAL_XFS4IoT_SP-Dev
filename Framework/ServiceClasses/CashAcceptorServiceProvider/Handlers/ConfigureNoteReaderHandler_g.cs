@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.CashAcceptor
             ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => ConfigureNoteReaderCompletion.PayloadData.CompletionCodeEnum.TimeOut,

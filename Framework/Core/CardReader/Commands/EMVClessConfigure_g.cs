@@ -119,7 +119,7 @@ namespace XFS4IoT.CardReader.Commands
             [DataContract]
             public sealed class KeyDataClass
             {
-                public KeyDataClass(string Rid = null, CaPublicKeyClass CaPublicKey = null)
+                public KeyDataClass(List<byte> Rid = null, CaPublicKeyClass CaPublicKey = null)
                 {
                     this.Rid = Rid;
                     this.CaPublicKey = CaPublicKey;
@@ -131,7 +131,7 @@ namespace XFS4IoT.CardReader.Commands
                 /// <example>oAAAAAM=</example>
                 /// </summary>
                 [DataMember(Name = "rid")]
-                public string Rid { get; init; }
+                public List<byte> Rid { get; init; }
 
                 [DataContract]
                 public sealed class CaPublicKeyClass

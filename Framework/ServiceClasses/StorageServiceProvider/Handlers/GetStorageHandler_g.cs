@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Storage
             GetStorageCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GetStorageCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GetStorageCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GetStorageCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GetStorageCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GetStorageCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GetStorageCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GetStorageCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GetStorageCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GetStorageCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GetStorageCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GetStorageCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GetStorageCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GetStorageCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GetStorageCompletion.PayloadData.CompletionCodeEnum.TimeOut,

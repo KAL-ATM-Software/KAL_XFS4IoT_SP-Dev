@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.PinPad
             MaintainPinCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => MaintainPinCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.TimeOut,

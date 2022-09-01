@@ -62,13 +62,13 @@ namespace XFS4IoTFramework.CardReader
                     Chip = ToOutputClass(result.TransactionResults[EMVContactlessPerformTransactionResult.DataSourceTypeEnum.Chip]);
                 }
 
-                return new EMVClessPerformTransactionCompletion.PayloadData(result.CompletionCode,
-                                                                            result.ErrorDescription,
-                                                                            result.ErrorCode,
-                                                                            Track1,
-                                                                            Track2,
-                                                                            Track3,
-                                                                            Chip);
+                return new EMVClessPerformTransactionCompletion.PayloadData(CompletionCode: result.CompletionCode,
+                                                                            ErrorDescription: result.ErrorDescription,
+                                                                            ErrorCode: result.ErrorCode,
+                                                                            Track1: Track1,
+                                                                            Track2: Track2,
+                                                                            Track3: Track3,
+                                                                            Chip: Chip);
             }
             else
             {
@@ -86,6 +86,7 @@ namespace XFS4IoTFramework.CardReader
                 new((EMVClessPerformTransactionEMVClessTxOutputDataClass.ClessOutcomeClass.CvmEnum)track.ClessOutcome.Cvm,
                     (EMVClessPerformTransactionEMVClessTxOutputDataClass.ClessOutcomeClass.AlternateInterfaceEnum)track.ClessOutcome.AlternateInterface,
                     track.ClessOutcome.Receipt,
+                    track.ClessOutcome.UiOutcome is null ? null :
                     new EMVClessUIClass (track.ClessOutcome.UiOutcome.MessageId,
                                          (EMVClessUIClass.StatusEnum)track.ClessOutcome.UiOutcome.Status,
                                          track.ClessOutcome.UiOutcome.HoldTime,
@@ -93,6 +94,7 @@ namespace XFS4IoTFramework.CardReader
                                          track.ClessOutcome.UiOutcome.Value,
                                          track.ClessOutcome.UiOutcome.CurrencyCode,
                                          track.ClessOutcome.UiOutcome.LanguagePreferenceData),
+                   track.ClessOutcome.UiRestart is null ? null :
                     new EMVClessUIClass (track.ClessOutcome.UiRestart.MessageId,
                                          (EMVClessUIClass.StatusEnum)track.ClessOutcome.UiRestart.Status,
                                          track.ClessOutcome.UiRestart.HoldTime,

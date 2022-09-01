@@ -41,6 +41,7 @@ namespace XFS4IoT.Completions
             InvalidTokenHMAC,
             InvalidTokenFormat,
             InvalidTokenKeyNoValue,
+            NotEnoughSpace
         }
 
         /// <summary>

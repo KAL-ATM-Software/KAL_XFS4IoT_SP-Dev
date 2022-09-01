@@ -74,17 +74,17 @@ namespace XFS4IoTFramework.Keyboard
                                          functionKeys));
                 }
 
-                if (inquiry is null ||
+                if (inquiry is null or EntryModeEnum.Data &&
                     entryType.Key == EntryModeEnum.Data)
                 {
                     data = resultFrames;
                 }
-                if (inquiry is null ||
+                if (inquiry is null or EntryModeEnum.Pin &&
                     entryType.Key == EntryModeEnum.Pin)
                 {
                     pin = resultFrames;
                 }
-                if (inquiry is null ||
+                if (inquiry is null or EntryModeEnum.Secure &&
                     entryType.Key == EntryModeEnum.Secure)
                 {
                     secure = resultFrames;

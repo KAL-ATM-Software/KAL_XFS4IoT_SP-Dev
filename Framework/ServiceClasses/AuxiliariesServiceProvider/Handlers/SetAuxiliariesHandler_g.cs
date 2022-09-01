@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Auxiliaries
             SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => SetAuxiliariesCompletion.PayloadData.CompletionCodeEnum.TimeOut,

@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Crypto
             GenerateRandomCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => GenerateRandomCompletion.PayloadData.CompletionCodeEnum.TimeOut,

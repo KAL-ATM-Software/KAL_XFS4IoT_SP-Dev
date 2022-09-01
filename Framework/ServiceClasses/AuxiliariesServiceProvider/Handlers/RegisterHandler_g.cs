@@ -57,6 +57,16 @@ namespace XFS4IoTFramework.Auxiliaries
             RegisterCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
                 InvalidDataException => RegisterCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => RegisterCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => RegisterCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => RegisterCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => RegisterCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => RegisterCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => RegisterCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => RegisterCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => RegisterCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => RegisterCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => RegisterCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
                 NotImplementedException or NotSupportedException => RegisterCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => RegisterCompletion.PayloadData.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => RegisterCompletion.PayloadData.CompletionCodeEnum.TimeOut,

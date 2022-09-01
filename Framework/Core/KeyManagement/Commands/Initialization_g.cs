@@ -103,7 +103,7 @@ namespace XFS4IoT.KeyManagement.Commands
             ///   *KeyManagement.StartAuthenticate* and *keyManagement.Authenticate* command requests.
             /// * If prior to this command request, *KeyManagement.StartAuthenticate* is not called or a command clears the
             ///   authentication data from the device,
-            ///   [sequenceError](#api.messagetypes.completionmessages.completioncodes) will be returned.
+            ///   [sequenceError](#api.generalinformation.messagetypes.completionmessages.completioncodes) will be returned.
             /// </summary>
             [DataMember(Name = "authentication")]
             public AuthenticationClass Authentication { get; init; }

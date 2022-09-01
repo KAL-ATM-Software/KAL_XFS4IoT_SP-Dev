@@ -32,8 +32,10 @@ namespace XFS4IoTFramework.CardReader
             List<EMVClessQueryApplicationsCompletion.PayloadData.AppDataClass> appData = new();
             foreach (EMVApplication app in result.EMVApplications)
             {
-                if (app.ApplicationIdentifier.Count == 0)
+                if (app.ApplicationIdentifier is not {Count: > 0 })
+                {
                     continue;
+                }
                 appData.Add(new EMVClessQueryApplicationsCompletion.PayloadData.AppDataClass(app.ApplicationIdentifier,
                                                                                              app.KernelIdentifier));
             }
