@@ -13,9 +13,11 @@ using XFS4IoT.Storage.Commands;
 using XFS4IoT.Storage.Completions;
 using XFS4IoT.Storage;
 using XFS4IoT.Completions;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.Storage
 {
+    [CommandHandlerAsync]
     public partial class GetStorageHandler
     { 
         private Task<GetStorageCompletion.PayloadData> HandleGetStorage(IGetStorageEvents events, GetStorageCommand getStorage, CancellationToken cancel)

@@ -62,7 +62,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
                 else
                 {
-                    if (Storage.CashUnits.ContainsKey(count.Payload.Unit))
+                    if (!Storage.CashUnits.ContainsKey(count.Payload.Unit))
                     {
                         return new CountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"Specified storage id is invalid. {count.Payload.Unit}");

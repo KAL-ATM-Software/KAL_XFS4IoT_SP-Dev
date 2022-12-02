@@ -20,6 +20,8 @@ namespace XFS4IoTServer
 
         Task RunAsync(CancellationSource cancellationSource);
 
-        Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token);
+        Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token);
+
+        Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token);
     }
 }

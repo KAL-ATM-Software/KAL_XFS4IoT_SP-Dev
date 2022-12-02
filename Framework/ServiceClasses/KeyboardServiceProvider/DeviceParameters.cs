@@ -43,10 +43,10 @@ namespace XFS4IoTFramework.Keyboard
         ContinueFDK
     }
 
-    public class ActiveKeyCalss
+    public class ActiveKeyClass
     {
 
-        public ActiveKeyCalss(string KeyName,
+        public ActiveKeyClass(string KeyName,
                               bool Terminate = false)
         {
             this.KeyName = KeyName;
@@ -80,7 +80,7 @@ namespace XFS4IoTFramework.Keyboard
     {
         public DataEntryRequest(int MaxLen,
                                 bool AutoEnd,
-                                List<ActiveKeyCalss> ActiveKeys)
+                                List<ActiveKeyClass> ActiveKeys)
         {
             this.MaxLen = MaxLen;
             this.AutoEnd = AutoEnd;
@@ -103,7 +103,7 @@ namespace XFS4IoTFramework.Keyboard
         /// <summary>
         /// Specifies Function Keys which are active during the execution of the command.
         /// </summary>
-        public List<ActiveKeyCalss> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; }
     }
 
     public sealed class DataEntryResult : DeviceResult
@@ -175,7 +175,7 @@ namespace XFS4IoTFramework.Keyboard
                                int MaxLen,
                                bool AutoEnd,
                                string Echo,
-                               List<ActiveKeyCalss> ActiveKeys)
+                               List<ActiveKeyClass> ActiveKeys)
         {
             this.MinLen = MinLen;
             this.MaxLen = MaxLen;
@@ -211,7 +211,7 @@ namespace XFS4IoTFramework.Keyboard
         /// <summary>
         /// Specifies function keys which are active during the execution of the command.
         /// </summary>
-        public List<ActiveKeyCalss> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; }
 
     }
 
@@ -270,7 +270,7 @@ namespace XFS4IoTFramework.Keyboard
 
         public SecureKeyEntryRequest(int KeyLen,
                                bool AutoEnd,
-                               List<ActiveKeyCalss> ActiveKeys,
+                               List<ActiveKeyClass> ActiveKeys,
                                VerificationTypeEnum VerificationType,
                                CryptoMethodEnum CryptoMethod)
         {
@@ -299,7 +299,7 @@ namespace XFS4IoTFramework.Keyboard
         /// Specifies those function keys which are active during the execution of the command.
         /// This parameter should include those FDKs mapped to edit functions.
         /// </summary>
-        public List<ActiveKeyCalss> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; }
 
         /// <summary>
         /// Specifies the type of verification to be done on the entered key.

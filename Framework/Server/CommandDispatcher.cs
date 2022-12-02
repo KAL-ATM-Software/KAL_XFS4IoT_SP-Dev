@@ -162,15 +162,14 @@ namespace XFS4IoTServer
 
         public virtual Task RunAsync(CancellationSource cancellationSource) => CommandQueue.RunAsync(cancellationSource.Token);
 
-        public virtual async Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token)
+        public virtual async Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token)
         {
-            bool retVal = await CommandQueue.AnyValidRequestID(Connection, RequestIds, token);
-            if (retVal)
-            {
-                //Cancel command completes before trying to cancel the running commands.
-                _ = CommandQueue.TryCancelItemsAsync(Connection, RequestIds, token);
-            }
-            return retVal;
+            return await CommandQueue.AnyValidRequestID(Connection, RequestIds, token);
+        }
+
+        public virtual async Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken token)
+        {
+            await CommandQueue.TryCancelItemsAsync(Connection, RequestIds, token);
         }
 
         private void Add(IEnumerable<(Type, Type, bool Async)> types)

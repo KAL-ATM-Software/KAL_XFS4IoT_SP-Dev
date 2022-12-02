@@ -26,7 +26,7 @@ namespace XFS4IoTServer
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(VendorApplicationServiceClass)}");
 
-            this.CommonService.VendorApplicationStatus = new VendorApplicationStatusClass(VendorApplicationStatusClass.AccessLevelEnum.NotActive);
+            CommonService.VendorApplicationStatus = new VendorApplicationStatusClass(VendorApplicationStatusClass.AccessLevelEnum.NotActive);
 
             GetCapabilities();
         }

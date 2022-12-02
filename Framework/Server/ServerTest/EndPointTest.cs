@@ -85,8 +85,8 @@ namespace XFS4IoTServerTest
             public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new System.NotImplementedException();
             public Task RunAsync(CancellationSource cancellationSource) => throw new System.NotImplementedException();
             public IEnumerator GetEnumerator() => throw new System.NotImplementedException();
-            public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
-
+            public Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
+            public Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token) => throw new NotImplementedException();
             public IEnumerable<Type> Commands { get => throw new NotImplementedException(); }
         }
     }

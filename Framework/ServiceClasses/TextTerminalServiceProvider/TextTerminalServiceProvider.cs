@@ -16,7 +16,7 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.TextTerminal;
 using XFS4IoTServer;
 
-namespace TextTerminalProvider
+namespace XFS4IoTServer
 {
     /// <summary>
     /// Default implimentation of a text terminal service provider. 

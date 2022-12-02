@@ -1,36 +1,32 @@
-/***********************************************************************************************\
+﻿/***********************************************************************************************\
  * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
- *
- * This file was created automatically as part of the XFS4IoT Common interface.
- * CancelHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
-
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoTServer;
 using XFS4IoT.Common.Commands;
 using XFS4IoT.Common.Completions;
-using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
-namespace XFS4IoTFramework.Common
+namespace XFS4IoTServer
 {
     [CommandHandler(XFSConstants.ServiceClass.Common, typeof(CancelCommand))]
-    public partial class CancelHandler : ICommandHandler
+    [CommandHandlerAsync]
+    public class CancelHandler : ICommandHandler
     {
         public CancelHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
             Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(CancelHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(CancelHandler)} constructor. {nameof(Provider.Device)}")
-                           .IsA<ICommonDevice>();
-
-            Common = Provider.IsA<ICommonService>();
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(CancelHandler)} constructor. {nameof(Provider.Device)}");
 
             this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(CancelHandler)} constructor. {nameof(logger)}");
             this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(CancelHandler)} constructor. {nameof(Connection)}");
@@ -41,10 +37,19 @@ namespace XFS4IoTFramework.Common
             var cancelCmd = command.IsA<CancelCommand>($"Invalid parameter in the Cancel Handle method. {nameof(CancelCommand)}");
             cancelCmd.Header.RequestId.HasValue.IsTrue();
 
-            ICancelEvents events = new CancelEvents(Connection, cancelCmd.Header.RequestId.Value);
+            bool res = await Provider.IsA<ICommandDispatcher>().AnyValidRequestID(Connection, cancelCmd.Payload.RequestIds, cancel);
 
-            var result = await HandleCancel(events, cancelCmd, cancel);
+            CancelCompletion.PayloadData result = res ?
+                new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null)
+                : new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, null, CancelCompletion.PayloadData.ErrorCodeEnum.NoMatchingRequestIDs);
             await Connection.SendMessageAsync(new CancelCompletion(cancelCmd.Header.RequestId.Value, result));
+
+            if(res)
+            {
+                Logger.Log(Constants.Component, "ICommandDispatcher.CancelCommandsAsync()");
+                await Provider.IsA<ICommandDispatcher>().CancelCommandsAsync(Connection, cancelCmd.Payload.RequestIds, cancel);
+                Logger.Log(Constants.Component, "ICommandDispatcher.CancelCommandsAsync() -> Success");
+            }
         }
 
         public async Task HandleError(object command, Exception commandException)
@@ -77,10 +82,8 @@ namespace XFS4IoTFramework.Common
         }
 
         private IConnection Connection { get; }
-        private ICommonDevice Device { get => Provider.Device.IsA<ICommonDevice>(); }
+        private IDevice Device { get => Provider.Device; }
         private IServiceProvider Provider { get; }
-        private ICommonService Common { get; }
         private ILogger Logger { get; }
     }
-
 }

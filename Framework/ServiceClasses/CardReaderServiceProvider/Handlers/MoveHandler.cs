@@ -117,7 +117,7 @@ namespace XFS4IoTFramework.CardReader
                     string storageId = to.StorageId;
                     if (string.IsNullOrEmpty(to.StorageId))
                     {
-                        // Default position and the device class most report storage id
+                        // Default position and the device class must report storage id
                         storageId = result.StorageId;
                     }
 

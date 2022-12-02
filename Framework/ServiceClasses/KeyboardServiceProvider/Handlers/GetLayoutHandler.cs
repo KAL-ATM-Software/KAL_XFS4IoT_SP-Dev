@@ -18,6 +18,7 @@ using XFS4IoT.Keyboard;
 
 namespace XFS4IoTFramework.Keyboard
 {
+    [CommandHandlerAsync]
     public partial class GetLayoutHandler
     {
         private Task<GetLayoutCompletion.PayloadData> HandleGetLayout(IGetLayoutEvents events, GetLayoutCommand getLayout, CancellationToken cancel)

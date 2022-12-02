@@ -69,14 +69,21 @@ namespace XFS4IoTFramework.CardReader
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                if (!string.IsNullOrEmpty(reset.Payload.StorageId))
+                string storageId = reset.Payload.StorageId;
+                if (string.IsNullOrEmpty(storageId))
+                {
+                    // Use one storage id reported by the SP
+                    storageId = result.StorageId;
+                }
+
+                if (!string.IsNullOrEmpty(storageId))
                 {
                     if (to == ResetDeviceRequest.ToEnum.Retain &&
-                        Storage.CardUnits.ContainsKey(reset.Payload.StorageId) &&
-                        Storage.CardUnits[reset.Payload.StorageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain)
+                        Storage.CardUnits.ContainsKey(storageId) &&
+                        Storage.CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain)
                     {
                         // Update counters and save persistently
-                        await Storage.UpdateCardStorageCount(reset.Payload.StorageId, result.CountMoved);
+                        await Storage.UpdateCardStorageCount(storageId, result.CountMoved);
                     }
                     else if (to == ResetDeviceRequest.ToEnum.Default)
                     {

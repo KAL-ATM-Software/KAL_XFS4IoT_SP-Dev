@@ -22,7 +22,7 @@ namespace XFS4IoTServer.Test
         [TestMethod]
         public async Task NewMessageDispatcherTest()
         {
-            var dispatcher = new CommandDispatcher( new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger() );
+            var dispatcher = new CommandDispatcher(new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger());
 
 
             await dispatcher.Dispatch(new TestConnection(), new TestMessage1(), CancellationToken.None);
@@ -39,7 +39,8 @@ namespace XFS4IoTServer.Test
         public IDevice Device { get => throw new NotImplementedException(); }
         public Task BroadcastEvent(object payload) => throw new NotImplementedException();
         public Task BroadcastEvent(IEnumerable<IConnection> connections, object payload) => throw new NotImplementedException();
-        public Task<bool> CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
+        public Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token) => throw new NotImplementedException();
+        public Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
         public Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken Token) => throw new NotImplementedException();
         public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync(CancellationSource cancellationSource) => throw new NotImplementedException();

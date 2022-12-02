@@ -42,7 +42,7 @@ namespace XFS4IoTFramework.Keyboard
             if (secureKeyEntry.Payload.AutoEnd is null)
                 Logger.Warning(Constants.Framework, $"No AutoEnd specified. use default false.");
 
-            List<ActiveKeyCalss> keys = new();
+            List<ActiveKeyClass> keys = new();
             foreach (var key in secureKeyEntry.Payload.ActiveKeys)
             {
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Secure].Contains(key.Key) &&
@@ -51,7 +51,7 @@ namespace XFS4IoTFramework.Keyboard
                     return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                     $"Invalid key specified. {key.Key}");
                 }
-                keys.Add(new ActiveKeyCalss(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
+                keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }
 
             KeyManagement.GetSecureKeyEntryStatus().ResetSecureKeyBuffered();

@@ -27,11 +27,13 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private async Task<DispenseCompletion.PayloadData> HandleDispense(IDispenseEvents events, DispenseCommand dispense, CancellationToken cancel)
         {
+            //Present should always be false unless the device does not have a stacker.
+            //XFS4 currently does not have a bPresent property on dispense, so no way to determine if the application wishes to Dispense and Present currently.
             bool present = false;
+
             CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
             if (dispense.Payload.Position is not null)
             {
-                present = true;
                 position = dispense.Payload.Position switch
                 {
                     OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.OutputPositionEnum.Bottom,

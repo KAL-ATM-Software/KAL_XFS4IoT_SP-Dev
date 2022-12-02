@@ -221,6 +221,11 @@ namespace XFS4IoTFramework.Printer
                             Orientation = reader.ReadEnum<FormOrientationEnum>();
                             break;
 
+                        case XFSFormReader.FormKeyword.LANGUAGE:
+                            _ = reader.ReadInt(); //Ignore the LANGUAGE value specified after the form keyword  
+                            Logger.Warning("FORM", "Provided form is using LANGUAGE element removed in XFS4, ignoring for now.");
+                            break;
+
                         default:
                             reader.FormReaderAssert(false, "Unexpected current token in ReadPrinterForm.");
                             break;

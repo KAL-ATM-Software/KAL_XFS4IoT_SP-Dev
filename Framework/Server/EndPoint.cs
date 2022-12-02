@@ -68,10 +68,8 @@ namespace XFS4IoTServer
                 Task completedTask = await Task.WhenAny(Enumerable.Append(Enumerable.Append(tasks, listenerTask), cancelTask));
 
                 // If it's one of the client connection tasks ending then we just need to stop waiting for it.  
-                if(completedTask == cancelTask)
-                {
-                    HttpListener.Stop();
-                    HttpListener.Close();
+                if(completedTask == cancelTask) 
+                { 
                 }
                 else if (completedTask != listenerTask)
                 {
@@ -112,7 +110,6 @@ namespace XFS4IoTServer
                     listenerTask = HttpListener.GetContextAsync();
                 }
             }
-            HttpListener.Stop();
             HttpListener.Close();
         }
 

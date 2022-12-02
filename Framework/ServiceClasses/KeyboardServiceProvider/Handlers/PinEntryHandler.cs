@@ -36,7 +36,7 @@ namespace XFS4IoTFramework.Keyboard
                                                             $"No Pin entry layout supported.");
             }
 
-            List<ActiveKeyCalss> keys = new();
+            List<ActiveKeyClass> keys = new();
             foreach (var key in pinEntry.Payload.ActiveKeys)
             {
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Pin].Contains(key.Key))
@@ -44,7 +44,7 @@ namespace XFS4IoTFramework.Keyboard
                     return new PinEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                               $"Invalid key specified. {key.Key}");
                 }
-                keys.Add(new ActiveKeyCalss(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
+                keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.PinEntry()");

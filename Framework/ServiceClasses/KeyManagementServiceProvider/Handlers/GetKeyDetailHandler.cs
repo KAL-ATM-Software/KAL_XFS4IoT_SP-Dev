@@ -16,9 +16,11 @@ using XFS4IoT.KeyManagement.Completions;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTFramework.Common;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.KeyManagement
 {
+    [CommandHandlerAsync]
     public partial class GetKeyDetailHandler
     {
         private Task<GetKeyDetailCompletion.PayloadData> HandleGetKeyDetail(IGetKeyDetailEvents events, GetKeyDetailCommand getKeyDetail, CancellationToken cancel)

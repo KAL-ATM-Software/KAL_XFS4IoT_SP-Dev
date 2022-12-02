@@ -425,11 +425,11 @@ namespace XFS4IoTServer
         /// </summary>
         private void ConstructCashUnits()
         {
-            Logger.Log(Constants.DeviceClass, "StorageDev.GetCashUnitConfiguration()");
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetCashStorageConfiguration()");
 
             bool newConfiguration = Device.GetCashStorageConfiguration(out Dictionary<string, CashUnitStorageConfiguration> newCashUnits);
 
-            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitConfiguration()-> {newConfiguration}");
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashStorageConfiguration()-> {newConfiguration}");
 
             newCashUnits.IsNotNull("The device class returned an empty cash unit structure information on the GetCashUnitStructure.");
 
@@ -515,8 +515,34 @@ namespace XFS4IoTServer
                         }
                         CashConfigurationClass cong = CashUnits[unit.Key].Unit.Configuration;
                         CashUnits[unit.Key].Unit.Status.Count = unit.Value.Count;
-                        CashUnits[unit.Key].Unit.Status.StorageCashInCount = unit.Value.StorageCashInCount;
-                        CashUnits[unit.Key].Unit.Status.StorageCashOutCount = unit.Value.StorageCashOutCount;
+                        if (unit.Value.StorageCashInCount is not null)
+                        {
+                            CashUnits[unit.Key].Unit.Status.StorageCashInCount = new(unit.Value.StorageCashInCount);
+                        }
+                        if (unit.Value.StorageCashOutCount is not null)
+                        {
+                            CashUnits[unit.Key].Unit.Status.StorageCashOutCount = new(unit.Value.StorageCashOutCount);
+                        }
+                    }
+                }
+
+                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitInitialCounts()");
+
+                bool updateInitialCounts = Device.GetCashUnitInitialCounts(out Dictionary<string, StorageCashCountClass> initialCounts);
+
+                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitInitialCounts()-> {updateInitialCounts}");
+
+                if (updateInitialCounts &&
+                    initialCounts is not null)
+                {
+                    foreach (var unit in initialCounts)
+                    {
+                        if (!CashUnits.ContainsKey(unit.Key))
+                        {
+                            Logger.Warning(Constants.Framework, $"Specified storage ID is not found. {unit.Key}");
+                            continue;
+                        }
+                        CashUnits[unit.Key].Unit.Status.InitialCounts = new(unit.Value);
                     }
                 }
 
@@ -882,19 +908,19 @@ namespace XFS4IoTServer
                                                                                                                 CashUnits[unitId].Unit.Configuration.BanknoteItems),
                                                         new XFS4IoT.CashManagement.StorageCashStatusClass(CashUnits[unitId].Unit.Status.Index,
                                                                                                           CashUnits[unitId].Unit.Status.InitialCounts.CopyTo(),
-                                                                                                          new XFS4IoT.CashManagement.StorageCashOutClass(CashUnits[unitId].Unit.Status.StorageCashOutCount.Presented.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Rejected.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Distributed.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Unknown.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Stacked.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Diverted.CopyTo(),
-                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount.Transport.CopyTo()),
-                                                                                                          new XFS4IoT.CashManagement.StorageCashInClass(CashUnits[unitId].Unit.Status.StorageCashInCount.RetractOperations,
-                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount.Deposited.CopyTo(),
-                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount.Retracted.CopyTo(),
-                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount.Rejected.CopyTo(),
-                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount.Distributed.CopyTo(),
-                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount.Transport.CopyTo()),
+                                                                                                          new XFS4IoT.CashManagement.StorageCashOutClass(CashUnits[unitId].Unit.Status.StorageCashOutCount?.Presented.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Rejected.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Distributed.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Unknown.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Stacked.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Diverted.CopyTo(),
+                                                                                                                                                         CashUnits[unitId].Unit.Status.StorageCashOutCount?.Transport.CopyTo()),
+                                                                                                          new XFS4IoT.CashManagement.StorageCashInClass(CashUnits[unitId].Unit.Status.StorageCashInCount?.RetractOperations,
+                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount?.Deposited.CopyTo(),
+                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount?.Retracted.CopyTo(),
+                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount?.Rejected.CopyTo(),
+                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount?.Distributed.CopyTo(),
+                                                                                                                                                        CashUnits[unitId].Unit.Status.StorageCashInCount?.Transport.CopyTo()),
                                                                                                           CashUnits[unitId].Unit.Status.Accuracy switch
                                                                                                           {
                                                                                                               CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
@@ -989,20 +1015,20 @@ namespace XFS4IoTServer
                                                                                                             unit.Value.Unit.Configuration.AppLockOut,
                                                                                                             unit.Value.Unit.Configuration.BanknoteItems),
                                                    new XFS4IoT.CashManagement.StorageCashStatusClass(unit.Value.Unit.Status.Index,
-                                                                                                     unit.Value.Unit.Status.InitialCounts.CopyTo(),
-                                                                                                     new XFS4IoT.CashManagement.StorageCashOutClass(unit.Value.Unit.Status.StorageCashOutCount.Presented.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Rejected.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Distributed.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Unknown.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Stacked.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Diverted.CopyTo(),
-                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount.Transport.CopyTo()),
-                                                                                                     new XFS4IoT.CashManagement.StorageCashInClass(unit.Value.Unit.Status.StorageCashInCount.RetractOperations,
-                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount.Deposited.CopyTo(),
-                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount.Retracted.CopyTo(),
-                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount.Rejected.CopyTo(),
-                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount.Distributed.CopyTo(),
-                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount.Transport.CopyTo()),
+                                                                                                     unit.Value.Unit.Status.InitialCounts?.CopyTo(),
+                                                                                                     new XFS4IoT.CashManagement.StorageCashOutClass(unit.Value.Unit.Status.StorageCashOutCount?.Presented.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Rejected.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Distributed.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Unknown.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Stacked.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Diverted.CopyTo(),
+                                                                                                                                                    unit.Value.Unit.Status.StorageCashOutCount?.Transport.CopyTo()),
+                                                                                                     new XFS4IoT.CashManagement.StorageCashInClass(unit.Value.Unit.Status.StorageCashInCount?.RetractOperations,
+                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount?.Deposited.CopyTo(),
+                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount?.Retracted.CopyTo(),
+                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount?.Rejected.CopyTo(),
+                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount?.Distributed.CopyTo(),
+                                                                                                                                                   unit.Value.Unit.Status.StorageCashInCount?.Transport.CopyTo()),
                                                                                                      unit.Value.Unit.Status.Accuracy switch 
                                                                                                      {
                                                                                                          CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,

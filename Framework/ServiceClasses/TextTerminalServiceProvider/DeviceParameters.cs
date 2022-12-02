@@ -45,12 +45,12 @@ namespace XFS4IoTFramework.TextTerminal
         /// <summary>
         /// Beep type to enable
         /// </summary>
-        BeepTypeEnum Type { get; init; }
+        public BeepTypeEnum Type { get; init; }
 
         /// <summary>
         /// Beep action to turn on, off or Continuous
         /// </summary>
-        BeepActionEnum Action { get; init; }
+        public BeepActionEnum Action { get; init; }
 
     }
 

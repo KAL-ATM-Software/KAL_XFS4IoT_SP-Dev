@@ -60,19 +60,25 @@ namespace XFS4IoTFramework.Storage
         bool GetCashStorageConfiguration(out Dictionary<string, CashUnitStorageConfiguration> newCardUnits);
 
         /// <summary>
-        /// Return return cash unit counts maintained by the device
+        /// Return cash unit counts maintained by the device class
         /// </summary>
         /// <returns>Return true if the device class maintained counts, otherwise false</returns>
         bool GetCashUnitCounts(out Dictionary<string, CashUnitCountClass> unitCounts);
 
         /// <summary>
-        /// Return return cash storage status
+        /// Return cash unit initial counts maintained by the device class and only this method is called on the start of day/
+        /// </summary>
+        /// <returns>Return true if the device class maintained initial counts, otherwise false</returns>
+        bool GetCashUnitInitialCounts(out Dictionary<string, StorageCashCountClass> initialCounts);
+
+        /// <summary>
+        /// Return cash storage status.
         /// </summary>
         /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
         bool GetCashStorageStatus(out Dictionary<string, CashUnitStorage.StatusEnum> storageStatus);
 
         /// <summary>
-        /// Return return cash unit status maintained by the device class
+        /// Return cash unit status maintained by the device class
         /// </summary>
         /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
         bool GetCashUnitStatus(out Dictionary<string, CashStatusClass.ReplenishmentStatusEnum> unitStatus);

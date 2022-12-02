@@ -245,24 +245,24 @@ namespace XFS4IoTServer
 
         private class AsyncAutoResetEvent
         {
-            public Task WaitAsync(CancellationToken token)
+            public async Task WaitAsync(CancellationToken token)
             {
+                TaskCompletionSource<bool> tcs = new();
+                using CancellationTokenRegistration ctr = token.Register(() => tcs.TrySetCanceled());
+
                 lock (WaitingTaskCompletionSources)
                 {
                     token.ThrowIfCancellationRequested();
                     if (Signaled)
                     {
                         Signaled = false;
-                        return CompletedTask;
+                        return;
                     }
                     else
-                    {
-                        var tcs = new TaskCompletionSource<bool>();
-                        using var _ = token.Register(() => tcs.TrySetCanceled());
                         WaitingTaskCompletionSources.Enqueue(tcs);
-                        return tcs.Task;
-                    }
                 }
+
+                await tcs.Task;
             }
 
             public void Set()

@@ -105,6 +105,11 @@ namespace XFS4IoTServer
         /// </summary>
         public VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get => CommonService.VendorApplicationCapabilities; set => CommonService.VendorApplicationCapabilities = value; }
 
+        /// <summary>
+        /// Stores vendor application status
+        /// </summary>
+        public VendorApplicationStatusClass VendorApplicationStatus { get => CommonService.VendorApplicationStatus; set => CommonService.VendorApplicationStatus = value; }
+
         #endregion
     }
 }

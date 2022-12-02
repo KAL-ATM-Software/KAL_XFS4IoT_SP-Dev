@@ -13,9 +13,11 @@ using XFS4IoT;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
 using XFS4IoT.Completions;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.PinPad
 {
+    [CommandHandlerAsync]
     public partial class GetQueryPCIPTSDeviceIdHandler
     {
         private Task<GetQueryPCIPTSDeviceIdCompletion.PayloadData> HandleGetQueryPCIPTSDeviceId(IGetQueryPCIPTSDeviceIdEvents events, GetQueryPCIPTSDeviceIdCommand getQueryPCIPTSDeviceId, CancellationToken cancel)
