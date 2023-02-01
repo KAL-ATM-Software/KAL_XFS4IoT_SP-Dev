@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.VendorApplication
                 }
             }
 
-            Logger.Log(Constants.DeviceClass, "PrinterDev.StartLocalApplicationRequest()");
+            Logger.Log(Constants.DeviceClass, "VendorApplicationDev.StartLocalApplicationRequest()");
             var result = await Device.StartLocalApplication(new StartLocalApplicationRequest(startLocalApplication.Payload.AppName,
                                                                                              startLocalApplication.Payload.AccessLevel switch
                                                                                              {
@@ -43,7 +43,7 @@ namespace XFS4IoTFramework.VendorApplication
                                                                                                  _ => null,
                                                                                              }),
                                                             cancel);
-            Logger.Log(Constants.DeviceClass, $"PrinterDev.StartLocalApplicationRequest() -> {result.CompletionCode}");
+            Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.StartLocalApplicationRequest() -> {result.CompletionCode}");
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
                 Common.VendorApplicationCapabilities.SupportedAccessLevels != VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.NotSupported)

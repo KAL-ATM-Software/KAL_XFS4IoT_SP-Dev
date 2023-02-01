@@ -13,9 +13,11 @@ using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.CashManagement;
 using XFS4IoT.Completions;
+using XFS4IoTServer;
 
 namespace XFS4IoTFramework.CashManagement
 {
+    [CommandHandlerAsync]
     public partial class GetBankNoteTypesHandler
     {
         private Task<GetBankNoteTypesCompletion.PayloadData> HandleGetBankNoteTypes(IGetBankNoteTypesEvents events, GetBankNoteTypesCommand getBankNoteTypes, CancellationToken cancel)

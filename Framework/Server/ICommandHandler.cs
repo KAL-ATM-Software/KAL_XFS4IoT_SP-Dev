@@ -18,5 +18,7 @@ namespace XFS4IoTServer
         Task Handle(object Command, CancellationToken Cancel);
 
         Task HandleError(object Command, Exception CommandException);
+
+        Task CommandPostProcessing(object Result) => Task.CompletedTask;
     }
 }

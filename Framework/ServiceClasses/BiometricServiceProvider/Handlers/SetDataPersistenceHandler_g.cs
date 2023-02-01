@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2023
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,6 +47,8 @@ namespace XFS4IoTFramework.Biometric
 
             var result = await HandleSetDataPersistence(events, setDataPersistenceCmd, cancel);
             await Connection.SendMessageAsync(new SetDataPersistenceCompletion(setDataPersistenceCmd.Header.RequestId.Value, result));
+
+            await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)

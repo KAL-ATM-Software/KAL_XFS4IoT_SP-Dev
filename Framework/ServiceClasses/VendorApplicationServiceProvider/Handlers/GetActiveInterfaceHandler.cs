@@ -19,10 +19,10 @@ namespace XFS4IoTFramework.VendorApplication
     {
         private Task<GetActiveInterfaceCompletion.PayloadData> HandleGetActiveInterface(IGetActiveInterfaceEvents events, GetActiveInterfaceCommand getActiveInterface, CancellationToken cancel)
         {
-            Logger.Log(Constants.DeviceClass, "PrinterDev.GetActiveInterface()");
+            Logger.Log(Constants.DeviceClass, "VendorApplicationDev.GetActiveInterface()");
             var result = Device.GetActiveInterface();
 
-            Logger.Log(Constants.DeviceClass, $"PrinterDev.GetActiveInterface() -> {result.CompletionCode}");
+            Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.GetActiveInterface() -> {result.CompletionCode}");
 
             return Task.FromResult(new GetActiveInterfaceCompletion.PayloadData(result.CompletionCode,
                                                                                 result.ErrorDescription,

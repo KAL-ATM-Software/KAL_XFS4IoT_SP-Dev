@@ -32,16 +32,18 @@ namespace XFS4IoTServer
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.TextTerminal },
+                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.TextTerminal, XFSConstants.ServiceClass.Lights },
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             TextTerminal = new TextTerminalServiceClass(this, logger);
+            LightsService = new LightsServiceClass(this, logger);
         }
 
         private readonly TextTerminalServiceClass TextTerminal;
         private readonly CommonServiceClass CommonService;
+        private readonly LightsServiceClass LightsService;
 
         #region Common unsolicited events
         public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
@@ -86,6 +88,16 @@ namespace XFS4IoTServer
         /// Stores TexTerminal interface status internally
         /// </summary>
         public TextTerminalStatusClass TextTerminalStatus { get => CommonService.TextTerminalStatus; set => CommonService.TextTerminalStatus = value; }
+
+        /// <summary>
+        /// Stores Lights interface capabilites internally
+        /// </summary>
+        public LightsCapabilitiesClass LightsCapabilities { get => CommonService.LightsCapabilities; set => CommonService.LightsCapabilities = value; }
+
+        /// <summary>
+        /// Lights Status
+        /// </summary>
+        public LightsStatusClass LightsStatus { get => CommonService.LightsStatus; set => CommonService.LightsStatus = value; }
 
 
         #endregion

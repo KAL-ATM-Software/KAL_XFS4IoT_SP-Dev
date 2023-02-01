@@ -61,12 +61,19 @@ namespace XFS4IoTFramework.VendorMode
                     Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Active;
                     throw;
                 }
-
-                await VendorMode.ModeExitedEvent();
-                Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Inactive;
             }
 
             return new ExitModeAcknowledgeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+        }
+        private async Task CommandPostProcessing(ExitModeAcknowledgeCompletion.PayloadData result)
+        {
+            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+                Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.ExitPending &&
+                VendorMode.PendingAcknowledge.Count == 0)
+            {
+                Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Inactive;
+                await VendorMode.ModeExitedEvent();
+            }
         }
     }
 }

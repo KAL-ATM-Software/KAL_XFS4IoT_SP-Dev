@@ -17,6 +17,7 @@ using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.Printer
 {
+    [CommandHandlerAsync]
     public partial class GetMediaListHandler
     {
         private Task<GetMediaListCompletion.PayloadData> HandleGetMediaList(IGetMediaListEvents events, GetMediaListCommand getMediaList, CancellationToken cancel)

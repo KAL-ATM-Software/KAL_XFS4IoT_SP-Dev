@@ -1117,7 +1117,7 @@ namespace XFS4IoTFramework.Common
                                                               Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Bolted),
                                                               Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilities.DoorType.Safe].HasFlag(AuxiliariesCapabilities.DoorCapabilities.Tampered))
                         : new XFS4IoT.Auxiliaries.DoorCapsClass(false, false, false, false, false)),
-                    Common.AuxiliariesCapabilities.VandalShield == AuxiliariesCapabilities.VandalShieldCapabilities.NotAvailable ?
+                    Common.AuxiliariesCapabilities.VandalShield != AuxiliariesCapabilities.VandalShieldCapabilities.NotAvailable ?
                         new XFS4IoT.Auxiliaries.CapabilitiesClass.VandalShieldClass(Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Closed),
                                                                                     Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Open),
                                                                                     Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilities.VandalShieldCapabilities.Locked),

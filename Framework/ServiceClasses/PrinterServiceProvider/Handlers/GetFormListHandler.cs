@@ -17,6 +17,7 @@ using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.Printer
 {
+    [CommandHandlerAsync]
     public partial class GetFormListHandler
     {
         private Task<GetFormListCompletion.PayloadData> HandleGetFormList(IGetFormListEvents events, GetFormListCommand getFormList, CancellationToken cancel)

@@ -29,9 +29,6 @@ namespace XFS4IoTFramework.VendorMode
 
             if (VendorMode.RegisteredClients.Count > 0)
             {
-                VendorMode.PendingAcknowledge = VendorMode.RegisteredClients.Select(c => c.Key).ToList();
-                Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.ExitPending;
-
                 // Broadcast ExitModeRequestEvent to registered clients
                 await VendorMode.BroadcastExitModeRequestEvent();
             }
@@ -61,12 +58,20 @@ namespace XFS4IoTFramework.VendorMode
                     Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Active;
                     throw;
                 }
-
-                await VendorMode.ModeExitedEvent();
-                Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Inactive;
             }
             
             return new ExitModeRequestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+        }
+
+        private async Task CommandPostProcessing(ExitModeRequestCompletion.PayloadData result)
+        {
+            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+                Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.ExitPending &&
+                VendorMode.PendingAcknowledge.Count == 0)
+            {
+                Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Inactive;
+                await VendorMode.ModeExitedEvent();
+            }
         }
     }
 }

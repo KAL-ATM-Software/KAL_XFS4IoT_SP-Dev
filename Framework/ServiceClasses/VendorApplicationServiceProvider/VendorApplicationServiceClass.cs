@@ -26,9 +26,8 @@ namespace XFS4IoTServer
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(VendorApplicationServiceClass)}");
 
-            CommonService.VendorApplicationStatus = new VendorApplicationStatusClass(VendorApplicationStatusClass.AccessLevelEnum.NotActive);
-
             GetCapabilities();
+            GetStatus();
         }
 
         /// <summary>
@@ -61,6 +60,15 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "VendorApplicationDev.VendorApplicationCapabilities=");
 
             CommonService.VendorApplicationCapabilities.IsNotNull($"The device class set VendorApplicationCapabilities property to null. The device class must report device capabilities.");
+        }
+
+        private void GetStatus()
+        {
+            Logger.Log(Constants.DeviceClass, "VendorApplicationDev.VendorApplicationStatus");
+            CommonService.VendorApplicationStatus = Device.VendorApplicationStatus;
+            Logger.Log(Constants.DeviceClass, "VendorApplicationDev.VendorApplicationStatus=");
+
+            CommonService.VendorApplicationCapabilities.IsNotNull($"The device class set VendorApplicationStatus property to null. The device class must report device status.");
         }
     }
 }

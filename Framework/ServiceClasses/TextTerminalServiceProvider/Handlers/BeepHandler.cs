@@ -25,12 +25,6 @@ namespace XFS4IoTFramework.TextTerminal
                                                       $"No beep flag is specified.");
             }
 
-            BeepRequest.BeepActionEnum action = BeepRequest.BeepActionEnum.On;
-            if (beep.Payload.Beep.Continuous is not null)
-            {
-                action = (bool)beep.Payload.Beep.Continuous ? BeepRequest.BeepActionEnum.Continuous : BeepRequest.BeepActionEnum.Off;
-            }
-
             BeepRequest.BeepTypeEnum type = BeepRequest.BeepTypeEnum.None;
             if (beep.Payload.Beep.BeepType is not null)
             {
@@ -43,6 +37,18 @@ namespace XFS4IoTFramework.TextTerminal
                     BeepCommand.PayloadData.BeepClass.BeepTypeEnum.Warning => BeepRequest.BeepTypeEnum.Warning,
                     _ => BeepRequest.BeepTypeEnum.None,
                 };
+            }
+
+            BeepRequest.BeepActionEnum action = BeepRequest.BeepActionEnum.On;
+            if (beep.Payload.Beep.Continuous is not null &&
+                (bool)beep.Payload.Beep.Continuous)
+            {
+                action = BeepRequest.BeepActionEnum.Continuous;
+            }
+
+            if (type == BeepRequest.BeepTypeEnum.None)
+            {
+                action = BeepRequest.BeepActionEnum.Off;
             }
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.BeepAsync()");

@@ -18,6 +18,7 @@ using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.CashManagement
 {
+    [CommandHandlerAsync]
     public partial class GetClassificationListHandler
     {
         private Task<GetClassificationListCompletion.PayloadData> HandleGetClassificationList(IGetClassificationListEvents events, GetClassificationListCommand getClassificationList, CancellationToken cancel)

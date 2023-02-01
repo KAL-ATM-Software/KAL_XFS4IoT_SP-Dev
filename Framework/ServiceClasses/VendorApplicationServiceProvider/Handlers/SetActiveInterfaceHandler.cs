@@ -27,10 +27,10 @@ namespace XFS4IoTFramework.VendorApplication
                 _ => ActiveInterfaceEnum.Operator,
             };
 
-            Logger.Log(Constants.DeviceClass, "PrinterDev.GetActiveInterface()");
+            Logger.Log(Constants.DeviceClass, "VendorApplicationDev.GetActiveInterface()");
             var current = Device.GetActiveInterface();
 
-            Logger.Log(Constants.DeviceClass, $"PrinterDev.GetActiveInterface() -> {current.CompletionCode}");
+            Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.GetActiveInterface() -> {current.CompletionCode}");
 
             if (current.ActiveInterface == requestedInterface)
             {

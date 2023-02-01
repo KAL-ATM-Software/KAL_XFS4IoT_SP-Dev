@@ -14,6 +14,7 @@ using XFS4IoTServer;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.VendorMode;
+using XFS4IoT.Commands;
 
 namespace XFS4IoTServer
 {
@@ -46,12 +47,22 @@ namespace XFS4IoTServer
         /// <summary>
         /// This service event is used to indicate the request to exit Vendor Mode to all registered clients
         /// </summary>
-        public Task BroadcastExitModeRequestEvent() => ServiceProvider.BroadcastEvent(RegisteredClients.Select(c => c.Key).ToList(), new XFS4IoT.VendorMode.Events.ExitModeRequestEvent());
+        public Task BroadcastExitModeRequestEvent()
+        {
+            CommonService.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.ExitPending;
+            PendingAcknowledge = RegisteredClients.Select(c => c.Key).ToList(); 
+            return ServiceProvider.BroadcastEvent(PendingAcknowledge, new XFS4IoT.VendorMode.Events.ExitModeRequestEvent());
+        }
 
         /// <summary>
         /// This service event is used to indicate the request to enter Vendor Mode
         /// </summary>
-        public Task BroadcastEnterModeRequestEvent() => ServiceProvider.BroadcastEvent(RegisteredClients.Select(c => c.Key).ToList(), new XFS4IoT.VendorMode.Events.EnterModeRequestEvent());
+        public Task BroadcastEnterModeRequestEvent()
+        {
+            CommonService.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.EnterPending;
+            PendingAcknowledge = RegisteredClients.Select(c => c.Key).ToList();
+            return ServiceProvider.BroadcastEvent(PendingAcknowledge, new XFS4IoT.VendorMode.Events.EnterModeRequestEvent());
+        }
 
         #endregion
 

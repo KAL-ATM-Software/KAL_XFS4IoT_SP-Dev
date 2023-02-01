@@ -41,5 +41,10 @@ namespace XFS4IoTFramework.VendorApplication
         /// </summary>
         VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get; set; }
 
+
+        /// <summary>
+        /// Stores vendor application status
+        /// </summary>
+        VendorApplicationStatusClass VendorApplicationStatus { get; set; }
     }
 }
