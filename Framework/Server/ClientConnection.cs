@@ -17,16 +17,12 @@ using System.Reflection;
 using System.Collections;
 
 using XFS4IoT;
+using System.IO;
 
 namespace XFS4IoTServer
 {
     internal class ClientConnection : IConnection
     {
-
-        // Exactly one send and one receive is supported on each ClientWebSocket object in parallel.
-        private static readonly Mutex SendAsyncMutex = new();
-
-
         public ClientConnection(WebSocket socket, 
                                 IMessageDecoder CommandDecoder, 
                                 ICommandDispatcher CommandDispatcher,
@@ -43,29 +39,29 @@ namespace XFS4IoTServer
         {
             try
             {
+                var receivedBuffer = new Memory<byte>(new byte[MAX_BUFFER]);
+
                 while (!token.IsCancellationRequested)
                 {
                     // client is no longer connected
                     if (socket.State != WebSocketState.Open)
                         break;
 
-                    var receivedBuffer = new ArraySegment<byte>(new byte[MAX_BUFFER]);
 
                     // a single message could be delivered in multiple chunks
-                    WebSocketReceiveResult res;
+                    ValueWebSocketReceiveResult res;
                     int ReceivedBufferReceived = 0;
                     do
                     {
-                        var BufferSlice = receivedBuffer.Slice(ReceivedBufferReceived, receivedBuffer.Count - ReceivedBufferReceived);
+                        var BufferSlice = receivedBuffer.Slice(ReceivedBufferReceived, receivedBuffer.Length - ReceivedBufferReceived);
                         // Wait for data from the client
                         res = await socket.ReceiveAsync(BufferSlice, token);
                         ReceivedBufferReceived += res.Count;
                     } while (!res.EndOfMessage);
 
-                    if (res.MessageType == WebSocketMessageType.Text ||
-                        res.MessageType == WebSocketMessageType.Binary)
+                    if (res.MessageType is WebSocketMessageType.Text or WebSocketMessageType.Binary)
                     {
-                        string message = Encoding.UTF8.GetString(receivedBuffer.Take(ReceivedBufferReceived).ToArray());
+                        string message = Encoding.UTF8.GetString(receivedBuffer[0..ReceivedBufferReceived].Span);
 
                         await HandleIncommingMessage(message, token);
                     }
@@ -88,7 +84,7 @@ namespace XFS4IoTServer
             }
             catch(Exception ex)
             {
-                Logger.Warning(Constants.Component, $"Unexpected exception: {ex.Message}");
+                Logger.Warning(Constants.Component, $"Unexpected exception: {ex}");
                 throw; 
             }
             finally
@@ -111,14 +107,14 @@ namespace XFS4IoTServer
             {
                 Logger.LogSensitive(Constants.Component, $"Received:{ProcessDataTypes(command)}");
             }
-            catch (InvalidDataException ex)
+            catch (XFS4IoT.InvalidDataException ex)
             {
                 await CommandDispatcher.DispatchError(this, commandBase, ex);
                 return;
             }
             catch (Exception ex)
             {
-                Contracts.Fail($"Exception caught while in serialising JSON on receiving incomming message. {ex.Message}");
+                Contracts.Fail($"Exception caught while in serialising JSON on receiving incomming message. {ex}");
             }
 
 
@@ -132,7 +128,7 @@ namespace XFS4IoTServer
             }
             catch (Exception ex)
             {
-                Contracts.Fail($"Exception caught while in processing command. {ex.Message}");
+                Contracts.Fail($"Exception caught while in processing command. {ex}");
             }
         }
 
@@ -144,11 +140,14 @@ namespace XFS4IoTServer
 
             try
             {
-                SendAsyncMutex.WaitOne();
                 string JSON = messageBase.Serialise();
                 Logger.LogSensitive(Constants.Component, $"Sending: {ProcessDataTypes(messsage)}");
-                await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JSON)), WebSocketMessageType.Text, true, CancellationToken.None);
-                SendAsyncMutex.ReleaseMutex();
+
+                // Ensure only a single message can be sent at a time.
+                {
+                    using var sync = await DisposableLock.Create(SendSyncObject);
+                    await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JSON)), WebSocketMessageType.Text, true, CancellationToken.None);
+                }
             }
             catch( Exception e ) when ((e.InnerException is WebSocketException we) && ((uint)we.HResult == 0x80004005))
             {
@@ -162,13 +161,13 @@ namespace XFS4IoTServer
 			{
                 Logger.Warning(Constants.Component, "The ClientWebSocket is not connected");
             }
-            catch (InvalidDataException ex)
+            catch (XFS4IoT.InvalidDataException ex)
             {
-                Contracts.Fail($"Invalid data is set by the device class.{messageBase.Header.Name}. {ex.Message}");
+                Contracts.Fail($"Invalid data is set by the device class.{messageBase.Header.Name}. {ex}");
             }
             catch (Exception ex)
             {
-                Contracts.Fail($"Exception caught while in serialising JSON on sending message. {ex.Message}");
+                Contracts.Fail($"Exception caught while in serialising JSON on sending message. {ex}");
             }
         }
 
@@ -247,20 +246,20 @@ namespace XFS4IoTServer
                     {
                         case string stringValue:
                             if (!string.IsNullOrEmpty(dataTypeAttrib.Pattern) && !Regex.IsMatch(stringValue, dataTypeAttrib.Pattern))
-                                throw new InvalidDataException($"{nameof(type)} doesn't match with the specified regilar expression. {dataTypeAttrib.Pattern}. Property:{propertyInfo.Name}");
+                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} doesn't match with the specified regilar expression. {dataTypeAttrib.Pattern}. Property:{propertyInfo.Name}");
 
                             if (dataTypeAttrib.MaxLength is not null && stringValue.Length > dataTypeAttrib.MaxLength)
-                                throw new InvalidDataException($"{nameof(type)} has longer length than the Maximum={dataTypeAttrib.MaxLength}. Property:{propertyInfo.Name}");
+                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} has longer length than the Maximum={dataTypeAttrib.MaxLength}. Property:{propertyInfo.Name}");
 
                             if (dataTypeAttrib.MinLength is not null && stringValue.Length < dataTypeAttrib.MinLength)
-                                throw new InvalidDataException($"{nameof(type)} has shorter length than the MinLength={dataTypeAttrib.MinLength}. Property:{propertyInfo.Name}");
+                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} has shorter length than the MinLength={dataTypeAttrib.MinLength}. Property:{propertyInfo.Name}");
                             break;
                         case int intValue:
                             if (dataTypeAttrib.Minimum > -1 && intValue < dataTypeAttrib.Minimum)
-                                throw new InvalidDataException($"{nameof(type)} is smaller than the Minimum={dataTypeAttrib.Minimum}. Property:{propertyInfo.Name}");
+                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} is smaller than the Minimum={dataTypeAttrib.Minimum}. Property:{propertyInfo.Name}");
 
                             if (dataTypeAttrib.Maximum > -1 && intValue > dataTypeAttrib.Maximum)
-                                throw new InvalidDataException($"{nameof(type)} is greater than the Maximum={dataTypeAttrib.Maximum}. Property:{propertyInfo.Name}");
+                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} is greater than the Maximum={dataTypeAttrib.Maximum}. Property:{propertyInfo.Name}");
                             break;
                     }
 
@@ -298,5 +297,6 @@ namespace XFS4IoTServer
         private readonly ILogger Logger;
         private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
         private readonly ICommandDispatcher CommandDispatcher;
+        private readonly SemaphoreSlim SendSyncObject = new(1, 1);
     }
 }
