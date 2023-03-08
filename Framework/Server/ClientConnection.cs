@@ -22,6 +22,11 @@ namespace XFS4IoTServer
 {
     internal class ClientConnection : IConnection
     {
+
+        // Exactly one send and one receive is supported on each ClientWebSocket object in parallel.
+        private static readonly Mutex SendAsyncMutex = new();
+
+
         public ClientConnection(WebSocket socket, 
                                 IMessageDecoder CommandDecoder, 
                                 ICommandDispatcher CommandDispatcher,
@@ -139,10 +144,11 @@ namespace XFS4IoTServer
 
             try
             {
+                SendAsyncMutex.WaitOne();
                 string JSON = messageBase.Serialise();
                 Logger.LogSensitive(Constants.Component, $"Sending: {ProcessDataTypes(messsage)}");
-
                 await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JSON)), WebSocketMessageType.Text, true, CancellationToken.None);
+                SendAsyncMutex.ReleaseMutex();
             }
             catch( Exception e ) when ((e.InnerException is WebSocketException we) && ((uint)we.HResult == 0x80004005))
             {

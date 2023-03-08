@@ -953,15 +953,19 @@ namespace XFS4IoTFramework.Printer
                                                $"COLOR is not valid.",
                                                PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
             }
-            
+
             // Check FONT
-            if (rules.ValidFonts != "ALL")
+
+            if (field.Type == FieldTypeEnum.TEXT)
             {
-                if (!rules.ValidFonts.Contains(field.Font))
+                if (rules.ValidFonts != "ALL")
                 {
-                    return new PrintFormResult(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                               $"FONT is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    if (!rules.ValidFonts.Contains(field.Font, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new PrintFormResult(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                   $"FONT is not valid.",
+                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    }
                 }
             }
 
