@@ -216,33 +216,6 @@ namespace XFS4IoTServer
         private bool CurrentCommandCancelRequested = false;
         private readonly ILogger Logger;
 
-        private class DisposableLock : IDisposable
-        {
-            private readonly SemaphoreSlim Semaphore;
-
-            public DisposableLock(SemaphoreSlim semaphore)
-            {
-                Semaphore = semaphore;
-            }
-
-            public async Task Aquire(CancellationToken token)
-            {
-                await Semaphore.WaitAsync(token);
-            }
-
-            public void Dispose()
-            {
-                Semaphore.Release();
-            }
-
-            public static async Task<DisposableLock> Create(SemaphoreSlim semaphore, CancellationToken token)
-            {
-                DisposableLock disposableLock = new(semaphore);
-                await disposableLock.Aquire(token);
-                return disposableLock;
-            }
-        }
-
         private class AsyncAutoResetEvent
         {
             public async Task WaitAsync(CancellationToken token)
