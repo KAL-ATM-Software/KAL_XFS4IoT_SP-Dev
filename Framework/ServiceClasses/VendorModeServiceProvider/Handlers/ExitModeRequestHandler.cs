@@ -63,9 +63,11 @@ namespace XFS4IoTFramework.VendorMode
             return new ExitModeRequestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
         }
 
-        private async Task CommandPostProcessing(ExitModeRequestCompletion.PayloadData result)
+        public async Task CommandPostProcessing(object exitModeResult)
         {
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            ExitModeRequestCompletion.PayloadData result = exitModeResult as ExitModeRequestCompletion.PayloadData;
+
+            if (result.IsNotNull().CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
                 Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.ExitPending &&
                 VendorMode.PendingAcknowledge.Count == 0)
             {

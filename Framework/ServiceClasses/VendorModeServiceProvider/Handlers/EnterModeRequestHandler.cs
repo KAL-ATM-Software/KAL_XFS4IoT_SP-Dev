@@ -63,10 +63,11 @@ namespace XFS4IoTFramework.VendorMode
             // Broadcast EnterModeRequestEvent to registered clients
             return new EnterModeRequestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
         }
-
-        private async Task CommandPostProcessing(EnterModeRequestCompletion.PayloadData result)
+        public async Task CommandPostProcessing(object enterModeResult)
         {
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            EnterModeRequestCompletion.PayloadData result = enterModeResult as EnterModeRequestCompletion.PayloadData;
+
+            if (result.IsNotNull().CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
                 Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.EnterPending && 
                 VendorMode.PendingAcknowledge.Count == 0)
             {
