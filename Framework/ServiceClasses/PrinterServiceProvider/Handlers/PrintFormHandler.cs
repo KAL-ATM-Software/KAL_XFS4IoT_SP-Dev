@@ -16,8 +16,6 @@ using XFS4IoT.Printer.Completions;
 using XFS4IoT.Printer.Events;
 using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
-using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace XFS4IoTFramework.Printer
 {
@@ -38,9 +36,9 @@ namespace XFS4IoTFramework.Printer
             }
 
             // Check form device supported
-            Form form = forms[printForm.Payload.FormName];
+            Form form = forms[printForm.Payload.FormName]; 
             FormRules rules = Device.FormRules;
-            if (rules.RowColumnOnly &&
+            if (rules.RowColumnOnly && 
                 form.Base != Form.BaseEnum.ROWCOLUMN)
             {
                 return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
@@ -88,63 +86,6 @@ namespace XFS4IoTFramework.Printer
                                                                $"Requested media is invalid. {result.ErrorDescription} {printForm.Payload.MediaName}",
                                                                result.ErrorCode);
                 }
-            }
-
-            List<FieldAssignment> fieldAssignments = new();
-            foreach (var fieldPayload in printForm.Payload.Fields)
-            {
-                // Parse field <fieldName>[<index>]
-                (string fieldName, int fieldIndex) = ParseFieldName(fieldPayload.Key);
-                // Console.WriteLine($"Parse field input Name [{fieldName}][{fieldIndex}]");
-
-                // Check invalid fields
-                if (!form.Fields.ContainsKey(fieldName))
-                {
-                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Requested field is invalid. {fieldName} {printForm.Payload.FormName}",
-                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-
-                // Check the field is not read - only.
-                if (form.Fields[fieldName].Access == FieldAccessEnum.READ)
-                {
-                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Value supplied for printing in READ only field. {fieldName} {printForm.Payload.FormName}",
-                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-
-                // Check field is not static.
-                if (form.Fields[fieldName].Class == FormField.ClassEnum.STATIC)
-                {
-                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Value supplied for printing in STATIC field. {fieldName} {printForm.Payload.FormName}",
-                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-
-                // Check for index given on non-indexed field or vice versa.
-                if (form.Fields[fieldName].Repeat == 0 && fieldIndex != -1)
-                {
-                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Indexed value supplied for printing in non-indexed field. {fieldName} {printForm.Payload.FormName}",
-                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-                else if (form.Fields[fieldName].Repeat != 0)
-                {
-                    if (fieldIndex == -1)
-                    {
-                        return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"Non-indexed value supplied for printing in indexed field. {fieldName} {printForm.Payload.FormName}",
-                                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                    }
-
-                    if (fieldIndex >= form.Fields[fieldName].Repeat)
-                    {
-                        return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"Index value supplied larger than field INDEX repeat count. {fieldName} {printForm.Payload.FormName}",
-                                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                    }
-                }
-                fieldAssignments.Add(new(form.Fields[fieldName], fieldIndex, fieldPayload.Value));
             }
 
             PaperSourceEnum? paperSource = null;
@@ -243,31 +184,125 @@ namespace XFS4IoTFramework.Printer
             catch (Exception)
             { throw; }
 
+            // This step assign field and field check
+            List<FieldAssignment> fieldAssignments = new();
+            int elementNumber;
+            foreach (var fieldName in printForm.Payload.Fields)
+            {
+                elementNumber = -1;
+                string fname = fieldName.Key;
+
+                int separator = fieldName.Key.IndexOf('[');
+                if (separator != -1 &&
+                    fieldName.Key[separator] == '[')
+                {
+                    fname = fieldName.Key.Substring(0, separator);
+                    elementNumber = 0;
+                    int N = separator + 1;
+                    while (fieldName.Key[N] >= '0' && fieldName.Key[N] <= '9')
+                    {
+                        elementNumber = elementNumber * 10 + fieldName.Key[N] - '0';
+                        N++;
+                    }
+                    if (N - separator < 2 || fieldName.Key[N] != ']')
+                    {
+                        return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"Invalid field assignment: expected <name>[nnn]=<value>. {fieldName.Key} {printForm.Payload.FormName}",
+                                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldSpecFailure);
+                    }
+                }
+
+                if (!form.Fields.ContainsKey(fname))
+                {
+                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                               $"Requested field is invalid. {fieldName.Key} {printForm.Payload.FormName}",
+                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                }
+
+                // Check the field is not read - only.
+                if (form.Fields[fname].Access == FieldAccessEnum.READ)
+                {
+                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                               $"Value supplied for printing in READ only field. {fieldName.Key} {printForm.Payload.FormName}",
+                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                }
+
+                // Check field is not static.
+                if (form.Fields[fname].Class == FormField.ClassEnum.STATIC)
+                {
+                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                               $"Value supplied for printing in STATIC field. {fieldName.Key} {printForm.Payload.FormName}",
+                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                }
+
+                // Check for index given on non-indexed field or vice versa.
+                if (form.Fields[fname].Repeat == 0 && elementNumber != -1)
+                {
+                    return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                               $"Indexed value supplied for printing in non-indexed field. {fieldName.Key} {printForm.Payload.FormName}",
+                                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                }
+                else if (form.Fields[fname].Repeat != 0)
+                {
+                    if (elementNumber == -1)
+                    {
+                        return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"Non-indexed value supplied for printing in indexed field. {fieldName.Key} {printForm.Payload.FormName}",
+                                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    }
+
+                    if (elementNumber >= form.Fields[fname].Repeat)
+                    {
+                        return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"Index value supplied larger than field INDEX repeat count. {fieldName.Key} {printForm.Payload.FormName}",
+                                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    }
+                }
+
+                FormField thisField = form.Fields[fname];
+                // Check if this field was already assigned
+                foreach (var field in fieldAssignments)
+                {
+                    if (field.Field == thisField &&
+                        field.ElementIndex == elementNumber)
+                    {
+                        Logger.Warning(Constants.Framework, $"Field supplied duplicated values. Form:{printForm.Payload.FormName} field:{field.Field.Name}");
+                        continue;
+                    }
+                }
+
+                // Add a new field assignment
+                FieldAssignment fieldAssignment = new(thisField, elementNumber, fieldName.Value);
+                fieldAssignments.Add(fieldAssignment);
+            }
+
             // This step involves checking all
             // REQUIRED fields have assignments, creating assignments for
             // STATIC fields and filling in OPTIONAL field assignments.
             foreach (var field in form.Fields)
             {
                 // If STATIC field, just add a new assignment for the INITIALVALUE
-                // Console.WriteLine($"Add Assignment for Field [name[count],class] = [{field.Key}[{field.Value.Repeat}], {field.Value.Class}]");
                 if (field.Value.Class == FormField.ClassEnum.STATIC)
                 {
+                    FieldAssignment fieldAssignment = new(field.Value, field.Value.InitialValue);
+
                     if (field.Value.Repeat > 0)
                     {
-                        for (int i = 0; i < field.Value.Repeat; i++)
+                        int i = 0;
+                        for (; i < field.Value.Repeat; i++)
                         {
-                            //Console.WriteLine($"Add assingement for {i} - {field.Key}");
-                            fieldAssignments.Add(new(field.Value, i, field.Value.InitialValue));
+                            fieldAssignment.ElementIndex = i;
+                            fieldAssignments.Add(fieldAssignment);
                         }
                     }
                     else
                     {
-                        fieldAssignments.Add(new(field.Value, field.Value.InitialValue));
+                        fieldAssignments.Add(fieldAssignment);
                     }
                     continue;
                 }
 
-                // If REQUIRED, just check there is already an assignment for the field.              
+                // If REQUIRED, just check there is already an assignment for the field.
                 if (field.Value.Class == FormField.ClassEnum.REQUIRED)
                 {
                     // For index fields, all elements must be assigned: count how many there are in the list.
@@ -295,32 +330,23 @@ namespace XFS4IoTFramework.Printer
                 {
                     continue;
                 }
-                else
+
+                for (int elemIndex = (field.Value.Repeat > 0) ? 0 : -1; elemIndex < field.Value.Repeat; elemIndex++)
                 {
-                    //FieldAssignment assignment = new(field.Value, (field.Value.Repeat > 0) ? 0 : -1, field.Value.InitialValue);
-                    if (field.Value.Repeat > 0)
+                    FieldAssignment assignment = new(field.Value, elemIndex, field.Value.InitialValue);
+                    // If this assignment isn't already in there, add it.
+                    int i = 0;
+                    for (; i < fieldAssignments.Count; i++)
                     {
-                        for (int i = 0; i < field.Value.Repeat; i++)
+                        if (fieldAssignments[i].Field == assignment.Field &&
+                            fieldAssignments[i].ElementIndex == elemIndex)
                         {
-                            // If this assignment isn't already in there, add it.
-                            bool l_isNotReady = true;
-                            foreach (var fieldAssignment in fieldAssignments)
-                            {
-                                if (fieldAssignment.Field == field.Value && i == fieldAssignment.ElementIndex)
-                                {
-                                    l_isNotReady = false;
-                                    break;
-                                }
-                            }
-                            if (l_isNotReady)
-                            {
-                                fieldAssignments.Add(new(field.Value, i, field.Value.InitialValue));
-                            }
+                            break;
                         }
                     }
-                    else
+                    if (i == fieldAssignments.Count)
                     {
-                        fieldAssignments.Add(new(field.Value, field.Value.InitialValue));
+                        fieldAssignments.Add(assignment);
                     }
                 }
             }
@@ -526,8 +552,8 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// Execute control media after form prining completed successfully
         /// </summary>
-        private async Task<PrintFormCompletion.PayloadData> ExecuteControlMedia(IPrintFormEvents events,
-                                                                                PrintFormCommand.PayloadData payload,
+        private async Task<PrintFormCompletion.PayloadData> ExecuteControlMedia(IPrintFormEvents events, 
+                                                                                PrintFormCommand.PayloadData payload, 
                                                                                 CancellationToken cancel)
         {
             PrinterCapabilitiesClass.ControlEnum controls = PrinterCapabilitiesClass.ControlEnum.NotSupported;
@@ -827,27 +853,13 @@ namespace XFS4IoTFramework.Printer
             return new PrintFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
         }
 
-        private static (string, int) ParseFieldName(string filedName)
-        {
-            Match l_match = FieldNameMatchRegex.Match(filedName);
-            if (l_match.Success)
-            {
-                return (l_match.Groups[1].Value, int.Parse(l_match.Groups[2].Value));
-
-            }
-            else
-            {
-                return (filedName, -1);
-            }
-        }
-
         /// <summary>
         /// Check the passed Form/Field is valid for this device.
         /// </summary>
         private PrintFormResult CheckFieldValid(FormField field, Form form)
         {
             FormRules rules = Device.FormRules;
-
+           
             // Check the field is entirely inside the form
             // Do this using printer units not dots: otherwise rounding may cause
             // us to reject valid forms.
@@ -1009,7 +1021,7 @@ namespace XFS4IoTFramework.Printer
                 Logger.Warning(Constants.Framework, $"INITIALVALUE for REQUIRED field ignored. {field.Name}");
             }
 
-            if (field.Class == FormField.ClassEnum.STATIC &&
+            if (field.Class == FormField.ClassEnum.STATIC && 
                 string.IsNullOrEmpty(field.InitialValue))
             {
                 Logger.Warning(Constants.Framework, $"INITIALVALUE for STATIC field. {field.Name}");
@@ -1641,7 +1653,7 @@ namespace XFS4IoTFramework.Printer
                         {
                             unjustifiedTasks.Add(new TextTask(task));
                         }
-                        TextTask T = new(tasks[^1]);
+                        TextTask T = new (tasks[^1]);
                         tasks.Clear();
                         tasks.Add(T);
 
@@ -1726,7 +1738,7 @@ namespace XFS4IoTFramework.Printer
             // in one task.
             if (NWords < 2)
             {
-                TextTask NewTask = new(task);
+                TextTask NewTask = new (task);
                 NewTask.Text = AllText;
                 tasks.Add(NewTask);
                 return new PrintFormResult(MessagePayload.CompletionCodeEnum.Success);
@@ -1796,12 +1808,12 @@ namespace XFS4IoTFramework.Printer
         /// <param name="overflow">Output, whether an overflow occurred</param>
         /// <param name="requiredLines">Output for required lines</param>
         /// <param name="tasks">Tasks to be processed</param>
-        private PrintFormResult BreakTextIntoLines(bool chop,
+        private PrintFormResult BreakTextIntoLines(bool chop, 
                                                    FieldAssignment fieldAssignment,
                                                    Form form,
-                                                   int maxLines,
-                                                   out bool overflow,
-                                                   out int requiredLines,
+                                                   int maxLines, 
+                                                   out bool overflow, 
+                                                   out int requiredLines, 
                                                    List<TextTask> tasks)
         {
             // Initialise no overflow
@@ -1910,7 +1922,7 @@ namespace XFS4IoTFramework.Printer
 
                 if (!chop)
                 {
-                    while (Index < Text.Length && (Text[Index] is ' ' or '\t'))
+                    while (Index < Text.Length && (Text[Index] is ' ' or '\t')) 
                         Index++;
                     // Note: TrimLeft removes newlines which we don't want to do
                 }
@@ -1927,7 +1939,7 @@ namespace XFS4IoTFramework.Printer
 
                 if (!chop)
                 {
-                    while (Index < Text.Length && (Text[Index] is ' ' or '\t'))
+                    while (Index < Text.Length && (Text[Index] is ' ' or '\t')) 
                         Index++;
                     // Note: TrimLeft removes newlines which we don't want to do
                 }
@@ -2140,7 +2152,7 @@ namespace XFS4IoTFramework.Printer
                             fieldAssignment.Field.Font,
                             fieldAssignment.Width,
                             fieldAssignment.Height);
-
+           
             // Add the task to the task manager.
             Printer.PrintJob.Tasks.Add(task);
 
@@ -2152,7 +2164,7 @@ namespace XFS4IoTFramework.Printer
         /// </summary>
         private PrintFormResult ConvertGraphicFieldAssignment(FieldAssignment fieldAssignment)
         {
-            GraphicTask task = new(fieldAssignment.X,
+            GraphicTask task = new (fieldAssignment.X,
                                     fieldAssignment.Y,
                                     fieldAssignment.Width,
                                     fieldAssignment.Height,
@@ -2253,9 +2265,5 @@ namespace XFS4IoTFramework.Printer
         /// Event interface to be used for an internal functions
         /// </summary>
         private IPrintFormEvents PrintFormEvents { get; set; }
-        /// <summary>
-        /// Regular Expressions to parse fieldName[index] to (fileName, index)
-        /// </summary>
-        private static readonly Regex FieldNameMatchRegex = new(@"((?:\w|-)+)\[(\d+)\]$");
     }
 }
