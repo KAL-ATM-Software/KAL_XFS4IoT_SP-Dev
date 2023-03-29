@@ -157,6 +157,7 @@ namespace XFS4IoTServer
                     }
                     else
                         Medias.Add(media.Name, media);
+                    PersistentData.Store<Dictionary<string, Media>>(typeof(Media).FullName, Medias);
                 }
                 else if (formReader.CurrentTokenType is XFSFormReader.TokenType.XFSFORM)
                 {
@@ -176,6 +177,7 @@ namespace XFS4IoTServer
                     }
                     else
                         Forms.Add(form.Name, form);
+                    PersistentData.Store<Dictionary<string, Form>>(typeof(Form).FullName, Forms);
                 }
             }
             catch (XFSFormReader.FormParseException parseException)
