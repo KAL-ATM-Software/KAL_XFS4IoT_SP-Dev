@@ -106,6 +106,7 @@ namespace XFS4IoTServer
                 await cmd.CommandHandler.HandleError(cmd.Command, new TimeoutCanceledException(true));
                 cmd.cts.Dispose();
                 Contents.Remove(cmd);
+                NewItemEvent.RemovedItem();
             }
         }
 
@@ -138,6 +139,7 @@ namespace XFS4IoTServer
                         await foundID.CommandHandler.HandleError(foundID.Command, new TimeoutCanceledException(true));
                         foundID.cts.Dispose();
                         Contents.Remove(foundID);
+                        NewItemEvent.RemovedItem();
                     }
                 }
             }
@@ -251,8 +253,15 @@ namespace XFS4IoTServer
                         Signaled++;
                     }
                 }
-                if (sourceToSignal != null)
-                    sourceToSignal.SetResult(true);
+			}
+
+            public void RemovedItem()
+            {
+                lock(WaitingTaskCompletionSources)
+                {
+                    if (Signaled > 0)
+                        Signaled--;
+                }
             }
 
             private readonly static Task CompletedTask = Task.FromResult(true);
