@@ -226,9 +226,9 @@ namespace XFS4IoTServer
                 lock (WaitingTaskCompletionSources)
                 {
                     token.ThrowIfCancellationRequested();
-                    if (Signaled)
+                    if (Signaled > 0)
                     {
-                        Signaled = false;
+                        Signaled--;
                         return;
                     }
                     else
@@ -243,10 +243,13 @@ namespace XFS4IoTServer
                 TaskCompletionSource<bool> sourceToSignal = null;
                 lock (WaitingTaskCompletionSources)
                 {
+
                     if (WaitingTaskCompletionSources.Count > 0)
                         sourceToSignal = WaitingTaskCompletionSources.Dequeue();
-                    else if (!Signaled)
-                        Signaled = true;
+                    else
+                    {
+                        Signaled++;
+                    }
                 }
                 if (sourceToSignal != null)
                     sourceToSignal.SetResult(true);
@@ -254,7 +257,7 @@ namespace XFS4IoTServer
 
             private readonly static Task CompletedTask = Task.FromResult(true);
             private readonly Queue<TaskCompletionSource<bool>> WaitingTaskCompletionSources = new Queue<TaskCompletionSource<bool>>();
-            private bool Signaled;
+            private int Signaled;
         }
     }
 }
