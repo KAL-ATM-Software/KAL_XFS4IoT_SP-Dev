@@ -261,19 +261,25 @@ namespace XFS4IoTFramework.Printer
 
                 FormField thisField = form.Fields[fname];
                 // Check if this field was already assigned
+                bool duplicatedValue = false;
                 foreach (var field in fieldAssignments)
                 {
                     if (field.Field == thisField &&
                         field.ElementIndex == elementNumber)
                     {
+                        // Passed in field value is a key-value pair and should not reach here
                         Logger.Warning(Constants.Framework, $"Field supplied duplicated values. Form:{printForm.Payload.FormName} field:{field.Field.Name}");
-                        continue;
+                        duplicatedValue = true;
+                        break;
                     }
                 }
 
-                // Add a new field assignment
-                FieldAssignment fieldAssignment = new(thisField, elementNumber, fieldName.Value);
-                fieldAssignments.Add(fieldAssignment);
+                if (!duplicatedValue)
+                {
+                    // Add a new field assignment
+                    FieldAssignment fieldAssignment = new(thisField, elementNumber, fieldName.Value);
+                    fieldAssignments.Add(fieldAssignment);
+                }
             }
 
             // This step involves checking all
@@ -284,20 +290,16 @@ namespace XFS4IoTFramework.Printer
                 // If STATIC field, just add a new assignment for the INITIALVALUE
                 if (field.Value.Class == FormField.ClassEnum.STATIC)
                 {
-                    FieldAssignment fieldAssignment = new(field.Value, field.Value.InitialValue);
-
                     if (field.Value.Repeat > 0)
                     {
-                        int i = 0;
-                        for (; i < field.Value.Repeat; i++)
+                        for (int i = 0; i < field.Value.Repeat; i++)
                         {
-                            fieldAssignment.ElementIndex = i;
-                            fieldAssignments.Add(fieldAssignment);
+                            fieldAssignments.Add(new(field.Value, i, field.Value.InitialValue));
                         }
                     }
                     else
                     {
-                        fieldAssignments.Add(fieldAssignment);
+                        fieldAssignments.Add(new(field.Value, field.Value.InitialValue));
                     }
                     continue;
                 }
