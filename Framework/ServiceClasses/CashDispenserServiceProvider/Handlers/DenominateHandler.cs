@@ -147,10 +147,10 @@ namespace XFS4IoTFramework.CashDispenser
                 }
 
                 Denomination mixDenom = CashDispenser.GetMix(denominate.Payload.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
-                if (mixDenom.Values != denomToDispense.Values)
+                if (!mixDenom.Values.OrderBy((denom) => denom.Key).SequenceEqual(denomToDispense.Values.OrderBy((denom) => denom.Key)))
                 {
                     return Task.FromResult(new DenominateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm.",
+                                                                                $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm. internal mix result " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)),
                                                                                 DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
                 }
             }

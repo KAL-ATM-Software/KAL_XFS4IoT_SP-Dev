@@ -728,8 +728,8 @@ namespace XFS4IoTServer
                     }
 
                     CashUnits[unitCount.Key].Unit.Status.Count = unitCount.Value.Count;
-                    CashUnits[unitCount.Key].Unit.Status.StorageCashOutCount = unitCount.Value.StorageCashOutCount;
-                    CashUnits[unitCount.Key].Unit.Status.StorageCashInCount = unitCount.Value.StorageCashInCount;
+                    CashUnits[unitCount.Key].Unit.Status.StorageCashOutCount = unitCount.Value.StorageCashOutCount is null ? new() : new(unitCount.Value.StorageCashOutCount);
+                    CashUnits[unitCount.Key].Unit.Status.StorageCashInCount = unitCount.Value.StorageCashInCount is null ? new() : new(unitCount.Value.StorageCashInCount);
                 }
             }
 
@@ -1074,6 +1074,12 @@ namespace XFS4IoTServer
         {
             if (storageDeltaCount is null)
                 return;
+
+            if (storageCashCount is null)
+            {
+                Logger.Warning(Constants.Framework, $"The target cash-in unit object is not set for Storage ID:{storageId}. The storage count won't be updated as expected.");
+                return;
+            }
 
             // update counts
             if (storageDeltaCount.Unrecognized >= 0 ||
