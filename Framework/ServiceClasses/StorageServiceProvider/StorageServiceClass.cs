@@ -160,11 +160,11 @@ namespace XFS4IoTServer
             }
 
             // Update hardware card unit status
-            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCardUnitStatus()");
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCardStorageStatus()");
 
             updateStatus = Device.GetCardUnitStatus(out Dictionary<string, CardStatusClass.ReplenishmentStatusEnum> unitStatus);
 
-            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCardUnitStatus()-> {updateStatus}");
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetCardStorageStatus()-> {updateStatus}");
 
             if (updateStatus &&
                 unitStatus is not null)

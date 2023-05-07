@@ -27,9 +27,6 @@ namespace XFS4IoTFramework.Storage
             Manipulated,
         }
 
-        [JsonConstructor]
-        public CardUnitStorage() { }
-
         public CardUnitStorage(CardUnitStorageConfiguration StorageConfiguration)
         {
             this.PositionName = StorageConfiguration.PositionName;

@@ -114,7 +114,6 @@ namespace XFS4IoTServer
                             break;
                     }
                 }
-                PersistentData.Store<Dictionary<string, Media>>(typeof(Media).FullName, Medias);
             }
             catch (XFSFormReader.FormParseException parseException)
             {
