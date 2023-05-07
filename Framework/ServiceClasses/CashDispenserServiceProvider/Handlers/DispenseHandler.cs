@@ -183,10 +183,10 @@ namespace XFS4IoTFramework.CashDispenser
                 }
 
                 Denomination mixDenom = CashDispenser.GetMix(dispense.Payload.Denomination.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
-                if (mixDenom.Values != denomToDispense.Values)
+                if (!mixDenom.Values.OrderBy((denom) => denom.Key).SequenceEqual(denomToDispense.Values.OrderBy((denom) => denom.Key)))
                 {
                     return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                              $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm.",
+                                                              $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm. internal mix result " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)),
                                                               DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
                 }
             }
@@ -236,7 +236,7 @@ namespace XFS4IoTFramework.CashDispenser
                 CashDispenser.LastCashDispenserPresentStatus[position].Status = (CashDispenserPresentStatus.PresentStatusEnum)presentStatus.Status;
 
                 if (presentStatus.LastDenomination is not null)
-                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = new(presentStatus.LastDenomination.CurrencyAmounts, presentStatus.LastDenomination.Values);
 
                 CashDispenser.LastCashDispenserPresentStatus[position].Token = presentStatus.Token;
             }

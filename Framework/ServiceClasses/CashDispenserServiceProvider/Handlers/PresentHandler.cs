@@ -91,7 +91,7 @@ namespace XFS4IoTFramework.CashDispenser
                 CashDispenser.LastCashDispenserPresentStatus[position].Status = (CashDispenserPresentStatus.PresentStatusEnum)presentStatus.Status;
 
                 if (presentStatus.LastDenomination is not null)
-                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = presentStatus.LastDenomination;
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = new(presentStatus.LastDenomination.CurrencyAmounts, presentStatus.LastDenomination.Values);
 
                 CashDispenser.LastCashDispenserPresentStatus[position].Token = presentStatus.Token;
             }
