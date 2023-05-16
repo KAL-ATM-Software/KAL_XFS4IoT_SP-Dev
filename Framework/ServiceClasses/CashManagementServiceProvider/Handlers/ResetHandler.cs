@@ -80,13 +80,37 @@ namespace XFS4IoTFramework.CashManagement
                                                                        $"Specified unsupported retract area. {retractArea}",
                                                                        ResetCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition);
                             }
-                        }
 
-                        if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract &&
-                            retract.Index is null)
-                        {
-                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Index property is set to null where the retract area is specified to retract position.");
+                            if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
+                            {
+                                index = 0;
+                                if (retract.Index is null)
+                                {
+                                    Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
+                                }
+                                else
+                                {
+                                    index = (int)retract.Index;
+                                }
+
+                                if (index < 0)
+                                {
+                                    Logger.Warning(Constants.Framework, $"Index property is set negative value {index}. default to zero.");
+                                    index = 0;
+                                }
+
+                                // Check the index is valid
+                                int totalRetractUnits = (from unit in Storage.CashUnits
+                                                         where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract) ||
+                                                               unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract)
+                                                         select unit).Count();
+                                if ((int)index > totalRetractUnits)
+                                {
+                                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                           $"Unexpected index property value is set where the retract area is specified to retract position. " +
+                                                                           $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
+                                }
+                            }
                         }
 
                         itemPosition = new ItemPosition(new Retract(retractArea, index));
