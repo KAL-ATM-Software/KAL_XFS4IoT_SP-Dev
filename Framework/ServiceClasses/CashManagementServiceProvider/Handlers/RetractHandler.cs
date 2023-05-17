@@ -57,13 +57,21 @@ namespace XFS4IoTFramework.CashManagement
 
                 if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
                 {
+                    int index = 0;
                     if (retract.Payload.Index is null)
                     {
-                        return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"Index property is set to null where the retract area is specified to retract position.");
+                        Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
+                    }
+                    else
+                    {
+                        index = (int)retract.Payload.Index;
                     }
 
-                    int index = (int)retract.Payload.Index;
+                    if (index < 0)
+                    {
+                        Logger.Warning(Constants.Framework, $"Index property is set negative value {index}. default to zero.");
+                        index = 0; 
+                    }
 
                     // Check the index is valid
                     int totalRetractUnits = (from unit in Storage.CashUnits
