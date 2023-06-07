@@ -913,19 +913,19 @@ namespace XFS4IoTFramework.Printer
                                                PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
                 }
 
-                if (string.IsNullOrEmpty(field.Format))
+                if (!string.IsNullOrEmpty(field.Format))
                 {
-                    return new PrintFormResult(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                               $"FORMAT is not set for graphic field.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    if (field.Format != "JPG" &&
+                        field.Format != "BMP")
+                    {
+                        return new PrintFormResult(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                   $"FORMAT is not valid for graphic field. {field.Format}",
+                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    }
                 }
-
-                if (field.Format == "JPG" &&
-                    field.Format == "BMP")
+                else
                 {
-                    return new PrintFormResult(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                               $"FORMAT is not valid for graphic field. {field.Format}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                    Logger.Log(Constants.Framework, $"No FORMAT field defined, the device class could sniff image format and decide how to deal with it.");
                 }
             }
 
