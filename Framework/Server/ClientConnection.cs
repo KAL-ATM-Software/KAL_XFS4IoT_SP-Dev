@@ -105,7 +105,7 @@ namespace XFS4IoTServer
             MessageBase commandBase = command as MessageBase;
             try
             {
-                Logger.LogSensitive(Constants.Component, $"Received:{ProcessDataTypes(command)}");
+                Logger.LogSensitive(Constants.Component, $"Received:{commandBase}");
             }
             catch (XFS4IoT.InvalidDataException ex)
             {
@@ -141,7 +141,7 @@ namespace XFS4IoTServer
             try
             {
                 string JSON = messageBase.Serialise();
-                Logger.LogSensitive(Constants.Component, $"Sending: {ProcessDataTypes(messsage)}");
+                Logger.LogSensitive(Constants.Component, $"Sending: {messageBase}");
 
                 // Ensure only a single message can be sent at a time.
                 {
@@ -170,129 +170,7 @@ namespace XFS4IoTServer
                 Contracts.Fail($"Exception caught while in serialising JSON on sending message. {ex}");
             }
         }
-
-        /// <summary>
-        /// Process properties in the given message object to check the custom attribute 'DataTypes' are set. The 'DataTypes' customer attributes are converted from the YAML.
-        /// </summary>
-        /// <remarks>
-        /// The keyword Pattern, MaxLength, MinLength are applies to the type string object.
-        /// The pattern keyword lets you define a regular expression template for the string value. Only the values that match this template will be accepted.
-        /// String length can be restricted using MinLength and MaxLength.
-        /// The keyword Maximum, Minimum are applied to the type int and specify the range of possible values.
-        /// </remarks>
-        /// <param name="message">Object to be processed</param>
-        /// <returns>Process YAML value</returns>
-        private string ProcessDataTypes(object message)
-        {
-            Contracts.IsTrue(message.GetType().IsSubclassOf(typeof(MessageBase)), $"Unexpected type of message in the {nameof(ProcessDataTypes)}. {message.GetType()}");
-            return DataTypesValidation(message.GetType(), message, ((MessageBase)message).Serialise());
-        }
-
-        /// <summary>
-        /// Data validation to ensure data follow rules specified in the custom attrbute "DataTypes" of the message properties.
-        /// </summary>
-        /// <param name="type">Data type of the message object</param>
-        /// <param name="message">Message object to access variables</param>
-        /// <param name="JSON">Process received JSON message to handle customer sensitive data</param>
-        /// <returns>Processed YAML</returns>
-        private string DataTypesValidation(Type type, object message, string JSON)
-        {
-            if (message is null)
-                return JSON;
-
-            string processedJson = JSON;
-            foreach (PropertyInfo propertyInfo in type.GetProperties())
-            {
-                // Process each value in this object
-                object value = !type.IsPrimitive && type != typeof(string)
-                                ? propertyInfo.GetValue(message)
-                                : message;
-
-                if (value is null)
-                    continue;
-
-                if (propertyInfo.PropertyType.IsArray)
-                {
-                    foreach (var c in (Array)value)
-                        processedJson = DataTypesValidation(c.GetType(), c, processedJson);
-                    continue;
-                }
-                else if (propertyInfo.PropertyType.IsGenericType || value is ArrayList)
-                {
-                    if (propertyInfo.PropertyType.GetGenericArguments().Length > 1)
-                        continue; // Dictionary is not supported yet
-
-                    if (value is IEnumerable enumerable)
-                    {
-                        foreach (var c in enumerable)
-                            processedJson = DataTypesValidation(c.GetType(), c, processedJson);
-                    }
-                    continue;
-                }
-                else if (propertyInfo.PropertyType.IsClass && propertyInfo.PropertyType is Object)
-                {
-                    processedJson = DataTypesValidation(propertyInfo.PropertyType, value, processedJson);
-                    continue;
-                }
-
-                // Process each DataTypeAttribute attached to this value, which tells us how 
-                // to handle this value. 
-                foreach (DataTypesAttribute dataTypeAttrib in from a in propertyInfo.GetCustomAttributes()
-                                                              where a is DataTypesAttribute
-                                                              select a as DataTypesAttribute )
-                {
-                    // Check value matches the rules set by the DataTypeAttribute
-                    switch (value)
-                    {
-                        case string stringValue:
-                            if (!string.IsNullOrEmpty(dataTypeAttrib.Pattern) && !Regex.IsMatch(stringValue, dataTypeAttrib.Pattern))
-                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} doesn't match with the specified regilar expression. {dataTypeAttrib.Pattern}. Property:{propertyInfo.Name}");
-
-                            if (dataTypeAttrib.MaxLength is not null && stringValue.Length > dataTypeAttrib.MaxLength)
-                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} has longer length than the Maximum={dataTypeAttrib.MaxLength}. Property:{propertyInfo.Name}");
-
-                            if (dataTypeAttrib.MinLength is not null && stringValue.Length < dataTypeAttrib.MinLength)
-                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} has shorter length than the MinLength={dataTypeAttrib.MinLength}. Property:{propertyInfo.Name}");
-                            break;
-                        case int intValue:
-                            if (dataTypeAttrib.Minimum > -1 && intValue < dataTypeAttrib.Minimum)
-                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} is smaller than the Minimum={dataTypeAttrib.Minimum}. Property:{propertyInfo.Name}");
-
-                            if (dataTypeAttrib.Maximum > -1 && intValue > dataTypeAttrib.Maximum)
-                                throw new XFS4IoT.InvalidDataException($"{nameof(type)} is greater than the Maximum={dataTypeAttrib.Maximum}. Property:{propertyInfo.Name}");
-                            break;
-                    }
-
-                    // If the this is tagged as sensitive, mask out the sensitive parts. 
-                    if (!dataTypeAttrib.Sensitive)
-                        continue;
-
-                    string camelCaseName = propertyInfo.Name.Length > 1 
-                                            ? $"{char.ToLowerInvariant(propertyInfo.Name[0])}{propertyInfo.Name[1..]}" 
-                                            : propertyInfo.Name.ToLower();
-
-                    // Replacing all sensitive data matching with key name
-                    (string pattern, string replace) = value switch
-                    {
-                        string      => ($"\"{camelCaseName}\":\"(.+?)\"", $"\"{camelCaseName}\"<:\"$1\">"),
-                        Int16  or Int32  or Int64  or
-                        UInt16 or UInt32 or UInt64 or
-                        Char or Byte or Decimal     
-                                    => ($"\"{camelCaseName}\":([0-9]+)", $"\"{camelCaseName}\"<:$1>"),
-
-                        _ =>(null, null)
-                    };
-
-                    if (pattern == null || replace == null )
-                        Logger.Log(Constants.Component, $"Logging sensitive data is not supporting data type {Type.GetTypeCode(value.GetType())}");
-                    else                    
-                        processedJson = Regex.Replace(processedJson, pattern, replace, RegexOptions.Multiline);
-                }
-            }
-
-            return processedJson;
-        }
-
+        
         private readonly WebSocket socket;
         private readonly ILogger Logger;
         private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
