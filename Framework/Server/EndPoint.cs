@@ -38,12 +38,12 @@ namespace XFS4IoTServer
             HttpListener = new HttpListener()
             {
                 IgnoreWriteExceptions = false,
-                Prefixes = { EndPointUri.ToString() },
+                Prefixes = { EndPointUri.OriginalString },
             };
 
             HttpListener.Start();
 
-            Logger.Log(Constants.Component, $"New endpoint at {EndPointUri.ToString()}");
+            Logger.Log(Constants.Component, $"New endpoint at {EndPointUri.OriginalString}");
         }
 
         private readonly HttpListener HttpListener;

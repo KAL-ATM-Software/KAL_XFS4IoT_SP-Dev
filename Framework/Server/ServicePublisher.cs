@@ -42,7 +42,47 @@ namespace XFS4IoTServer
                 Logger.Log(Constants.Framework, $"No configuration object is set and use default value. {Configurations.ServerAddressUri}");
             }
 
-            foreach (int port in XFSConstants.PortRanges)
+            // Service URI is configuration parameter
+            string serverAddressUri = serviceConfiguration?.Get(Configurations.ServerAddressUri);
+            if (string.IsNullOrEmpty(serverAddressUri))
+            {
+                Logger.Log(Constants.Framework, $"No configuration value '{serverAddressUri}' exists and use default value. {Configurations.ServerAddressUri}");
+                serverAddressUri = Configurations.Default.ServerAddressUri;
+            }
+            else
+            {
+                bool result = Regex.IsMatch(serverAddressUri, "^https?://[-_.!~*'()a-z0-9%]+$", RegexOptions.IgnoreCase);
+                result.IsTrue($"Invalid service URI is configured. URI must be with out port number. i.e. http(s)://Terminal321.ATMNetwork.corporatenet and no ");
+            }
+
+            List<int> portRanges = XFSConstants.PortRanges.ToList();
+            string specificPort = serviceConfiguration?.Get(Configurations.ServerPort);
+            if (!string.IsNullOrEmpty(specificPort))
+            {
+                if (int.TryParse(specificPort, out int port))
+                {
+                    if (portRanges.Contains(port))
+                    {
+                        portRanges.Remove(port);
+                        portRanges.Insert(0, port);
+                    }
+                    else
+                    {
+                        Logger.Warning(Constants.Framework, $"Invalid configuration for '{Configurations.ServerPort}'. Valid port number is 80, 443 or 5846-5856");
+                    }
+                }
+            }
+
+            if (serverAddressUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                // Remove port 80 for secure channel.
+                if (portRanges.Contains(80))
+                {
+                    portRanges.Remove(80);
+                }
+            }
+
+            foreach (int port in portRanges)
             {
                 try
                 {
@@ -51,19 +91,6 @@ namespace XFS4IoTServer
                     // wss://192.168.21.43:5848/xfs4iot/v1.0/CardReader1 
                     // We're going to open a HTTP connection first, then upgrade to WSS, hence http://
 
-                    // Service URI is configuration parameter
-                    string serverAddressUri = serviceConfiguration?.Get(Configurations.ServerAddressUri);
-                    if (string.IsNullOrEmpty(serverAddressUri))
-                    {
-                        Logger.Log(Constants.Framework, $"No configuration value '{serverAddressUri}' exists and use default value. {Configurations.ServerAddressUri}");
-                        serverAddressUri = Configurations.Default.ServerAddressUri;
-                    }
-                    else
-                    {
-                        bool result = Regex.IsMatch(serverAddressUri, "^https?://[-_.!~*'()a-z0-9%]+$", RegexOptions.IgnoreCase);
-                        result.IsTrue($"Invalid service URI is configured. URI must be with out port number. i.e. http(s)://Terminal321.ATMNetwork.corporatenet and no ");
-                    }
-
                     Uri = new Uri($"{serverAddressUri}:{port}/xfs4iot/v1.0/");
 
                     string serverAddressWUri = Regex.Replace(serverAddressUri, "^http", "ws", RegexOptions.IgnoreCase);
@@ -71,7 +98,7 @@ namespace XFS4IoTServer
            
                     EndpointDetails = new EndpointDetails(serverAddressUri, serverAddressWUri, port);
 
-                    Logger.Log(Constants.Component, $"Attempting to bind to {Uri}");
+                    Logger.Log(Constants.Component, $"Attempting to bind to {Uri.OriginalString}");
 
                     EndPoint = new EndPoint(Uri,
                                             CommandDecoder: CommandDecoder,

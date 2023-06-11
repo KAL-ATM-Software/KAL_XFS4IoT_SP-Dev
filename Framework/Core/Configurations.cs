@@ -27,6 +27,12 @@ namespace XFS4IoT
         public static readonly string ServerAddressUri = "ServerAddressUri";
 
         /// <summary>
+        /// Specific port to listen, must be within defined port in the XFS4IoT specification. 80, 443, 5846-5856.
+        /// if this value is not configured or configured outside of range, first available port will be used.
+        /// </summary>
+        public static readonly string ServerPort = "ServerPort";
+
+        /// <summary>
         /// Set of default values
         /// </summary>
         public static class Default
