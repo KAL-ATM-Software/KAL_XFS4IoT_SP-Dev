@@ -22,26 +22,8 @@ void* Pull1 = NewNonce;
 // match this then it will be rejected as invalid.
 // This will be cleared when the nonce is cleared such that a new token will be accepted 
 // after that. 
-bool CurrentTokenSet = false; 
-char CurrentTokenHMAC[32];
-
-char const NonceStr[] = "NONCE";
-char const HMACSHA256Str[] = "HMACSHA256";
-// length of the HMAC SHA256 string - 256 bit
-#define HMACSHA256Len (64U)
-char const TokenFormatStr[] = "TOKENFORMAT";
-char const TokenLengthStr[] = "TOKENLENGTH";
-
-// Absolute minimum token length, including required keys, including null. 
-// NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2
-unsigned int const MinTokenLength = sizeof(NonceStr) - 1 + 2 + 1 +          // NONCE=1,
-                                    sizeof(TokenFormatStr) - 1 + 2 + 1 +    // TOKENFORMAT=1,
-                                    sizeof(TokenLengthStr) - 1 + 2 + 4 +    // TOKENLENGTH=0164,
-                                    sizeof(HMACSHA256Str) - 1 + 1 + HMACSHA256Len + //HMACSHA256=1234567890123456789012345678901234567890123456789012345678901234
-                                    1;                                    // null terminated
-
-// Max permitted token length, as defined in XFS Spec. (In bytes, plus null)
-unsigned int const MaxTokenLength = 1024 + 1;
+extern bool CurrentTokenSet = false; 
+extern char CurrentTokenHMAC[32] = "";
 
 
 
@@ -180,7 +162,7 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
         return false;
     }
     // HMAC must be 64 characters
-    size_t HMACLen = TokenStringLength - (HMACStrOffset - Token) - (sizeof(HMACSHA256Str) + 1);
+    size_t HMACLen = TokenStringLength - (HMACStrOffset - Token) - (HMACSHA256StrLen + 1);
     if ( HMACLen != 64 )
     {
         LogV("ValidateToken: HMACSHA256 value is too short. %d bytes, should be 64 => false", (HMACLen-/*HMACSHA256=*/11 -1));
@@ -188,7 +170,7 @@ bool ValidateToken(char const* const Token, size_t TokenSize)
     }
     // Convert token HMAC to binary
     static char TokenHMAC[32] ="";
-    char const* bytePtr = HMACStrOffset + sizeof(HMACSHA256Str);
+    char const* bytePtr = HMACStrOffset + HMACSHA256StrLen;
     for (unsigned int i = 0; i < 32; i++)
     {
         char highNibble = *bytePtr++;

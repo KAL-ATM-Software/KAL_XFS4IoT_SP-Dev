@@ -8,7 +8,7 @@
 #include "framework.h"
 #include "tokens.h"
 #include "endtoendsecurity.h"
-#include <climits>
+#include "extensionpoints.h"
 
 extern C_LINKAGE bool ValidateToken(char const* const Token, size_t TokenLength);
 extern C_LINKAGE bool ParseDispenseToken(char const* const Token, size_t TokenSize);
@@ -30,6 +30,7 @@ static struct DispenseKeyValues_t RemainingValue = { 0, 0, "   " };
 bool ExtractValue(char const* const Start, char const* const End, unsigned long* valueOut);
 
 extern bool CurrentTokenSet;
+extern char CurrentTokenHMAC[32];
 
 /// <summary>
 /// Extract required details from a dispense Token. 
@@ -247,6 +248,15 @@ bool ConfirmDispense(unsigned int Value, unsigned int Fraction, char const Curre
     // Reduce the current token by the requested amount
     RemainingValue.Value -= Value; 
     RemainingValue.Fraction -= Fraction; 
+
+    // Remember the HMAC of the current dispense token so that it can be used in PresentStatus tokens
+    if (!SetLastDispenseID(CurrentTokenHMAC))
+    {
+        LogV("ConfirmDispense: Error - Failed to store the last dispense ID. This will make it impossible to create a LastPresentStatus "
+                             " token. The current dispense token will now be cleared.");
+        InvalidateToken();
+        CleanDispenceValues();
+    }
 
     // If we've dispensed all of the value for this token then we can invalidate the token 
     // and allow a new token to be created and used. 

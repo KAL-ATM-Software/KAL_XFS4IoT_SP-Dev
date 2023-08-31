@@ -40,6 +40,12 @@
     <ClCompile Include="DispenseToken.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PresentStatusToken.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tokens.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />
@@ -49,5 +55,6 @@
     <None Include="package\KAL.XFS4IoT.SP-Dev.Framework.Native.EndToEnd.props">
       <Filter>nuget</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

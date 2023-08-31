@@ -17,19 +17,19 @@ extern C_LINKAGE bool ParseDispenseToken(char const* const Token, size_t TokenSi
 extern C_LINKAGE bool AuthoriseDispense(unsigned int UnitValue, unsigned int SubUnitValue, char const Currency[3]);
 
 
-
+// The following extern "C" functions are the implementation of the firmware specific parts required 
+// for end to end security. Here we have stub functions for use with the unit tests. 
 extern "C" void Log(char const* const Message)
 {
     Logger::WriteMessage( Message );
 };
 
 static std::string CurrentNonce = "";
-static std::string ExpectedHMAC = ""; 
+static std::string ExpectedHMAC = "";
 static std::string LastToken = ""; 
 
 extern "C" void FatalError(char const* const Message)
 {
-    using namespace Microsoft::VisualStudio::CppUnitTestFramework;
     Assert::Fail(ToString(Message).c_str());
 }
 
@@ -51,7 +51,43 @@ extern "C" bool CompareNonce(char const* const CommandNonce, unsigned long Nonce
     return nonce == CurrentNonce;
 }
 
-extern "C" bool CheckHMAC(char const* const Token, unsigned int TokenLength, unsigned char const* const TokenHMAC)
+static bool NewHMACResult = false;
+static std::string NewHMACString = "";
+unsigned char ConvertHex(char high, char low);
+extern "C" bool NewHMAC(char const* const Token, size_t TokenLength, unsigned char* const TokenHMAC)
+{
+    Assert::IsNotNull(Token);
+    Assert::IsNotNull(TokenHMAC);
+
+    if (!NewHMACResult) return false;
+
+    static char TokenHMACString[65] = "";
+    for (unsigned int i = 0; i < 32; i++)
+    {
+        TokenHMAC[i] = ConvertHex( NewHMACString[i*2], NewHMACString[i*2+1]);
+    }
+
+    NewHMACString = "";
+    return true;
+}
+
+unsigned char ConvertNibble(char nibble);
+unsigned char ConvertHex(char high, char low)
+{
+    return ConvertNibble(high) << 4 | ConvertNibble(low);
+}
+
+unsigned char ConvertNibble(char nibble)
+{
+    if (nibble >= '0' && nibble <= '9') return nibble - '0';
+    else if (nibble >= 'A' && nibble <= 'F') return nibble - 'A' + 10;
+
+    Assert::Fail(L"Invalid HMAC string given in a unit test");
+    return 0;
+}
+
+
+extern "C" bool CheckHMAC(char const* const Token, size_t TokenLength, unsigned char const* const TokenHMAC)
 {
     Assert::IsNotNull(Token);
     Assert::IsNotNull(TokenHMAC);
@@ -70,8 +106,138 @@ extern "C" bool CheckHMAC(char const* const Token, unsigned int TokenLength, uns
     return result;
 }
 
+static bool GetLastDispenseResult = false; 
+static int LastDispensedUnit = -1;
+static int LastDispensedSubUnit = -1; 
+static std::string LastDispencedCurrency; 
+
+#define HMACSHA256SIZE 32
+static bool SetLastDispenseIDResult = false; 
+static char LastDispenseID[HMACSHA256SIZE] = { 0 };
+extern "C" bool SetLastDispenseID(char NewDispenseID[HMACSHA256SIZE])
+{
+    if (SetLastDispenseIDResult != true) return false; 
+
+    Assert::IsNotNull(NewDispenseID);
+    memcpy_s(LastDispenseID, sizeof(LastDispenseID), NewDispenseID, HMACSHA256SIZE);
+    return true; 
+}
+
+static bool GetLastDispenseIDResult = false; 
+static bool GetLastDispenseIDKnown = false;
+extern "C" bool GetLastDispenseID(bool* ValueKnown, char DispenseID[HMACSHA256SIZE])
+{
+    if (GetLastDispenseIDResult != true) return false;
+
+    Assert::IsNotNull(ValueKnown);
+    *ValueKnown = GetLastDispenseIDKnown;
+
+    Assert::IsNotNull(DispenseID);
+    memcpy_s(DispenseID, HMACSHA256SIZE, LastDispenseID, sizeof(LastDispenseID) );
+    return true;
+}
+
+extern "C" bool GetLastDispenseAmount(unsigned int* UnitValue, unsigned int* SubUnitValue, char Currency[3])
+{
+    if (!GetLastDispenseResult) return false; 
+
+    Assert::IsNotNull(UnitValue);
+    Assert::IsNotNull(SubUnitValue);
+    Assert::IsNotNull(Currency);
+
+    *UnitValue = LastDispensedUnit; 
+    *SubUnitValue = LastDispensedSubUnit; 
+    Assert::AreEqual(size_t(3), LastDispencedCurrency.length());
+    Currency[0] = LastDispencedCurrency[0];
+    Currency[1] = LastDispencedCurrency[1];
+    Currency[2] = LastDispencedCurrency[2];
+
+    return true;
+}
+
+static bool GetLastDispensePresentedResult = false; 
+static bool LastDispensePresented = true;
+
+extern "C" bool GetLastDispensePresented(bool* Presented)
+{
+    if (!GetLastDispensePresentedResult) return false;
+
+    Assert::IsNotNull(Presented);
+
+    *Presented = LastDispensePresented; 
+
+    return true;
+}
+
+static bool GetLastPresentedAmountResult = false;
+static int LastPresentedAmountUnit = -1;
+static int LastPresentedAmountSubUnit = -1;
+static std::string LastPresentedAmountCurrency;
+
+extern "C" bool GetLastPresentedAmount(unsigned int* UnitValue, unsigned int* SubUnitValue, char Currency[3])
+{
+    if (!GetLastPresentedAmountResult) return false;
+
+    Assert::IsNotNull(UnitValue);
+    Assert::IsNotNull(SubUnitValue);
+    Assert::IsNotNull(Currency);
+
+    *UnitValue = LastPresentedAmountUnit;
+    *SubUnitValue = LastPresentedAmountSubUnit;
+    Assert::AreEqual(size_t(3), LastPresentedAmountCurrency.length());
+    Currency[0] = LastPresentedAmountCurrency[0];
+    Currency[1] = LastPresentedAmountCurrency[1];
+    Currency[2] = LastPresentedAmountCurrency[2];
+
+    return true;
+}
+
+static bool GetLastDispenseRetractedResult = false;
+static bool LastDispenseRetracted = false;
+
+extern "C" bool GetLastDispenseRetracted(bool* Retracted)
+{
+    if (!GetLastDispenseRetractedResult) return false;
+
+    Assert::IsNotNull(Retracted);
+
+    *Retracted = LastDispenseRetracted;
+
+    return true;
+}
+
+static bool GetLastRetractedAmountResult = false;
+static bool LastRetractedAmountKnown = false; 
+static int LastRetractedAmountUnit = -1;
+static int LastRetractedAmountSubUnit = -1;
+static std::string LastRetractedAmountCurrency;
+
+extern "C" bool GetLastRetractedAmount(bool *ValueKnown, unsigned int* UnitValue, unsigned int* SubUnitValue, char Currency[3])
+{
+    if (!GetLastRetractedAmountResult) return false;
+
+    Assert::IsNotNull(ValueKnown);
+    Assert::IsNotNull(UnitValue);
+    Assert::IsNotNull(SubUnitValue);
+    Assert::IsNotNull(Currency);
+
+    *ValueKnown = LastRetractedAmountKnown;
+    *UnitValue = LastRetractedAmountUnit;
+    *SubUnitValue = LastRetractedAmountSubUnit;
+    Assert::AreEqual(size_t(3), LastRetractedAmountCurrency.length());
+    Currency[0] = LastRetractedAmountCurrency[0];
+    Currency[1] = LastRetractedAmountCurrency[1];
+    Currency[2] = LastRetractedAmountCurrency[2];
+
+    return true;
+}
+
+
 namespace EndToEndSecurityTest
 {
+    /// <summary>
+    /// Generic tests of token handling. 
+    /// </summary>
     TEST_CLASS(GenericTokenTest)
     {
     public:
@@ -248,6 +414,9 @@ namespace EndToEndSecurityTest
         }
     };
 
+    /// <summary>
+    /// Generic tests around command Nonce handling
+    /// </summary>
     TEST_CLASS(NonceTest)
     {
     public:
@@ -283,6 +452,9 @@ namespace EndToEndSecurityTest
         }
     };
 
+    /// <summary>
+    /// Generic tests around command HMAC checking
+    /// </summary>
     TEST_CLASS(HMACTest)
     {
     public:
@@ -314,6 +486,9 @@ namespace EndToEndSecurityTest
         }
     };
 
+    /// <summary>
+    /// Tests specific to Dispense tokens
+    /// </summary>
     TEST_CLASS(DispenserTest)
     {
     public: 
@@ -467,6 +642,9 @@ namespace EndToEndSecurityTest
 
     };
 
+    /// <summary>
+    /// Tests around tracking tokens across commands
+    /// </summary>
     TEST_CLASS(TokenTrackingTest)
     {
     public: 
@@ -543,6 +721,9 @@ namespace EndToEndSecurityTest
         }
     };
 
+    /// <summary>
+    /// Tests around tracking the total value against a dispense token
+    /// </summary>
     TEST_CLASS(DispenserValueTrackingTest)
     {
     public:
@@ -621,6 +802,7 @@ namespace EndToEndSecurityTest
             bool result = false;
             DispenseKeyValues_t const *values = NULL;
 
+            SetLastDispenseIDResult = true;
 
             CurrentNonce = "1";
             ExpectedHMAC = "CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
@@ -699,6 +881,7 @@ namespace EndToEndSecurityTest
             result = InvalidateToken();
             Assert::IsTrue(result);
 
+            SetLastDispenseIDResult = true;
             CurrentNonce = "1";
             ExpectedHMAC = "CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
             char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=123.678XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
@@ -746,5 +929,299 @@ namespace EndToEndSecurityTest
             Assert::AreEqual(unsigned long(0), values->Fraction);
             Assert::AreEqual(std::string("   "), std::string(values->Currency, 3));
         }
+    };
+
+    /// <summary>
+    /// Tests around getting a present status response token
+    /// </summary>
+    TEST_CLASS(GetPresentStatusTokenTest)
+    {
+        /// <summary>
+        /// Reset all the responses that will be used when constructing the PresentStatus token to good values
+        /// </summary>
+        void ResetAllResponsesToGood()
+        {
+            SetLastDispenseIDResult = true;
+            GetLastDispenseIDResult = true;
+            GetLastDispenseIDKnown = true;
+
+            // DISPENSEID
+            // We need to set the last dispense hmac first, so that it can be used as the dispense id. 
+            CurrentNonce = "1";
+            ExpectedHMAC = "CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+            char const testToken[] = "NONCE=1,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=123.678XYZ,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2";
+
+            AuthoriseDispenseAgainstToken(testToken, sizeof(testToken), 123, 678, "XYZ");
+            ConfirmDispenseAgainstToken(testToken, sizeof(testToken), 123, 678, "XYZ");
+
+            // DISPENSED1
+            GetLastDispenseResult = true;
+            LastDispensedUnit = 12;
+            LastDispensedSubUnit = 34;
+            LastDispencedCurrency = "EUR";
+
+            // PRESENTED1
+            GetLastDispensePresentedResult = true;
+            LastDispensePresented = true;
+
+            // PRESENTEDAMOUNT1
+            GetLastPresentedAmountResult = true;
+            LastPresentedAmountUnit = 50;
+            LastPresentedAmountSubUnit = 40;
+            LastPresentedAmountCurrency = "USD";
+
+            // RETRACTED1
+            GetLastDispenseRetractedResult = true;
+            LastDispenseRetracted = true;
+
+            // RETRACTEDAMOUNT1
+            GetLastRetractedAmountResult = true;
+            LastRetractedAmountKnown = true;
+            LastRetractedAmountUnit = 123;
+            LastRetractedAmountSubUnit = 45;
+            LastRetractedAmountCurrency = "EUR";
+
+            // HMACSHA256
+            NewHMACResult = true;
+            NewHMACString = "55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83";
+        }
+        TEST_METHOD(GoodGetPresentStatusToken)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0296,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=12.34EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.40USD,RETRACTED1=YES,RETRACTEDAMOUNT1=123.45EUR,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+            // Sample token from the XFS specification
+            // NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0268,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=50.00EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.00EUR,RETRACTED1=NO,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83
+            //
+            // NONCE            : Passed by client
+            // TOKENFORMAT      : Fixed - 1
+            // TOKENLENGTH      : Dynamically calculated. Always four digits
+            // DISPENSEID       : Stored from last dispense command
+            // DISPENSED1       : Recorded by hardware
+            // PRESENTED1       : Recorded by hardware
+            // PRESENTEDAMOUNT1 : Recorded by hardware
+            // RETRACTED1       : Recorded by hardware
+            // RETRACTEDAMOUNT1 : Recorded by hardware
+            // HMACSHA256       : Dynamically calculated
+
+            char const* responceNonce = "1414";
+
+            ResetAllResponsesToGood();
+
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(expectedToken, string(responceToken));
+        }
+        // Nonce tests
+        TEST_METHOD(ResponceNonceNull)
+        {
+            char const* responceNonce = NULL;
+            char const* responceToken = (char*)1; 
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(ResponceNonceEmpty)
+        {
+            char const* responceNonce = "";
+            char const* responceToken = (char*)1;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(ResponceNonceTooLong)
+        {
+            // Set an arbitary maximum length on the nonce - 100 characters
+            auto maxNonceLen = 100;
+            char const* responceNonce = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901";
+            char const* responceToken = (char*)1;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        // DispenseID tests
+        TEST_METHOD(GetLastDispenseIDResultFalse)
+        {
+            ResetAllResponsesToGood();
+        
+            // DISPENSEID
+            GetLastDispenseIDResult = false;
+                
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+        
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(GetLastDispenseIDResultUnknown)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0220,DISPENSED1=12.34EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.40USD,RETRACTED1=YES,RETRACTEDAMOUNT1=123.45EUR,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+            char const* responceNonce = "1414";
+
+            ResetAllResponsesToGood();
+
+            GetLastDispenseIDKnown = false;
+
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(expectedToken, string(responceToken));
+        }
+        // Dispensed (amount) tests
+        TEST_METHOD(GetLastDispenseAmountResultFalse)
+        {
+            ResetAllResponsesToGood(); 
+
+            GetLastDispenseResult = false;
+            LastDispensedUnit = 12;
+            LastDispensedSubUnit = 34;
+            LastDispencedCurrency = "EUR";
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }        
+        // Presented flag tests
+        TEST_METHOD(GetLastDispensePresentedResultFalse)
+        {
+            ResetAllResponsesToGood(); 
+
+            GetLastPresentedAmountResult = false;
+            LastPresentedAmountUnit = 99;
+            LastPresentedAmountSubUnit = 99;
+            LastPresentedAmountCurrency = "XXX";
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(GetLastDispensePresentedNo)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0295,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=12.34EUR,PRESENTED1=NO,PRESENTEDAMOUNT1=50.40USD,RETRACTED1=YES,RETRACTEDAMOUNT1=123.45EUR,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+
+            ResetAllResponsesToGood();
+            GetLastDispensePresentedResult = true;
+            LastDispensePresented = false; 
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(expectedToken, string(responceToken));
+        }
+        // PresentedAmount tests
+        TEST_METHOD(GetLastPresentedAmountResultFalse)
+        {
+            ResetAllResponsesToGood(); 
+
+            GetLastPresentedAmountResult = false;
+            LastDispensedUnit = 99;
+            LastDispensedSubUnit = 99;
+            LastDispencedCurrency = "XXX";
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        // Retracted flag tests
+        TEST_METHOD(GetLastRetractedResultFalse)
+        {
+            ResetAllResponsesToGood();
+
+            GetLastDispenseRetractedResult = false;
+            LastDispenseRetracted = true;
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(GetLastDispenseRetractedNo)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0295,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=12.34EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.40USD,RETRACTED1=NO,RETRACTEDAMOUNT1=123.45EUR,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+
+            ResetAllResponsesToGood();
+            LastDispenseRetracted = false;
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(expectedToken, string(responceToken));
+        }
+        // Retracted amount tests
+        TEST_METHOD(GetLastRetractedAmountResultFalse)
+        {
+            ResetAllResponsesToGood(); 
+
+            GetLastRetractedAmountResult = false;
+            LastRetractedAmountUnit = 99;
+            LastRetractedAmountSubUnit = 99;
+            LastRetractedAmountCurrency = "XXX";
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        TEST_METHOD(GetLastRetractedAmountUnknown)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0288,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=12.34EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.40USD,RETRACTED1=YES,RETRACTEDAMOUNT1=?,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+
+            ResetAllResponsesToGood();
+            LastRetractedAmountKnown = false;
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(expectedToken, string(responceToken));
+        }
+        // HMACSHA256 tests
+        TEST_METHOD(NewHMACFalse)
+        {
+            ResetAllResponsesToGood();
+
+            NewHMACResult = false; 
+
+            char const* responceNonce = "1414";
+            char const* responceToken = NULL;
+            auto result = GetPresentStatusToken(responceNonce, &responceToken);
+
+            Assert::IsFalse(result);
+            Assert::IsNull(responceToken);
+        }
+        // General tests
+        TEST_METHOD(ResponceTokenBufferNull)
+        {
+            string expectedToken = "NONCE=1414,TOKENFORMAT=1,TOKENLENGTH=0268,DISPENSEID=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2,DISPENSED1=50.00EUR,PRESENTED1=YES,PRESENTEDAMOUNT1=50.00EUR,RETRACTED1=NO,HMACSHA256=55D123E9EE64F0CC3D1CD4F953348B441E521BBACCD6998C6F51D645D71E6C83"s;
+
+            char const* responceNonce = "1";
+            auto result = GetPresentStatusToken(responceNonce, NULL);
+
+            Assert::IsFalse(result);
+        }
+
     };
 }
