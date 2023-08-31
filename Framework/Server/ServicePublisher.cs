@@ -11,7 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using XFS4IoT;
-using System.Threading;
+using System.Reflection;
+using System.IO;
 
 namespace XFS4IoTServer
 {
@@ -31,19 +32,24 @@ namespace XFS4IoTServer
         /// (as defined by XFS4IoT.) 
         /// </remarks>
         /// <param name="Logger">To use for all logging</param>
-        /// <param name="serviceConfiguration">To get service configuration</param>
-        public ServicePublisher(ILogger Logger, IServiceConfiguration serviceConfiguration)
+        /// <param name="ServiceConfiguration">To get service configuration</param>
+        /// <param name="JsonSchemaValidator">3rd party JSON schema validator can be used</param>
+        public ServicePublisher(ILogger Logger, 
+                                IServiceConfiguration ServiceConfiguration,
+                                IJsonSchemaValidator JsonSchemaValidator = null)
             : base(new[] { XFSConstants.ServiceClass.Publisher }, Logger)
         {
             Logger.IsNotNull($"Invalid parameter received in the {nameof(ServicePublisher)} constructor. {nameof(Logger)}");
             
-            if (serviceConfiguration is null)
+            if (ServiceConfiguration is null)
             {
                 Logger.Log(Constants.Framework, $"No configuration object is set and use default value. {Configurations.ServerAddressUri}");
             }
 
+            this.JsonSchemaValidator = JsonSchemaValidator;
+
             // Service URI is configuration parameter
-            string serverAddressUri = serviceConfiguration?.Get(Configurations.ServerAddressUri);
+            string serverAddressUri = ServiceConfiguration?.Get(Configurations.ServerAddressUri);
             if (string.IsNullOrEmpty(serverAddressUri))
             {
                 Logger.Log(Constants.Framework, $"No configuration value '{serverAddressUri}' exists and use default value. {Configurations.ServerAddressUri}");
@@ -56,7 +62,7 @@ namespace XFS4IoTServer
             }
 
             List<int> portRanges = XFSConstants.PortRanges.ToList();
-            string specificPort = serviceConfiguration?.Get(Configurations.ServerPort);
+            string specificPort = ServiceConfiguration?.Get(Configurations.ServerPort);
             if (!string.IsNullOrEmpty(specificPort))
             {
                 if (int.TryParse(specificPort, out int port))
@@ -105,6 +111,8 @@ namespace XFS4IoTServer
                                             CommandDispatcher: this,
                                             Logger);
 
+                    EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
+
                     return;
                 }
                 catch (System.Net.HttpListenerException)
@@ -119,6 +127,12 @@ namespace XFS4IoTServer
 
         public async override Task RunAsync(CancellationSource cancellationSource)
         {
+            if (JsonSchemaValidator is not null)
+            {
+                await JsonSchemaValidator.LoadSchemaAsync();
+            }
+            EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
+
             var thisTask = Task.WhenAll( EndPoint.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource) );
             var otherTasks = from service in _Services
                              select service.RunAsync(cancellationSource);
@@ -129,8 +143,12 @@ namespace XFS4IoTServer
         }
 
         public void Dispose() => EndPoint.Dispose();
-        
-        public void Add(IServiceProvider Service) => _Services.Add(Service);
+
+        public void Add(IServiceProvider Service)
+        {
+            _Services.Add(Service);
+            Service.SetJsonSchemaValidator(JsonSchemaValidator);
+        }
 
         public Task BroadcastEvent(object payload)
         {
@@ -150,6 +168,14 @@ namespace XFS4IoTServer
         // Autopopulate the CommandDecoder with reflection based on the Command attribute added
         // to the relevant classes. 
         private readonly MessageDecoder CommandDecoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command);
+
+        // JSON schema validator
+        private IJsonSchemaValidator JsonSchemaValidator;
+
+        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator)
+        {
+            this.JsonSchemaValidator = JsonSchemaValidator; ;
+        }
 
         /// <summary>
         /// Details relating to endpoints on this publisher. 

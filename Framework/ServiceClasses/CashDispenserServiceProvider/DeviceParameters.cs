@@ -151,7 +151,7 @@ namespace XFS4IoTFramework.CashDispenser
                 bool invalidAmount = internalAmount != total;
                 if (invalidAmount)
                 {
-                    Logger.Warning(Constants.Framework, $"Total amount to dispanse doesn't match with requested. Amount specified to dispense each units {internalAmount}, Amount to dispense {total} " + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Total amount to dispense doesn't match with requested. Amount specified to dispense each units {internalAmount}, Amount to dispense {total} " + nameof(IsDispensable));
                     return DispensableResultEnum.InvalidDenomination;
                 }
             }

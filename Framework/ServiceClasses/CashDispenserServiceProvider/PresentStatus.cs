@@ -26,7 +26,7 @@ namespace XFS4IoTFramework.CashDispenser
         {
             this.Status = Status;
             this.LastDenomination = LastDenomination;
-            this.Token = Token;
+            this.DispenseToken = Token;
         }
 
         /// <summary>
@@ -50,8 +50,13 @@ namespace XFS4IoTFramework.CashDispenser
         public Denomination LastDenomination { get; set; }
 
         /// <summary>
-        /// E2E token used last
+        /// Last E2E dispense authorisation token used.
         /// </summary>
-        public string Token { get; set; }
+        /// <remarks>
+        /// Note that this is the incoming token that authorised the last dispense operation. This
+        /// is _not_ the outgoing token that validates the GetPresentStatus result. That has to be 
+        /// calculated later. 
+        /// </remarks>
+        public string DispenseToken { get; set; }
     }
 }

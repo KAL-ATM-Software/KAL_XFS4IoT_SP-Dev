@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
@@ -34,7 +36,7 @@ namespace XFS4IoTServer
             this.CommandDecoder = CommandDecoder;
             this.CommandDispatcher = CommandDispatcher;
             this.Logger = Logger;
-
+            
             HttpListener = new HttpListener()
             {
                 IgnoreWriteExceptions = false,
@@ -91,7 +93,8 @@ namespace XFS4IoTServer
                         ClientConnection clientConnection = new(client,
                                                                 CommandDecoder,
                                                                 CommandDispatcher,
-                                                                Logger);
+                                                                Logger,
+                                                                JsonSchemaValidator);
                         var task = clientConnection.RunAsync(token);
 
                         // Remember the connection and the task that's running it so 
@@ -112,6 +115,13 @@ namespace XFS4IoTServer
             }
             HttpListener.Close();
         }
+
+        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator)
+        {
+            this.JsonSchemaValidator = JsonSchemaValidator;
+        }
+
+        private IJsonSchemaValidator JsonSchemaValidator;
 
         private readonly IMessageDecoder CommandDecoder;
         private readonly ICommandDispatcher CommandDispatcher;

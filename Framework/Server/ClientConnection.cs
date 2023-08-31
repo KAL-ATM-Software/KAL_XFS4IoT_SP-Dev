@@ -26,13 +26,14 @@ namespace XFS4IoTServer
         public ClientConnection(WebSocket socket, 
                                 IMessageDecoder CommandDecoder, 
                                 ICommandDispatcher CommandDispatcher,
-                                ILogger Logger
-                                )
+                                ILogger Logger,
+                                IJsonSchemaValidator JsonSchemaValidator)
         {
             this.socket = socket;
             this.CommandDecoder = CommandDecoder;
             this.CommandDispatcher = CommandDispatcher;
             this.Logger = Logger;
+            this.JsonSchemaValidator = JsonSchemaValidator;
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -47,7 +48,6 @@ namespace XFS4IoTServer
                     if (socket.State != WebSocketState.Open)
                         break;
 
-
                     // a single message could be delivered in multiple chunks
                     ValueWebSocketReceiveResult res;
                     int ReceivedBufferReceived = 0;
@@ -57,7 +57,8 @@ namespace XFS4IoTServer
                         // Wait for data from the client
                         res = await socket.ReceiveAsync(BufferSlice, token);
                         ReceivedBufferReceived += res.Count;
-                    } while (!res.EndOfMessage);
+                    } while (!res.EndOfMessage && ReceivedBufferReceived < receivedBuffer.Length);
+                    res.EndOfMessage.IsTrue($"Failed to receive message within MAX_BUFFER. {MAX_BUFFER}");
 
                     if (res.MessageType is WebSocketMessageType.Text or WebSocketMessageType.Binary)
                     {
@@ -91,6 +92,16 @@ namespace XFS4IoTServer
             {
                 // Remove client from the list 
                 socket.Dispose();
+
+                try
+                {
+                    // Cancel any active or queued commands from this connection as there is no way for the application to cancel or receive the completion message.
+                    await CommandDispatcher.CancelCommandsAsync(this, null, CancellationToken.None);
+                }
+                catch(Exception ex)
+                {
+                    Logger.Warning(Constants.Component, $"Caught exception cancelling commands on client disconnect. {ex}");
+                }
             }
         }
 
@@ -103,6 +114,8 @@ namespace XFS4IoTServer
             Contracts.Assert(command is not null, $"Failed on unserialzing received JSON in ${nameof(HandleIncommingMessage)} method. JSON:{messageString}");
 
             MessageBase commandBase = command as MessageBase;
+
+            // Logging customer sensitve information if there are any
             try
             {
                 Logger.LogSensitive(Constants.Component, $"Received:{commandBase}");
@@ -117,7 +130,25 @@ namespace XFS4IoTServer
                 Contracts.Fail($"Exception caught while in serialising JSON on receiving incomming message. {ex}");
             }
 
+            // Validate message first if JSON schema validator is being injected
+            try
+            {
+                if (JsonSchemaValidator?.SchemaLoaded is true)
+                {
+                    string failedReason = string.Empty;
+                    if (!JsonSchemaValidator.Validate(messageString, out failedReason))
+                    {
+                        throw new InvalidCommandException($"Command message validation failed. {failedReason}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await CommandDispatcher.DispatchError(this, commandBase, ex);
+                return;
+            }
 
+            // Process command
             try
             {
                 await CommandDispatcher.Dispatch(this, commandBase, token);
@@ -175,6 +206,7 @@ namespace XFS4IoTServer
         private readonly ILogger Logger;
         private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
         private readonly ICommandDispatcher CommandDispatcher;
+        private readonly IJsonSchemaValidator JsonSchemaValidator;
         private readonly SemaphoreSlim SendSyncObject = new(1, 1);
     }
 }

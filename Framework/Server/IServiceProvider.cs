@@ -37,5 +37,11 @@ namespace XFS4IoTServer
         /// <param name="connections">The connections to broadcast to</param>
         /// <param name="payload">The XFS payload for the message</param>
         Task BroadcastEvent(IEnumerable<IConnection> connections, object payload);
+
+        /// <summary>
+        /// Set JSON schema dependency injection to the services.
+        /// </summary>
+        /// <param name="JsonSchemaValidator"></param>
+        void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator);
     }
 }

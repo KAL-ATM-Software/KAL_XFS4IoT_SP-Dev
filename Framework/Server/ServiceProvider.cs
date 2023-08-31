@@ -16,7 +16,11 @@ namespace XFS4IoTServer
 {
     public class ServiceProvider : CommandDispatcher, IServiceProvider
     {
-        public ServiceProvider(XFS4IoTServer.EndpointDetails EndpointDetails, string ServiceName, IEnumerable<XFSConstants.ServiceClass> Services, IDevice Device, ILogger Logger)
+        public ServiceProvider(XFS4IoTServer.EndpointDetails EndpointDetails, 
+                               string ServiceName, 
+                               IEnumerable<XFSConstants.ServiceClass> Services, 
+                               IDevice Device, 
+                               ILogger Logger)
             : base(Services, Logger)
         {
             EndpointDetails.IsNotNull($"The endpoint details are invalid. {nameof(EndpointDetails)}");
@@ -71,5 +75,7 @@ namespace XFS4IoTServer
 
             logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event to specified connections");
         }
+
+        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
     }
 }

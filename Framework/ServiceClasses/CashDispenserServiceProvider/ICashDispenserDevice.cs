@@ -43,6 +43,13 @@ namespace XFS4IoTFramework.CashDispenser
         Task<RejectResult> RejectAsync(ItemInfoAvailableCommandEvent events, 
                                        CancellationToken cancellation);
 
+        /// <summary>+
+        /// Calculate the token which will validate the data in the GetPresentStatus result. 
+        /// </summary>
+        /// <param name="nonce">Value that will be unique for each token</param>
+        /// <returns>Token string, including nonce and HMAC, or null if E2E is not supported</returns>
+        Task<string> GetPresentStatusTokenAsync(string nonce) => Task.FromResult<string>(null);
+
         /// <summary>
         /// This method is used to test cash units following replenishment.
         /// All physical cash units which are testable (i.e. that have a status of ok or low and no application lock in the the physical cash unit) are tested.

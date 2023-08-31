@@ -44,6 +44,7 @@ namespace XFS4IoTServer.Test
         public Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken Token) => throw new NotImplementedException();
         public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync(CancellationSource cancellationSource) => throw new NotImplementedException();
+        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => throw new NotImplementedException();
     }
 
     internal class TestLogger : ILogger

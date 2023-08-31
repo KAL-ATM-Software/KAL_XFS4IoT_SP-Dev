@@ -69,6 +69,12 @@ namespace XFS4IoT
         public string Serialise() => JsonSerializer.Serialize(this, GetType(), JsonOptions);
 
         /// <summary>
+        /// Serialise this object in JSON format
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() => Serialise();
+
+        /// <summary>
         /// Deep copy of the message object
         /// </summary>
         /// <returns>Copied message object</returns>
