@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = GetCertificate
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.GetCertificate")]
     public sealed class GetCertificateCommand : Command<GetCertificateCommand.PayloadData>
     {
-        public GetCertificateCommand(int RequestId, GetCertificateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetCertificateCommand(int RequestId, GetCertificateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, GetCertificateEnum? GetCertificate = null)
-                : base(Timeout)
+            public PayloadData(GetCertificateEnum? GetCertificate = null)
+                : base()
             {
                 this.GetCertificate = GetCertificate;
             }

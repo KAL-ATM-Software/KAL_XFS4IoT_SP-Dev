@@ -48,7 +48,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashInRollback()");
 
-            var result = await Device.CashInRollback(new ItemInfoAvailableCommandEvent(events), cancel);
+            var result = await Device.CashInRollback(new CashInRollbackCommandEvents(Storage, events), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashInRollback() -> {result.CompletionCode}, {result.ErrorCode}");
 

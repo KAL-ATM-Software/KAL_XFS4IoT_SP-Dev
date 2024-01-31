@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = ReadRawData
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCommand : Command<ReadRawDataCommand.PayloadData>
     {
-        public ReadRawDataCommand(int RequestId, ReadRawDataCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadRawDataCommand(int RequestId, ReadRawDataCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, bool? Track1 = null, bool? Track2 = null, bool? Track3 = null, bool? Chip = null, bool? Security = null, bool? FluxInactive = null, bool? Watermark = null, bool? MemoryChip = null, bool? Track1Front = null, bool? FrontImage = null, bool? BackImage = null, bool? Track1JIS = null, bool? Track3JIS = null, bool? Ddi = null)
-                : base(Timeout)
+            public PayloadData(bool? Track1 = null, bool? Track2 = null, bool? Track3 = null, bool? Chip = null, bool? Security = null, bool? FluxInactive = null, bool? Watermark = null, bool? MemoryChip = null, bool? Track1Front = null, bool? FrontImage = null, bool? BackImage = null, bool? Track1JIS = null, bool? Track3JIS = null, bool? Ddi = null)
+                : base()
             {
                 this.Track1 = Track1;
                 this.Track2 = Track2;

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.PinPad.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "PinPad.GetPinBlock")]
     public sealed class GetPinBlockCompletion : Completion<GetPinBlockCompletion.PayloadData>
     {
@@ -48,7 +49,7 @@ namespace XFS4IoT.PinPad.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyNotFound``` - The specified key was not found.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
@@ -60,7 +61,7 @@ namespace XFS4IoT.PinPad.Completions
             /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
             /// * ```formatNotSupported``` - The specified format is not supported.
             /// * ```invalidKeyLength``` - The length of *secondEncKey* or *key* is not supported by this key or the
-            /// length of an encryption 
+            /// length of an encryption
             /// key is not compatible with the encryption operation required.
             /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported.
             /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be
@@ -72,7 +73,7 @@ namespace XFS4IoT.PinPad.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The encrypted PIN block.
+            /// The encrypted PIN block. This value is null if there is no PIN block.
             /// <example>UGluYmxvY2sgZGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "pinBlock")]

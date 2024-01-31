@@ -16,6 +16,7 @@ namespace XFS4IoT.KeyManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "KeyManagement.InitializedEvent")]
     public sealed class InitializedEvent : UnsolicitedEvent<MessagePayloadBase>
     {

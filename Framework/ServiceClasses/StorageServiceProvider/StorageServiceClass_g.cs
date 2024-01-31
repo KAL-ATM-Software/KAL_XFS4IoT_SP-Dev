@@ -18,14 +18,11 @@ namespace XFS4IoTServer
     public partial class StorageServiceClass : IStorageServiceClass
     {
 
-        public async Task StorageThresholdEvent(XFS4IoT.Storage.Events.StorageThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageThresholdEvent(Payload));
-
         public async Task StorageChangedEvent(XFS4IoT.Storage.Events.StorageChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageChangedEvent(Payload));
 
-        public async Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageErrorEvent(Payload));
+        public async Task StorageThresholdEvent(XFS4IoT.Storage.Events.StorageThresholdEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Storage.Events.StorageThresholdEvent(Payload));
 
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }

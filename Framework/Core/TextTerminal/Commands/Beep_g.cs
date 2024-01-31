@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = Beep
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.Beep")]
     public sealed class BeepCommand : Command<BeepCommand.PayloadData>
     {
-        public BeepCommand(int RequestId, BeepCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public BeepCommand(int RequestId, BeepCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, BeepClass Beep = null)
-                : base(Timeout)
+            public PayloadData(BeepClass Beep = null)
+                : base()
             {
                 this.Beep = Beep;
             }
@@ -72,8 +73,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies whether the beeper should be turned on or off. If omitted, the beeper is switched off,
-            /// otherwise the beep is specified as follows.
+            /// Specifies whether the beeper should be turned on or off.
             /// </summary>
             [DataMember(Name = "beep")]
             public BeepClass Beep { get; init; }

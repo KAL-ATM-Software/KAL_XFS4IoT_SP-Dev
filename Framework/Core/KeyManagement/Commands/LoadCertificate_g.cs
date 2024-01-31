@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = LoadCertificate
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.LoadCertificate")]
     public sealed class LoadCertificateCommand : Command<LoadCertificateCommand.PayloadData>
     {
-        public LoadCertificateCommand(int RequestId, LoadCertificateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public LoadCertificateCommand(int RequestId, LoadCertificateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, LoadOptionEnum? LoadOption = null, SignerEnum? Signer = null, List<byte> CertificateData = null)
-                : base(Timeout)
+            public PayloadData(LoadOptionEnum? LoadOption = null, SignerEnum? Signer = null, List<byte> CertificateData = null)
+                : base()
             {
                 this.LoadOption = LoadOption;
                 this.Signer = Signer;
@@ -69,13 +70,13 @@ namespace XFS4IoT.KeyManagement.Commands
 
             /// <summary>
             /// The structure that contains the certificate that is to be loaded represented in DER encoded ASN.1
-            /// notation. 
+            /// notation.
             /// 
-            /// For *loadNewHost*, this data should be in a binary encoded PKCS#7 (See
+            /// For *newHost*, this data should be in a binary encoded PKCS#7 (See
             /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) using the 'degenerate certificate only' case of the
             /// SignedData content type in which the inner content's data file is omitted and there are no signers.
             /// 
-            /// For *replaceHost*, the message has an outer SignedData content type with the SignerInfo encryptedDigest 
+            /// For *replaceHost*, the message has an outer SignedData content type with the SignerInfo encryptedDigest
             /// field containing the signature of signer. The inner content is binary encoded PKCS#7 (See
             /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) using the degenerate certificate.
             /// 

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Storage.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Storage.SetStorage")]
     public sealed class SetStorageCompletion : Completion<SetStorageCompletion.PayloadData>
     {
@@ -40,12 +41,12 @@ namespace XFS4IoT.Storage.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```invalidUnit``` - Invalid unit.
-            /// * ```noExchangeActive``` - The device is not in an exchange state and a request has been made to 
+            /// * ```noExchangeActive``` - The device is not in an exchange state and a request has been made to
             /// modify information which can only be modified in an exchange state.
-            /// * ```storageUnitError``` - A problem occurred with a storage unit. A 
+            /// * ```storageUnitError``` - A problem occurred with a storage unit. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]

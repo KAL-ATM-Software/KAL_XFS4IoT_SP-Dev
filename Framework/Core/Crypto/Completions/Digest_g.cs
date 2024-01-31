@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Crypto.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Crypto.Digest")]
     public sealed class DigestCompletion : Completion<DigestCompletion.PayloadData>
     {
@@ -39,16 +40,16 @@ namespace XFS4IoT.Crypto.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for 
-            ///                        any vendor specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for
+            ///                         any vendor specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains the generated digest.
+            /// Contains the generated digest. If the command fails, this will be null.
             /// <example>OTNjYzE2Y2FkNzYwMTY3 ...</example>
             /// </summary>
             [DataMember(Name = "digest")]

@@ -16,19 +16,20 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = SetVersions
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.SetVersions")]
     public sealed class SetVersionsCommand : Command<SetVersionsCommand.PayloadData>
     {
-        public SetVersionsCommand(int RequestId, SetVersionsCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetVersionsCommand(int RequestId, SetVersionsCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, Dictionary<string, int> Commands = null, Dictionary<string, int> Events = null)
-                : base(Timeout)
+            public PayloadData(Dictionary<string, int> Commands = null, Dictionary<string, int> Events = null)
+                : base()
             {
                 this.Commands = Commands;
                 this.Events = Events;

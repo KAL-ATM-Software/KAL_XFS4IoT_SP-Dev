@@ -16,24 +16,25 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = DeriveKey
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.DeriveKey")]
     public sealed class DeriveKeyCommand : Command<DeriveKeyCommand.PayloadData>
     {
-        public DeriveKeyCommand(int RequestId, DeriveKeyCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DeriveKeyCommand(int RequestId, DeriveKeyCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, DerivationAlgorithmEnum? DerivationAlgorithm = null, string Key = null, string KeyGenKey = null, string IvKey = null, List<byte> Iv = null, int? Padding = null, List<byte> InputData = null)
-                : base(Timeout)
+            public PayloadData(DerivationAlgorithmEnum? DerivationAlgorithm = null, string Key = null, string KeyGenKey = null, string StoredKey = null, IvClass Iv = null, int? Padding = null, List<byte> InputData = null)
+                : base()
             {
                 this.DerivationAlgorithm = DerivationAlgorithm;
                 this.Key = Key;
                 this.KeyGenKey = KeyGenKey;
-                this.IvKey = IvKey;
+                this.StoredKey = StoredKey;
                 this.Iv = Iv;
                 this.Padding = Padding;
                 this.InputData = InputData;
@@ -53,7 +54,7 @@ namespace XFS4IoT.KeyManagement.Commands
             public DerivationAlgorithmEnum? DerivationAlgorithm { get; init; }
 
             /// <summary>
-            /// Specifies the name where the derived key will be stored. 
+            /// Specifies the name where the derived key will be stored.
             /// <example>Key01</example>
             /// </summary>
             [DataMember(Name = "key")]
@@ -67,32 +68,60 @@ namespace XFS4IoT.KeyManagement.Commands
             public string KeyGenKey { get; init; }
 
             /// <summary>
-            /// Specifies the name of the stored key used to decrypt the *iv* to obtain the Initialization
-            /// Vector.
+            /// This specifies the name of a key (usage 'I0') used as the Initialization Vector (IV).
+            /// This property is null if not required.
             /// 
-            /// If this field is omitted, *iv* is used as the Initialization Vector.
-            /// <example>IVKey01</example>
+            /// <example>StoredIVKey</example>
             /// </summary>
-            [DataMember(Name = "ivKey")]
-            public string IvKey { get; init; }
+            [DataMember(Name = "storedKey")]
+            public string StoredKey { get; init; }
+
+            [DataContract]
+            public sealed class IvClass
+            {
+                public IvClass(string Key = null, List<byte> Value = null)
+                {
+                    this.Key = Key;
+                    this.Value = Value;
+                }
+
+                /// <summary>
+                /// The name of a key used to decrypt the *value*.
+                /// This specifies the name of a key (usage 'K0') used to decrypt the *value*.
+                /// This is only used when the *key* usage is 'D0' and *cryptoMethod* is either CBC or
+                /// CFB. if this property is null, *value* is used as the Initialization Vector.
+                /// 
+                /// <example>KeyToDecrypt</example>
+                /// </summary>
+                [DataMember(Name = "key")]
+                public string Key { get; init; }
+
+                /// <summary>
+                /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
+                /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+                /// </summary>
+                [DataMember(Name = "value")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Value { get; init; }
+
+            }
 
             /// <summary>
-            /// DES initialization vector for the encryption step within the derivation.
-            /// <example>REVTIGluaXRpYWxpemF0 ...</example>
+            /// Specifies the Initialization Vector. This property is null if *storedKey* is used.
             /// </summary>
             [DataMember(Name = "iv")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-            public List<byte> Iv { get; init; }
+            public IvClass Iv { get; init; }
 
             /// <summary>
-            /// Specifies the padding character for the encryption step within the derivation.
+            /// Specifies the padding character to use for symmetric key encryption.
+            /// <example>255</example>
             /// </summary>
             [DataMember(Name = "padding")]
             [DataTypes(Minimum = 0, Maximum = 255)]
             public int? Padding { get; init; }
 
             /// <summary>
-            /// Data to be used for key derivation. 
+            /// Data to be used for key derivation.
             /// <example>a2V5IGRlcml2YXRpb24g ...</example>
             /// </summary>
             [DataMember(Name = "inputData")]

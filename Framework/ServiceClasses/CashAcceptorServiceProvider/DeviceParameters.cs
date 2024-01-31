@@ -224,7 +224,7 @@ namespace XFS4IoTFramework.CashAcceptor
     }
 
     /// <summary>
-    /// CashInStartRequest
+    /// CashInRequest
     /// Request for the cash-in operation
     /// </summary>
     public sealed class CashInRequest
@@ -432,6 +432,23 @@ namespace XFS4IoTFramework.CashAcceptor
         /// Specifies the error code on loading note templates.
         /// </summary>
         public ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+    }
+
+    /// <summary>
+    /// CreateSignatureRequest
+    /// Request for the operation to scan notes of signature
+    /// </summary>
+    public sealed class CreateSignatureRequest
+    {
+        public CreateSignatureRequest(int Timeout)
+        {
+            this.Timeout = Timeout;
+        }
+
+        /// <summary>
+        /// Timeout for waiting customer to insert items
+        /// </summary>
+        public int Timeout { get; init; }
     }
 
     /// <summary>

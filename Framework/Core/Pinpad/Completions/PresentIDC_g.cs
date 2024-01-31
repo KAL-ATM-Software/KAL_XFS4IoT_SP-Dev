@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.PinPad.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "PinPad.PresentIDC")]
     public sealed class PresentIDCCompletion : Completion<PresentIDCCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.PinPad.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
             /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
@@ -56,13 +57,14 @@ namespace XFS4IoT.PinPad.Completions
             /// <summary>
             /// Identifies the protocol that was used to communicate with the chip. This property contains the same
             /// value as the corresponding property in the input.
+            /// This value is null if there is no data returned from the chip.
             /// <example>chipT0</example>
             /// </summary>
             [DataMember(Name = "chipProtocol")]
             public string ChipProtocol { get; init; }
 
             /// <summary>
-            /// The data returned from the chip.
+            /// The data returned from the chip. This value is null if there is no data returned from the chip.
             /// <example>Y2hpcCBkYXRhIHJlY2Vp ...</example>
             /// </summary>
             [DataMember(Name = "chipData")]

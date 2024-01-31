@@ -16,6 +16,8 @@ using XFS4IoTFramework.CashDispenser;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace XFS4IoTServer
 {
@@ -152,6 +154,22 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CashDispenserStatus=");
 
             CommonService.CashDispenserStatus.IsNotNull($"The device class set CashDispenserStatus property to null. The device class must report device status.");
+            CommonService.CashDispenserStatus.PropertyChanged += StatusChangedEventFowarder;
+            foreach (var position in CommonService.CashDispenserStatus.Positions)
+            {
+                if (position.Value.CashDispenserPosition is null)
+                {
+                    position.Value.CashDispenserPosition = position.Key;
+                }
+                else
+                {
+                    // The device class maybe sharing the same status object with different locations.
+                    // For example, output position, centor and default, then the PropertyChanged event is sent once property is changed.
+                    // Need to handle multiple position status in one PropertyChanged event.
+                    position.Value.CashDispenserPosition |= position.Key;
+                }
+                position.Value.PropertyChanged += StatusChangedEventFowarder;
+            }
         }
 
         private void GetCapabilities()
@@ -173,5 +191,12 @@ namespace XFS4IoTServer
                 Logger.Warning(Constants.Framework, $"Failed to save persistent data. {ServiceProvider.Name + typeof(CashDispenserPresentStatus).FullName}");
             }
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

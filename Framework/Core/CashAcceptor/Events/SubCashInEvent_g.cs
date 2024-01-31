@@ -16,6 +16,7 @@ namespace XFS4IoT.CashAcceptor.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashAcceptor.SubCashInEvent")]
     public sealed class SubCashInEvent : Event<SubCashInEvent.PayloadData>
     {
@@ -36,9 +37,12 @@ namespace XFS4IoT.CashAcceptor.Events
             }
 
             /// <summary>
-            /// Count of unrecognized items handled by the cash interface.
+            /// Count of unrecognized items handled by the cash interface. May be null in command data and events if
+            /// not changed or not to be changed.
+            /// <example>5</example>
             /// </summary>
             [DataMember(Name = "unrecognized")]
+            [DataTypes(Minimum = 0)]
             public int? Unrecognized { get; init; }
 
             [System.Text.Json.Serialization.JsonExtensionData]

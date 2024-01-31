@@ -48,6 +48,19 @@ namespace XFS4IoTServer
 
             this.JsonSchemaValidator = JsonSchemaValidator;
 
+            // Set service publisher specific command name and version to the dispacher.
+            Type type = typeof(XFS4IoT.ServicePublisher.Commands.GetServicesCommand);
+            CommandAttribute commandAttrib = Attribute.GetCustomAttribute(type, typeof(CommandAttribute)) as CommandAttribute;
+            commandAttrib.IsNotNull($"Internal command object XFS4IoT.ServicePublisher.Commands.GetServicesCommand has no Command attribute.");
+
+            XFS4VersionAttribute versionAttrib = Attribute.GetCustomAttribute(type, typeof(XFS4VersionAttribute)) as XFS4VersionAttribute;
+            versionAttrib.IsNotNull($"Internal command object XFS4IoT.ServicePublisher.Commands.GetServicesCommand has no XFS4Version attribute.");
+
+            SetMessagesSupported(new()
+            {
+                { commandAttrib.Name, new(MessageTypeInfo.MessageTypeEnum.Command, [versionAttrib.Version]) }
+            });
+
             // Service URI is configuration parameter
             string serverAddressUri = ServiceConfiguration?.Get(Configurations.ServerAddressUri);
             if (string.IsNullOrEmpty(serverAddressUri))
@@ -111,8 +124,6 @@ namespace XFS4IoTServer
                                             CommandDispatcher: this,
                                             Logger);
 
-                    EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
-
                     return;
                 }
                 catch (System.Net.HttpListenerException)
@@ -161,7 +172,7 @@ namespace XFS4IoTServer
         }
 
         public IEnumerable<IServiceProvider> Services { get => _Services; } 
-        private readonly List<IServiceProvider> _Services = new(); 
+        private readonly List<IServiceProvider> _Services = []; 
 
         private readonly XFS4IoTServer.EndPoint EndPoint;
 
@@ -174,7 +185,7 @@ namespace XFS4IoTServer
 
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator)
         {
-            this.JsonSchemaValidator = JsonSchemaValidator; ;
+            this.JsonSchemaValidator = JsonSchemaValidator;
         }
 
         /// <summary>
@@ -189,6 +200,16 @@ namespace XFS4IoTServer
         public Uri Uri { get; }
         public Uri WSUri { get; }
         public IDevice Device { get => Contracts.Fail<IDevice>("A device object was requested from the Publisher service, but the publisher service does not have a device class"); }
+
+        /// <summary>
+        /// Set supported commands and events to the dispatcher.
+        /// </summary>
+        /// <param name="MessagesSupported"></param>
+        public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported)
+        {
+            base.MessagesSupported = MessagesSupported;
+        }
+        public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => base.MessagesSupported;
     }
 
     /// <summary>

@@ -56,8 +56,9 @@ namespace XFS4IoT
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>
         /// <param name="Payload"></param>
-        public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload) :
-            base(RequestId, Type)
+        /// <param name="Timeout"></param>
+        public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload, int? Timeout) :
+            base(RequestId, Type, Timeout)
         {
             this.Payload = Payload.Ignore();
         }

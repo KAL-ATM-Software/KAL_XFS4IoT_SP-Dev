@@ -47,7 +47,7 @@ namespace XFS4IoTFramework.CashAcceptor
                 };
             }
 
-            if (!Common.CashAcceptorCapabilities.Positions.HasFlag(outputPosition))
+            if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
                 return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                               $"Unsupported output position. {outputPosition}");
@@ -73,13 +73,12 @@ namespace XFS4IoTFramework.CashAcceptor
                                                               PresentMediaCompletion.PayloadData.ErrorCodeEnum.NoItems);
             }
 
-            if (CashAcceptor.PositionCapabilities is not null &&
-                CashAcceptor.PositionCapabilities.ContainsKey(outputPosition))
+            if (Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
-                if (!CashAcceptor.PositionCapabilities[outputPosition].PresentControl)
+                if (!Common.CashAcceptorCapabilities.Positions[outputPosition].PresentControl)
                 {
                     return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Specified position reported by the PresentControl property in PositionCapabilities is {CashAcceptor.PositionCapabilities[outputPosition].PresentControl}");
+                                                                  $"Specified position reported by the PresentControl property in PositionCapabilities is {Common.CashAcceptorCapabilities.Positions[outputPosition].PresentControl}");
                 }
             }
 

@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = PrintForm
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.PrintForm")]
     public sealed class PrintFormCommand : Command<PrintFormCommand.PayloadData>
     {
-        public PrintFormCommand(int RequestId, PrintFormCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PrintFormCommand(int RequestId, PrintFormCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, string PaperSource = null)
-                : base(Timeout)
+            public PayloadData(string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, string PaperSource = null)
+                : base()
             {
                 this.FormName = FormName;
                 this.MediaName = MediaName;
@@ -49,7 +50,7 @@ namespace XFS4IoT.Printer.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// The media name. If no media definition applies, this should be empty or omitted.
+            /// The media name. If no media definition applies, this should be null.
             /// <example>Media1</example>
             /// </summary>
             [DataMember(Name = "mediaName")]
@@ -269,23 +270,20 @@ namespace XFS4IoT.Printer.Commands
             /// the application with the device to ensure that all data has been physically printed. The
             /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
             /// applicable to this command. If set, the command will fail with error *invalidData*.
+            /// This property is null if no actions required.
             /// </summary>
             [DataMember(Name = "mediaControl")]
             public MediaControlClass MediaControl { get; init; }
 
             /// <summary>
-            /// An object containing one or more key/value pairs where the key is a field name and the value is the
-            /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
-            /// index specifies the zero-based element of the index field.
+            /// An object containing one or more fields.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }
 
             /// <summary>
-            /// Specifies the paper source to use when printing this form. If omitted, then the paper
-            /// source is determined from the media definition. This parameter is ignored if there is already paper in
-            /// the print position.
-            /// It can be one of the following:
+            /// Specifes the paper source to be used. For commands which print, this parameter is ignored if there is already
+            /// paper in the print position. It can be one of the following:
             /// 
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
             ///                 supply.
@@ -294,10 +292,12 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux``` - Use the auxiliary paper source.
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
+            /// * ```any``` - Use any paper source, it is determined by the service.
             /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]
-            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^any$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
             public string PaperSource { get; init; }
 
         }

@@ -28,15 +28,15 @@ namespace XFS4IoT.TextTerminal
         public enum KeyboardEnum
         {
             On,
-            Off,
-            NotAvailable
+            Off
         }
 
         /// <summary>
-        /// Specifies the state of the keyboard in the text terminal unit as one of the following values:
+        /// Specifies the state of the keyboard in the text terminal unit. This property will be null in
+        /// [Common.Status](#common.status) if the keyboard is not available, otherwise one of the following values:
+        /// 
         /// * ```on``` - The keyboard is activated.
         /// * ```off``` - The keyboard is not activated.
-        /// * ```notAvailable``` - The keyboard is not available.
         /// </summary>
         [DataMember(Name = "keyboard")]
         public KeyboardEnum? Keyboard { get; init; }
@@ -44,28 +44,33 @@ namespace XFS4IoT.TextTerminal
         public enum KeyLockEnum
         {
             On,
-            Off,
-            NotAvailable
+            Off
         }
 
         /// <summary>
-        /// Specifies the state of the keyboard lock of the text terminal unit as one of the following values:
+        /// Specifies the state of the keyboard lock of the text terminal unit. This property will be null in
+        /// [Common.Status](#common.status) if the keyboard lock switch is not available, otherwise one of the following
+        /// values:
+        /// 
         /// * ```on``` - The keyboard lock switch is activated.
         /// * ```off``` - The keyboard lock switch is not activated.
-        /// * ```notAvailable``` - The keyboard lock switch is not available.
         /// </summary>
         [DataMember(Name = "keyLock")]
         public KeyLockEnum? KeyLock { get; init; }
 
         /// <summary>
-        /// Specifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
+        /// Specifies the horizontal size of the display of the text terminal unit (the number of columns that can be
+        /// displayed). This property will be null in [Common.StatusChangedEvent](#common.statuschangedevent) if
+        /// unchanged.
         /// </summary>
         [DataMember(Name = "displaySizeX")]
         [DataTypes(Minimum = 0)]
         public int? DisplaySizeX { get; init; }
 
         /// <summary>
-        /// Specifies the vertical size of the display of the text terminal unit (the number of rows that can be displayed).
+        /// Specifies the vertical size of the display of the text terminal unit (the number of rows that can be
+        /// displayed).  This property will be null in [Common.StatusChangedEvent](#common.statuschangedevent) if
+        /// unchanged.
         /// </summary>
         [DataMember(Name = "displaySizeY")]
         [DataTypes(Minimum = 0)]
@@ -246,19 +251,13 @@ namespace XFS4IoT.TextTerminal
         public OverflowEnum? Overflow { get; init; }
 
         /// <summary>
-        /// Format string as defined in the form for this field.
+        /// Format string as defined in the form for this field. 
+        /// This value will be null if the parameter is not specified in the field definition.
         /// <example>Format 1</example>
         /// </summary>
         [DataMember(Name = "format")]
         public string Format { get; init; }
 
-    }
-
-
-    public enum ModesEnum
-    {
-        Relative,
-        Absolute
     }
 
 
@@ -276,6 +275,13 @@ namespace XFS4IoT.TextTerminal
         [DataMember(Name = "terminate")]
         public bool? Terminate { get; init; }
 
+    }
+
+
+    public enum ModesEnum
+    {
+        Relative,
+        Absolute
     }
 
 

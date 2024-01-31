@@ -16,13 +16,13 @@ namespace XFS4IoTFramework.VendorMode
     public interface IVendorModeUnsolicitedEvents
     {
 
+        Task EnterModeRequestEvent();
+
         Task ExitModeRequestEvent();
 
         Task ModeEnteredEvent();
 
         Task ModeExitedEvent(XFS4IoT.VendorMode.Events.ModeExitedEvent.PayloadData Payload);
-
-        Task EnterModeRequestEvent();
 
     }
 }

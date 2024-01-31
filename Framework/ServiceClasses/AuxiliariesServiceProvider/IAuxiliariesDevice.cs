@@ -48,12 +48,12 @@ namespace XFS4IoTFramework.Auxiliaries
         /// <summary>
         /// Auxiliaries Capabilities
         /// </summary>
-        AuxiliariesCapabilities AuxiliariesCapabilities { get; set; }
+        AuxiliariesCapabilitiesClass AuxiliariesCapabilities { get; set; }
 
         /// <summary>
         /// Stores Auxiliaries status
         /// </summary>
-        AuxiliariesStatus AuxiliariesStatus { get; set; }
+        AuxiliariesStatusClass AuxiliariesStatus { get; set; }
 
     }
 }

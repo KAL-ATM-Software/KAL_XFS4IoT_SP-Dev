@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.CompareSignature")]
     public sealed class CompareSignatureCompletion : Completion<CompareSignatureCompletion.PayloadData>
     {
@@ -42,12 +43,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```cashInActive``` - A cash-in transaction is active. This device requires that no cash-in 
+            /// * ```cashInActive``` - A cash-in transaction is active. This device requires that no cash-in
             /// transaction is active in order to perform the command.
             /// * ```exchangeActive``` - The device is in the exchange state.
-            /// * ```invalidReferenceSignature``` - At least one of the reference signatures is invalid. The application should 
+            /// * ```invalidReferenceSignature``` - At least one of the reference signatures is invalid. The application should
             /// prompt the operator to carefully retry the creation of the reference signatures.
             /// * ```invalidTransactionSignature``` - At least one of the transaction signatures is invalid.
             /// </summary>
@@ -65,9 +66,10 @@ namespace XFS4IoT.CashAcceptor.Completions
                 }
 
                 /// <summary>
-                /// Specifies the index (0 to #*signatures* - 1) of the matching signature from the input parameter *signatures*.
+                /// Specifies the index (0 to #*signatures* - 1) of the matching signature from the input property *signatures*.
                 /// </summary>
                 [DataMember(Name = "index")]
+                [DataTypes(Minimum = 0)]
                 public int? Index { get; init; }
 
                 /// <summary>
@@ -81,7 +83,7 @@ namespace XFS4IoT.CashAcceptor.Completions
 
                 /// <summary>
                 /// Vendor dependent comparison result data. This data may be used as justification for the signature match or
-                /// confidence level. This field is omitted if no additional comparison data is returned.
+                /// confidence level. This property is null if no additional comparison data is returned.
                 /// <example>Example comparison data.</example>
                 /// </summary>
                 [DataMember(Name = "comparisonData")]
@@ -90,10 +92,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Array of compare results. This array is empty when the compare operation completes with no matches found.
-            /// If there are matches found, *signaturesIndex* contains the indices of the matching signatures from the 
-            /// input parameter *signatures*.
-            /// If there is a match found but the Service does not support the confidence level factor, *signaturesIndex* 
+            /// Array of compare results. This is null when the compare operation completes with no matches found.
+            /// If there are matches found, *signaturesIndex* contains the indices of the matching signatures from the
+            /// input property *signatures*.
+            /// If there is a match found but the Service does not support the confidence level factor, *signaturesIndex*
             /// contains a single index with confidenceLevel set to 0.
             /// </summary>
             [DataMember(Name = "signaturesIndex")]

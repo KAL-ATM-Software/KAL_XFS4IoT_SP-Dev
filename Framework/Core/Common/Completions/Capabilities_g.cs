@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.Capabilities")]
     public sealed class CapabilitiesCompletion : Completion<CapabilitiesCompletion.PayloadData>
     {
@@ -26,7 +27,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, Lights.CapabilitiesClass Lights = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, VendorApplication.CapabilitiesClass VendorApplication = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, Check.CapabilitiesClass Check = null, MixedMedia.CapabilitiesClass MixedMedia = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, Lights.CapabilitiesClass Lights = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, VendorApplication.CapabilitiesClass VendorApplication = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Interfaces = Interfaces;
@@ -35,6 +36,8 @@ namespace XFS4IoT.Common.Completions
                 this.CashAcceptor = CashAcceptor;
                 this.CashDispenser = CashDispenser;
                 this.CashManagement = CashManagement;
+                this.Check = Check;
+                this.MixedMedia = MixedMedia;
                 this.PinPad = PinPad;
                 this.Crypto = Crypto;
                 this.KeyManagement = KeyManagement;
@@ -55,120 +58,60 @@ namespace XFS4IoT.Common.Completions
             [DataMember(Name = "interfaces")]
             public List<InterfaceClass> Interfaces { get; init; }
 
-            /// <summary>
-            /// Capability information common to all XFS4IoT services.
-            /// </summary>
             [DataMember(Name = "common")]
             public CapabilityPropertiesClass Common { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the CardReader interface. This will be omitted if
-            /// the CardReader interface is not supported.
-            /// </summary>
             [DataMember(Name = "cardReader")]
             public CardReader.CapabilitiesClass CardReader { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the CashAcceptor interface. This will be omitted if
-            /// the CashAcceptor interface is not supported.
-            /// </summary>
             [DataMember(Name = "cashAcceptor")]
             public CashAcceptor.CapabilitiesClass CashAcceptor { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the CashDispenser interface. This will be omitted
-            /// if the CashDispenser interface is not supported.
-            /// </summary>
             [DataMember(Name = "cashDispenser")]
             public CashDispenser.CapabilitiesClass CashDispenser { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the CashManagement interface. This will be omitted
-            /// if the CashManagement interface is not supported.
-            /// </summary>
             [DataMember(Name = "cashManagement")]
             public CashManagement.CapabilitiesClass CashManagement { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the PinPad interface. This will be omitted if the
-            /// PinPad interface is not supported.
-            /// </summary>
+            [DataMember(Name = "check")]
+            public Check.CapabilitiesClass Check { get; init; }
+
+            [DataMember(Name = "mixedMedia")]
+            public MixedMedia.CapabilitiesClass MixedMedia { get; init; }
+
             [DataMember(Name = "pinPad")]
             public PinPad.CapabilitiesClass PinPad { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Crypto interface. This will be omitted if the
-            /// Crypto interface is not supported.
-            /// </summary>
             [DataMember(Name = "crypto")]
             public Crypto.CapabilitiesClass Crypto { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the KeyManagement interface. This will be omitted
-            /// if the KeyManagement interface is not supported.
-            /// </summary>
             [DataMember(Name = "keyManagement")]
             public KeyManagement.CapabilitiesClass KeyManagement { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Keyboard interface. This will be omitted if the
-            /// Keyboard interface is not supported.
-            /// </summary>
             [DataMember(Name = "keyboard")]
             public Keyboard.CapabilitiesClass Keyboard { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the TextTerminal interface. This will be omitted if
-            /// the TextTerminal interface is not supported.
-            /// </summary>
             [DataMember(Name = "textTerminal")]
             public TextTerminal.CapabilitiesClass TextTerminal { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Printer interface. This will be omitted if the
-            /// Printer interface is not supported.
-            /// </summary>
             [DataMember(Name = "printer")]
             public Printer.CapabilitiesClass Printer { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the BarcodeReader interface. This will be omitted
-            /// if the BarcodeReader interface is not supported.
-            /// </summary>
             [DataMember(Name = "barcodeReader")]
             public BarcodeReader.CapabilitiesClass BarcodeReader { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Biometrics interface. This will be omitted if
-            /// the Biometrics interface is not supported.
-            /// </summary>
             [DataMember(Name = "biometric")]
             public Biometric.CapabilitiesClass Biometric { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Camera interface. This will be omitted if the Camera interface is not supported.
-            /// </summary>
             [DataMember(Name = "camera")]
             public Camera.CapabilitiesClass Camera { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Lights interface. This will be omitted if the 
-            /// Lights interface is not supported.
-            /// </summary>
             [DataMember(Name = "lights")]
             public Lights.CapabilitiesClass Lights { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the Auxiliaries interface. This will be omitted if the
-            /// Auxiliaries interface is not supported.
-            /// </summary>
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.CapabilitiesClass Auxiliaries { get; init; }
 
-            /// <summary>
-            /// Capability information for XFS4IoT services implementing the VendorApplication interface. This will be omitted if 
-            /// the Vendor Application interface is not supported.
-            /// </summary>
             [DataMember(Name = "vendorApplication")]
             public VendorApplication.CapabilitiesClass VendorApplication { get; init; }
 

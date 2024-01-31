@@ -16,19 +16,20 @@ namespace XFS4IoT.Biometric.Commands
 {
     //Original name = Match
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Biometric.Match")]
     public sealed class MatchCommand : Command<MatchCommand.PayloadData>
     {
-        public MatchCommand(int RequestId, MatchCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public MatchCommand(int RequestId, MatchCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CompareModeEnum? CompareMode = null, string Identifier = null, int? Maximum = null, int? Threshold = null)
-                : base(Timeout)
+            public PayloadData(CompareModeEnum? CompareMode = null, string Identifier = null, int? Maximum = null, int? Threshold = null)
+                : base()
             {
                 this.CompareMode = CompareMode;
                 this.Identifier = Identifier;
@@ -52,10 +53,10 @@ namespace XFS4IoT.Biometric.Commands
             public CompareModeEnum? CompareMode { get; init; }
 
             /// <summary>
-            /// In the case where *compareMode* is verify this parameter corresponds to a template that has been imported by a previous call to 
-            /// the [Biometric.Import](#biometric.import). If *compareMode* is identify a comparison is performed against all of the 
-            /// imported templates, in which case this property can be omitted. 
-            /// This property corresponds to the list of template identifiers returned by the 
+            /// In the case where *compareMode* is verify this parameter corresponds to a template that has been imported by a previous call to
+            /// the [Biometric.Import](#biometric.import). If *compareMode* is identify a comparison is performed against all of the
+            /// imported templates, in which case this property can be null.
+            /// This property corresponds to the list of template identifiers returned by the
             /// [Biometric.GetStorageInfo](#biometric.getstorageinfo) command.
             /// <example>id1</example>
             /// </summary>
@@ -64,14 +65,14 @@ namespace XFS4IoT.Biometric.Commands
             public string Identifier { get; init; }
 
             /// <summary>
-            /// Specifies the maximum number of matches to return. In the case where *compareMode* is verify this property can be omitted.
+            /// Specifies the maximum number of matches to return. In the case where *compareMode* is verify this property can be null.
             /// </summary>
             [DataMember(Name = "maximum")]
             [DataTypes(Minimum = 0)]
             public int? Maximum { get; init; }
 
             /// <summary>
-            /// Specifies the minimum matching confidence level necessary for the candidate to be included in the results. This value should be 
+            /// Specifies the minimum matching confidence level necessary for the candidate to be included in the results. This value should be
             /// in the range of 0 to 100, where 100 represents an exact match and 0 represents no match.
             /// <example>80</example>
             /// </summary>

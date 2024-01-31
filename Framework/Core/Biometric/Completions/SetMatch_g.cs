@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.SetMatch")]
     public sealed class SetMatchCompletion : Completion<SetMatchCompletion.PayloadData>
     {
@@ -41,12 +42,12 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```invalidIdentifier``` -\tThe command failed because data was imported but *identifier* was not found. 
-            /// * ```modeNotSupported``` - The type of match specified in *compareMode* is not supported. 
-            /// * ```noImportedData``` - The command failed because no data was imported previously using the 
-            ///                          [Biometric.ImportData](#biometric.import).
+            /// * ```invalidIdentifier``` -\tThe command failed because data was imported but *identifier* was not found.
+            /// * ```modeNotSupported``` - The type of match specified in *compareMode* is not supported.
+            /// * ```noImportedData``` - The command failed because no data was imported previously using the
+            ///                           [Biometric.ImportData](#biometric.import).
             /// * ```invalidThreshold``` - The *threshold* input parameter is greater than the maximum allowed of 100.
             /// </summary>
             [DataMember(Name = "errorCode")]

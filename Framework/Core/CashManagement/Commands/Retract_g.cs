@@ -16,42 +16,29 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = Retract
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.Retract")]
     public sealed class RetractCommand : Command<RetractCommand.PayloadData>
     {
-        public RetractCommand(int RequestId, RetractCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public RetractCommand(int RequestId, RetractCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, OutputPositionEnum? OutputPosition = null, RetractAreaEnum? RetractArea = null, int? Index = null)
-                : base(Timeout)
+            public PayloadData(RetractClass Location = null)
+                : base()
             {
-                this.OutputPosition = OutputPosition;
-                this.RetractArea = RetractArea;
-                this.Index = Index;
+                this.Location = Location;
             }
 
-            [DataMember(Name = "outputPosition")]
-            public OutputPositionEnum? OutputPosition { get; init; }
-
-            [DataMember(Name = "retractArea")]
-            public RetractAreaEnum? RetractArea { get; init; }
-
             /// <summary>
-            /// If *retractArea* is set to *retract* this property defines the position inside the retract storage units into 
-            /// which the cash is to be retracted. *index* starts with a value of 1 for the first retract position 
-            /// and increments by one for each subsequent position. If there are several retract storage units 
-            /// (of type *retractCassette* in [Storage.GetStorage](#storage.getstorage)), *index* would be incremented from the 
-            /// first position of the first retract storage unit to the last position of the last retract storage unit. 
-            /// The maximum value of *index* is the sum of *maximum* of each retract storage unit. If *retractArea* is not 
-            /// set to *retract* the value of this property is ignored.
+            /// Specifies where items are to be retracted from and where they are to be retracted to.
             /// </summary>
-            [DataMember(Name = "index")]
-            public int? Index { get; init; }
+            [DataMember(Name = "location")]
+            public RetractClass Location { get; init; }
 
         }
     }

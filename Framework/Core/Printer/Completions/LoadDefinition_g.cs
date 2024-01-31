@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.LoadDefinition")]
     public sealed class LoadDefinitionCompletion : Completion<LoadDefinitionCompletion.PayloadData>
     {
@@ -40,7 +41,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formInvalid``` - The form is invalid.
             /// * ```mediaInvalid``` - The media definition is invalid.

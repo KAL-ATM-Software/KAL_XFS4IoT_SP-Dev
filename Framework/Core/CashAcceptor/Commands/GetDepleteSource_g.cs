@@ -16,25 +16,26 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = GetDepleteSource
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.GetDepleteSource")]
     public sealed class GetDepleteSourceCommand : Command<GetDepleteSourceCommand.PayloadData>
     {
-        public GetDepleteSourceCommand(int RequestId, GetDepleteSourceCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetDepleteSourceCommand(int RequestId, GetDepleteSourceCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string CashUnitTarget = null)
-                : base(Timeout)
+            public PayloadData(string CashUnitTarget = null)
+                : base()
             {
                 this.CashUnitTarget = CashUnitTarget;
             }
 
             /// <summary>
-            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
             /// command) which would be used as the target of the depletion operation.
             /// <example>unit2</example>
             /// </summary>

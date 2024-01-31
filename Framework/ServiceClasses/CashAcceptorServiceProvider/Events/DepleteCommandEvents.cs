@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,15 +12,12 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
 using XFS4IoT.CashAcceptor.Events;
+using XFS4IoT.Events;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
-    public class DepleteCommandEvents : ItemErrorCommandEvents
+    public sealed class DepleteCommandEvents(IStorageService storage, IDepleteEvents events) : ItemErrorCommandEvents(events)
     {
-        public DepleteCommandEvents(IDepleteEvents events) :
-            base(events)
-        { }
-
         public Task IncompleteDepleteEvent(DepleteOperationResult result)
         {
             IncompleteDepleteEvent.PayloadData payload = new();
@@ -54,5 +50,9 @@ namespace XFS4IoTFramework.CashAcceptor
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(IncompleteDepleteEvent));
         }
+
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds) => StorageErrorCommandEvent?.StorageErrorEvent(Failure, CashUnitIds);
+
+        private StorageErrorCommandEvent StorageErrorCommandEvent { get; init; } = new(storage, events);
     }
 }

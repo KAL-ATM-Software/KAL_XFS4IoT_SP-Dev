@@ -10,6 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
 using XFS4IoTFramework.Common;
+using System.Diagnostics;
+using System.Security.Principal;
+using XFS4IoT.Commands;
 
 // KAL specific implementation of keymanagement. 
 namespace XFS4IoTFramework.KeyManagement
@@ -37,30 +40,30 @@ namespace XFS4IoTFramework.KeyManagement
                                         CancellationToken cancellation);
 
         /// <summary>
-        /// This command can be used to delete a key without authentication.
-        /// Where an authenticated delete is required, the StartAuthenticate command should be used.
+        /// This method can be used to delete a key without authentication.
+        /// Where an authenticated delete is required, the StartAuthenticate method should be used.
         /// </summary>
         Task<DeviceResult> DeleteKey(DeleteKeyRequest request,
                                      CancellationToken cancellation);
 
         /// <summary>
-        /// This command returns the Key Check Value (kcv) for the specified key. 
+        /// This method returns the Key Check Value (kcv) for the specified key. 
         /// </summary>
         Task<GenerateKCVResult> GenerateKCV(GenerateKCVRequest request,
                                             CancellationToken cancellation);
         /// <summary>
         /// The encryption module must be initialized before any encryption function can be used.Every call to Initialization destroys all application keys that have been loaded or imported.
         /// it does not affect those keys loaded during manufacturing.
-        /// Usually this command is called by an operator task and not by the application program.
+        /// Usually this method is called by an operator task and not by the application program.
         /// Public keys imported under the RSA Signature based remote key loading scheme when public key deletion authentication is required will not be affected. 
-        /// However, if this command is requested in authenticated mode, public keys that require authentication for deletion will be deleted. 
+        /// However, if this method is requested in authenticated mode, public keys that require authentication for deletion will be deleted. 
         /// This includes public keys imported under either the RSA Signature based remote key loading scheme or the TR34 RSA Certificate based remote key loading scheme. 
         /// Initialization also involves loading 'initial' application keys and local vendor dependent keys. 
         /// These can be supplied, for example, by an operator through a keyboard, a local configuration file, 
         /// remote RSA key management or possibly by means of some secure hardware that can be attached to the device. 
         /// The application 'initial' keys would normally get updated by the application during a Importkey command as soon as possible.
         /// Local vendor dependent static keys (e.g. storage, firmware and offset keys) would normally be transparent to the application and by definition cannot be dynamically changed.
-        /// Where initial keys are not available immediately when this command is issued (i.e. when operator intervention is required), 
+        /// Where initial keys are not available immediately when this method is issued (i.e. when operator intervention is required), 
         /// the Service Provider returns accessDenied and the application must await the initializedevent.
         /// During initialization an optional encrypted ID key can be stored in the HW module. 
         /// The ID key and the corresponding encryption key can be passed as parameters.
@@ -71,7 +74,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// Any keys installed during production, which have been permanently replaced, will not be reset.
         /// Any Verification certificates that may have been loaded must be reloaded.The Certificate state will remain the same, 
         /// but the LoadCertificate or ReplaceCertificate commands must be called again.When multiple ZKA HSMs are present, 
-        /// this command deletes all keys loaded within all ZKA logical HSMs.
+        /// this method deletes all keys loaded within all ZKA logical HSMs.
         /// </summary>
         Task<InitializationResult> Initialization(InitializationRequest request, 
                                                   CancellationToken cancellation);
@@ -94,12 +97,12 @@ namespace XFS4IoTFramework.KeyManagement
         /// </summary>
         Task<DeviceResult> ResetDevice(CancellationToken cancellation);
 
-       
+
         /// <summary>
-        /// This command is used to export data elements from the device, which have been signed by an offline Signature Issuer or
+        /// This method is used to export data elements from the device, which have been signed by an offline Signature Issuer or
         /// a private key within the EPP. 
-        /// This command is used when the default keys and Signature Issuer signatures, installed during manufacture, 
-        /// are to be used for remote key loading. This command allows the following data items are to be exported:
+        /// This method is used when the default keys and Signature Issuer signatures, installed during manufacture, 
+        /// are to be used for remote key loading. This method allows the following data items are to be exported:
         /// - The Security Item which uniquely identifies the device. 
         ///   This value may be used to uniquely identify a device and therefore confer trust upon any key or data obtained from this device.
         /// - The RSA public key component of a public/private key pair that exists within the device.
@@ -112,10 +115,10 @@ namespace XFS4IoTFramework.KeyManagement
         Task<RSASignedItemResult> ExportRSAPublicKey(ExportRSAPublicKeyRequest request, 
                                                      CancellationToken cancellation);
 
- 
+
         /// <summary>
-        /// This command will generate a new RSA key pair.
-        /// The public key generated as a result of this command can subsequently be obtained by calling 
+        /// This method will generate a new RSA key pair.
+        /// The public key generated as a result of this method can subsequently be obtained by calling 
         /// ExportRSAEPPSignedItem.The newly generated key pair can only be used for the use defined in the use flag.
         /// This flag defines the use of the private key; its public key can only be used for the inverse function.
         /// </summary>
@@ -123,24 +126,24 @@ namespace XFS4IoTFramework.KeyManagement
                                                           CancellationToken cancellation);
 
         /// <summary>
-        /// This command is used to read out the encryptor's certificate, which has been signed by the trusted Certificate Authority and is sent to the host. 
-        /// This command only needs to be called once if no new Certificate Authority has taken over.
-        /// The output of this command will specify in the PKCS #7 message the resulting Primary or Secondary certificate.
+        /// This method is used to read out the encryptor's certificate, which has been signed by the trusted Certificate Authority and is sent to the host. 
+        /// This method only needs to be called once if no new Certificate Authority has taken over.
+        /// The output of this method will specify in the PKCS #7 message the resulting Primary or Secondary certificate.
         /// </summary>
         Task<ExportCertificateResult> ExportCertificate(ExportCertificateRequest request,
                                                         CancellationToken cancellation);
 
         /// <summary>
-        /// This command is used to replace the existing primary or secondary Certificate Authority certificate already loaded into the KeyManagement.
+        /// This method is used to replace the existing primary or secondary Certificate Authority certificate already loaded into the KeyManagement.
         /// This operation must be done by an Initial Certificate Authority or by a Sub-Certificate Authority.
         /// These operations will replace either the primary or secondary Certificate Authority public verification key inside of the KeyManagement.
-        /// After this command is complete, the application should send the LoadCertificate and GetCertificate commands to ensure that the new HOST and the encryptor have all the information required to perform the remote key loading process.
+        /// After this method is complete and send a completion, the application should send the LoadCertificate and GetCertificate commands to ensure that the new HOST and the encryptor have all the information required to perform the remote key loading process.
         /// </summary>
         Task<ReplaceCertificateResult> ReplaceCertificate(ReplaceCertificateRequest request,
                                                           CancellationToken cancellation);
 
         /// <summary>
-        /// This command is used to start communication with the host, including transferring the host's Key Transport Key, 
+        /// This method is used to start communication with the host, including transferring the host's Key Transport Key, 
         /// replacing the Host certificate, and requesting initialization remotely. 
         /// This output value is returned to the host and is used in the ImportKey and LoadCertificate to verify that the encryptor is talking to the proper host.
         /// The ImportKey command end the key exchange process.
@@ -149,23 +152,45 @@ namespace XFS4IoTFramework.KeyManagement
 
 
         /// <summary>
-        /// This command is used to load a host certificate to make remote key loading possible. 
-        /// This command can be used to load a host certificate when there is not already one present in the encryptor as well as replace the existing host certificate with a new host certificate.
+        /// This method is used to load a host certificate to make remote key loading possible. 
+        /// This method can be used to load a host certificate when there is not already one present in the encryptor as well as replace the existing host certificate with a new host certificate.
         /// The type of certificate (Primary or Secondary) to be loaded will be embedded within the actual certificate structure.
         /// </summary>
         Task<ImportCertificateResult> ImportCertificate(ImportCertificateRequest request,
                                                         CancellationToken cancellation);
 
-        
+
         /// <summary>
-        /// This command is used to retrieve the data that needs to be signed and hence provided to the Authenticate command in order to perform an authenticated action on the device.
-        /// If this command returns data to be signed then the Authenticate command must be used to call the command referenced by the payload.
+        /// This method is used to retrieve the data that needs to be signed and hence provided to the Authenticate command in order to perform an authenticated action on the device.
+        /// If this method returns data to be signed then the Authenticate command must be used to call the command referenced by the payload.
         /// Any attempt to call the referenced command without using the Authenticate command, if authentication is required, 
         /// shall result in AuthRequired. 
         /// </summary>
         Task<StartAuthenticateResult> StartAuthenticate(StartAuthenticateRequest request, 
                                                         CancellationToken cancellation);
 
+
+        /// <summary>
+        /// This method is used to load a DES (56, 112, 168) or AES (128, 192, 256) key included in a key transport token.
+        /// The Key Transport Key should be destroyed if the entire process is not completed.In addition, a new Key
+        /// Transport Key should be generated each time this protocol is executed.
+        /// This method ends the Key Exchange process.
+        /// </summary>
+        Task<ImportKeyTokenResult> ImportKeyToken(ImportKeyTokenRequest request,
+                                                  CancellationToken cancellation);
+
+        /// <summary>
+        /// The Certification Authority and the Chip Card RSA public
+        /// keys needed for EMV are loaded or deleted in/from the encryption module.
+        /// This method is similar to the ImportKey method,
+        /// but it is specifically designed to address the key formats and security
+        /// features defined by EMV.Mainly the extensive use of "signed certificate" or "EMV certificate" (which is a compromise between
+        /// signature and a pure certificate) to provide the public key is taken in account.
+        /// The SP is responsible for all EMV public key import validation. Once loaded, the SP is not responsible
+        /// for key/certificate expiry, this is an application responsibility.
+        /// </summary>
+        Task<ImportEMVPublicKeyResult> ImportEMVPublicKey(ImportEMVPublicKeyRequest request,
+                                                          CancellationToken cancellation);
 
         /// <summary>
         /// KeyManagement Status

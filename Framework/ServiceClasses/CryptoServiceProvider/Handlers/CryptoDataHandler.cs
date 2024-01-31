@@ -42,10 +42,10 @@ namespace XFS4IoTFramework.Crypto
             }
 
             KeyDetail ivKeyDetail = null;
-            if (!string.IsNullOrEmpty(cryptoData.Payload.IvKey))
+            if (!string.IsNullOrEmpty(cryptoData.Payload.Iv?.Key))
             {
                 // Check stored IV key attributes
-                ivKeyDetail = KeyManagement.GetKeyDetail(cryptoData.Payload.IvKey);
+                ivKeyDetail = KeyManagement.GetKeyDetail(cryptoData.Payload.Iv.Key);
 
                 if (ivKeyDetail is null)
                 {
@@ -156,10 +156,10 @@ namespace XFS4IoTFramework.Crypto
 
             List<byte> ivData = null;
             string ivKeyName = string.Empty;
-            if (!string.IsNullOrEmpty(cryptoData.Payload.IvKey) ||
-                cryptoData.Payload.Iv?.Count > 0)
+            if (!string.IsNullOrEmpty(cryptoData.Payload.Iv?.Key) ||
+                cryptoData.Payload.Iv?.Value?.Count > 0)
             {
-                if (!string.IsNullOrEmpty(cryptoData.Payload.IvKey))
+                if (!string.IsNullOrEmpty(cryptoData.Payload.Iv.Key))
                 {
                     // First to check capabilities of ECB decryption
                     bool verifyIVAttrib = false;
@@ -188,14 +188,14 @@ namespace XFS4IoTFramework.Crypto
                 ivData = (new byte[8]).Select(x => x = 0).ToList();
 
                 // Need an IV
-                if (string.IsNullOrEmpty(cryptoData.Payload.IvKey) &&
-                    cryptoData.Payload.Iv?.Count > 0)
+                if (string.IsNullOrEmpty(cryptoData.Payload.Iv?.Key) &&
+                    cryptoData.Payload.Iv?.Value?.Count > 0)
                 {
                     // ClearIV;
-                    ivData = cryptoData.Payload.Iv;
+                    ivData = cryptoData.Payload.Iv.Value;
                 }
-                else if (!string.IsNullOrEmpty(cryptoData.Payload.IvKey) &&
-                         cryptoData.Payload.Iv?.Count > 0)
+                else if (!string.IsNullOrEmpty(cryptoData.Payload.Iv?.Key) &&
+                         cryptoData.Payload.Iv?.Value?.Count > 0)
                 {
                     // In this last mode, the data is encrypted, so we have to decrypt
                     // it then send it as a clear IV
@@ -204,9 +204,9 @@ namespace XFS4IoTFramework.Crypto
                     var decryptResult = await Device.Crypto(new CryptoCommandEvents(events), 
                                                             new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
                                                                                   CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                                  cryptoData.Payload.IvKey,
-                                                                                  KeyManagement.GetKeyDetail(cryptoData.Payload.IvKey).KeySlot,
-                                                                                  cryptoData.Payload.Iv,
+                                                                                  cryptoData.Payload.Iv.Key,
+                                                                                  KeyManagement.GetKeyDetail(cryptoData.Payload.Iv.Key).KeySlot,
+                                                                                  cryptoData.Payload.Iv.Value,
                                                                                   0),
                                                             cancel);
 
@@ -223,7 +223,7 @@ namespace XFS4IoTFramework.Crypto
                 }
                 else
                 {
-                    ivKeyName = cryptoData.Payload.IvKey;
+                    ivKeyName = cryptoData.Payload.Iv?.Key;
                 }
             }
 

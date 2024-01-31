@@ -16,6 +16,7 @@ using XFS4IoT.CashAcceptor.Completions;
 using XFS4IoT.CashManagement;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Common;
+using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
@@ -40,7 +41,7 @@ namespace XFS4IoTFramework.CashAcceptor
                 };
             }
 
-            if (!Common.CashAcceptorCapabilities.Positions.HasFlag(outputPosition))
+            if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
                 return new PreparePresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                 $"Unsupported output position. {outputPosition}");
@@ -68,7 +69,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.PreparePresent()");
 
-            var result = await Device.PreparePresent(new ItemInfoAvailableCommandEvent(events),
+            var result = await Device.PreparePresent(new PreparePresentCommandEvents(Storage, events),
                                                      new PreparePresentRequest(outputPosition),
                                                      cancel);
 
@@ -76,9 +77,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             return new PreparePresentCompletion.PayloadData(result.CompletionCode,
                                                             result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            result.CompletionCode == MessagePayload.CompletionCodeEnum.Success ? preparePresent.Payload.Position : null);
+                                                            result.ErrorCode);
 
         }
+
+        private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }
 }

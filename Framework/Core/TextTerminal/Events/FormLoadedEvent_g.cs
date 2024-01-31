@@ -16,6 +16,7 @@ namespace XFS4IoT.TextTerminal.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "TextTerminal.FormLoadedEvent")]
     public sealed class FormLoadedEvent : Event<FormLoadedEvent.PayloadData>
     {

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.GetQueryField")]
     public sealed class GetQueryFieldCompletion : Completion<GetQueryFieldCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```fieldNotFound``` - The specified field cannot be found.
@@ -160,14 +161,14 @@ namespace XFS4IoT.Printer.Completions
                 /// <summary>
                 /// The initial value of the field. When the form is printed (using
                 /// [Printer.PrintForm](#printer.printform)), this value will be used if another value is not
-                /// provided. This value will be omitted if the parameter is not specified in the field definition.
+                /// provided. This value will be an empty string if the parameter is not specified in the field definition.
                 /// <example>This is Field 1</example>
                 /// </summary>
                 [DataMember(Name = "initialValue")]
                 public string InitialValue { get; init; }
 
                 /// <summary>
-                /// Format string as defined in the form for this field. This value will be omitted if the parameter
+                /// Format string as defined in the form for this field. This value will be an empty string if the parameter
                 /// is not specified in the field definition.
                 /// <example>Format 1</example>
                 /// </summary>
@@ -178,7 +179,8 @@ namespace XFS4IoT.Printer.Completions
                 {
                     Auto,
                     Low,
-                    High
+                    High,
+                    Na
                 }
 
                 /// <summary>
@@ -187,6 +189,7 @@ namespace XFS4IoT.Printer.Completions
                 /// * ```auto``` - The coercivity is decided by the Service or the hardware.
                 /// * ```low``` - A low coercivity is to be used for writing the magnetic stripe.
                 /// * ```high``` - A high coercivity is to be used for writing the magnetic stripe.
+                /// * ```na``` - Not applicable.
                 /// </summary>
                 [DataMember(Name = "coercivity")]
                 public CoercivityEnum? Coercivity { get; init; }
@@ -194,7 +197,8 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Details of the field(s) requested. For each object, the key is the field name.
+            /// Details of the field(s) requested. For each object, the key is the field name. This property is null if the
+            /// form or field cannot be found or is invalid.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, FieldsClass> Fields { get; init; }

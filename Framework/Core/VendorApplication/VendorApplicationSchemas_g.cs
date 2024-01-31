@@ -55,12 +55,11 @@ namespace XFS4IoT.VendorApplication
         [DataContract]
         public sealed class SupportedAccessLevelsClass
         {
-            public SupportedAccessLevelsClass(bool? Basic = null, bool? Intermediate = null, bool? Full = null, bool? AccessNotSupported = null)
+            public SupportedAccessLevelsClass(bool? Basic = null, bool? Intermediate = null, bool? Full = null)
             {
                 this.Basic = Basic;
                 this.Intermediate = Intermediate;
                 this.Full = Full;
-                this.AccessNotSupported = AccessNotSupported;
             }
 
             /// <summary>
@@ -84,20 +83,12 @@ namespace XFS4IoT.VendorApplication
             [DataMember(Name = "full")]
             public bool? Full { get; init; }
 
-            /// <summary>
-            /// Access levels are not supported.
-            /// </summary>
-            [DataMember(Name = "accessNotSupported")]
-            public bool? AccessNotSupported { get; init; }
-
         }
 
         /// <summary>
         /// Specifies the supported access levels. This allows the application to show a user interface with
-        /// reduced or extended functionality depending on the access levels. The exact meaning or functionalities
-        /// definition is left to the vendor. If no access levels are supported this property will be omitted.
-        /// Otherwise this will report the supported access levels.
-        /// respectively.
+        /// reduced or extended functionality depending on the access levels. The exact meaning or functionality
+        /// definition is left to the vendor. If no access levels are supported this property will be null.
         /// </summary>
         [DataMember(Name = "supportedAccessLevels")]
         public SupportedAccessLevelsClass SupportedAccessLevels { get; init; }

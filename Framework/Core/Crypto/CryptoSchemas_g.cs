@@ -52,6 +52,7 @@ namespace XFS4IoT.Crypto
 
         /// <summary>
         /// Specifies which hash algorithm is supported for the calculation of the HASH.
+        /// This property is null if not supported.
         /// </summary>
         [DataMember(Name = "emvHashAlgorithm")]
         public EmvHashAlgorithmClass EmvHashAlgorithm { get; init; }
@@ -104,7 +105,7 @@ namespace XFS4IoT.Crypto
                 public bool? Ofb { get; init; }
 
                 /// <summary>
-                /// The CTR method defined in NIST SP800-38A (See [[Ref. crypto-4](#ref-crypto-4)]) 
+                /// The CTR method defined in NIST SP800-38A (See [[Ref. crypto-4](#ref-crypto-4)])
                 /// </summary>
                 [DataMember(Name = "ctr")]
                 public bool? Ctr { get; init; }
@@ -131,9 +132,9 @@ namespace XFS4IoT.Crypto
 
             /// <summary>
             /// Specifies the cryptographic method supported by the [Crypto.CryptoData](#crypto.cryptodata)
-            /// command. If the key usage is any of the MAC usages (i.e.
-            /// ['M1'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), then the
-            /// following properties can be true. 
+            /// command. 
+            /// If the key usage is symmetric encryption methods ['D0'](#common.capabilities.completion.properties.crypto.cryptoattributes.d0)),
+            /// then the following properties can be true.
             /// 
             /// * ```ecb``` - The ECB encryption method.
             /// * ```cbc``` - The CBC encryption method.
@@ -142,9 +143,9 @@ namespace XFS4IoT.Crypto
             /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. crypto-4](#ref-crypto-4)])
             /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. crypto-5](#ref-crypto-5)])
             /// 
-            /// If the algorithm is 'R' and the key usage is
-            /// ['D0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0), then the
-            /// following properties can be true. 
+            /// If the key usage is asymmetric encryption methods 
+            /// ['D1'](#common.capabilities.completion.properties.crypto.cryptoattributes.d1), 
+            /// then the following properties can be true.
             /// 
             /// * ```rsaesPkcs1V15``` - RSAES_PKCS1-v1.5 algorithm.
             /// * ```rsaesOaep``` - The RSAES OAEP algorithm.
@@ -155,7 +156,7 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [Crypto.CryptoData](#crypto.cryptodata) command to encrypt or
+        /// Attributes supported by the [Crypto.CryptoData](#crypto.cryptodata) command to encrypt or
         /// decrypt data.
         /// </summary>
         [DataMember(Name = "cryptoAttributes")]
@@ -198,8 +199,8 @@ namespace XFS4IoT.Crypto
             /// [Crypto.GenerateAuthentication](#crypto.generateauthentication) command.
             /// 
             /// If the key usage is one of the MAC usages (e.g.
-            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
-            /// following properties are false.
+            /// ['M0'](#common.capabilities.completion.properties.crypto.authenticationattributes.m0)), 
+            /// this property should be null.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodClass CryptoMethod { get; init; }
@@ -232,8 +233,8 @@ namespace XFS4IoT.Crypto
             /// Specifies the hash algorithm supported.
             /// 
             /// If the *key* usage is one of the MAC usages (e.g.
-            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
-            /// following properties are false.
+            /// ['M0'](#common.capabilities.completion.properties.crypto.authenticationattributes.m0)), 
+            /// this property should be null.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmClass HashAlgorithm { get; init; }
@@ -241,7 +242,7 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the
+        /// Attributes supported by the
         /// [Crypto.GenerateAuthentication](#crypto.generateauthentication) command to generate authentication data.
         /// </summary>
         [DataMember(Name = "authenticationAttributes")]
@@ -284,8 +285,8 @@ namespace XFS4IoT.Crypto
             /// [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command.
             /// 
             /// If the key usage is one of the MAC usages (e.g.
-            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
-            /// following properties are false.
+            /// ['M0'](#common.capabilities.completion.properties.crypto.verifyattributes.m0)), 
+            /// this property should be null.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodClass CryptoMethod { get; init; }
@@ -318,8 +319,8 @@ namespace XFS4IoT.Crypto
             /// Specifies the hash algorithm supported.
             /// 
             /// If the key usage is one of the MAC usages (e.g.
-            /// ['M0'](#common.capabilities.completion.properties.keymanagement.keyattributes.m0)), the
-            /// following properties are false.
+            /// ['M0'](#common.capabilities.completion.properties.crypto.verifyattributes.m0)),
+            /// this property should be null.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmClass HashAlgorithm { get; init; }
@@ -327,7 +328,7 @@ namespace XFS4IoT.Crypto
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication)
+        /// Attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication)
         /// command to verify authentication data.
         /// </summary>
         [DataMember(Name = "verifyAttributes")]

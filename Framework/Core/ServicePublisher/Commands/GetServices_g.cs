@@ -16,22 +16,12 @@ namespace XFS4IoT.ServicePublisher.Commands
 {
     //Original name = GetServices
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "ServicePublisher.GetServices")]
-    public sealed class GetServicesCommand : Command<GetServicesCommand.PayloadData>
+    public sealed class GetServicesCommand : Command<MessagePayload>
     {
-        public GetServicesCommand(int RequestId, GetServicesCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetServicesCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
-
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

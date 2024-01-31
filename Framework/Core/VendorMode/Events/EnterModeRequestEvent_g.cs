@@ -16,6 +16,7 @@ namespace XFS4IoT.VendorMode.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "VendorMode.EnterModeRequestEvent")]
     public sealed class EnterModeRequestEvent : UnsolicitedEvent<MessagePayloadBase>
     {

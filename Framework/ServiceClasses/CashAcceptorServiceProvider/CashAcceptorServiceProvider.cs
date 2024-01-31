@@ -15,6 +15,8 @@ using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
 using XFS4IoTFramework.CashAcceptor;
+using XFS4IoT.Common.Events;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -48,10 +50,6 @@ namespace XFS4IoTServer
         private readonly CommonServiceClass CommonService;
 
         #region CashManagement unsolicited events
-
-        public Task SafeDoorOpenEvent() => CashManagementService.SafeDoorOpenEvent();
-
-        public Task SafeDoorClosedEvent() => CashManagementService.SafeDoorClosedEvent();
 
         public Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
 
@@ -95,18 +93,7 @@ namespace XFS4IoTServer
         #endregion
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the CashAcceptor Service.");
 
@@ -202,11 +189,6 @@ namespace XFS4IoTServer
         /// Value - List of storage id can be used for source of the depletion operation
         /// </summary>
         public Dictionary<string, List<string>> DepleteCashUnitSources { get => CashAcceptor.DepleteCashUnitSources; init { } }
-
-        /// <summary>
-        /// Additional information about the use assigned to each position available in the device.
-        /// </summary>
-        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionCapabilitiesClass> PositionCapabilities { get => CashAcceptor.PositionCapabilities; init { } }
 
         /// <summary>
         /// Which storage units can be specified as targets for a given source storage unit with the CashAcceptor.Replenish command

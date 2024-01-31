@@ -16,6 +16,7 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.MediaInsertedEvent")]
     public sealed class MediaInsertedEvent : Event<MessagePayloadBase>
     {

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.BarcodeReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "BarcodeReader.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.BarcodeReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```barcodeInvalid``` - The read operation could not be completed successfully. The barcode presented
             /// was defective or was wrongly read.
@@ -198,6 +199,7 @@ namespace XFS4IoT.BarcodeReader.Completions
                 /// on the symbology read, e.g. it may contain 8 bit character values where the symbol is dependent
                 /// on the codepage used to encode the barcode, may contain UNICODE data, or may be a binary block
                 /// of data. The application is responsible for checking the completeness and validity of the data.
+                /// If the read operation could not be completed successfully, this will be null.
                 /// <example>YmFyY29kZSBkYXRh</example>
                 /// </summary>
                 [DataMember(Name = "barcodeData")]
@@ -205,7 +207,7 @@ namespace XFS4IoT.BarcodeReader.Completions
                 public List<byte> BarcodeData { get; init; }
 
                 /// <summary>
-                /// A vendor dependent symbology identifier for the symbology recognized.
+                /// A vendor dependent symbology identifier for the symbology recognized. May be null if not applicable.
                 /// <example>code39</example>
                 /// </summary>
                 [DataMember(Name = "symbologyName")]
@@ -214,7 +216,8 @@ namespace XFS4IoT.BarcodeReader.Completions
             }
 
             /// <summary>
-            /// An array of barcode data structures, one for each barcode scanned during the read operation
+            /// An array of barcode data structures, one for each barcode scanned during the read operation. If no
+            /// barcode was scanned, this property is null.
             /// </summary>
             [DataMember(Name = "readOutput")]
             public List<ReadOutputClass> ReadOutput { get; init; }

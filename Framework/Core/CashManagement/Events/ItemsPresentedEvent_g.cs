@@ -16,6 +16,7 @@ namespace XFS4IoT.CashManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashManagement.ItemsPresentedEvent")]
     public sealed class ItemsPresentedEvent : UnsolicitedEvent<ItemsPresentedEvent.PayloadData>
     {
@@ -29,14 +30,26 @@ namespace XFS4IoT.CashManagement.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(PositionInfoClass Position = null)
+            public PayloadData(PositionEnum? Position = null, string AdditionalBunches = null)
                 : base()
             {
                 this.Position = Position;
+                this.AdditionalBunches = AdditionalBunches;
             }
 
             [DataMember(Name = "position")]
-            public PositionInfoClass Position { get; init; }
+            public PositionEnum? Position { get; init; }
+
+            /// <summary>
+            /// Specifies how many more bunches will be required to present the request. Following values are possible:
+            /// 
+            ///   * ```&lt;number&gt;``` - The number of additional bunches to be presented.
+            ///   * ```unknown``` - More than one additional bunch is required but the precise number is unknown.
+            /// <example>1</example>
+            /// </summary>
+            [DataMember(Name = "additionalBunches")]
+            [DataTypes(Pattern = @"^unknown$|^[0-9]*$")]
+            public string AdditionalBunches { get; init; }
 
         }
 

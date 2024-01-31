@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.VendorMode.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorMode.EnterModeRequest")]
     public sealed class EnterModeRequestCompletion : Completion<EnterModeRequestCompletion.PayloadData>
     {

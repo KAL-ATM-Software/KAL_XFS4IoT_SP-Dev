@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.GetItemInfo")]
     public sealed class GetItemInfoCompletion : Completion<GetItemInfoCompletion.PayloadData>
     {
@@ -33,7 +34,7 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Array of objects listing the item information.
+            /// Array of objects listing the item information. May be null, if empty.
             /// </summary>
             [DataMember(Name = "itemsList")]
             public List<ItemInfoClass> ItemsList { get; init; }

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.SetClassificationList")]
     public sealed class SetClassificationListCompletion : Completion<SetClassificationListCompletion.PayloadData>
     {

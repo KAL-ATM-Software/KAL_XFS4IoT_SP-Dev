@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ControlMedia
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.ControlMedia")]
     public sealed class ControlMediaCommand : Command<ControlMediaCommand.PayloadData>
     {
-        public ControlMediaCommand(int RequestId, ControlMediaCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ControlMediaCommand(int RequestId, ControlMediaCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, MediaControlClass MediaControl = null)
-                : base(Timeout)
+            public PayloadData(MediaControlClass MediaControl = null)
+                : base()
             {
                 this.MediaControl = MediaControl;
             }
@@ -184,7 +185,7 @@ namespace XFS4IoT.Printer.Commands
             /// other otherwise the command completes with *invalidData*.
             /// 
             /// It is not possible to combine the property
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) with any other 
+            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) with any other
             /// properties, otherwise the command completes with *invalidData*.
             /// 
             /// An application should be aware that the sequence of the actions is not guaranteed if more than one

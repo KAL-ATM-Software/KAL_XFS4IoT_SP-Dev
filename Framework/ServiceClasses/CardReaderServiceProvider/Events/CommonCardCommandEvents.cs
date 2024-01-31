@@ -11,7 +11,7 @@ using XFS4IoT;
 
 namespace XFS4IoTFramework.CardReader
 {
-    public class CommonCardCommandEvents
+    public abstract class CommonCardCommandEvents
     {
         public CommonCardCommandEvents(IReadRawDataEvents events)
         {

@@ -11,7 +11,7 @@ using XFS4IoT;
 
 namespace XFS4IoTFramework.Printer
 {
-    public sealed class MediaPresentedCommandEvent
+    public abstract class MediaPresentedCommandEvent
     {
         public MediaPresentedCommandEvent(IPrintRawEvents events)
         {

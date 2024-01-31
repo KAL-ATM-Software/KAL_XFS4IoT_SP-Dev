@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.LoadForm")]
     public sealed class LoadFormCompletion : Completion<LoadFormCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formInvalid``` - The form is invalid.
             /// * ```definitionExists``` - The specified form definition already exists and *overwrite* was false.

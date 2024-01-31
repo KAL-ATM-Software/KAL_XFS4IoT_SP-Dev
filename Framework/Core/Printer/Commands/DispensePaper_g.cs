@@ -16,27 +16,27 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = DispensePaper
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.DispensePaper")]
     public sealed class DispensePaperCommand : Command<DispensePaperCommand.PayloadData>
     {
-        public DispensePaperCommand(int RequestId, DispensePaperCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DispensePaperCommand(int RequestId, DispensePaperCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string PaperSource = null)
-                : base(Timeout)
+            public PayloadData(string PaperSource = null)
+                : base()
             {
                 this.PaperSource = PaperSource;
             }
 
             /// <summary>
-            /// Specifes the paper source to be used. 
-            /// This property can be omitted if any paper source to be used and the paper source is determined by the service.
-            /// It can be one of the following:
+            /// Specifes the paper source to be used. For commands which print, this parameter is ignored if there is already
+            /// paper in the print position. It can be one of the following:
             /// 
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
             ///                 supply.
@@ -45,10 +45,12 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux``` - Use the auxiliary paper source.
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
+            /// * ```any``` - Use any paper source, it is determined by the service.
             /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]
-            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^any$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
             public string PaperSource { get; init; }
 
         }

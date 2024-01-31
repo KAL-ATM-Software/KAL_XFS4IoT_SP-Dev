@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.ResetCount")]
     public sealed class ResetCountCompletion : Completion<ResetCountCompletion.PayloadData>
     {

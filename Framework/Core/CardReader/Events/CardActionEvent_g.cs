@@ -16,6 +16,7 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.CardActionEvent")]
     public sealed class CardActionEvent : UnsolicitedEvent<CardActionEvent.PayloadData>
     {
@@ -40,7 +41,7 @@ namespace XFS4IoT.CardReader.Events
             /// Position where the card was moved to. Possible values are:
             /// 
             /// * ```exit``` - The card was moved to the exit position.
-            /// * ```transport``` - The card was moved to the transport position. 
+            /// * ```transport``` - The card was moved to the transport position.
             /// * ```&lt;storage unit identifier&gt;``` - The card was moved to the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *retain*.
@@ -55,7 +56,7 @@ namespace XFS4IoT.CardReader.Events
             /// 
             /// * ```unknown``` - The position of the card cannot be determined.
             /// * ```exit``` - The card was in the exit position.
-            /// * ```transport``` - The card was in the transport position. 
+            /// * ```transport``` - The card was in the transport position.
             /// * ```&lt;storage unit identifier&gt;``` - The card was in a storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *park*.

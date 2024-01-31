@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ReadForm
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.ReadForm")]
     public sealed class ReadFormCommand : Command<ReadFormCommand.PayloadData>
     {
-        public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, List<string> FieldNames = null, string MediaName = null, MediaControlClass MediaControl = null)
-                : base(Timeout)
+            public PayloadData(string FormName = null, List<string> FieldNames = null, string MediaName = null, MediaControlClass MediaControl = null)
+                : base()
             {
                 this.FormName = FormName;
                 this.FieldNames = FieldNames;
@@ -44,7 +45,7 @@ namespace XFS4IoT.Printer.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// The field names from which to read input data. If this is omitted or empty, all input fields on the
+            /// The field names from which to read input data. If this is null, all input fields on the
             /// form will be read.
             /// <example>["FieldName1"]</example>
             /// </summary>
@@ -52,7 +53,7 @@ namespace XFS4IoT.Printer.Commands
             public List<string> FieldNames { get; init; }
 
             /// <summary>
-            /// The media name. If omitted or empty, no media definition applies.
+            /// The media name. If null, no media definition applies.
             /// <example>MediaName1</example>
             /// </summary>
             [DataMember(Name = "mediaName")]

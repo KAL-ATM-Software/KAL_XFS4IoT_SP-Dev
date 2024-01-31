@@ -16,19 +16,20 @@ namespace XFS4IoT.Keyboard.Commands
 {
     //Original name = KeypressBeep
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Keyboard.KeypressBeep")]
     public sealed class KeypressBeepCommand : Command<KeypressBeepCommand.PayloadData>
     {
-        public KeypressBeepCommand(int RequestId, KeypressBeepCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public KeypressBeepCommand(int RequestId, KeypressBeepCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ModeClass Mode = null)
-                : base(Timeout)
+            public PayloadData(ModeClass Mode = null)
+                : base()
             {
                 this.Mode = Mode;
             }

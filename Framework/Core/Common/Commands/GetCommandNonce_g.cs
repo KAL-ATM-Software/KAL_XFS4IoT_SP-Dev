@@ -16,22 +16,13 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = GetCommandNonce
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.GetCommandNonce")]
-    public sealed class GetCommandNonceCommand : Command<GetCommandNonceCommand.PayloadData>
+    public sealed class GetCommandNonceCommand : Command<MessagePayload>
     {
-        public GetCommandNonceCommand(int RequestId, GetCommandNonceCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetCommandNonceCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

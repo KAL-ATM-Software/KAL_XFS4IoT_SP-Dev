@@ -16,44 +16,26 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = TestCashUnits
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.TestCashUnits")]
     public sealed class TestCashUnitsCommand : Command<TestCashUnitsCommand.PayloadData>
     {
-        public TestCashUnitsCommand(int RequestId, TestCashUnitsCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public TestCashUnitsCommand(int RequestId, TestCashUnitsCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Unit = null, CashManagement.RetractClass RetractArea = null, CashManagement.OutputPositionEnum? OutputPosition = null)
-                : base(Timeout)
+            public PayloadData(CashManagement.ItemTargetClass Target = null)
+                : base()
             {
-                this.Unit = Unit;
-                this.RetractArea = RetractArea;
-                this.OutputPosition = OutputPosition;
+                this.Target = Target;
             }
 
-            /// <summary>
-            /// Specifies the object name (as stated by the 
-            /// [Storage.GetStorage](#storage.getstorage) command) of the single unit to 
-            /// be used for the storage of any items found.
-            /// <example>unit1</example>
-            /// </summary>
-            [DataMember(Name = "unit")]
-            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
-            public string Unit { get; init; }
-
-            /// <summary>
-            /// This property is used if items are to be moved to internal areas of
-            /// the device, including storage units, the intermediate stacker, or the transport.
-            /// </summary>
-            [DataMember(Name = "retractArea")]
-            public CashManagement.RetractClass RetractArea { get; init; }
-
-            [DataMember(Name = "outputPosition")]
-            public CashManagement.OutputPositionEnum? OutputPosition { get; init; }
+            [DataMember(Name = "target")]
+            public CashManagement.ItemTargetClass Target { get; init; }
 
         }
     }

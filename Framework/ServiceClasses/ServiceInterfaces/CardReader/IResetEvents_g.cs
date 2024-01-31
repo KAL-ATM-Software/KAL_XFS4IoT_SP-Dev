@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.CardReader
     public interface IResetEvents
     {
 
-        Task MediaDetectedEvent(XFS4IoT.CardReader.Events.MediaDetectedEvent.PayloadData Payload);
-
     }
 }

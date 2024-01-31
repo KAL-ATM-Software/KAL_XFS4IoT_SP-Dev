@@ -16,19 +16,20 @@ namespace XFS4IoT.PinPad.Commands
 {
     //Original name = LocalVisa
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "PinPad.LocalVisa")]
     public sealed class LocalVisaCommand : Command<LocalVisaCommand.PayloadData>
     {
-        public LocalVisaCommand(int RequestId, LocalVisaCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public LocalVisaCommand(int RequestId, LocalVisaCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Pan = null, string Pvv = null, string Key = null, string KeyEncKey = null)
-                : base(Timeout)
+            public PayloadData(string Pan = null, string Pvv = null, string Key = null, List<byte> KeyEncKey = null)
+                : base()
             {
                 this.Pan = Pan;
                 this.Pvv = Pvv;
@@ -63,12 +64,13 @@ namespace XFS4IoT.PinPad.Commands
             public string Key { get; init; }
 
             /// <summary>
-            /// If this property is omitted, key is used directly for PIN validation. Otherwise, key is used to
+            /// If this value is null, *key* is used directly for PIN validation. Otherwise, *key* is used to
             /// decrypt the encrypted key passed in *keyEncKey* and the result is used for PIN validation.
-            /// <example>Key02</example>
+            /// <example>UGluYmxvY2sgZGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "keyEncKey")]
-            public string KeyEncKey { get; init; }
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> KeyEncKey { get; init; }
 
         }
     }

@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.CashManagement
     public interface ISetTellerInfoEvents
     {
 
-        Task TellerInfoChangedEvent(XFS4IoT.CashManagement.Events.TellerInfoChangedEvent.PayloadData Payload);
-
     }
 }

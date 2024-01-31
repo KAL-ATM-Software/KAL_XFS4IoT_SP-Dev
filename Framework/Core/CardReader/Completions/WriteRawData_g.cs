@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCompletion : Completion<WriteRawDataCompletion.PayloadData>
     {
@@ -44,7 +45,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```mediaJam``` - The card is jammed. Operator intervention is required.
             /// * ```shutterFail``` - The open of the shutter failed due to manipulation or hardware error. Operator
@@ -54,7 +55,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   driven devices, the write is disabled; i.e. another command has to be issued to enable the reader
             ///   for card entry.
             /// * ```invalidMedia``` - No track found; card may have been inserted or pulled through the wrong way.
-            /// * ```writeMethod``` - The [writeMethod](#cardreader.writerawdata.command.properties.data.writemethod)
+            /// * ```writeMethod``` - The [writeMethod](#cardreader.writerawdata.command.properties.track1.writemethod)
             ///   value is inconsistent with device capabilities.
             /// * ```cardTooShort``` - The card that was inserted is too short. When this error occurs the card
             ///   remains at the exit slot.

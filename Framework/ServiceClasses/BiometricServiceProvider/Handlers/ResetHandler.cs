@@ -34,9 +34,9 @@ namespace XFS4IoTFramework.Biometric
             {
                 clearMode = reset.Payload.ClearData switch
                 {
-                    XFS4IoT.Biometric.ClearDataEnum.ScannedData => BiometricCapabilitiesClass.ClearModesEnum.ScannedData,
-                    XFS4IoT.Biometric.ClearDataEnum.ImportedData => BiometricCapabilitiesClass.ClearModesEnum.ImportedData,
-                    XFS4IoT.Biometric.ClearDataEnum.SetMatchedData => BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData,
+                    ResetCommand.PayloadData.ClearDataEnum.ScannedData => BiometricCapabilitiesClass.ClearModesEnum.ScannedData,
+                    ResetCommand.PayloadData.ClearDataEnum.ImportedData => BiometricCapabilitiesClass.ClearModesEnum.ImportedData,
+                    ResetCommand.PayloadData.ClearDataEnum.SetMatchedData => BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData,
                     _ => throw new InvalidDataException("Invalid ClearData type supplied within Biometric.Reset handler.")
                 };
 

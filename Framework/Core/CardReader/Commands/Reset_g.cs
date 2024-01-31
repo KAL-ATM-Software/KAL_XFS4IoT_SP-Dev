@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = Reset
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ToEnum? To = null, string StorageId = null)
-                : base(Timeout)
+            public PayloadData(ToEnum? To = null, string StorageId = null)
+                : base()
             {
                 this.To = To;
                 this.StorageId = StorageId;
@@ -38,11 +39,12 @@ namespace XFS4IoT.CardReader.Commands
             {
                 Exit,
                 Retain,
-                CurrentPosition
+                CurrentPosition,
+                Auto
             }
 
             /// <summary>
-            /// Specifies the position a card in the transport or exit position should be moved to as one of the 
+            /// Specifies the position a card in the transport or exit position should be moved to as one of the
             /// following:
             /// 
             /// * ```exit``` - Move the card to the exit position. If the card is already at the exit, it may be moved
@@ -50,8 +52,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```retain``` - Move the card to a retain storage unit.
             /// * ```currentPosition``` - Keep the card in its current position. If the card is in the transport, it
             ///   may be moved in the transport to verify it is not jammed.
-            /// 
-            /// If omitted, the service will select the position to which the card will be moved based on device 
+            /// * ```auto``` - The service will select the position to which the card will be moved based on device
             /// capabilities, retain storage units available and service specific configuration.
             /// <example>retain</example>
             /// </summary>
@@ -59,12 +60,12 @@ namespace XFS4IoT.CardReader.Commands
             public ToEnum? To { get; init; }
 
             /// <summary>
-            /// If the card is to be moved to a retain storage unit, this indicates the retain storage unit to which
+            /// If the card is to be moved to a *retain* storage unit, this indicates the retain storage unit to which
             /// the card should be moved.
             /// 
-            /// If omitted, the service will select the retain storage unit based on the number of retain storage
+            /// If null, the Service will select the retain storage unit based on the number of retain storage
             /// units available and service specific configuration.
-            /// <example>unit1</example>
+            /// <example>unit4</example>
             /// </summary>
             [DataMember(Name = "storageId")]
             [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]

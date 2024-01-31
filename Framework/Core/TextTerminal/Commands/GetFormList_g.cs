@@ -16,22 +16,13 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = GetFormList
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.GetFormList")]
-    public sealed class GetFormListCommand : Command<GetFormListCommand.PayloadData>
+    public sealed class GetFormListCommand : Command<MessagePayload>
     {
-        public GetFormListCommand(int RequestId, GetFormListCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetFormListCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

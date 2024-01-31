@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.SupplyReplenish")]
     public sealed class SupplyReplenishCompletion : Completion<SupplyReplenishCompletion.PayloadData>
     {

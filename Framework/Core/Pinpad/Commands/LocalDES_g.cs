@@ -16,19 +16,20 @@ namespace XFS4IoT.PinPad.Commands
 {
     //Original name = LocalDES
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "PinPad.LocalDES")]
     public sealed class LocalDESCommand : Command<LocalDESCommand.PayloadData>
     {
-        public LocalDESCommand(int RequestId, LocalDESCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public LocalDESCommand(int RequestId, LocalDESCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string ValidationData = null, string Offset = null, string Padding = null, int? MaxPIN = null, int? ValDigits = null, bool? NoLeadingZero = null, string Key = null, string KeyEncKey = null, string DecTable = null)
-                : base(Timeout)
+            public PayloadData(string ValidationData = null, string Offset = null, string Padding = null, int? MaxPIN = null, int? ValDigits = null, bool? NoLeadingZero = null, string Key = null, string KeyEncKey = null, string DecTable = null)
+                : base()
             {
                 this.ValidationData = ValidationData;
                 this.Offset = Offset;
@@ -52,7 +53,7 @@ namespace XFS4IoT.PinPad.Commands
 
             /// <summary>
             /// ASCII string defining the offset data for the PIN block as an ASCII string.
-            /// if this property is omitted then no offset is used.
+            /// if this property is null then no offset is used.
             /// The character must be in the ranges '0' to '9', 'a' to 'f' and 'A' to 'F'.
             /// <example>0000000000000000</example>
             /// </summary>
@@ -61,8 +62,8 @@ namespace XFS4IoT.PinPad.Commands
             public string Offset { get; init; }
 
             /// <summary>
-            /// Specifies the padding character for the validation data. 
-            /// If the validation data is less than 16 characters long then it will be padded with this character. 
+            /// Specifies the padding character for the validation data.
+            /// If the validation data is less than 16 characters long then it will be padded with this character.
             /// If padding is in the range 00 to 0F in 16 character string, padding is applied after the validation
             /// data has been compressed. If the character is in the range 30 to 39 ('0' to '9'), 41 to 46 ('a' to
             /// 'f'), or 61 to 66 ('A' to 'F'), padding is applied before the validation data is compressed.
@@ -105,7 +106,7 @@ namespace XFS4IoT.PinPad.Commands
             public string Key { get; init; }
 
             /// <summary>
-            /// If this property is omitted, key is used directly for PIN validation. Otherwise, key is used to
+            /// If this value is null, *key* is used directly for PIN validation. Otherwise, *key* is used to
             /// decrypt the encrypted key passed in *keyEncKey* and the result is used for PIN validation.
             /// <example>Key02</example>
             /// </summary>

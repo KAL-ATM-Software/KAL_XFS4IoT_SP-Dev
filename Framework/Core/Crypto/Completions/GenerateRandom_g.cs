@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Crypto.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Crypto.GenerateRandom")]
     public sealed class GenerateRandomCompletion : Completion<GenerateRandomCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.Crypto.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
             /// </summary>
@@ -47,7 +48,7 @@ namespace XFS4IoT.Crypto.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The random number.
+            /// The random number. If the command fails, this will be null.
             /// <example>VGhlIGdlbmVyYXRlZCBy ...</example>
             /// </summary>
             [DataMember(Name = "randomNumber")]

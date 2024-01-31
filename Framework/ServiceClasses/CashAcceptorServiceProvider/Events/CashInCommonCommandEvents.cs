@@ -16,7 +16,7 @@ using XFS4IoT.CashAcceptor.Events;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
-    public class CashInCommonCommandEvents : ItemErrorCommandEvents
+    public abstract class CashInCommonCommandEvents : ItemErrorCommandEvents
     {
         public enum RefusedReasonEnum
         {

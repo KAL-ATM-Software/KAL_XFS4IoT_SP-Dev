@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,18 +52,18 @@ namespace XFS4IoTFramework.Keyboard
 
             foreach (var entryType in Keyboard.KeyboardLayouts)
             {
-                List<LayoutFrameClass> resultFrames = new();
+                List<LayoutFrameClass> resultFrames = [];
                 foreach (var frame in entryType.Value)
                 {
-                    List<LayoutFrameClass.KeysClass> functionKeys = new();
+                    List<LayoutFrameClass.KeysClass> functionKeys = [];
                     foreach (var functionKey in frame.FunctionKeys)
                     {
-                        functionKeys.Add(new LayoutFrameClass.KeysClass(functionKey.XPos,
-                                                                        functionKey.YPos,
-                                                                        functionKey.XSize,
-                                                                        functionKey.YSize,
-                                                                        functionKey.Key,
-                                                                        functionKey.ShiftKey));
+                        functionKeys.Add(new LayoutFrameClass.KeysClass(XPos:functionKey.XPos,
+                                                                        YPos: functionKey.YPos,
+                                                                        XSize:functionKey.XSize,
+                                                                        YSize: functionKey.YSize,
+                                                                        Key: functionKey.Key,
+                                                                        ShiftKey: functionKey.ShiftKey));
                     }
 
                     resultFrames.Add(new(frame.XPos, 
@@ -95,9 +94,14 @@ namespace XFS4IoTFramework.Keyboard
                     break;
             }
             
-            return Task.FromResult(new GetLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                       null, 
-                                                                       Layout: new LayoutClass(data, pin, secure)));
+            return Task.FromResult(new GetLayoutCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.Success,
+                                                                       ErrorDescription: null, 
+                                                                       Layout: data is null && pin is null && secure is null ?
+                                                                       null :
+                                                                       new LayoutNullableClass(
+                                                                           Data: data, 
+                                                                           Pin: pin, 
+                                                                           Secure: secure)));
         }
     }
 }

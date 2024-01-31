@@ -16,19 +16,20 @@ namespace XFS4IoT.PinPad.Commands
 {
     //Original name = PresentIDC
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "PinPad.PresentIDC")]
     public sealed class PresentIDCCommand : Command<PresentIDCCommand.PayloadData>
     {
-        public PresentIDCCommand(int RequestId, PresentIDCCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PresentIDCCommand(int RequestId, PresentIDCCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PresentAlgorithmEnum? PresentAlgorithm = null, string ChipProtocol = null, List<byte> ChipData = null, AlgorithmDataClass AlgorithmData = null)
-                : base(Timeout)
+            public PayloadData(PresentAlgorithmEnum? PresentAlgorithm = null, string ChipProtocol = null, List<byte> ChipData = null, AlgorithmDataClass AlgorithmData = null)
+                : base()
             {
                 this.PresentAlgorithm = PresentAlgorithm;
                 this.ChipProtocol = ChipProtocol;
@@ -76,7 +77,7 @@ namespace XFS4IoT.PinPad.Commands
                 }
 
                 /// <summary>
-                /// The byte offset where to start inserting the PIN into chipData. 
+                /// The byte offset where to start inserting the PIN into chipData.
                 /// The leftmost byte is numbered zero.
                 /// </summary>
                 [DataMember(Name = "pinPointer")]
@@ -84,7 +85,7 @@ namespace XFS4IoT.PinPad.Commands
                 public int? PinPointer { get; init; }
 
                 /// <summary>
-                /// The bit offset within the byte specified by *pinPointer* property where to start inserting the PIN. 
+                /// The bit offset within the byte specified by *pinPointer* property where to start inserting the PIN.
                 /// The leftmost bit numbered zero.
                 /// </summary>
                 [DataMember(Name = "pinOffset")]

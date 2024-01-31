@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.MediaPresentedUnsolicitedEvent")]
     public sealed class MediaPresentedUnsolicitedEvent : UnsolicitedEvent<MediaPresentedUnsolicitedEvent.PayloadData>
     {
@@ -37,7 +38,7 @@ namespace XFS4IoT.Printer.Events
             }
 
             /// <summary>
-            /// Specifies the index (starting from one) of the presented wad, where a wad is a bunch of one or more pages
+            /// Specifies the index (starting from 1) of the presented wad, where a wad is a bunch of one or more pages
             /// presented as a bunch.
             /// </summary>
             [DataMember(Name = "wadIndex")]

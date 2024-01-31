@@ -21,9 +21,49 @@ namespace XFS4IoTFramework.Common
 
         private Task<SetVersionsCompletion.PayloadData> HandleSetVersions(ISetVersionsEvents events, SetVersionsCommand setVersions, CancellationToken cancel)
         {
-            // The version information to be transparent to the device class and handle version within the framework. TODO
-            return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                         $"SetVersion commnad is not supported yet."));
+            if (setVersions is null)
+            {
+                Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                      $"No payload specified."));
+            }
+
+            if (setVersions.Payload.Commands is not null)
+            {
+                foreach (var cmd in setVersions.Payload.Commands)
+                {
+                    if (!Provider.GetMessagesSupported().ContainsKey(cmd.Key))
+                    {
+                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
+                                                                                     $"Unsupported command specified. {cmd.Key}"));
+                    }
+
+                    if (!Provider.GetMessagesSupported()[cmd.Key].Versions.Contains($"{cmd.Value}.0"))
+                    {
+                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
+                                                                                     $"Unsupported version specified. {cmd.Value}, The Service only support version {Provider.GetMessagesSupported()[cmd.Key].Versions[0]}"));
+                    }
+                }
+            }
+
+            if (setVersions.Payload.Events is not null)
+            {
+                foreach (var ev in setVersions.Payload.Events)
+                {
+                    if (!Provider.GetMessagesSupported().ContainsKey(ev.Key))
+                    {
+                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
+                                                                                     $"Unsupported event specified. {ev.Key}"));
+                    }
+
+                    if (!Provider.GetMessagesSupported()[ev.Key].Versions.Contains($"{ev.Value}.0"))
+                    {
+                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
+                                                                                     $"Unsupported event specified. {ev.Value}, The Service only support version {Provider.GetMessagesSupported()[ev.Key].Versions[0]}"));
+                    }
+                }
+            }
+
+            return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty));
         }
     }
 }

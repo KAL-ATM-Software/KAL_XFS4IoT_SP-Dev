@@ -8,8 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace XFS4IoTFramework.Common
 {
@@ -35,11 +38,14 @@ namespace XFS4IoTFramework.Common
             All = 1 << 1,
         }
 
-        public enum CounterfeitActionEnum
+        // Specifies whether such items are retained by the device if detected during a cash-in transaction.
+        [Flags]
+        public enum RetainCounterfeitActionEnum
         {
-            None,
-            Level2,
-            Level23
+            NotSupported = 0,
+            Level2 = 1 << 0,
+            Level3 = 1 << 1,
+            Inked = 1 << 2,
         }
 
         public CashAcceptorCapabilitiesClass(CashManagementCapabilitiesClass.TypeEnum Type,
@@ -48,13 +54,13 @@ namespace XFS4IoTFramework.Common
                                              bool ShutterControl,
                                              int IntermediateStacker,
                                              bool ItemsTakenSensor,
-                                             CashManagementCapabilitiesClass.PositionEnum Positions,
+                                             Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionClass> Positions,
                                              CashManagementCapabilitiesClass.RetractAreaEnum RetractAreas,
                                              CashManagementCapabilitiesClass.RetractTransportActionEnum RetractTransportActions,
                                              CashManagementCapabilitiesClass.RetractStackerActionEnum RetractStackerActions,
                                              CashInLimitEnum CashInLimit,
                                              CountActionEnum CountActions,
-                                             CounterfeitActionEnum CounterfeitAction)
+                                             RetainCounterfeitActionEnum RetainCounterfeitAction)
         {
             this.Type = Type;
             this.MaxCashInItems = MaxCashInItems;
@@ -68,7 +74,7 @@ namespace XFS4IoTFramework.Common
             this.RetractStackerActions = RetractStackerActions;
             this.CashInLimit = CashInLimit;
             this.CountActions = CountActions;
-            this.CounterfeitAction = CounterfeitAction;
+            this.RetainCounterfeitAction = RetainCounterfeitAction;
         }
 
         /// <summary>
@@ -128,10 +134,94 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         public bool ItemsTakenSensor { get; init; }
 
+        public sealed class PositionClass
+        {
+            [Flags]
+            public enum UsageEnum
+            {
+                NotSupported = 0,
+                In = 1 << 0,
+                Refuse = 1 << 1,
+                Rollback = 1 << 2,
+            }
+
+            [Flags]
+            public enum RetractAreaEnum
+            {
+                NotSupported = 0,
+                Retract = 1 << 0,
+                Reject = 1 << 1,
+                Transport = 1 << 2,
+                Stacker = 1 << 3,
+                BillCassettes = 1 << 4,
+                CashIn = 1 << 5,
+            }
+
+            /// <summary>
+            /// This class representing position capabilities.
+            /// </summary>
+            public PositionClass(UsageEnum Usage,
+                                 bool ShutterControl,
+                                 bool ItemsTakenSensor,
+                                 bool ItemsInsertedSensor,
+                                 bool PresentControl,
+                                 bool PreparePresent,
+                                 RetractAreaEnum RetractArea)
+            {
+                this.Usage = Usage;
+                this.ShutterControl = ShutterControl;
+                this.ItemsTakenSensor = ItemsTakenSensor;
+                this.ItemsInsertedSensor = ItemsInsertedSensor;
+                this.PresentControl = PresentControl;
+                this.PreparePresent = PreparePresent;
+                this.RetractArea = RetractArea;
+            }
+
+            /// <summary>
+            /// Specifies supported input or output position
+            /// </summary>
+            public CashManagementCapabilitiesClass.PositionEnum Position { get; init; }
+
+            /// <summary>
+            /// Specifies supported usage for input, reject or rollback.
+            /// </summary>
+            public UsageEnum Usage { get; init; }
+
+            /// <summary>
+            /// Specifies true if the shutter is controlled implicitly, otherwise false.
+            /// </summary>
+            public bool ShutterControl { get; init; }
+
+            /// <summary>
+            /// Specifies whether or not the described position can detect when items at the exit position are taken by the user.
+            /// </summary>
+            public bool ItemsTakenSensor { get; init; }
+
+            /// <summary>
+            /// Specifies whether the described position has the ability to detect when items have been inserted by the user. 
+            /// </summary>
+            public bool ItemsInsertedSensor { get; init; }
+
+            /// <summary>
+            /// Specifies how the presenting of media items is controlled. 
+            /// </summary>
+            public bool PresentControl { get; init; }
+
+            /// <summary>
+            /// Specifies how the presenting of items is controlled. 
+            /// </summary>
+            public bool PreparePresent { get; init; }
+
+            /// <summary>
+            /// Specifies the areas to which items can be retracted from this position.
+            /// </summary>
+            public RetractAreaEnum RetractArea { get; init; }
+        }
+
         /// <summary>
         /// Specifies the CashAcceptor input and output positions which are available.
         /// </summary>
-        public CashManagementCapabilitiesClass.PositionEnum Positions { get; init; }
+        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionClass> Positions { get; init; }
 
         /// <summary>
         /// Retract areas support of this device
@@ -162,19 +252,16 @@ namespace XFS4IoTFramework.Common
         public CountActionEnum CountActions { get; init; }
 
         /// <summary>
-        /// Specifies whether counterfeit or suspect items (see 
-        /// [Note Classification](#cashmanagement.generalinformation.noteclassification)) are allowed to be returned
-        /// to the customer during a cash-in transaction. If items are not to be returned to the customer by 
-        /// these rules, they will not be returned regardless of whether their specific note type is configured to not 
-        /// be accepted by [CashAcceptor.ConfigureNoteTypes](#cashacceptor.configurenotetypes). The following rules are 
-        /// possible:
+        /// If [counterfeit, inked or suspect](#cashmanagement.generalinformation.noteclassification) items
+        /// are supported by the Service(see
+        /// [classifications](#common.capabilities.completion.description.cashmanagement.classifications)), this
+        /// specifies whether such items are retained by the device if detected during a cash-in
+        /// transaction.See[acceptor](#common.status.completion.description.cashmanagement.acceptor) for details of
+        /// the impact on offering cash-in transactions if unable to retain items due to storage unit status.
         /// 
-        /// * ```None``` - The device is not able to classify items as counterfeit or suspect.
-        /// * ```Level2``` - Items are classified including counterfeit or suspect. Counterfeit items will not be returned to 
-        /// the customer in a cash-in transaction.
-        /// * ```Level23``` - Items are classified including counterfeit or suspect. Counterfeit and suspect items will not be 
-        /// returned to the customer in a cash-in transaction.
+        /// This applies regardless of whether their specific note type is configured to not
+        /// be accepted by [CashAcceptor.ConfigureNoteTypes] (#cashacceptor.configurenotetypes).
         /// </summary>
-        public CounterfeitActionEnum CounterfeitAction { get; init; }
+        public RetainCounterfeitActionEnum RetainCounterfeitAction { get; init; }
     }
 }

@@ -16,22 +16,13 @@ namespace XFS4IoT.VendorMode.Commands
 {
     //Original name = ExitModeAcknowledge
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "VendorMode.ExitModeAcknowledge")]
-    public sealed class ExitModeAcknowledgeCommand : Command<ExitModeAcknowledgeCommand.PayloadData>
+    public sealed class ExitModeAcknowledgeCommand : Command<MessagePayload>
     {
-        public ExitModeAcknowledgeCommand(int RequestId, ExitModeAcknowledgeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ExitModeAcknowledgeCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

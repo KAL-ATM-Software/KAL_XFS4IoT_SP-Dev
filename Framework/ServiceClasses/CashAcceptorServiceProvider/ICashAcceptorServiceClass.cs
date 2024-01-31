@@ -35,11 +35,6 @@ namespace XFS4IoTServer
         Dictionary<string, List<string>> DepleteCashUnitSources { get; init; }
 
         /// <summary>
-        /// Additional information about the use assigned to each position available in the device.
-        /// </summary>
-        Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionCapabilitiesClass> PositionCapabilities { get; init; }
-
-        /// <summary>
         /// Which storage units can be specified as targets for a given source storage unit with the CashAcceptor.Replenish command
         /// </summary>
         List<string> ReplenishTargets { get; init; }

@@ -113,6 +113,7 @@ namespace XFS4IoTFramework.Common
             Stacker = 1 << 2,
             Reject = 1 << 3,
             ItemCassette = 1 << 4,
+            CashIn = 1 << 5,
         }
 
         /// <summary>
@@ -128,7 +129,8 @@ namespace XFS4IoTFramework.Common
             Present = 1 << 0,
             Retract = 1 << 1,
             Reject = 1 << 2,
-            ItemCassette = 1 << 3,
+            BillCassette = 1 << 3,
+            CashIn = 1 << 4,
         }
 
         /// <summary>
@@ -144,7 +146,8 @@ namespace XFS4IoTFramework.Common
             Present = 1 << 0,
             Retract = 1 << 1,
             Reject = 1 << 2,
-            ItemCassette = 1 << 3,
+            BillCassette = 1 << 3,
+            CashIn = 1 << 4,
         }
 
         public enum TypeEnum

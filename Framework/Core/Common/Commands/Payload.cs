@@ -15,18 +15,14 @@ namespace XFS4IoT.Commands
     public class MessagePayload : MessagePayloadBase
     {
         /// <summary>
-        /// The original message name, for example "CardReader.Status"
-        /// </summary>
-        [DataMember(IsRequired = true, Name = "timeout")]
-        public int Timeout { get; private set; }
-
-        /// <summary>
         /// Constructor for the common command payload
         /// </summary>
-        /// <param name="Timeout"></param>
-        public MessagePayload(int Timeout)
-        {
-            this.Timeout = Timeout;
-        }
+        /// 
+        
+        public MessagePayload()
+        { }
+
+        // Add properties for common properties under payload when common properties
+        // in payload introduced in the XFS4IoT specification.
     }
 }

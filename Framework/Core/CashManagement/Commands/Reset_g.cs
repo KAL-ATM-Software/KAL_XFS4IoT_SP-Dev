@@ -16,44 +16,26 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = Reset
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Unit = null, RetractClass RetractArea = null, OutputPositionEnum? OutputPosition = null)
-                : base(Timeout)
+            public PayloadData(ItemTargetClass Position = null)
+                : base()
             {
-                this.Unit = Unit;
-                this.RetractArea = RetractArea;
-                this.OutputPosition = OutputPosition;
+                this.Position = Position;
             }
 
-            /// <summary>
-            /// Specifies the object name (as stated by the 
-            /// [Storage.GetStorage](#storage.getstorage) command) of the single unit to 
-            /// be used for the storage of any items found.
-            /// <example>unit1</example>
-            /// </summary>
-            [DataMember(Name = "unit")]
-            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
-            public string Unit { get; init; }
-
-            /// <summary>
-            /// This property is used if items are to be moved to internal areas of
-            /// the device, including storage units, the intermediate stacker, or the transport.
-            /// </summary>
-            [DataMember(Name = "retractArea")]
-            public RetractClass RetractArea { get; init; }
-
-            [DataMember(Name = "outputPosition")]
-            public OutputPositionEnum? OutputPosition { get; init; }
+            [DataMember(Name = "position")]
+            public ItemTargetClass Position { get; init; }
 
         }
     }

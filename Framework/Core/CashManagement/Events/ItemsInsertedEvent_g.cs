@@ -16,6 +16,7 @@ namespace XFS4IoT.CashManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashManagement.ItemsInsertedEvent")]
     public sealed class ItemsInsertedEvent : UnsolicitedEvent<ItemsInsertedEvent.PayloadData>
     {

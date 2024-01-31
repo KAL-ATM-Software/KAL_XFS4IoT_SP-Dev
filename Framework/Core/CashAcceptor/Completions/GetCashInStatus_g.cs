@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.GetCashInStatus")]
     public sealed class GetCashInStatusCompletion : Completion<GetCashInStatusCompletion.PayloadData>
     {
@@ -49,10 +50,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// 
             /// * ```ok``` - The cash-in transaction is complete and has ended with [CashAcceptor.CashInEnd](#cashacceptor.cashinend).
             /// * ```rollback``` - The cash-in transaction ended with [CashAcceptor.CashInRollback](#cashacceptor.cashinrollback).
-            /// * ```active``` - There is a cash-in transaction active. See the [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command description 
+            /// * ```active``` - There is a cash-in transaction active. See the [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command description
             /// for a definition of an active cash-in transaction.
             /// * ```retract``` - The cash-in transaction ended with [CashManagement.Retract](#cashmanagement.retract).
-            /// * ```unknown``` - The state of the cash-in transaction is unknown. This status is also set if the *noteNumberList* 
+            /// * ```unknown``` - The state of the cash-in transaction is unknown. This status is also set if the *noteNumberList*
             /// details are not known or are not reliable.
             /// * ```reset``` - The cash-in transaction ended with [CashManagement.Reset](#cashmanagement.reset).
             /// </summary>
@@ -61,16 +62,16 @@ namespace XFS4IoT.CashAcceptor.Completions
 
             /// <summary>
             /// Specifies the number of items refused during the currently active or most recently ended cash-in
-            /// transaction period.
+            /// transaction period. May be null if no items were refused.
             /// </summary>
             [DataMember(Name = "numOfRefused")]
             [DataTypes(Minimum = 0)]
             public int? NumOfRefused { get; init; }
 
             /// <summary>
-            /// List of banknote types that were inserted, identified, and accepted during the currently active or most 
-            /// recently ended cash-in transaction period. If items have been rolled back (*status* is *rollback*) they will 
-            /// be included in this list.
+            /// List of banknote types that were inserted, identified, and accepted during the currently active or most
+            /// recently ended cash-in transaction period. If items have been rolled back (*status* is *rollback*) they will
+            /// be included in this list. It will be null if no banknotes were accepted.
             /// 
             /// Includes any identified notes.
             /// </summary>

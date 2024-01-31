@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.TestCashUnits")]
     public sealed class TestCashUnitsCompletion : Completion<TestCashUnitsCompletion.PayloadData>
     {
@@ -46,10 +47,10 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A storage unit caused a problem that meant all storage units could not be tested or 
-            /// no storage units were testable. One or more [Storage.StorageErrorEvent](#storage.storageerrorevent) 
+            /// * ```cashUnitError``` - A storage unit caused a problem that meant all storage units could not be tested or
+            /// no storage units were testable. One or more [Storage.StorageErrorEvent](#storage.storageerrorevent)
             /// events will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```shutterNotOpen``` - The shutter is not open or did not open when it should have. No items presented.
@@ -58,9 +59,9 @@ namespace XFS4IoT.CashDispenser.Completions
             /// * ```exchangeActive``` - The device is in an exchange state (see
             /// [Storage.StartExchange](#storage.startexchange)).
             /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were presented.
-            /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the items 
+            /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the items
             /// were presented.
-            /// * ```presentErrorUnknown``` - There was an error during the present operation - the position of the items 
+            /// * ```presentErrorUnknown``` - There was an error during the present operation - the position of the items
             /// is unknown. Intervention may be required to reconcile the cash amount totals.
             /// </summary>
             [DataMember(Name = "errorCode")]

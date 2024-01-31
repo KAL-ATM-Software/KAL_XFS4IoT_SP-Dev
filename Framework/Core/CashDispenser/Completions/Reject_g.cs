@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.Reject")]
     public sealed class RejectCompletion : Completion<RejectCompletion.PayloadData>
     {
@@ -40,9 +41,9 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - A storage unit caused a problem. A 
+            /// * ```cashUnitError``` - A storage unit caused a problem. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```noItems``` - There were no items to reject.
             /// * ```exchangeActive``` - The device is in an exchange state (see

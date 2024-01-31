@@ -7,10 +7,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.Commands;
+using XFS4IoT.Common.Events;
 using XFS4IoTFramework.CardReader;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
@@ -58,6 +61,14 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CardReaderDev.CardReaderStatus=");
 
             CommonService.CardReaderStatus.IsNotNull($"The device class set CardReaderStatus property to null. The device class must report device status.");
+            CommonService.CardReaderStatus.PropertyChanged += StatusChangedEventFowarder;
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

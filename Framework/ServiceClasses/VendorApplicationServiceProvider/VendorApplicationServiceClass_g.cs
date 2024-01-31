@@ -18,11 +18,11 @@ namespace XFS4IoTServer
     public partial class VendorApplicationServiceClass : IVendorApplicationServiceClass
     {
 
-        public async Task InterfaceChangedEvent(XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorApplication.Events.InterfaceChangedEvent(Payload));
-
         public async Task VendorAppExitedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorApplication.Events.VendorAppExitedEvent());
+
+        public async Task InterfaceChangedEvent(XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorApplication.Events.InterfaceChangedEvent(Payload));
 
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }

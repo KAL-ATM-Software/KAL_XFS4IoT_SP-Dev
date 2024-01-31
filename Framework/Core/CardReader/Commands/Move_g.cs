@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = Move
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.Move")]
     public sealed class MoveCommand : Command<MoveCommand.PayloadData>
     {
-        public MoveCommand(int RequestId, MoveCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public MoveCommand(int RequestId, MoveCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string From = null, string To = null)
-                : base(Timeout)
+            public PayloadData(string From = null, string To = null)
+                : base()
             {
                 this.From = From;
                 this.To = To;
@@ -39,7 +40,7 @@ namespace XFS4IoT.CardReader.Commands
             /// 
             /// * ```exit``` - The card will be moved from the exit position.
             /// * ```transport``` - The card will be moved from the transport position. This is the only value
-            ///   applicable to latched dip card readers. 
+            ///   applicable to latched dip card readers.
             /// * ```&lt;storage unit identifier&gt;``` - The card will be moved from the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   either *dispense* or *park*.

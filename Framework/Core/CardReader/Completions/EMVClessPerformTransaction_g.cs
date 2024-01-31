@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCompletion : Completion<EMVClessPerformTransactionCompletion.PayloadData>
     {
@@ -44,7 +45,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noMedia``` - The card was removed before completion of the read operation.
             /// * ```invalidMedia``` - No track or chip was found or the card tapped cannot be used with this command
@@ -56,29 +57,29 @@ namespace XFS4IoT.CardReader.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains the BER-TLV formatted data read from the chip. This value is set after the contactless
-            /// transaction has been completed with EMV mode or mag-stripe mode.
+            /// Contains the BER-TLV formatted data read from the chip. This property is set after the contactless
+            /// transaction has been completed with EMV mode or mag-stripe mode. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "chip")]
             public EMVClessPerformTransactionEMVClessTxOutputDataClass Chip { get; init; }
 
             /// <summary>
-            /// Contains the chip returned data formatted in as track 1. This value is set after the contactless
-            /// transaction has been completed with mag-stripe mode.
+            /// Contains the chip returned data formatted in as track 1. This property is set after the contactless
+            /// transaction has been completed with mag-stripe mode. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "track1")]
             public EMVClessPerformTransactionEMVClessTxOutputDataClass Track1 { get; init; }
 
             /// <summary>
-            /// Contains the chip returned data formatted in as track 2. This value is set after the contactless
-            /// transaction has been completed with mag-stripe mode.
+            /// Contains the chip returned data formatted in as track 2. This property is set after the contactless
+            /// transaction has been completed with mag-stripe mode. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "track2")]
             public EMVClessPerformTransactionEMVClessTxOutputDataClass Track2 { get; init; }
 
             /// <summary>
-            /// Contains the chip returned data formatted in as track 3. This value is set after the contactless
-            /// transaction has been completed with mag-stripe mode.
+            /// Contains the chip returned data formatted in as track 3. This property is set after the contactless
+            /// transaction has been completed with mag-stripe mode. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "track3")]
             public EMVClessPerformTransactionEMVClessTxOutputDataClass Track3 { get; init; }

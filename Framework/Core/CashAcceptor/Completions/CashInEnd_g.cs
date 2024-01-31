@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.CashInEnd")]
     public sealed class CashInEndCompletion : Completion<CashInEndCompletion.PayloadData>
     {
@@ -44,23 +45,23 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```noItems``` - There were no items to cash-in.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
             /// * ```positionNotEmpty``` - The input or output position is not empty.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order
-            /// to perform this command.
+            /// to perform this command. (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// List of storage units that have taken items, and the type of items they have taken, during the current 
-            /// transaction. This only contains data related to the current transaction.
+            /// Object containing the storage units which have had items inserted during the associated operation or
+            /// transaction. Only storage units whose contents have been modified are included.
             /// </summary>
             [DataMember(Name = "storage")]
             public Dictionary<string, CashManagement.StorageCashInClass> Storage { get; init; }

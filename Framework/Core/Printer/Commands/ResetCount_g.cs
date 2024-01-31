@@ -16,25 +16,26 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ResetCount
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.ResetCount")]
     public sealed class ResetCountCommand : Command<ResetCountCommand.PayloadData>
     {
-        public ResetCountCommand(int RequestId, ResetCountCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCountCommand(int RequestId, ResetCountCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? BinNumber = null)
-                : base(Timeout)
+            public PayloadData(int? BinNumber = null)
+                : base()
             {
                 this.BinNumber = BinNumber;
             }
 
             /// <summary>
-            /// The number of the retract bin for which the retract count should be reset to 0. If omitted or
+            /// The number of the retract bin for which the retract count should be reset to 0. If
             /// 0, all bin counts will be set to 0. See
             /// [retractBins](#common.capabilities.completion.properties.printer.retractbins).
             /// <example>1</example>

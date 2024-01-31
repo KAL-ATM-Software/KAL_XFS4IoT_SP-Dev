@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.ExportRSAIssuerSignedItem")]
     public sealed class ExportRSAIssuerSignedItemCompletion : Completion<ExportRSAIssuerSignedItemCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```noRSAKeyPair``` - The device does not have a private key.
             /// * ```accessDenied``` - The device is either not initialized or not ready for any vendor specific reason.
             /// * ```keyNotFound``` - The data item identified by name was not found.
@@ -64,9 +65,9 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <summary>
             /// Specifies the algorithm, used to generate the Signature returned in signature, as one of the following:
             /// 
-            /// * ```na``` - No signature algorithm used, no signature will be provided in signature, the data item may 
-            ///   still be exported.  
-            /// * ```rsassaPkcs1V15``` - RSASSA-PKCS1-v1.5 algorithm used.  
+            /// * ```na``` - No signature algorithm used, no signature will be provided in signature, the data item may
+            ///   still be exported.
+            /// * ```rsassaPkcs1V15``` - RSASSA-PKCS1-v1.5 algorithm used.
             /// * ```rsassaPss``` - RSASSA-PSS algorithm used.
             /// </summary>
             [DataMember(Name = "rsaSignatureAlgorithm")]
@@ -75,7 +76,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <summary>
             /// The RSA signature of the data item exported.
             /// 
-            /// This should be omitted when the key signature is not supported. 
+            /// This should be null when the key signature is not supported.
             /// <example>U2lnbmF0dXJlIGRhdGE=</example>
             /// </summary>
             [DataMember(Name = "signature")]

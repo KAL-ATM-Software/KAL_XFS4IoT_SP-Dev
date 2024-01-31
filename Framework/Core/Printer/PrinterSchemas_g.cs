@@ -16,7 +16,6 @@ namespace XFS4IoT.Printer
 
     public enum PaperSupplyEnum
     {
-        NotSupported,
         Unknown,
         Full,
         Low,
@@ -51,7 +50,6 @@ namespace XFS4IoT.Printer
 
         public enum MediaEnum
         {
-            NotSupported,
             Unknown,
             Present,
             NotPresent,
@@ -62,9 +60,9 @@ namespace XFS4IoT.Printer
 
         /// <summary>
         /// Specifies the state of the print media (i.e. receipt, statement, passbook, etc.) as one of the following
-        /// values. This field does not apply to journal printers:
+        /// values. This property will be null in [Common.Status](#common.status) for journal printers or if the
+        /// capability to report the state of the print media is not supported by the device:
         /// 
-        /// * ```notSupported``` - The capability to report the state of the print media is not supported by the device.
         /// * ```unknown``` - The state of the print media cannot be determined with the device in its current state.
         /// * ```present``` - Media is in the print position, on the stacker or on the transport (i.e. a passbook in the
         ///   parking station is not considered to be present). On devices with continuous paper supplies, this value is
@@ -140,7 +138,8 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the state of paper supplies as one of the following values. Omitted if not applicable:
+        /// Specifies the state of paper supplies as one of the following values. Each individual supply state will be
+        /// null in [Common.Status](#common.status) if not applicable:
         /// 
         /// * ```unknown``` - Status cannot be determined with device in its current state.
         /// * ```full``` - The paper supply is full.
@@ -153,7 +152,6 @@ namespace XFS4IoT.Printer
 
         public enum TonerEnum
         {
-            NotSupported,
             Unknown,
             Full,
             Low,
@@ -161,10 +159,11 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the state of the toner or ink supply or the state of the ribbon as one of the following:
+        /// Specifies the state of the toner or ink supply or the state of the ribbon. The property will be
+        /// null in [Common.Status](#common.status) if the capability is not supported by device, otherwise one of the
+        /// following:
         /// 
-        /// * ```notSupported``` - Capability not supported by device.
-        /// * ```unknown``` - Status of toner or ink supply or the ribbon cannot be determined with device in its 
+        /// * ```unknown``` - Status of toner or ink supply or the ribbon cannot be determined with device in its
         ///   current state.
         /// * ```full``` - The toner or ink supply is full or the ribbon is OK.
         /// * ```low``` - The toner or ink supply is low or the print contrast with a ribbon is weak.
@@ -176,7 +175,6 @@ namespace XFS4IoT.Printer
 
         public enum InkEnum
         {
-            NotSupported,
             Unknown,
             Full,
             Low,
@@ -184,9 +182,10 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the status of the stamping ink in the printer as one of the following values:
+        /// Specifies the status of the stamping ink in the printer. The property will be
+        /// null in [Common.Status](#common.status) if the capability is not supported by device, otherwise one of the
+        /// following:
         /// 
-        /// * ```notSupported``` - Capability not supported by device.
         /// * ```unknown``` - Status of the stamping ink supply cannot be determined with device in its current state.
         /// * ```full``` - Ink supply in device is full.
         /// * ```low``` - Ink supply in device is low.
@@ -197,7 +196,6 @@ namespace XFS4IoT.Printer
 
         public enum LampEnum
         {
-            NotSupported,
             Unknown,
             Ok,
             Fading,
@@ -205,9 +203,10 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the status of the printer imaging lamp as one of the following values:
+        /// Specifies the status of the printer imaging lamp. The property will be
+        /// null in [Common.Status](#common.status) if the capability is not supported by device, otherwise one of the
+        /// following:
         /// 
-        /// * ```notSupported``` - Capability not supported by device.
         /// * ```unknown``` - Status of the imaging lamp cannot be determined with device in its current state.
         /// * ```ok``` - The lamp is OK.
         /// * ```fading``` - The lamp should be changed.
@@ -235,7 +234,8 @@ namespace XFS4IoT.Printer
             }
 
             /// <summary>
-            /// Specifies the state of the printer retract bin as one of the following:
+            /// Specifies the state of the printer retract bin as one of the following. This may be null in
+            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
             /// 
             /// * ```ok``` - The retract bin of the printer is in a healthy state.
             /// * ```full``` - The retract bin of the printer is full.
@@ -248,7 +248,8 @@ namespace XFS4IoT.Printer
 
             /// <summary>
             /// The number of media retracted to this bin. This value is persistent; it may be reset to 0 by the
-            /// [Printer.ResetCount](#printer.resetcount) command.
+            /// [Printer.ResetCount](#printer.resetcount) command. This may be null in
+            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
             /// </summary>
             [DataMember(Name = "count")]
             [DataTypes(Minimum = 0)]
@@ -257,15 +258,18 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// An array of bin state objects. If no retain bins are supported, the array will be empty.
+        /// An array of bin state objects. If no retain bins are supported, the property will be null.
         /// </summary>
         [DataMember(Name = "retractBins")]
         public List<RetractBinsClass> RetractBins { get; init; }
 
         /// <summary>
-        /// The number of media on stacker; applicable only to printers with stacking capability.
+        /// The number of media on stacker; applicable only to printers with stacking capability therefore null if
+        /// not applicable.
+        /// <example>7</example>
         /// </summary>
         [DataMember(Name = "mediaOnStacker")]
+        [DataTypes(Minimum = 0)]
         public int? MediaOnStacker { get; init; }
 
         [DataContract]
@@ -330,7 +334,8 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the type of paper loaded as one of the following:
+        /// Specifies the type of paper loaded as one of the following. Only applicable properties are reported. This
+        /// may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// 
         /// * ```unknown``` - No paper is loaded, reporting of this paper type is not supported or the paper type cannot
         ///   be determined.
@@ -342,16 +347,15 @@ namespace XFS4IoT.Printer
 
         public enum BlackMarkModeEnum
         {
-            NotSupported,
             Unknown,
             On,
             Off
         }
 
         /// <summary>
-        /// Specifies the status of the black mark detection and associated functionality:
+        /// Specifies the status of the black mark detection and associated functionality. The property is null
+        /// if not supported.
         /// 
-        /// * ```notSupported``` - Black mark detection is not supported.
         /// * ```unknown``` - The status of the black mark detection cannot be determined.
         /// * ```on``` - Black mark detection and associated functionality is switched on.
         /// * ```off``` - Black mark detection and associated functionality is switched off.
@@ -363,73 +367,9 @@ namespace XFS4IoT.Printer
 
 
     [DataContract]
-    public sealed class PaperSourcesClass
-    {
-        public PaperSourcesClass(bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
-        {
-            this.Upper = Upper;
-            this.Lower = Lower;
-            this.External = External;
-            this.Aux = Aux;
-            this.Aux2 = Aux2;
-            this.Park = Park;
-        }
-
-        /// <summary>
-        /// The upper paper source.
-        /// </summary>
-        [DataMember(Name = "upper")]
-        public bool? Upper { get; init; }
-
-        /// <summary>
-        /// The lower paper source.
-        /// </summary>
-        [DataMember(Name = "lower")]
-        public bool? Lower { get; init; }
-
-        /// <summary>
-        /// The external paper source.
-        /// </summary>
-        [DataMember(Name = "external")]
-        public bool? External { get; init; }
-
-        /// <summary>
-        /// The auxiliary paper source.
-        /// </summary>
-        [DataMember(Name = "aux")]
-        public bool? Aux { get; init; }
-
-        /// <summary>
-        /// The second auxiliary paper source.
-        /// </summary>
-        [DataMember(Name = "aux2")]
-        public bool? Aux2 { get; init; }
-
-        /// <summary>
-        /// The parking station.
-        /// </summary>
-        [DataMember(Name = "park")]
-        public bool? Park { get; init; }
-
-        [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
-
-        [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Dictionary<string, bool> ExtendedProperties
-        {
-            get => MessageBase.ParseExtendedProperties<bool>(ExtensionData);
-            set => ExtensionData = MessageBase.CreateExtensionData<bool>(value);
-        }
-
-    }
-
-
-    [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeClass Type = null, ResolutionClass Resolution = null, ReadFormClass ReadForm = null, WriteFormClass WriteForm = null, ExtentsClass Extents = null, ControlClass Control = null, int? MaxMediaOnStacker = null, bool? AcceptMedia = null, bool? MultiPage = null, PaperSourcesClass PaperSources = null, bool? MediaTaken = null, int? RetractBins = null, List<int> MaxRetract = null, ImageTypeClass ImageType = null, FrontImageColorFormatClass FrontImageColorFormat = null, BackImageColorFormatClass BackImageColorFormat = null, CodelineFormatClass CodelineFormat = null, ImageSourceClass ImageSource = null, bool? DispensePaper = null, string OsPrinter = null, bool? MediaPresented = null, int? AutoRetractPeriod = null, bool? RetractToTransport = null, CoercivityTypeClass CoercivityType = null, ControlPassbookClass ControlPassbook = null, PrintSidesEnum? PrintSides = null)
+        public CapabilitiesClass(TypeClass Type = null, ResolutionClass Resolution = null, ReadFormClass ReadForm = null, WriteFormClass WriteForm = null, ExtentsClass Extents = null, ControlClass Control = null, int? MaxMediaOnStacker = null, bool? AcceptMedia = null, bool? MultiPage = null, PaperSourcesClass PaperSources = null, bool? MediaTaken = null, int? RetractBins = null, List<int> MaxRetract = null, ImageTypeClass ImageType = null, FrontImageColorFormatClass FrontImageColorFormat = null, BackImageColorFormatClass BackImageColorFormat = null, ImageSourceClass ImageSource = null, bool? DispensePaper = null, string OsPrinter = null, bool? MediaPresented = null, int? AutoRetractPeriod = null, bool? RetractToTransport = null, CoercivityTypeClass CoercivityType = null, ControlPassbookClass ControlPassbook = null, PrintSidesEnum? PrintSides = null)
         {
             this.Type = Type;
             this.Resolution = Resolution;
@@ -447,7 +387,6 @@ namespace XFS4IoT.Printer
             this.ImageType = ImageType;
             this.FrontImageColorFormat = FrontImageColorFormat;
             this.BackImageColorFormat = BackImageColorFormat;
-            this.CodelineFormat = CodelineFormat;
             this.ImageSource = ImageSource;
             this.DispensePaper = DispensePaper;
             this.OsPrinter = OsPrinter;
@@ -612,7 +551,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies whether the device can read data from media.
+        /// Specifies whether the device can read data from media. This property is null if the device can not read data.
         /// </summary>
         [DataMember(Name = "readForm")]
         public ReadFormClass ReadForm { get; init; }
@@ -705,7 +644,8 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies whether the device is able to measure the inserted media.
+        /// Specifies whether the device is able to measure the inserted media. This property is null if the device is unable to
+        /// measure inserted media.
         /// </summary>
         [DataMember(Name = "extents")]
         public ExtentsClass Extents { get; init; }
@@ -852,7 +792,7 @@ namespace XFS4IoT.Printer
         public ControlClass Control { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of media items that the stacker can hold. Omitted if not available.
+        /// Specifies the maximum number of media items that the stacker can hold.
         /// <example>5</example>
         /// </summary>
         [DataMember(Name = "maxMediaOnStacker")]
@@ -872,6 +812,69 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "multiPage")]
         public bool? MultiPage { get; init; }
 
+        [DataContract]
+        public sealed class PaperSourcesClass
+        {
+            public PaperSourcesClass(bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
+            {
+                this.Upper = Upper;
+                this.Lower = Lower;
+                this.External = External;
+                this.Aux = Aux;
+                this.Aux2 = Aux2;
+                this.Park = Park;
+            }
+
+            /// <summary>
+            /// The upper paper source.
+            /// </summary>
+            [DataMember(Name = "upper")]
+            public bool? Upper { get; init; }
+
+            /// <summary>
+            /// The lower paper source.
+            /// </summary>
+            [DataMember(Name = "lower")]
+            public bool? Lower { get; init; }
+
+            /// <summary>
+            /// The external paper source.
+            /// </summary>
+            [DataMember(Name = "external")]
+            public bool? External { get; init; }
+
+            /// <summary>
+            /// The auxiliary paper source.
+            /// </summary>
+            [DataMember(Name = "aux")]
+            public bool? Aux { get; init; }
+
+            /// <summary>
+            /// The second auxiliary paper source.
+            /// </summary>
+            [DataMember(Name = "aux2")]
+            public bool? Aux2 { get; init; }
+
+            /// <summary>
+            /// The parking station.
+            /// </summary>
+            [DataMember(Name = "park")]
+            public bool? Park { get; init; }
+
+            [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [System.Text.Json.Serialization.JsonExtensionData]
+            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+            [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [System.Text.Json.Serialization.JsonIgnore]
+            public Dictionary<string, bool> ExtendedProperties
+            {
+                get => MessageBase.ParseExtendedProperties<bool>(ExtensionData);
+                set => ExtensionData = MessageBase.CreateExtensionData<bool>(value);
+            }
+
+        }
+
         /// <summary>
         /// Specifies the paper sources available for this printer.
         /// </summary>
@@ -886,7 +889,7 @@ namespace XFS4IoT.Printer
         public bool? MediaTaken { get; init; }
 
         /// <summary>
-        /// Specifies the number of retract bins. Omitted if not available.
+        /// Specifies the number of retract bins.
         /// <example>1</example>
         /// </summary>
         [DataMember(Name = "retractBins")]
@@ -896,7 +899,7 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// An array of the length [retractBins](#common.capabilities.completion.properties.printer.retractbins) with
         /// the maximum number of media items that each retract bin can hold (one count for each supported bin, starting
-        /// from zero for bin number 1 to *retractBins* - 1 for bin number *retractBins*). This will be omitted if there
+        /// from zero for bin number 1 to *retractBins* - 1 for bin number *retractBins*). This will be null if there
         /// are no retract bins.
         /// </summary>
         [DataMember(Name = "maxRetract")]
@@ -941,7 +944,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the image format supported by this device.
+        /// Specifies the image format supported by this device. This will be null if the device is unable to scan images.
         /// </summary>
         [DataMember(Name = "imageType")]
         public ImageTypeClass ImageType { get; init; }
@@ -978,7 +981,7 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the front image color formats supported by this device.
+        /// Specifies the front image color formats supported by this device. This will be null if the device is unable to scan front images.
         /// </summary>
         [DataMember(Name = "frontImageColorFormat")]
         public FrontImageColorFormatClass FrontImageColorFormat { get; init; }
@@ -1015,55 +1018,18 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the back image color formats supported by this device.
+        /// Specifies the back image color formats supported by this device. This will be null if the device is unable to scan back images.
         /// </summary>
         [DataMember(Name = "backImageColorFormat")]
         public BackImageColorFormatClass BackImageColorFormat { get; init; }
 
         [DataContract]
-        public sealed class CodelineFormatClass
-        {
-            public CodelineFormatClass(bool? Cmc7 = null, bool? E13b = null, bool? Ocr = null)
-            {
-                this.Cmc7 = Cmc7;
-                this.E13b = E13b;
-                this.Ocr = Ocr;
-            }
-
-            /// <summary>
-            /// The device can read CMC7 code lines.
-            /// </summary>
-            [DataMember(Name = "cmc7")]
-            public bool? Cmc7 { get; init; }
-
-            /// <summary>
-            /// The device can read E13B code lines.
-            /// </summary>
-            [DataMember(Name = "e13b")]
-            public bool? E13b { get; init; }
-
-            /// <summary>
-            /// The device can read code lines using Optical Character Recognition.
-            /// </summary>
-            [DataMember(Name = "ocr")]
-            public bool? Ocr { get; init; }
-
-        }
-
-        /// <summary>
-        /// Specifies the code line (MICR data) formats supported by this device.
-        /// </summary>
-        [DataMember(Name = "codelineFormat")]
-        public CodelineFormatClass CodelineFormat { get; init; }
-
-        [DataContract]
         public sealed class ImageSourceClass
         {
-            public ImageSourceClass(bool? ImageFront = null, bool? ImageBack = null, bool? CodeLine = null)
+            public ImageSourceClass(bool? ImageFront = null, bool? ImageBack = null)
             {
                 this.ImageFront = ImageFront;
                 this.ImageBack = ImageBack;
-                this.CodeLine = CodeLine;
             }
 
             /// <summary>
@@ -1078,16 +1044,11 @@ namespace XFS4IoT.Printer
             [DataMember(Name = "imageBack")]
             public bool? ImageBack { get; init; }
 
-            /// <summary>
-            /// The device can recognize the code line.
-            /// </summary>
-            [DataMember(Name = "codeLine")]
-            public bool? CodeLine { get; init; }
-
         }
 
         /// <summary>
-        /// Specifies the source for the read image command supported by this device.
+        /// Specifies the source for the read image command supported by this device. This will be null if the device does not
+        /// support reading images.
         /// </summary>
         [DataMember(Name = "imageSource")]
         public ImageSourceClass ImageSource { get; init; }
@@ -1101,8 +1062,9 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// Specifies the name of the default logical operating system printer that is associated with this Service.
         /// Applications should use this printer name to generate native printer files to be printed through
-        /// the [Printer.PrintNative](#printer.printnative) command. This value will be omitted if the Service
+        /// the [Printer.PrintNative](#printer.printnative) command. This will be null if the Service
         /// does not support the *Printer.PrintNative* command.
+        /// <example>example printer</example>
         /// </summary>
         [DataMember(Name = "osPrinter")]
         public string OsPrinter { get; init; }
@@ -1118,9 +1080,10 @@ namespace XFS4IoT.Printer
         /// <summary>
         /// Specifies the number of seconds before the device will automatically retract the presented media. If the
         /// command that generated the media is still active when the media is automatically retracted, the command will
-        /// complete with an error. Omitted if the device does not retract media automatically.
+        /// complete with an error. If the device does not retract media automatically this value is 0.
         /// </summary>
         [DataMember(Name = "autoRetractPeriod")]
+        [DataTypes(Minimum = 0)]
         public int? AutoRetractPeriod { get; init; }
 
         /// <summary>
@@ -1161,7 +1124,8 @@ namespace XFS4IoT.Printer
         }
 
         /// <summary>
-        /// Specifies the form write modes supported by this device.
+        /// Specifies the form write modes supported by this device. This will be null if the device is unable to write magnetic
+        /// stripes.
         /// </summary>
         [DataMember(Name = "coercivityType")]
         public CoercivityTypeClass CoercivityType { get; init; }
@@ -1205,22 +1169,21 @@ namespace XFS4IoT.Printer
 
         /// <summary>
         /// Specifies how the passbook can be controlled with the [Printer.ControlPassbook](#printer.controlpassbook)
-        /// command.
+        /// command. This will be null if the command is not supported.
         /// </summary>
         [DataMember(Name = "controlPassbook")]
         public ControlPassbookClass ControlPassbook { get; init; }
 
         public enum PrintSidesEnum
         {
-            NotSupported,
             Single,
             Dual
         }
 
         /// <summary>
-        /// Specifies on which sides of the media this device can print as one of the following values.
+        /// Specifies on which sides of the media this device can print as one of the following values. This will be
+        /// null if the device is not capable of printing on any sides of the media.
         /// 
-        /// * ```notSupported``` - The device is not capable of printing on any sides of the media.
         /// * ```single``` - The device is capable of printing on one side of the media.
         /// * ```dual``` - The device is capable of printing on two sides of the media.
         /// </summary>

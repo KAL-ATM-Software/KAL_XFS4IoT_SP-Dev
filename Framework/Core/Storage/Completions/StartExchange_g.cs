@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Storage.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Storage.StartExchange")]
     public sealed class StartExchangeCompletion : Completion<StartExchangeCompletion.PayloadData>
     {
@@ -40,10 +41,10 @@ namespace XFS4IoT.Storage.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
-            /// * ```storageUnitError``` - An error occurred with a storage unit while performing the exchange 
-            /// operation. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the 
+            /// * ```storageUnitError``` - An error occurred with a storage unit while performing the exchange
+            /// operation. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the
             /// details.
             /// * ```exchangeActive``` - The device is already in an exchange state.
             /// * ```transactionActive``` - A transaction is active.

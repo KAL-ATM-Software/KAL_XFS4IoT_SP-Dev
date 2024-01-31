@@ -16,6 +16,7 @@ namespace XFS4IoT.KeyManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "KeyManagement.DUKPTKSNEvent")]
     public sealed class DUKPTKSNEvent : Event<DUKPTKSNEvent.PayloadData>
     {
@@ -37,7 +38,7 @@ namespace XFS4IoT.KeyManagement.Events
             }
 
             /// <summary>
-            /// Specifies the name of the DUKPT Key derivation key. 
+            /// Specifies the name of the DUKPT Key derivation key.
             /// <example>Key01</example>
             /// </summary>
             [DataMember(Name = "key")]
@@ -45,7 +46,7 @@ namespace XFS4IoT.KeyManagement.Events
 
             /// <summary>
             /// The KSN.
-            /// <example>S2V5IFNlcmlhbCBOdW1i ...</example>
+            /// <example>S1NORGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "ksn")]
             [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]

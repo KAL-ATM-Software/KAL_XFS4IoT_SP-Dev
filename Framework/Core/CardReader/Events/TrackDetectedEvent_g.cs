@@ -16,6 +16,7 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.TrackDetectedEvent")]
     public sealed class TrackDetectedEvent : Event<TrackDetectedEvent.PayloadData>
     {
@@ -41,6 +42,7 @@ namespace XFS4IoT.CardReader.Events
 
             /// <summary>
             /// The card has track 1.
+            /// <example>true</example>
             /// </summary>
             [DataMember(Name = "track1")]
             public bool? Track1 { get; init; }

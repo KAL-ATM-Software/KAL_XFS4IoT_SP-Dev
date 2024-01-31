@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = PrintNative
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.PrintNative")]
     public sealed class PrintNativeCommand : Command<PrintNativeCommand.PayloadData>
     {
-        public PrintNativeCommand(int RequestId, PrintNativeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PrintNativeCommand(int RequestId, PrintNativeCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<byte> Data = null, MediaControlClass MediaControl = null, string PaperSource = null)
-                : base(Timeout)
+            public PayloadData(List<byte> Data = null, MediaControlClass MediaControl = null, string PaperSource = null)
+                : base()
             {
                 this.Data = Data;
                 this.MediaControl = MediaControl;
@@ -189,7 +190,7 @@ namespace XFS4IoT.Printer.Commands
 
             /// <summary>
             /// Specifies the manner in which the media should be handled after each page is printed.
-            /// If no options are set, no actions will be performed, as when printing multiple
+            /// If null or no options are set, no actions will be performed, as when printing multiple
             /// pages on a single media item. Note that the
             /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
             /// applicable to this this command and will be ignored.
@@ -198,9 +199,8 @@ namespace XFS4IoT.Printer.Commands
             public MediaControlClass MediaControl { get; init; }
 
             /// <summary>
-            /// Specifies the paper source to use when printing. If omitted, the Service will determine the
-            /// paper source that will be used. This parameter is ignored if there is already paper in the print position.
-            /// It can be one of the following:
+            /// Specifes the paper source to be used. For commands which print, this parameter is ignored if there is already
+            /// paper in the print position. It can be one of the following:
             /// 
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
             ///                 supply.
@@ -209,11 +209,12 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux``` - Use the auxiliary paper source.
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
+            /// * ```any``` - Use any paper source, it is determined by the service.
             /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
             /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]
-            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^any$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
             public string PaperSource { get; init; }
 
         }

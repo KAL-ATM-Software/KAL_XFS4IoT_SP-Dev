@@ -7,34 +7,37 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CashManagementStatusClass
+    public sealed class CashManagementStatusClass : StatusBase
     {
-        public sealed class PositionStatusClass
+        public sealed class PositionStatusClass : StatusBase
         {
             public PositionStatusClass(ShutterEnum Shutter,
                                        PositionStatusEnum PositionStatus,
                                        TransportEnum Transport,
                                        TransportStatusEnum TransportStatus)
             {
-                this.Shutter = Shutter;
-                this.PositionStatus = PositionStatus;
-                this.Transport = Transport;
-                this.TransportStatus = TransportStatus;
+                shutter = Shutter;
+                positionStatus = PositionStatus;
+                transport = Transport;
+                transportStatus = TransportStatus;
             }
 
             public PositionStatusClass()
             {
-                Shutter = ShutterEnum.Unknown;
-                PositionStatus = PositionStatusEnum.Unknown;
-                Transport = TransportEnum.Unknown;
-                TransportStatus = TransportStatusEnum.NotSupported;
             }
+
+            /// <summary>
+            /// This property is set by the framework to generate status changed event
+            /// </summary>
+            public CashManagementCapabilitiesClass.OutputPositionEnum? CashDispenserPosition { get; set; } = null;
+            public CashManagementCapabilitiesClass.PositionEnum? CashAcceptorPosition { get; set; } = null;
 
             /// <summary>
             /// Supplies the state of the shutter. Following values are possible:
@@ -45,7 +48,19 @@ namespace XFS4IoTFramework.Common
             /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
             /// * ```notSupported``` - The physical device has no shutter or shutter state reporting is not supported.
             /// </summary>
-            public ShutterEnum Shutter { get; set; }
+            public ShutterEnum Shutter 
+            {
+                get { return shutter; } 
+                set
+                {
+                    if (shutter != value)
+                    {
+                        shutter = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private ShutterEnum shutter = ShutterEnum.NotSupported;
 
             /// <summary>
             /// Returns information regarding items which may be at the output position. 
@@ -57,7 +72,19 @@ namespace XFS4IoTFramework.Common
             /// * ```unknown``` - Due to a hardware error or other condition, the state of the output position cannot be determined.
             /// * ```notSupported``` - The device is not capable of reporting whether or not items are at the output position.
             /// </summary>
-            public PositionStatusEnum PositionStatus { get; set; }
+            public PositionStatusEnum PositionStatus 
+            { 
+                get { return positionStatus; }
+                set
+                {
+                    if (positionStatus != value)
+                    {
+                        positionStatus = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private PositionStatusEnum positionStatus = PositionStatusEnum.NotSupported;
 
             /// <summary>
             /// Supplies the state of the transport mechanism. The transport is defined as any area leading to or from the position.
@@ -68,7 +95,19 @@ namespace XFS4IoTFramework.Common
             /// * ```unknown``` -Due to a hardware error or other condition the state of the transport cannot be determined.
             /// * ```notSupported``` - The physical device has no transport or transport state reporting is not supported.
             /// </summary>
-            public TransportEnum Transport { get; set; }
+            public TransportEnum Transport 
+            { 
+                get { return transport; } 
+                set
+                {
+                    if (transport != value)
+                    {
+                        transport = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private TransportEnum transport = TransportEnum.NotSupported;
 
             /// <summary>
             /// Returns information regarding items which may be on the transport. If the device is a recycler 
@@ -81,8 +120,19 @@ namespace XFS4IoTFramework.Common
             /// * ```notEmptyUnknown``` - Due to a hardware error or other condition it is not known whether there are items on the transport.
             /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
             /// </summary>
-            public TransportStatusEnum TransportStatus { get; set; }
-
+            public TransportStatusEnum TransportStatus 
+            { 
+                get { return transportStatus; } 
+                set
+                {
+                    if (transportStatus != value)
+                    {
+                        transportStatus = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private TransportStatusEnum transportStatus = TransportStatusEnum.NotSupported;
         }
 
         public enum PositionStatusEnum
@@ -108,14 +158,6 @@ namespace XFS4IoTFramework.Common
             NotEmptyCustomer,
             Unknown,
             NotSupported,
-        }
-
-        public enum SafeDoorEnum
-        {
-            NotSupported,
-            Open,
-            Closed,
-            Unknown,
         }
 
         public enum DispenserEnum
@@ -149,29 +191,13 @@ namespace XFS4IoTFramework.Common
         }
 
         public CashManagementStatusClass()
-        {
-            SafeDoor = SafeDoorEnum.NotSupported;
-            Dispenser = DispenserEnum.Unknown;
-            Acceptor =  AcceptorEnum.Unknown;
-        }
-        public CashManagementStatusClass(SafeDoorEnum SafeDoor,
-                                         DispenserEnum Dispenser,
+        { }
+        public CashManagementStatusClass(DispenserEnum Dispenser,
                                          AcceptorEnum Acceptor)
         {
-            this.SafeDoor = SafeDoor;
-            this.Dispenser = Dispenser;
-            this.Acceptor = Acceptor;
+            dispenser = Dispenser;
+            acceptor = Acceptor;
         }
-
-        /// <summary>
-        /// Supplies the state of the safe door. Following values are possible:
-        /// 
-        /// * ```doorNotSupported``` - Physical device has no safe door or safe door state reporting is not supported.
-        /// * ```doorOpen``` - Safe door is open.
-        /// * ```doorClosed``` - Safe door is closed.
-        /// * ```doorUnknown``` - Due to a hardware error or other condition, the state of the safe door cannot be determined.
-        /// </summary>
-        public SafeDoorEnum SafeDoor { get; set; }
 
         /// <summary>
         /// Supplies the state of the storage units for dispensing cash. Following values are possible:
@@ -185,8 +211,19 @@ namespace XFS4IoTFramework.Common
         /// lock is set on every storage unit which can be locked.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be determined.
         /// </summary>
-        public DispenserEnum Dispenser { get; set; }
-
+        public DispenserEnum Dispenser 
+        { 
+            get { return dispenser; }
+            set
+            {
+                if (dispenser != value)
+                {
+                    dispenser = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private DispenserEnum dispenser = DispenserEnum.NotSupported;
 
 
         /// <summary>
@@ -203,6 +240,18 @@ namespace XFS4IoTFramework.Common
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be 
         /// determined.
         /// </summary>
-        public AcceptorEnum Acceptor { get; set; }
+        public AcceptorEnum Acceptor 
+        {
+            get { return acceptor; }
+            set
+            {
+                if (acceptor != value)
+                {
+                    acceptor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AcceptorEnum acceptor = AcceptorEnum.NotSupported;
     }
 }

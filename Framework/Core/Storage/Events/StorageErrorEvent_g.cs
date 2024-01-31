@@ -16,12 +16,13 @@ namespace XFS4IoT.Storage.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Storage.StorageErrorEvent")]
-    public sealed class StorageErrorEvent : UnsolicitedEvent<StorageErrorEvent.PayloadData>
+    public sealed class StorageErrorEvent : Event<StorageErrorEvent.PayloadData>
     {
 
-        public StorageErrorEvent(PayloadData Payload)
-            : base(Payload)
+        public StorageErrorEvent(int RequestId, PayloadData Payload)
+            : base(RequestId, Payload)
         { }
 
 
@@ -44,7 +45,10 @@ namespace XFS4IoT.Storage.Events
                 Locked,
                 Invalid,
                 Config,
-                NotConfigured
+                NotConfigured,
+                FeedModuleProblem,
+                PhysicalLocked,
+                PhysicalUnlocked
             }
 
             /// <summary>
@@ -57,6 +61,9 @@ namespace XFS4IoT.Storage.Events
             /// * ```invalid``` - Specified storage unit is invalid.
             /// * ```config``` - An attempt has been made to change the settings of a self-configuring storage unit.
             /// * ```notConfigured``` - Specified storage unit is not configured.
+            /// * ```feedModuleProblem``` - A problem has been detected with the feeding module.
+            /// * ```physicalLocked``` - The storage unit could not be unlocked and remains physically locked.
+            /// * ```physicalUnlocked``` - The storage unit could not be locked and remains physically unlocked.
             /// </summary>
             [DataMember(Name = "failure")]
             public FailureEnum? Failure { get; init; }

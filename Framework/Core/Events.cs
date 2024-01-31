@@ -17,7 +17,7 @@ namespace XFS4IoT.Events
         /// <param name="RequestId">Request id of the command this even relates to</param>
         /// <param name="Payload">Data for the event</param>
         public Event(int RequestId, T Payload = null) :
-            base(RequestId, MessageHeader.TypeEnum.Event, Payload)
+            base(RequestId, MessageHeader.TypeEnum.Event, Payload, Timeout: null)
         {
             if (Payload is null)
             {
@@ -34,7 +34,7 @@ namespace XFS4IoT.Events
         /// </summary>
         /// <param name="Payload">Data for the event</param>
         public UnsolicitedEvent(T Payload = null) :
-            base(null, MessageHeader.TypeEnum.Event, Payload)
+            base(RequestId: null, MessageHeader.TypeEnum.Event, Payload, Timeout: null)
         {
             if (Payload is null)
             {

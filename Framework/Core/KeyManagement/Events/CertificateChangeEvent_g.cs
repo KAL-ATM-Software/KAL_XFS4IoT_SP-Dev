@@ -16,6 +16,7 @@ namespace XFS4IoT.KeyManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "KeyManagement.CertificateChangeEvent")]
     public sealed class CertificateChangeEvent : UnsolicitedEvent<CertificateChangeEvent.PayloadData>
     {

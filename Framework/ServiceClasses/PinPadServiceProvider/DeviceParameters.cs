@@ -145,38 +145,37 @@ namespace XFS4IoTFramework.PinPad
         public VerifyPINLocalVISARequest(string CustomerData,
                                          string PINValidationValue,
                                          string KeyName,
-                                         string KeyEncKeyName)
+                                         List<byte> KeyEncryptionKey)
         {
             this.CustomerData = CustomerData;
             this.PINValidationValue = PINValidationValue;
             this.KeyName = KeyName;
-            this.KeyEncKeyName = KeyEncKeyName;
+            this.KeyEncryptionKey = KeyEncryptionKey;
         }
 
         /// <summary>
-            /// Primary Account Number from track data, as an ASCII string. 
-            /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit ), 
-            /// followed by the pvki indicator in the 12th byte.
-            /// </summary>
-            public string CustomerData { get; init; }
+        /// Primary Account Number from track data, as an ASCII string. 
+        /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit ), 
+        /// followed by the pvki indicator in the 12th byte.
+        /// </summary>
+        public string CustomerData { get; init; }
 
-            /// <summary>
-            /// PIN Validation Value from track data. The valid range is '0' to '9'. 
-            /// This string should contain 4 digits. 
-            /// </summary>
-            public string PINValidationValue { get; init; }
+        /// <summary>
+        /// PIN Validation Value from track data. The valid range is '0' to '9'. 
+        /// This string should contain 4 digits. 
+        /// </summary>
+        public string PINValidationValue { get; init; }
 
-            /// <summary>
-            /// Name of the validation key. The key referenced by key must have the 'V2' attribute.
-            /// </summary>
-            public string KeyName { get; init; }
+        /// <summary>
+        /// Name of the validation key. The key referenced by key must have the 'V2' attribute.
+        /// </summary>
+        public string KeyName { get; init; }
 
-            /// <summary>
-            /// If this property is omitted, key is used directly for PIN validation. Otherwise, key is used to decrypt the 
-            /// encrypted key passed in *keyEncKey* and the result is used for PIN validation. 
-            /// </summary>
-            public string KeyEncKeyName { get; init; }
-
+        /// <summary>
+        /// If this value is an empry list, KeyName property is used directly for PIN validation. Otherwise, KeyName property is used to
+        /// decrypt the encrypted key passed in KeyEncryptionKey property and the result is used for PIN validation.
+        /// </summary>
+        public List<byte> KeyEncryptionKey { get; init; }
     }
 
     public sealed class PINBlockRequest

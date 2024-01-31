@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.GetQueryMedia")]
     public sealed class GetQueryMediaCompletion : Completion<GetQueryMediaCompletion.PayloadData>
     {
@@ -58,7 +59,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```mediaNotFound``` - The specified media definition cannot be found.
             /// * ```mediaInvalid``` - The specified media definition is invalid.
@@ -75,6 +76,7 @@ namespace XFS4IoT.Printer.Completions
 
             /// <summary>
             /// Specifies the type of media as one of the following:
+            /// This property is null if the specified media definition cannot be found or is invalid.
             /// 
             /// * ```generic``` - The media is generic, i.e. a single sheet.
             /// * ```passbook``` - The media is a passbook.
@@ -92,6 +94,7 @@ namespace XFS4IoT.Printer.Completions
 
             /// <summary>
             /// Specifies the base unit of measurement of the form and can be one of the following values:
+            /// This property is null if the specified media definition cannot be found or is invalid.
             /// 
             /// * ```inch``` - The base unit is inches.
             /// * ```mm``` - The base unit is millimeters.
@@ -132,14 +135,14 @@ namespace XFS4IoT.Printer.Completions
             public int? SizeHeight { get; init; }
 
             /// <summary>
-            /// Specifies the number of pages in a media of type *passbook*.
+            /// Specifies the number of pages in media of type *passbook*. This will be null if not applicable.
             /// </summary>
             [DataMember(Name = "pageCount")]
             [DataTypes(Minimum = 0)]
             public int? PageCount { get; init; }
 
             /// <summary>
-            /// Specifies the number of lines on a page for a media of type *passbook*.
+            /// Specifies the number of lines on a page for a media of type *passbook*. This will be null if not applicable.
             /// </summary>
             [DataMember(Name = "lineCount")]
             [DataTypes(Minimum = 0)]
@@ -206,8 +209,8 @@ namespace XFS4IoT.Printer.Completions
             public int? RestrictedAreaHeight { get; init; }
 
             /// <summary>
-            /// Specifies the staggering from the top in terms of the base vertical resolution for a media of type
-            /// *passbook*.
+            /// Specifies the staggering from the top in terms of the base vertical resolution for media of type
+            /// *passbook*. This will be null if not applicable.
             /// </summary>
             [DataMember(Name = "stagger")]
             [DataTypes(Minimum = 0)]
@@ -221,7 +224,8 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specified the type of fold for a media of type *passbook* as one of the following:
+            /// Specified the type of fold for media of type *passbook* as one of the following. This will be null
+            /// if not applicable.
             /// 
             /// * ```none``` - Passbook has no fold.
             /// * ```horizontal``` - Passbook has a horizontal fold.
@@ -230,8 +234,71 @@ namespace XFS4IoT.Printer.Completions
             [DataMember(Name = "foldType")]
             public FoldTypeEnum? FoldType { get; init; }
 
+            [DataContract]
+            public sealed class PaperSourcesClass
+            {
+                public PaperSourcesClass(bool? Upper = null, bool? Lower = null, bool? External = null, bool? Aux = null, bool? Aux2 = null, bool? Park = null)
+                {
+                    this.Upper = Upper;
+                    this.Lower = Lower;
+                    this.External = External;
+                    this.Aux = Aux;
+                    this.Aux2 = Aux2;
+                    this.Park = Park;
+                }
+
+                /// <summary>
+                /// The upper paper source.
+                /// </summary>
+                [DataMember(Name = "upper")]
+                public bool? Upper { get; init; }
+
+                /// <summary>
+                /// The lower paper source.
+                /// </summary>
+                [DataMember(Name = "lower")]
+                public bool? Lower { get; init; }
+
+                /// <summary>
+                /// The external paper source.
+                /// </summary>
+                [DataMember(Name = "external")]
+                public bool? External { get; init; }
+
+                /// <summary>
+                /// The auxiliary paper source.
+                /// </summary>
+                [DataMember(Name = "aux")]
+                public bool? Aux { get; init; }
+
+                /// <summary>
+                /// The second auxiliary paper source.
+                /// </summary>
+                [DataMember(Name = "aux2")]
+                public bool? Aux2 { get; init; }
+
+                /// <summary>
+                /// The parking station.
+                /// </summary>
+                [DataMember(Name = "park")]
+                public bool? Park { get; init; }
+
+                [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+                [System.Text.Json.Serialization.JsonExtensionData]
+                public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
+
+                [DataTypes(Pattern = @"^[a-zA-Z]([a-zA-Z0-9]*)$")]
+                [System.Text.Json.Serialization.JsonIgnore]
+                public Dictionary<string, bool> ExtendedProperties
+                {
+                    get => MessageBase.ParseExtendedProperties<bool>(ExtensionData);
+                    set => ExtensionData = MessageBase.CreateExtensionData<bool>(value);
+                }
+
+            }
+
             /// <summary>
-            /// Specifies the paper sources to use when printing forms using this media. If omitted, the paper source
+            /// Specifies the paper sources to use when printing forms using this media. If null, the paper source
             /// is determined by the Service.
             /// </summary>
             [DataMember(Name = "paperSources")]

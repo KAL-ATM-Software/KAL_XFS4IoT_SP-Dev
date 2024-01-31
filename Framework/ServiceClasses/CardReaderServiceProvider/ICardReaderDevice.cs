@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.CardReader
         /// If no card has been inserted, and for all other categories of card readers, the card unit waits for the period of time specified in the call for a card to be either inserted or pulled through.
         /// The InsertCardEvent will be generated when there is no card in the cardreader and the device is ready to accept a card.
         /// </summary>
-        Task<AcceptCardResult> AcceptCardAsync(CommonCardCommandEvents events,
+        Task<AcceptCardResult> AcceptCardAsync(ReadRawDataCommandEvents events,
                                                AcceptCardRequest acceptCardInfo,
                                                CancellationToken cancellation);
 
@@ -54,7 +54,7 @@ namespace XFS4IoTFramework.CardReader
         /// This procedure is followed by data verification.
         /// If power fails during a write the outcome of the operation will be vendor specific, there is no guarantee that thewrite will have succeeded.
         /// </summary>
-        Task<WriteCardResult> WriteCardAsync(CommonCardCommandEvents events,
+        Task<WriteCardResult> WriteCardAsync(WriteRawDataCommandEvents events,
                                              WriteCardRequest dataToWrite,
                                              CancellationToken cancellation);
 
@@ -101,8 +101,7 @@ namespace XFS4IoTFramework.CardReader
         /// If no action is specified the user card will not be moved even if this means that the devicecannot be recovered.
         /// If the device is a permanent chip card unit, this command will power-off the chip.For devices with parking station capability there will be one MediaInsertedEvent for each card found.
         /// </summary>
-        Task<ResetDeviceResult> ResetDeviceAsync(ResetCommandEvents events,
-                                                 ResetDeviceRequest cardAction,
+        Task<ResetDeviceResult> ResetDeviceAsync(ResetDeviceRequest cardAction,
                                                  CancellationToken cancellation);
 
         /// <summary>

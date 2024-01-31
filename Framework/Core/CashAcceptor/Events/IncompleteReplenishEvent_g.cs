@@ -16,6 +16,7 @@ namespace XFS4IoT.CashAcceptor.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashAcceptor.IncompleteReplenishEvent")]
     public sealed class IncompleteReplenishEvent : Event<IncompleteReplenishEvent.PayloadData>
     {
@@ -47,7 +48,7 @@ namespace XFS4IoT.CashAcceptor.Events
 
                 /// <summary>
                 /// Total number of items removed from the source storage unit including rejected items during execution of this
-                /// command. Not specified if no items were removed.
+                /// command. This property is null if no items were removed.
                 /// <example>20</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRemoved")]
@@ -55,7 +56,7 @@ namespace XFS4IoT.CashAcceptor.Events
                 public int? NumberOfItemsRemoved { get; init; }
 
                 /// <summary>
-                /// Total number of items rejected during execution of this command. Not specified if no items were rejected.
+                /// Total number of items rejected during execution of this command. This property is null if no items were rejected.
                 /// <example>2</example>
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRejected")]
@@ -73,7 +74,7 @@ namespace XFS4IoT.CashAcceptor.Events
                     }
 
                     /// <summary>
-                    /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                    /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
                     /// command) to which items have been moved.
                     /// <example>unit1</example>
                     /// </summary>
@@ -82,8 +83,8 @@ namespace XFS4IoT.CashAcceptor.Events
                     public string Target { get; init; }
 
                     /// <summary>
-                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
-                    /// specified if the item was not identified as a cash item.
+                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is null
+                    /// if the item was not identified as a cash item.
                     /// <example>type20USD1</example>
                     /// </summary>
                     [DataMember(Name = "cashItem")]
@@ -101,14 +102,14 @@ namespace XFS4IoT.CashAcceptor.Events
                 }
 
                 /// <summary>
-                /// Breakdown of which notes were moved and where they moved to. In the case where one note type has several releases and these 
-                /// are moved, or where items are moved from a multi denomination storage unit to a multi denomination storage unit, 
-                /// each target can receive several note types. 
+                /// Breakdown of which notes were moved and where they moved to. In the case where one note type has several releases and these
+                /// are moved, or where items are moved from a multi denomination storage unit to a multi denomination storage unit,
+                /// each target can receive several note types.
                 /// 
                 /// For example:
-                /// * If one single target was specified with the *replenishTargets* input structure, and this target received 
+                /// * If one single target was specified with the *replenishTargets* input structure, and this target received
                 /// two different note types, then this property will have two elements.
-                /// * If two targets were specified and the first target received two different note types and the second target 
+                /// * If two targets were specified and the first target received two different note types and the second target
                 /// received three different note types, then this property will have five elements.
                 /// </summary>
                 [DataMember(Name = "replenishTargetResults")]
@@ -117,7 +118,7 @@ namespace XFS4IoT.CashAcceptor.Events
             }
 
             /// <summary>
-            /// Note that in this case the values in this structure report the amount and number of each denomination that 
+            /// Note that in this case the values in this structure report the amount and number of each denomination that
             /// have actually been moved during the replenishment command.
             /// </summary>
             [DataMember(Name = "replenish")]

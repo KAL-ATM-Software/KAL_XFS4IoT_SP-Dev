@@ -16,6 +16,7 @@ namespace XFS4IoT.CashAcceptor.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashAcceptor.InputRefuseEvent")]
     public sealed class InputRefuseEvent : Event<InputRefuseEvent.PayloadData>
     {
@@ -56,18 +57,18 @@ namespace XFS4IoT.CashAcceptor.Events
             /// * ```cashInUnitFull``` - storage unit is full.
             /// * ```invalidBill``` - Recognition of the items took place, but one or more of the items are invalid.
             /// * ```noBillsToDeposit``` - There are no items in the input area.
-            /// * ```depositFailure``` - A deposit has failed for a reason not covered by the other reasons and the 
+            /// * ```depositFailure``` - A deposit has failed for a reason not covered by the other reasons and the
             /// failure is not a fatal hardware problem, for example failing to pick an item from the input area.
             /// * ```commonInputComponentFailure``` - Failure of a common input component which is shared by all storage
             /// units.
             /// * ```stackerFull``` - The intermediate stacker is full.
             /// * ```foreignItemsDetected``` - Foreign items have been detected in the input position.
-            /// * ```invalidBunch``` - Recognition of the items did not take place. The bunch of notes inserted is 
+            /// * ```invalidBunch``` - Recognition of the items did not take place. The bunch of notes inserted is
             /// invalid, e.g. it is too large or was inserted incorrectly.
-            /// * ```counterfeit``` - One or more counterfeit items have been detected and refused. This is only 
-            /// applicable where notes are not classified as level 2 and the device is capable of differentiating 
+            /// * ```counterfeit``` - One or more counterfeit items have been detected and refused. This is only
+            /// applicable where notes are not classified as level 2 and the device is capable of differentiating
             /// between invalid and counterfeit items.
-            /// * ```limitOverTotalItems``` - Number of items inserted exceeded the limitation set with the 
+            /// * ```limitOverTotalItems``` - Number of items inserted exceeded the limitation set with the
             /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command.
             /// * ```limitOverAmount``` - Amount exceeded the limitation set with the _CashAcceptor.CashInStart_ command.
             /// </summary>

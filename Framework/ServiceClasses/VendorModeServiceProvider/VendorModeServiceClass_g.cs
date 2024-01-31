@@ -18,6 +18,9 @@ namespace XFS4IoTServer
     public partial class VendorModeServiceClass : IVendorModeServiceClass
     {
 
+        public async Task EnterModeRequestEvent()
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.EnterModeRequestEvent());
+
         public async Task ExitModeRequestEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.ExitModeRequestEvent());
 
@@ -26,9 +29,6 @@ namespace XFS4IoTServer
 
         public async Task ModeExitedEvent(XFS4IoT.VendorMode.Events.ModeExitedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.ModeExitedEvent(Payload));
-
-        public async Task EnterModeRequestEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.VendorMode.Events.EnterModeRequestEvent());
 
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }

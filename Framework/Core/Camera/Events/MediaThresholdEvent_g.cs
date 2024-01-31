@@ -16,6 +16,7 @@ namespace XFS4IoT.Camera.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Camera.MediaThresholdEvent")]
     public sealed class MediaThresholdEvent : UnsolicitedEvent<MediaThresholdEvent.PayloadData>
     {

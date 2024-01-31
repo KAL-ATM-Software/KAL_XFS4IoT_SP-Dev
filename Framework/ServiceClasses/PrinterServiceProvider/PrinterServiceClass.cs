@@ -13,6 +13,7 @@ using System.Runtime.Versioning;
 using XFS4IoT;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -73,6 +74,28 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterStatus=");
 
             CommonService.PrinterStatus.IsNotNull($"The device class set PrinterStatus property to null. The device class must report device status.");
+            CommonService.PrinterStatus.PropertyChanged += StatusChangedEventFowarder;
+            if (CommonService.PrinterStatus.RetractBins is not null)
+            {
+                foreach (var retractBin in CommonService.PrinterStatus.RetractBins)
+                {
+                    retractBin.PropertyChanged += StatusChangedEventFowarder;
+                }
+            }
+            if (CommonService.PrinterStatus.Paper is not null)
+            {
+                foreach (var paper in CommonService.PrinterStatus.Paper)
+                {
+                    paper.Value.PropertyChanged += StatusChangedEventFowarder;
+                }
+            }
+            if (CommonService.PrinterStatus.CustomPaper is not null)
+            {
+                foreach (var papercustom in CommonService.PrinterStatus.CustomPaper)
+                {
+                    papercustom.Value.PropertyChanged += StatusChangedEventFowarder;
+                }
+            }
         }
 
         /// <summary>
@@ -253,5 +276,12 @@ namespace XFS4IoTServer
         /// This class used to convert from XFS form into image
         /// </summary>
         private PrintToBitmapHandler ImageConverter { get; set; }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

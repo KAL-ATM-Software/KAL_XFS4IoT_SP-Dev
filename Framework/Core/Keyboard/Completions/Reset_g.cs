@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Keyboard.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Keyboard.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {

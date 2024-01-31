@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.GetTransactionState")]
     public sealed class GetTransactionStateCompletion : Completion<GetTransactionStateCompletion.PayloadData>
     {
@@ -50,6 +51,10 @@ namespace XFS4IoT.Common.Completions
 
             /// <summary>
             /// Specifies a string which identifies the transaction ID.
+            /// 
+            /// if *state* is *inactive*, this property:
+            ///   - Is ignored in [Common.SetTransactionState](#common.settransactionstate)
+            ///   - Is null in [Common.GetTransactionState](#common.gettransactionstate).
             /// <example>Example transaction ID</example>
             /// </summary>
             [DataMember(Name = "transactionID")]

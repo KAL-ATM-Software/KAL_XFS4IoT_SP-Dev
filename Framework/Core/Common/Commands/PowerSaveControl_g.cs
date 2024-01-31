@@ -16,19 +16,20 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = PowerSaveControl
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.PowerSaveControl")]
     public sealed class PowerSaveControlCommand : Command<PowerSaveControlCommand.PayloadData>
     {
-        public PowerSaveControlCommand(int RequestId, PowerSaveControlCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PowerSaveControlCommand(int RequestId, PowerSaveControlCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? MaxPowerSaveRecoveryTime = null)
-                : base(Timeout)
+            public PayloadData(int? MaxPowerSaveRecoveryTime = null)
+                : base()
             {
                 this.MaxPowerSaveRecoveryTime = MaxPowerSaveRecoveryTime;
             }

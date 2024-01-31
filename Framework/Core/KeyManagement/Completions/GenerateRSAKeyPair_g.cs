@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.GenerateRSAKeyPair")]
     public sealed class GenerateRSAKeyPairCompletion : Completion<GenerateRSAKeyPairCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
             /// * ```invalidModulusLength``` - The modulus length specified is invalid.

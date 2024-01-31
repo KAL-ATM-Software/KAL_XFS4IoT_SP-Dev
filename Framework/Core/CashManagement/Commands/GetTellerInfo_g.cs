@@ -16,26 +16,27 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = GetTellerInfo
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.GetTellerInfo")]
     public sealed class GetTellerInfoCommand : Command<GetTellerInfoCommand.PayloadData>
     {
-        public GetTellerInfoCommand(int RequestId, GetTellerInfoCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetTellerInfoCommand(int RequestId, GetTellerInfoCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? TellerID = null, string Currency = null)
-                : base(Timeout)
+            public PayloadData(int? TellerID = null, string Currency = null)
+                : base()
             {
                 this.TellerID = TellerID;
                 this.Currency = Currency;
             }
 
             /// <summary>
-            /// Identification of the teller. If invalid the error *invalidTellerId* is reported. If not specified, all
+            /// Identification of the teller. If invalid the error *invalidTellerId* is reported. If null, all
             /// tellers are reported.
             /// </summary>
             [DataMember(Name = "tellerID")]
@@ -43,7 +44,7 @@ namespace XFS4IoT.CashManagement.Commands
             public int? TellerID { get; init; }
 
             /// <summary>
-            /// ISO 4217 format currency identifier [[Ref. cashmanagement-1](#ref-cashmanagement-1)]. If not specified, all currencies are reported for *tellerID*.
+            /// ISO 4217 format currency identifier [[Ref. cashmanagement-1](#ref-cashmanagement-1)]. If null, all currencies are reported for *tellerID*.
             /// <example>USD</example>
             /// </summary>
             [DataMember(Name = "currency")]

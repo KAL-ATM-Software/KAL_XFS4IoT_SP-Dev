@@ -16,19 +16,20 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = GetItemInfo
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.GetItemInfo")]
     public sealed class GetItemInfoCommand : Command<GetItemInfoCommand.PayloadData>
     {
-        public GetItemInfoCommand(int RequestId, GetItemInfoCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetItemInfoCommand(int RequestId, GetItemInfoCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ItemsClass Items = null, ItemInfoTypeClass ItemInfoType = null)
-                : base(Timeout)
+            public PayloadData(ItemsClass Items = null, ItemInfoTypeClass ItemInfoType = null)
+                : base()
             {
                 this.Items = Items;
                 this.ItemInfoType = ItemInfoType;
@@ -47,7 +48,7 @@ namespace XFS4IoT.CashManagement.Commands
                 public NoteLevelEnum? Level { get; init; }
 
                 /// <summary>
-                /// Specifies the zero based index for the item information required. If not specified, all items of the
+                /// Specifies the zero based index for the item information required. If null, all items of the
                 /// specified *level* will be returned.
                 /// <example>1</example>
                 /// </summary>
@@ -58,7 +59,7 @@ namespace XFS4IoT.CashManagement.Commands
             }
 
             /// <summary>
-            /// Specifies which item or items to return information for. If not specified, all information on all items is
+            /// Specifies which item or items to return information for. If null, all information on all items is
             /// returned.
             /// </summary>
             [DataMember(Name = "items")]
@@ -95,7 +96,7 @@ namespace XFS4IoT.CashManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the type of information required. If not specified, all available information will be returned.
+            /// Specifies the type of information required. If null, all available information will be returned.
             /// </summary>
             [DataMember(Name = "itemInfoType")]
             public ItemInfoTypeClass ItemInfoType { get; init; }

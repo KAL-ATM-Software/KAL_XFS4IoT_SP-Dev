@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class BiometricStatusClass
+    public sealed class BiometricStatusClass : StatusBase
     {
 
         public enum SubjectStatusEnum
@@ -33,31 +33,79 @@ namespace XFS4IoTFramework.Common
                                     BiometricCapabilitiesClass.PersistenceModesEnum DataPersistence = BiometricCapabilitiesClass.PersistenceModesEnum.Clear,
                                     int? RemainingStorage = null)
         {
-            this.Subject = Subject;
-            this.Capture = Capture;
-            this.DataPersistence = DataPersistence;
-            this.RemainingStorage = RemainingStorage;
+            subject = Subject;
+            capture = Capture;
+            dataPersistence = DataPersistence;
+            remainingStorage = RemainingStorage;
         }
 
         /// <summary>
         /// Specifies the state of the subject to be scanned
         /// </summary>
-        public SubjectStatusEnum Subject { get; set; }
+        public SubjectStatusEnum Subject 
+        { 
+            get { return subject; }
+            set
+            {
+                if (subject != value)
+                {
+                    subject = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SubjectStatusEnum subject = SubjectStatusEnum.NotSupported;
 
         /// <summary>
         /// Indicates whether or not scanned biometric data has been captured and is stored locally
         /// </summary>
-        public bool Capture { get; set; }
+        public bool Capture 
+        { 
+            get { return capture; }
+            set
+            {
+                if (capture != value)
+                {
+                    capture = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private bool capture = false;
 
         /// <summary>
         /// Specifies the current data persistence mode
         /// </summary>
-        public BiometricCapabilitiesClass.PersistenceModesEnum DataPersistence { get; set; }
+        public BiometricCapabilitiesClass.PersistenceModesEnum DataPersistence
+        {
+            get { return dataPersistence; }
+            set
+            {
+                if (dataPersistence != value)
+                {
+                    dataPersistence = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private BiometricCapabilitiesClass.PersistenceModesEnum dataPersistence = BiometricCapabilitiesClass.PersistenceModesEnum.None;
 
         /// <summary>
         /// Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes.
         /// Can be null if not supported.
         /// </summary>
-        public int? RemainingStorage { get; set; }
+        public int? RemainingStorage
+        {
+            get { return remainingStorage; }
+            set
+            {
+                if (remainingStorage != value)
+                {  
+                    remainingStorage = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int? remainingStorage = null;
     }
 }

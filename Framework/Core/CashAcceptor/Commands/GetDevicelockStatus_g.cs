@@ -16,22 +16,13 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = GetDeviceLockStatus
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.GetDeviceLockStatus")]
-    public sealed class GetDeviceLockStatusCommand : Command<GetDeviceLockStatusCommand.PayloadData>
+    public sealed class GetDeviceLockStatusCommand : Command<MessagePayload>
     {
-        public GetDeviceLockStatusCommand(int RequestId, GetDeviceLockStatusCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetDeviceLockStatusCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

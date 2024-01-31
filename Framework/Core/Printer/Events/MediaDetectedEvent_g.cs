@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.MediaDetectedEvent")]
     public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
     {
@@ -29,43 +30,28 @@ namespace XFS4IoT.Printer.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(PositionEnum? Position = null, int? RetractBinNumber = null)
+            public PayloadData(string Position = null)
                 : base()
             {
                 this.Position = Position;
-                this.RetractBinNumber = RetractBinNumber;
-            }
-
-            public enum PositionEnum
-            {
-                Retracted,
-                Present,
-                Entering,
-                Jammed,
-                Unknown,
-                Expelled
             }
 
             /// <summary>
             /// Specifies the media position after the reset operation, as one of the following values:
             /// 
-            /// * ```retracted``` - The media was retracted during the reset operation.
             /// * ```present``` - The media is in the print position or on the stacker.
             /// * ```entering``` - The media is in the exit slot.
             /// * ```jammed``` - The media is jammed in the device.
             /// * ```unknown``` - The media is in an unknown position.
             /// * ```expelled``` - The media was expelled during the reset operation.
+            /// * ```unit&lt;retract bin number&gt;``` - Media was retracted to the retract bin specified. The bin number
+            /// is between 1 and the [number of bins](#common.capabilities.completion.properties.printer.retractbins)
+            /// supported by this device.
+            /// <example>unit2</example>
             /// </summary>
             [DataMember(Name = "position")]
-            public PositionEnum? Position { get; init; }
-
-            /// <summary>
-            /// Number of the retract bin the media was retracted to. This number has to be between one and the 
-            /// [number of bins](#common.capabilities.completion.properties.printer.retractbins) supported by this device.
-            /// It is only relevant if [position](#printer.mediadetectedevent.event.properties.position) is *retracted*.
-            /// </summary>
-            [DataMember(Name = "retractBinNumber")]
-            public int? RetractBinNumber { get; init; }
+            [DataTypes(Pattern = @"^present$|^entering$|^jammed$|^unknown$|^expelled$|^unit[0-9]+$")]
+            public string Position { get; init; }
 
         }
 

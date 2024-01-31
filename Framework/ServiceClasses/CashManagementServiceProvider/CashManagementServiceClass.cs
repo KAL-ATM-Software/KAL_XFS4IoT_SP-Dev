@@ -15,6 +15,10 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
 using XFS4IoT.CashManagement.Events;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Collections;
+using XFS4IoT.CashManagement;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -75,7 +79,7 @@ namespace XFS4IoTServer
 
         public Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches = null) => ItemsTakenEvent(
                     new ItemsTakenEvent.PayloadData(
-                        new XFS4IoT.CashManagement.PositionInfoClass(Position switch
+                        Position: Position switch
                         {
                             CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
                             CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
@@ -93,9 +97,9 @@ namespace XFS4IoTServer
                             CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
                             CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
                             CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                            _ => null,
+                            _ => throw new InternalErrorException($"Invalid position is specified for the ItemsTakenEvent event {Position}"),
                         },
-                            AdditionalBunches))
+                        AdditionalBunches: AdditionalBunches)
                     );
 
         public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position) => ItemsInsertedEvent(
@@ -117,12 +121,12 @@ namespace XFS4IoTServer
                 CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
                 CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
                 CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                _ => null,
+                _ => throw new InternalErrorException($"Invalid position is specified for the ItemsInsertedEvent event {Position}"),
             }));
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => ItemsPresentedEvent(
                         new ItemsPresentedEvent.PayloadData(
-                            new XFS4IoT.CashManagement.PositionInfoClass(Position switch
+                            Position: Position switch
                             {
                                 CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
                                 CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
@@ -140,14 +144,59 @@ namespace XFS4IoTServer
                                 CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
                                 CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
                                 CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                                _ => null,
+                                _ => throw new InternalErrorException($"Invalid position is specified for the ItemsPresentedEvent event {Position}"),
                             },
-                            AdditionalBunches)));
+                            AdditionalBunches: AdditionalBunches));
+
+        public Task MediaDetectedEvent(string StorageId, ItemTargetEnum Target, int? Index = null)
+        {
+            (StorageService.CashUnits is null || StorageService.CashUnits.Count == 0).IsFalse($"MediaDetectedEvent is attempted to send when no storage unit setup.");
+
+            string unitName = null;
+            foreach (var unit in StorageService.CashUnits)
+            {
+                if (unit.Value.Id == StorageId)
+                {
+                    unitName = unit.Key;
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(unitName) &&
+                Target == ItemTargetEnum.SingleUnit)
+            {
+                Contracts.Assert(false, $"The items are moved into the single unit but there is no StorageId matches with specified type of unit. {StorageId} {Target}");
+            }
+
+            return MediaDetectedEvent(
+                    new(Target: Target switch
+                        {
+                            ItemTargetEnum.SingleUnit => ItemTargetEnumEnum.SingleUnit,
+                            ItemTargetEnum.Retract => ItemTargetEnumEnum.Retract,
+                            ItemTargetEnum.Transport => ItemTargetEnumEnum.Transport,
+                            ItemTargetEnum.Stacker => ItemTargetEnumEnum.Stacker,
+                            ItemTargetEnum.Reject => ItemTargetEnumEnum.Reject,
+                            ItemTargetEnum.ItemCassette => ItemTargetEnumEnum.ItemCassette,
+                            ItemTargetEnum.CashIn => ItemTargetEnumEnum.CashIn,
+                            ItemTargetEnum.OutDefault => ItemTargetEnumEnum.OutDefault,
+                            ItemTargetEnum.OutLeft => ItemTargetEnumEnum.OutLeft,
+                            ItemTargetEnum.OutRight => ItemTargetEnumEnum.OutRight,
+                            ItemTargetEnum.OutCenter => ItemTargetEnumEnum.OutCenter,
+                            ItemTargetEnum.OutTop => ItemTargetEnumEnum.OutTop,
+                            ItemTargetEnum.OutBottom => ItemTargetEnumEnum.OutBottom,
+                            ItemTargetEnum.OutFront => ItemTargetEnumEnum.OutFront,
+                            ItemTargetEnum.OutRear => ItemTargetEnumEnum.OutRear,
+                            _ => throw new InternalErrorException($"Unsupported target value specified for sending MediaDetectedEvent. {Target}"),
+                        }, 
+                        Unit: unitName,
+                        Index: Index)
+                    );
+        }
 
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status)
         {
             ShutterStatusChangedEvent.PayloadData payload = new(
-                Position switch
+                Position: Position switch
                 {
                     CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
                     CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
@@ -165,9 +214,9 @@ namespace XFS4IoTServer
                     CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
                     CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
                     CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                    _ => null,
+                    _ => throw new InternalErrorException($"Invalid position is specified for the ShutterStatusChangedEvent event {Position}"),
                 },
-                Status switch
+                Shutter: Status switch
                 {
                     CashManagementStatusClass.ShutterEnum.Closed => XFS4IoT.CashManagement.ShutterEnum.Closed,
                     CashManagementStatusClass.ShutterEnum.JammedClosed => XFS4IoT.CashManagement.ShutterEnum.Jammed,
@@ -176,7 +225,7 @@ namespace XFS4IoTServer
                     CashManagementStatusClass.ShutterEnum.JammedUnknown => XFS4IoT.CashManagement.ShutterEnum.Jammed,
                     CashManagementStatusClass.ShutterEnum.Open => XFS4IoT.CashManagement.ShutterEnum.Open,
                     CashManagementStatusClass.ShutterEnum.Unknown => XFS4IoT.CashManagement.ShutterEnum.Unknown,
-                    _ => null,
+                    _ => throw new InternalErrorException($"Invalid status is specified for the ShutterStatusChangedEvent event {Status}"),
                 }
                 );
 
@@ -190,6 +239,7 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CashManagementDev.CashDispenserStatus=");
 
             CommonService.CashManagementStatus.IsNotNull($"The device class set CashManagementStatus property to null. The device class must report device status.");
+            CommonService.CashManagementStatus.PropertyChanged += StatusChangedEventFowarder;
         }
 
         private void GetCapabilities()
@@ -273,5 +323,12 @@ namespace XFS4IoTServer
                 Logger.Warning(Constants.Framework, $"Failed to save persistent data. {ServiceProvider.Name + typeof(ItemClassificationListClass).FullName}");
             }
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

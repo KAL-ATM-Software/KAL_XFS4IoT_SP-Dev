@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.DefineKeys")]
     public sealed class DefineKeysCompletion : Completion<DefineKeysCompletion.PayloadData>
     {
@@ -40,7 +41,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified keys is invalid.
             /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service.
             /// * ```noActiveKeys``` - There are no active keys specified.

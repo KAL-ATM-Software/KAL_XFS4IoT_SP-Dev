@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Storage.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Storage.EndExchange")]
     public sealed class EndExchangeCompletion : Completion<EndExchangeCompletion.PayloadData>
     {
@@ -39,9 +40,9 @@ namespace XFS4IoT.Storage.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
-            /// * ```storageUnitError``` - A storage unit problem occurred that meant no storage units could be 
+            /// * ```storageUnitError``` - A storage unit problem occurred that meant no storage units could be
             /// updated. One or more [Storage.StorageErrorEvent](#storage.storageerrorevent) events will be sent with
             /// the details.
             /// * ```noExchangeActive``` - There is no exchange active.

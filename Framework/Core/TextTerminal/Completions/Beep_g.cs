@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.Beep")]
     public sealed class BeepCompletion : Completion<BeepCompletion.PayloadData>
     {

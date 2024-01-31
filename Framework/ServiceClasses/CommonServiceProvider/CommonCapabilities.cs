@@ -35,24 +35,20 @@ namespace XFS4IoTFramework.Common
 
             public enum EventEnum
             {
-                DevicePositionEvent,
-                ExchangeStateChangedEvent,
+                ErrorEvent,
                 NonceClearedEvent,
-                PowerSaveChangeEvent,
+                StatusChangedEvent,
             }
 
             public CommonInterfaceClass(List<CommandEnum> Commands = null,
-                                        List<EventEnum> Events = null,
-                                        List<CommandEnum> AuthenticationRequired = null)
+                                        List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class CardReaderInterfaceClass
         {
@@ -78,24 +74,20 @@ namespace XFS4IoTFramework.Common
                 EMVClessReadStatusEvent,
                 InsertCardEvent,
                 InvalidMediaEvent,
-                InvalidTrackDataEvent,
                 MediaDetectedEvent,
                 MediaInsertedEvent,
                 MediaRemovedEvent,
                 TrackDetectedEvent,
             }
             public CardReaderInterfaceClass(List<CommandEnum> Commands = null,
-                                            List<EventEnum> Events = null,
-                                            List<CommandEnum> AuthenticationRequired = null)
+                                            List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class CashDispenserInterfaceClass
@@ -112,6 +104,7 @@ namespace XFS4IoTFramework.Common
                 Present,
                 Reject,
                 SetMixTable,
+                TestCashUnits,
             }
 
             public enum EventEnum
@@ -121,17 +114,14 @@ namespace XFS4IoTFramework.Common
                 StartDispenseEvent,
             }
             public CashDispenserInterfaceClass(List<CommandEnum> Commands = null,
-                                               List<EventEnum> Events = null,
-                                               List<CommandEnum> AuthenticationRequired = null)
+                                               List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class CashManagementInterfaceClass
@@ -144,7 +134,6 @@ namespace XFS4IoTFramework.Common
                 GetClassificationList,
                 GetItemInfo,
                 GetTellerInfo,
-                OpenSafeDoor,
                 OpenShutter,
                 Reset,
                 Retract,
@@ -161,23 +150,18 @@ namespace XFS4IoTFramework.Common
                 ItemsTakenEvent,
                 MediaDetectedEvent,
                 NoteErrorEvent,
-                SafeDoorClosedEvent,
-                SafeDoorOpenEvent,
                 ShutterStatusChangedEvent,
                 TellerInfoChangedEvent,
             }
             public CashManagementInterfaceClass(List<CommandEnum> Commands = null,
-                                                List<EventEnum> Events = null,
-                                                List<CommandEnum> AuthenticationRequired = null)
+                                                List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class CryptoInterfaceClass
@@ -193,21 +177,16 @@ namespace XFS4IoTFramework.Common
 
             public enum EventEnum
             {
-                DUKPTKSNEvent,
-                IllegalKeyAccessEvent,
             }
             public CryptoInterfaceClass(List<CommandEnum> Commands = null,
-                                        List<EventEnum> Events = null,
-                                        List<CommandEnum> AuthenticationRequired = null)
+                                        List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class KeyManagementInterfaceClass
@@ -229,26 +208,26 @@ namespace XFS4IoTFramework.Common
                 Reset,
                 StartAuthenticate,
                 StartKeyExchange,
+                ImportKeyToken,
+                ImportEmvPublicKey,
             }
 
             public enum EventEnum
             {
                 CertificateChangeEvent,
+                DUKPTKSNEvent,
                 IllegalKeyAccessEvent,
                 InitializedEvent,
             }
             public KeyManagementInterfaceClass(List<CommandEnum> Commands = null,
-                                               List<EventEnum> Events = null,
-                                               List<CommandEnum> AuthenticationRequired = null)
+                                               List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class KeyboardInterfaceClass
         {
@@ -270,17 +249,14 @@ namespace XFS4IoTFramework.Common
                 LayoutEvent,
             }
             public KeyboardInterfaceClass(List<CommandEnum> Commands = null,
-                                          List<EventEnum> Events = null,
-                                          List<CommandEnum> AuthenticationRequired = null)
+                                          List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class PinPadInterfaceClass
         {
@@ -298,21 +274,16 @@ namespace XFS4IoTFramework.Common
 
             public enum EventEnum
             {
-                DUKPTKSNEvent,
-                IllegalKeyAccessEvent,
             }
             public PinPadInterfaceClass(List<CommandEnum> Commands = null,
-                                        List<EventEnum> Events = null,
-                                        List<CommandEnum> AuthenticationRequired = null)
+                                        List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class TextTerminalInterfaceClass
         {
@@ -337,20 +308,18 @@ namespace XFS4IoTFramework.Common
             {
                 FieldErrorEvent,
                 FieldWarningEvent,
+                FormLoadedEvent,
                 KeyEvent,
             }
             public TextTerminalInterfaceClass(List<CommandEnum> Commands = null,
-                                              List<EventEnum> Events = null,
-                                              List<CommandEnum> AuthenticationRequired = null)
+                                              List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class StorageInterfaceClass
         {
@@ -369,17 +338,14 @@ namespace XFS4IoTFramework.Common
                 StorageThresholdEvent,
             }
             public StorageInterfaceClass(List<CommandEnum> Commands = null,
-                                         List<EventEnum> Events = null,
-                                         List<CommandEnum> AuthenticationRequired = null)
+                                         List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class LightsInterfaceClass
@@ -391,16 +357,13 @@ namespace XFS4IoTFramework.Common
             public enum EventEnum
             {
             }
-            public LightsInterfaceClass(List<CommandEnum> Commands = null,
-                                        List<CommandEnum> AuthenticationRequired = null)
+            public LightsInterfaceClass(List<CommandEnum> Commands = null)
             {
                 this.Commands = Commands;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; } = null;
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class AuxiliariesInterfaceClass
@@ -416,20 +379,16 @@ namespace XFS4IoTFramework.Common
 
             public enum EventEnum
             {
-                AuxiliaryStatusEvent,
             }
             public AuxiliariesInterfaceClass(List<CommandEnum> Commands = null,
-                                             List<EventEnum> Events = null,
-                                             List<CommandEnum> AuthenticationRequired = null)
+                                             List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
         public sealed class PrinterInterfaceClass
         {
@@ -480,17 +439,14 @@ namespace XFS4IoTFramework.Common
                 TonerThresholdEvent,
             }
             public PrinterInterfaceClass(List<CommandEnum> Commands = null,
-                                         List<EventEnum> Events = null,
-                                         List<CommandEnum> AuthenticationRequired = null)
+                                         List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class VendorModeInterfaceClass
@@ -512,17 +468,14 @@ namespace XFS4IoTFramework.Common
                 ModeExitedEvent,
             }
             public VendorModeInterfaceClass(List<CommandEnum> Commands = null,
-                                        List<EventEnum> Events = null,
-                                        List<CommandEnum> AuthenticationRequired = null)
+                                        List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class VendorApplicationInterfaceClass
@@ -540,17 +493,14 @@ namespace XFS4IoTFramework.Common
                 InterfaceChangedEvent,
             }
             public VendorApplicationInterfaceClass(List<CommandEnum> Commands = null,
-                                                   List<EventEnum> Events = null,
-                                                   List<CommandEnum> AuthenticationRequired = null)
+                                                   List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class BarcodeReaderInterfaceClass
@@ -566,17 +516,14 @@ namespace XFS4IoTFramework.Common
             }
 
             public BarcodeReaderInterfaceClass(List<CommandEnum> Commands = null,
-                                               List<EventEnum> Events = null,
-                                               List<CommandEnum> AuthenticationRequired = null)
+                                               List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class BiometricInterfaceClass
@@ -604,17 +551,14 @@ namespace XFS4IoTFramework.Common
             }
 
             public BiometricInterfaceClass(List<CommandEnum> Commands = null,
-                                          List<EventEnum> Events = null,
-                                          List<CommandEnum> AuthenticationRequired = null)
+                                          List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
         }
 
         public sealed class CashAcceptorInterfaceClass
@@ -653,17 +597,39 @@ namespace XFS4IoTFramework.Common
             }
 
             public CashAcceptorInterfaceClass(List<CommandEnum> Commands = null,
-                                              List<EventEnum> Events = null,
-                                              List<CommandEnum> AuthenticationRequired = null)
+                                              List<EventEnum> Events = null)
             {
                 this.Commands = Commands;
                 this.Events = Events;
-                this.AuthenticationRequired = AuthenticationRequired;
             }
 
             public List<CommandEnum> Commands { get; init; }
             public List<EventEnum> Events { get; init; }
-            public List<CommandEnum> AuthenticationRequired { get; init; }
+        }
+
+        public sealed class CameraInterfaceClass
+        {
+            public enum CommandEnum
+            {
+                TakePicture,
+                Reset,
+            }
+
+            public enum EventEnum
+            {
+                InvalidDataEvent,
+                MediaThresholdEvent,
+            }
+
+            public CameraInterfaceClass(List<CommandEnum> Commands = null,
+                                        List<EventEnum> Events = null)
+            {
+                this.Commands = Commands;
+                this.Events = Events;
+            }
+
+            public List<CommandEnum> Commands { get; init; }
+            public List<EventEnum> Events { get; init; }
         }
 
         public CommonCapabilitiesClass(CommonInterfaceClass CommonInterface,
@@ -734,6 +700,8 @@ namespace XFS4IoTFramework.Common
         public BarcodeReaderInterfaceClass BarcodeReaderInterface { get; init; }
         public BiometricInterfaceClass BiometricInterface { get; init; }
         public CashAcceptorInterfaceClass CashAcceptorInterface { get; init; }
+        public CommonInterfaceClass CameraInterface { get; init; }
+
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
         /// element for each device.

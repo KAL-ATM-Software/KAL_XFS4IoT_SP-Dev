@@ -18,6 +18,8 @@ using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CardReader;
 using XFS4IoTFramework.Storage;
+using System.ComponentModel;
+using System.Threading;
 
 namespace XFS4IoTServer
 {
@@ -67,6 +69,17 @@ namespace XFS4IoTServer
             };
             return CardReader.CardActionEvent(new CardActionEvent.PayloadData(to, from));
         }
+
+        public Task MediaDetectedEvent(MovePosition Position)
+        {
+            return CardReader.MediaDetectedEvent(new MediaDetectedEvent.PayloadData(Position.Position switch
+            {
+                MovePosition.MovePositionEnum.Exit => "exit",
+                MovePosition.MovePositionEnum.Transport => "transport",
+                _ => Position.StorageId,
+            }));
+        }
+
         #endregion
 
         #region Storage unsolic events
@@ -84,25 +97,9 @@ namespace XFS4IoTServer
             return StorageService.StorageChangedEvent(paylod);
         }
 
-        public Task StorageErrorEvent(FailureEnum Failure, List<string> CardUnitIds)
-        {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = GetStorages(CardUnitIds);
-            return StorageService.StorageErrorEvent(new StorageErrorEvent.PayloadData(Failure switch
-                                                                                     {
-                                                                                         FailureEnum.Config => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Config,
-                                                                                         FailureEnum.Empty => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Empty,
-                                                                                         FailureEnum.Error => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Error,
-                                                                                         FailureEnum.Full => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Full,
-                                                                                         FailureEnum.Invalid => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Invalid,
-                                                                                         FailureEnum.Locked => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Locked,
-                                                                                         _ => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.NotConfigured,
-                                                                                     },
-                                                                                     storages));
-        }
-
         private Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> CardUnitIds)
         {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = new();
+            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = [];
 
             foreach (var storageId in CardUnitIds)
             {
@@ -137,11 +134,11 @@ namespace XFS4IoTServer
                                                                                   StorageService.CardUnits[storageId].Unit.Status.RetainCount,
                                                                                   StorageService.CardUnits[storageId].Unit.Status.ReplenishmentStatus switch
                                                                                   {
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.Storage.ReplenishmentStatusEnumEnum.Empty,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Storage.ReplenishmentStatusEnumEnum.Full,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Storage.ReplenishmentStatusEnumEnum.High,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.Storage.ReplenishmentStatusEnumEnum.Low,
-                                                                                      _ => XFS4IoT.Storage.ReplenishmentStatusEnumEnum.Ok,
+                                                                                      CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
+                                                                                      CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
+                                                                                      CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
+                                                                                      CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
+                                                                                      _ => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
                                                                                   })
                                         )
                                  ));
@@ -152,18 +149,8 @@ namespace XFS4IoTServer
         #endregion
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
 
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the CardReader Service.");
 

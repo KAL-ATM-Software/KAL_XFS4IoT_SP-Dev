@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.CashAcceptor
             CashManagementCapabilitiesClass.PositionEnum position = CashManagementCapabilitiesClass.PositionEnum.NotSupported;
             foreach (var presentStatus in CashManagement.LastCashManagementPresentStatus)
             {
-                if (!Common.CashAcceptorCapabilities.Positions.HasFlag(presentStatus.Key) ||
+                if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(presentStatus.Key) ||
                     presentStatus.Key == CashManagementCapabilitiesClass.PositionEnum.InBottom ||
                     presentStatus.Key == CashManagementCapabilitiesClass.PositionEnum.InCenter ||
                     presentStatus.Key == CashManagementCapabilitiesClass.PositionEnum.InDefault ||

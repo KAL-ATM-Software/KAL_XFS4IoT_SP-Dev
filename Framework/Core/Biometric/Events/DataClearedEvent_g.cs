@@ -16,6 +16,7 @@ namespace XFS4IoT.Biometric.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Biometric.DataClearedEvent")]
     public sealed class DataClearedEvent : UnsolicitedEvent<DataClearedEvent.PayloadData>
     {
@@ -35,9 +36,16 @@ namespace XFS4IoT.Biometric.Events
                 this.ClearData = ClearData;
             }
 
+            public enum ClearDataEnum
+            {
+                ScannedData,
+                ImportedData,
+                SetMatchedData
+            }
+
             /// <summary>
-            /// This parameter indicates the type of data that has been cleared from storage. 
-            /// If this property is omitted, then all stored data has been cleared. 
+            /// This property indicates the type of data to be or which has been cleared from storage.
+            /// If this property is null, then all stored data will be or has been cleared.
             /// Available values are described in the [clearData](#common.capabilities.completion.properties.biometric.cleardata).
             /// The following values are possible:
             /// 

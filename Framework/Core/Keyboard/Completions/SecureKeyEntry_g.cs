@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Keyboard.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCompletion : Completion<SecureKeyEntryCompletion.PayloadData>
     {
@@ -51,14 +52,14 @@ namespace XFS4IoT.Keyboard.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            ///                        specific reason.
+            ///                         specific reason.
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
             /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
             ///                           Service Provider.
             /// * ```noActiveKeys``` - There are no active function keys specified, or there is no defined layout
-            ///                        definition.
+            ///                         definition.
             /// * ```noTerminatekeys``` - There are no terminate keys specified and *autoEnd* is false.
             /// * ```invalidKeyLength``` - The keyLen key length is not supported.
             /// * ```modeNotSupported``` - The KCV mode is not supported.
@@ -66,7 +67,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// * ```partialFrame``` - The single Touch Frame does not cover the entire monitor.
             /// * ```missingKeys``` - The single frame does not contain a full set of hexadecimal key definitions.
             /// * ```entryTimeout``` - The timeout for entering data has been reached. This is a timeout which may be
-            ///                        due to hardware limitations or legislative requirements (for example PCI).
+            ///                         due to hardware limitations or legislative requirements (for example PCI).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -85,7 +86,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// <summary>
             /// Contains the key check value data that can be used for verification of the entered key formatted in
             /// Base64.
-            /// This property it omitted if device does not have this capability, or the key entry was not fully
+            /// This value is null if device does not have this capability, or the key entry was not fully
             /// entered, e.g. the entry was terminated by Enter before the required number of digits was entered.
             /// <example>S2V5IENoZWNrIFZhbHVl</example>
             /// </summary>

@@ -60,49 +60,90 @@ namespace XFS4IoTFramework.CashDispenser
             CashDispenser.LastCashDispenserPresentStatus[position].Status = CashDispenserPresentStatus.PresentStatusEnum.NotPresented;
             CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = new (new Dictionary<string, double>(), new Dictionary<string, int>());
 
-            if (dispense.Payload.Denomination.Denomination.Currencies is null &&
-                dispense.Payload.Denomination.Denomination.Values is null)
+            // Validate command parameters
+            if (dispense.Payload is null ||
+                dispense.Payload.Denomination is null ||
+                (dispense.Payload.Denomination.Denomination.Service is null &&
+                 dispense.Payload.Denomination.Denomination.App is null))
             {
-                return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                          $"Invalid amounts and values specified. either amount or values dispensing from each cash units required.",
-                                                          DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+                return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                          $"No denomination specified.");
             }
 
-            if (dispense.Payload.Denomination.Denomination.Currencies.Select(c => string.IsNullOrEmpty(c.Key) || Regex.IsMatch(c.Key, "^[A-Z]{3}$")).ToList().Count == 0)
+            if (dispense.Payload.Denomination.Denomination.Service is not null &&
+                dispense.Payload.Denomination.Denomination.App is not null)
+            {
+                return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                          $"Invalid parameter specified for both application and service mix. it should be either application or service mix to be specified.");
+            }
+
+            // Check parameter either application or service mix.
+            Dictionary<string, double> currencies;
+            Dictionary<string, int> counts = null;
+            if (dispense.Payload.Denomination.Denomination.Service is not null)
+            {
+                // Check mix valid parameters for service.
+                if (!string.IsNullOrEmpty(dispense.Payload.Denomination.Denomination.Service.Mix) &&
+                    CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix) is null)
+                {
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                              $"Invalid MixNumber specified. {dispense.Payload.Denomination.Denomination.Service.Mix}",
+                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber);
+                }
+
+                if (dispense.Payload.Denomination.Denomination.Service.Currencies is null)
+                {
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                              $"No currency specified for service to get mix result.",
+                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+                }
+
+                currencies = dispense.Payload.Denomination.Denomination.Service.Currencies;
+            }
+            else
+            {
+                // check application mix
+                if (dispense.Payload.Denomination.Denomination.App.Currencies is null)
+                {
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                              $"No currency specified for service to get mix result.",
+                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+                }
+
+                if (dispense.Payload.Denomination.Denomination.App.Counts is null ||
+                    dispense.Payload.Denomination.Denomination.App.Counts.Count == 0)
+                {
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                              $"No currency specified for service to get mix result.",
+                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+                }
+
+                currencies = dispense.Payload.Denomination.Denomination.App.Currencies;
+                counts = dispense.Payload.Denomination.Denomination.App.Counts;
+            }
+
+            if (currencies.Select(c => string.IsNullOrEmpty(c.Key) || Regex.IsMatch(c.Key, "^[A-Z]{3}$")).ToList().Count == 0)
             {
                 return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                           $"Invalid currency specified.",
                                                           DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency);
             }
 
-            if (!string.IsNullOrEmpty(dispense.Payload.Denomination.Mix) &&
-                CashDispenser.GetMix(dispense.Payload.Denomination.Mix) is null)
-            {
-                return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                          $"Invalid MixNumber specified. {dispense.Payload.Denomination.Mix}", 
-                                                          DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber);
-            }
+            double totalAmount = currencies.Select(c => c.Value).Sum();
+            Denominate denomToDispense = new(currencies, counts, Logger);
 
-            double totalAmount = 0;
-            if (dispense.Payload.Denomination.Denomination.Currencies is not null)
-                totalAmount = dispense.Payload.Denomination.Denomination.Currencies.Select(c => c.Value).Sum();
-
-            Denominate denomToDispense = new(dispense.Payload.Denomination.Denomination.Currencies, 
-                                             dispense.Payload.Denomination.Denomination.Values, 
-                                             Logger);
-
-            ////////////////////////////////////////////////////////////////////////////
-            // 1) Check that a given denomination can currently be paid out or test that a given amount matches a given denomination.
-            if (string.IsNullOrEmpty(dispense.Payload.Denomination.Mix))
+            if (dispense.Payload.Denomination.Denomination.App is not null)
             {
                 if (totalAmount == 0 &&
-                    (dispense.Payload.Denomination.Denomination.Values is null ||
-                     dispense.Payload.Denomination.Denomination.Values.Count == 0))
+                    (counts is null ||
+                     counts.Count == 0 ||
+                     counts.Select(c => c.Value).Sum() == 0))
                 {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                              "No counts specified to dispense items from the cash units.");
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                              $"No counts specified to dispense items from the cash units.");
                 }
 
+                // Check that a given denomination can currently be paid out or Test that a given amount matches a given denomination.
                 Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(Storage.CashUnits);
                 switch (Result)
                 {
@@ -110,13 +151,13 @@ namespace XFS4IoTFramework.CashDispenser
                         break;
                     case Denominate.DispensableResultEnum.CashUnitError:
                         {
-                            return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
+                            return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                       $"Invalid Cash Unit specified to dispense.",
                                                                       DispenseCompletion.PayloadData.ErrorCodeEnum.CashUnitError);
                         }
                     case Denominate.DispensableResultEnum.CashUnitLocked:
                         {
-                            return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
+                            return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                                       $"Cash unit is locked.",
                                                                       DispenseCompletion.PayloadData.ErrorCodeEnum.CashUnitError);
                         }
@@ -129,13 +170,13 @@ namespace XFS4IoTFramework.CashDispenser
                     case Denominate.DispensableResultEnum.InvalidCurrency:
                         {
                             return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                      "Invalid currency specified. ",
+                                                                      $"Invalid currency specified. ",
                                                                       DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency);
                         }
                     case Denominate.DispensableResultEnum.InvalidDenomination:
                         {
                             return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                      "Invalid denimination specified. ",
+                                                                      $"Invalid denomination specified. ",
                                                                       DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
                         }
                     default:
@@ -146,64 +187,55 @@ namespace XFS4IoTFramework.CashDispenser
                 if (denomToDispense.Values is null)
                 {
                     return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Mix failed to denominate. {dispense.Payload.Denomination.Mix}, {denomToDispense.CurrencyAmounts}",
-                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
-                }
-            }
-            ////////////////////////////////////////////////////////////////////////////
-            //  2) Calculate the denomination, given an amount and mix number.
-            else if (!string.IsNullOrEmpty(dispense.Payload.Denomination.Mix) &&
-                     (dispense.Payload.Denomination.Denomination.Values is null ||
-                      dispense.Payload.Denomination.Denomination.Values.Count == 0))
-            {
-                if (totalAmount == 0)
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                              $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
-                }
-
-                denomToDispense.Denomination = CashDispenser.GetMix(dispense.Payload.Denomination.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
-
-                if (denomToDispense.Values is null)
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Mix failed to denominate. {dispense.Payload.Denomination.Mix}, {totalAmount}",
-                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
-                }
-            }
-            ////////////////////////////////////////////////////////////////////////////
-            //  3) Complete a partially specified denomination for a given amount.
-            else if (!string.IsNullOrEmpty(dispense.Payload.Denomination.Mix) &&
-                     dispense.Payload.Denomination.Denomination.Values.Count != 0)
-            {
-                if (totalAmount == 0)
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                              $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
-                }
-
-                Denomination mixDenom = CashDispenser.GetMix(dispense.Payload.Denomination.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
-                if(mixDenom.Values is null)
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Specified counts each cash unit to be dispensed is not dispensable.",
-                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
-                }
-                else if (!mixDenom.Values.OrderBy((denom) => denom.Key).SequenceEqual(denomToDispense.Values.OrderBy((denom) => denom.Key)))
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                              $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm. internal mix result " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)),
+                                                              $"Mix failed to denominate on application mix. {denomToDispense.CurrencyAmounts}",
                                                               DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
                 }
             }
             else
             {
-                Contracts.Assert(false, $"Unreachable code.");
+                if (totalAmount == 0)
+                {
+                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                              $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
+                }
+
+                if (counts is null ||
+                    counts.Count == 0 ||
+                    counts.Select(c => c.Value).Sum() == 0)
+                {
+                    // Calculate the denomination, given an amount and mix number.
+                    denomToDispense.Denomination = CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
+
+                    if (denomToDispense.Values is null)
+                    {
+                        return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                  $"Mix failed to denominate on service mix. {dispense.Payload.Denomination.Denomination.Service.Mix}, {denomToDispense.CurrencyAmounts}",
+                                                                  DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                    }
+                }
+                else
+                {
+                    // Complete a partially specified denomination for a given amount.
+                    Denomination mixDenom = CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
+                    if (!mixDenom.Values.OrderBy((denom) => denom.Key).SequenceEqual(denomToDispense.Values.OrderBy((denom) => denom.Key)))
+                    {
+                        return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                  $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm. internal mix result " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)),
+                                                                  DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                    }
+                }
+            }
+
+            if (denomToDispense.Values is null)
+            {
+                return new DispenseCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                          ErrorDescription: $"Requested amount is not dispensable. {totalAmount}",
+                                                          ErrorCode: DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
             }
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.DispenseAsync()");
 
-            var result = await Device.DispenseAsync(new DispenseCommandEvents(events), 
+            var result = await Device.DispenseAsync(new DispenseCommandEvents(Storage, events), 
                                                     new DispenseRequest(denomToDispense.Values,
                                                                         present,
                                                                         position,
@@ -251,12 +283,28 @@ namespace XFS4IoTFramework.CashDispenser
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new DispenseCompletion.PayloadData(result.CompletionCode,
-                                                      result.ErrorDescription,
-                                                      result.ErrorCode,
-                                                      new DenominationClass(denomToDispense.CurrencyAmounts,
-                                                                            denomToDispense.Values,
-                                                                            dispense.Payload.Denomination.Denomination.CashBox));
+            if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+            {
+                return new DispenseCompletion.PayloadData(
+                    CompletionCode: result.CompletionCode,
+                    ErrorDescription: result.ErrorDescription,
+                    ErrorCode: result.ErrorCode);
+            }
+
+            return new DispenseCompletion.PayloadData(
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription,
+                ErrorCode: result.ErrorCode,
+                Denomination: denomToDispense.Values is null ?
+                              null :
+                              new(Currencies: denomToDispense.CurrencyAmounts,
+                                  Values: denomToDispense.Values,
+                                  CashBox: dispense.Payload.Denomination.Denomination.Service is not null ?
+                                    dispense.Payload.Denomination.Denomination.Service.CashBox :
+                                    dispense.Payload.Denomination.Denomination.App.CashBox),
+                                  Bunches: result.Bunches >= 1 ?
+                                    result.Bunches.ToString() :
+                                    "unknown");
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

@@ -63,7 +63,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashUnitCount()");
 
-            var result = await Device.CashUnitCount(new ItemErrorCommandEvents(events),
+            var result = await Device.CashUnitCount(new CashUnitCountCommandEvents(Storage, events),
                                                     new CashUnitCountRequest(cashUnitCount.Payload.Units),
                                                     cancel);
 

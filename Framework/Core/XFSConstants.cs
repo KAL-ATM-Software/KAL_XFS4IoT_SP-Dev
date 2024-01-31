@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XFS4IoT
 {
@@ -61,16 +62,16 @@ namespace XFS4IoT
             Biometric,
             Camera,
             CashAcceptor,
+            Check,
+            MixedMedia,
         }
 
-        /// <summary>
-        /// Service version
-        /// </summary>
-        public static readonly string ServiceVersion = "1.0";
+        // This value is set to the Common.ServiceVersion property
+        // Major version represents the version of incremental XFS4IoT specification and minor version for fixing bugs and adding new features.
+        public static readonly string ServiceVersion = "2.0";
 
-        /// <summary>
-        /// Command payload version range supported
-        /// </summary>
-        public static readonly List<string> SupportedVersionRange = new(){ "1.0" };
+        // Maximum number of requests which can be queued by the Service.
+        // This will be 0 if the maximum number of requests is unlimited.
+        public static readonly int MaximumRequests = 0;
     }
 }

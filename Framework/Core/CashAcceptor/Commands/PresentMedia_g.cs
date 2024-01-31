@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = PresentMedia
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.PresentMedia")]
     public sealed class PresentMediaCommand : Command<PresentMediaCommand.PayloadData>
     {
-        public PresentMediaCommand(int RequestId, PresentMediaCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PresentMediaCommand(int RequestId, PresentMediaCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CashManagement.PositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(CashManagement.PositionEnum? Position = null)
+                : base()
             {
                 this.Position = Position;
             }

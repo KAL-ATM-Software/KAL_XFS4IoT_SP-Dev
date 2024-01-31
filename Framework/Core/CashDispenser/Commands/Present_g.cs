@@ -16,19 +16,20 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Present
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.Present")]
     public sealed class PresentCommand : Command<PresentCommand.PayloadData>
     {
-        public PresentCommand(int RequestId, PresentCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PresentCommand(int RequestId, PresentCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CashManagement.OutputPositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(CashManagement.OutputPositionEnum? Position = null)
+                : base()
             {
                 this.Position = Position;
             }

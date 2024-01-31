@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = EMVClessPerformTransaction
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCommand : Command<EMVClessPerformTransactionCommand.PayloadData>
     {
-        public EMVClessPerformTransactionCommand(int RequestId, EMVClessPerformTransactionCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public EMVClessPerformTransactionCommand(int RequestId, EMVClessPerformTransactionCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<byte> Data = null)
-                : base(Timeout)
+            public PayloadData(List<byte> Data = null)
+                : base()
             {
                 this.Data = Data;
             }
@@ -45,7 +46,7 @@ namespace XFS4IoT.CardReader.Commands
             /// 
             /// Individual payment systems could define further data elements.
             /// 
-            /// Tags are not mandatory with this command and this value can be omitted.
+            /// Tags are not mandatory with this command and this property can therefore be null.
             /// 
             /// *Tags 9A and 9F21 could be managed internally by the reader. If tags are not supplied, tag values may
             /// be used from the configuration sent previously in the

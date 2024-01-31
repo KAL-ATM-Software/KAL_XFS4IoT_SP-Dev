@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.GetPresentStatus")]
     public sealed class GetPresentStatusCompletion : Completion<GetPresentStatusCompletion.PayloadData>
     {
@@ -49,7 +50,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Supplies the status of the items that were to be presented by the most recent attempt to present or return 
+            /// Supplies the status of the items that were to be presented by the most recent attempt to present or return
             /// items to the customer. The following values are possible:
             /// 
             /// * ```presented``` - The items were presented. This status is set as soon as the customer has access to the items.
@@ -67,7 +68,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies whether or not additional bunches of items are remaining to be presented as a result of the 
+            /// Specifies whether or not additional bunches of items are remaining to be presented as a result of the
             /// most recent operation. The following values are possible:
             /// 
             /// * ```none``` - No additional bunches remain.
@@ -78,33 +79,34 @@ namespace XFS4IoT.CashAcceptor.Completions
             public AdditionalBunchesEnum? AdditionalBunches { get; init; }
 
             /// <summary>
-            /// If *additionalBunches* is ```oneMore```, specifies the number of additional bunches of items remaining to 
+            /// If *additionalBunches* is ```oneMore```, specifies the number of additional bunches of items remaining to
             /// be presented as a result of the current operation.
-            /// This property is omitted if any of the following are true:
-            /// * If the number of additional bunches is at least one, but the precise number is unknown. 
+            /// This property is null if any of the following are true:
+            /// * If the number of additional bunches is at least one, but the precise number is unknown.
             /// * *additionalBunches* is not ```oneMore```.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
+            [DataTypes(Minimum = 0)]
             public int? BunchesRemaining { get; init; }
 
             /// <summary>
-            /// Array holding a list of counts of banknotes which have been moved to the output position as a result of the 
+            /// Array holding a list of counts of banknotes which have been moved to the output position as a result of the
             /// most recent operation.
             /// </summary>
             [DataMember(Name = "returnedItems")]
             public CashManagement.StorageCashCountsClass ReturnedItems { get; init; }
 
             /// <summary>
-            /// Array of cumulative counts of banknotes which have been moved to the output position. 
-            /// This value will be reset when a *CashAcceptor.CashInStart*, *CashAcceptor.CashIn*, 
-            /// *CashAcceptor.CashInEnd*, *CashManagement.Retract*, *CashManagement.Reset* or *CashAcceptor.CashInRollback* 
+            /// Array of cumulative counts of banknotes which have been moved to the output position.
+            /// This value will be reset when a *CashAcceptor.CashInStart*, *CashAcceptor.CashIn*,
+            /// *CashAcceptor.CashInEnd*, *CashManagement.Retract*, *CashManagement.Reset* or *CashAcceptor.CashInRollback*
             /// command is executed.
             /// </summary>
             [DataMember(Name = "totalReturnedItems")]
             public CashManagement.StorageCashCountsClass TotalReturnedItems { get; init; }
 
             /// <summary>
-            /// Array of counts of banknotes on the intermediate stacker or transport which have not been yet moved to the 
+            /// Array of counts of banknotes on the intermediate stacker or transport which have not been yet moved to the
             /// output position.
             /// </summary>
             [DataMember(Name = "remainingItems")]

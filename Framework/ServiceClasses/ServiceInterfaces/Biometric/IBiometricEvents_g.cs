@@ -16,12 +16,6 @@ namespace XFS4IoTFramework.Biometric
     public interface IBiometricUnsolicitedEvents
     {
 
-        Task PresentSubjectEvent();
-
-        Task SubjectDetectedEvent();
-
-        Task RemoveSubjectEvent();
-
         Task SubjectRemovedEvent();
 
         Task DataClearedEvent(XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData Payload);

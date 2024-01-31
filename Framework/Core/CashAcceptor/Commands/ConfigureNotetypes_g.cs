@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = ConfigureNoteTypes
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.ConfigureNoteTypes")]
     public sealed class ConfigureNoteTypesCommand : Command<ConfigureNoteTypesCommand.PayloadData>
     {
-        public ConfigureNoteTypesCommand(int RequestId, ConfigureNoteTypesCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ConfigureNoteTypesCommand(int RequestId, ConfigureNoteTypesCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<ItemsClass> Items = null)
-                : base(Timeout)
+            public PayloadData(List<ItemsClass> Items = null)
+                : base()
             {
                 this.Items = Items;
             }
@@ -43,8 +44,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
-                /// specified if the item was not identified as a cash item.
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes).
                 /// <example>type20USD1</example>
                 /// </summary>
                 [DataMember(Name = "item")]
@@ -53,7 +53,7 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// If true the banknote reader will accept this note type during a cash-in operations.
-                /// If false the banknote reader will refuse this note type, unless it must be retained by note classification 
+                /// If false the banknote reader will refuse this note type, unless it must be retained by note classification
                 /// rules.
                 /// </summary>
                 [DataMember(Name = "enabled")]

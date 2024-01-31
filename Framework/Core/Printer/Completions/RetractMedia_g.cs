@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCompletion : Completion<RetractMediaCompletion.PayloadData>
     {
@@ -26,11 +27,11 @@ namespace XFS4IoT.Printer.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? BinNumber = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Result = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.BinNumber = BinNumber;
+                this.Result = Result;
             }
 
             public enum ErrorCodeEnum
@@ -41,7 +42,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noMediaPresent``` - No media present on retract. Either there was no media present (in a position
             ///   to be retracted from) when the command was called or the media was removed during the retract.
@@ -53,13 +54,16 @@ namespace XFS4IoT.Printer.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The number of the retract bin where the media has actually been deposited. Omitted if no media was retracted.
-            /// See [retractBins](#common.capabilities.completion.properties.printer.retractbins).
-            /// <example>2</example>
+            /// Specifies where the media has actually been deposited, as one of the following:
+            /// 
+            /// * ```transport``` - Media was retracted to the transport.
+            /// * ```nomedia``` - No media was retracted.
+            /// * ```unit&lt;retract bin number&gt;``` - Media was retracted to the retract bin specified.
+            /// <example>unit1</example>
             /// </summary>
-            [DataMember(Name = "binNumber")]
-            [DataTypes(Minimum = 1)]
-            public int? BinNumber { get; init; }
+            [DataMember(Name = "result")]
+            [DataTypes(Pattern = @"^transport$|^nomedia$|^unit[0-9]+$")]
+            public string Result { get; init; }
 
         }
     }

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.CashInRollback")]
     public sealed class CashInRollbackCompletion : Completion<CashInRollbackCompletion.PayloadData>
     {
@@ -44,11 +45,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
+            /// 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
-            /// * ```shutterNotOpen``` - The shutter failed to open. In the case of explicit shutter control 
+            /// * ```shutterNotOpen``` - The shutter failed to open. In the case of explicit shutter control
             /// the application may have failed to open the shutter before issuing the command.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
@@ -59,8 +61,8 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// List of storage units that have taken items, and the type of items they have taken, during the current 
-            /// transaction. This only contains data related to the current transaction.
+            /// Object containing the storage units which have had items inserted during the associated operation or
+            /// transaction. Only storage units whose contents have been modified are included.
             /// </summary>
             [DataMember(Name = "storage")]
             public Dictionary<string, CashManagement.StorageCashInClass> Storage { get; init; }

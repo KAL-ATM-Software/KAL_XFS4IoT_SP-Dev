@@ -11,6 +11,7 @@ using XFS4IoTServer;
 using XFS4IoT.Completions;
 using XFS4IoT.Lights.Completions;
 using XFS4IoTFramework.Common;
+using XFS4IoT.Camera.Completions;
 
 namespace XFS4IoTFramework.Camera
 {
@@ -20,18 +21,30 @@ namespace XFS4IoTFramework.Camera
     /// </summary>
     /// <param name="StdCamera">A standard camera to take a picture with. Will be <see langword="null"/> if <paramref name="CustomCamera"/> is set.</param>
     /// <param name="CustomCamera">A vendor specific camera to take a picture with. Will be <see langword="null"/> if <paramref name="StdCamera"/> is set.</param>
-    public sealed record TakePictureRequest(CameraCapabilitiesClass.CameraEnum? StdCamera = null, string CustomCamera = null);
+    /// <param name="CamData">Any text string to be displayed on the image. The value may be updated depending on the device capabilities <see cref="XFS4IoTFramework.Common.CameraCapabilitiesClass.MaxDataLength"/> and <see cref="XFS4IoTFramework.Common.CameraCapabilitiesClass.CamData"/>.</param>
+    public sealed record TakePictureRequest(CameraCapabilitiesClass.CameraEnum? StdCamera = null, string CustomCamera = null, string CamData = null);
 
     public sealed class TakePictureResponse : DeviceResult
     {
 
         public TakePictureResponse(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
                               List<byte> PictureData = null)
+            : base(CompletionCode, null)
+        {
+            this.PictureData = PictureData;
+            this.ErrorCode = null;
+        }
+
+        public TakePictureResponse(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              TakePictureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.PictureData = PictureData;
+            this.ErrorCode = ErrorCode;
         }
+
+        public TakePictureCompletion.PayloadData.ErrorCodeEnum? ErrorCode;
 
         public List<byte> PictureData { get; init; }
     }

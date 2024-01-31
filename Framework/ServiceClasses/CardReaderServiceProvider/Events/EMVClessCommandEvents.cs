@@ -8,6 +8,7 @@
 using System;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.CardReader;
 using XFS4IoT.CardReader.Events;
 
 namespace XFS4IoTFramework.CardReader
@@ -49,12 +50,12 @@ namespace XFS4IoTFramework.CardReader
                                             int HoldTime, 
                                             ValueQualifierEnum ValueQualifier, 
                                             string Value, 
-                                            string CurrencyCode,
+                                            int CurrencyCode,
                                             string LanguagePreference)
         {
             EMVClessReadStatusEvent.PayloadData payload = new(
-                       MessageId,
-                       Status switch
+                       MessageId: MessageId,
+                       Status: Status switch
                        {
                            StatusEnum.CardReadOk => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.StatusEnum.CardReadOk,
                            StatusEnum.Idle => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.StatusEnum.Idle,
@@ -63,15 +64,18 @@ namespace XFS4IoTFramework.CardReader
                            StatusEnum.ProcessingError => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.StatusEnum.ProcessingError,
                            _ => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.StatusEnum.ReadyToRead,
                        },
-                       HoldTime,
-                       ValueQualifier switch
-                       {
-                           ValueQualifierEnum.Amount => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.Amount,
-                           _ => XFS4IoT.CardReader.Events.EMVClessReadStatusEvent.PayloadData.ValueQualifierEnum.Balance,
-                       },
-                       Value,
-                       CurrencyCode,
-                       LanguagePreference); ;
+                       HoldTime: HoldTime,
+                       ValueDetails: (ValueQualifier == ValueQualifierEnum.NotApplicable) ?
+                                      null :
+                                      new ValueDetailsClass(
+                                          Qualifier: ValueQualifier switch
+                                          {
+                                              ValueQualifierEnum.Amount => ValueDetailsClass.QualifierEnum.Amount,
+                                              _ => ValueDetailsClass.QualifierEnum.Balance,
+                                          },
+                                          Value: Value,
+                                          CurrencyCode: CurrencyCode),
+                       LanguagePreferenceData: LanguagePreference); ;
 
             if (EMVClessIssuerUpdateEvent is not null)
             {

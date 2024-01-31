@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.EMVClessConfigure")]
     public sealed class EMVClessConfigureCompletion : Completion<EMVClessConfigureCompletion.PayloadData>
     {
@@ -40,7 +41,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```invalidTerminalData``` - Input data
             ///   [terminalData](#cardreader.emvclessconfigure.command.properties.terminaldata) was invalid.

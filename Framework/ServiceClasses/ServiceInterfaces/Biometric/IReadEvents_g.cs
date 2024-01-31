@@ -16,5 +16,11 @@ namespace XFS4IoTFramework.Biometric
     public interface IReadEvents
     {
 
+        Task PresentSubjectEvent();
+
+        Task SubjectDetectedEvent();
+
+        Task RemoveSubjectEvent();
+
     }
 }

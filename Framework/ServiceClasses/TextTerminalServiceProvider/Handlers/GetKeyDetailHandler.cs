@@ -14,6 +14,7 @@ using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
 using System.Collections.Generic;
 using XFS4IoT.Completions;
+using XFS4IoT.TextTerminal;
 
 namespace XFS4IoTFramework.TextTerminal
 {
@@ -29,10 +30,15 @@ namespace XFS4IoTFramework.TextTerminal
                 TextTerminal.FirstGetKeyDetailCommand = false;
             }
 
-            return Task.FromResult(new GetKeyDetailCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                null,
-                TextTerminal.SupportedKeys.Keys,
-                TextTerminal.SupportedKeys.CommandKeys));
+            Dictionary<string, KeyClass> commandKeys = null;
+            foreach (var commandKey in TextTerminal.SupportedKeys.CommandKeys)
+            {
+                (commandKeys ??= []).Add(commandKey.Key, new(Terminate: commandKey.Value));
+            }
+            return Task.FromResult(new GetKeyDetailCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.Success,
+                ErrorDescription: null,
+                Keys: TextTerminal.SupportedKeys.Keys,
+                CommandKeys: commandKeys));
         }
 
     }

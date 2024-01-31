@@ -16,6 +16,7 @@ namespace XFS4IoT.KeyManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "KeyManagement.IllegalKeyAccessEvent")]
     public sealed class IllegalKeyAccessEvent : UnsolicitedEvent<IllegalKeyAccessEvent.PayloadData>
     {
@@ -37,7 +38,7 @@ namespace XFS4IoT.KeyManagement.Events
             }
 
             /// <summary>
-            /// Specifies the name of the key that caused the error. 
+            /// Specifies the name of the key that caused the error.
             /// <example>Key02</example>
             /// </summary>
             [DataMember(Name = "keyName")]

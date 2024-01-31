@@ -44,8 +44,8 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CreateSignature()");
 
-            var result = await Device.CreateSignature(new CashInCommonCommandEvents(events), 
-                                                      new CashInRequest(createSignature.Payload.Timeout), 
+            var result = await Device.CreateSignature(new CreateSignatureCommandEvents(events), 
+                                                      new CreateSignatureRequest(createSignature.Header.Timeout ?? 0), 
                                                       cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CreateSignature() -> {result.CompletionCode}, {result.ErrorCode}");

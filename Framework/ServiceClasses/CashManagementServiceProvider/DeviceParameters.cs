@@ -15,6 +15,11 @@ using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static XFS4IoT.Configurations;
+using static XFS4IoTFramework.Common.LightsCapabilitiesClass;
+using System.Collections;
+using System.Reflection;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -45,6 +50,27 @@ namespace XFS4IoTFramework.CashManagement
         OnClassificationList,
         NotOnClassificationList,
         ClassificationListUnknown,
+    }
+
+    // Target desitnation item to be moved in reset operation
+    public enum ItemTargetEnum
+    {
+        SingleUnit,
+        Retract,
+        Transport,
+        Stacker,
+        Reject,
+        ItemCassette,
+        CashIn,
+        OutDefault,
+        OutLeft,
+        OutRight,
+        OutCenter,
+        OutTop,
+        OutBottom,
+        OutFront,
+        OutRear,
+        Default,
     }
 
     [Flags]
@@ -101,25 +127,25 @@ namespace XFS4IoTFramework.CashManagement
         public int? Index { get; init; }
     }
 
-    public sealed record ItemPosition
+    public sealed record RetractPosition
     {
         /// <summary>
-        /// ItemPosition
-        /// Specifies where the dispensed items should be moved to
+        /// RetractPosition
+        /// Specifies where the dispensed items should be moved to for retract command
         /// </summary>
-         public ItemPosition(string CashUnit)
+        public RetractPosition(string CashUnit)
         {
             this.CashUnit = CashUnit;
             RetractArea = null;
             OutputPosition = null;
         }
-        public ItemPosition(Retract RetractArea)
+        public RetractPosition(Retract RetractArea)
         {
             CashUnit = string.Empty;
             this.RetractArea = RetractArea;
             OutputPosition = null;
         }
-        public ItemPosition(CashManagementCapabilitiesClass.PositionEnum? OutputPosition)
+        public RetractPosition(CashManagementCapabilitiesClass.PositionEnum? OutputPosition)
         {
             CashUnit = string.Empty;
             RetractArea = null;
@@ -149,6 +175,64 @@ namespace XFS4IoTFramework.CashManagement
         /// * ```OutRear``` - The rear output position.
         /// </summary>
         public CashManagementCapabilitiesClass.PositionEnum? OutputPosition { get; init; }
+    }
+
+    public sealed record ItemDestination
+    {
+        /// <summary>
+        /// ItemDestination
+        /// Specifies where the dispensed items should be moved to.
+        /// </summary>
+        public ItemDestination()
+        { }
+        public ItemDestination(string CashUnit)
+        {
+            this.CashUnit = CashUnit;
+            Destination = ItemTargetEnum.SingleUnit;
+        }
+        public ItemDestination(ItemTargetEnum Destination, int IndexOfRetractUnit = 1)
+        {
+            this.Destination = Destination;
+            this.IndexOfRetractUnit = IndexOfRetractUnit;
+        }
+
+        /// <summary>
+        /// This property specifies the name of the single cash unit to be used for the storage of any items found.
+        /// The Destination property must be SingleUnit otherwise it is ingored.
+        /// </summary>
+        public string CashUnit { get; init; } = string.Empty;
+
+        /// <summary>
+        /// The output position to which items are to be moved.
+        /// 
+        ///  * ```SingleUnit``` - Move the items to a single storage unit.
+        ///  * ```Retract``` - Move the items to a retract storage unit.
+        ///  * ```Stacker``` - Move the items to the intermediate stacker area.
+        ///  * ```Reject``` - Move the items to a reject storage unit.
+        ///  * ```ItemCassette``` - Move the items to the storage units which would be used during a Cash In transaction including recycling storage units.
+        ///  * ```CashIn``` - Move the items to the storage units which would be used during a Cash In transaction but not including recycling storage units.
+        ///  * ```OutDefault``` - Default output position.
+        ///  * ```OutLeft``` - Left output position.
+        ///  * ```OutRight``` - Right output position.
+        ///  * ```OutCenter``` - Center output position.
+        ///  * ```OutTop``` - Top output position.
+        ///  * ```OutBottom``` - Bottom output position.
+        ///  * ```OutFront``` - Front output position.
+        ///  * ```OutRear``` - Rear output position.
+        ///  * ```Default``` - Default position.
+        /// </summary>
+        public ItemTargetEnum Destination { get; init; } = ItemTargetEnum.Default;
+
+        /// <summary>
+        /// If Destination property is set to Retract this property defines the position inside the retract storage units into
+        /// which the cash is to be retracted. IndexOfRetractUnit starts with a value of 1 for the first retract position
+        /// and increments by one for each subsequent position.If there are several retract storage units
+        /// (of type *retractCassette* in [Storage.GetStorage](#storage.getstorage)), IndexOfRetractUnit would be incremented from the
+        /// first position of the first retract storage unit to the last position of the last retract storage unit.
+        /// The maximum value of IndexOfRetractUnit is the sum of maximum of each retract storage unit. If Destination property is not
+        /// set to Retract the value of this property is not used.
+        /// </summary>
+        public int IndexOfRetractUnit { get; init; } = 1;
     }
 
     public sealed record ItemInfoClass
@@ -218,24 +302,6 @@ namespace XFS4IoTFramework.CashManagement
     }
 
     /// <summary>
-    /// UnlockSafeResult
-    /// Request for unlocking safe door.
-    /// </summary>
-    public sealed class UnlockSafeResult : DeviceResult
-    {
-        public UnlockSafeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      OpenSafeDoorCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        { }
-
-        /// <summary>
-        /// Specifies the error code on end exchange
-        /// </summary>
-        public OpenSafeDoorCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
-    }
-
-    /// <summary>
     /// CalibrateCashUnitRequest
     /// Request to perform calibration of cash unit
     /// </summary>
@@ -243,7 +309,7 @@ namespace XFS4IoTFramework.CashManagement
     {
         public CalibrateCashUnitRequest(string CashUnit,
                                         int NumOfBills,
-                                        ItemPosition Position)
+                                        ItemDestination Position)
         {
             this.CashUnit = CashUnit;
             this.NumOfBills = NumOfBills;
@@ -263,7 +329,7 @@ namespace XFS4IoTFramework.CashManagement
         /// <summary>
         /// Specifies where the dispensed items should be moved to
         /// </summary>
-        public ItemPosition Position { get; init; }
+        public ItemDestination Position { get; init; }
     }
 
     /// <summary>
@@ -290,7 +356,7 @@ namespace XFS4IoTFramework.CashManagement
         }
 
         public CalibrateCashUnitResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       ItemPosition Position,
+                                       ItemDestination Position,
                                        Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
@@ -308,7 +374,7 @@ namespace XFS4IoTFramework.CashManagement
         /// <summary>
         /// Specifies where the dispensed items should be moved to
         /// </summary>
-        public ItemPosition Position { get; init; }
+        public ItemDestination Position { get; init; }
 
         /// <summary>
         /// Specifies the detailed note movement while in calibration.
@@ -399,16 +465,15 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetRequest
         /// The parameter class for the reset device operation
         /// </summary>
-        public ResetDeviceRequest(ItemPosition Position)
+        public ResetDeviceRequest(ItemDestination Position)
         {
             this.Position = Position;
         }
 
         /// <summary>
         /// Specifies where the dispensed items should be moved to.
-        /// If tnis value is null, the retract items to the default position.
         /// </summary>
-        public ItemPosition Position { get; init; }
+        public ItemDestination Position { get; init; }
     }
 
     /// <summary>
@@ -460,7 +525,7 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetRequest
         /// The parameter class for the retract operation
         /// </summary>
-        public RetractRequest(ItemPosition Position)
+        public RetractRequest(RetractPosition Position)
         {
             this.Position = Position;
         }
@@ -469,7 +534,7 @@ namespace XFS4IoTFramework.CashManagement
         /// Specifies where the dispensed items should be moved to.
         /// If tnis value is null, the retract items to the default position
         /// </summary>
-        public ItemPosition Position { get; init; }
+        public RetractPosition Position { get; init; }
     }
 
     /// <summary>

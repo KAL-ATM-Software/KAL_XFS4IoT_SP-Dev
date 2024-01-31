@@ -16,13 +16,8 @@ using XFS4IoT.CashAcceptor.Events;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
-    public sealed class CashInCommandEvents : CashInCommonCommandEvents
+    public sealed class CashInCommandEvents(IStorageService storage, ICashInEvents events) : CashInCommonCommandEvents(events)
     {
-        public CashInCommandEvents(ICashInEvents events) :
-            base(events)
-        { }
-
-        
         public Task SubCashInEvent(int? unrecognized, Dictionary<string, CashItemCountClass> itemCounts)
         {
             CashInEvents.IsNotNull($"No ICashInEvents interface is set. " + nameof(SubCashInEvent));
@@ -35,11 +30,17 @@ namespace XFS4IoTFramework.CashAcceptor
                 {
                     itemMovementResult.Add(itemCount.Key, new XFS4IoT.CashManagement.StorageCashCountClass(itemCount.Value.Fit, itemCount.Value.Unfit, itemCount.Value.Suspect, itemCount.Value.Counterfeit, itemCount.Value.Inked));
                 }
-                payload = new (unrecognized);
-                payload.ExtendedProperties = itemMovementResult;
+                payload = new(unrecognized)
+                {
+                    ExtendedProperties = itemMovementResult
+                };
             }
 
             return CashInEvents.SubCashInEvent(payload);
         }
+
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds) => StorageErrorCommandEvent?.StorageErrorEvent(Failure, CashUnitIds);
+
+        private StorageErrorCommandEvent StorageErrorCommandEvent { get; init; } = new(storage, events);
     }
 }

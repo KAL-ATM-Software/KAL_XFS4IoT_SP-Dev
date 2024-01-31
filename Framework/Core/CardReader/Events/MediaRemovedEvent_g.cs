@@ -16,6 +16,7 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.MediaRemovedEvent")]
     public sealed class MediaRemovedEvent : UnsolicitedEvent<MessagePayloadBase>
     {

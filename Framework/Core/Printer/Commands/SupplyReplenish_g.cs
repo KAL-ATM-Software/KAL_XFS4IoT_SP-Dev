@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = SupplyReplenish
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.SupplyReplenish")]
     public sealed class SupplyReplenishCommand : Command<SupplyReplenishCommand.PayloadData>
     {
-        public SupplyReplenishCommand(int RequestId, SupplyReplenishCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SupplyReplenishCommand(int RequestId, SupplyReplenishCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, bool? Upper = null, bool? Lower = null, bool? Aux = null, bool? Aux2 = null, bool? Toner = null, bool? Ink = null, bool? Lamp = null)
-                : base(Timeout)
+            public PayloadData(bool? Upper = null, bool? Lower = null, bool? Aux = null, bool? Aux2 = null, bool? Toner = null, bool? Ink = null, bool? Lamp = null)
+                : base()
             {
                 this.Upper = Upper;
                 this.Lower = Lower;

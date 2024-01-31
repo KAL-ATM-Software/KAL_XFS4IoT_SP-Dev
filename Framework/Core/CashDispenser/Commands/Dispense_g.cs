@@ -16,19 +16,20 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Dispense
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.Dispense")]
     public sealed class DispenseCommand : Command<DispenseCommand.PayloadData>
     {
-        public DispenseCommand(int RequestId, DispenseCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DispenseCommand(int RequestId, DispenseCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, DenominateRequestClass Denomination = null, CashManagement.OutputPositionEnum? Position = null, string Token = null)
-                : base(Timeout)
+            public PayloadData(DenominateRequestClass Denomination = null, CashManagement.OutputPositionEnum? Position = null, string Token = null)
+                : base()
             {
                 this.Denomination = Denomination;
                 this.Position = Position;
@@ -36,59 +37,51 @@ namespace XFS4IoT.CashDispenser.Commands
             }
 
             /// <summary>
-            /// Denomination object describing the contents of the denomination operation.
+            /// Denomination object describing the contents of the dispense operation.
             /// </summary>
             [DataMember(Name = "denomination")]
             public DenominateRequestClass Denomination { get; init; }
 
-            /// <summary>
-            /// If specified, defines the [output position](#common.capabilities.completion.description.cashdispenser.positions) to which the items are to be 
-            /// dispensed. If not specified, the items are dispensed to one of the following positions as applicable:
-            /// 
-            /// * teller position if the device is a Teller Dispenser
-            /// * intermediate stacker if the device has one
-            /// * the default position if there is no intermediate stacker.
-            /// </summary>
             [DataMember(Name = "position")]
             public CashManagement.OutputPositionEnum? Position { get; init; }
 
             /// <summary>
-            /// The dispense token that authorizes the dispense operation, as created by the authorizing host. See 
-            /// the section on [end-to-end security](#api.e2esecurity) for more information. 
+            /// The dispense token that authorizes the dispense operation, as created by the authorizing host. See
+            /// the section on [end-to-end security](#api.e2esecurity) for more information.
             /// 
-            /// The same token may be used multiple times with multiple calls to the [CashDispenser.Dispense](#cashdispenser.dispense) and 
-            /// [CashDispenser.Present](#cashdispenser.present) commands, as long as the total value stacked does not exceed the value given in the 
-            /// token. The hardware will track the total value of the cash and will raise an *invalidToken* error for any 
-            /// attempt to dispense or present more cash than authorized by the token. 
+            /// The same token may be used multiple times with multiple calls to the [CashDispenser.Dispense](#cashdispenser.dispense) and
+            /// [CashDispenser.Present](#cashdispenser.present) commands, as long as the total value stacked does not exceed the value given in the
+            /// token. The hardware will track the total value of the cash and will raise an *invalidToken* error for any
+            /// attempt to dispense or present more cash than authorized by the token.
             /// 
-            /// The token contains a nonce returned by [Common.GetCommandNonce](#common.getcommandnonce) which must match 
-            /// the nonce stored in the hardware. The nonce value stored in the hardware will be cleared automatically at 
-            /// various times, meaning that all tokens will become invalid. 
+            /// The token contains a nonce returned by [Common.GetCommandNonce](#common.getcommandnonce) which must match
+            /// the nonce stored in the hardware. The nonce value stored in the hardware will be cleared automatically at
+            /// various times, meaning that all tokens will become invalid.
             /// 
-            /// The hardware will also track the token being used and block any attempt to use multiple tokens with the 
-            /// same nonce. The same token must be used for all calls to dispense, until the nonce is cleared and a new 
+            /// The hardware will also track the token being used and block any attempt to use multiple tokens with the
+            /// same nonce. The same token must be used for all calls to dispense, until the nonce is cleared and a new
             /// nonce and token is created. Any attempt to use a different token will trigger an *invalidToken* error.
             /// 
-            /// For maximum security the client should also explicitly clear the command nonce (and hence invalidate and 
-            /// existing tokens,) with the [Common.ClearCommandNonce](#common.clearcommandnonce) command as soon as it's 
+            /// For maximum security the client should also explicitly clear the command nonce (and hence invalidate and
+            /// existing tokens,) with the [Common.ClearCommandNonce](#common.clearcommandnonce) command as soon as it's
             /// finished using the current token.
             /// 
-            /// The dispense token will follow the standard token format, and will contain the standard keys plus the 
-            /// following key: 
+            /// The dispense token will follow the standard token format, and will contain the standard keys plus the
+            /// following key:
             /// 
-            /// ```DISPENSE1```: The maximum value to be dispensed. This will be a number string that may contain a 
-            /// fractional part. The decimal character will be ".". The value, including the fractional part, will be 
-            /// defined by the ISO 4217 currency identifier [[Ref. cashdispenser-1](#ref-cashdispenser-1)]. 
-            /// The number will be followed by the ISO 4217 currency code. The currency code will be upper case. 
+            /// ```DISPENSE1```: The maximum value to be dispensed. This will be a number string that may contain a
+            /// fractional part. The decimal character will be ".". The value, including the fractional part, will be
+            /// defined by the ISO 4217 currency identifier [[Ref. cashdispenser-1](#ref-cashdispenser-1)].
+            /// The number will be followed by the ISO 4217 currency code. The currency code will be upper case.
             /// 
             /// For example, "123.45EUR" will be €123 and 45 cents.
             /// 
-            /// The "DISPENSE" key may appear multiple times with a number suffix. For example, DISPENSE1, DISPENSE2, 
-            /// DISPENSE3. The number will start at 1 and increment. Each key can only be given once. Each key must 
-            /// have a value in a different currency. For example, DISPENSE1=100.00EUR,DISPENSE2=200.00USD   
+            /// The "DISPENSE" key may appear multiple times with a number suffix. For example, DISPENSE1, DISPENSE2,
+            /// DISPENSE3. The number will start at 1 and increment. Each key can only be given once. Each key must
+            /// have a value in a different currency. For example, DISPENSE1=100.00EUR,DISPENSE2=200.00USD
             /// 
             /// The actual amount dispensed will be given by the denomination. The value in the token MUST be
-            /// greater or equal to the amount in the denomination parameter. If the Token has a lower value, 
+            /// greater or equal to the amount in the *denomination* property. If the Token has a lower value,
             /// or the Token is invalid for any reason, then the command will fail with an invalid data error code.
             /// 
             /// Example token is as follows:

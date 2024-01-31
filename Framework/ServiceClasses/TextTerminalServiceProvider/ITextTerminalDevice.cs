@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using XFS4IoT.TextTerminal.Completions;
 using XFS4IoTServer;
 using XFS4IoTFramework.Common;
+using static XFS4IoTFramework.TextTerminal.ITextTerminalService;
 
 // KAL specific implementation of textterminal. 
 namespace XFS4IoTFramework.TextTerminal
@@ -19,7 +20,7 @@ namespace XFS4IoTFramework.TextTerminal
         /// <summary>
         /// This command returns information about the Keys (buttons) supported by the device. This command should be issued to determine which Keys are available.
         /// </summary>
-        GetKeyDetailCompletion.PayloadData GetKeyDetail();
+        KeyDetails GetKeyDetail();
 
         /// <summary>
         /// This command is used to beep at the text terminal unit.

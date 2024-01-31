@@ -134,16 +134,16 @@ namespace XFS4IoTFramework.Auxiliaries
         public SetDoorEnum? RightCabinetDoor { get; set; }
         public SetOpenClosedIndicatorEnum? OpenClosedIndicator { get; set; }
         public SetAuxiliaryOnOff? FasciaLight { get; set; }
-        public AuxiliariesStatus.AudioRateEnum? AudioRate { get; set; }
-        public AuxiliariesStatus.AudioSignalEnum? AudioSignal { get; set; }
+        public AuxiliariesStatusClass.AudioRateEnum? AudioRate { get; set; }
+        public AuxiliariesStatusClass.AudioSignalEnum? AudioSignal { get; set; }
         public SetAuxiliaryOnOff? Heating { get; set; }
         public SetAuxiliaryOnOff? DisplayBackLight { get; set; }
         public SetAuxiliaryOnOff? SignageDisplay { get; set; }
         public int? Volume { get; set; }
         public SetUpsEnum? Ups { get; set; }
         public SetAuxiliaryOnOff? AudibleAlarm { get; set; }
-        public AuxiliariesStatus.EnhancedAudioControlEnum? EnhancedAudioControl { get; set; }
-        public AuxiliariesStatus.EnhancedAudioControlEnum? EnhancedMicrophoneControl { get; set; }
+        public AuxiliariesStatusClass.EnhancedAudioControlEnum? EnhancedAudioControl { get; set; }
+        public AuxiliariesStatusClass.EnhancedAudioControlEnum? EnhancedMicrophoneControl { get; set; }
         public int? MicrophoneVolume { get; set; }
     }
 }

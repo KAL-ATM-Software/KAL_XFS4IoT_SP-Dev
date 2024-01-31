@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.SetTellerInfo")]
     public sealed class SetTellerInfoCompletion : Completion<SetTellerInfoCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```invalidCurrency``` - The specified currency is not currently available.
             /// * ```invalidTellerId``` - The teller ID is invalid.

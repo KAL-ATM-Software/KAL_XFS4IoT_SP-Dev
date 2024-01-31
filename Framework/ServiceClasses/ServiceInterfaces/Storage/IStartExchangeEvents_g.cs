@@ -16,5 +16,7 @@ namespace XFS4IoTFramework.Storage
     public interface IStartExchangeEvents
     {
 
+        Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload);
+
     }
 }

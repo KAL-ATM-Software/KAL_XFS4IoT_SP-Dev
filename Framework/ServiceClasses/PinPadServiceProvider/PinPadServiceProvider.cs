@@ -17,6 +17,7 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTFramework.PinPad;
 using XFS4IoTFramework.Keyboard;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -62,17 +63,8 @@ namespace XFS4IoTServer
         #endregion
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
+
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the PinPad Service.");
 
         public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,

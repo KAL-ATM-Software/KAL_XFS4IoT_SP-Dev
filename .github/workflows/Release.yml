@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
 
     - name: Restore Dependencies
       run: dotnet restore Framework
@@ -28,21 +28,22 @@ jobs:
     
     - name: Run Tests
       run: dotnet test Framework --no-build --verbosity normal --configuration Release
+      
+    - name: Package
+      run: dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build --configuration Release
     
     - name: Create release
       run: |
         set -x
         
-        dotnet pack Framework -p:PackageVersion=${{ github.event.inputs.version }} -o nuget --no-build --configuration Release
-
         assets=()
         for asset in ./nuget/*.nupkg; do
-          assets+=("-a" "$asset")
+          assets+=("$asset")
         done
         for asset in ./nuget/*.snupkg; do
-          assets+=("-a" "$asset")
+          assets+=("$asset")
         done
-        hub release create "${assets[@]}" -m "v${{ github.event.inputs.version }}" "v${{ github.event.inputs.version }}"
+        gh release create "v${{ github.event.inputs.version }}" "${assets[@]}" --generate-notes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

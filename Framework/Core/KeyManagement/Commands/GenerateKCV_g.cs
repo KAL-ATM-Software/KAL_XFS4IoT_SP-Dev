@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = GenerateKCV
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.GenerateKCV")]
     public sealed class GenerateKCVCommand : Command<GenerateKCVCommand.PayloadData>
     {
-        public GenerateKCVCommand(int RequestId, GenerateKCVCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GenerateKCVCommand(int RequestId, GenerateKCVCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Key = null, KeyCheckModeEnum? KeyCheckMode = null)
-                : base(Timeout)
+            public PayloadData(string Key = null, KeyCheckModeEnum? KeyCheckMode = null)
+                : base()
             {
                 this.Key = Key;
                 this.KeyCheckMode = KeyCheckMode;

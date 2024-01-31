@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.LoadCertificate")]
     public sealed class LoadCertificateCompletion : Completion<LoadCertificateCompletion.PayloadData>
     {
@@ -45,13 +46,13 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
             /// * ```formatInvalid``` - The format of the message is invalid.
             /// * ```invalidCertificateState``` - The certificate module is in a state in which the request is invalid.
             /// * ```signatureInvalid``` - The verification data in the input data is invalid.
-            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously 
+            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously
             /// provided by the device.
             /// * ```modeNotSupported``` - The *loadOption* and *signer* are not supported.
             /// </summary>
@@ -80,7 +81,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <summary>
             /// The PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)]) structure using a Digested-data content
             /// type. The digest parameter should contain the thumb print value calculated by the algorithm specified by
-            /// *rsaKeyCheckMode*. If *rsaKeyCheckMode* is none, this property is omitted.
+            /// *rsaKeyCheckMode*. If *rsaKeyCheckMode* is none, this property is null.
             /// <example>UEtDUyAjNyBkYXRh</example>
             /// </summary>
             [DataMember(Name = "rsaData")]

@@ -30,7 +30,6 @@ namespace XFS4IoT.CardReader
 
         public enum MediaEnum
         {
-            NotSupported,
             Unknown,
             Present,
             NotPresent,
@@ -40,10 +39,10 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the transport/exit position media state as one of the following values:
+        /// Specifies the transport/exit position media state. This property will be null if the capability to report
+        /// media position is not supported by the device (e.g., a typical swipe reader or contactless chip card
+        /// reader), otherwise one of the following values:
         /// 
-        /// * ```notSupported``` - Capability to report media position is not supported by the device (e.g. a typical
-        ///   swipe reader or contactless chip card reader).
         /// * ```unknown``` - The media state cannot be determined with the device in its current state (e.g. the value
         ///   of [device](#common.status.completion.properties.common.device) is *noDevice*, *powerOff*, *offline* or *hardwareError*.
         /// * ```present``` - Media is present in the device, not in the entering position and not jammed. On the
@@ -59,15 +58,14 @@ namespace XFS4IoT.CardReader
 
         public enum SecurityEnum
         {
-            NotSupported,
             NotReady,
             Open
         }
 
         /// <summary>
-        /// Specifies the state of the security module as one of the following:
+        /// Specifies the state of the security module. This property will be null if no security module is available,
+        /// otherwise one of the following values:
         /// 
-        /// * ```notSupported``` - No security module is available.
         /// * ```notReady``` - The security module is not ready to process cards or is inoperable.
         /// * ```open``` - The security module is open and ready to process cards.
         /// </summary>
@@ -76,7 +74,6 @@ namespace XFS4IoT.CardReader
 
         public enum ChipPowerEnum
         {
-            NotSupported,
             Unknown,
             Online,
             Busy,
@@ -89,10 +86,9 @@ namespace XFS4IoT.CardReader
         /// <summary>
         /// Specifies the state of the chip controlled by this service. Depending on the value of capabilities response,
         /// this can either be the chip on the currently inserted user card or the chip on a permanently connected chip
-        /// card. The state of the chip is one of the following:
+        /// card. This property will be null if the capability to report the state of the chip is not supported by the
+        /// ID card unit device and will apply to contactless chip card readers, otherwise one of the following values:
         /// 
-        /// * ```notSupported``` - Capability to report the state of the chip is not supported by the ID card unit
-        ///   device. This value is returned for contactless chip card readers.
         /// * ```unknown``` - The state of the chip cannot be determined with the device in its current state.
         /// * ```online``` - The chip is present, powered on and online (i.e. operational, not busy processing a request
         ///   and not in an error state).
@@ -110,17 +106,16 @@ namespace XFS4IoT.CardReader
         {
             Ok,
             Inoperable,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Specifies the state of the chip card module reader as one of the following:
+        /// Specifies the state of the chip card module reader. This property will be null if reporting the chip card
+        /// module status is not supported, otherwise one of the following values:
         /// 
         /// * ```ok``` - The chip card module is in a good state.
         /// * ```inoperable``` - The chip card module is inoperable.
         /// * ```unknown``` - The state of the chip card module cannot be determined.
-        /// * ```notSupported``` - Reporting the chip card module status is not supported.
         /// </summary>
         [DataMember(Name = "chipModule")]
         public ChipModuleEnum? ChipModule { get; init; }
@@ -129,17 +124,16 @@ namespace XFS4IoT.CardReader
         {
             Ok,
             Inoperable,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Specifies the state of the magnetic card writer as one of the following:
+        /// Specifies the state of the magnetic card writer. This property will be null if reporting the magnetic card
+        /// writing module status is not supported, otherwise one of the following values:
         /// 
         /// * ```ok``` - The magnetic card writing module is in a good state.
         /// * ```inoperable``` - The magnetic card writing module is inoperable.
         /// * ```unknown``` - The state of the magnetic card writing module cannot be determined.
-        /// * ```notSupported``` - Reporting the magnetic card writing module status is not supported.
         /// </summary>
         [DataMember(Name = "magWriteModule")]
         public MagWriteModuleEnum? MagWriteModule { get; init; }
@@ -148,17 +142,16 @@ namespace XFS4IoT.CardReader
         {
             Ok,
             Inoperable,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Specifies the state of the front image reader as one of the following:
+        /// Specifies the state of the front image reader. This property will be null if reporting the front image
+        /// reading module status is not supported, otherwise one of the following values:
         /// 
         /// * ```ok``` - The front image reading module is in a good state.
         /// * ```inoperable``` - The front image reading module is inoperable.
         /// * ```unknown``` - The state of the front image reading module cannot be determined.
-        /// * ```notSupported``` - Reporting the front image reading module status is not supported.
         /// </summary>
         [DataMember(Name = "frontImageModule")]
         public FrontImageModuleEnum? FrontImageModule { get; init; }
@@ -167,17 +160,16 @@ namespace XFS4IoT.CardReader
         {
             Ok,
             Inoperable,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Specifies the state of the back image reader as one of the following:
+        /// Specifies the state of the back image reader. This property will be null if reporting the back image
+        /// reading module status is not supported, otherwise one of the following values:
         /// 
         /// * ```ok``` - The back image reading module is in a good state.
         /// * ```inoperable``` - The back image reading module is inoperable.
         /// * ```unknown``` - The state of the back image reading module cannot be determined.
-        /// * ```notSupported``` - Reporting the back image reading module status is not supported.
         /// </summary>
         [DataMember(Name = "backImageModule")]
         public BackImageModuleEnum? BackImageModule { get; init; }
@@ -319,7 +311,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the tracks that can be read by the card reader.
+        /// Specifies the tracks that can be read by the card reader. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "readTracks")]
         public ReadTracksClass ReadTracks { get; init; }
@@ -376,7 +368,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the tracks that can be written by the card reader.
+        /// Specifies the tracks that can be written by the card reader. May be null if no tracks can be written.
         /// </summary>
         [DataMember(Name = "writeTracks")]
         public WriteTracksClass WriteTracks { get; init; }
@@ -441,22 +433,20 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the chip card protocols that are supported by the card reader.
+        /// Specifies the chip card protocols that are supported by the card reader. May be null if none are supported.
         /// </summary>
         [DataMember(Name = "chipProtocols")]
         public ChipProtocolsClass ChipProtocols { get; init; }
 
         public enum SecurityTypeEnum
         {
-            NotSupported,
             Mm,
             Cim86
         }
 
         /// <summary>
-        /// Specifies the type of security module as one of the following:
+        /// Specifies the type of security module as one of the following or null if the device has no security module.
         /// 
-        /// * ```notSupported``` - The device has no security module.
         /// * ```mm``` - The security module is a MMBox.
         /// * ```cim86``` - The security module is a CIM86.
         /// </summary>
@@ -465,7 +455,6 @@ namespace XFS4IoT.CardReader
 
         public enum PowerOnOptionEnum
         {
-            NotSupported,
             Exit,
             Retain,
             ExitThenRetain,
@@ -474,9 +463,9 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Specifies the power-on (or off) capabilities of the device hardware as one of the following options
-        /// (applicable only to motor driven ID card units):
+        /// (applicable only to motor driven ID card units). May be null if the device does not support power on
+        /// (or off) options.
         /// 
-        /// * ```notSupported``` - The device does not support power on (or off) options.
         /// * ```exit``` - The card will be moved to the exit position.
         /// * ```retain``` - The card will be moved to a *retain* storage unit.
         /// * ```exitThenRetain``` - The card will be moved to the exit position for a finite time, then if not taken,
@@ -484,7 +473,7 @@ namespace XFS4IoT.CardReader
         ///   position is vendor dependent.
         /// * ```transport``` - The card will be moved to the transport position.
         /// 
-        /// If multiple *retain* storage units are present, the storage unit to which the card is retained is vendor 
+        /// If multiple *retain* storage units are present, the storage unit to which the card is retained is vendor
         /// specific.
         /// </summary>
         [DataMember(Name = "powerOnOption")]
@@ -492,7 +481,6 @@ namespace XFS4IoT.CardReader
 
         public enum PowerOffOptionEnum
         {
-            NotSupported,
             Exit,
             Retain,
             ExitThenRetain,
@@ -552,7 +540,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The write capabilities, with respect to whether the device can write low coercivity (loco) and/or high
-        /// coercivity (hico) magnetic stripes.
+        /// coercivity (hico) magnetic stripes. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "writeMode")]
         public WriteModeClass WriteMode { get; init; }
@@ -589,7 +577,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The chip power management capabilities (in relation to the user or permanent chip controlled by the
-        /// Service.
+        /// Service. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "chipPower")]
         public ChipPowerClass ChipPower { get; init; }
@@ -618,7 +606,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// The memory card protocols that are supported:
+        /// The memory card protocols that are supported. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "memoryChipProtocols")]
         public MemoryChipProtocolsClass MemoryChipProtocols { get; init; }
@@ -648,8 +636,8 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// Specifies the target positions that is supported for the [CardReader.Move](#cardreader.move)
-        /// command. This is independent of the storage units.
+        /// Specifies the target positions that are supported for the [CardReader.Move](#cardreader.move)
+        /// command. This is independent of the storage units. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "positions")]
         public PositionsClass Positions { get; init; }
@@ -667,13 +655,35 @@ namespace XFS4IoT.CardReader
 
     public enum CardDataStatusEnum
     {
-        Ok,
         DataMissing,
         DataInvalid,
         DataTooLong,
         DataTooShort,
         DataSourceNotSupported,
         DataSourceMissing
+    }
+
+
+    [DataContract]
+    public sealed class CardDataNullableClass
+    {
+        public CardDataNullableClass(CardDataStatusEnum? Status = null, List<byte> Data = null)
+        {
+            this.Status = Status;
+            this.Data = Data;
+        }
+
+        [DataMember(Name = "status")]
+        public CardDataStatusEnum? Status { get; init; }
+
+        /// <summary>
+        /// Base64 encoded representation of the data. This property is null if not read.
+        /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+        /// </summary>
+        [DataMember(Name = "data")]
+        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        public List<byte> Data { get; init; }
+
     }
 
 
@@ -690,7 +700,7 @@ namespace XFS4IoT.CardReader
         public CardDataStatusEnum? Status { get; init; }
 
         /// <summary>
-        /// Base64 encoded representation of the data
+        /// Base64 encoded representation of the data. This property is null if not read.
         /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
         /// </summary>
         [DataMember(Name = "data")]
@@ -701,182 +711,47 @@ namespace XFS4IoT.CardReader
 
 
     [DataContract]
-    public sealed class StorageCapabilitiesClass
+    public sealed class ValueDetailsClass
     {
-        public StorageCapabilitiesClass(TypeEnum? Type = null, bool? HardwareSensors = null)
+        public ValueDetailsClass(QualifierEnum? Qualifier = null, string Value = null, int? CurrencyCode = null)
         {
-            this.Type = Type;
-            this.HardwareSensors = HardwareSensors;
+            this.Qualifier = Qualifier;
+            this.Value = Value;
+            this.CurrencyCode = CurrencyCode;
         }
 
-        public enum TypeEnum
+        public enum QualifierEnum
         {
-            Retain,
-            Dispense,
-            Park
-        }
-
-        /// <summary>
-        /// The type of card storage as one of the following:
-        /// 
-        /// * ```retain``` - The storage unit can retain cards.
-        /// * ```dispense``` - The storage unit can dispense cards.
-        /// * ```park``` - The storage unit can be used to temporarily store a card allowing another card to enter the
-        ///   transport.
-        /// </summary>
-        [DataMember(Name = "type")]
-        public TypeEnum? Type { get; init; }
-
-        /// <summary>
-        /// Indicates whether the storage unit has hardware sensors that can detect threshold states.
-        /// </summary>
-        [DataMember(Name = "hardwareSensors")]
-        public bool? HardwareSensors { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class StorageConfigurationClass
-    {
-        public StorageConfigurationClass(string CardID = null, int? Threshold = null)
-        {
-            this.CardID = CardID;
-            this.Threshold = Threshold;
+            Amount,
+            Balance
         }
 
         /// <summary>
-        /// The identifier that may be used to identify the type of cards in the storage unit. This is only applicable 
-        /// to *dispense* type storage units.
-        /// <example>LoyaltyCard</example>
+        /// Qualifies *value*. This data is defined by EMVCo as one of the following:
+        /// 
+        /// * ```amount``` - *value* is an Amount.
+        /// * ```balance``` - *value* is a Balance.
+        /// <example>amount</example>
         /// </summary>
-        [DataMember(Name = "cardID")]
-        public string CardID { get; init; }
+        [DataMember(Name = "qualifier")]
+        public QualifierEnum? Qualifier { get; init; }
 
         /// <summary>
-        /// If the threshold value is non zero, hardware sensors in the storage unit do not trigger
-        /// [Storage.StorageThresholdEvent](#storage.storagethresholdevent) events.
-        /// 
-        /// If non zero, when *count* reaches the threshold value:  
-        /// 
-        /// * For [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
-        ///   units, a [high](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus)
-        ///   threshold will be sent.
-        /// * For [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type
-        ///   storage units, a
-        ///   [low](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus) threshold
-        ///   will be sent.
+        /// Represents the numeric value of the amount or balance (as specified by *qualifier*) to be displayed where
+        /// appropriate. The format of this property is defined by EMVCo.
+        /// <example>000000012345</example>
         /// </summary>
-        [DataMember(Name = "threshold")]
-        [DataTypes(Minimum = 0)]
-        public int? Threshold { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class StorageStatusClass
-    {
-        public StorageStatusClass(int? InitialCount = null, int? Count = null, int? RetainCount = null, Storage.ReplenishmentStatusEnumEnum? ReplenishmentStatus = null)
-        {
-            this.InitialCount = InitialCount;
-            this.Count = Count;
-            this.RetainCount = RetainCount;
-            this.ReplenishmentStatus = ReplenishmentStatus;
-        }
+        [DataMember(Name = "value")]
+        [DataTypes(Pattern = @"^[0-9]{12}$")]
+        public string Value { get; init; }
 
         /// <summary>
-        /// The initial number of cards in the storage unit. This is only applicable to
-        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
-        /// units.
-        /// 
-        /// This value is persistent.
+        /// Represents the numeric value of the currency code as defined by ISO 4217 [[Ref. cardreader-5](#ref-cardreader-5)].
+        /// <example>826</example>
         /// </summary>
-        [DataMember(Name = "initialCount")]
-        [DataTypes(Minimum = 0)]
-        public int? InitialCount { get; init; }
-
-        /// <summary>
-        /// The number of cards in the storage unit.
-        /// 
-        /// If the storage unit type is
-        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
-        /// 
-        /// * This count also includes a card dispensed from the storage unit which has not been moved to either the 
-        ///   exit position or a [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type)
-        ///   type storage unit.
-        /// * This count is decremented when a card from the card storage unit is moved to the exit position or
-        ///   retained. If this value reaches zero it will not decrement further but will remain at zero.
-        ///   
-        /// If the storage unit type is [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
-        /// 
-        /// * The count is incremented when a card is moved into the storage unit.
-        /// 
-        /// If the storage unit type is [park](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
-        /// 
-        /// * The count will increment when a card is moved into the storage module and decremented when a card is
-        ///   moved out of the storage module.
-        /// 
-        /// This value is persistent.
-        /// </summary>
-        [DataMember(Name = "count")]
-        [DataTypes(Minimum = 0)]
-        public int? Count { get; init; }
-
-        /// <summary>
-        /// The number of cards from this storage unit which are in a
-        /// [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) storage unit.
-        /// 
-        /// This is only applicable to
-        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
-        /// units.
-        /// 
-        /// This value is persistent.
-        /// </summary>
-        [DataMember(Name = "retainCount")]
-        [DataTypes(Minimum = 0)]
-        public int? RetainCount { get; init; }
-
-        /// <summary>
-        /// The state of the cards in the storage unit if it can be determined. Note that overall 
-        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be taken
-        /// into account when deciding whether the storage unit is usable and whether replenishment status is
-        /// applicable. In particular, if the overall status is *missing* this will be omitted.
-        /// 
-        /// The following values are possible:
-        /// 
-        /// * ```ok``` - The storage unit is in a good state.
-        /// * ```full``` - The storage unit is full.
-        /// * ```high``` - The storage unit is almost full (either sensor based or above the 
-        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
-        /// * ```low``` - The storage unit is almost empty (either sensor based or below the 
-        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)). 
-        /// * ```empty``` - The storage unit is empty.
-        /// </summary>
-        [DataMember(Name = "replenishmentStatus")]
-        public Storage.ReplenishmentStatusEnumEnum? ReplenishmentStatus { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class StorageClass
-    {
-        public StorageClass(StorageCapabilitiesClass Capabilities = null, StorageConfigurationClass Configuration = null, StorageStatusClass Status = null)
-        {
-            this.Capabilities = Capabilities;
-            this.Configuration = Configuration;
-            this.Status = Status;
-        }
-
-        [DataMember(Name = "capabilities")]
-        public StorageCapabilitiesClass Capabilities { get; init; }
-
-        [DataMember(Name = "configuration")]
-        public StorageConfigurationClass Configuration { get; init; }
-
-        [DataMember(Name = "status")]
-        public StorageStatusClass Status { get; init; }
+        [DataMember(Name = "currencyCode")]
+        [DataTypes(Minimum = 0, Maximum = 999)]
+        public int? CurrencyCode { get; init; }
 
     }
 
@@ -884,14 +759,12 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class EMVClessUIClass
     {
-        public EMVClessUIClass(int? MessageId = null, StatusEnum? Status = null, int? HoldTime = null, ValueQualifierEnum? ValueQualifier = null, string Value = null, string CurrencyCode = null, string LanguagePreferenceData = null)
+        public EMVClessUIClass(int? MessageId = null, StatusEnum? Status = null, int? HoldTime = null, ValueDetailsClass ValueDetails = null, string LanguagePreferenceData = null)
         {
             this.MessageId = MessageId;
             this.Status = Status;
             this.HoldTime = HoldTime;
-            this.ValueQualifier = ValueQualifier;
-            this.Value = Value;
-            this.CurrencyCode = CurrencyCode;
+            this.ValueDetails = ValueDetails;
             this.LanguagePreferenceData = LanguagePreferenceData;
         }
 
@@ -901,6 +774,7 @@ namespace XFS4IoT.CardReader
         /// [[Ref. cardreader-3](#ref-cardreader-3)], Section 9.4).
         /// </summary>
         [DataMember(Name = "messageId")]
+        [DataTypes(Minimum = 0)]
         public int? MessageId { get; init; }
 
         public enum StatusEnum
@@ -938,46 +812,129 @@ namespace XFS4IoT.CardReader
         [DataTypes(Minimum = 0)]
         public int? HoldTime { get; init; }
 
-        public enum ValueQualifierEnum
-        {
-            Amount,
-            Balance
-        }
+        [DataMember(Name = "valueDetails")]
+        public ValueDetailsClass ValueDetails { get; init; }
 
         /// <summary>
-        /// Qualifies *value*. This data is defined by EMVCo as one of the following. If neither apply, this field and 
-        /// *value* are omitted:
-        /// * ```amount``` - *value* is an Amount.
-        /// * ```balance``` - *value* is a Balance.
-        /// <example>amount</example>
-        /// </summary>
-        [DataMember(Name = "valueQualifier")]
-        public ValueQualifierEnum? ValueQualifier { get; init; }
-
-        /// <summary>
-        /// Represents the value of the amount or balance (as specified by *valueQualifier*)
-        /// to be displayed where appropriate. If *valueQualifier* is omitted, this property is omitted.
-        /// <example>123.45</example>
-        /// </summary>
-        [DataMember(Name = "value")]
-        public string Value { get; init; }
-
-        /// <summary>
-        /// Represents the numeric value of currency code as per ISO 4217. If omitted, the currency code is not available.
-        /// <example>GBP</example>
-        /// </summary>
-        [DataMember(Name = "currencyCode")]
-        [DataTypes(Pattern = @"^[A-Z]{3}$")]
-        public string CurrencyCode { get; init; }
-
-        /// <summary>
-        /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. If not returned, this property is omitted.
-        /// The application should use this data to display all messages in the specified language until the transaction concludes.
+        /// Represents the language preference (EMV Tag '5F2D') if returned by the card. If not returned, this property
+        /// reports null. The application should use this data to display all messages in the specified
+        /// language until the transaction concludes.
         /// <example>en</example>
         /// </summary>
         [DataMember(Name = "languagePreferenceData")]
-        [DataTypes(Pattern = @"^[a-z]{2}$")]
+        [DataTypes(Pattern = @"^[a-z]{2}")]
         public string LanguagePreferenceData { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class EMVClessOutcomeClass
+    {
+        public EMVClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, List<byte> DiscretionaryData = null)
+        {
+            this.Cvm = Cvm;
+            this.AlternateInterface = AlternateInterface;
+            this.Receipt = Receipt;
+            this.UiOutcome = UiOutcome;
+            this.UiRestart = UiRestart;
+            this.FieldOffHoldTime = FieldOffHoldTime;
+            this.CardRemovalTimeout = CardRemovalTimeout;
+            this.DiscretionaryData = DiscretionaryData;
+        }
+
+        public enum CvmEnum
+        {
+            OnlinePIN,
+            ConfirmationCodeVerified,
+            Sign,
+            NoCVM,
+            NoCVMPreference
+        }
+
+        /// <summary>
+        /// Specifies the card holder verification method (CVM) to be performed as one of the following:
+        /// 
+        /// * ```onlinePIN``` - Online PIN should be entered by the card holder.
+        /// * ```confirmationCodeVerified``` - A confirmation code entry has been successfully done on a mobile
+        ///   device.
+        /// * ```sign``` - Application should obtain card holder signature.
+        /// * ```noCVM``` - No CVM is required for this transaction.
+        /// * ```noCVMPreference``` - There is no CVM preference, but application can follow the payment system's
+        ///   rules to process the transaction.
+        /// </summary>
+        [DataMember(Name = "cvm")]
+        public CvmEnum? Cvm { get; init; }
+
+        public enum AlternateInterfaceEnum
+        {
+            Contact,
+            MagneticStripe
+        }
+
+        /// <summary>
+        /// This specifies the alternative interface to be used to complete a transaction if applicable as one of the following:
+        /// 
+        /// * ```contact``` - *txOutcome* is *tryAnotherInterface* and the contact chip interface should be used to complete a transaction.
+        /// * ```magneticStripe``` - *txOutcome* is *tryAnotherInterface* and the magnetic stripe interface should be used to complete a transaction.
+        /// * ```null``` - *txOutcome* is not *tryAnotherInterface*
+        /// <example>magneticStripe</example>
+        /// </summary>
+        [DataMember(Name = "alternateInterface")]
+        public AlternateInterfaceEnum? AlternateInterface { get; init; }
+
+        /// <summary>
+        /// Specifies whether a receipt should be printed.
+        /// </summary>
+        [DataMember(Name = "receipt")]
+        public bool? Receipt { get; init; }
+
+        /// <summary>
+        /// The user interface details required to be displayed to the card holder after processing the outcome of a
+        /// contactless transaction. If no user interface details are required, this will be null. Please refer
+        /// to EMVCo Contactless Specifications for Payment Systems Book A [[Ref. cardreader-3](#ref-cardreader-3)], Section 6.2 for details of the data
+        /// within this object.
+        /// </summary>
+        [DataMember(Name = "uiOutcome")]
+        public EMVClessUIClass UiOutcome { get; init; }
+
+        /// <summary>
+        /// The user interface details required to be displayed to the card holder when a transaction needs to be
+        /// completed with a re-tap. If no user interface details are required, this will be null.
+        /// </summary>
+        [DataMember(Name = "uiRestart")]
+        public EMVClessUIClass UiRestart { get; init; }
+
+        /// <summary>
+        /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
+        /// the contactless card reader by issuing either the
+        /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command or the
+        /// [CardReader.EMVClessIssuerUpdate](#cardreader.emvclessissuerupdate) command depending on the value of
+        /// [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome). For
+        /// intelligent contactless card readers, the completion of this command ensures that the contactless chip
+        /// card reader field is automatically turned off, so there is no need for the application to disable the
+        /// field.
+        /// </summary>
+        [DataMember(Name = "fieldOffHoldTime")]
+        [DataTypes(Minimum = 0)]
+        public int? FieldOffHoldTime { get; init; }
+
+        /// <summary>
+        /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
+        /// </summary>
+        [DataMember(Name = "cardRemovalTimeout")]
+        [DataTypes(Minimum = 0)]
+        public int? CardRemovalTimeout { get; init; }
+
+        /// <summary>
+        /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
+        /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
+        /// present, this will be null.
+        /// <example>Qnl0ZSBBcnJheSBEYXRh</example>
+        /// </summary>
+        [DataMember(Name = "discretionaryData")]
+        [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+        public List<byte> DiscretionaryData { get; init; }
 
     }
 
@@ -985,7 +942,7 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class EMVClessPerformTransactionEMVClessTxOutputDataClass
     {
-        public EMVClessPerformTransactionEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, CardholderActionEnum? CardholderAction = null, List<byte> DataRead = null, ClessOutcomeClass ClessOutcome = null)
+        public EMVClessPerformTransactionEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, CardholderActionEnum? CardholderAction = null, List<byte> DataRead = null, EMVClessOutcomeClass ClessOutcome = null)
         {
             this.TxOutcome = TxOutcome;
             this.CardholderAction = CardholderAction;
@@ -1062,130 +1019,15 @@ namespace XFS4IoT.CardReader
         /// member name is [track1](#cardreader.emvclessperformtransaction.completion.properties.track1),
         /// [track2](#cardreader.emvclessperformtransaction.completion.properties.track2) or
         /// [track3](#cardreader.emvclessperformtransaction.completion.properties.track3) this contains the data read
-        /// from the chip, i.e the value returned by the card reader device and no cryptogram tag (9F26). This value is
-        /// terminated with a single null character and cannot contain UNICODE characters.
+        /// from the chip, i.e the value returned by the card reader device and no cryptogram tag (9F26).
         /// <example>fSfILqum6niI6jURWzeo ...</example>
         /// </summary>
         [DataMember(Name = "dataRead")]
         [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
         public List<byte> DataRead { get; init; }
 
-        [DataContract]
-        public sealed class ClessOutcomeClass
-        {
-            public ClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, List<byte> DiscretionaryData = null)
-            {
-                this.Cvm = Cvm;
-                this.AlternateInterface = AlternateInterface;
-                this.Receipt = Receipt;
-                this.UiOutcome = UiOutcome;
-                this.UiRestart = UiRestart;
-                this.FieldOffHoldTime = FieldOffHoldTime;
-                this.CardRemovalTimeout = CardRemovalTimeout;
-                this.DiscretionaryData = DiscretionaryData;
-            }
-
-            public enum CvmEnum
-            {
-                OnlinePIN,
-                ConfirmationCodeVerified,
-                Sign,
-                NoCVM,
-                NoCVMPreference
-            }
-
-            /// <summary>
-            /// Specifies the card holder verification method (CVM) to be performed as one of the following:
-            /// 
-            /// * ```onlinePIN``` - Online PIN should be entered by the card holder.
-            /// * ```confirmationCodeVerified``` - A confirmation code entry has been successfully done on a mobile
-            ///   device.
-            /// * ```sign``` - Application should obtain card holder signature.
-            /// * ```noCVM``` - No CVM is required for this transaction.
-            /// * ```noCVMPreference``` - There is no CVM preference, but application can follow the payment system's
-            ///   rules to process the transaction.
-            /// </summary>
-            [DataMember(Name = "cvm")]
-            public CvmEnum? Cvm { get; init; }
-
-            public enum AlternateInterfaceEnum
-            {
-                Contact,
-                MagneticStripe
-            }
-
-            /// <summary>
-            /// If [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome) is not
-            /// *tryAnotherInterface*, this is ignored and can be omitted. If *txOutcome* is *tryAnotherInterface*, this specifies
-            /// the alternative interface to be used to complete a transaction as one of the following:
-            /// 
-            /// * ```contact``` - Contact chip interface should be used to complete a transaction.
-            /// * ```magneticStripe``` - Magnetic stripe interface should be used to complete a transaction.
-            /// </summary>
-            [DataMember(Name = "alternateInterface")]
-            public AlternateInterfaceEnum? AlternateInterface { get; init; }
-
-            /// <summary>
-            /// Specifies whether a receipt should be printed. True indicates that a receipt is required.
-            /// </summary>
-            [DataMember(Name = "receipt")]
-            public bool? Receipt { get; init; }
-
-            /// <summary>
-            /// The user interface details required to be displayed to the card holder after processing the outcome of a
-            /// contactless transaction. If no user interface details are required, this will be omitted. Please refer
-            /// to EMVCo Contactless Specifications for Payment Systems Book A [[Ref. cardreader-3](#ref-cardreader-3)], Section 6.2 for details of the data
-            /// within this object.
-            /// </summary>
-            [DataMember(Name = "uiOutcome")]
-            public EMVClessUIClass UiOutcome { get; init; }
-
-            /// <summary>
-            /// The user interface details required to be displayed to the card holder when a transaction needs to be
-            /// completed with a re-tap. If no user interface details are required, this will be omitted.
-            /// </summary>
-            [DataMember(Name = "uiRestart")]
-            public EMVClessUIClass UiRestart { get; init; }
-
-            /// <summary>
-            /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
-            /// the contactless card reader by issuing either the
-            /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command or the
-            /// [CardReader.EMVClessIssuerUpdate](#cardreader.emvclessissuerupdate) command depending on the value of
-            /// [txOutcome](#cardreader.emvclessperformtransaction.completion.properties.chip.txoutcome). For
-            /// intelligent contactless card readers, the completion of this command ensures that the contactless chip
-            /// card reader field is automatically turned off, so there is no need for the application to disable the
-            /// field.
-            /// </summary>
-            [DataMember(Name = "fieldOffHoldTime")]
-            [DataTypes(Minimum = 0)]
-            public int? FieldOffHoldTime { get; init; }
-
-            /// <summary>
-            /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
-            /// </summary>
-            [DataMember(Name = "cardRemovalTimeout")]
-            [DataTypes(Minimum = 0)]
-            public int? CardRemovalTimeout { get; init; }
-
-            /// <summary>
-            /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
-            /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
-            /// present, this will be omitted.
-            /// <example>fSfILqum6niI6jURWzeo ...</example>
-            /// </summary>
-            [DataMember(Name = "discretionaryData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-            public List<byte> DiscretionaryData { get; init; }
-
-        }
-
-        /// <summary>
-        /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)].
-        /// This can be omitted for contactless chip card readers that do not follow EMVCo Entry Point Specifications.
-        /// </summary>
         [DataMember(Name = "clessOutcome")]
-        public ClessOutcomeClass ClessOutcome { get; init; }
+        public EMVClessOutcomeClass ClessOutcome { get; init; }
 
     }
 
@@ -1193,7 +1035,7 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class EMVClessIssuerUpdateEMVClessTxOutputDataClass
     {
-        public EMVClessIssuerUpdateEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, List<byte> DataRead = null, ClessOutcomeClass ClessOutcome = null)
+        public EMVClessIssuerUpdateEMVClessTxOutputDataClass(TxOutcomeEnum? TxOutcome = null, List<byte> DataRead = null, EMVClessOutcomeClass ClessOutcome = null)
         {
             this.TxOutcome = TxOutcome;
             this.DataRead = DataRead;
@@ -1229,131 +1071,214 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The Base64 encoded representation of the data read from the chip after a contactless transaction has been
-        /// completed successfully. The BER-TLV formatted data contains cryptogram tag (9F26) after a contactless chip 
-        /// transaction has been completed successfully. This value is terminated with a single null character and 
-        /// cannot contain UNICODE characters.
+        /// completed successfully. The BER-TLV formatted data contains cryptogram tag (9F26) after a contactless chip
+        /// transaction has been completed successfully.
         /// <example>fSfILqum6niI6jURWzeo ...</example>
         /// </summary>
         [DataMember(Name = "dataRead")]
         [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
         public List<byte> DataRead { get; init; }
 
-        [DataContract]
-        public sealed class ClessOutcomeClass
+        [DataMember(Name = "clessOutcome")]
+        public EMVClessOutcomeClass ClessOutcome { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageCapabilitiesClass
+    {
+        public StorageCapabilitiesClass(TypeEnum? Type = null, bool? HardwareSensors = null)
         {
-            public ClessOutcomeClass(CvmEnum? Cvm = null, AlternateInterfaceEnum? AlternateInterface = null, bool? Receipt = null, EMVClessUIClass UiOutcome = null, EMVClessUIClass UiRestart = null, int? FieldOffHoldTime = null, int? CardRemovalTimeout = null, List<byte> DiscretionaryData = null)
-            {
-                this.Cvm = Cvm;
-                this.AlternateInterface = AlternateInterface;
-                this.Receipt = Receipt;
-                this.UiOutcome = UiOutcome;
-                this.UiRestart = UiRestart;
-                this.FieldOffHoldTime = FieldOffHoldTime;
-                this.CardRemovalTimeout = CardRemovalTimeout;
-                this.DiscretionaryData = DiscretionaryData;
-            }
+            this.Type = Type;
+            this.HardwareSensors = HardwareSensors;
+        }
 
-            public enum CvmEnum
-            {
-                OnlinePIN,
-                ConfirmationCodeVerified,
-                Sign,
-                NoCVM,
-                NoCVMPreference
-            }
-
-            /// <summary>
-            /// Specifies the card holder verification method (CVM) to be performed as one of the following:
-            /// 
-            /// * ```onlinePIN``` - Online PIN should be entered by the card holder.
-            /// * ```confirmationCodeVerified``` - A confirmation code entry has been successfully done on a mobile
-            ///   device.
-            /// * ```sign``` - Application should obtain card holder signature.
-            /// * ```noCVM``` - No CVM is required for this transaction.
-            /// * ```noCVMPreference``` - There is no CVM preference, but application can follow the payment system's
-            ///   rules to process the transaction.
-            /// </summary>
-            [DataMember(Name = "cvm")]
-            public CvmEnum? Cvm { get; init; }
-
-            public enum AlternateInterfaceEnum
-            {
-                Contact,
-                MagneticStripe
-            }
-
-            /// <summary>
-            /// If [txOutcome](#cardreader.emvclessissuerupdate.completion.properties.chip.txoutcome) is not
-            /// *tryAnotherInterface*, this ignored and can be omitted. If *txOutcome* is *tryAnotherInterface*, this specifies
-            /// the alternative interface to be used to complete a transaction as one of the following:
-            /// 
-            /// * ```contact``` - Contact chip interface should be used to complete a transaction.
-            /// * ```magneticStripe``` - Magnetic stripe interface should be used to complete a transaction.
-            /// </summary>
-            [DataMember(Name = "alternateInterface")]
-            public AlternateInterfaceEnum? AlternateInterface { get; init; }
-
-            /// <summary>
-            /// Specifies whether a receipt should be printed. True indicates that a receipt is required.
-            /// </summary>
-            [DataMember(Name = "receipt")]
-            public bool? Receipt { get; init; }
-
-            /// <summary>
-            /// The user interface details required to be displayed to the card holder after processing the outcome of a
-            /// contactless transaction. If no user interface details are required, this will be omitted. Please refer
-            /// to EMVCo Contactless Specifications for Payment Systems Book A [[Ref. cardreader-3](#ref-cardreader-3)], Section 6.2 for details of the data
-            /// within this object.
-            /// </summary>
-            [DataMember(Name = "uiOutcome")]
-            public EMVClessUIClass UiOutcome { get; init; }
-
-            /// <summary>
-            /// The user interface details required to be displayed to the card holder when a transaction needs to be
-            /// completed with a re-tap. If no user interface details are required, this will be omitted.
-            /// </summary>
-            [DataMember(Name = "uiRestart")]
-            public EMVClessUIClass UiRestart { get; init; }
-
-            /// <summary>
-            /// The application should wait for this specific hold time in units of 100 milliseconds, before re-enabling
-            /// the contactless card reader by issuing either the
-            /// [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command or the
-            /// [CardReader.EMVClessIssuerUpdate](#cardreader.emvclessissuerupdate) command depending on the value of
-            /// [txOutcome](#cardreader.emvclessissuerupdate.completion.properties.chip.txoutcome). For
-            /// intelligent contactless card readers, the completion of this command ensures that the contactless chip
-            /// card reader field is automatically turned off, so there is no need for the application to disable the
-            /// field.
-            /// </summary>
-            [DataMember(Name = "fieldOffHoldTime")]
-            [DataTypes(Minimum = 0)]
-            public int? FieldOffHoldTime { get; init; }
-
-            /// <summary>
-            /// Specifies a timeout value in units of 100 milliseconds for prompting the user to remove the card.
-            /// </summary>
-            [DataMember(Name = "cardRemovalTimeout")]
-            [DataTypes(Minimum = 0)]
-            public int? CardRemovalTimeout { get; init; }
-
-            /// <summary>
-            /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
-            /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
-            /// present, this will be omitted.
-            /// <example>fSfILqum6niI6jURWzeo ...</example>
-            /// </summary>
-            [DataMember(Name = "discretionaryData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-            public List<byte> DiscretionaryData { get; init; }
-
+        public enum TypeEnum
+        {
+            Retain,
+            Dispense,
+            Park
         }
 
         /// <summary>
-        /// The Entry Point Outcome specified in EMVCo Specifications for Contactless Payment Systems (Book A and B) [[Ref. cardreader-3](#ref-cardreader-3)].
-        /// This can be omitted for contactless chip card readers that do not follow EMVCo Entry Point Specifications.
+        /// The type of card storage. This property may be
+        /// null in events if the type did not change, otherwise will be one of the following
+        /// values:
+        /// 
+        /// * ```retain``` - The storage unit can retain cards.
+        /// * ```dispense``` - The storage unit can dispense cards.
+        /// * ```park``` - The storage unit can be used to temporarily store a card allowing another card to enter the
+        ///   transport.
         /// </summary>
-        [DataMember(Name = "clessOutcome")]
-        public ClessOutcomeClass ClessOutcome { get; init; }
+        [DataMember(Name = "type")]
+        public TypeEnum? Type { get; init; }
+
+        /// <summary>
+        /// Indicates whether the storage unit has hardware sensors that can detect threshold states.
+        /// This property may be null in events if it did not change.
+        /// <example>true</example>
+        /// </summary>
+        [DataMember(Name = "hardwareSensors")]
+        public bool? HardwareSensors { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageConfigurationClass
+    {
+        public StorageConfigurationClass(string CardID = null, int? Threshold = null)
+        {
+            this.CardID = CardID;
+            this.Threshold = Threshold;
+        }
+
+        /// <summary>
+        /// The identifier that may be used to identify the type of cards in the storage unit. This is only applicable
+        /// to [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) storage units
+        /// and may be null in events if it did not change.
+        /// <example>LoyaltyCard</example>
+        /// </summary>
+        [DataMember(Name = "cardID")]
+        public string CardID { get; init; }
+
+        /// <summary>
+        /// If the threshold value is non zero, hardware sensors in the storage unit do not trigger
+        /// [Storage.StorageThresholdEvent](#storage.storagethresholdevent) events.
+        /// This property may be null in events if it did not change.
+        /// 
+        /// If non zero, when *count* reaches the threshold value:
+        /// 
+        /// * For [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        ///   units, a [high](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus)
+        ///   threshold will be sent.
+        /// * For [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type
+        ///   storage units, a
+        ///   [low](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus) threshold
+        ///   will be sent.
+        /// <example>10</example>
+        /// </summary>
+        [DataMember(Name = "threshold")]
+        [DataTypes(Minimum = 0)]
+        public int? Threshold { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageStatusClass
+    {
+        public StorageStatusClass(int? InitialCount = null, int? Count = null, int? RetainCount = null, ReplenishmentStatusEnum? ReplenishmentStatus = null)
+        {
+            this.InitialCount = InitialCount;
+            this.Count = Count;
+            this.RetainCount = RetainCount;
+            this.ReplenishmentStatus = ReplenishmentStatus;
+        }
+
+        /// <summary>
+        /// The initial number of cards in the storage unit. This is only applicable to
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        /// units. This property may be null in events if it did not change.
+        /// 
+        /// This value is persistent.
+        /// </summary>
+        [DataMember(Name = "initialCount")]
+        [DataTypes(Minimum = 0)]
+        public int? InitialCount { get; init; }
+
+        /// <summary>
+        /// The number of cards in the storage unit.
+        /// 
+        /// If the storage unit type is
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * This count also includes a card dispensed from the storage unit which has not been moved to either the
+        ///   exit position or a [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type)
+        ///   type storage unit.
+        /// * This count is decremented when a card from the card storage unit is moved to the exit position or
+        ///   retained. If this value reaches zero it will not decrement further but will remain at zero.
+        /// 
+        /// If the storage unit type is [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * The count is incremented when a card is moved into the storage unit.
+        /// 
+        /// If the storage unit type is [park](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type):
+        /// 
+        /// * The count will increment when a card is moved into the storage module and decremented when a card is
+        ///   moved out of the storage module.
+        /// 
+        /// This value is persistent and may be null in events if it did not change.
+        /// </summary>
+        [DataMember(Name = "count")]
+        [DataTypes(Minimum = 0)]
+        public int? Count { get; init; }
+
+        /// <summary>
+        /// The number of cards from this storage unit which are in a
+        /// [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) storage unit.
+        /// 
+        /// This is only applicable to
+        /// [dispense](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
+        /// units.
+        /// 
+        /// This value is persistent and may be null in events if it did not change.
+        /// </summary>
+        [DataMember(Name = "retainCount")]
+        [DataTypes(Minimum = 0)]
+        public int? RetainCount { get; init; }
+
+        public enum ReplenishmentStatusEnum
+        {
+            Ok,
+            Full,
+            High,
+            Low,
+            Empty
+        }
+
+        /// <summary>
+        /// The state of the cards in the storage unit if it can be determined. Note that overall
+        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be taken
+        /// into account when deciding whether the storage unit is usable and whether replenishment status is
+        /// applicable. In particular, if the overall status is *missing* this will be null. 
+        /// The property may also be null in events if it did not change.
+        /// 
+        /// The following values are possible:
+        /// 
+        /// * ```ok``` - The storage unit is in a good state.
+        /// * ```full``` - The storage unit is full.
+        /// * ```high``` - The storage unit is almost full (either sensor based or above the
+        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
+        /// * ```low``` - The storage unit is almost empty (either sensor based or below the
+        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
+        /// * ```empty``` - The storage unit is empty.
+        /// </summary>
+        [DataMember(Name = "replenishmentStatus")]
+        public ReplenishmentStatusEnum? ReplenishmentStatus { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageClass
+    {
+        public StorageClass(StorageCapabilitiesClass Capabilities = null, StorageConfigurationClass Configuration = null, StorageStatusClass Status = null)
+        {
+            this.Capabilities = Capabilities;
+            this.Configuration = Configuration;
+            this.Status = Status;
+        }
+
+        [DataMember(Name = "capabilities")]
+        public StorageCapabilitiesClass Capabilities { get; init; }
+
+        [DataMember(Name = "configuration")]
+        public StorageConfigurationClass Configuration { get; init; }
+
+        [DataMember(Name = "status")]
+        public StorageStatusClass Status { get; init; }
 
     }
 
@@ -1367,7 +1292,7 @@ namespace XFS4IoT.CardReader
         }
 
         /// <summary>
-        /// The number of cards in the storage unit at the last replenishment. If specified, 
+        /// The number of cards in the storage unit at the last replenishment. If specified,
         /// [count](#storage.getstorage.completion.properties.storage.unit1.card.status.count) is set to match
         /// this value and
         /// [retainCount](#storage.getstorage.completion.properties.storage.unit1.card.status.retaincount) is set to

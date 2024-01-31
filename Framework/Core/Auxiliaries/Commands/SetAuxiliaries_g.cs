@@ -16,20 +16,22 @@ namespace XFS4IoT.Auxiliaries.Commands
 {
     //Original name = SetAuxiliaries
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Auxiliaries.SetAuxiliaries")]
     public sealed class SetAuxiliariesCommand : Command<SetAuxiliariesCommand.PayloadData>
     {
-        public SetAuxiliariesCommand(int RequestId, SetAuxiliariesCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetAuxiliariesCommand(int RequestId, SetAuxiliariesCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, SafeDoorEnum? SafeDoor = null, VandalShieldEnum? VandalShield = null, FrontCabinetDoorsEnum? FrontCabinetDoors = null, RearCabinetDoorsEnum? RearCabinetDoors = null, LeftCabinetDoorsEnum? LeftCabinetDoors = null, RightCabinetDoorsEnum? RightCabinetDoors = null, OpenCloseEnum? OpenClose = null, FasciaLightEnum? FasciaLight = null, AudioClass Audio = null, HeatingEnum? Heating = null, DisplayBackLightEnum? DisplayBackLight = null, SignageDisplayEnum? SignageDisplay = null, int? Volume = null, UpsEnum? Ups = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlEnum? EnhancedMicrophoneControl = null, int? MicrophoneVolume = null)
-                : base(Timeout)
+            public PayloadData(CabinetDoorsEnum? CabinetDoors = null, SafeDoorEnum? SafeDoor = null, VandalShieldEnum? VandalShield = null, FrontCabinetDoorsEnum? FrontCabinetDoors = null, RearCabinetDoorsEnum? RearCabinetDoors = null, LeftCabinetDoorsEnum? LeftCabinetDoors = null, RightCabinetDoorsEnum? RightCabinetDoors = null, OpenCloseEnum? OpenClose = null, AudioClass Audio = null, HeatingEnum? Heating = null, ConsumerDisplayBackLightEnum? ConsumerDisplayBackLight = null, SignageDisplayEnum? SignageDisplay = null, int? Volume = null, UpsEnum? Ups = null, AudibleAlarmEnum? AudibleAlarm = null, EnhancedAudioControlEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlEnum? EnhancedMicrophoneControl = null, int? MicrophoneVolume = null)
+                : base()
             {
+                this.CabinetDoors = CabinetDoors;
                 this.SafeDoor = SafeDoor;
                 this.VandalShield = VandalShield;
                 this.FrontCabinetDoors = FrontCabinetDoors;
@@ -37,10 +39,9 @@ namespace XFS4IoT.Auxiliaries.Commands
                 this.LeftCabinetDoors = LeftCabinetDoors;
                 this.RightCabinetDoors = RightCabinetDoors;
                 this.OpenClose = OpenClose;
-                this.FasciaLight = FasciaLight;
                 this.Audio = Audio;
                 this.Heating = Heating;
-                this.DisplayBackLight = DisplayBackLight;
+                this.ConsumerDisplayBackLight = ConsumerDisplayBackLight;
                 this.SignageDisplay = SignageDisplay;
                 this.Volume = Volume;
                 this.Ups = Ups;
@@ -49,6 +50,23 @@ namespace XFS4IoT.Auxiliaries.Commands
                 this.EnhancedMicrophoneControl = EnhancedMicrophoneControl;
                 this.MicrophoneVolume = MicrophoneVolume;
             }
+
+            public enum CabinetDoorsEnum
+            {
+                Bolt,
+                Unbolt
+            }
+
+            /// <summary>
+            /// Specifies whether all the Cabinet Doors should be bolted or unbolted as one of the following values:
+            /// 
+            /// * ```bolt``` - All Cabinet Doors are bolted.
+            /// * ```unbolt``` - All Cabinet Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "cabinetDoors")]
+            public CabinetDoorsEnum? CabinetDoors { get; init; }
 
             public enum SafeDoorEnum
             {
@@ -61,6 +79,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```bolt``` - All Safe Doors are bolted.
             /// * ```unbolt``` - All Safe Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "safeDoor")]
             public SafeDoorEnum? SafeDoor { get; init; }
@@ -80,6 +100,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// * ```open``` - Open the Vandal Shield.
             /// * ```service``` - Position the Vandal Shield in the service position.
             /// * ```keyboard``` - Position the Vandal Shield to permit access to the keyboard.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "vandalShield")]
             public VandalShieldEnum? VandalShield { get; init; }
@@ -95,6 +117,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```bolt``` - All front Cabinet Doors are bolted.
             /// * ```unbolt``` - All front Cabinet Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "frontCabinetDoors")]
             public FrontCabinetDoorsEnum? FrontCabinetDoors { get; init; }
@@ -110,6 +134,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```bolt``` - All rear Cabinet Doors are bolted.
             /// * ```unbolt``` - All rear Cabinet Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "rearCabinetDoors")]
             public RearCabinetDoorsEnum? RearCabinetDoors { get; init; }
@@ -125,6 +151,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```bolt``` - All left Cabinet Doors are bolted.
             /// * ```unbolt``` - All left Cabinet Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "leftCabinetDoors")]
             public LeftCabinetDoorsEnum? LeftCabinetDoors { get; init; }
@@ -140,6 +168,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```bolt``` - All right Cabinet Doors are bolted.
             /// * ```unbolt``` - All right Cabinet Doors are unbolted.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "rightCabinetDoors")]
             public RightCabinetDoorsEnum? RightCabinetDoors { get; init; }
@@ -151,29 +181,16 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// Specifies whether the Open/Closed Indicator should show Open or Close to a consumer as one of the 
+            /// Specifies whether the Open/Closed Indicator should show Open or Close to a consumer as one of the
             /// following values:
             /// 
             /// * ```closed``` - The Open/Closed Indicator is changed to show that the terminal is closed for a consumer.
             /// * ```open``` - The Open/Closed Indicator is changed to show that the terminal is open to be used by a consumer.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "openClose")]
             public OpenCloseEnum? OpenClose { get; init; }
-
-            public enum FasciaLightEnum
-            {
-                Off,
-                On
-            }
-
-            /// <summary>
-            /// Specifies whether the Fascia Lights should be turned on or off as one of the following values:
-            /// 
-            /// * ```off``` - Turn off the Fascia Light.
-            /// * ```on``` - Turn on the Fascia Light.
-            /// </summary>
-            [DataMember(Name = "fasciaLight")]
-            public FasciaLightEnum? FasciaLight { get; init; }
 
             [DataContract]
             public sealed class AudioClass
@@ -187,7 +204,8 @@ namespace XFS4IoT.Auxiliaries.Commands
                 public enum RateEnum
                 {
                     On,
-                    Off
+                    Off,
+                    Continuous
                 }
 
                 /// <summary>
@@ -211,11 +229,11 @@ namespace XFS4IoT.Auxiliaries.Commands
 
                 /// <summary>
                 /// Specifies the Audio sound as one of the following values:
-                ///         
+                /// 
                 /// * ```keypress``` - Sound a key click signal.
-                /// * ```exclamation``` - Sound an exclamation signal.  
+                /// * ```exclamation``` - Sound an exclamation signal.
                 /// * ```warning``` - Sound a warning signal.
-                /// * ```error``` - Sound an error signal. 
+                /// * ```error``` - Sound an error signal.
                 /// * ```critical``` - Sound a critical error signal.
                 /// </summary>
                 [DataMember(Name = "signal")]
@@ -225,6 +243,7 @@ namespace XFS4IoT.Auxiliaries.Commands
 
             /// <summary>
             /// Specifies whether the Audio Indicator should be turned on or off, if available.
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "audio")]
             public AudioClass Audio { get; init; }
@@ -236,30 +255,34 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// Specifies whether the Internal Heating device should be turned on or off as one of the 
+            /// Specifies whether the Internal Heating device should be turned on or off as one of the
             /// following values:
             /// 
             /// * ```off``` - The Internal Heating device is turned off.
             /// * ```on``` - The Internal Heating device is turned on.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "heating")]
             public HeatingEnum? Heating { get; init; }
 
-            public enum DisplayBackLightEnum
+            public enum ConsumerDisplayBackLightEnum
             {
                 On,
                 Off
             }
 
             /// <summary>
-            /// Specifies whether the Consumer Display Backlight should be turned on or off as one of the 
+            /// Specifies whether the Consumer Display Backlight should be turned on or off as one of the
             /// following values:
             /// 
             /// * ```off``` - The Consumer Display Backlight is turned off.
             /// * ```on``` - The Consumer Display Backlight is turned on.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
-            [DataMember(Name = "displayBackLight")]
-            public DisplayBackLightEnum? DisplayBackLight { get; init; }
+            [DataMember(Name = "consumerDisplayBackLight")]
+            public ConsumerDisplayBackLightEnum? ConsumerDisplayBackLight { get; init; }
 
             public enum SignageDisplayEnum
             {
@@ -272,6 +295,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```off``` - The Signage Display is turned off.
             /// * ```on``` - The Signage Display is turned on.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "signageDisplay")]
             public SignageDisplayEnum? SignageDisplay { get; init; }
@@ -280,6 +305,7 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// Specifies whether the value of the Volume Control should be changed. If so, the value of Volume Control is
             /// defined in an interval from 1 to 1000 where 1 is the lowest volume level and 1000 is the highest volume
             /// level.
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "volume")]
             [DataTypes(Minimum = 1, Maximum = 1000)]
@@ -297,6 +323,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```engage``` - Engage the UPS.
             /// * ```disengage``` - Disengage the UPS.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "ups")]
             public UpsEnum? Ups { get; init; }
@@ -312,6 +340,8 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// 
             /// * ```off``` - Turn off the Audible Alarm device.
             /// * ```on``` - Turn on the Audible Alarm device.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "audibleAlarm")]
             public AudibleAlarmEnum? AudibleAlarm { get; init; }
@@ -327,28 +357,30 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// Specifies whether the state of the Enhanced Audio Controller should be changed as 
+            /// Specifies whether the state of the Enhanced Audio Controller should be changed as
             /// one of the following values:
             /// 
-            /// * ```publicAudioManual``` - Set the Enhanced Audio Controller to manual mode, public 
-            /// state (i.e. audio will be played through speakers only). 
-            /// * ```publicAudioAuto``` - Set the Enhanced Audio Controller to auto mode, public state 
-            /// (i.e. audio will be played through speakers). When a Privacy Device is activated (headset 
-            /// connected/handset off-hook), the device will go to the private state. 
-            /// * ```publicAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode, public 
-            /// state (i.e. audio will be played through speakers). When a Privacy Device is activated, 
+            /// * ```publicAudioManual``` - Set the Enhanced Audio Controller to manual mode, public
+            /// state (i.e. audio will be played through speakers only).
+            /// * ```publicAudioAuto``` - Set the Enhanced Audio Controller to auto mode, public state
+            /// (i.e. audio will be played through speakers). When a Privacy Device is activated (headset
+            /// connected/handset off-hook), the device will go to the private state.
+            /// * ```publicAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode, public
+            /// state (i.e. audio will be played through speakers). When a Privacy Device is activated,
             /// the device will go to the private state.
-            /// * ```privateAudioManual``` - Set the Enhanced Audio Controller to manual mode, private 
-            /// state (i.e. audio will be played only through a connected Privacy Device). In private 
-            /// mode, no audio is transmitted through the speakers. 
-            /// * ```privateAudioAuto``` - Set the Enhanced Audio Controller to auto mode, private state 
-            /// (i.e. audio will be played only through an activated Privacy Device). In private mode, 
-            /// no audio is transmitted through the speakers. When a Privacy Device is deactivated 
-            /// (headset disconnected/handset on-hook), the device will go to the public state. 
-            /// * ```privateAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode, 
-            /// private state (i.e. audio will be played only through an activated Privacy Device). In 
-            /// private mode, no audio is transmitted through the speakers. When a Privacy Device is 
+            /// * ```privateAudioManual``` - Set the Enhanced Audio Controller to manual mode, private
+            /// state (i.e. audio will be played only through a connected Privacy Device). In private
+            /// mode, no audio is transmitted through the speakers.
+            /// * ```privateAudioAuto``` - Set the Enhanced Audio Controller to auto mode, private state
+            /// (i.e. audio will be played only through an activated Privacy Device). In private mode,
+            /// no audio is transmitted through the speakers. When a Privacy Device is deactivated
+            /// (headset disconnected/handset on-hook), the device will go to the public state.
+            /// * ```privateAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode,
+            /// private state (i.e. audio will be played only through an activated Privacy Device). In
+            /// private mode, no audio is transmitted through the speakers. When a Privacy Device is
             /// deactivated, the device will remain in the private state.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "enhancedAudioControl")]
             public EnhancedAudioControlEnum? EnhancedAudioControl { get; init; }
@@ -364,28 +396,30 @@ namespace XFS4IoT.Auxiliaries.Commands
             }
 
             /// <summary>
-            /// Specifies whether the state of the Enhanced Microphone Controller should be changed as 
+            /// Specifies whether the state of the Enhanced Microphone Controller should be changed as
             /// one of the following values:
             /// 
-            /// * ```publicAudioManual``` - Set the Enhanced Microphone Controller to manual mode, public 
+            /// * ```publicAudioManual``` - Set the Enhanced Microphone Controller to manual mode, public
             /// state (i.e. only the microphone in the fascia is active).
-            /// * ```publicAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, public 
-            /// state (i.e. only the microphone in the fascia is active). When a Privacy Device with a 
+            /// * ```publicAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, public
+            /// state (i.e. only the microphone in the fascia is active). When a Privacy Device with a
             /// microphone is activated (headset connected/handset off-hook), the device will go to the private state.
-            /// * ```publicAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, public state 
-            /// (i.e. only the microphone in the fascia is active). When a Privacy Device with a microphone is 
+            /// * ```publicAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, public state
+            /// (i.e. only the microphone in the fascia is active). When a Privacy Device with a microphone is
             /// activated, the device will go to the private state.
-            /// * ```privateAudioManual``` - Set the Enhanced Microphone Controller to manual mode, private state 
-            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio 
+            /// * ```privateAudioManual``` - Set the Enhanced Microphone Controller to manual mode, private state
+            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
             /// input is transmitted through the fascia microphone.
-            /// * ```privateAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, private state 
-            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio 
-            /// input is transmitted through the fascia microphone. When a Privacy Device with a microphone is 
-            /// deactivated (headset disconnected/handset on-hook), the device will go to the public state. 
-            /// * ```privateAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, private 
-            /// state (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no 
-            /// audio input is transmitted through the fascia microphone. When a Privacy Device with a microphone is 
+            /// * ```privateAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, private state
+            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
+            /// input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
+            /// deactivated (headset disconnected/handset on-hook), the device will go to the public state.
+            /// * ```privateAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, private
+            /// state (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no
+            /// audio input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
             /// deactivated, the device will remain in the private state.
+            /// 
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "enhancedMicrophoneControl")]
             public EnhancedMicrophoneControlEnum? EnhancedMicrophoneControl { get; init; }
@@ -394,6 +428,7 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// Specifies whether the value of the Microphone Volume Control should be changed. If so, the value of
             /// Microphone Volume Control is defined in an interval from 1 to 1000 where 1 is the lowest volume level and
             /// 1000 is the highest volume level.
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "microphoneVolume")]
             [DataTypes(Minimum = 1, Maximum = 1000)]

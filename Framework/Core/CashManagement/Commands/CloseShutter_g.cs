@@ -16,19 +16,20 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = CloseShutter
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.CloseShutter")]
     public sealed class CloseShutterCommand : Command<CloseShutterCommand.PayloadData>
     {
-        public CloseShutterCommand(int RequestId, CloseShutterCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CloseShutterCommand(int RequestId, CloseShutterCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(PositionEnum? Position = null)
+                : base()
             {
                 this.Position = Position;
             }

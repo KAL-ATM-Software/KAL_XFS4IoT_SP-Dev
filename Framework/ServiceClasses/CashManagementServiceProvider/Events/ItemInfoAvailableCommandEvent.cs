@@ -14,7 +14,7 @@ using XFS4IoTFramework.CashAcceptor;
 
 namespace XFS4IoTFramework.CashManagement
 {
-    public class ItemInfoAvailableCommandEvent
+    public abstract class ItemInfoAvailableCommandEvent
     {
         public ItemInfoAvailableCommandEvent(IDispenseEvents events)
         {
@@ -198,14 +198,21 @@ namespace XFS4IoTFramework.CashManagement
             throw new InvalidOperationException($"Unreachable code. " + nameof(InfoAvailableEvent));
         }
 
+        #region CashManagement
+        protected IRetractEvents RetractEvents { get; init; } = null;
+        protected IResetEvents ResetEvents { get; init; } = null;
+        protected ICalibrateCashUnitEvents CalibrateCashUnitEvents { get; init; } = null;
+        #endregion
+
+        #region CashDispenser
         protected IDispenseEvents DispenseEvents { get; init; } = null;
         protected IPresentEvents PresentEvents { get; init; } = null;
         protected IRejectEvents RejectEvents { get; init; } = null;
         protected ITestCashUnitsEvents TestCashUnitsEvents { get; init; } = null;
         protected ICountEvents CountEvents { get; init; } = null;
-        protected IRetractEvents RetractEvents { get; init; } = null;
-        protected IResetEvents ResetEvents { get; init; } = null;
-        protected ICalibrateCashUnitEvents CalibrateCashUnitEvents { get; init; } = null;
+        #endregion
+
+        #region CashAcceptor
         protected ICashInEvents CashInEvents { get; init; } = null;
         protected ICashInEndEvents CashInEndEvents { get; init; } = null;
         protected ICashInRollbackEvents CashInRollbackEvents { get; init; } = null;
@@ -214,5 +221,6 @@ namespace XFS4IoTFramework.CashManagement
         protected ICashUnitCountEvents CashUnitCountEvents { get; init; } = null;
         protected IDepleteEvents DepleteEvents { get; init; } = null;
         protected IReplenishEvents ReplenishEvents { get; init; } = null;
+        #endregion
     }
 }

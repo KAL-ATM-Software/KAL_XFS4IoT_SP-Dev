@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.PaperThresholdEvent")]
     public sealed class PaperThresholdEvent : UnsolicitedEvent<PaperThresholdEvent.PayloadData>
     {
@@ -39,17 +40,17 @@ namespace XFS4IoT.Printer.Events
             /// <summary>
             /// Specifies the paper source as one of the following:
             /// 
-            /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
+            /// * ```upper``` - The only paper source or the upper paper source, if there is more than one paper
             ///                 supply.
-            /// * ```lower``` - Use the lower paper source.
-            /// * ```external``` - Use the external paper.
-            /// * ```aux``` - Use the auxiliary paper source.
-            /// * ```aux2``` - Use the second auxiliary paper source.
-            /// * ```park``` - Use the parking station paper source.
+            /// * ```lower``` - The lower paper source.
+            /// * ```external``` - The external paper.
+            /// * ```aux``` - The auxiliary paper source.
+            /// * ```aux2``` - The second auxiliary paper source.
             /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]
-            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
+            [DataTypes(Pattern = @"^upper$|^lower$|^external$|^aux$|^aux2$|^[a-zA-Z]([a-zA-Z0-9]*)$")]
             public string PaperSource { get; init; }
 
             public enum ThresholdEnum
@@ -65,6 +66,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```full``` - The paper in the paper source is in a good state.
             /// * ```low``` - The paper in the paper source is low.
             /// * ```out``` - The paper in the paper source is out.
+            /// <example>out</example>
             /// </summary>
             [DataMember(Name = "threshold")]
             public ThresholdEnum? Threshold { get; init; }

@@ -16,6 +16,7 @@ namespace XFS4IoT.CashManagement.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashManagement.IncompleteRetractEvent")]
     public sealed class IncompleteRetractEvent : Event<IncompleteRetractEvent.PayloadData>
     {
@@ -37,8 +38,8 @@ namespace XFS4IoT.CashManagement.Events
             }
 
             /// <summary>
-            /// The values in this structure report the amount and number of each denomination that were successfully moved
-            /// during the command prior to the failure.
+            /// Object containing the storage units which have had items inserted during the associated operation or
+            /// transaction. Only storage units whose contents have been modified are included.
             /// </summary>
             [DataMember(Name = "itemNumberList")]
             public Dictionary<string, StorageCashInClass> ItemNumberList { get; init; }
@@ -54,9 +55,9 @@ namespace XFS4IoT.CashManagement.Events
             /// <summary>
             /// The reason for not having retracted items. Following values are possible:
             /// 
-            /// * ```retractFailure``` - The retract has partially failed for a reason not covered by the other reasons 
+            /// * ```retractFailure``` - The retract has partially failed for a reason not covered by the other reasons
             /// listed in this event, for example failing to pick an item to be retracted.
-            /// * ```retractAreaFull``` - The storage area specified in the command payload has become full during the 
+            /// * ```retractAreaFull``` - The storage area specified in the command payload has become full during the
             /// retract operation.
             /// * ```foreignItemsDetected``` - Foreign items have been detected.
             /// * ```invalidBunch``` - An invalid bunch of items has been detected, e.g. it is too large or could not be

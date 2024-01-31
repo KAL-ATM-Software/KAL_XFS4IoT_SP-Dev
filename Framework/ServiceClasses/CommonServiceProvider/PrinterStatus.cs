@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     /// PrinterStatusClass
     /// Store device status for the printer
     /// </summary>
-    public sealed class PrinterStatusClass
+    public sealed class PrinterStatusClass : StatusBase
     {
         public enum MediaEnum
         {
@@ -54,7 +54,8 @@ namespace XFS4IoTFramework.Common
         {
             Unknown,
             Single,
-            Dual
+            Dual,
+            NotSupported,
         }
 
         public enum BlackMarkModeEnum
@@ -93,18 +94,16 @@ namespace XFS4IoTFramework.Common
             Inop
         }
 
-        public sealed class RetractBinsClass
+        public sealed class RetractBinsClass : StatusBase
         {
             public RetractBinsClass()
             {
-                State = StateEnum.Unknown;
-                Count = 0;
             }
             public RetractBinsClass(StateEnum State,
                                     int Count)
             {
-                this.State = State;
-                this.Count = Count;
+                state = State;
+                count = Count;
             }
 
             public enum StateEnum
@@ -125,28 +124,55 @@ namespace XFS4IoTFramework.Common
             /// * ```High``` - The retract bin of the printer is nearly full.
             /// * ```Missing``` - The retract bin is missing.
             /// </summary>
-            public StateEnum State { get; set; }
-
+            public StateEnum State 
+            { 
+                get { return state; }
+                set
+                {
+                    if (state != value)
+                    {
+                        state = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private StateEnum state = StateEnum.Unknown;
             /// <summary>
             /// The number of media retracted to this bin. This value is persistent; it may be reset to zero by the
             /// Printer.ResetCount command.
             /// </summary>
-            public int Count { get; set; }
+            public int Count 
+            { 
+                get { return count; } 
+                set
+                {
+                    if (count != value)
+                    {
+                        count = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private int count = 0;
         }
 
-        public sealed class SupplyStatusClass
+        public sealed class SupplyStatusClass : StatusBase
         {
             public SupplyStatusClass()
             {
-                PaperSupply = PaperSupplyEnum.Unknown;
-                PaperType = PaperTypeEnum.Unknown;
             }
             public SupplyStatusClass(PaperSupplyEnum PaperSupply,
                                      PaperTypeEnum PaperType)
             {
-                this.PaperSupply = PaperSupply;
-                this.PaperType = PaperType;
+                paperSupply = PaperSupply;
+                paperType = PaperType;
             }
+
+            /// <summary>
+            /// Properties Source and CustomSource are set by the framework to generate status changed event
+            /// </summary>
+            public PaperSourceEnum? Source { get; set; } = null;
+            public string CustomSource { get; set; } = null;
 
             /// <summary>
             /// Specifies the state of paper supplies as one of the following values:
@@ -158,7 +184,20 @@ namespace XFS4IoTFramework.Common
             /// * ```Out``` - The paper supply is empty.
             /// * ```Jammed``` - The paper supply is jammed.
             /// </summary>
-            public PaperSupplyEnum PaperSupply { get; set; }
+            public PaperSupplyEnum PaperSupply 
+            { 
+                get { return paperSupply; } 
+                set
+                {
+                    if (paperSupply != value)
+                    {
+                        paperSupply = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private PaperSupplyEnum paperSupply = PaperSupplyEnum.NotSupported;
+
             /// <summary>
             /// Specifies the type of paper loaded as one of the following:
             /// 
@@ -167,7 +206,19 @@ namespace XFS4IoTFramework.Common
             /// * ```Single``` - The paper can be printed on only one side.
             /// * ```Dual``` - The paper can be printed on both sides.
             /// </summary>
-            public PaperTypeEnum PaperType { get; set; }
+            public PaperTypeEnum PaperType 
+            {
+                get { return paperType; }
+                set
+                {
+                    if (PaperType != value)
+                    {
+                        paperType = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+            private PaperTypeEnum paperType = PaperTypeEnum.NotSupported;
         }
 
         public PrinterStatusClass(MediaEnum Media,
@@ -180,14 +231,14 @@ namespace XFS4IoTFramework.Common
                                   BlackMarkModeEnum BlackMarkMode,
                                   Dictionary<string, SupplyStatusClass> CustomPaper = null)
         {
-            this.Media = Media;
+            media = Media;
             this.Paper = Paper;
-            this.Toner = Toner;
-            this.Ink = Ink;
-            this.Lamp = Lamp;
+            toner = Toner;
+            ink = Ink;
+            lamp = Lamp;
             this.RetractBins = RetractBins;
-            this.MediaOnStacker = MediaOnStacker;
-            this.BlackMarkMode = BlackMarkMode;
+            mediaOnStacker = MediaOnStacker;
+            blackMarkMode = BlackMarkMode;
             this.CustomPaper = CustomPaper;
         }
 
@@ -206,10 +257,21 @@ namespace XFS4IoTFramework.Common
         /// * ```Entering``` - Media is at the entry/exit slot of the device.
         /// * ```Retracted``` - Media was retracted during the last command which controlled media.
         /// </summary>
-        public MediaEnum Media { get; set; }
+        public MediaEnum Media 
+        {
+            get { return media; } 
+            set
+            {
+                if (media != value)
+                {
+                    media = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private MediaEnum media = MediaEnum.NotSupported;
 
-        
-        public Dictionary<PaperSourceEnum, SupplyStatusClass> Paper { get; set; }
+        public Dictionary<PaperSourceEnum, SupplyStatusClass> Paper { get; init; }
 
         /// <summary>
         /// Specifies the state of the toner or ink supply or the state of the ribbon as one of the following:
@@ -222,7 +284,19 @@ namespace XFS4IoTFramework.Common
         /// * ```Out``` - The toner or ink supply is empty or the print contrast with a ribbon is not sufficient any
         ///   more.
         /// </summary>
-        public TonerEnum Toner { get; set; }
+        public TonerEnum Toner 
+        { 
+            get { return toner; }
+            set
+            {
+                if (toner != value)
+                {
+                    toner = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private TonerEnum toner = TonerEnum.NotSupported;
 
         /// <summary>
         /// Specifies the status of the stamping ink in the printer as one of the following values:
@@ -233,7 +307,19 @@ namespace XFS4IoTFramework.Common
         /// * ```Low``` - Ink supply in device is low.
         /// * ```Out``` - Ink supply in device is empty.
         /// </summary>
-        public InkEnum Ink { get; set; }
+        public InkEnum Ink
+        {
+            get { return ink; }
+            set
+            {
+                if (ink != value)
+                {
+                    ink = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private InkEnum ink = InkEnum.NotSupported;
 
         /// <summary>
         /// Specifies the status of the printer imaging lamp as one of the following values:
@@ -244,17 +330,42 @@ namespace XFS4IoTFramework.Common
         /// * ```Fading``` - The lamp should be changed.
         /// * ```Inop``` - The lamp is inoperative.
         /// </summary>
-        public LampEnum Lamp { get; set; }
+        public LampEnum Lamp 
+        {
+            get { return lamp; }
+            set
+            {
+                if (lamp != value)
+                {
+                    lamp = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private LampEnum lamp = LampEnum.NotSupported;
 
         /// <summary>
         /// An array of bin state objects. If no retain bins are supported, the array will be empty.
         /// </summary>
-        public List<RetractBinsClass> RetractBins { get; set; }
+        public List<RetractBinsClass> RetractBins { get; init; }
 
         /// <summary>
         /// The number of media on stacker; applicable only to printers with stacking capability.
+        /// -1 if it's unknown.
         /// </summary>
-        public int MediaOnStacker { get; set; }
+        public int MediaOnStacker 
+        {
+            get { return mediaOnStacker; }
+            set
+            {
+                if (mediaOnStacker != value)
+                {
+                    mediaOnStacker = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int mediaOnStacker = -1;
 
         /// <summary>
         /// Specifies the status of the black mark detection and associated functionality:
@@ -264,11 +375,23 @@ namespace XFS4IoTFramework.Common
         /// * ```On``` - Black mark detection and associated functionality is switched on.
         /// * ```Off``` - Black mark detection and associated functionality is switched off.
         /// </summary>
-        public BlackMarkModeEnum BlackMarkMode { get; set; }
+        public BlackMarkModeEnum BlackMarkMode 
+        {
+            get { return blackMarkMode; } 
+            set
+            {
+                if (blackMarkMode != value)
+                {
+                    blackMarkMode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private BlackMarkModeEnum blackMarkMode = BlackMarkModeEnum.NotSupported;
 
         /// <summary>
         /// Paper supply status for vendor specific supply not listed in the prefixed named paper supply
         /// </summary>
-        public Dictionary<string, SupplyStatusClass> CustomPaper { get; set; }
+        public Dictionary<string, SupplyStatusClass> CustomPaper { get; init; }
     }
 }

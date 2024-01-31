@@ -16,19 +16,20 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = GetPresentStatus
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.GetPresentStatus")]
     public sealed class GetPresentStatusCommand : Command<GetPresentStatusCommand.PayloadData>
     {
-        public GetPresentStatusCommand(int RequestId, GetPresentStatusCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetPresentStatusCommand(int RequestId, GetPresentStatusCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CashManagement.OutputPositionEnum? Position = null, string Nonce = null)
-                : base(Timeout)
+            public PayloadData(CashManagement.OutputPositionEnum? Position = null, string Nonce = null)
+                : base()
             {
                 this.Position = Position;
                 this.Nonce = Nonce;
@@ -38,8 +39,9 @@ namespace XFS4IoT.CashDispenser.Commands
             public CashManagement.OutputPositionEnum? Position { get; init; }
 
             /// <summary>
-            /// A nonce value to be used when creating the end-to-end security token in the 
-            /// response. See the generic end-to-end security documentation for more details.
+            /// A nonce value to be used when creating the end-to-end security token in the
+            /// response. If no token is requested this property should be null. See the
+            /// generic end-to-end security documentation for more details.
             /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
             /// </summary>
             [DataMember(Name = "nonce")]

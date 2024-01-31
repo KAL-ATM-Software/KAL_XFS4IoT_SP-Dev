@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.GetFormList")]
     public sealed class GetFormListCompletion : Completion<GetFormListCompletion.PayloadData>
     {
@@ -33,7 +34,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Array of the form names.
+            /// Array of the form names. This property is null if no forms were loaded.
             /// <example>["Example form1", "Example form2"]</example>
             /// </summary>
             [DataMember(Name = "formList")]

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.CashUnitCount")]
     public sealed class CashUnitCountCompletion : Completion<CashUnitCountCompletion.PayloadData>
     {
@@ -43,18 +44,18 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```invalidCashUnit``` - At least one of the storage units specified is either invalid or does not 
+            /// * ```invalidCashUnit``` - At least one of the storage units specified is either invalid or does not
             /// support being counted. No storage units have been counted.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```tooManyItemsToCount``` - There were too many items. The required internal position may have been
-            /// of insufficient size. 
+            /// of insufficient size.
             /// All items should be returned to the storage unit from which they originated.
             /// * ```countPositionNotEmpty``` - A required internal position is not empty so a storage unit count is
             /// not possible.
-            /// * ```cashUnitError``` - A storage unit caused a problem. A 
+            /// * ```cashUnitError``` - A storage unit caused a problem. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]

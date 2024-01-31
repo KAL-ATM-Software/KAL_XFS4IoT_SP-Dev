@@ -76,7 +76,9 @@ namespace XFS4IoTFramework.Biometric
 
             Logger.Log(Constants.DeviceClass, "BiometricDev.ReadAsync()");
 
-            var result = await Device.ReadAsync(new ReadRequest(read.Payload.Timeout, dataTypes, read.Payload.NumCaptures ?? 0, scanMode), cancel);
+            var result = await Device.ReadAsync(new(events),
+                                                new ReadRequest(read.Header.Timeout ?? 0, dataTypes, read.Payload.NumCaptures ?? 0, scanMode), 
+                                                cancel);
 
             Logger.Log(Constants.DeviceClass, $"BiometricDev.ReadAsync() -> {result.CompletionCode}");
 

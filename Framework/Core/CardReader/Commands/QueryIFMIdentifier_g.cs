@@ -16,22 +16,13 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = QueryIFMIdentifier
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.QueryIFMIdentifier")]
-    public sealed class QueryIFMIdentifierCommand : Command<QueryIFMIdentifierCommand.PayloadData>
+    public sealed class QueryIFMIdentifierCommand : Command<MessagePayload>
     {
-        public QueryIFMIdentifierCommand(int RequestId, QueryIFMIdentifierCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public QueryIFMIdentifierCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

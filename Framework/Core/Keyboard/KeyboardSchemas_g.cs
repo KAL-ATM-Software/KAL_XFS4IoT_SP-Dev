@@ -32,13 +32,15 @@ namespace XFS4IoT.Keyboard
             }
 
             /// <summary>
-            /// Specifies whether an automatic tone will be generated for all active keys.
+            /// Specifies whether an automatic tone will be generated for all active keys. This may be null in
+            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
             /// </summary>
             [DataMember(Name = "activeAvailable")]
             public bool? ActiveAvailable { get; init; }
 
             /// <summary>
-            /// Specifies whether an automatic tone will be generated for all inactive keys.
+            /// Specifies whether an automatic tone will be generated for all inactive keys. This may be null in
+            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
             /// </summary>
             [DataMember(Name = "inactiveAvailable")]
             public bool? InactiveAvailable { get; init; }
@@ -58,7 +60,7 @@ namespace XFS4IoT.Keyboard
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(AutoBeepClass AutoBeep = null, List<EtsCapsClass> EtsCaps = null)
+        public CapabilitiesClass(AutoBeepClass AutoBeep = null, EtsCapsClass EtsCaps = null)
         {
             this.AutoBeep = AutoBeep;
             this.EtsCaps = EtsCaps;
@@ -107,7 +109,7 @@ namespace XFS4IoT.Keyboard
 
         /// <summary>
         /// Specifies whether the device will emit a key beep tone on key presses of active keys or inactive keys,
-        /// and if so, which mode it supports.
+        /// and if so, which mode it supports. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "autoBeep")]
         public AutoBeepClass AutoBeep { get; init; }
@@ -196,7 +198,7 @@ namespace XFS4IoT.Keyboard
 
             /// <summary>
             /// Specifies if the device can float the touch keyboards. Both properties *x* and *y* are false
-            /// if the device cannot randomly shift the layout.
+            /// if the device cannot randomly shift the layout. This property is null if not supported.
             /// </summary>
             [DataMember(Name = "float")]
             public FloatClass Float { get; init; }
@@ -205,9 +207,10 @@ namespace XFS4IoT.Keyboard
 
         /// <summary>
         /// Specifies the capabilities of the Encrypting Touch Screen device.
+        /// This property is null if not supported.
         /// </summary>
         [DataMember(Name = "etsCaps")]
-        public List<EtsCapsClass> EtsCaps { get; init; }
+        public EtsCapsClass EtsCaps { get; init; }
 
     }
 
@@ -302,9 +305,10 @@ namespace XFS4IoT.Keyboard
         }
 
         /// <summary>
-        /// Specifies if the device can float the touch keyboards.
-        /// 
-        /// This should be omitted not supported.
+        /// Specifies if the device can float the touch keyboards. 
+        /// If [etsCaps](#common.capabilities.completion.properties.keyboard.etscaps) is null or 
+        /// [float](#common.capabilities.completion.properties.keyboard.etscaps.float) is null, this property is null.
+        /// If this property is null, the device cannot randomly shift the layout in both horizontal and vertical direction.
         /// </summary>
         [DataMember(Name = "float")]
         public FloatClass Float { get; init; }
@@ -312,47 +316,18 @@ namespace XFS4IoT.Keyboard
         [DataContract]
         public sealed class KeysClass
         {
-            public KeysClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, string Key = null, string ShiftKey = null)
+            public KeysClass(string Key = null, string ShiftKey = null, int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null)
             {
+                this.Key = Key;
+                this.ShiftKey = ShiftKey;
                 this.XPos = XPos;
                 this.YPos = YPos;
                 this.XSize = XSize;
                 this.YSize = YSize;
-                this.Key = Key;
-                this.ShiftKey = ShiftKey;
             }
 
             /// <summary>
-            /// Specifies the position of the left edge of the key relative to the left side of the frame.
-            /// </summary>
-            [DataMember(Name = "xPos")]
-            [DataTypes(Minimum = 0, Maximum = 999)]
-            public int? XPos { get; init; }
-
-            /// <summary>
-            /// Specifies the position of the top edge of the key relative to the top edge of the frame.
-            /// </summary>
-            [DataMember(Name = "yPos")]
-            [DataTypes(Minimum = 0, Maximum = 999)]
-            public int? YPos { get; init; }
-
-            /// <summary>
-            /// Specifies the Function Key (FK) width.
-            /// </summary>
-            [DataMember(Name = "xSize")]
-            [DataTypes(Minimum = 1, Maximum = 1000)]
-            public int? XSize { get; init; }
-
-            /// <summary>
-            /// Specifies the Function Key (FK) height.
-            /// </summary>
-            [DataMember(Name = "ySize")]
-            [DataTypes(Minimum = 1, Maximum = 1000)]
-            public int? YSize { get; init; }
-
-            /// <summary>
             /// Specifies the Function Key associated with the physical area in non-shifted mode.
-            /// This property can be omitted if no keys are supported.
             /// 
             /// The following standard values are defined:
             /// 
@@ -389,7 +364,6 @@ namespace XFS4IoT.Keyboard
 
             /// <summary>
             /// Specifies the Function Key associated with the physical key in shifted mode.
-            /// This property can be omitted if no keys are supported.
             /// 
             /// See *key* for the valid property values.
             /// <example>a</example>
@@ -398,6 +372,34 @@ namespace XFS4IoT.Keyboard
             [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
             public string ShiftKey { get; init; }
 
+            /// <summary>
+            /// Specifies the position of the left edge of the key relative to the left side of the frame.
+            /// </summary>
+            [DataMember(Name = "xPos")]
+            [DataTypes(Minimum = 0, Maximum = 999)]
+            public int? XPos { get; init; }
+
+            /// <summary>
+            /// Specifies the position of the top edge of the key relative to the top edge of the frame.
+            /// </summary>
+            [DataMember(Name = "yPos")]
+            [DataTypes(Minimum = 0, Maximum = 999)]
+            public int? YPos { get; init; }
+
+            /// <summary>
+            /// Specifies the Function Key (FK) width.
+            /// </summary>
+            [DataMember(Name = "xSize")]
+            [DataTypes(Minimum = 1, Maximum = 1000)]
+            public int? XSize { get; init; }
+
+            /// <summary>
+            /// Specifies the Function Key (FK) height.
+            /// </summary>
+            [DataMember(Name = "ySize")]
+            [DataTypes(Minimum = 1, Maximum = 1000)]
+            public int? YSize { get; init; }
+
         }
 
         /// <summary>
@@ -405,6 +407,121 @@ namespace XFS4IoT.Keyboard
         /// </summary>
         [DataMember(Name = "keys")]
         public List<KeysClass> Keys { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class LayoutNullableClass
+    {
+        public LayoutNullableClass(List<LayoutFrameClass> Data = null, List<LayoutFrameClass> Pin = null, List<LayoutFrameClass> Secure = null)
+        {
+            this.Data = Data;
+            this.Pin = Pin;
+            this.Secure = Secure;
+        }
+
+        /// <summary>
+        /// The layout for the [Keyboard.DataEntry](#keyboard.dataentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
+        /// </summary>
+        [DataMember(Name = "data")]
+        public List<LayoutFrameClass> Data { get; init; }
+
+        /// <summary>
+        /// The layout for the [Keyboard.PinEntry](#keyboard.pinentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
+        /// </summary>
+        [DataMember(Name = "pin")]
+        public List<LayoutFrameClass> Pin { get; init; }
+
+        /// <summary>
+        /// The layout for the [Keyboard.SecureKeyEntry](#keyboard.securekeyentry) command.
+        /// 
+        /// There can be one or more frames included.
+        /// 
+        /// Refer to the [layout](#keyboard.generalinformation.layout) section for the different types of frames, and
+        /// see the diagram for an example.
+        /// </summary>
+        [DataMember(Name = "secure")]
+        public List<LayoutFrameClass> Secure { get; init; }
+
+    }
+
+
+    public enum EntryCompletionEnum
+    {
+        Auto,
+        Enter,
+        Cancel,
+        Continue,
+        Clear,
+        Backspace,
+        Fdk,
+        Help,
+        Fk,
+        ContFdk
+    }
+
+
+    [DataContract]
+    public sealed class KeyPressedClass
+    {
+        public KeyPressedClass(EntryCompletionEnum? Completion = null, string Digit = null)
+        {
+            this.Completion = Completion;
+            this.Digit = Digit;
+        }
+
+        [DataMember(Name = "completion")]
+        public EntryCompletionEnum? Completion { get; init; }
+
+        /// <summary>
+        /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode
+        /// ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this
+        /// property is null for the function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed,
+        /// the corresponding key value is stored in this property.
+        /// 
+        /// The following standard values are defined:
+        /// 
+        /// * ```zero``` - Numeric digit 0
+        /// * ```one``` - Numeric digit 1
+        /// * ```two``` - Numeric digit 2
+        /// * ```three``` - Numeric digit 3
+        /// * ```four``` - Numeric digit 4
+        /// * ```five``` - Numeric digit 5
+        /// * ```six``` - Numeric digit 6
+        /// * ```seven``` - Numeric digit 7
+        /// * ```eight``` - Numeric digit 8
+        /// * ```nine``` - Numeric digit 9
+        /// * ```[a-f]``` - Hex digit A to F for secure key entry
+        /// * ```enter``` - Enter
+        /// * ```cancel``` - Cancel
+        /// * ```clear``` - Clear
+        /// * ```backspace``` - Backspace
+        /// * ```help``` - Help
+        /// * ```decPoint``` - Decimal point
+        /// * ```shift``` - Shift key used during hex entry
+        /// * ```doubleZero``` - 00
+        /// * ```tripleZero``` - 000
+        /// * ```fdk[01-32]``` - 32 FDK keys
+        /// 
+        /// Additional non-standard values are also allowed:
+        /// 
+        /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
+        /// <example>five</example>
+        /// </summary>
+        [DataMember(Name = "digit")]
+        [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
+        public string Digit { get; init; }
 
     }
 
@@ -451,92 +568,6 @@ namespace XFS4IoT.Keyboard
         /// </summary>
         [DataMember(Name = "secure")]
         public List<LayoutFrameClass> Secure { get; init; }
-
-    }
-
-
-    [DataContract]
-    public sealed class KeyClass
-    {
-        public KeyClass(bool? Terminate = null)
-        {
-            this.Terminate = Terminate;
-        }
-
-        /// <summary>
-        /// The key is a terminate key.
-        /// </summary>
-        [DataMember(Name = "terminate")]
-        public bool? Terminate { get; init; }
-
-    }
-
-
-    public enum EntryCompletionEnum
-    {
-        Auto,
-        Enter,
-        Cancel,
-        Continue,
-        Clear,
-        Backspace,
-        Fdk,
-        Help,
-        Fk,
-        ContFdk
-    }
-
-
-    [DataContract]
-    public sealed class KeyPressedClass
-    {
-        public KeyPressedClass(EntryCompletionEnum? Completion = null, string Digit = null)
-        {
-            this.Completion = Completion;
-            this.Digit = Digit;
-        }
-
-        [DataMember(Name = "completion")]
-        public EntryCompletionEnum? Completion { get; init; }
-
-        /// <summary>
-        /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode
-        /// ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this
-        /// property is omitted for the function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed,
-        /// the corresponding key value is stored in this property.
-        /// 
-        /// The following standard values are defined:
-        /// 
-        /// * ```zero``` - Numeric digit 0
-        /// * ```one``` - Numeric digit 1
-        /// * ```two``` - Numeric digit 2
-        /// * ```three``` - Numeric digit 3
-        /// * ```four``` - Numeric digit 4
-        /// * ```five``` - Numeric digit 5
-        /// * ```six``` - Numeric digit 6
-        /// * ```seven``` - Numeric digit 7
-        /// * ```eight``` - Numeric digit 8
-        /// * ```nine``` - Numeric digit 9
-        /// * ```[a-f]``` - Hex digit A to F for secure key entry
-        /// * ```enter``` - Enter
-        /// * ```cancel``` - Cancel
-        /// * ```clear``` - Clear
-        /// * ```backspace``` - Backspace
-        /// * ```help``` - Help
-        /// * ```decPoint``` - Decimal point
-        /// * ```shift``` - Shift key used during hex entry
-        /// * ```doubleZero``` - 00
-        /// * ```tripleZero``` - 000
-        /// * ```fdk[01-32]``` - 32 FDK keys
-        /// 
-        /// Additional non-standard values are also allowed:
-        /// 
-        /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
-        /// <example>five</example>
-        /// </summary>
-        [DataMember(Name = "digit")]
-        [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
-        public string Digit { get; init; }
 
     }
 

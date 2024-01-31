@@ -7,6 +7,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +55,23 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CameraDev.CameraStatus=");
 
             CommonService.CameraStatus.IsNotNull($"The device class set CameraStatus property to null. The device class must report device status.");
+            foreach (var stdCam in CommonService.CameraStatus.CameraLocationStatus)
+            {
+                stdCam.Value.Location = stdCam.Key;
+                stdCam.Value.PropertyChanged += StatusChangedEventFowarder;
+            }
+            foreach (var customCam in CommonService.CameraStatus.CustomCameraLocationStatus)
+            {
+                customCam.Value.CustomLocation = customCam.Key;
+                customCam.Value.PropertyChanged += StatusChangedEventFowarder;
+            }
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

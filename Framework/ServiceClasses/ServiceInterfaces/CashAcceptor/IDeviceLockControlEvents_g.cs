@@ -16,5 +16,7 @@ namespace XFS4IoTFramework.CashAcceptor
     public interface IDeviceLockControlEvents
     {
 
+        Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload);
+
     }
 }

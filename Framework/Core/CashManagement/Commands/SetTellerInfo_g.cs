@@ -16,19 +16,20 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = SetTellerInfo
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.SetTellerInfo")]
     public sealed class SetTellerInfoCommand : Command<SetTellerInfoCommand.PayloadData>
     {
-        public SetTellerInfoCommand(int RequestId, SetTellerInfoCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetTellerInfoCommand(int RequestId, SetTellerInfoCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ActionEnum? Action = null, TellerDetailsClass TellerDetails = null)
-                : base(Timeout)
+            public PayloadData(ActionEnum? Action = null, TellerDetailsClass TellerDetails = null)
+                : base()
             {
                 this.Action = Action;
                 this.TellerDetails = TellerDetails;

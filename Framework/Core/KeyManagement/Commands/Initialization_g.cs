@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = Initialization
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.Initialization")]
     public sealed class InitializationCommand : Command<InitializationCommand.PayloadData>
     {
-        public InitializationCommand(int RequestId, InitializationCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public InitializationCommand(int RequestId, InitializationCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, AuthenticationClass Authentication = null)
-                : base(Timeout)
+            public PayloadData(AuthenticationClass Authentication = null)
+                : base()
             {
                 this.Authentication = Authentication;
             }
@@ -51,11 +52,9 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// M0.
                 /// 
                 /// If *method* is sigHost, then this specifies the name of a previously loaded asymmetric key (i.e. an RSA
-                /// Public Key).
-                /// 
-                /// If this contains the name of the
+                /// Public Key). If null, the
                 /// [default Signature Issuer](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity)
-                /// or if omitted, the default Signature Issuer public key (installed in a secure environment during
+                /// or if null, the default Signature Issuer public key (installed in a secure environment during
                 /// manufacture) will be used.
                 /// <example>Key01</example>
                 /// </summary>
@@ -64,7 +63,6 @@ namespace XFS4IoT.KeyManagement.Commands
 
                 /// <summary>
                 /// This property contains the authenticated data (MAC, Signature) generated from the previous call to
-                /// either the KeyManagement device during the previous call to
                 /// [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate).
                 /// 
                 /// The authentication method specified by *method* is used to generate this data. Both this authentication
@@ -82,9 +80,11 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// If *sigHost* is specified in the *method* property, this is a PKCS#7 structure which includes the data
                 /// that was returned by the *KeyManagement.StartAuthenticate* command.
                 /// 
-                /// If *cmcmac* or *cmac* is specified in the *method* property, then *key* must refer to a key with a MAC
+                /// If *cbcmac* or *cmac* is specified in the *method* property, then *key* must refer to a key with a MAC
                 /// key usage key e.g. M0.
-                /// <example>QXV0aGVudGljYXRpb24g ...</example>
+                /// 
+                /// If *method* is none, this property is not required.
+                /// <example>QXV0aGVudGljYXRpb25EYXRh</example>
                 /// </summary>
                 [DataMember(Name = "data")]
                 [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
@@ -98,12 +98,12 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Additionally, if the command requires authentication:
             /// 
             /// * The [KeyManagement.StartAuthenticate](#keymanagement.startauthenticate) command must be called before
-            ///   this command to.
+            ///   this command.
             /// * Commands which do not clear or modify the authentication data from the device may be executed between the
-            ///   *KeyManagement.StartAuthenticate* and *keyManagement.Authenticate* command requests.
+            ///   *KeyManagement.StartAuthenticate* and the authenticated command requests.
             /// * If prior to this command request, *KeyManagement.StartAuthenticate* is not called or a command clears the
             ///   authentication data from the device,
-            ///   [sequenceError](#api.generalinformation.messagetypes.completionmessages.completioncodes) will be returned.
+            ///   [sequenceError](#api.messages.headerdefinition.completioncodeproperty) will be returned.
             /// </summary>
             [DataMember(Name = "authentication")]
             public AuthenticationClass Authentication { get; init; }

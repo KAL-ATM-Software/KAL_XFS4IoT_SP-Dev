@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Auxiliaries.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Auxiliaries.SetAuxiliaries")]
     public sealed class SetAuxiliariesCompletion : Completion<SetAuxiliariesCompletion.PayloadData>
     {
@@ -38,9 +39,9 @@ namespace XFS4IoT.Auxiliaries.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```invalidAuxiliary``` - An attempt to set a auxiliary to a new value was invalid because the auxiliary does not 
+            /// * ```invalidAuxiliary``` - An attempt to set a auxiliary to a new value was invalid because the auxiliary does not
             ///   exist or the auxiliary is pre-configured as an input port.
             /// </summary>
             [DataMember(Name = "errorCode")]

@@ -16,19 +16,20 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = SetMixTable
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.SetMixTable")]
     public sealed class SetMixTableCommand : Command<SetMixTableCommand.PayloadData>
     {
-        public SetMixTableCommand(int RequestId, SetMixTableCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetMixTableCommand(int RequestId, SetMixTableCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
-                : base(Timeout)
+            public PayloadData(int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
+                : base()
             {
                 this.MixNumber = MixNumber;
                 this.Name = Name;
@@ -36,7 +37,7 @@ namespace XFS4IoT.CashDispenser.Commands
             }
 
             /// <summary>
-            /// Number identifying the house mix table.
+            /// Number identifying the house mix table (optional).
             /// <example>21</example>
             /// </summary>
             [DataMember(Name = "mixNumber")]
@@ -44,7 +45,7 @@ namespace XFS4IoT.CashDispenser.Commands
             public int? MixNumber { get; init; }
 
             /// <summary>
-            /// Name of the house mix table.
+            /// Name of the house mix table. Null if not defined.
             /// <example>House mix 21</example>
             /// </summary>
             [DataMember(Name = "name")]

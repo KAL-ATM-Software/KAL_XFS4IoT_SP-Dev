@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.TextTerminal
 
         Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload);
 
-        Task FieldWarningEvent();
+        Task FieldWarningEvent(XFS4IoT.TextTerminal.Events.FieldWarningEvent.PayloadData Payload);
 
     }
 }

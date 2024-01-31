@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.GetMediaList")]
     public sealed class GetMediaListCompletion : Completion<GetMediaListCompletion.PayloadData>
     {
@@ -33,7 +34,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// The list of media names.
+            /// The list of media definition names. This will be null if no media definitions are available.
             /// <example>["Media1", "Media2"]</example>
             /// </summary>
             [DataMember(Name = "mediaList")]

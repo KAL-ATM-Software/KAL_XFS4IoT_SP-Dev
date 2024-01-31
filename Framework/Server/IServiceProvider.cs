@@ -43,5 +43,13 @@ namespace XFS4IoTServer
         /// </summary>
         /// <param name="JsonSchemaValidator"></param>
         void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator);
+
+        /// <summary>
+        /// The list of commands and events device class supproted and associated with versions.
+        /// The framework only supports one latest version of commands and events.
+        /// </summary>
+
+        void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported);
+        Dictionary<string, MessageTypeInfo> GetMessagesSupported();
     }
 }

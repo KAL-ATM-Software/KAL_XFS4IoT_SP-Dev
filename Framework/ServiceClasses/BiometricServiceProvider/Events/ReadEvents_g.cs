@@ -21,5 +21,11 @@ namespace XFS4IoTFramework.Biometric
             : base(connection, requestId)
         { }
 
+        public async Task PresentSubjectEvent() => await connection.SendMessageAsync(new XFS4IoT.Biometric.Events.PresentSubjectEvent(requestId));
+
+        public async Task SubjectDetectedEvent() => await connection.SendMessageAsync(new XFS4IoT.Biometric.Events.SubjectDetectedEvent(requestId));
+
+        public async Task RemoveSubjectEvent() => await connection.SendMessageAsync(new XFS4IoT.Biometric.Events.RemoveSubjectEvent(requestId));
+
     }
 }

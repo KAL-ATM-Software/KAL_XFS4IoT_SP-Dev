@@ -16,34 +16,35 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Count
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.Count")]
     public sealed class CountCommand : Command<CountCommand.PayloadData>
     {
-        public CountCommand(int RequestId, CountCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CountCommand(int RequestId, CountCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Unit = null, CashManagement.OutputPositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(string Unit = null, CashManagement.OutputPositionEnum? Position = null)
+                : base()
             {
                 this.Unit = Unit;
                 this.Position = Position;
             }
 
             /// <summary>
-            /// Specifies the unit to empty or that all units are to be emptied. Following values are possible:
+            /// Specifies the unit to empty. If this property is null, all units are emptied.
+            /// Following values are possible:
             /// 
-            ///   * ```all``` - All units are to be emptied.
             ///   * ```&lt;storage unit identifier&gt;``` - The storage unit to be emptied as
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]
-            [DataTypes(Pattern = @"^all$|^unit[0-9A-Za-z]+$")]
+            [DataTypes(Pattern = @"^unit[0-9A-Za-z]+$")]
             public string Unit { get; init; }
 
             [DataMember(Name = "position")]

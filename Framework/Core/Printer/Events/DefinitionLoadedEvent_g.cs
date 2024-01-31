@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.DefinitionLoadedEvent")]
     public sealed class DefinitionLoadedEvent : UnsolicitedEvent<DefinitionLoadedEvent.PayloadData>
     {
@@ -55,6 +56,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```form``` - The form identified by [name](#printer.definitionloadedevent.event.properties.name) has
             ///   been loaded.
             /// * ```media``` - The media identified by *name* has been loaded.
+            /// <example>media</example>
             /// </summary>
             [DataMember(Name = "type")]
             public TypeEnum? Type { get; init; }

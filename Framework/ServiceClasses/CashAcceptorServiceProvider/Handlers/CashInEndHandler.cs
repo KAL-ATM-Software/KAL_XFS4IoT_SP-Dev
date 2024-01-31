@@ -48,7 +48,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashInEnd()");
 
-            var result = await Device.CashInEnd(new ItemErrorCommandEvents(events), cancel);
+            var result = await Device.CashInEnd(new CashInEndCommandEvents(Storage, events), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashInEnd() -> {result.CompletionCode}, {result.ErrorCode}");
 

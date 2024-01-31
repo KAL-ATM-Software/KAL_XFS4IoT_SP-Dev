@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.Count")]
     public sealed class CountCompletion : Completion<CountCompletion.PayloadData>
     {
@@ -42,12 +43,13 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```cashUnitError``` - A storage unit caused a problem. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order to perform this operation.
-            /// * ```exchangeActive``` - The device is in an exchange state (see 
+            /// (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
+            /// * ```exchangeActive``` - The device is in an exchange state (see
             /// [Storage.StartExchange](#storage.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
@@ -89,7 +91,7 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// List of counted storage unit objects.
+            /// List of counted storage unit objects. Will be null if no units were counted.
             /// </summary>
             [DataMember(Name = "countedCashUnits")]
             public Dictionary<string, CountedCashUnitsClass> CountedCashUnits { get; init; }

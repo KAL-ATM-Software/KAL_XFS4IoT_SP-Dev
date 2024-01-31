@@ -15,10 +15,11 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Auxiliaries.Completions
 {
     [DataContract]
-    [Completion(Name = "Auxiliaries.SetAutoStartupTime")]
-    public sealed class SetAutoStartupTimeCompletion : Completion<SetAutoStartupTimeCompletion.PayloadData>
+    [XFS4Version(Version = "2.0")]
+    [Completion(Name = "Auxiliaries.SetAutoStartUpTime")]
+    public sealed class SetAutoStartUpTimeCompletion : Completion<SetAutoStartUpTimeCompletion.PayloadData>
     {
-        public SetAutoStartupTimeCompletion(int RequestId, SetAutoStartupTimeCompletion.PayloadData Payload)
+        public SetAutoStartUpTimeCompletion(int RequestId, SetAutoStartUpTimeCompletion.PayloadData Payload)
             : base(RequestId, Payload)
         { }
 

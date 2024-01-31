@@ -24,20 +24,10 @@ namespace XFS4IoT.Storage
     }
 
 
-    public enum ReplenishmentStatusEnumEnum
-    {
-        Ok,
-        Full,
-        High,
-        Low,
-        Empty
-    }
-
-
     [DataContract]
     public sealed class StorageUnitClass
     {
-        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null)
+        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null, Check.StorageClass Check = null)
         {
             this.Id = Id;
             this.PositionName = PositionName;
@@ -46,10 +36,11 @@ namespace XFS4IoT.Storage
             this.SerialNumber = SerialNumber;
             this.Cash = Cash;
             this.Card = Card;
+            this.Check = Check;
         }
 
         /// <summary>
-        /// An identifier which can be used for cUnitID in CDM/CIM XFS 3.x migration. Not required if not applicable.
+        /// An identifier which can be used for cUnitID in CDM/CIM XFS 3.x migration. May be null if not applicable.
         /// <example>RC1</example>
         /// </summary>
         [DataMember(Name = "id")]
@@ -57,7 +48,7 @@ namespace XFS4IoT.Storage
         public string Id { get; init; }
 
         /// <summary>
-        /// Fixed physical name for the position.
+        /// Fixed physical name for the position. May be null if not applicable.
         /// <example>Top Right</example>
         /// </summary>
         [DataMember(Name = "positionName")]
@@ -65,7 +56,8 @@ namespace XFS4IoT.Storage
 
         /// <summary>
         /// The nominal capacity of the unit. This may be an estimate as the quality and thickness of the items
-        /// stored in the unit may affect how many items can be stored. 0 means the capacity is unknown.
+        /// stored in the unit may affect how many items can be stored. 0 means the capacity is unknown, null means capacity
+        /// is not applicable.
         /// <example>100</example>
         /// </summary>
         [DataMember(Name = "capacity")]
@@ -76,23 +68,20 @@ namespace XFS4IoT.Storage
         public StatusEnum? Status { get; init; }
 
         /// <summary>
-        /// The storage unit's serial number if it can be read electronically.
+        /// The storage unit's serial number if it can be read electronically. May be null if not applicable.
         /// <example>ABCD1234</example>
         /// </summary>
         [DataMember(Name = "serialNumber")]
         public string SerialNumber { get; init; }
 
-        /// <summary>
-        /// The cash related contents, status and configuration of the unit.
-        /// </summary>
         [DataMember(Name = "cash")]
         public CashManagement.StorageCashClass Cash { get; init; }
 
-        /// <summary>
-        /// The card related contents, status and configuration of the unit.
-        /// </summary>
         [DataMember(Name = "card")]
         public CardReader.StorageClass Card { get; init; }
+
+        [DataMember(Name = "check")]
+        public Check.StorageClass Check { get; init; }
 
     }
 
@@ -100,23 +89,21 @@ namespace XFS4IoT.Storage
     [DataContract]
     public sealed class SetStorageUnitClass
     {
-        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null, CardReader.StorageSetClass Card = null)
+        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null, CardReader.StorageSetClass Card = null, Check.StorageSetClass Check = null)
         {
             this.Cash = Cash;
             this.Card = Card;
+            this.Check = Check;
         }
 
-        /// <summary>
-        /// The cash related contents and configuration of the unit.
-        /// </summary>
         [DataMember(Name = "cash")]
         public CashManagement.StorageSetCashClass Cash { get; init; }
 
-        /// <summary>
-        /// The card related contents and configuration of the unit.
-        /// </summary>
         [DataMember(Name = "card")]
         public CardReader.StorageSetClass Card { get; init; }
+
+        [DataMember(Name = "check")]
+        public Check.StorageSetClass Check { get; init; }
 
     }
 

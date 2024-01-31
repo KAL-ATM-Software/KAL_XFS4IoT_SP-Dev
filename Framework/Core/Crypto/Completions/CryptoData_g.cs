@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Crypto.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCompletion : Completion<CryptoDataCompletion.PayloadData>
     {
@@ -46,26 +47,26 @@ namespace XFS4IoT.Crypto.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason. 
+            /// specific reason.
             /// * ```keyNotFound``` - The *key* name does not exist.
             /// * ```keyNoValue``` - The *key* name exists but the key is not loaded.
-            /// * ```useViolation``` - The *key* usage is not supported. 
+            /// * ```useViolation``` - The *key* usage is not supported.
             /// * ```modeOfUseNotSupported``` - The *key* Mode of Use or the *modeOfUse* qualifier is not supported.
             /// * ```invalidKeyLength``` - The length of *iv* is not supported or the length of an encryption key is
-            /// not compatible with the encryption operation required. 
+            /// not compatible with the encryption operation required.
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not
             /// supported.
             /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip
-            /// transaction active. 
+            /// transaction active.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The encrypted or decrypted data.
+            /// The encrypted or decrypted data. If the command fails, this will be null.
             /// <example>U2FtcGxlIERhdGE=</example>
             /// </summary>
             [DataMember(Name = "data")]

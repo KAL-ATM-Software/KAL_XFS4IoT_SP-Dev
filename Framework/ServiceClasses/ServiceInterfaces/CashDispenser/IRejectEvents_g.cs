@@ -16,6 +16,8 @@ namespace XFS4IoTFramework.CashDispenser
     public interface IRejectEvents
     {
 
+        Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload);
+
         Task InfoAvailableEvent(XFS4IoT.CashManagement.Events.InfoAvailableEvent.PayloadData Payload);
 
     }

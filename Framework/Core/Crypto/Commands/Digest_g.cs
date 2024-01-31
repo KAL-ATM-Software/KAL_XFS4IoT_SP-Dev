@@ -16,19 +16,20 @@ namespace XFS4IoT.Crypto.Commands
 {
     //Original name = Digest
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Crypto.Digest")]
     public sealed class DigestCommand : Command<DigestCommand.PayloadData>
     {
-        public DigestCommand(int RequestId, DigestCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DigestCommand(int RequestId, DigestCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, HashAlgorithmEnum? HashAlgorithm = null, List<byte> Data = null)
-                : base(Timeout)
+            public PayloadData(HashAlgorithmEnum? HashAlgorithm = null, List<byte> Data = null)
+                : base()
             {
                 this.HashAlgorithm = HashAlgorithm;
                 this.Data = Data;

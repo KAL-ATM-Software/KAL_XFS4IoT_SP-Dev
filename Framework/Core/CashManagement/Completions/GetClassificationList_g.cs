@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.GetClassificationList")]
     public sealed class GetClassificationListCompletion : Completion<GetClassificationListCompletion.PayloadData>
     {
@@ -34,15 +35,15 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// This is an application defined string that sets the version identifier of 
-            /// the classification list. This property can be omitted if it has no version identifier.
+            /// This is an application defined string that sets the version identifier of
+            /// the classification list. This property can be null if it has no version identifier.
             /// <example>Version 1.2</example>
             /// </summary>
             [DataMember(Name = "version")]
             public string Version { get; init; }
 
             /// <summary>
-            /// Array of objects defining the classification list.
+            /// Array of objects defining the classification list. May be null if empty.
             /// </summary>
             [DataMember(Name = "classificationElements")]
             public List<ClassificationElementClass> ClassificationElements { get; init; }

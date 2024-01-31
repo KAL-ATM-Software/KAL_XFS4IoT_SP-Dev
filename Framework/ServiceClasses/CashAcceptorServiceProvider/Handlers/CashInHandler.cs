@@ -18,6 +18,7 @@ using XFS4IoT.Completions;
 using XFS4IoTFramework.Storage;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoT.CashManagement;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
@@ -47,41 +48,45 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashIn()");
 
-            var result = await Device.CashIn(new CashInCommandEvents(events), 
-                                             new CashInRequest(cashIn.Payload.Timeout), 
+            var result = await Device.CashIn(new CashInCommandEvents(Storage, events), 
+                                             new CashInRequest(cashIn.Header.Timeout ?? 0), 
                                              cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashIn() -> {result.CompletionCode}, {result.ErrorCode}");
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            CashInCompletion.PayloadData payload = new(result.CompletionCode,
-                                                       result.ErrorDescription,
-                                                       result.ErrorCode,
-                                                       result.CompletionCode == MessagePayload.CompletionCodeEnum.Success ? result.Unrecognized : null);
+            StorageCashCountsClass movement = null;
 
             if (result.ItemCounts?.Count > 0)
             {
+                movement = new(result.Unrecognized);
+
                 Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> itemAcceptedResult = new();
                 foreach (var itemCount in result.ItemCounts)
                 {
                     itemAcceptedResult.Add(itemCount.Key, new XFS4IoT.CashManagement.StorageCashCountClass(itemCount.Value.Fit, itemCount.Value.Unfit, itemCount.Value.Suspect, itemCount.Value.Counterfeit, itemCount.Value.Inked));
 
-                    if (CashManagement.CashInStatusManaged.CashCounts.ItemCounts.ContainsKey(itemCount.Key))
+                    if (CashManagement.CashInStatusManaged.CashCounts.ItemCounts.TryGetValue(itemCount.Key, out CashItemCountClass value))
                     {
-                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Counterfeit += itemCount.Value.Counterfeit;
-                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Fit += itemCount.Value.Fit;
-                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Inked += itemCount.Value.Inked;
-                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Suspect += itemCount.Value.Suspect;
-                        CashManagement.CashInStatusManaged.CashCounts.ItemCounts[itemCount.Key].Unfit += itemCount.Value.Unfit;
+                        value.Counterfeit += itemCount.Value.Counterfeit;
+                        value.Fit += itemCount.Value.Fit;
+                        value.Inked += itemCount.Value.Inked;
+                        value.Suspect += itemCount.Value.Suspect;
+                        value.Unfit += itemCount.Value.Unfit;
                     }
                     else
                     {
                         CashManagement.CashInStatusManaged.CashCounts.ItemCounts.Add(itemCount.Key, new(itemCount.Value));
                     }
                 }
-                payload.ExtendedProperties = itemAcceptedResult;
+                movement.ExtendedProperties = itemAcceptedResult;
             }
+
+            CashInCompletion.PayloadData payload = new(result.CompletionCode,
+                                                       result.ErrorDescription,
+                                                       result.ErrorCode,
+                                                       movement);
 
             CashManagement.CashInStatusManaged.CashCounts.Unrecognized = result.Unrecognized;
             CashManagement.StoreCashInStatus();

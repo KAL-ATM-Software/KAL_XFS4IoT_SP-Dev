@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.GetBankNoteTypes")]
     public sealed class GetBankNoteTypesCompletion : Completion<GetBankNoteTypesCompletion.PayloadData>
     {
@@ -34,7 +35,7 @@ namespace XFS4IoT.CashManagement.Completions
 
             /// <summary>
             /// An object listing which cash items the device is capable of handling and whether the cash items
-            /// are enabled for acceptance.
+            /// are enabled for acceptance. May be null if empty.
             /// </summary>
             [DataMember(Name = "items")]
             public Dictionary<string, BankNoteClass> Items { get; init; }

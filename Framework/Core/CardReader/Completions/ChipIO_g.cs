@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.ChipIO")]
     public sealed class ChipIOCompletion : Completion<ChipIOCompletion.PayloadData>
     {
@@ -46,7 +47,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```mediaJam``` - The card is jammed. Operator intervention is required.
             /// * ```noMedia``` - There is no card inside the device.
@@ -71,9 +72,8 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Identifies the protocol that is used to communicate with the chip. This field contains the same value
-            /// as the corresponding field in the payload. This field should be ignored in Memory Card dialogs and
-            /// will contain *notSupported* when returned for any Memory Card dialog.
+            /// Identifies the protocol that is used to communicate with the chip. This contains the same value
+            /// as the corresponding property in the payload. This property is null for Memory Card dialogs.
             /// 
             /// It can be one of the following:
             /// 
@@ -85,16 +85,16 @@ namespace XFS4IoT.CardReader.Completions
             ///   communicate with the chip.
             /// * ```chipTypeAPart4``` - The ISO 14443 (Part4) Type A contactless chip card protocol has been used to
             ///   communicate with the chip.
-            /// * ```chipTypeB``` - The ISO 14443 Type B contactless chip card protocol has been used to communicate 
+            /// * ```chipTypeB``` - The ISO 14443 Type B contactless chip card protocol has been used to communicate
             ///   with the chip.
-            /// * ```chipTypeNFC``` - The ISO 18092 (106/212/424kbps) contactless chip card protocol has been used to 
+            /// * ```chipTypeNFC``` - The ISO 18092 (106/212/424kbps) contactless chip card protocol has been used to
             ///   communicate with the chip.
             /// </summary>
             [DataMember(Name = "chipProtocol")]
             public ChipProtocolEnum? ChipProtocol { get; init; }
 
             /// <summary>
-            /// The Base64 encoded data received from the chip.
+            /// The Base64 encoded data received from the chip. This property is null if no data received.
             /// <example>bGs=</example>
             /// </summary>
             [DataMember(Name = "chipData")]

@@ -30,7 +30,7 @@ namespace XFS4IoTCoreTest.Response
         [TestMethod]
         public void UnserialiseStringToObject()
         {
-            var ReadCardJSON = @"{""payload"":{""track1"":{""status"":""ok"",""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""},""completionCode"":""success"",""errorDescription"":""OK""},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}";
+            var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""},""completionCode"":""success"",""errorDescription"":""OK""},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}";
 
             var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
             IsNotNull(assemblyName);

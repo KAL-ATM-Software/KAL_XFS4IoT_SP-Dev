@@ -16,24 +16,25 @@ namespace XFS4IoT.Crypto.Commands
 {
     //Original name = VerifyAuthentication
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Crypto.VerifyAuthentication")]
     public sealed class VerifyAuthenticationCommand : Command<VerifyAuthenticationCommand.PayloadData>
     {
-        public VerifyAuthenticationCommand(int RequestId, VerifyAuthenticationCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public VerifyAuthenticationCommand(int RequestId, VerifyAuthenticationCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Key = null, List<byte> Data = null, List<byte> VerifyData = null, string IvKey = null, List<byte> Iv = null, int? Padding = null, string Compression = null, CryptoMethodEnum? CryptoMethod = null, HashAlgorithmEnum? HashAlgorithm = null)
-                : base(Timeout)
+            public PayloadData(string Key = null, List<byte> Data = null, List<byte> VerifyData = null, string StoredKey = null, IvClass Iv = null, int? Padding = null, string Compression = null, CryptoMethodEnum? CryptoMethod = null, HashAlgorithmEnum? HashAlgorithm = null)
+                : base()
             {
                 this.Key = Key;
                 this.Data = Data;
                 this.VerifyData = VerifyData;
-                this.IvKey = IvKey;
+                this.StoredKey = StoredKey;
                 this.Iv = Iv;
                 this.Padding = Padding;
                 this.Compression = Compression;
@@ -68,29 +69,49 @@ namespace XFS4IoT.Crypto.Commands
             public List<byte> VerifyData { get; init; }
 
             /// <summary>
-            /// The name of a key used to decrypt the *iv* or the name of an Initialization Vector (IV).
+            /// This specifies the name of a key (usage 'I0') used as the Initialization Vector (IV).
+            /// This property is null if not required.
             /// 
-            /// If *iv* is included, this specifies the name of a key (usage 'K0') used to decrypt the *iv*.
-            /// 
-            /// If *iv* is omitted, this specifies the name of an IV (usage 'I0').
-            /// 
-            /// This is only used when the *key* usage is a symmetric encryption key and *cryptoMethod* is either CBC or
-            /// CFB.            
-            /// 
-            /// <example>IVKey</example>
+            /// <example>StoredIVKey</example>
             /// </summary>
-            [DataMember(Name = "ivKey")]
-            public string IvKey { get; init; }
+            [DataMember(Name = "storedKey")]
+            public string StoredKey { get; init; }
+
+            [DataContract]
+            public sealed class IvClass
+            {
+                public IvClass(string Key = null, List<byte> Value = null)
+                {
+                    this.Key = Key;
+                    this.Value = Value;
+                }
+
+                /// <summary>
+                /// The name of a key used to decrypt the *value*.
+                /// This specifies the name of a key (usage 'K0') used to decrypt the *value*.
+                /// This is only used when the *key* usage is 'D0' and *cryptoMethod* is either CBC or
+                /// CFB. if this property is null, *value* is used as the Initialization Vector.
+                /// 
+                /// <example>KeyToDecrypt</example>
+                /// </summary>
+                [DataMember(Name = "key")]
+                public string Key { get; init; }
+
+                /// <summary>
+                /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
+                /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+                /// </summary>
+                [DataMember(Name = "value")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Value { get; init; }
+
+            }
 
             /// <summary>
-            /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
-            /// 
-            /// If *iv* and *ivKey* properties are omitted the default IV is all zeroes.
-            /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+            /// Specifies the Initialization Vector. This property is null if *storedKey* is used.
             /// </summary>
             [DataMember(Name = "iv")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-            public List<byte> Iv { get; init; }
+            public IvClass Iv { get; init; }
 
             /// <summary>
             /// Specifies the padding character to use for symmetric key encryption.
@@ -102,7 +123,7 @@ namespace XFS4IoT.Crypto.Commands
 
             /// <summary>
             /// Specifies whether the data is to be compressed (blanks removed) before building the MAC. If this property is
-            /// omitted compression is not applied. Otherwise this property value is the  blank character (e.g. ' ' in ASCII
+            /// null, the compression is not applied. Otherwise this property value is the blank character (e.g. ' ' in ASCII
             /// or '@' in EBCDIC).
             /// <example>@</example>
             /// </summary>
@@ -124,10 +145,11 @@ namespace XFS4IoT.Crypto.Commands
             /// If the *key* usage is an asymmetric key pair signature usage (e.g. 'S0') this can be one of the
             /// following values:
             /// 
-            /// * ```rsassaPkcs1V15``` - Use the RSASSA-PKCS1-v1.5 algorithm. 
-            /// * ```rsassaPss``` - Use the RSASSA-PSS algorithm. 
+            /// * ```rsassaPkcs1V15``` - Use the RSASSA-PKCS1-v1.5 algorithm.
+            /// * ```rsassaPss``` - Use the RSASSA-PSS algorithm.
+            /// * ```na``` - Not applicable.
             /// 
-            /// If the *key* usage is a MAC usage (e.g. 'M0') this property should be omitted.
+            /// If the *key* usage is a MAC usage (e.g. 'M0') this property should be null.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
             public CryptoMethodEnum? CryptoMethod { get; init; }
@@ -147,10 +169,12 @@ namespace XFS4IoT.Crypto.Commands
             /// following values:
             /// 
             /// * ```sha1``` - The SHA1 digest algorithm.
-            /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004
+            /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004.
+            /// * ```na``` - Not applicable.
+            /// 
             /// [[Ref. crypto-1](#ref-crypto-1)] and FIPS 180-2 [[Ref. crypto-2](#ref-crypto-2)].
             /// 
-            /// If the *key* usage is a MAC usage (e.g. 'M0') this property should be omitted.)].
+            /// If the *key* usage is a MAC usage (e.g. 'M0') this property will be ignored.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmEnum? HashAlgorithm { get; init; }

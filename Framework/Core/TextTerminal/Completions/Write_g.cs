@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.Write")]
     public sealed class WriteCompletion : Completion<WriteCompletion.PayloadData>
     {
@@ -38,7 +39,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```characterSetsData``` - The character set(s) supported by the Service is inconsistent with *text*.
             /// </summary>
             [DataMember(Name = "errorCode")]

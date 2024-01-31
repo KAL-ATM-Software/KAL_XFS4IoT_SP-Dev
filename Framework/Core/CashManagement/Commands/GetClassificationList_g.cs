@@ -16,22 +16,13 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = GetClassificationList
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.GetClassificationList")]
-    public sealed class GetClassificationListCommand : Command<GetClassificationListCommand.PayloadData>
+    public sealed class GetClassificationListCommand : Command<MessagePayload>
     {
-        public GetClassificationListCommand(int RequestId, GetClassificationListCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetClassificationListCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

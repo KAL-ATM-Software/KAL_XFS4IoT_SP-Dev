@@ -24,6 +24,9 @@ namespace XFS4IoTServer
         public async Task CardActionEvent(XFS4IoT.CardReader.Events.CardActionEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.CardActionEvent(Payload));
 
+        public async Task MediaDetectedEvent(XFS4IoT.CardReader.Events.MediaDetectedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CardReader.Events.MediaDetectedEvent(Payload));
+
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }
         private ICardReaderDevice Device { get => ServiceProvider.Device.IsA<ICardReaderDevice>(); }

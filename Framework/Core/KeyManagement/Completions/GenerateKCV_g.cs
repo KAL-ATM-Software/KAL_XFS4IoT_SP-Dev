@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.GenerateKCV")]
     public sealed class GenerateKCVCompletion : Completion<GenerateKCVCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyNotFound``` - The specified key encryption key was not found.
             /// * ```keyNoValue``` - The specified key exists but has no value loaded.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
@@ -53,7 +54,7 @@ namespace XFS4IoT.KeyManagement.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Contains KCV data that can be used for verification of the key.
+            /// Contains KCV data that can be used for verification of the key. If the command fails, this will be null.
             /// <example>a2N2</example>
             /// </summary>
             [DataMember(Name = "kcv")]

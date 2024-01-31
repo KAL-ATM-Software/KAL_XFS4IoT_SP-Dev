@@ -135,21 +135,11 @@ namespace XFS4IoTFramework.Common
         }
 
         [Flags]
-        public enum CodelineFormatEnum
-        {
-            NotSupported = 0,
-            CMC7 = 1 << 0,
-            E13B = 1 << 1,
-            OCR = 1 << 2,
-        }
-
-        [Flags]
         public enum ImageSourceTypeEnum
         {
             NotSupported = 0,
             ImageFront = 1 << 0,
             ImageBack = 1 << 1,
-            CodeLine = 1 << 2,
         }
 
         [Flags]
@@ -194,7 +184,6 @@ namespace XFS4IoTFramework.Common
                                         ImageTypeEnum ImageTypes,
                                         FrontImageColorFormatEnum FrontImageColorFormats,
                                         BackImageColorFormatEnum BackImageColorFormats,
-                                        CodelineFormatEnum CodelineFormats,
                                         ImageSourceTypeEnum ImageSourceTypes,
                                         bool DispensePaper,
                                         string OSPrinter,
@@ -222,7 +211,6 @@ namespace XFS4IoTFramework.Common
             this.ImageTypes = ImageTypes;
             this.FrontImageColorFormats = FrontImageColorFormats;
             this.BackImageColorFormats = BackImageColorFormats;
-            this.CodelineFormats = CodelineFormats;
             this.ImageSourceTypes = ImageSourceTypes;
             this.DispensePaper = DispensePaper;
             this.OSPrinter = OSPrinter;
@@ -320,12 +308,6 @@ namespace XFS4IoTFramework.Common
         /// Specifies the back image color formats supported by this device
         /// </summary>
         public BackImageColorFormatEnum BackImageColorFormats { get; init; }
-
-        /// <summary>
-        /// Specifies the codeline format supported by this device
-        /// flags.
-        /// </summary>
-        public CodelineFormatEnum CodelineFormats { get; init; }
 
         /// <summary>
         /// Specifies the source for the read image command supported by this device

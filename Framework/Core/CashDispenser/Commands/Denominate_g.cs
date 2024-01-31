@@ -16,43 +16,29 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Denominate
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.Denominate")]
     public sealed class DenominateCommand : Command<DenominateCommand.PayloadData>
     {
-        public DenominateCommand(int RequestId, DenominateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DenominateCommand(int RequestId, DenominateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, DenominationClass Denomination = null, string Mix = null, int? TellerID = null)
-                : base(Timeout)
+            public PayloadData(DenominateRequestClass Request = null)
+                : base()
             {
-                this.Denomination = Denomination;
-                this.Mix = Mix;
-                this.TellerID = TellerID;
+                this.Request = Request;
             }
 
-            [DataMember(Name = "denomination")]
-            public DenominationClass Denomination { get; init; }
-
             /// <summary>
-            /// Mix algorithm or house mix table to be used as defined by mixes reported by
-            /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes). May be omitted if the request is entirely specified
-            /// by *counts*.
-            /// <example>mix1</example>
+            /// The request to be denominated.
             /// </summary>
-            [DataMember(Name = "mix")]
-            [DataTypes(Pattern = @"^mix[0-9A-Za-z]+$")]
-            public string Mix { get; init; }
-
-            /// <summary>
-            /// Only applies to Teller Dispensers. Identification of teller.
-            /// </summary>
-            [DataMember(Name = "tellerID")]
-            public int? TellerID { get; init; }
+            [DataMember(Name = "request")]
+            public DenominateRequestClass Request { get; init; }
 
         }
     }

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
@@ -42,11 +43,11 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```readFailed``` -\tModule was unable to complete the scan operation.
             /// * ```modeNotSupported``` -\t*mode* is not supported.
-            /// * ```formatNotSupported``` - The format specified is valid but not supported. 
+            /// * ```formatNotSupported``` - The format specified is valid but not supported.
             ///                         A list of the supported values can be obtained through the [dataFormats](#common.capabilities.completion.properties.biometric.dataformats).
             /// * ```keyNotFound``` -\tThe specified key name is not found.
             /// </summary>
@@ -55,7 +56,7 @@ namespace XFS4IoT.Biometric.Completions
 
             /// <summary>
             /// This property is used to indicate the biometric data type of the template data contained.
-            /// This property is not required if *dataTypes* property is omitted in the command payload.
+            /// This property is not required if *dataTypes* property is null.
             /// </summary>
             [DataMember(Name = "dataRead")]
             public List<BioDataClass> DataRead { get; init; }

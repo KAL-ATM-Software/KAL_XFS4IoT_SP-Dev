@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = Deplete
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.Deplete")]
     public sealed class DepleteCommand : Command<DepleteCommand.PayloadData>
     {
-        public DepleteCommand(int RequestId, DepleteCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DepleteCommand(int RequestId, DepleteCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<DepleteSourcesClass> DepleteSources = null, string CashUnitTarget = null)
-                : base(Timeout)
+            public PayloadData(List<DepleteSourcesClass> DepleteSources = null, string CashUnitTarget = null)
+                : base()
             {
                 this.DepleteSources = DepleteSources;
                 this.CashUnitTarget = CashUnitTarget;
@@ -53,7 +54,7 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// The number of items to be moved from the source storage unit. If 0, all items will be moved.
-                /// If non-zero, this must be equal to or less than the count of items reported for the storage unit specified by 
+                /// If non-zero, this must be equal to or less than the count of items reported for the storage unit specified by
                 /// *cashUnitSource*.
                 /// <example>100</example>
                 /// </summary>

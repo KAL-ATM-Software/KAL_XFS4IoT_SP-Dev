@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.ReplaceCertificate")]
     public sealed class ReplaceCertificateCompletion : Completion<ReplaceCertificateCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.
             /// * ```formatInvalid``` - The format of the message is invalid.
@@ -56,7 +57,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <example>UEtDUyAjNyB0aHVtYiBw ...</example>
             /// </summary>
             [DataMember(Name = "newCertificateData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}?$")]
             public List<byte> NewCertificateData { get; init; }
 
         }

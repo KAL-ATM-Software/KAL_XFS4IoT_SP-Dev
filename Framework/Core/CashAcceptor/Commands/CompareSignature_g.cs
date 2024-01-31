@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = CompareSignature
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.CompareSignature")]
     public sealed class CompareSignatureCommand : Command<CompareSignatureCommand.PayloadData>
     {
-        public CompareSignatureCommand(int RequestId, CompareSignatureCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CompareSignatureCommand(int RequestId, CompareSignatureCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<CashManagement.SignatureClass> ReferenceSignatures = null, List<CashManagement.SignatureClass> Signatures = null)
-                : base(Timeout)
+            public PayloadData(List<CashManagement.SignatureClass> ReferenceSignatures = null, List<CashManagement.SignatureClass> Signatures = null)
+                : base()
             {
                 this.ReferenceSignatures = ReferenceSignatures;
                 this.Signatures = Signatures;
@@ -38,8 +39,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// Array of Signature structures.
             /// 
             /// Each structure represents the signature corresponding to one orientation of a single reference banknote.
-            /// At least one orientation must be provided. If no orientations are provided (this array is missing or empty) 
-            /// the command returns an *invalidData* error.
+            /// At least one orientation must be provided.
             /// </summary>
             [DataMember(Name = "referenceSignatures")]
             public List<CashManagement.SignatureClass> ReferenceSignatures { get; init; }
@@ -47,8 +47,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// <summary>
             /// Array of Signature structures. Each structure represents a signature from the cash-in
             /// transactions, to be compared with the reference signatures in *referenceSignatures*.
-            /// At least one signature must be provided. If there are no signatures provided (this array is missing or 
-            /// empty) the command returns an *invalidData* error.
+            /// At least one signature must be provided.
             /// </summary>
             [DataMember(Name = "signatures")]
             public List<CashManagement.SignatureClass> Signatures { get; init; }

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
@@ -56,7 +57,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```readNotSupported``` - The device has no read capability.
@@ -89,10 +90,7 @@ namespace XFS4IoT.Printer.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// An object containing one or more key/value pairs where the key is a field name and the value is the
-            /// field value. If the field is an index field, the key must be specified as *fieldname[index]* where
-            /// index specifies the zero-based element of the index field. The field names and values can contain
-            /// UNICODE if supported by the service.
+            /// An object containing fields read. If no fields were read, this is null.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }

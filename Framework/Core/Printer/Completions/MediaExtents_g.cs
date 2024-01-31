@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCompletion : Completion<MediaExtentsCompletion.PayloadData>
     {
@@ -44,7 +45,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```extentNotSupported``` - The device cannot report extent(s).
             /// * ```mediaJammed``` - The media is jammed.

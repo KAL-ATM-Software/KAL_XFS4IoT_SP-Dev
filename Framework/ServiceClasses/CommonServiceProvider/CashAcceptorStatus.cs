@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XFS4IoT.Auxiliaries;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CashAcceptorStatusClass
+    public sealed class CashAcceptorStatusClass : StatusBase
     {
         public enum StackerItemsEnum
         {
@@ -21,6 +22,7 @@ namespace XFS4IoTFramework.Common
             NoCustomerAccess,
             AccessUnknown,
             NoItems,
+            NotSupported
         }
 
         public enum BanknoteReaderEnum
@@ -46,10 +48,10 @@ namespace XFS4IoTFramework.Common
                                        bool DropBox,
                                        Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementStatusClass.PositionStatusClass> Positions)
         {
-            this.IntermediateStacker = IntermediateStacker;
-            this.StackerItems = StackerItems;
-            this.BanknoteReader = BanknoteReader;
-            this.DropBox = DropBox;
+            intermediateStacker = IntermediateStacker;
+            stackerItems = StackerItems;
+            banknoteReader = BanknoteReader;
+            dropBox = DropBox;
             this.Positions = Positions;
         }
 
@@ -64,7 +66,19 @@ namespace XFS4IoTFramework.Common
         /// cannot be determined.
         /// * ```NotSupported``` - The physical device has no intermediate stacker.
         /// </summary>
-        public IntermediateStackerEnum IntermediateStacker { get; set; }
+        public IntermediateStackerEnum IntermediateStacker 
+        {
+            get { return intermediateStacker; }
+            set
+            {
+                if (intermediateStacker != value)
+                {
+                    intermediateStacker = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private IntermediateStackerEnum intermediateStacker = IntermediateStackerEnum.NotSupported;
 
         /// <summary>
         /// This field informs the application whether items on the intermediate stacker have been in customer access. 
@@ -78,7 +92,19 @@ namespace XFS4IoTFramework.Common
         /// * ```NoItems``` - There are no items on the intermediate stacker or the physical device has no intermediate 
         /// stacker.
         /// </summary>
-        public StackerItemsEnum StackerItems { get; set; }
+        public StackerItemsEnum StackerItems 
+        { 
+            get { return stackerItems; } 
+            set
+            {
+                if (stackerItems != value)
+                {
+                    stackerItems = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private StackerItemsEnum stackerItems = StackerItemsEnum.NotSupported;
 
         /// <summary>
         /// Supplies the state of the banknote reader. The following values are possible:
@@ -89,7 +115,19 @@ namespace XFS4IoTFramework.Common
         /// determined.
         /// * ```NotSupported``` - The physical device has no banknote reader.
         /// </summary>
-        public BanknoteReaderEnum BanknoteReader { get; set; }
+        public BanknoteReaderEnum BanknoteReader 
+        { 
+            get { return banknoteReader; }
+            set
+            {
+                if (banknoteReader != value)
+                {
+                    banknoteReader = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private BanknoteReaderEnum banknoteReader = BanknoteReaderEnum.NotSupported;
 
         /// <summary>
         /// The drop box is an area within the Cash Acceptor where items which have caused a problem during an operation 
@@ -97,7 +135,19 @@ namespace XFS4IoTFramework.Common
         /// If true, some items are stored in the drop box due to a cash-in transaction which caused a problem.
         /// If false, the drop box is empty or there is no drop box.
         /// </summary>
-        public bool DropBox { get; set; }
+        public bool DropBox 
+        {
+            get { return dropBox; }
+            set
+            {
+                if (dropBox != value)
+                {
+                    dropBox = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private bool dropBox = false;
 
         /// <summary>
         /// Array of structures for each position to which items can be dispensed or presented.

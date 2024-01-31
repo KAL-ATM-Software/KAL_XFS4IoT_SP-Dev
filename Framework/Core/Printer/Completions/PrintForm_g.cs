@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.PrintForm")]
     public sealed class PrintFormCompletion : Completion<PrintFormCompletion.PayloadData>
     {
@@ -66,7 +67,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formNotFound``` - The specified form definition cannot be found.
             /// * ```flushFail``` - The device was not able to flush data.

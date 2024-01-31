@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,10 +54,6 @@ namespace XFS4IoTServer
 
         #region CashManagement unsolicited events
 
-        public Task SafeDoorOpenEvent() => CashManagementService.SafeDoorOpenEvent();
-
-        public Task SafeDoorClosedEvent() => CashManagementService.SafeDoorClosedEvent();
-
         public Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches = null) => CashManagementService.ItemsTakenEvent(Position, AdditionalBunches);
 
         public Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position) => CashManagementService.ItemsInsertedEvent(Position);
@@ -68,18 +65,7 @@ namespace XFS4IoTServer
         #endregion
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
-
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
 
         public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(ReasonDescription);
 
@@ -104,21 +90,6 @@ namespace XFS4IoTServer
             return StorageService.StorageChangedEvent(paylod);
         }
 
-        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds)
-        {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = GetStorages(CashUnitIds);
-            return StorageService.StorageErrorEvent(new StorageErrorEvent.PayloadData(Failure switch
-            {
-                FailureEnum.Config => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Config,
-                FailureEnum.Empty => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Empty,
-                FailureEnum.Error => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Error,
-                FailureEnum.Full => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Full,
-                FailureEnum.Invalid => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Invalid,
-                FailureEnum.Locked => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.Locked,
-                _ => XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData.FailureEnum.NotConfigured,
-            },
-                                                                                     storages));
-        }
         private Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> CashUnitIds)
         {
             Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = new();
@@ -201,8 +172,8 @@ namespace XFS4IoTServer
                                                                                                 CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
                                                                                                 CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
                                                                                                 CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                                                                                CashStatusClass.AccuracyEnum.NotSupported => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.NotSupported,
-                                                                                                _ => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
+                                                                                                CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
+                                                                                                _ => null,
                                                                                             },
                                                                                             CashUnits[storageId].Unit.Status.ReplenishmentStatus switch
                                                                                             {

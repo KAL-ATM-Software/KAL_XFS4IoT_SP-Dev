@@ -83,7 +83,7 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.DispensePaperAsync()");
-            var result = await Device.DispensePaperAsync(new MediaPresentedCommandEvent(events),
+            var result = await Device.DispensePaperAsync(new DispensePaperCommandEvents(events),
                                                          new DispensePaperRequest(source, customSource),
                                                          cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.DispensePaperAsync() -> {result.CompletionCode}, {result.ErrorCode}");

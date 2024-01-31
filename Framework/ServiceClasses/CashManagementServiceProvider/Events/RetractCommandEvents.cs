@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,12 +13,8 @@ using XFS4IoTFramework.Storage;
 
 namespace XFS4IoTFramework.CashManagement
 {
-    public sealed class RetractCommandEvents : ItemErrorCommandEvents
+    public sealed class RetractCommandEvents(IStorageService storage, IRetractEvents events) : ItemErrorCommandEvents(events)
     {
-        public RetractCommandEvents(IRetractEvents events) :
-            base(events)
-        { }
-
         public enum IncompleteRetractReasonEnum
         {
             RetractFailure,
@@ -35,7 +30,7 @@ namespace XFS4IoTFramework.CashManagement
                 Dictionary<string, XFS4IoT.CashManagement.StorageCashInClass> itemMovementResult = null;
                 if (movements?.Count > 0)
                 {
-                    itemMovementResult = new();
+                    itemMovementResult = [];
                     foreach (var movement in movements)
                     {
                         Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
@@ -91,5 +86,9 @@ namespace XFS4IoTFramework.CashManagement
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(IncompleteRetractEvent));
         }
+
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds) => StorageErrorCommandEvent?.StorageErrorEvent(Failure, CashUnitIds);
+
+        private StorageErrorCommandEvent StorageErrorCommandEvent { get; init; } = new(storage, events);
     }
 }

@@ -16,26 +16,27 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = Replenish
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.Replenish")]
     public sealed class ReplenishCommand : Command<ReplenishCommand.PayloadData>
     {
-        public ReplenishCommand(int RequestId, ReplenishCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReplenishCommand(int RequestId, ReplenishCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Source = null, List<ReplenishTargetsClass> ReplenishTargets = null)
-                : base(Timeout)
+            public PayloadData(string Source = null, List<ReplenishTargetsClass> ReplenishTargets = null)
+                : base()
             {
                 this.Source = Source;
                 this.ReplenishTargets = ReplenishTargets;
             }
 
             /// <summary>
-            /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
             /// command) from which items are to be removed.
             /// <example>unit1</example>
             /// </summary>
@@ -53,7 +54,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// Object name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
                 /// command) to which items are to be moved.
                 /// <example>unit1</example>
                 /// </summary>
@@ -63,8 +64,8 @@ namespace XFS4IoT.CashAcceptor.Commands
 
                 /// <summary>
                 /// The number of items to be moved to the target storage unit. If 0, all items will be moved.
-                /// Any items which are removed from the 
-                /// source storage unit that are not of the correct currency and value for the target storage unit 
+                /// Any items which are removed from the
+                /// source storage unit that are not of the correct currency and value for the target storage unit
                 /// during execution of this command will be returned to the source storage unit.
                 /// <example>100</example>
                 /// </summary>

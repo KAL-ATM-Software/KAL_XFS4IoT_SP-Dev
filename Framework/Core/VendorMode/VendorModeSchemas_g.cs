@@ -30,7 +30,8 @@ namespace XFS4IoT.VendorMode
         }
 
         /// <summary>
-        /// Specifies the status of the Vendor Mode Service. Status will be one of the following
+        /// Specifies the status of the Vendor Mode Service. This property may be
+        /// null in events if the status did not change, otherwise will be one of the following
         /// values:
         /// 
         /// * ```online``` - The Vendor Mode service is available.
@@ -48,8 +49,10 @@ namespace XFS4IoT.VendorMode
         }
 
         /// <summary>
+        /// Specifies the service state. This property may be
+        /// null in events if the state did not change, otherwise will be one of the following
+        /// values:
         /// 
-        /// Specifies the service state as one of the following values:
         /// * ```enterPending``` - Vendor Mode enter request pending.
         /// * ```active``` - Vendor Mode active.
         /// * ```exitPending``` - Vendor Mode exit request pending.

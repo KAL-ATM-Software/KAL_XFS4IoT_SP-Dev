@@ -16,7 +16,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum OperatorSwitchStateEnum
     {
-        NotAvailable,
         Run,
         Maintenance,
         Supervisor
@@ -25,7 +24,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum TamperSensorStateEnum
     {
-        NotAvailable,
         On,
         Off
     }
@@ -33,7 +31,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum InternalTamperSensorStateEnum
     {
-        NotAvailable,
         On,
         Off
     }
@@ -41,7 +38,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum SeismicSensorStateEnum
     {
-        NotAvailable,
         On,
         Off
     }
@@ -49,7 +45,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum HeatSensorStateEnum
     {
-        NotAvailable,
         On,
         Off
     }
@@ -57,7 +52,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum ProximitySensorStateEnum
     {
-        NotAvailable,
         Present,
         NotPresent
     }
@@ -65,7 +59,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum AmbientLightSensorStateEnum
     {
-        NotAvailable,
         VeryDark,
         Dark,
         MediumLight,
@@ -76,7 +69,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum EnhancedAudioSensorStateEnum
     {
-        NotAvailable,
         Present,
         NotPresent
     }
@@ -84,15 +76,13 @@ namespace XFS4IoT.Auxiliaries
 
     public enum BootSwitchSensorStateEnum
     {
-        NotAvailable,
         Off,
         On
     }
 
 
-    public enum DisplaySensorStateEnum
+    public enum ConsumerDisplaySensorStateEnum
     {
-        NotAvailable,
         Off,
         On,
         DisplayError
@@ -101,7 +91,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum OperatorCallButtonSensorStateEnum
     {
-        NotAvailable,
         Off,
         On
     }
@@ -109,7 +98,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum HandsetSensorStateEnum
     {
-        NotAvailable,
         OnTheHook,
         OffTheHook
     }
@@ -117,7 +105,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum HeadsetMicrophoneSensorStateEnum
     {
-        NotAvailable,
         Present,
         NotPresent
     }
@@ -125,7 +112,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum FasciaMicrophoneSensorStateEnum
     {
-        NotAvailable,
         Off,
         On
     }
@@ -133,7 +119,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum SafeDoorStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -144,7 +129,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum VandalShieldStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -158,7 +142,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum CabinetFrontDoorStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -169,7 +152,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum CabinetRearDoorStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -180,7 +162,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum CabinetLeftDoorStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -191,7 +172,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum CabinetRightDoorStateEnum
     {
-        NotAvailable,
         Closed,
         Open,
         Locked,
@@ -202,7 +182,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum OpenClosedIndicatorStateEnum
     {
-        NotAvailable,
         Closed,
         Open
     }
@@ -224,11 +203,14 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the state of the Audio Indicator as one of the following values:
+        /// Specifies the state of the Audio Indicator as one of the following values. This may be null in
+        /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// 
         /// * ```on``` - Turn on the Audio Indicator.
         /// * ```off``` - Turn off the Audio Indicator.
         /// * ```continuous``` - Turn the Audio Indicator to continuous.
+        /// 
+        /// This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "rate")]
         public RateEnum? Rate { get; init; }
@@ -243,13 +225,16 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the Audio sound as one of the following values:
-        ///           
+        /// Specifies the Audio sound as one of the following values. This may be null in
+        /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
         /// * ```keypress``` - Sound a key click signal.
-        /// * ```exclamation``` - Sound an exclamation signal.  
+        /// * ```exclamation``` - Sound an exclamation signal.
         /// * ```warning``` - Sound a warning signal.
-        /// * ```error``` - Sound an error signal. 
+        /// * ```error``` - Sound an error signal.
         /// * ```critical``` - Sound a critical error signal.
+        /// 
+        /// This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "signal")]
         public SignalEnum? Signal { get; init; }
@@ -259,7 +244,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum HeatingStateEnum
     {
-        NotAvailable,
         Off,
         On
     }
@@ -267,7 +251,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum ConsumerDisplayBacklightStateEnum
     {
-        NotAvailable,
         Off,
         On
     }
@@ -275,31 +258,8 @@ namespace XFS4IoT.Auxiliaries
 
     public enum SignageDisplayStateEnum
     {
-        NotAvailable,
         Off,
         On
-    }
-
-
-    [DataContract]
-    public sealed class VolumeStateClass
-    {
-        public VolumeStateClass(int? VolumeLevel = null)
-        {
-            this.VolumeLevel = VolumeLevel;
-        }
-
-        /// <summary>
-        /// Specifies the value of the Volume Control, if available. The value of Volume Control is 
-        /// defined in an interval from 1 to 1000 where 1 is the lowest volume level and 1000 is the 
-        /// highest volume level. The interval is defined in logarithmic steps, e.g. a volume control 
-        /// on a radio. Note: The Volume Control property is vendor-specific and therefore it is not possible to 
-        /// guarantee a consistent actual volume level across different vendor hardware.
-        /// </summary>
-        [DataMember(Name = "volumeLevel")]
-        [DataTypes(Minimum = 1, Maximum = 1000)]
-        public int? VolumeLevel { get; init; }
-
     }
 
 
@@ -314,15 +274,28 @@ namespace XFS4IoT.Auxiliaries
             this.Recovered = Recovered;
         }
 
+        /// <summary>
+        /// The charge level of the UPS is low.
+        /// <example>true</example>
+        /// </summary>
         [DataMember(Name = "low")]
         public bool? Low { get; init; }
 
+        /// <summary>
+        /// The UPS is engaged.
+        /// </summary>
         [DataMember(Name = "engaged")]
         public bool? Engaged { get; init; }
 
+        /// <summary>
+        /// The UPS is powering the system.
+        /// </summary>
         [DataMember(Name = "powering")]
         public bool? Powering { get; init; }
 
+        /// <summary>
+        /// The UPS was engaged when the main power went off.
+        /// </summary>
         [DataMember(Name = "recovered")]
         public bool? Recovered { get; init; }
 
@@ -331,7 +304,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum AudibleAlarmStateEnum
     {
-        NotAvailable,
         On,
         Off
     }
@@ -339,7 +311,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum EnhancedAudioControlStateEnum
     {
-        NotAvailable,
         PublicAudioManual,
         PublicAudioAuto,
         PublicAudioSemiAuto,
@@ -351,7 +322,6 @@ namespace XFS4IoT.Auxiliaries
 
     public enum EnhancedMicrophoneControlStateEnum
     {
-        NotAvailable,
         PublicAudioManual,
         PublicAudioAuto,
         PublicAudioSemiAuto,
@@ -362,38 +332,9 @@ namespace XFS4IoT.Auxiliaries
 
 
     [DataContract]
-    public sealed class MicrophoneVolumeStateClass
-    {
-        public MicrophoneVolumeStateClass(bool? Available = null, int? VolumeLevel = null)
-        {
-            this.Available = Available;
-            this.VolumeLevel = VolumeLevel;
-        }
-
-        /// <summary>
-        /// Specifies whether the Microphone Volume Control is available.
-        /// </summary>
-        [DataMember(Name = "available")]
-        public bool? Available { get; init; }
-
-        /// <summary>
-        /// Specifies the value of the Microphone Volume Control, if available. The value of Volume Control is 
-        /// defined in an interval from 1 to 1000 where 1 is the lowest volume level and 1000 is the 
-        /// highest volume level. The interval is defined in logarithmic steps, e.g. a volume control 
-        /// on a radio. Note: The Microphone Volume Control property is vendor-specific and therefore it is 
-        /// not possible to guarantee a consistent actual volume level across different vendor hardware.
-        /// </summary>
-        [DataMember(Name = "volumeLevel")]
-        [DataTypes(Minimum = 1, Maximum = 1000)]
-        public int? VolumeLevel { get; init; }
-
-    }
-
-
-    [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, InternalTamperSensorStateEnum? InternalTamperSensor = null, SeismicSensorStateEnum? SeismicSensor = null, HeatSensorStateEnum? HeatSensor = null, ProximitySensorStateEnum? ProximitySensor = null, AmbientLightSensorStateEnum? AmbientLightSensor = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensor = null, BootSwitchSensorStateEnum? BootSwitchSensor = null, DisplaySensorStateEnum? DisplaySensor = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor = null, HandsetSensorStateEnum? HandsetSensor = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor = null, SafeDoorStateEnum? SafeDoor = null, VandalShieldStateEnum? VandalShield = null, CabinetFrontDoorStateEnum? CabinetFrontDoor = null, CabinetRearDoorStateEnum? CabinetRearDoor = null, CabinetLeftDoorStateEnum? CabinetLeftDoor = null, CabinetRightDoorStateEnum? CabinetRightDoor = null, OpenClosedIndicatorStateEnum? OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateEnum? Heating = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight = null, SignageDisplayStateEnum? SignageDisplay = null, VolumeStateClass Volume = null, UPSStateClass UPS = null, AudibleAlarmStateEnum? AudibleAlarm = null, EnhancedAudioControlStateEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl = null, MicrophoneVolumeStateClass MicrophoneVolume = null)
+        public StatusClass(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, InternalTamperSensorStateEnum? InternalTamperSensor = null, SeismicSensorStateEnum? SeismicSensor = null, HeatSensorStateEnum? HeatSensor = null, ProximitySensorStateEnum? ProximitySensor = null, AmbientLightSensorStateEnum? AmbientLightSensor = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensor = null, BootSwitchSensorStateEnum? BootSwitchSensor = null, ConsumerDisplaySensorStateEnum? ConsumerDisplaySensor = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor = null, HandsetSensorStateEnum? HandsetSensor = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor = null, SafeDoorStateEnum? SafeDoor = null, VandalShieldStateEnum? VandalShield = null, CabinetFrontDoorStateEnum? CabinetFrontDoor = null, CabinetRearDoorStateEnum? CabinetRearDoor = null, CabinetLeftDoorStateEnum? CabinetLeftDoor = null, CabinetRightDoorStateEnum? CabinetRightDoor = null, OpenClosedIndicatorStateEnum? OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateEnum? Heating = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight = null, SignageDisplayStateEnum? SignageDisplay = null, int? Volume = null, UPSStateClass UPS = null, AudibleAlarmStateEnum? AudibleAlarm = null, EnhancedAudioControlStateEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl = null, int? MicrophoneVolume = null)
         {
             this.OperatorSwitch = OperatorSwitch;
             this.TamperSensor = TamperSensor;
@@ -404,7 +345,7 @@ namespace XFS4IoT.Auxiliaries
             this.AmbientLightSensor = AmbientLightSensor;
             this.EnhancedAudioSensor = EnhancedAudioSensor;
             this.BootSwitchSensor = BootSwitchSensor;
-            this.DisplaySensor = DisplaySensor;
+            this.ConsumerDisplaySensor = ConsumerDisplaySensor;
             this.OperatorCallButtonSensor = OperatorCallButtonSensor;
             this.HandsetSensor = HandsetSensor;
             this.HeadsetMicrophoneSensor = HeadsetMicrophoneSensor;
@@ -455,8 +396,8 @@ namespace XFS4IoT.Auxiliaries
         [DataMember(Name = "bootSwitchSensor")]
         public BootSwitchSensorStateEnum? BootSwitchSensor { get; init; }
 
-        [DataMember(Name = "displaySensor")]
-        public DisplaySensorStateEnum? DisplaySensor { get; init; }
+        [DataMember(Name = "consumerDisplaySensor")]
+        public ConsumerDisplaySensorStateEnum? ConsumerDisplaySensor { get; init; }
 
         [DataMember(Name = "operatorCallButtonSensor")]
         public OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor { get; init; }
@@ -503,8 +444,17 @@ namespace XFS4IoT.Auxiliaries
         [DataMember(Name = "signageDisplay")]
         public SignageDisplayStateEnum? SignageDisplay { get; init; }
 
+        /// <summary>
+        /// Specifies the value of the Volume Control. The value of Volume Control is
+        /// defined in an interval from 1 to 1000 where 1 is the lowest volume level and 1000 is the
+        /// highest volume level. The interval is defined in logarithmic steps, e.g. a volume control
+        /// on a radio. Note: The Volume Control property is vendor-specific and therefore it is not possible to
+        /// guarantee a consistent actual volume level across different vendor hardware.
+        /// This property is null if not applicable.
+        /// </summary>
         [DataMember(Name = "volume")]
-        public VolumeStateClass Volume { get; init; }
+        [DataTypes(Minimum = 1, Maximum = 1000)]
+        public int? Volume { get; init; }
 
         [DataMember(Name = "UPS")]
         public UPSStateClass UPS { get; init; }
@@ -518,8 +468,17 @@ namespace XFS4IoT.Auxiliaries
         [DataMember(Name = "enhancedMicrophoneControl")]
         public EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl { get; init; }
 
+        /// <summary>
+        /// Specifies the value of the Microphone Volume Control. The value of Volume Control is
+        /// defined in an interval from 1 to 1000 where 1 is the lowest volume level and 1000 is the
+        /// highest volume level. The interval is defined in logarithmic steps, e.g. a volume control
+        /// on a radio. Note: The Microphone Volume Control property is vendor-specific and therefore it is
+        /// not possible to guarantee a consistent actual volume level across different vendor hardware.
+        /// This property is null if not applicable.
+        /// </summary>
         [DataMember(Name = "microphoneVolume")]
-        public MicrophoneVolumeStateClass MicrophoneVolume { get; init; }
+        [DataTypes(Minimum = 1, Maximum = 1000)]
+        public int? MicrophoneVolume { get; init; }
 
     }
 
@@ -572,7 +531,7 @@ namespace XFS4IoT.Auxiliaries
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(OperatorSwitchClass OperatorSwitch = null, bool? TamperSensor = null, bool? InternalTamperSensor = null, bool? SeismicSensor = null, bool? HeatSensor = null, bool? ProximitySensor = null, bool? AmbientLightSensor = null, EnhancedAudioSensorClass EnhancedAudioSensor = null, bool? BootSwitchSensor = null, bool? DisplaySensor = null, bool? OperatorCallButtonSensor = null, HandsetSensorClass HandsetSensor = null, HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor = null, bool? FasciaMicrophoneSensor = null, DoorCapsClass SafeDoor = null, VandalShieldClass VandalShield = null, DoorCapsClass FrontCabinet = null, DoorCapsClass RearCabinet = null, DoorCapsClass LeftCabinet = null, DoorCapsClass RightCabinet = null, bool? OpenCloseIndicator = null, bool? Audio = null, bool? Heating = null, bool? ConsumerDisplayBacklight = null, bool? SignageDisplay = null, int? Volume = null, UpsClass Ups = null, bool? AudibleAlarm = null, EnhancedAudioControlClass EnhancedAudioControl = null, EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState = null, int? MicrophoneVolume = null, AutoStartupModeClass AutoStartupMode = null)
+        public CapabilitiesClass(OperatorSwitchClass OperatorSwitch = null, bool? TamperSensor = null, bool? InternalTamperSensor = null, bool? SeismicSensor = null, bool? HeatSensor = null, bool? ProximitySensor = null, bool? AmbientLightSensor = null, EnhancedAudioSensorClass EnhancedAudioSensor = null, bool? BootSwitchSensor = null, bool? ConsumerDisplaySensor = null, bool? OperatorCallButtonSensor = null, HandsetSensorClass HandsetSensor = null, HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor = null, bool? FasciaMicrophoneSensor = null, DoorCapsClass CabinetDoor = null, DoorCapsClass SafeDoor = null, VandalShieldClass VandalShield = null, DoorCapsClass FrontCabinet = null, DoorCapsClass RearCabinet = null, DoorCapsClass LeftCabinet = null, DoorCapsClass RightCabinet = null, bool? OpenCloseIndicator = null, bool? Audio = null, bool? Heating = null, bool? ConsumerDisplayBacklight = null, bool? SignageDisplay = null, int? Volume = null, UpsClass Ups = null, bool? AudibleAlarm = null, EnhancedAudioControlClass EnhancedAudioControl = null, EnhancedMicrophoneControlClass EnhancedMicrophoneControl = null, int? MicrophoneVolume = null, AutoStartupModeClass AutoStartupMode = null)
         {
             this.OperatorSwitch = OperatorSwitch;
             this.TamperSensor = TamperSensor;
@@ -583,11 +542,12 @@ namespace XFS4IoT.Auxiliaries
             this.AmbientLightSensor = AmbientLightSensor;
             this.EnhancedAudioSensor = EnhancedAudioSensor;
             this.BootSwitchSensor = BootSwitchSensor;
-            this.DisplaySensor = DisplaySensor;
+            this.ConsumerDisplaySensor = ConsumerDisplaySensor;
             this.OperatorCallButtonSensor = OperatorCallButtonSensor;
             this.HandsetSensor = HandsetSensor;
             this.HeadsetMicrophoneSensor = HeadsetMicrophoneSensor;
             this.FasciaMicrophoneSensor = FasciaMicrophoneSensor;
+            this.CabinetDoor = CabinetDoor;
             this.SafeDoor = SafeDoor;
             this.VandalShield = VandalShield;
             this.FrontCabinet = FrontCabinet;
@@ -603,7 +563,7 @@ namespace XFS4IoT.Auxiliaries
             this.Ups = Ups;
             this.AudibleAlarm = AudibleAlarm;
             this.EnhancedAudioControl = EnhancedAudioControl;
-            this.EnhancedMicrophoneControlState = EnhancedMicrophoneControlState;
+            this.EnhancedMicrophoneControl = EnhancedMicrophoneControl;
             this.MicrophoneVolume = MicrophoneVolume;
             this.AutoStartupMode = AutoStartupMode;
         }
@@ -639,7 +599,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies which states the Operator Switch can be set to, if available.
+        /// Specifies which states the Operator Switch can be set to. If not available, this property is null.
         /// </summary>
         [DataMember(Name = "operatorSwitch")]
         public OperatorSwitchClass OperatorSwitch { get; init; }
@@ -719,7 +679,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies which modes the Audio Jack supports, if present.
+        /// Specifies which modes the Audio Jack supports. if present. Null if not applicable.
         /// </summary>
         [DataMember(Name = "enhancedAudioSensor")]
         public EnhancedAudioSensorClass EnhancedAudioSensor { get; init; }
@@ -733,8 +693,8 @@ namespace XFS4IoT.Auxiliaries
         /// <summary>
         /// Specifies whether the Consumer Display Sensor is available.
         /// </summary>
-        [DataMember(Name = "displaySensor")]
-        public bool? DisplaySensor { get; init; }
+        [DataMember(Name = "consumerDisplaySensor")]
+        public bool? ConsumerDisplaySensor { get; init; }
 
         /// <summary>
         /// Specifies whether the Operator Call Button is available. The Operator Call Button does not actually
@@ -781,7 +741,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies which modes the Handset supports, if present.
+        /// Specifies which modes the Handset supports if present. Null if not applicable.
         /// </summary>
         [DataMember(Name = "handsetSensor")]
         public HandsetSensorClass HandsetSensor { get; init; }
@@ -817,9 +777,9 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies whether the Microphone Jack is present, and if so, which modes it supports. If the 
-        /// *enhancedAudio* capability indicates the presence of a bi-directional Audio Jack then both sensors 
-        /// reference the same physical jack.
+        /// Specifies whether the Microphone Jack is present, and if so, which modes it supports. If the
+        /// *enhancedAudio* capability indicates the presence of a bi-directional Audio Jack then both sensors
+        /// reference the same physical jack. Null if not applicable.
         /// </summary>
         [DataMember(Name = "headsetMicrophoneSensor")]
         public HeadsetMicrophoneSensorClass HeadsetMicrophoneSensor { get; init; }
@@ -831,7 +791,15 @@ namespace XFS4IoT.Auxiliaries
         public bool? FasciaMicrophoneSensor { get; init; }
 
         /// <summary>
-        /// Specifies whether the Safe Door is available, and if so, which states it supports.
+        /// Specifies whether the Cabinet Door is available, and if so, which states it supports.
+        /// If there are multiple Cabinet Doors available, use appropriate position of Cabinet Door. *frontCabinet*,
+        /// *rearCabinet*, *leftCabinet* or *rightCabinet* properties. Null if not applicable.
+        /// </summary>
+        [DataMember(Name = "cabinetDoor")]
+        public DoorCapsClass CabinetDoor { get; init; }
+
+        /// <summary>
+        /// Specifies whether the Safe Door is available, and if so, which states it supports. Null if not applicable.
         /// </summary>
         [DataMember(Name = "safeDoor")]
         public DoorCapsClass SafeDoor { get; init; }
@@ -888,35 +856,35 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the states the Vandal Shield can support, if available.
+        /// Specifies the states the Vandal Shield can support, if available. Null if not applicable.
         /// </summary>
         [DataMember(Name = "vandalShield")]
         public VandalShieldClass VandalShield { get; init; }
 
         /// <summary>
-        /// Specifies whether at least one Front Cabinet Door is available, and if so, which states they 
-        /// support.
+        /// Specifies whether at least one Front Cabinet Door is available, and if so, which states they
+        /// support. Null if not applicable.
         /// </summary>
         [DataMember(Name = "frontCabinet")]
         public DoorCapsClass FrontCabinet { get; init; }
 
         /// <summary>
-        /// Specifies whether at least one Rear Cabinet Door is available, and if so, which states they 
-        /// support.
+        /// Specifies whether at least one Rear Cabinet Door is available, and if so, which states they
+        /// support. Null if not applicable.
         /// </summary>
         [DataMember(Name = "rearCabinet")]
         public DoorCapsClass RearCabinet { get; init; }
 
         /// <summary>
-        /// Specifies whether at least one left Cabinet Door is available, and if so, which states they 
-        /// support.
+        /// Specifies whether at least one left Cabinet Door is available, and if so, which states they
+        /// support. Null if not applicable.
         /// </summary>
         [DataMember(Name = "leftCabinet")]
         public DoorCapsClass LeftCabinet { get; init; }
 
         /// <summary>
-        /// Specifies whether at least one right Cabinet Door is available, and if so, which states they 
-        /// support.
+        /// Specifies whether at least one right Cabinet Door is available, and if so, which states they
+        /// support. Null if not applicable.
         /// </summary>
         [DataMember(Name = "rightCabinet")]
         public DoorCapsClass RightCabinet { get; init; }
@@ -996,7 +964,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies what states the UPS device supports.
+        /// Specifies what states the UPS device supports. Null if not applicable.
         /// </summary>
         [DataMember(Name = "ups")]
         public UpsClass Ups { get; init; }
@@ -1017,7 +985,7 @@ namespace XFS4IoT.Auxiliaries
             }
 
             /// <summary>
-            /// The Enhanced Audio Controller is supports Privacy Device activation/deactivation. The device is able 
+            /// The Enhanced Audio Controller is supports Privacy Device activation/deactivation. The device is able
             /// to report events to indicate Privacy Device activation/deactivation.
             /// </summary>
             [DataMember(Name = "headsetDetection")]
@@ -1033,32 +1001,32 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the modes the Enhanced Audio Controller can support. The Enhanced Audio Controller controls how 
-        /// private and public audio are broadcast when the headset is inserted into/removed from the audio jack and 
-        /// when the handset is off-hook/on-hook. In the following Privacy Device is used to refer to either the 
-        /// headset or handset.
+        /// Specifies the modes the Enhanced Audio Controller can support. The Enhanced Audio Controller controls how
+        /// private and public audio are broadcast when the headset is inserted into/removed from the audio jack and
+        /// when the handset is off-hook/on-hook. In the following Privacy Device is used to refer to either the
+        /// headset or handset. Null if not applicable.
         /// </summary>
         [DataMember(Name = "enhancedAudioControl")]
         public EnhancedAudioControlClass EnhancedAudioControl { get; init; }
 
         [DataContract]
-        public sealed class EnhancedMicrophoneControlStateClass
+        public sealed class EnhancedMicrophoneControlClass
         {
-            public EnhancedMicrophoneControlStateClass(bool? HeadsetDetection = null, bool? ModeControllable = null)
+            public EnhancedMicrophoneControlClass(bool? HeadsetDetection = null, bool? ModeControllable = null)
             {
                 this.HeadsetDetection = HeadsetDetection;
                 this.ModeControllable = ModeControllable;
             }
 
             /// <summary>
-            /// The Enhanced Microphone Controller supports Privacy Device activation/deactivation. The device is 
+            /// The Enhanced Microphone Controller supports Privacy Device activation/deactivation. The device is
             /// able to report events to indicate Privacy Device activation/deactivation.
             /// </summary>
             [DataMember(Name = "headsetDetection")]
             public bool? HeadsetDetection { get; init; }
 
             /// <summary>
-            /// The Enhanced Microphone Controller supports application control of the Privacy Device mode via 
+            /// The Enhanced Microphone Controller supports application control of the Privacy Device mode via
             /// [Auxiliaries.SetAuxiliaries](#auxiliaries.setauxiliaries).
             /// </summary>
             [DataMember(Name = "modeControllable")]
@@ -1067,16 +1035,16 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the modes the Enhanced Microphone Controller can support. The Enhanced Microphone Controller 
-        /// controls how private and public audio input are transmitted when the headset is inserted into/removed 
-        /// from the audio jack and when the handset is off-hook/on-hook. In the following Privacy Device is used 
-        /// to refer to either the headset or handset.
+        /// Specifies the modes the Enhanced Microphone Controller can support. The Enhanced Microphone Controller
+        /// controls how private and public audio input are transmitted when the headset is inserted into/removed
+        /// from the audio jack and when the handset is off-hook/on-hook. In the following Privacy Device is used
+        /// to refer to either the headset or handset. Null if not applicable.
         /// </summary>
-        [DataMember(Name = "enhancedMicrophoneControlState")]
-        public EnhancedMicrophoneControlStateClass EnhancedMicrophoneControlState { get; init; }
+        [DataMember(Name = "enhancedMicrophoneControl")]
+        public EnhancedMicrophoneControlClass EnhancedMicrophoneControl { get; init; }
 
         /// <summary>
-        /// Specifies the Microphone Volume Control increment/decrement value recommended by the vendor.
+        /// Specifies the Microphone Volume Control increment/decrement value recommended by the vendor. Null if not applicable.
         /// </summary>
         [DataMember(Name = "microphoneVolume")]
         [DataTypes(Minimum = 1, Maximum = 1000)]
@@ -1113,7 +1081,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies which modes of the auto start-up control are supported.
+        /// Specifies which modes of the auto start-up control are supported. Null if not applicable.
         /// </summary>
         [DataMember(Name = "autoStartupMode")]
         public AutoStartupModeClass AutoStartupMode { get; init; }
@@ -1135,14 +1103,14 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the year if relevant to the *mode*.
+        /// Specifies the year. This property is null if it is not relevant to the *mode*.
         /// </summary>
         [DataMember(Name = "year")]
         [DataTypes(Minimum = 1601, Maximum = 30827)]
         public int? Year { get; init; }
 
         /// <summary>
-        /// Specifies the month if relevant to the *mode*.
+        /// Specifies the month. This property is null if it is not relevant to the *mode*.
         /// </summary>
         [DataMember(Name = "month")]
         [DataTypes(Minimum = 1, Maximum = 12)]
@@ -1160,7 +1128,8 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies the day of the week, if relevant to the *mode*. The following values are possible:
+        /// Specifies the day of the week. This property is null if it is not relevant to the *mode*.
+        /// The following values are possible:
         /// 
         /// * ```Saturday``` - the day of the week is Saturday.
         /// * ```Sunday``` - the day of the week is Sunday.
@@ -1174,21 +1143,21 @@ namespace XFS4IoT.Auxiliaries
         public DayOfWeekEnum? DayOfWeek { get; init; }
 
         /// <summary>
-        /// Specifies the day if relevant to the *mode*.
+        /// Specifies the day. This property is null if it is not relevant to the *mode*.
         /// </summary>
         [DataMember(Name = "day")]
         [DataTypes(Minimum = 1, Maximum = 31)]
         public int? Day { get; init; }
 
         /// <summary>
-        /// Specifies the hour if relevant to the *mode*.
+        /// Specifies the hour. This property is null if it is not relevant to the *mode*.
         /// </summary>
         [DataMember(Name = "hour")]
         [DataTypes(Minimum = 0, Maximum = 23)]
         public int? Hour { get; init; }
 
         /// <summary>
-        /// Specifies the minute if relevant to the *mode*.
+        /// Specifies the minute. This property is null if it is not relevant to the *mode*.
         /// </summary>
         [DataMember(Name = "minute")]
         [DataTypes(Minimum = 0, Maximum = 59)]

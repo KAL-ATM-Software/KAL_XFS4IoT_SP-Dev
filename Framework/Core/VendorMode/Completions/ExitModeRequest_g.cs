@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.VendorMode.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorMode.ExitModeRequest")]
     public sealed class ExitModeRequestCompletion : Completion<ExitModeRequestCompletion.PayloadData>
     {

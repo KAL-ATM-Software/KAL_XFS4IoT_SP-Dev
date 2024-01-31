@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.RetractBinStatusEvent")]
     public sealed class RetractBinStatusEvent : UnsolicitedEvent<RetractBinStatusEvent.PayloadData>
     {

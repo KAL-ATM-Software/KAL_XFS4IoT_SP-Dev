@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.ExportRSADeviceSignedItem")]
     public sealed class ExportRSADeviceSignedItemCompletion : Completion<ExportRSADeviceSignedItemCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.KeyManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```noRSAKeyPair``` - The device does not have a private key.
             /// * ```accessDenied``` - The device is either not initialized or not ready for any vendor specific reason.
             /// * ```keyNotFound``` - The data item identified by name was not found.
@@ -65,7 +66,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// If a public key was requested then *selfSignature* contains the RSA signature of the public key
             /// exported, generated with the key-pair's private component.
             /// 
-            /// This should be omitted if not supported/required.
+            /// This should be null if not supported or required.
             /// <example>c2lnbmF0dXJlIG9mIHRo ...</example>
             /// </summary>
             [DataMember(Name = "selfSignature")]
@@ -74,7 +75,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <summary>
             /// Specifies the RSA signature of the data item exported.
             /// 
-            /// This should be omitted if not supported/required.
+            /// This should be null if not supported or required.
             /// <example>c2lnbmF0dXJlIG9mIHRo ...</example>
             /// </summary>
             [DataMember(Name = "signature")]

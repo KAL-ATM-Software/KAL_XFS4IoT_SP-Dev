@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,10 +69,6 @@ namespace XFS4IoTServer
                 }
             }
 
-            Logger.Log(Constants.DeviceClass, "CashAcceptorDev.GetPositionCapabilities()");
-            PositionCapabilities = Device.GetPositionCapabilities();
-            Logger.Log(Constants.DeviceClass, "CashAcceptorDev.GetPositionCapabilities()->");
-
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ReplenishTargets()");
             ReplenishTargets = Device.ReplenishTargets();
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ReplenishTargets()->");
@@ -116,6 +113,25 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashAcceptorStatus=");
 
             CommonService.CashAcceptorStatus.IsNotNull($"The device class set CashAcceptorStatus property to null. The device class must report device status.");
+            CommonService.CashAcceptorStatus.PropertyChanged += StatusChangedEventFowarder;
+            if (CommonService.CashAcceptorStatus.Positions is not null)
+            {
+                foreach (var position in CommonService.CashAcceptorStatus.Positions)
+                {
+                    if (position.Value.CashAcceptorPosition is null)
+                    {
+                        position.Value.CashAcceptorPosition = position.Key;
+                    }
+                    else
+                    {
+                        // The device class maybe sharing the same status object with different locations.
+                        // For example, output position, centor and default, then the PropertyChanged event is sent once property is changed.
+                        // Need to handle multiple position status in one PropertyChanged event.
+                        position.Value.CashAcceptorPosition |= position.Key;
+                    }
+                    position.Value.PropertyChanged += StatusChangedEventFowarder;
+                }
+            }
         }
 
         /// <summary>
@@ -137,13 +153,15 @@ namespace XFS4IoTServer
         public Dictionary<string, List<string>> DepleteCashUnitSources { get; init; }
 
         /// <summary>
-        /// Additional information about the use assigned to each position available in the device.
-        /// </summary>
-        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionCapabilitiesClass> PositionCapabilities { get; init; }
-
-        /// <summary>
         /// Which storage units can be specified as targets for a given source storage unit with the CashAcceptor.Replenish command
         /// </summary>
         public List<string> ReplenishTargets { get; init; }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

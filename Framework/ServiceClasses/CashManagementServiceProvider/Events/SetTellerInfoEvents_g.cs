@@ -21,7 +21,5 @@ namespace XFS4IoTFramework.CashManagement
             : base(connection, requestId)
         { }
 
-        public async Task TellerInfoChangedEvent(XFS4IoT.CashManagement.Events.TellerInfoChangedEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.CashManagement.Events.TellerInfoChangedEvent(requestId, Payload));
-
     }
 }

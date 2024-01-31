@@ -179,7 +179,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// <summary>
         /// Constants
         /// </summary>
-        public static readonly string regxKeyUsage = "^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-3]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$";
+        public static readonly string regxKeyUsage = "^B[0-3]$|^C0$|^D[0-3]$|^E[0-7]$|^I0$|^K[0-4]$|^M[0-8]$|^P[0-1]$|^S[0-2]$|^V[0-5]$|^[0-9][0-9]$";
         public static readonly string regxAlgorithm = "^[0-9ADRT]$";
         public static readonly string regxModeOfUse = "^[0-9BCDEGSTVXY]$";
         public static readonly string regxExportability = "^[0-9ESN]$";
@@ -187,5 +187,6 @@ namespace XFS4IoTFramework.KeyManagement
 
         public static readonly string regxVerifyKeyUsage = "^M[0-8]$|^S[0-2]$|^[0-9][0-9]$";
         public static readonly string regxVerifyModeOfUse = "^[0-9SV]$";
+        public static readonly string regxEMVKeyUsage = "^E[0-7]$|^[0-9][0-9]$";
     }
 }

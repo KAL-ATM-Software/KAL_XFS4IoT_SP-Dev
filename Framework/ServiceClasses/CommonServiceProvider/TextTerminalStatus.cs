@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class TextTerminalStatusClass
+    public sealed class TextTerminalStatusClass : StatusBase
     {
         public enum KeyboardEnum
         {
@@ -34,10 +34,10 @@ namespace XFS4IoTFramework.Common
                                        int DisplaySizeX, 
                                        int DisplaySizeY)
         {
-            this.Keyboard = Keyboard;
-            this.KeyLock = KeyLock;
-            this.DisplaySizeX = DisplaySizeX;
-            this.DisplaySizeY = DisplaySizeY;
+            keyboard = Keyboard;
+            keyLock = KeyLock;
+            displaySizeX = DisplaySizeX;
+            displaySizeY = DisplaySizeY;
         }
 
         
@@ -48,7 +48,19 @@ namespace XFS4IoTFramework.Common
         /// * ```off``` - The keyboard is not activated.
         /// * ```notAvailable``` - The keyboard is not available.
         /// </summary>
-        public KeyboardEnum Keyboard { get; set; }
+        public KeyboardEnum Keyboard 
+        {
+            get { return keyboard; }
+            set
+            {
+                if (keyboard != value)
+                {
+                    keyboard = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private KeyboardEnum keyboard = KeyboardEnum.NotAvailable;
 
         /// <summary>
         /// Specifies the state of the keyboard lock of the text terminal unit as one of the following values:
@@ -56,16 +68,52 @@ namespace XFS4IoTFramework.Common
         /// * ```off``` - The keyboard lock switch is not activated.
         /// * ```notAvailable``` - The keyboard lock switch is not available.
         /// </summary>
-        public KeyLockEnum KeyLock { get; set; }
+        public KeyLockEnum KeyLock 
+        { 
+            get { return keyLock; }
+            set
+            {
+                if (keyLock != value)
+                {
+                    keyLock = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private KeyLockEnum keyLock = KeyLockEnum.NotAvailable;
 
         /// <summary>
         /// Specifies the horizontal size of the display of the text terminal unit.
         /// </summary>
-        public int DisplaySizeX { get; set; }
+        public int DisplaySizeX 
+        {
+            get { return displaySizeX; } 
+            set
+            {
+                if (displaySizeX != value)
+                {
+                    displaySizeX = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int displaySizeX = -1;
 
         /// <summary>
         /// Specifies the vertical size of the display of the text terminal unit.
         /// </summary>
-        public int DisplaySizeY { get; set; }
+        public int DisplaySizeY 
+        {
+            get { return displaySizeY; }
+            set
+            {
+                if (displaySizeY != value)
+                {
+                    displaySizeY = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int displaySizeY = -1;
     }
 }

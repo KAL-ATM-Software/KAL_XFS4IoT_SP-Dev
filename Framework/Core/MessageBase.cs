@@ -43,11 +43,22 @@ namespace XFS4IoT
         /// </summary>
         /// <param name="RequestId">Request ID</param>
         /// <param name="Type">Type of the message, Command, Response, Events</param>
-        public MessageBase(int? RequestId, MessageHeader.TypeEnum Type)
+        /// <param name="Timeout">Timeout is only valid for commands.</param>
+        public MessageBase(int? RequestId, MessageHeader.TypeEnum Type, int? Timeout)
         {
             string attribNameValue = LookupMessageName(GetType());
+            string version = LookupMessageVersion(GetType());
             Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure in the {nameof(MessageBase)} constructor. { Type }");
-            this.Header = new MessageHeader(attribNameValue, RequestId, Type);
+            if (Type != MessageHeader.TypeEnum.Command)
+            {
+                //Timeout is only valid for commands.
+                Timeout = null;
+            }
+            else
+            {
+                Timeout ??= 0; // default
+            }
+            this.Header = new MessageHeader(attribNameValue, RequestId, version, Type, Timeout);
         }
 
         /// <summary>
@@ -89,6 +100,10 @@ namespace XFS4IoT
         internal static string LookupMessageName(Type type)
         {
             var attribNames = from attrib in type.CustomAttributes
+                              where attrib.AttributeType == typeof(CommandAttribute) || 
+                                    attrib.AttributeType == typeof(CompletionAttribute) || 
+                                    attrib.AttributeType == typeof(EventAttribute) ||
+                                    attrib.AttributeType == typeof(AcknowledgeAttribute)
                               from n in attrib.NamedArguments
                               where n.MemberName is "Name" && n.TypedValue.ArgumentType == typeof(string)
                               select n.TypedValue.Value;
@@ -99,6 +114,25 @@ namespace XFS4IoT
             return null;
         }
 
+        /// <summary>
+        /// LookupMessageVersion
+        /// Look up message version for commands and response with the custom attributes
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        internal static string LookupMessageVersion(Type type)
+        {
+            var attribNames = from attrib in type.CustomAttributes
+                              where attrib.AttributeType == typeof(XFS4VersionAttribute)
+                              from n in attrib.NamedArguments
+                              where n.MemberName is "Version" && n.TypedValue.ArgumentType == typeof(string)
+                              select n.TypedValue.Value;
+
+            foreach (string s in attribNames)
+                return s;
+
+            return null;
+        }
 
         internal static Dictionary<string, T> ParseExtendedProperties<T>(Dictionary<string, JsonElement> elements)
         {

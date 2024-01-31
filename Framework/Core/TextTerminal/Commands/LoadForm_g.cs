@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = LoadForm
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.LoadForm")]
     public sealed class LoadFormCommand : Command<LoadFormCommand.PayloadData>
     {
-        public LoadFormCommand(int RequestId, LoadFormCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public LoadFormCommand(int RequestId, LoadFormCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Definition = null, bool? Overwrite = null)
-                : base(Timeout)
+            public PayloadData(string Definition = null, bool? Overwrite = null)
+                : base()
             {
                 this.Definition = Definition;
                 this.Overwrite = Overwrite;

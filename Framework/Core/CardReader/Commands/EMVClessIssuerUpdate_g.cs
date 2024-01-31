@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = EMVClessIssuerUpdate
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.EMVClessIssuerUpdate")]
     public sealed class EMVClessIssuerUpdateCommand : Command<EMVClessIssuerUpdateCommand.PayloadData>
     {
-        public EMVClessIssuerUpdateCommand(int RequestId, EMVClessIssuerUpdateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public EMVClessIssuerUpdateCommand(int RequestId, EMVClessIssuerUpdateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<byte> Data = null)
-                : base(Timeout)
+            public PayloadData(List<byte> Data = null)
+                : base()
             {
                 this.Data = Data;
             }

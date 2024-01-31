@@ -16,19 +16,20 @@ namespace XFS4IoT.VendorMode.Commands
 {
     //Original name = Register
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "VendorMode.Register")]
     public sealed class RegisterCommand : Command<RegisterCommand.PayloadData>
     {
-        public RegisterCommand(int RequestId, RegisterCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public RegisterCommand(int RequestId, RegisterCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string AppName = null)
-                : base(Timeout)
+            public PayloadData(string AppName = null)
+                : base()
             {
                 this.AppName = AppName;
             }

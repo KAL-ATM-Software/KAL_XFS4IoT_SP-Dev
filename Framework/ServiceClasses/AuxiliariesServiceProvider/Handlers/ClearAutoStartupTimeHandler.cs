@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,10 +18,10 @@ namespace XFS4IoTFramework.Auxiliaries
     public partial class ClearAutoStartupTimeHandler
     {
 
-        private async Task<ClearAutoStartupTimeCompletion.PayloadData> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartupTimeCommand clearAutoStartupTime, CancellationToken cancel)
+        private async Task<ClearAutoStartUpTimeCompletion.PayloadData> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartUpTimeCommand clearAutoStartupTime, CancellationToken cancel)
         {
-            if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilities.AutoStartupModes.NotAvailable)
-                return new ClearAutoStartupTimeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
+            if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
+                return new ClearAutoStartUpTimeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
 
             Logger.Log(Constants.DeviceClass, "AuxiliariesDev.ClearAutoStartupTime()");
 
@@ -31,7 +29,7 @@ namespace XFS4IoTFramework.Auxiliaries
 
             Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.ClearAutoStartupTime() -> {result.CompletionCode}");
 
-            return new ClearAutoStartupTimeCompletion.PayloadData(result.CompletionCode,
+            return new ClearAutoStartUpTimeCompletion.PayloadData(result.CompletionCode,
                                                                   result.ErrorDescription);
         }
 

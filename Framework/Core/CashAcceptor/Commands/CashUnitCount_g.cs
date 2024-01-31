@@ -16,30 +16,31 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = CashUnitCount
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.CashUnitCount")]
     public sealed class CashUnitCountCommand : Command<CashUnitCountCommand.PayloadData>
     {
-        public CashUnitCountCommand(int RequestId, CashUnitCountCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CashUnitCountCommand(int RequestId, CashUnitCountCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<string> Units = null)
-                : base(Timeout)
+            public PayloadData(List<string> Units = null)
+                : base()
             {
                 this.Units = Units;
             }
 
             /// <summary>
-            /// Array containing the [identifiers](#storage.getstorage.completion.properties.storage) of the individual 
-            /// storage units to be counted. 
+            /// Array containing the [identifiers](#storage.getstorage.completion.properties.storage) of the individual
+            /// storage units to be counted.
             /// If an invalid storage unit is contained in this list, the command will fail with a *cashUnitError*
             /// *errorCode*.
             /// 
-            /// <example>'["unit1", "unit2"]'</example>
+            /// <example>["unit1", "unit2"]</example>
             /// </summary>
             [DataMember(Name = "units")]
             public List<string> Units { get; init; }

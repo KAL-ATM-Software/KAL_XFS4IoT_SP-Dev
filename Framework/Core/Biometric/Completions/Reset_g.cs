@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {

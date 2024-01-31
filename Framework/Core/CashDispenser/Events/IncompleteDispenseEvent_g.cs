@@ -16,6 +16,7 @@ namespace XFS4IoT.CashDispenser.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashDispenser.IncompleteDispenseEvent")]
     public sealed class IncompleteDispenseEvent : Event<IncompleteDispenseEvent.PayloadData>
     {
@@ -29,7 +30,7 @@ namespace XFS4IoT.CashDispenser.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, Dictionary<string, double> CashBox = null)
+            public PayloadData(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, DenominationCashBoxClass CashBox = null)
                 : base()
             {
                 this.Currencies = Currencies;
@@ -38,8 +39,8 @@ namespace XFS4IoT.CashDispenser.Events
             }
 
             /// <summary>
-            /// List of currency and amount combinations for denomination requests or output. There will be one entry for 
-            /// each currency in the denomination. This list can be omitted on a request if *values* specifies the entire request.
+            /// List of currency and amount combinations for denomination requests or output. There will be one entry for
+            /// each currency in the denomination.
             /// </summary>
             [DataMember(Name = "currencies")]
             public Dictionary<string, double> Currencies { get; init; }
@@ -54,11 +55,8 @@ namespace XFS4IoT.CashDispenser.Events
             [DataMember(Name = "values")]
             public Dictionary<string, int> Values { get; init; }
 
-            /// <summary>
-            /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
-            /// </summary>
             [DataMember(Name = "cashBox")]
-            public Dictionary<string, double> CashBox { get; init; }
+            public DenominationCashBoxClass CashBox { get; init; }
 
         }
 

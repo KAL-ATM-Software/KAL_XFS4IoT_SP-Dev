@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.ConfigureNoteReader")]
     public sealed class ConfigureNoteReaderCompletion : Completion<ConfigureNoteReaderCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - A cash-in transaction is active.

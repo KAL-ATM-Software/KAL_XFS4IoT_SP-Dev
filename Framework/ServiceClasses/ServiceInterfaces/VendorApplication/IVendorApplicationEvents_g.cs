@@ -16,9 +16,9 @@ namespace XFS4IoTFramework.VendorApplication
     public interface IVendorApplicationUnsolicitedEvents
     {
 
-        Task InterfaceChangedEvent(XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData Payload);
-
         Task VendorAppExitedEvent();
+
+        Task InterfaceChangedEvent(XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData Payload);
 
     }
 }

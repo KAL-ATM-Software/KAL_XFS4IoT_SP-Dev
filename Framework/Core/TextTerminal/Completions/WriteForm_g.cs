@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.WriteForm")]
     public sealed class WriteFormCompletion : Completion<WriteFormCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```formNotFound``` - The specified form definition cannot be found.
             /// * ```formInvalid``` - The specified form definition is invalid.
             /// * ```mediaOverflow``` - The form overflowed the media.

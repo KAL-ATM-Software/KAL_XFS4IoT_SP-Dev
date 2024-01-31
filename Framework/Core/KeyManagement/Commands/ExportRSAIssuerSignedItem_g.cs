@@ -16,36 +16,36 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ExportRSAIssuerSignedItem
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.ExportRSAIssuerSignedItem")]
     public sealed class ExportRSAIssuerSignedItemCommand : Command<ExportRSAIssuerSignedItemCommand.PayloadData>
     {
-        public ExportRSAIssuerSignedItemCommand(int RequestId, ExportRSAIssuerSignedItemCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ExportRSAIssuerSignedItemCommand(int RequestId, ExportRSAIssuerSignedItemCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, TypeDataItemToExportEnum? ExportItemType = null, string Name = null)
-                : base(Timeout)
+            public PayloadData(TypeDataItemToExportEnum? ExportItemType = null, string Name = null)
+                : base()
             {
                 this.ExportItemType = ExportItemType;
                 this.Name = Name;
             }
 
-            /// <summary>
-            /// Defines the type of data item to be exported from the device. 
-            /// </summary>
             [DataMember(Name = "exportItemType")]
             public TypeDataItemToExportEnum? ExportItemType { get; init; }
 
             /// <summary>
             /// Specifies the name of the public key to be exported.
             /// 
-            /// The private/public key pair was installed during manufacture; see section [Default Keys and Security 
-            /// Item loaded during manufacture](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity) 
+            /// The private/public key pair was installed during manufacture; see section [Default Keys and Security
+            /// Item loaded during manufacture](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity)
             /// for a definition of these default keys.
+            /// If this is null, then the default EPP public key that is used for symmetric key encryption
+            /// is exported.
             /// <example>PKey01</example>
             /// </summary>
             [DataMember(Name = "name")]

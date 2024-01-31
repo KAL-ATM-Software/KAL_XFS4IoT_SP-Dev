@@ -16,6 +16,7 @@ namespace XFS4IoT.VendorMode.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "VendorMode.ModeExitedEvent")]
     public sealed class ModeExitedEvent : UnsolicitedEvent<ModeExitedEvent.PayloadData>
     {
@@ -37,7 +38,7 @@ namespace XFS4IoT.VendorMode.Events
 
             /// <summary>
             /// List of applications that have not shut down.
-            /// <example>'["Application1", "Application2"]'</example>
+            /// <example>["Application1", "Application2"]</example>
             /// </summary>
             [DataMember(Name = "connectedApplications")]
             public List<string> ConnectedApplications { get; init; }

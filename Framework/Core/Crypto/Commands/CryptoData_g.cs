@@ -16,22 +16,23 @@ namespace XFS4IoT.Crypto.Commands
 {
     //Original name = CryptoData
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCommand : Command<CryptoDataCommand.PayloadData>
     {
-        public CryptoDataCommand(int RequestId, CryptoDataCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CryptoDataCommand(int RequestId, CryptoDataCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Key = null, string IvKey = null, List<byte> Iv = null, int? Padding = null, string ModeOfUse = null, CryptoMethodEnum? CryptoMethod = null, List<byte> Data = null)
-                : base(Timeout)
+            public PayloadData(string Key = null, string StoredKey = null, IvClass Iv = null, int? Padding = null, string ModeOfUse = null, CryptoMethodEnum? CryptoMethod = null, List<byte> Data = null)
+                : base()
             {
                 this.Key = Key;
-                this.IvKey = IvKey;
+                this.StoredKey = StoredKey;
                 this.Iv = Iv;
                 this.Padding = Padding;
                 this.ModeOfUse = ModeOfUse;
@@ -49,29 +50,49 @@ namespace XFS4IoT.Crypto.Commands
             public string Key { get; init; }
 
             /// <summary>
-            /// The name of a key used to decrypt the *iv* or the name of an Initialization Vector (IV).
+            /// This specifies the name of a key (usage 'I0') used as the Initialization Vector (IV).
+            /// This property is null if not required.
             /// 
-            /// If *iv* is included, this specifies the name of a key (usage 'K0') used to decrypt the *iv*.
-            /// 
-            /// If *iv* is omitted, this specifies the name of an IV (usage 'I0').
-            /// 
-            /// This is only used when the *key* usage is a symmetric encryption key and *cryptoMethod* is either CBC or
-            /// CFB.            
-            /// 
-            /// <example>IVKey</example>
+            /// <example>StoredIVKey</example>
             /// </summary>
-            [DataMember(Name = "ivKey")]
-            public string IvKey { get; init; }
+            [DataMember(Name = "storedKey")]
+            public string StoredKey { get; init; }
+
+            [DataContract]
+            public sealed class IvClass
+            {
+                public IvClass(string Key = null, List<byte> Value = null)
+                {
+                    this.Key = Key;
+                    this.Value = Value;
+                }
+
+                /// <summary>
+                /// The name of a key used to decrypt the *value*.
+                /// This specifies the name of a key (usage 'K0') used to decrypt the *value*.
+                /// This is only used when the *key* usage is 'D0' and *cryptoMethod* is either CBC or
+                /// CFB. if this property is null, *value* is used as the Initialization Vector.
+                /// 
+                /// <example>KeyToDecrypt</example>
+                /// </summary>
+                [DataMember(Name = "key")]
+                public string Key { get; init; }
+
+                /// <summary>
+                /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
+                /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+                /// </summary>
+                [DataMember(Name = "value")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Value { get; init; }
+
+            }
 
             /// <summary>
-            /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
-            /// 
-            /// If *iv* and *ivKey* properties are omitted the default IV is all zeroes.
-            /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+            /// Specifies the Initialization Vector. This property is null if *storedKey* is used.
             /// </summary>
             [DataMember(Name = "iv")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-            public List<byte> Iv { get; init; }
+            public IvClass Iv { get; init; }
 
             /// <summary>
             /// Specifies the padding character to use for symmetric key encryption.
@@ -85,12 +106,12 @@ namespace XFS4IoT.Crypto.Commands
             /// The *key* [Mode of Use](#common.capabilities.completion.properties.crypto.cryptoattributes.d0.d.d)
             /// qualifier.
             /// 
-            /// If the *key* Mode Of Use is 'B', this qualifies the Mode of Use as one of the following values: 
+            /// If the *key* Mode Of Use is 'B', this qualifies the Mode of Use as one of the following values:
             /// 
-            /// * ```D``` - Decrypt / Unwrap Only. 
-            /// * ```E``` - Encrypt / Wrap Only. 
+            /// * ```D``` - Decrypt / Unwrap Only.
+            /// * ```E``` - Encrypt / Wrap Only.
             /// 
-            /// If the *key* Mode of Use is not 'B', this should be omitted.
+            /// If the *key* Mode of Use is not 'B', this should be null.
             /// <example>E</example>
             /// </summary>
             [DataMember(Name = "modeOfUse")]

@@ -18,15 +18,6 @@ namespace XFS4IoTServer
     public partial class BiometricServiceClass : IBiometricServiceClass
     {
 
-        public async Task PresentSubjectEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Biometric.Events.PresentSubjectEvent());
-
-        public async Task SubjectDetectedEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Biometric.Events.SubjectDetectedEvent());
-
-        public async Task RemoveSubjectEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Biometric.Events.RemoveSubjectEvent());
-
         public async Task SubjectRemovedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Biometric.Events.SubjectRemovedEvent());
 

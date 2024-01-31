@@ -282,24 +282,41 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class WriteCardRequest
     {
+        public enum DestinationEnum
+        {
+            Track1,
+            Track2,
+            Track3,
+            Track1Front,
+            Track1JIS,
+            Track3JIS,
+        }
+
         /// <summary>
         /// Contains the data to write tracks with method
         /// </summary>
         public class CardData
         {
+            public enum WriteMethodEnum
+            {
+                Auto,
+                Loco,
+                Hico
+            }
+
             /// <summary>
             /// CardDataToWrite
             /// </summary>
             /// <param name="Data">Data to write to the track</param>
             /// <param name="WriteMethod">The coercivity to write data</param>
-            public CardData(List<byte> Data = null,
-                            WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum? WriteMethod = null)
+            public CardData(WriteMethodEnum WriteMethod,
+                            List<byte> Data = null)
             {
                 this.Data = Data;
                 this.WriteMethod = WriteMethod;
             }
 
-            public WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum? WriteMethod { get; init; }
+            public WriteMethodEnum WriteMethod { get; init; }
             public List<byte> Data { get; init; }
         }
 
@@ -307,12 +324,12 @@ namespace XFS4IoTFramework.CardReader
         /// WriteCardDataRequest
         /// </summary>
         /// <param name="DataToWrite">Card data to write with destination. i.e. track1, 2 or 3</param>
-        public WriteCardRequest(Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, CardData> DataToWrite)
+        public WriteCardRequest(Dictionary<DestinationEnum, CardData> DataToWrite)
         {
             this.DataToWrite = DataToWrite;
         }
 
-        public Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, CardData> DataToWrite { get; init; }
+        public Dictionary<DestinationEnum, CardData> DataToWrite { get; init; }
     }
 
     /// <summary>
@@ -938,7 +955,7 @@ namespace XFS4IoTFramework.CardReader
                 /// <summary>
                 /// Represents the numeric value of currency code as per ISO 4217.
                 /// </summary>
-                public string CurrencyCode { get; init; }
+                public int CurrencyCode { get; init; }
 
                 /// <summary>
                 /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. The application should use this
@@ -951,7 +968,7 @@ namespace XFS4IoTFramework.CardReader
                                         int HoldTime,
                                         ValueQualifierEnum ValueQualifier,
                                         string Value,
-                                        string CurrencyCode,
+                                        int CurrencyCode,
                                         string LanguagePreferenceData)
                 {
                     this.MessageId = MessageId;

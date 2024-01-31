@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * GetAutoStartupTime_g.cs uses automatically generated parts.
+ * GetAutoStartUpTime_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,24 +14,15 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.Auxiliaries.Commands
 {
-    //Original name = GetAutoStartupTime
+    //Original name = GetAutoStartUpTime
     [DataContract]
-    [Command(Name = "Auxiliaries.GetAutoStartupTime")]
-    public sealed class GetAutoStartupTimeCommand : Command<GetAutoStartupTimeCommand.PayloadData>
+    [XFS4Version(Version = "2.0")]
+    [Command(Name = "Auxiliaries.GetAutoStartUpTime")]
+    public sealed class GetAutoStartUpTimeCommand : Command<MessagePayload>
     {
-        public GetAutoStartupTimeCommand(int RequestId, GetAutoStartupTimeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetAutoStartUpTimeCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

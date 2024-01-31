@@ -16,25 +16,26 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = GetReplenishTarget
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.GetReplenishTarget")]
     public sealed class GetReplenishTargetCommand : Command<GetReplenishTargetCommand.PayloadData>
     {
-        public GetReplenishTargetCommand(int RequestId, GetReplenishTargetCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetReplenishTargetCommand(int RequestId, GetReplenishTargetCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Source = null)
-                : base(Timeout)
+            public PayloadData(string Source = null)
+                : base()
             {
                 this.Source = Source;
             }
 
             /// <summary>
-            /// The name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+            /// The name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
             /// command) which would be used as the source of the replenishment operation.
             /// <example>unit2</example>
             /// </summary>

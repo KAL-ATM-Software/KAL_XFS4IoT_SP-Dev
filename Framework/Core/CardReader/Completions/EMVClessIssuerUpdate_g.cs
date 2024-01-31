@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.EMVClessIssuerUpdate")]
     public sealed class EMVClessIssuerUpdateCompletion : Completion<EMVClessIssuerUpdateCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noMedia``` - The card was removed before completion of the read action.
             /// * ```invalidMedia``` - No track or chip found or card tapped cannot be used with this command (e.g.
@@ -53,10 +54,6 @@ namespace XFS4IoT.CardReader.Completions
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
-            /// <summary>
-            /// Contains the BER-TLV formatted data read from the chip. This will be omitted if no data has been
-            /// returned.
-            /// </summary>
             [DataMember(Name = "chip")]
             public EMVClessIssuerUpdateEMVClessTxOutputDataClass Chip { get; init; }
 

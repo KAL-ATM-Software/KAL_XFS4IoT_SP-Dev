@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.DeviceLockControl")]
     public sealed class DeviceLockControlCompletion : Completion<DeviceLockControlCompletion.PayloadData>
     {
@@ -41,13 +42,13 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```invalidCashUnit``` - The storage unit type specified is invalid.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
-            /// * ```deviceLockFailure``` - The device and/or the storage units specified could not be locked/unlocked, 
-            /// e.g., the lock action could not be performed because the storage unit specified to be locked had been 
+            /// * ```deviceLockFailure``` - The device and/or the storage units specified could not be locked/unlocked,
+            /// e.g., the lock action could not be performed because the storage unit specified to be locked had been
             /// removed.
             /// </summary>
             [DataMember(Name = "errorCode")]

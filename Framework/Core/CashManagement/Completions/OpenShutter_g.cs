@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.OpenShutter")]
     public sealed class OpenShutterCompletion : Completion<OpenShutterCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```shutterNotOpen``` - Shutter failed to open.

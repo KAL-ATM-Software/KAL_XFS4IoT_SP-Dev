@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.PreparePresent")]
     public sealed class PreparePresentCompletion : Completion<PreparePresentCompletion.PayloadData>
     {
@@ -26,11 +27,10 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.OutputPositionEnum? Position = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.Position = Position;
             }
 
             public enum ErrorCodeEnum
@@ -42,20 +42,17 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for 
+            /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for
             /// this command.
             /// * ```positionNotEmpty``` - The input or output position is not empty.
             /// * ```noItems``` - There were no items to present at the specified position.
-            /// * ```cashUnitError``` - A storage unit caused a problem. A 
+            /// * ```cashUnitError``` - A storage unit caused a problem. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
-
-            [DataMember(Name = "position")]
-            public CashManagement.OutputPositionEnum? Position { get; init; }
 
         }
     }

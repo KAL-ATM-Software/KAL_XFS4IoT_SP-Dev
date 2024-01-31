@@ -19,14 +19,12 @@ namespace XFS4IoT.Camera
         Ok,
         High,
         Full,
-        NotSupported,
         Unknown
     }
 
 
     public enum CamerasStateEnum
     {
-        NotSupported,
         Ok,
         Inop,
         Unknown
@@ -87,12 +85,12 @@ namespace XFS4IoT.Camera
 
         /// <summary>
         /// Specifies the state of the recording media of the cameras as one of the following. For a device which 
-        /// stores pictures on a hard disk drive or other general-purpose storage, this will be *notSupported*.
+        /// stores pictures on a hard disk drive or other general-purpose storage, the relevant property will be null.
+        /// This property may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// 
         /// * ```ok``` - The media is in a good state.
         /// * ```high``` - The media is almost full (threshold).
         /// * ```full``` - The media is full.
-        /// * ```notSupported``` - The device does not support sensing the media level.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the media cannot be determined.
         /// </summary>
         [DataMember(Name = "media")]
@@ -140,9 +138,9 @@ namespace XFS4IoT.Camera
         }
 
         /// <summary>
-        /// Specifies the state of the cameras as one of the following.
+        /// Specifies the state of the cameras as one of the following. The relevant property will be null if not
+        /// supported and this property may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// 
-        /// * ```notSupported``` - The camera is not supported.
         /// * ```ok``` - The camera is in a good state.
         /// * ```inoperative``` - The camera is inoperative.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the camera cannot be determined.
@@ -195,7 +193,9 @@ namespace XFS4IoT.Camera
 
         /// <summary>
         /// Specifies the number of pictures stored on the recording media of the cameras. For a device which 
-        /// stores pictures on a hard disk drive or other general-purpose storage, the value of the property should be 0.
+        /// stores pictures on a hard disk drive or other general-purpose storage, the value of the relevant camera's
+        /// property is 0.
+        /// Properties may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// </summary>
         [DataMember(Name = "pictures")]
         public PicturesClass Pictures { get; init; }
@@ -206,27 +206,13 @@ namespace XFS4IoT.Camera
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeEnum? Type = null, CamerasClass Cameras = null, int? MaxPictures = null, CamDataClass CamData = null, int? MaxDataLength = null, bool? PictureFile = null)
+        public CapabilitiesClass(CamerasClass Cameras = null, int? MaxPictures = null, CamDataClass CamData = null, int? MaxDataLength = null)
         {
-            this.Type = Type;
             this.Cameras = Cameras;
             this.MaxPictures = MaxPictures;
             this.CamData = CamData;
             this.MaxDataLength = MaxDataLength;
-            this.PictureFile = PictureFile;
         }
-
-        public enum TypeEnum
-        {
-            Cam
-        }
-
-        /// <summary>
-        /// Specifies the type of the camera device.
-        /// * ```cam``` - Camera system.
-        /// </summary>
-        [DataMember(Name = "type")]
-        public TypeEnum? Type { get; init; }
 
         [DataContract]
         public sealed class CamerasClass
@@ -276,7 +262,8 @@ namespace XFS4IoT.Camera
         public CamerasClass Cameras { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of pictures that can be stored on the recording media.
+        /// Specifies the maximum number of pictures that can be stored on the recording media. This property is null if not 
+        /// applicable.
         /// </summary>
         [DataMember(Name = "maxPictures")]
         [DataTypes(Minimum = 0)]
@@ -307,27 +294,19 @@ namespace XFS4IoT.Camera
         }
 
         /// <summary>
-        /// Specifies whether the methods are supported for adding data to the picture. If all methods are false, no data can be 
+        /// Specifies whether the methods are supported for adding data to the picture. If null, no data can be 
         /// added to the picture.
         /// </summary>
         [DataMember(Name = "camData")]
         public CamDataClass CamData { get; init; }
 
         /// <summary>
-        /// Specifies the maximum length of the data that is displayed on the photo. Omitted if data cannot be manually 
-        /// added to the picture.
+        /// Specifies the maximum length of the data that is displayed on the photo. This property is null if not 
+        /// applicable.
         /// </summary>
         [DataMember(Name = "maxDataLength")]
         [DataTypes(Minimum = 0)]
         public int? MaxDataLength { get; init; }
-
-        /// <summary>
-        /// Specifies whether the parameter [Camera.TakePicture.pictureFile](#camera.takepicture.command.properties.picturefile)
-        /// is supported.
-        /// supported.
-        /// </summary>
-        [DataMember(Name = "pictureFile")]
-        public bool? PictureFile { get; init; }
 
     }
 

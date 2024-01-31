@@ -12,6 +12,7 @@ using XFS4IoT;
 using System.Threading.Tasks;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.TextTerminal;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -54,13 +55,20 @@ namespace XFS4IoTServer
 
             var result = Device.GetKeyDetail();
 
-            Logger.Log(Constants.DeviceClass, $"TextTerminalDev.GetKeyDetail() -> {result.CompletionCode}");
-
-            if(result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
+            string keys = string.Empty;
+            if (result.Keys is not null)
             {
-                // Store the Keys and CommandKeys
-                SupportedKeys = new(result.Keys, result.CommandKeys ?? new());
+                keys = string.Join(",", [..result.Keys]);
             }
+            string commandKeys = string.Empty;
+            if (result.CommandKeys is not null)
+            {
+                commandKeys = string.Join(",", [..result.CommandKeys.Keys]);
+            }
+            Logger.Log(Constants.DeviceClass, $"TextTerminalDev.GetKeyDetail() -> Keys:{keys}, CommandKeys:{commandKeys}");
+
+            // Store the Keys and CommandKeys
+            SupportedKeys = new(result.Keys ?? [], result.CommandKeys ?? []);
         }
 
         private void GetStatus()
@@ -80,5 +88,12 @@ namespace XFS4IoTServer
 
             CommonService.TextTerminalCapabilities.IsNotNull($"The device class set TextTerminalCapabilities property to null. The device class must report device capabilities.");
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

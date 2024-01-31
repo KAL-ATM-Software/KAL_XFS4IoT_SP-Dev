@@ -40,7 +40,7 @@ namespace XFS4IoTFramework.CashDispenser
                                                         $"No reject units supported for this device.");
             }
 
-            var result = await Device.RejectAsync(new ItemInfoAvailableCommandEvent(events), cancel);
+            var result = await Device.RejectAsync(new RejectCommandEvents(Storage, events), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.RejectAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

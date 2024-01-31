@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.GetDeviceLockStatus")]
     public sealed class GetDeviceLockStatusCompletion : Completion<GetDeviceLockStatusCompletion.PayloadData>
     {
@@ -46,9 +47,9 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// 
             /// * ```lock``` - The device is physically locked.
             /// * ```unlock``` - The device is physically unlocked.
-            /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the 
+            /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the
             /// device cannot be determined.
-            /// * ```lockNotSupported``` - The Service does not support reporting the physical lock/unlock status of the 
+            /// * ```lockNotSupported``` - The Service does not support reporting the physical lock/unlock status of the
             /// device.
             /// </summary>
             [DataMember(Name = "deviceLockStatus")]
@@ -83,7 +84,7 @@ namespace XFS4IoT.CashAcceptor.Completions
                 /// 
                 /// * ```lock``` - The storage unit is physically locked.
                 /// * ```unlock``` - The storage unit is physically unlocked.
-                /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the 
+                /// * ```lockUnknown``` - Due to a hardware error or other condition, the physical lock/unlock status of the
                 /// storage unit cannot be determined.
                 /// </summary>
                 [DataMember(Name = "unitLockStatus")]

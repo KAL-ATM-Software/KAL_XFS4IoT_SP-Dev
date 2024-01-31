@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.SetVersions")]
     public sealed class SetVersionsCompletion : Completion<SetVersionsCompletion.PayloadData>
     {

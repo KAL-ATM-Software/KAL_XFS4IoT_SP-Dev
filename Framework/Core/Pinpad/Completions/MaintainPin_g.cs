@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.PinPad.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "PinPad.MaintainPin")]
     public sealed class MaintainPinCompletion : Completion<MaintainPinCompletion.PayloadData>
     {

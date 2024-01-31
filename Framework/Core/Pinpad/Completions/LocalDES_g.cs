@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.PinPad.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "PinPad.LocalDES")]
     public sealed class LocalDESCompletion : Completion<LocalDESCompletion.PayloadData>
     {
@@ -45,7 +46,7 @@ namespace XFS4IoT.PinPad.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyNotFound``` - The specified key was not found.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
             /// specific reason.

@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.NoMediaEvent")]
     public sealed class NoMediaEvent : Event<NoMediaEvent.PayloadData>
     {
@@ -36,7 +37,7 @@ namespace XFS4IoT.Printer.Events
             }
 
             /// <summary>
-            /// The user prompt from the form definition. This will be omitted if either a form does not define a value
+            /// The user prompt from the form definition. This will be an empty string if either a form does not define a value
             /// for the user prompt or the event is being generated as the result of a command that does not use forms.
             /// 
             /// The application may use this in any manner it sees fit, for example it might display the string to the

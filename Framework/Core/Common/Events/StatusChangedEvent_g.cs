@@ -16,6 +16,7 @@ namespace XFS4IoT.Common.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Common.StatusChangedEvent")]
     public sealed class StatusChangedEvent : UnsolicitedEvent<StatusChangedEvent.PayloadData>
     {
@@ -29,117 +30,82 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(DeviceEnum? Device = null, PositionStatusEnum? DevicePosition = null, int? PowerSaveRecoveryTime = null, AntiFraudModuleEnum? AntiFraudModule = null, ExchangeEnum? Exchange = null, EndToEndSecurityEnum? EndToEndSecurity = null)
+            public PayloadData(StatusPropertiesChangedClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
                 : base()
             {
-                this.Device = Device;
-                this.DevicePosition = DevicePosition;
-                this.PowerSaveRecoveryTime = PowerSaveRecoveryTime;
-                this.AntiFraudModule = AntiFraudModule;
-                this.Exchange = Exchange;
-                this.EndToEndSecurity = EndToEndSecurity;
+                this.Common = Common;
+                this.CardReader = CardReader;
+                this.CashAcceptor = CashAcceptor;
+                this.CashDispenser = CashDispenser;
+                this.CashManagement = CashManagement;
+                this.Check = Check;
+                this.MixedMedia = MixedMedia;
+                this.KeyManagement = KeyManagement;
+                this.Keyboard = Keyboard;
+                this.TextTerminal = TextTerminal;
+                this.Printer = Printer;
+                this.BarcodeReader = BarcodeReader;
+                this.Biometric = Biometric;
+                this.Camera = Camera;
+                this.Lights = Lights;
+                this.Auxiliaries = Auxiliaries;
+                this.VendorMode = VendorMode;
+                this.VendorApplication = VendorApplication;
             }
 
-            public enum DeviceEnum
-            {
-                Online,
-                Offline,
-                PowerOff,
-                NoDevice,
-                HardwareError,
-                UserError,
-                DeviceBusy,
-                FraudAttempt,
-                PotentialFraud,
-                Starting
-            }
+            [DataMember(Name = "common")]
+            public StatusPropertiesChangedClass Common { get; init; }
 
-            /// <summary>
-            /// Specifies the state of the device. Following values are possible:
-            /// 
-            /// * ```online``` - The device is online. This is returned when the device is present and operational.
-            /// * ```offline``` - The device is offline (e.g., the operator has taken the device offline by turning a switch or breaking an interlock).
-            /// * ```powerOff``` - The device is powered off or physically not connected.
-            /// * ```noDevice``` - The device is not intended to be there, e.g. this type of self service machine does not contain such a device or it is internally not configured.
-            /// * ```hardwareError``` - The device is inoperable due to a hardware error.
-            /// * ```userError``` - The device is present but a person is preventing proper device operation.
-            /// * ```deviceBusy``` - The device is busy and unable to process a command at this time.
-            /// * ```fraudAttempt``` - The device is present but is inoperable because it has detected a fraud attempt.
-            /// * ```potentialFraud``` - The device has detected a potential fraud attempt and is capable of remaining in service. In this case the application should make the decision as to whether to take the device offline.
-            /// * ```starting``` - The device is starting and performing whatever initialization is necessary. This can be
-            /// reported after the connection is made but before the device is ready to accept commands. This must only be a
-            /// temporary state, the Service must report a different state as soon as possible. If an error causes
-            /// initialization to fail then the state should change to *hardwareError*.
-            /// </summary>
-            [DataMember(Name = "device")]
-            public DeviceEnum? Device { get; init; }
+            [DataMember(Name = "cardReader")]
+            public CardReader.StatusClass CardReader { get; init; }
 
-            /// <summary>
-            /// Position of the device. Following values are possible:
-            /// 
-            /// * ```inPosition``` - The device is in its normal operating position, or is fixed in place and cannot be moved.
-            /// * ```notInPosition``` - The device has been removed from its normal operating position.
-            /// * ```unknown``` - Due to a hardware error or other condition, the position of the device cannot be determined.
-            /// </summary>
-            [DataMember(Name = "devicePosition")]
-            public PositionStatusEnum? DevicePosition { get; init; }
+            [DataMember(Name = "cashAcceptor")]
+            public CashAcceptor.StatusClass CashAcceptor { get; init; }
 
-            /// <summary>
-            /// Specifies the actual number of seconds required by the device to resume its normal operational state from
-            /// the current power saving mode. This value is 0 if either the power saving mode has not been activated or
-            /// no power save control is supported.
-            /// </summary>
-            [DataMember(Name = "powerSaveRecoveryTime")]
-            public int? PowerSaveRecoveryTime { get; init; }
+            [DataMember(Name = "cashDispenser")]
+            public CashDispenser.StatusClass CashDispenser { get; init; }
 
-            public enum AntiFraudModuleEnum
-            {
-                Ok,
-                Inoperable,
-                DeviceDetected,
-                Unknown
-            }
+            [DataMember(Name = "cashManagement")]
+            public CashManagement.StatusClass CashManagement { get; init; }
 
-            /// <summary>
-            /// Specifies the state of the anti-fraud module if available. Following values are possible:
-            /// 
-            /// * ```ok``` - Anti-fraud module is in a good state and no foreign device is detected.
-            /// * ```inoperable``` - Anti-fraud module is inoperable.
-            /// * ```deviceDetected``` - Anti-fraud module detected the presence of a foreign device.
-            /// * ```unknown``` - The state of the anti-fraud module cannot be determined.
-            /// </summary>
-            [DataMember(Name = "antiFraudModule")]
-            public AntiFraudModuleEnum? AntiFraudModule { get; init; }
+            [DataMember(Name = "check")]
+            public Check.StatusClass Check { get; init; }
 
-            [DataMember(Name = "exchange")]
-            public ExchangeEnum? Exchange { get; init; }
+            [DataMember(Name = "mixedMedia")]
+            public MixedMedia.StatusClass MixedMedia { get; init; }
 
-            public enum EndToEndSecurityEnum
-            {
-                NotSupported,
-                NotEnforced,
-                NotConfigured,
-                Enforced
-            }
+            [DataMember(Name = "keyManagement")]
+            public KeyManagement.StatusClass KeyManagement { get; init; }
 
-            /// <summary>
-            /// Specifies the status of end to end security support on this device. 
-            /// 
-            /// Also see [Common.CapabilityProperties.endToEndSecurity](#common.capabilities.completion.properties.common.endtoendsecurity). 
-            /// 
-            /// * ```notSupported``` - E2E security is not supported by this hardware. Any command can be called without a 
-            /// token. 
-            /// * ```notEnforced``` - E2E security is supported by this hardware but it is not currently enforced, for 
-            /// example because required keys aren't loaded. It's currently possible to perform E2E commands without a 
-            /// token. 
-            /// * ```notConfigured``` - E2E security is supported but not correctly configured, for example because required
-            /// keys aren't loaded. Any attempt to perform any command protected by E2E security will fail.
-            /// * ```enforced``` - E2E security is supported and correctly configured. E2E security will be enforced. 
-            /// Calling E2E protected commands will only be possible if a valid token is given.
-            /// <example>enforced</example>
-            /// </summary>
-            [DataMember(Name = "endToEndSecurity")]
-            public EndToEndSecurityEnum? EndToEndSecurity { get; init; }
+            [DataMember(Name = "keyboard")]
+            public Keyboard.StatusClass Keyboard { get; init; }
+
+            [DataMember(Name = "textTerminal")]
+            public TextTerminal.StatusClass TextTerminal { get; init; }
+
+            [DataMember(Name = "printer")]
+            public Printer.StatusClass Printer { get; init; }
+
+            [DataMember(Name = "barcodeReader")]
+            public BarcodeReader.StatusClass BarcodeReader { get; init; }
+
+            [DataMember(Name = "biometric")]
+            public Biometric.StatusClass Biometric { get; init; }
+
+            [DataMember(Name = "camera")]
+            public Camera.StatusClass Camera { get; init; }
+
+            [DataMember(Name = "lights")]
+            public Lights.StatusClass Lights { get; init; }
+
+            [DataMember(Name = "auxiliaries")]
+            public Auxiliaries.StatusClass Auxiliaries { get; init; }
+
+            [DataMember(Name = "vendorMode")]
+            public VendorMode.StatusClass VendorMode { get; init; }
+
+            [DataMember(Name = "vendorApplication")]
+            public VendorApplication.StatusClass VendorApplication { get; init; }
 
         }
 

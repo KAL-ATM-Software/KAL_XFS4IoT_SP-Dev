@@ -38,7 +38,7 @@ namespace XFS4IoTFramework.KeyManagement
                     return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                $"No authentication method specified.");
                 }
-                if (deleteKey.Payload.Authentication.Method != AuthenticationMethodEnum.None)
+                if (deleteKey.Payload.Authentication.Method is not null)
                 {
                     if (deleteKey.Payload.Authentication.Data is null ||
                         deleteKey.Payload.Authentication.Data.Count == 0)

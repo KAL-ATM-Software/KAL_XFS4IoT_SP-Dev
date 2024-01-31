@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.QueryIFMIdentifier")]
     public sealed class QueryIFMIdentifierCompletion : Completion<QueryIFMIdentifierCompletion.PayloadData>
     {
@@ -32,6 +33,9 @@ namespace XFS4IoT.CardReader.Completions
                 this.IfmIdentifiers = IfmIdentifiers;
             }
 
+            /// <summary>
+            /// An array of the IFM identifiers supported by the Service or null if none are supported.
+            /// </summary>
             [DataMember(Name = "ifmIdentifiers")]
             public Dictionary<string, string> IfmIdentifiers { get; init; }
 

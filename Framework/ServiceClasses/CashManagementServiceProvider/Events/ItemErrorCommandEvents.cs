@@ -15,7 +15,7 @@ using XFS4IoTFramework.CashAcceptor;
 
 namespace XFS4IoTFramework.CashManagement
 {
-    public class ItemErrorCommandEvents : ItemInfoAvailableCommandEvent
+    public abstract class ItemErrorCommandEvents : ItemInfoAvailableCommandEvent
     {
         public enum ItemErrorReasonEnum
         {
@@ -107,15 +107,15 @@ namespace XFS4IoTFramework.CashManagement
             }
             if (CashUnitCountEvents is not null)
             {
-                CashUnitCountEvents.NoteErrorEvent(payload);
+                return CashUnitCountEvents.NoteErrorEvent(payload);
             }
             if (DepleteEvents is not null)
             {
-                DepleteEvents.NoteErrorEvent(payload);
+                return DepleteEvents.NoteErrorEvent(payload);
             }
             if (ReplenishEvents is not null)
             {
-                ReplenishEvents.NoteErrorEvent(payload);
+                return ReplenishEvents.NoteErrorEvent(payload);
             }
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(NoteErrorEvent));

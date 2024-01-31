@@ -70,8 +70,9 @@ namespace XFS4IoTFramework.Printer
 
     public enum AutoRetractResultEnum
     {
-        Ok,
-        Jammed
+        Transport,
+        Jammed,
+        Retracted,
     }
 
     public enum PositionEnum
@@ -239,7 +240,6 @@ namespace XFS4IoTFramework.Printer
         {
             Front,
             Back,
-            Codeline,
         }
 
         public sealed class ReadData

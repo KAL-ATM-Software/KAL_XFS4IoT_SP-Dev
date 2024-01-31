@@ -16,6 +16,7 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.EMVClessReadStatusEvent")]
     public sealed class EMVClessReadStatusEvent : Event<EMVClessReadStatusEvent.PayloadData>
     {
@@ -29,15 +30,13 @@ namespace XFS4IoT.CardReader.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(int? MessageId = null, StatusEnum? Status = null, int? HoldTime = null, ValueQualifierEnum? ValueQualifier = null, string Value = null, string CurrencyCode = null, string LanguagePreferenceData = null)
+            public PayloadData(int? MessageId = null, StatusEnum? Status = null, int? HoldTime = null, ValueDetailsClass ValueDetails = null, string LanguagePreferenceData = null)
                 : base()
             {
                 this.MessageId = MessageId;
                 this.Status = Status;
                 this.HoldTime = HoldTime;
-                this.ValueQualifier = ValueQualifier;
-                this.Value = Value;
-                this.CurrencyCode = CurrencyCode;
+                this.ValueDetails = ValueDetails;
                 this.LanguagePreferenceData = LanguagePreferenceData;
             }
 
@@ -47,6 +46,7 @@ namespace XFS4IoT.CardReader.Events
             /// [[Ref. cardreader-3](#ref-cardreader-3)], Section 9.4).
             /// </summary>
             [DataMember(Name = "messageId")]
+            [DataTypes(Minimum = 0)]
             public int? MessageId { get; init; }
 
             public enum StatusEnum
@@ -84,45 +84,17 @@ namespace XFS4IoT.CardReader.Events
             [DataTypes(Minimum = 0)]
             public int? HoldTime { get; init; }
 
-            public enum ValueQualifierEnum
-            {
-                Amount,
-                Balance
-            }
+            [DataMember(Name = "valueDetails")]
+            public ValueDetailsClass ValueDetails { get; init; }
 
             /// <summary>
-            /// Qualifies *value*. This data is defined by EMVCo as one of the following. If neither apply, this field and 
-            /// *value* are omitted:
-            /// * ```amount``` - *value* is an Amount.
-            /// * ```balance``` - *value* is a Balance.
-            /// <example>amount</example>
-            /// </summary>
-            [DataMember(Name = "valueQualifier")]
-            public ValueQualifierEnum? ValueQualifier { get; init; }
-
-            /// <summary>
-            /// Represents the value of the amount or balance (as specified by *valueQualifier*)
-            /// to be displayed where appropriate. If *valueQualifier* is omitted, this property is omitted.
-            /// <example>123.45</example>
-            /// </summary>
-            [DataMember(Name = "value")]
-            public string Value { get; init; }
-
-            /// <summary>
-            /// Represents the numeric value of currency code as per ISO 4217. If omitted, the currency code is not available.
-            /// <example>GBP</example>
-            /// </summary>
-            [DataMember(Name = "currencyCode")]
-            [DataTypes(Pattern = @"^[A-Z]{3}$")]
-            public string CurrencyCode { get; init; }
-
-            /// <summary>
-            /// Represents the language preference (EMV Tag ‘5F2D’) if returned by the card. If not returned, this property is omitted.
-            /// The application should use this data to display all messages in the specified language until the transaction concludes.
+            /// Represents the language preference (EMV Tag '5F2D') if returned by the card. If not returned, this property
+            /// reports null. The application should use this data to display all messages in the specified
+            /// language until the transaction concludes.
             /// <example>en</example>
             /// </summary>
             [DataMember(Name = "languagePreferenceData")]
-            [DataTypes(Pattern = @"^[a-z]{2}$")]
+            [DataTypes(Pattern = @"^[a-z]{2}")]
             public string LanguagePreferenceData { get; init; }
 
         }

@@ -16,50 +16,37 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = Reset
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, MediaControlEnum? MediaControl = null, int? RetractBinNumber = null)
-                : base(Timeout)
+            public PayloadData(string MediaControl = null)
+                : base()
             {
                 this.MediaControl = MediaControl;
-                this.RetractBinNumber = RetractBinNumber;
-            }
-
-            public enum MediaControlEnum
-            {
-                Eject,
-                Retract,
-                Expel
             }
 
             /// <summary>
             /// Specifies the manner in which the media should be handled, as one of the following:
             /// 
             /// * ```eject``` - Eject the media.
-            /// * ```retract``` - Retract the media to retract bin number specified.
             /// * ```expel``` - Throw the media out of the exit slot.
+            /// * ```unit&lt;retract bin number&gt;``` - Retract the media to retract bin number specified. This number has
+            /// to be between 1 and the [number of bins](#common.capabilities.completion.properties.printer.retractbins)
+            /// supported by this device.
+            /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "mediaControl")]
-            public MediaControlEnum? MediaControl { get; init; }
-
-            /// <summary>
-            /// Number of the retract bin the media is retracted to. This number has to be between one and the
-            /// [number of bins](#common.capabilities.completion.properties.printer.retractbins) supported by this
-            /// device. It is only relevant if [mediaControl](#printer.reset.command.properties.mediacontrol) is
-            /// *retract*.
-            /// </summary>
-            [DataMember(Name = "retractBinNumber")]
-            [DataTypes(Minimum = 1)]
-            public int? RetractBinNumber { get; init; }
+            [DataTypes(Pattern = @"^eject$|^expel$|^unit[0-9]+$")]
+            public string MediaControl { get; init; }
 
         }
     }

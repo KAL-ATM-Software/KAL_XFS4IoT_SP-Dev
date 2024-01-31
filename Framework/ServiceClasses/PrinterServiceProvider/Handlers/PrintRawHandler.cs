@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.RawPrintAsync()");
-            var result = await Device.RawPrintAsync(new MediaPresentedCommandEvent(events),
+            var result = await Device.RawPrintAsync(new RawPrintCommandEvents(events),
                                                     new RawPrintRequest(printRaw.Payload.InputData == PrintRawCommand.PayloadData.InputDataEnum.Yes,
                                                                         printRaw.Payload.Data), 
                                                     cancel);

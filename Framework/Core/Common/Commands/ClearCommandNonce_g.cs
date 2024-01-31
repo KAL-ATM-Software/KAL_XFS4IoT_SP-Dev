@@ -16,22 +16,13 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = ClearCommandNonce
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.ClearCommandNonce")]
-    public sealed class ClearCommandNonceCommand : Command<ClearCommandNonceCommand.PayloadData>
+    public sealed class ClearCommandNonceCommand : Command<MessagePayload>
     {
-        public ClearCommandNonceCommand(int RequestId, ClearCommandNonceCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearCommandNonceCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

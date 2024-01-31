@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     /// LightsStatusClass
     /// Store device status for the available lights reported by the capabilities
     /// </summary>
-    public sealed class LightsStatusClass
+    public sealed class LightsStatusClass : StatusBase
     {
         public sealed class LightOperation
         {

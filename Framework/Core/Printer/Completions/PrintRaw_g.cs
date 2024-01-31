@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.PrintRaw")]
     public sealed class PrintRawCompletion : Completion<PrintRawCompletion.PayloadData>
     {
@@ -46,7 +47,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed.
@@ -67,7 +68,7 @@ namespace XFS4IoT.Printer.Completions
             /// <example>UmF3RGF0YQ==</example>
             /// </summary>
             [DataMember(Name = "data")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
             public List<byte> Data { get; init; }
 
         }

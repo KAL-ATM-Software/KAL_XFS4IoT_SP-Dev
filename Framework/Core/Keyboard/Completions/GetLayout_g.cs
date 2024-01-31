@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Keyboard.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Keyboard.GetLayout")]
     public sealed class GetLayoutCompletion : Completion<GetLayoutCompletion.PayloadData>
     {
@@ -26,7 +27,7 @@ namespace XFS4IoT.Keyboard.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, LayoutClass Layout = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, LayoutNullableClass Layout = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
@@ -39,7 +40,7 @@ namespace XFS4IoT.Keyboard.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```modeNotSupported``` - The specified entry mode is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
@@ -49,7 +50,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// Return supported layouts specified by the *entryMode* property.
             /// </summary>
             [DataMember(Name = "layout")]
-            public LayoutClass Layout { get; init; }
+            public LayoutNullableClass Layout { get; init; }
 
         }
     }

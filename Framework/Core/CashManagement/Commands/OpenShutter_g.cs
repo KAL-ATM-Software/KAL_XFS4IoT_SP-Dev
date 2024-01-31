@@ -16,19 +16,20 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = OpenShutter
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.OpenShutter")]
     public sealed class OpenShutterCommand : Command<OpenShutterCommand.PayloadData>
     {
-        public OpenShutterCommand(int RequestId, OpenShutterCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public OpenShutterCommand(int RequestId, OpenShutterCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(PositionEnum? Position = null)
+                : base()
             {
                 this.Position = Position;
             }

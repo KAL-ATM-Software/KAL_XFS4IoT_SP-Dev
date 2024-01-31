@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.SetDataPersistence")]
     public sealed class SetDataPersistenceCompletion : Completion<SetDataPersistenceCompletion.PayloadData>
     {
@@ -38,7 +39,7 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```modeNotSupported``` - The command failed because a mode was specified which is not supported.
             /// </summary>

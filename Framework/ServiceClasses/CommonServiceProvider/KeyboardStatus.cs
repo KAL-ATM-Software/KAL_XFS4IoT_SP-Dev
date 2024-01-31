@@ -13,16 +13,12 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyboardStatusClass
+    public sealed class KeyboardStatusClass : StatusBase
     {
 
-        public KeyboardStatusClass()
-        {
-            AutoBeepMode = AutoBeepModeEnum.NotSupported;
-        }
         public KeyboardStatusClass(AutoBeepModeEnum AutoBeepMode)
         {
-            this.AutoBeepMode = AutoBeepMode;
+            autoBeepMode = AutoBeepMode;
         }
 
         [Flags]
@@ -41,6 +37,18 @@ namespace XFS4IoTFramework.Common
         /// * ```active``` - An automatic tone will be generated for all active keys.
         /// * ```inActive``` - An automatic tone will be generated for all in-active keys.
         /// </summary>
-        public AutoBeepModeEnum AutoBeepMode { get; set; }
+        public AutoBeepModeEnum AutoBeepMode
+        {
+            get { return autoBeepMode; }
+            set
+            {
+                if (autoBeepMode != value)
+                {
+                    autoBeepMode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AutoBeepModeEnum autoBeepMode = AutoBeepModeEnum.NotSupported;
     }
 }

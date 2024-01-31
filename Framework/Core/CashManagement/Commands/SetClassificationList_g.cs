@@ -16,27 +16,28 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = SetClassificationList
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.SetClassificationList")]
     public sealed class SetClassificationListCommand : Command<SetClassificationListCommand.PayloadData>
     {
-        public SetClassificationListCommand(int RequestId, SetClassificationListCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetClassificationListCommand(int RequestId, SetClassificationListCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Version = null, List<ClassificationElementClass> ClassificationElements = null)
-                : base(Timeout)
+            public PayloadData(string Version = null, List<ClassificationElementClass> ClassificationElements = null)
+                : base()
             {
                 this.Version = Version;
                 this.ClassificationElements = ClassificationElements;
             }
 
             /// <summary>
-            /// This is an application defined string that sets the version identifier of 
-            /// the classification list. This property can be omitted if it has no version identifier.
+            /// This is an application defined string that sets the version identifier of
+            /// the classification list. This property can be null if it has no version identifier.
             /// <example>Version 1.2</example>
             /// </summary>
             [DataMember(Name = "version")]

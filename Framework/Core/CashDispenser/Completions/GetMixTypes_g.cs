@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.GetMixTypes")]
     public sealed class GetMixTypesCompletion : Completion<GetMixTypesCompletion.PayloadData>
     {
@@ -34,11 +35,12 @@ namespace XFS4IoT.CashDispenser.Completions
 
             /// <summary>
             /// Object containing mix specifications including mix tables and pre-defined algorithms. The property name of
-            /// each mix can be used as the *mix* in the [CashDispenser.Dispense](#cashdispenser.dispense) and 
+            /// each mix can be used as the *mix* in the [CashDispenser.Dispense](#cashdispenser.dispense) and
             /// [CashDispenser.Denominate](#cashdispenser.denominate) commands.
             /// 
             /// Mix tables are defined by [CashDispenser.SetMixTable](#cashdispenser.setmixtable). A mix table's definition
             /// can be queried using its property name as input to [CashDispenser.GetMixTable](#cashdispenser.getmixtable).
+            /// Can be null if empty.
             /// </summary>
             [DataMember(Name = "mixes")]
             public Dictionary<string, MixClass> Mixes { get; init; }

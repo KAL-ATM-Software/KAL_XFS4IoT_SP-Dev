@@ -16,6 +16,7 @@ namespace XFS4IoT.CashAcceptor.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashAcceptor.InsertItemsEvent")]
     public sealed class InsertItemsEvent : Event<MessagePayloadBase>
     {

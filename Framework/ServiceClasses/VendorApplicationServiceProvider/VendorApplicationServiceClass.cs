@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +69,15 @@ namespace XFS4IoTServer
             CommonService.VendorApplicationStatus = Device.VendorApplicationStatus;
             Logger.Log(Constants.DeviceClass, "VendorApplicationDev.VendorApplicationStatus=");
 
-            CommonService.VendorApplicationCapabilities.IsNotNull($"The device class set VendorApplicationStatus property to null. The device class must report device status.");
+            CommonService.VendorApplicationStatus.IsNotNull($"The device class set VendorApplicationStatus property to null. The device class must report device status.");
+            CommonService.VendorApplicationStatus.PropertyChanged += StatusChangedEventFowarder;
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

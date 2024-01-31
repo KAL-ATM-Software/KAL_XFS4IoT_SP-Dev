@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = Read
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.Read")]
     public sealed class ReadCommand : Command<ReadCommand.PayloadData>
     {
-        public ReadCommand(int RequestId, ReadCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadCommand(int RequestId, ReadCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Visible = null, bool? Flush = null, bool? AutoEnd = null, string ActiveKeys = null, Dictionary<string, KeyClass> ActiveCommandKeys = null)
-                : base(Timeout)
+            public PayloadData(int? NumOfChars = null, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, EchoModeEnum? EchoMode = null, EchoAttrClass EchoAttr = null, bool? Visible = null, bool? Flush = null, bool? AutoEnd = null, List<string> ActiveKeys = null, Dictionary<string, KeyClass> ActiveCommandKeys = null)
+                : base()
             {
                 this.NumOfChars = NumOfChars;
                 this.Mode = Mode;
@@ -44,7 +45,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the number of printable characters (numeric and alphanumeric keys) that will be read from the 
+            /// Specifies the number of printable characters (numeric and alphanumeric keys) that will be read from the
             /// text terminal unit key pad. All command keys like 'enter', 'fdk01' will not be counted.
             /// </summary>
             [DataMember(Name = "numOfChars")]
@@ -55,8 +56,8 @@ namespace XFS4IoT.TextTerminal.Commands
             public ModesEnum? Mode { get; init; }
 
             /// <summary>
-            /// If mode is *absolute*, this specifies the absolute horizontal position. 
-            /// If mode is *relative*, this specifies a horizontal offset relative to the 
+            /// If mode is *absolute*, this specifies the absolute horizontal position.
+            /// If mode is *relative*, this specifies a horizontal offset relative to the
             /// current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posX")]
@@ -64,8 +65,8 @@ namespace XFS4IoT.TextTerminal.Commands
             public int? PosX { get; init; }
 
             /// <summary>
-            /// If mode is *absolute*, this specifies the absolute vertical position. 
-            /// If mode is *relative* this specifies a vertical offset relative to the 
+            /// If mode is *absolute*, this specifies the absolute vertical position.
+            /// If mode is *relative* this specifies a vertical offset relative to the
             /// current cursor position as a 0 based value.
             /// </summary>
             [DataMember(Name = "posY")]
@@ -119,8 +120,8 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the text attributes with which the user input is echoed to the screen. 
-            /// If none of the attributes are selected then the text will be displayed as normal text.
+            /// Specifies the text attributes with which the user input is echoed to the screen.
+            /// If this property is null then the text will be displayed as normal text.
             /// </summary>
             [DataMember(Name = "echoAttr")]
             public EchoAttrClass EchoAttr { get; init; }
@@ -138,31 +139,41 @@ namespace XFS4IoT.TextTerminal.Commands
             public bool? Flush { get; init; }
 
             /// <summary>
-            /// Specifies whether the command input is automatically ended by the Service if the maximum number 
+            /// Specifies whether the command input is automatically ended by the Service if the maximum number
             /// of printable characters as specified with _numOfChars_ is entered.
             /// </summary>
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
 
             /// <summary>
-            /// String which specifies the numeric and alphanumeric keys on the Text Terminal Unit,
-            /// e.g. "12ABab", to be active during the execution of the command. Devices having a shift key interpret 
-            /// this parameter differently from those that do not have a shift key. For devices having a shift key, 
-            /// specifying only the upper case of a particular letter enables both upper and lower case of that key, 
-            /// but the device converts lower case letters to upper case in the output parameter. To enable both 
-            /// upper and lower case keys, and have both upper and lower case letters returned, specify both the 
-            /// upper and lower case of the letter (e.g. "12AaBb"). For devices not having a shift key, specifying 
-            /// either the upper case only (e.g. "12AB"), or specifying both the upper and lower case of a particular letter 
-            /// (e.g. "12AaBb"), enables that key and causes the device to return the upper case of the letter in the output parameter. 
-            /// For both types of device, specifying only lower case letters (e.g. "12ab") produces a key invalid error. 
-            /// This property can be omitted if no keys of this type are active keys.
-            /// <example>12AaBb</example>
+            /// Specifying the numeric and alphanumeric keys on the Text Terminal Unit,
+            /// e.g. ["one", "two", "A", "B", "a", "b"] to be active during the execution of the command.
+            /// Devices having a shift key interpret this parameter differently from those that do not have a shift key.
+            /// 
+            /// For devices having a shift key, specifying only the upper case of a particular letter enables both upper
+            /// and lower case of that key, but the device converts lower case letters to upper case in the output
+            /// parameter. To enable both upper and lower case keys, and have both upper and lower case letters returned,
+            /// specify both the upper and lower case of the letter (e.g. ["one", "two", "A", "a", "B", "b"]).
+            /// 
+            /// For devices not having a shift key, specifying either the upper case only (e.g. ["one", "two", "A", "B"]),
+            /// or specifying both the upper and lower case of a particular letter
+            /// (e.g. ["one", "two", "A", "a", "B", "b"]), enables that key and causes the device to return the upper
+            /// case of the letter in the output parameter.
+            /// 
+            /// For both types of device, specifying only lower case letters (e.g. ["one", "two", "a", "b"]) produces a key
+            /// invalid error.
+            /// This property is null if no keys of this type are active keys.
+            /// 
+            /// See predefined [keys](#textterminal.getkeydetail.completion.properties.keys).
+            /// <example>["one", "nine"]</example>
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            public string ActiveKeys { get; init; }
+            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|\\D)$")]
+            public List<string> ActiveKeys { get; init; }
 
             /// <summary>
-            /// Specifying the command keys which are active during the execution of the command.     
+            /// Specifying the command keys which are active during the execution of the command.
+            /// This property is null if no keys of this type are active keys.
             /// </summary>
             [DataMember(Name = "activeCommandKeys")]
             public Dictionary<string, KeyClass> ActiveCommandKeys { get; init; }

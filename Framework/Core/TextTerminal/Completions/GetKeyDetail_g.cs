@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.GetKeyDetail")]
     public sealed class GetKeyDetailCompletion : Completion<GetKeyDetailCompletion.PayloadData>
     {
@@ -26,7 +27,7 @@ namespace XFS4IoT.TextTerminal.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string Keys = null, List<string> CommandKeys = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<string> Keys = null, Dictionary<string, KeyClass> CommandKeys = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.Keys = Keys;
@@ -34,21 +35,36 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// String which holds the printable characters (numeric and alphanumeric keys) on the Text Terminal Unit, 
-            /// e.g. "0123456789ABCabc" if those text terminal input keys are present. This property is omitted if no keys 
-            /// of this type are present on the device.
-            /// <example>0123456789ABCabc</example>
+            /// String array which contains the printable characters numeric and alphanumeric keys
+            /// on the Text Terminal Unit,
+            /// e.g. ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "A", "B", "C", "a", "b", "c" ]
+            /// if those text terminal input keys are present. This property will be null if no keys supported.
+            /// 
+            /// The following prefixed key names are defined:
+            /// 
+            ///   * ```zero``` - Numeric digit 0
+            ///   * ```one``` - Numeric digit 1
+            ///   * ```two``` - Numeric digit 2
+            ///   * ```three``` - Numeric digit 3
+            ///   * ```four``` - Numeric digit 4
+            ///   * ```five``` - Numeric digit 5
+            ///   * ```six``` - Numeric digit 6
+            ///   * ```seven``` - Numeric digit 7
+            ///   * ```eight``` - Numeric digit 8
+            ///   * ```nine``` - Numeric digit 9
+            ///   * ```\\D``` - Any character other than a decimal digit
+            /// <example>["one", "nine"]</example>
             /// </summary>
             [DataMember(Name = "keys")]
-            public string Keys { get; init; }
+            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|\\D)$")]
+            public List<string> Keys { get; init; }
 
             /// <summary>
-            /// Supporting command keys on the Text Terminal Unit. This property can be omitted if no command keys supported.
-            /// <example>["enter", "cancel"]</example>
+            /// Supporting command keys on the Text Terminal Unit.
+            /// This property can be null if no command keys supported.
             /// </summary>
             [DataMember(Name = "commandKeys")]
-            [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[A-Za-z0-9]*)$")]
-            public List<string> CommandKeys { get; init; }
+            public Dictionary<string, KeyClass> CommandKeys { get; init; }
 
         }
     }

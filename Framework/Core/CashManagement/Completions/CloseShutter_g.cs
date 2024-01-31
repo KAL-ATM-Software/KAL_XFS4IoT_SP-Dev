@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.CloseShutter")]
     public sealed class CloseShutterCompletion : Completion<CloseShutterCompletion.PayloadData>
     {
@@ -43,14 +44,14 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// * ```shutterClosed``` - Shutter was already closed.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```shutterNotClosed``` - Shutter failed to close.
             /// * ```tooManyItems``` - There were too many items inserted for the shutter to close.
-            /// * ```foreignItemsDetected``` - Foreign items have been detected in the input position. The shutter 
+            /// * ```foreignItemsDetected``` - Foreign items have been detected in the input position. The shutter
             /// is open.
             /// </summary>
             [DataMember(Name = "errorCode")]

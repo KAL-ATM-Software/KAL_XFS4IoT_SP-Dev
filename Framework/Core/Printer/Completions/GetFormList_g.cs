@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.GetFormList")]
     public sealed class GetFormListCompletion : Completion<GetFormListCompletion.PayloadData>
     {
@@ -33,7 +34,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// The list of form names.
+            /// The list of form names. This will be null if no forms are available.
             /// <example>["Form1", "Form2"]</example>
             /// </summary>
             [DataMember(Name = "formList")]

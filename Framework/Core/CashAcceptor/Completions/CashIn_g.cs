@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.CashIn")]
     public sealed class CashInCompletion : Completion<CashInCompletion.PayloadData>
     {
@@ -26,11 +27,11 @@ namespace XFS4IoT.CashAcceptor.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Unrecognized = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.StorageCashCountsClass Items = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
-                this.Unrecognized = Unrecognized;
+                this.Items = Items;
             }
 
             public enum ErrorCodeEnum
@@ -48,22 +49,22 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
-            /// * ```tooManyItems``` - There were too many items inserted previously. The cash-in stacker is full at 
-            /// the beginning of this command. This may also be reported where a limit specified by 
-            /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) has already been reached at the beginning 
+            /// * ```tooManyItems``` - There were too many items inserted previously. The cash-in stacker is full at
+            /// the beginning of this command. This may also be reported where a limit specified by
+            /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) has already been reached at the beginning
             /// of this command.
             /// * ```noItems``` - There were no items to cash-in.
             /// * ```exchangeActive``` - The device is in an exchange state.
-            /// * ```shutterNotClosed``` - Shutter failed to close. In the case of explicit shutter control the 
+            /// * ```shutterNotClosed``` - Shutter failed to close. In the case of explicit shutter control the
             /// application should close the shutter first.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
             /// * ```positionNotEmpty``` - The output position is not empty so a cash-in is not possible.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order
-            /// to perform this command.
+            /// to perform this command. (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
             /// * ```foreignItemsDetected``` - Foreign items have been detected inside the input position.
             /// * ```shutterNotOpen``` - Shutter failed to open.
             /// </summary>
@@ -71,20 +72,11 @@ namespace XFS4IoT.CashAcceptor.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Count of unrecognized items handled by the cash interface.
+            /// Items detected during the command. May be null if no items were detected. This information is not
+            /// cumulative over multiple *CashIn* commands.
             /// </summary>
-            [DataMember(Name = "unrecognized")]
-            public int? Unrecognized { get; init; }
-
-            [System.Text.Json.Serialization.JsonExtensionData]
-            public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
-
-            [System.Text.Json.Serialization.JsonIgnore]
-            public Dictionary<string, CashManagement.StorageCashCountClass> ExtendedProperties
-            {
-                get => MessageBase.ParseExtendedProperties<CashManagement.StorageCashCountClass>(ExtensionData);
-                set => ExtensionData = MessageBase.CreateExtensionData<CashManagement.StorageCashCountClass>(value);
-            }
+            [DataMember(Name = "items")]
+            public CashManagement.StorageCashCountsClass Items { get; init; }
 
         }
     }

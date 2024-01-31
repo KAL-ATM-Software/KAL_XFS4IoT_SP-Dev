@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,89 +20,89 @@ namespace XFS4IoTFramework.Auxiliaries
 
         private async Task<SetAuxiliariesCompletion.PayloadData> HandleSetAuxiliaries(ISetAuxiliariesEvents events, SetAuxiliariesCommand setAuxiliaries, CancellationToken cancel)
         {
+            if (setAuxiliaries.Payload.CabinetDoors.HasValue)
+            {
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Cabinet))
+                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "CabinetDoor is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+            }
             if (setAuxiliaries.Payload.SafeDoor.HasValue)
             {
-                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilities.DoorType.Safe))
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Safe))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "SafeDoor is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.VandalShield.HasValue)
             {
-                if (Device.AuxiliariesCapabilities.VandalShield == AuxiliariesCapabilities.VandalShieldCapabilities.NotAvailable)
+                if (Device.AuxiliariesCapabilities.VandalShield == AuxiliariesCapabilitiesClass.VandalShieldCapabilities.NotAvailable)
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "VandalShield is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.FrontCabinetDoors.HasValue)
             {
-                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilities.DoorType.FrontCabinet))
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.FrontCabinet))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "FrontCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.RearCabinetDoors.HasValue)
             {
-                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilities.DoorType.RearCabinet))
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RearCabinet))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "RearCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.LeftCabinetDoors.HasValue)
             {
-                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilities.DoorType.LeftCabinet))
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.LeftCabinet))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "LeftCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.RightCabinetDoors.HasValue)
             {
-                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilities.DoorType.RightCabinet))
+                if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RightCabinet))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "RightCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.OpenClose.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.OpenCloseIndicator))
+                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.OpenCloseIndicator))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "OpenClose is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
-            }
-            if (setAuxiliaries.Payload.FasciaLight.HasValue) 
-            {
-                //if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.FasciaLight))
-                //    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "FasciaLight is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.Audio is not null)
             {
-                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.Audio))
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Audio))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Audio is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.Heating.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.Heating))
+                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Heating))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Heating is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
-            if (setAuxiliaries.Payload.DisplayBackLight.HasValue) 
+            if (setAuxiliaries.Payload.ConsumerDisplayBackLight.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.ConsumerDisplayBacklight))
+                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ConsumerDisplayBacklight))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "DisplayBackLight is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.SignageDisplay.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.SignageDisplay))
+                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.SignageDisplay))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "SignageDisplay is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.Volume.HasValue) 
             {
-                //if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.Volume))
-                //    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Volume is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (Device.AuxiliariesCapabilities.Volume == -1)
+                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Volume is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.Ups.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilities.UpsEnum.Engaged))
+                if(!Device.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Engaged))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Engage/Disengage Ups is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.AudibleAlarm.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.AudibleAlarm))
+                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.AudibleAlarm))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "AudibleAlarm is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.EnhancedAudioControl.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.ModeControllable))
+                if(!Device.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "EnhancedAudioControl is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.EnhancedMicrophoneControl.HasValue) 
             {
-                if(!Device.AuxiliariesCapabilities.EnhancedMicrophoneControlState.HasFlag(AuxiliariesCapabilities.EnhancedAudioControlEnum.ModeControllable))
+                if(!Device.AuxiliariesCapabilities.EnhancedMicrophoneControlState.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
                     return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "EnhancedMicrophoneControl is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
             if (setAuxiliaries.Payload.MicrophoneVolume.HasValue) 
@@ -160,25 +158,19 @@ namespace XFS4IoTFramework.Auxiliaries
                     SetAuxiliariesCommand.PayloadData.OpenCloseEnum.Closed => SetAuxiliariesRequest.SetOpenClosedIndicatorEnum.Closed,
                     _ => null
                 },
-                FasciaLight = setAuxiliaries.Payload.FasciaLight switch
-                {
-                    SetAuxiliariesCommand.PayloadData.FasciaLightEnum.On => SetAuxiliariesRequest.SetAuxiliaryOnOff.On,
-                    SetAuxiliariesCommand.PayloadData.FasciaLightEnum.Off => SetAuxiliariesRequest.SetAuxiliaryOnOff.Off,
-                    _ => null
-                },
                 AudioRate = setAuxiliaries.Payload.Audio?.Rate switch
                 {
-                    SetAuxiliariesCommand.PayloadData.AudioClass.RateEnum.On => AuxiliariesStatus.AudioRateEnum.On,
-                    SetAuxiliariesCommand.PayloadData.AudioClass.RateEnum.Off => AuxiliariesStatus.AudioRateEnum.Off,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.RateEnum.On => AuxiliariesStatusClass.AudioRateEnum.On,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.RateEnum.Off => AuxiliariesStatusClass.AudioRateEnum.Off,
                     _ => null
                 },
                 AudioSignal = setAuxiliaries.Payload.Audio?.Signal switch
                 {
-                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Keypress => AuxiliariesStatus.AudioSignalEnum.Keypress,
-                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Exclamation => AuxiliariesStatus.AudioSignalEnum.Exclamation,
-                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Warning => AuxiliariesStatus.AudioSignalEnum.Warning,
-                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Error => AuxiliariesStatus.AudioSignalEnum.Error,
-                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Critical => AuxiliariesStatus.AudioSignalEnum.Critical,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Keypress => AuxiliariesStatusClass.AudioSignalEnum.Keypress,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Exclamation => AuxiliariesStatusClass.AudioSignalEnum.Exclamation,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Warning => AuxiliariesStatusClass.AudioSignalEnum.Warning,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Error => AuxiliariesStatusClass.AudioSignalEnum.Error,
+                    SetAuxiliariesCommand.PayloadData.AudioClass.SignalEnum.Critical => AuxiliariesStatusClass.AudioSignalEnum.Critical,
                     _ => null
                 },
                 Heating = setAuxiliaries.Payload.Heating switch
@@ -187,10 +179,10 @@ namespace XFS4IoTFramework.Auxiliaries
                     SetAuxiliariesCommand.PayloadData.HeatingEnum.Off => SetAuxiliariesRequest.SetAuxiliaryOnOff.Off,
                     _ => null
                 },
-                DisplayBackLight = setAuxiliaries.Payload.DisplayBackLight switch
+                DisplayBackLight = setAuxiliaries.Payload.ConsumerDisplayBackLight switch
                 {
-                    SetAuxiliariesCommand.PayloadData.DisplayBackLightEnum.On => SetAuxiliariesRequest.SetAuxiliaryOnOff.On,
-                    SetAuxiliariesCommand.PayloadData.DisplayBackLightEnum.Off => SetAuxiliariesRequest.SetAuxiliaryOnOff.Off,
+                    SetAuxiliariesCommand.PayloadData.ConsumerDisplayBackLightEnum.On => SetAuxiliariesRequest.SetAuxiliaryOnOff.On,
+                    SetAuxiliariesCommand.PayloadData.ConsumerDisplayBackLightEnum.Off => SetAuxiliariesRequest.SetAuxiliaryOnOff.Off,
                     _ => null
                 },
                 SignageDisplay = setAuxiliaries.Payload.SignageDisplay switch
@@ -214,22 +206,22 @@ namespace XFS4IoTFramework.Auxiliaries
                 },
                 EnhancedAudioControl = setAuxiliaries.Payload.EnhancedAudioControl switch
                 {
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioManual => AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioManual,
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioSemiAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioManual => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioManual,
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioSemiAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioManual => AuxiliariesStatusClass.EnhancedAudioControlEnum.PublicAudioManual,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PublicAudioAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PublicAudioSemiAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioManual => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioManual,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedAudioControlEnum.PrivateAudioSemiAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
                     _ => null
                 },
                 EnhancedMicrophoneControl = setAuxiliaries.Payload.EnhancedMicrophoneControl switch
                 {
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioManual => AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioManual,
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PublicAudioAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioSemiAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioManual => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioManual,
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioAuto,
-                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioSemiAuto => AuxiliariesStatus.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioManual => AuxiliariesStatusClass.EnhancedAudioControlEnum.PublicAudioManual,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PublicAudioAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PublicAudioSemiAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioManual => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioManual,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioAuto,
+                    SetAuxiliariesCommand.PayloadData.EnhancedMicrophoneControlEnum.PrivateAudioSemiAuto => AuxiliariesStatusClass.EnhancedAudioControlEnum.PrivateAudioSemiAuto,
                     _ => null
                 },
                 MicrophoneVolume = setAuxiliaries.Payload.MicrophoneVolume

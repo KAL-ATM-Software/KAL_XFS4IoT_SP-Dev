@@ -22,9 +22,10 @@ namespace XFS4IoT
         /// </summary>
         /// <param name="RequestId">request id</param>
         /// <param name="CommandName">acknowledge command name</param>
+        /// <param name="Version">version of command, completion or event</param>
         /// <param name="Payload">payload contents</param>
-        public Acknowledge(int RequestId, string CommandName, PayloadData Payload) :
-            base(new MessageHeader(CommandName, RequestId, MessageHeader.TypeEnum.Acknowledge), Payload)
+        public Acknowledge(int RequestId, string CommandName, string Version, PayloadData Payload) :
+            base(new MessageHeader(CommandName, RequestId, Version, MessageHeader.TypeEnum.Acknowledge), Payload)
         { }
 
         [DataContract]

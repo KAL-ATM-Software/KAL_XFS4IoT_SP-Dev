@@ -25,19 +25,19 @@ namespace XFS4IoTFramework.CashManagement
     {
         private async Task<RetractCompletion.PayloadData> HandleRetract(IRetractEvents events, RetractCommand retract, CancellationToken cancel)
         {
-            if (retract.Payload.RetractArea is not null &&
-                retract.Payload.OutputPosition is not null)
+            if (retract.Payload.Location.RetractArea is not null &&
+                retract.Payload.Location.OutputPosition is not null)
             {
                 return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                          $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
             }
 
-            ItemPosition itemPosition = null;
+            RetractPosition retractPosition = null;
 
-            if (retract.Payload.RetractArea is not null)
+            if (retract.Payload.Location.RetractArea is not null)
             {
                 CashManagementCapabilitiesClass.RetractAreaEnum retractArea = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
-                retractArea = retract.Payload.RetractArea switch
+                retractArea = retract.Payload.Location.RetractArea switch
                 {
                     RetractAreaEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
                     RetractAreaEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
@@ -58,13 +58,13 @@ namespace XFS4IoTFramework.CashManagement
                 if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
                 {
                     int index = 0;
-                    if (retract.Payload.Index is null)
+                    if (retract.Payload.Location.Index is null)
                     {
                         Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
                     }
                     else
                     {
-                        index = (int)retract.Payload.Index;
+                        index = (int)retract.Payload.Location.Index;
                     }
 
                     if (index < 0)
@@ -85,12 +85,12 @@ namespace XFS4IoTFramework.CashManagement
                                                                  $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
                     }
 
-                    itemPosition = new ItemPosition(new Retract(retractArea, index));
+                    retractPosition = new RetractPosition(new Retract(retractArea, index));
                 }
             }
-            else if (retract.Payload.OutputPosition is not null)
+            else if (retract.Payload.Location.OutputPosition is not null)
             {
-                CashManagementCapabilitiesClass.PositionEnum position = retract.Payload.OutputPosition switch
+                CashManagementCapabilitiesClass.PositionEnum position = retract.Payload.Location.OutputPosition switch
                 {
                     OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
                     OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
@@ -107,10 +107,10 @@ namespace XFS4IoTFramework.CashManagement
                 if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
                 {
                     return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"Specified unsupported output position. {position}");
+                                                             $"Specified unsupported output position. {position}");
                 }
 
-                itemPosition = new ItemPosition(position);
+                retractPosition = new RetractPosition(position);
             }
 
             // Clear TotalReturnedItems for the present status
@@ -121,8 +121,8 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.RetractAsync()");
 
-            var result = await Device.RetractAsync(new RetractCommandEvents(events),
-                                                   new RetractRequest(itemPosition),
+            var result = await Device.RetractAsync(new RetractCommandEvents(Storage, events),
+                                                   new RetractRequest(retractPosition),
                                                    cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.RetractAsync() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -135,7 +135,7 @@ namespace XFS4IoTFramework.CashManagement
 
             if (result.MovementResult?.Count > 0)
             {
-                itemMovementResult = new();
+                itemMovementResult = [];
                 foreach (var movement in result.MovementResult)
                 {
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
@@ -154,35 +154,46 @@ namespace XFS4IoTFramework.CashManagement
                     foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
                         transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
 
-                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized);
-                    depositedCount.ExtendedProperties = deposited;
-                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized);
-                    retractedCount.ExtendedProperties = retracted;
-                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized);
-                    rejectedCount.ExtendedProperties = rejected;
-                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized);
-                    distributedCount.ExtendedProperties = distributed;
-                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized);
-                    transportCount.ExtendedProperties = transport;
+                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized)
+                    {
+                        ExtendedProperties = deposited
+                    };
+                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized)
+                    {
+                        ExtendedProperties = retracted
+                    };
+                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized)
+                    {
+                        ExtendedProperties = rejected
+                    };
+                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized)
+                    {
+                        ExtendedProperties = distributed
+                    };
+                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized)
+                    {
+                        ExtendedProperties = transport
+                    };
 
-                    itemMovementResult.Add(movement.Key, new StorageCashInClass
-                                                             (
-                                                                movement.Value.StorageCashInCount.RetractOperations,
-                                                                depositedCount,
-                                                                retractedCount,
-                                                                rejectedCount,
-                                                                distributedCount,
-                                                                transportCount
-                                                             ));
+                    itemMovementResult.Add(movement.Key, 
+                        new StorageCashInClass
+                        (
+                            movement.Value.StorageCashInCount.RetractOperations,
+                            depositedCount,
+                            retractedCount,
+                            rejectedCount,
+                            distributedCount,
+                            transportCount
+                        ));
                 }
             }
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new RetractCompletion.PayloadData(result.CompletionCode,
-                                                     result.ErrorDescription,
-                                                     result.ErrorCode,
-                                                     itemMovementResult);
+            return new RetractCompletion.PayloadData(CompletionCode: result.CompletionCode,
+                                                     ErrorDescription: result.ErrorDescription,
+                                                     ErrorCode: result.ErrorCode,
+                                                     Storage: itemMovementResult);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

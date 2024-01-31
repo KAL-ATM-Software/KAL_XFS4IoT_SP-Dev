@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
@@ -43,26 +44,21 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```formNotFound``` - The specified form definition cannot be found.
             /// * ```formInvalid``` - The specified form definition is invalid.
             /// * ```fieldSpecFailure``` - The syntax of *fields* is invalid.
-            /// * ```keyCanceled``` - The read operation was terminated by pressing the &lt;CANCEL&gt; key.
+            /// * ```keyCanceled``` - The read operation was terminated by pressing the cancel key.
             /// * ```fieldError``` - An error occurred while processing a field.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Details of the field(s) requested. Each property's name is the field name and value is field value containing all the printable characters (numeric and alphanumeric) 
+            /// Details of the field(s) requested. Each property's name is the field name and value is field value containing
+            /// all the printable characters (numeric and alphanumeric)
             /// read from the text terminal unit key pad for this field. An example shows two fields read.
-            /// 
-            ///   ``` json
-            ///   {
-            ///     "Field1": 123,
-            ///     "Field2": 456
-            ///   }
-            ///   ```
+            /// This property is null if no fields were read.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, string> Fields { get; init; }

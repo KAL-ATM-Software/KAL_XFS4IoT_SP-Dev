@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = Write
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.Write")]
     public sealed class WriteCommand : Command<WriteCommand.PayloadData>
     {
-        public WriteCommand(int RequestId, WriteCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public WriteCommand(int RequestId, WriteCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ModesEnum? Mode = null, int? PosX = null, int? PosY = null, TextAttrClass TextAttr = null, string Text = null)
-                : base(Timeout)
+            public PayloadData(ModesEnum? Mode = null, int? PosX = null, int? PosY = null, TextAttrClass TextAttr = null, string Text = null)
+                : base()
             {
                 this.Mode = Mode;
                 this.PosX = PosX;
@@ -87,8 +88,8 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the text attributes used for displaying the text. If omitted or none are set to true
-            /// then the text will be displayed as normal text.
+            /// Specifies the text attributes used for displaying the text.
+            /// This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "textAttr")]
             public TextAttrClass TextAttr { get; init; }

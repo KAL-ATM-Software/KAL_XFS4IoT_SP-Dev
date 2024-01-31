@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = LoadDefinition
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.LoadDefinition")]
     public sealed class LoadDefinitionCommand : Command<LoadDefinitionCommand.PayloadData>
     {
-        public LoadDefinitionCommand(int RequestId, LoadDefinitionCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public LoadDefinitionCommand(int RequestId, LoadDefinitionCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Definition = null, bool? Overwrite = null)
-                : base(Timeout)
+            public PayloadData(string Definition = null, bool? Overwrite = null)
+                : base()
             {
                 this.Definition = Definition;
                 this.Overwrite = Overwrite;
@@ -45,7 +46,7 @@ namespace XFS4IoT.Printer.Commands
             public string Definition { get; init; }
 
             /// <summary>
-            /// Specifies if an existing form or media definition with the same name is to be replaced. If 
+            /// Specifies if an existing form or media definition with the same name is to be replaced. If
             /// is true then an existing form or media definition with the same name will be replaced, unless the
             /// command fails with an error, where the definition will remain unchanged. If false this
             /// command will fail with an error if the form or media definition already exists.

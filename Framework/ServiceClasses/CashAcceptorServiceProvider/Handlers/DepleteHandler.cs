@@ -81,7 +81,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.Deplete()");
 
-            var result = await Device.Deplete(new DepleteCommandEvents(events), 
+            var result = await Device.Deplete(new DepleteCommandEvents(Storage, events), 
                                               new DepleteRequest(
                                                   deplete.Payload.DepleteSources.ToDictionary(s => s.Source, s => (int)s.NumberOfItemsToMove),
                                                   deplete.Payload.CashUnitTarget

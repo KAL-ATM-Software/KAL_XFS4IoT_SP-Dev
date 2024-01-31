@@ -16,22 +16,13 @@ namespace XFS4IoT.Storage.Commands
 {
     //Original name = StartExchange
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Storage.StartExchange")]
-    public sealed class StartExchangeCommand : Command<StartExchangeCommand.PayloadData>
+    public sealed class StartExchangeCommand : Command<MessagePayload>
     {
-        public StartExchangeCommand(int RequestId, StartExchangeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartExchangeCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

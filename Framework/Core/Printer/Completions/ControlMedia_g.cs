@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.ControlMedia")]
     public sealed class ControlMediaCompletion : Completion<ControlMediaCompletion.PayloadData>
     {
@@ -53,7 +54,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noMediaPresent``` - The control action could not be completed because there is no media in the
             ///   device, the media is not in a position where it can be controlled, or (in the case of *retract*) has

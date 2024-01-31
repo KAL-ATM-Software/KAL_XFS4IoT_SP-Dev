@@ -16,19 +16,20 @@ namespace XFS4IoT.CashManagement.Commands
 {
     //Original name = CalibrateCashUnit
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashManagement.CalibrateCashUnit")]
     public sealed class CalibrateCashUnitCommand : Command<CalibrateCashUnitCommand.PayloadData>
     {
-        public CalibrateCashUnitCommand(int RequestId, CalibrateCashUnitCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CalibrateCashUnitCommand(int RequestId, CalibrateCashUnitCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string Unit = null, int? NumOfBills = null, ItemPositionClass Position = null)
-                : base(Timeout)
+            public PayloadData(string Unit = null, int? NumOfBills = null, ItemTargetClass Position = null)
+                : base()
             {
                 this.Unit = Unit;
                 this.NumOfBills = NumOfBills;
@@ -44,17 +45,17 @@ namespace XFS4IoT.CashManagement.Commands
             public string Unit { get; init; }
 
             /// <summary>
-            /// The number of bills to be dispensed during the calibration process. If not specified or 0, the 
-            /// Service may decide how many bills are required. This may also be ignored if the device always dispenses a 
+            /// The number of bills to be dispensed during the calibration process. If null, the
+            /// Service may decide how many bills are required. This may also be ignored if the device always dispenses a
             /// default number of bills.
             /// <example>40</example>
             /// </summary>
             [DataMember(Name = "numOfBills")]
-            [DataTypes(Minimum = 0)]
+            [DataTypes(Minimum = 1)]
             public int? NumOfBills { get; init; }
 
             [DataMember(Name = "position")]
-            public ItemPositionClass Position { get; init; }
+            public ItemTargetClass Position { get; init; }
 
         }
     }

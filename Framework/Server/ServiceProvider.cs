@@ -16,7 +16,7 @@ namespace XFS4IoTServer
 {
     public class ServiceProvider : CommandDispatcher, IServiceProvider
     {
-        public ServiceProvider(XFS4IoTServer.EndpointDetails EndpointDetails, 
+        public ServiceProvider(EndpointDetails EndpointDetails, 
                                string ServiceName, 
                                IEnumerable<XFSConstants.ServiceClass> Services, 
                                IDevice Device, 
@@ -77,5 +77,15 @@ namespace XFS4IoTServer
         }
 
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
+
+        /// <summary>
+        /// Set supported commands and events to the dispatcher.
+        /// </summary>
+        /// <param name="MessagesSupported"></param>
+        public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported)
+        {
+            base.MessagesSupported = MessagesSupported;
+        }
+        public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => base.MessagesSupported;
     }
 }

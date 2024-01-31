@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.PresentMedia")]
     public sealed class PresentMediaCompletion : Completion<PresentMediaCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for
             /// this command.

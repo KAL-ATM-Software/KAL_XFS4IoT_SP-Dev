@@ -7,13 +7,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CommonStatusClass
+    public sealed class CommonStatusClass : StatusBase
     {
         public enum PositionStatusEnum
         {
@@ -77,15 +78,6 @@ namespace XFS4IoTFramework.Common
             Suspend
         }
 
-        public CommonStatusClass()
-        {
-            Device = DeviceEnum.NoDevice;
-            DevicePosition = PositionStatusEnum.Unknown;
-            PowerSaveRecoveryTime = 0;
-            AntiFraudModule = AntiFraudModuleEnum.NotSupported;
-            Exchange = ExchangeEnum.NotSupported;
-            EndToEndSecurity = EndToEndSecurityEnum.NotSupported;
-        }
         public CommonStatusClass(DeviceEnum Device, 
                                  PositionStatusEnum DevicePosition, 
                                  int PowerSaveRecoveryTime, 
@@ -93,12 +85,12 @@ namespace XFS4IoTFramework.Common
                                  ExchangeEnum Exchange,
                                  EndToEndSecurityEnum EndToEndSecurity)
         {
-            this.Device = Device;
-            this.DevicePosition = DevicePosition;
-            this.PowerSaveRecoveryTime = PowerSaveRecoveryTime;
-            this.AntiFraudModule = AntiFraudModule;
-            this.Exchange = Exchange;
-            this.EndToEndSecurity = EndToEndSecurity;
+            device = Device;
+            devicePosition = DevicePosition;
+            powerSaveRecoveryTime = PowerSaveRecoveryTime;
+            antiFraudModule = AntiFraudModule;
+            exchange = Exchange;
+            endToEndSecurity = EndToEndSecurity;
         }
         
         /// <summary>
@@ -114,7 +106,19 @@ namespace XFS4IoTFramework.Common
         /// * ```fraudAttempt``` - The device is present but is inoperable because it has detected a fraud attempt.
         /// * ```potentialFraud``` - The device has detected a potential fraud attempt and is capable of remaining in service. In this case the application should make the decision as to whether to take the device offline.
         /// </summary>
-        public DeviceEnum Device { get; set; }
+        public DeviceEnum Device 
+        {
+            get { return device; } 
+            set
+            {
+                if (device != value)
+                {
+                    device = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private DeviceEnum device = DeviceEnum.NoDevice;
 
         /// <summary>
         /// Position of the device. Following values are possible:
@@ -123,14 +127,38 @@ namespace XFS4IoTFramework.Common
         /// * ```notInPosition``` - The device has been removed from its normal operating position.
         /// * ```unknown``` - Due to a hardware error or other condition, the position of the device cannot be determined.
         /// </summary>
-        public PositionStatusEnum DevicePosition { get; set; }
+        public PositionStatusEnum DevicePosition 
+        { 
+            get { return devicePosition; }
+            set
+            {
+                if (devicePosition != value)
+                {
+                    devicePosition = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private PositionStatusEnum devicePosition = PositionStatusEnum.Unknown;
 
         /// <summary>
         /// Specifies the actual number of seconds required by the device to resume its normal operational state from
         /// the current power saving mode. This value is zero if either the power saving mode has not been activated or
         /// no power save control is supported.
         /// </summary>
-        public int PowerSaveRecoveryTime { get; set; }
+        public int PowerSaveRecoveryTime 
+        {
+            get { return powerSaveRecoveryTime; }
+            set
+            {
+                if (powerSaveRecoveryTime != value)
+                {
+                    powerSaveRecoveryTime = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int powerSaveRecoveryTime = 0;
 
         /// <summary>
         /// Specifies the state of the anti-fraud module. Following values are possible:
@@ -141,12 +169,36 @@ namespace XFS4IoTFramework.Common
         /// * ```deviceDetected``` - Anti-fraud module detected the presence of a foreign device.
         /// * ```unknown``` - The state of the anti-fraud module cannot be determined.
         /// </summary>
-        public AntiFraudModuleEnum AntiFraudModule { get; set; }
+        public AntiFraudModuleEnum AntiFraudModule 
+        {
+            get { return antiFraudModule; }
+            set
+            {
+                if (antiFraudModule != value)
+                {
+                    antiFraudModule = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AntiFraudModuleEnum antiFraudModule = AntiFraudModuleEnum.NotSupported;
 
         /// <summary>
         /// Exchange status for storage
         /// </summary>
-        public ExchangeEnum Exchange { get; set; }
+        public ExchangeEnum Exchange 
+        {
+            get { return exchange; }
+            set
+            {
+                if (exchange != value)
+                {
+                    exchange = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ExchangeEnum exchange = ExchangeEnum.NotSupported;
 
         /// <summary>
         /// Specifies the status of end to end security support on this device. 
@@ -163,6 +215,18 @@ namespace XFS4IoTFramework.Common
         /// * ```enforced``` - E2E security is supported and correctly configured. E2E security will be enforced. 
         /// Calling E2E protected commands will only be possible if a valid token is given.
         /// </summary>
-        public EndToEndSecurityEnum EndToEndSecurity { get; set; }
+        public EndToEndSecurityEnum EndToEndSecurity 
+        { 
+            get { return endToEndSecurity; } 
+            set
+            {
+                if (endToEndSecurity != value)
+                {
+                    endToEndSecurity = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private EndToEndSecurityEnum endToEndSecurity = EndToEndSecurityEnum.NotSupported;
     }
 }

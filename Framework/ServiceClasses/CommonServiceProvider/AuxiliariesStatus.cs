@@ -12,9 +12,32 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class AuxiliariesStatus
+    public sealed class AuxiliariesStatusClass : StatusBase
     {
-        public AuxiliariesStatus(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
+        public sealed class DoorStatusClass(DoorStatusEnum DoorStatus) : StatusBase
+        {
+            /// <summary>
+            /// This property is set by the framework for StatusChangedEvent generation
+            /// </summary>
+            public AuxiliariesCapabilitiesClass.DoorType? Type { get; set; } = null;
+
+            public DoorStatusEnum DoorStatus
+            {
+                get { return doorStatus; }
+                set
+                {
+                    if (doorStatus != value)
+                    {
+                        doorStatus = value;
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
+
+            private DoorStatusEnum doorStatus = DoorStatus;
+        }
+
+        public AuxiliariesStatusClass(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
                                  SensorEnum TamperSensor = SensorEnum.NotAvailable,
                                  SensorEnum InternalTamperSensor = SensorEnum.NotAvailable,
                                  SensorEnum SeismicSensor = SensorEnum.NotAvailable,
@@ -29,48 +52,48 @@ namespace XFS4IoTFramework.Common
                                  PresenceSensorEnum HeadsetMicrophoneSensor = PresenceSensorEnum.NotAvailable,
                                  SensorEnum FasciaMicrophoneSensor = SensorEnum.NotAvailable,
                                  VandalShieldStatusEnum VandalShield = VandalShieldStatusEnum.NotAvailable,
-                                 Dictionary<AuxiliariesCapabilities.DoorType, DoorStatusEnum> Doors = null,
+                                 Dictionary<AuxiliariesCapabilitiesClass.DoorType, DoorStatusClass> Doors = null,
                                  OpenClosedIndicatorEnum OpenClosedIndicator = OpenClosedIndicatorEnum.NotAvailable,
                                  AudioRateEnum AudioRate = AudioRateEnum.Off,
                                  AudioSignalEnum AudioSignal = AudioSignalEnum.Keypress,
                                  SensorEnum Heating = SensorEnum.NotAvailable,
                                  SensorEnum ConsumerDisplayBacklight = SensorEnum.NotAvailable,
                                  SensorEnum SignageDisplay = SensorEnum.NotAvailable,
-                                 int Volume = 1,
+                                 int Volume = 0,
                                  UpsStatusEnum UPS = UpsStatusEnum.NotAvailable,
                                  SensorEnum AudibleAlarm = SensorEnum.NotAvailable,
                                  EnhancedAudioControlEnum EnhancedAudioControl = EnhancedAudioControlEnum.NotAvailable,
                                  EnhancedAudioControlEnum EnhancedMicrophoneControl = EnhancedAudioControlEnum.NotAvailable,
-                                 MicrophoneVolumeStatus MicrophoneVolume = null)
+                                 int MicrophoneVolume = 0)
         {
-            this.OperatorSwitch = OperatorSwitch;
-            this.TamperSensor = TamperSensor;
-            this.InternalTamperSensor = InternalTamperSensor;
-            this.SeismicSensor = SeismicSensor;
-            this.HeatSensor = HeatSensor;
-            this.ProximitySensor = ProximitySensor;
-            this.AmbientLightSensor = AmbientLightSensor;
-            this.EnhancedAudioSensor = EnhancedAudioSensor;
-            this.BootSwitchSensor = BootSwitchSensor;
-            this.DisplaySensor = DisplaySensor;
-            this.OperatorCallButtonSensor = OperatorCallButtonSensor;
-            this.HandsetSensor = HandsetSensor;
-            this.HeadsetMicrophoneSensor = HeadsetMicrophoneSensor;
-            this.FasciaMicrophoneSensor = FasciaMicrophoneSensor;
-            this.VandalShield = VandalShield;
+            operatorSwitch = OperatorSwitch;
+            tamperSensor = TamperSensor;
+            internalTamperSensor = InternalTamperSensor;
+            seismicSensor = SeismicSensor;
+            heatSensor = HeatSensor;
+            proximitySensor = ProximitySensor;
+            ambientLightSensor = AmbientLightSensor;
+            enhancedAudioSensor = EnhancedAudioSensor;
+            bootSwitchSensor = BootSwitchSensor;
+            displaySensor = DisplaySensor;
+            operatorCallButtonSensor = OperatorCallButtonSensor;
+            handsetSensor = HandsetSensor;
+            headsetMicrophoneSensor = HeadsetMicrophoneSensor;
+            fasciaMicrophoneSensor = FasciaMicrophoneSensor;
+            vandalShield = VandalShield;
             this.Doors = Doors;
-            this.OpenClosedIndicator = OpenClosedIndicator;
-            this.AudioRate = AudioRate;
-            this.AudioSignal = AudioSignal;
-            this.Heating = Heating;
-            this.ConsumerDisplayBacklight = ConsumerDisplayBacklight;
-            this.SignageDisplay = SignageDisplay;
-            this.Volume = Volume;
-            this.UPS = UPS;
-            this.AudibleAlarm = AudibleAlarm;
-            this.EnhancedAudioControl = EnhancedAudioControl;
-            this.EnhancedMicrophoneControl = EnhancedMicrophoneControl;
-            this.MicrophoneVolume = MicrophoneVolume;
+            openClosedIndicator = OpenClosedIndicator;
+            audioRate = AudioRate;
+            audioSignal = AudioSignal;
+            heating = Heating;
+            consumerDisplayBacklight = ConsumerDisplayBacklight;
+            signageDisplay = SignageDisplay;
+            volume = Volume;
+            ups = UPS;
+            audibleAlarm = AudibleAlarm;
+            enhancedAudioControl = EnhancedAudioControl;
+            enhancedMicrophoneControl = EnhancedMicrophoneControl;
+            microphoneVolume = MicrophoneVolume;
         }
 
         public enum SensorEnum
@@ -170,64 +193,407 @@ namespace XFS4IoTFramework.Common
             Recovered = 1 << 3,
         }
 
-        public OperatorSwitchEnum OperatorSwitch { get; set; }
+        public OperatorSwitchEnum OperatorSwitch 
+        { 
+            get { return operatorSwitch; }
+            set
+            {
+                if (operatorSwitch != value)
+                {
+                    operatorSwitch = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private OperatorSwitchEnum operatorSwitch = OperatorSwitchEnum.NotAvailable;
 
-        public SensorEnum TamperSensor { get; set; }
+        public SensorEnum TamperSensor 
+        { 
+            get { return tamperSensor; }
+            set
+            {
+                if (tamperSensor != value)
+                {
+                    tamperSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum tamperSensor = SensorEnum.NotAvailable;
 
-        public SensorEnum InternalTamperSensor { get; set; }
+        public SensorEnum InternalTamperSensor 
+        { 
+            get { return internalTamperSensor; }
+            set
+            {
+                if (internalTamperSensor != value)
+                {
+                    internalTamperSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum internalTamperSensor = SensorEnum.NotAvailable;
 
-        public SensorEnum SeismicSensor { get; set; }
+        public SensorEnum SeismicSensor 
+        { 
+            get { return seismicSensor; }
+            set
+            {
+                if (seismicSensor != value)
+                {
+                    seismicSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum seismicSensor = SensorEnum.NotAvailable;
 
-        public SensorEnum HeatSensor { get; set; }
+        public SensorEnum HeatSensor 
+        { 
+            get { return heatSensor; }
+            set
+            {
+                if (heatSensor != value)
+                {
+                    heatSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum heatSensor = SensorEnum.NotAvailable;
 
-        public PresenceSensorEnum ProximitySensor { get; set; }
+        public PresenceSensorEnum ProximitySensor 
+        { 
+            get { return proximitySensor; }
+            set
+            {
+                if (proximitySensor != value)
+                {  
+                    proximitySensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private PresenceSensorEnum proximitySensor = PresenceSensorEnum.NotAvailable;
 
-        public AmbientLightSensorEnum AmbientLightSensor { get; set; }
+        public AmbientLightSensorEnum AmbientLightSensor 
+        { 
+            get { return ambientLightSensor; }
+            set
+            {
+                if (ambientLightSensor != value)
+                {
+                    ambientLightSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AmbientLightSensorEnum ambientLightSensor = AmbientLightSensorEnum.NotAvailable;
 
-        public PresenceSensorEnum EnhancedAudioSensor { get; set; }
+        public PresenceSensorEnum EnhancedAudioSensor 
+        { 
+            get { return enhancedAudioSensor; }
+            set
+            {
+                if (enhancedAudioSensor != value)
+                {
+                    enhancedAudioSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private PresenceSensorEnum enhancedAudioSensor = PresenceSensorEnum.NotAvailable;
 
-        public SensorEnum BootSwitchSensor { get; set; }
+        public SensorEnum BootSwitchSensor 
+        { 
+            get { return bootSwitchSensor; }
+            set
+            {
+                if (bootSwitchSensor != value)
+                {
+                    bootSwitchSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum bootSwitchSensor = SensorEnum.NotAvailable;
 
-        public DisplaySensorEnum DisplaySensor { get; set; }
+        public DisplaySensorEnum DisplaySensor
+        { 
+            get { return displaySensor; }
+            set
+            {
+                if (displaySensor != value)
+                {
+                    displaySensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private DisplaySensorEnum displaySensor = DisplaySensorEnum.NotAvailable;
 
-        public SensorEnum OperatorCallButtonSensor { get; set; }
+        public SensorEnum OperatorCallButtonSensor 
+        {
+            get { return operatorCallButtonSensor; } 
+            set
+            {
+                if (operatorCallButtonSensor != value)
+                {
+                    operatorCallButtonSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum operatorCallButtonSensor = SensorEnum.NotAvailable;
 
-        public HandsetSensorStatusEnum HandsetSensor { get; set; }
+        public HandsetSensorStatusEnum HandsetSensor 
+        { 
+            get { return handsetSensor; }
+            set
+            {
+                if (handsetSensor != value)
+                {
+                    handsetSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private HandsetSensorStatusEnum handsetSensor = HandsetSensorStatusEnum.NotAvailable;
 
-        public PresenceSensorEnum HeadsetMicrophoneSensor { get; set; }
+        public PresenceSensorEnum HeadsetMicrophoneSensor 
+        { 
+            get { return headsetMicrophoneSensor; }
+            set
+            {
+                if (headsetMicrophoneSensor != value)
+                {
+                    headsetMicrophoneSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private PresenceSensorEnum headsetMicrophoneSensor = PresenceSensorEnum.NotAvailable;
 
-        public SensorEnum FasciaMicrophoneSensor { get; set; }
+        public SensorEnum FasciaMicrophoneSensor 
+        { 
+            get { return fasciaMicrophoneSensor; }
+            set
+            {
+                fasciaMicrophoneSensor = value;
+                if (fasciaMicrophoneSensor != value)
+                {
+                    fasciaMicrophoneSensor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum fasciaMicrophoneSensor = SensorEnum.NotAvailable;
 
-        public VandalShieldStatusEnum VandalShield { get; set; }
+        public VandalShieldStatusEnum VandalShield 
+        { 
+            get { return vandalShield; }
+            set
+            {
+                if (vandalShield != value)
+                {
+                    vandalShield = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private VandalShieldStatusEnum vandalShield = VandalShieldStatusEnum.NotAvailable;
+
+        public Dictionary<AuxiliariesCapabilitiesClass.DoorType, DoorStatusClass> Doors { get; init; }
+
+        public OpenClosedIndicatorEnum OpenClosedIndicator 
+        { 
+            get { return openClosedIndicator; }
+            set
+            {
+                if (openClosedIndicator != value)
+                {
+                    openClosedIndicator = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private OpenClosedIndicatorEnum openClosedIndicator = OpenClosedIndicatorEnum.NotAvailable;
+
+        public enum AudioRateEnum 
+        {
+            On,
+            Off,
+            NotAvailable,
+        }
+        public enum AudioSignalEnum 
+        { 
+            Keypress, 
+            Exclamation, 
+            Warning, 
+            Error, 
+            Critical,
+            NotAvailable,
+        }
+
+        public AudioRateEnum AudioRate 
+        { 
+            get { return audioRate; }
+            set
+            {
+                if (audioRate != value)
+                {  
+                    audioRate = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AudioRateEnum audioRate = AudioRateEnum.NotAvailable;
+
+        public AudioSignalEnum AudioSignal 
+        { 
+            get { return audioSignal; }
+            set
+            {
+                if (audioSignal != value)
+                {
+                    audioSignal = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private AudioSignalEnum audioSignal = AudioSignalEnum.NotAvailable;
+
+        public SensorEnum Heating 
+        { 
+            get { return heating; }
+            set
+            {
+                if (heating != value)
+                {
+                    heating = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum heating = SensorEnum.NotAvailable;
+
+        public SensorEnum ConsumerDisplayBacklight 
+        { 
+            get { return consumerDisplayBacklight; }
+            set
+            {
+                if (consumerDisplayBacklight != value)
+                {
+                    consumerDisplayBacklight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum consumerDisplayBacklight = SensorEnum.NotAvailable;
+
+        public SensorEnum SignageDisplay 
+        { 
+            get { return signageDisplay; }
+            set
+            {
+                if (signageDisplay != value)
+                {
+                    signageDisplay = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum signageDisplay = SensorEnum.NotAvailable;
+
+        /// <summary>
+        /// This property is zero if the device doesn't support volume.
+        /// </summary>
+        public int Volume 
+        { 
+            get { return volume; }
+            set
+            {
+                if (volume != value)
+                {
+                    volume = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int volume = 0;
+
+        public UpsStatusEnum UPS 
+        { 
+            get {  return ups; }
+            set
+            {
+                if (ups != value)
+                {
+                    ups = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private UpsStatusEnum ups = UpsStatusEnum.NotAvailable;
+
+        public SensorEnum AudibleAlarm 
+        { 
+            get { return audibleAlarm; }
+            set
+            {
+                if (audibleAlarm != value)
+                {
+                    audibleAlarm = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private SensorEnum audibleAlarm = SensorEnum.NotAvailable;
+
+        public EnhancedAudioControlEnum EnhancedAudioControl 
+        {
+            get { return enhancedAudioControl; }
+            set
+            {
+                if (enhancedAudioControl  != value)
+                {
+                    enhancedAudioControl = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private EnhancedAudioControlEnum enhancedAudioControl = EnhancedAudioControlEnum.NotAvailable;
+
+        public EnhancedAudioControlEnum EnhancedMicrophoneControl 
+        {
+            get { return enhancedMicrophoneControl; }
+            set
+            {
+                if (enhancedMicrophoneControl != value)
+                {
+                    enhancedMicrophoneControl = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private EnhancedAudioControlEnum enhancedMicrophoneControl = EnhancedAudioControlEnum.NotAvailable;
         
-        public Dictionary<AuxiliariesCapabilities.DoorType, DoorStatusEnum> Doors { get; set; }
-
-        public OpenClosedIndicatorEnum OpenClosedIndicator { get; set; }
-
-        public enum AudioRateEnum { On, Off }
-        public enum AudioSignalEnum { Keypress, Exclamation, Warning, Error, Critical }
-
-        public AudioRateEnum AudioRate { get; set; }
-
-        public AudioSignalEnum AudioSignal { get; set; }
-
-        public SensorEnum Heating { get; set; }
-
-        public SensorEnum ConsumerDisplayBacklight { get; set; }
-
-        public SensorEnum SignageDisplay { get; set; }
-
-        public int Volume { get; set; }
-
-        public UpsStatusEnum UPS { get; set; }
-
-        public SensorEnum AudibleAlarm { get; set; }
-
-        public EnhancedAudioControlEnum EnhancedAudioControl { get; set; }
-
-        public EnhancedAudioControlEnum EnhancedMicrophoneControl { get; set; }
-
-        public record MicrophoneVolumeStatus(bool Available, int VolumeLevel);
-        public MicrophoneVolumeStatus MicrophoneVolume { get; set; }
+        /// <summary>
+        /// This property is zero if the device doesn't support volume.
+        /// </summary>
+        public int MicrophoneVolume 
+        {
+            get { return microphoneVolume; }
+            set
+            {
+                if (microphoneVolume != value)
+                {
+                    microphoneVolume = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int microphoneVolume = 0;
     }
 }

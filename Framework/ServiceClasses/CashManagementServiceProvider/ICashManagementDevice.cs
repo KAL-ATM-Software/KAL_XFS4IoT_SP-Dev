@@ -40,16 +40,11 @@ namespace XFS4IoTFramework.CashManagement
                                                  ResetDeviceRequest request,
                                                  CancellationToken cancellation);
 
-        /// <summary>
-        /// This method unlocks the safe door or starts the timedelay count down prior to unlocking the safe door, 
-        /// if the device supports it. The command completes when the door is unlocked or the timer has started.
-        /// </summary>
-        Task<UnlockSafeResult> UnlockSafeAsync(CancellationToken cancellation);
 
         /// <summary>
         /// This method will cause a vendor dependent sequence of hardware events which will calibrate one or more physical cash units associated with a logical cash unit.
         /// </summary>
-        Task<CalibrateCashUnitResult> CalibrateCashUnitAsync(ItemErrorCommandEvents events, 
+        Task<CalibrateCashUnitResult> CalibrateCashUnitAsync(CalibrateCashUnitCommandEvents events, 
                                                              CalibrateCashUnitRequest request, 
                                                              CancellationToken cancellation);
         /// <summary>

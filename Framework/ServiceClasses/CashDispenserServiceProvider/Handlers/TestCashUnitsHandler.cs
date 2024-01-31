@@ -17,6 +17,7 @@ using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
+using System.Text.RegularExpressions;
 
 namespace XFS4IoTFramework.CashDispenser
 {
@@ -24,104 +25,154 @@ namespace XFS4IoTFramework.CashDispenser
     {
         private async Task<TestCashUnitsCompletion.PayloadData> HandleTestCashUnits(ITestCashUnitsEvents events, TestCashUnitsCommand testCashUnits, CancellationToken cancel)
         {
-            ItemPosition itemPosition = null;
+            ItemDestination destination = new();
 
-            if (string.IsNullOrEmpty(testCashUnits.Payload.Unit) &&
-                testCashUnits.Payload.RetractArea is null &&
-                testCashUnits.Payload.OutputPosition is null)
+            if (testCashUnits.Payload.Target is null)
             {
                 // Default position is device decide to move items
             }
             else
             {
-                if (!string.IsNullOrEmpty(testCashUnits.Payload.Unit) &&
-                    !Storage.CashUnits.ContainsKey(testCashUnits.Payload.Unit))
+                if (testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.SingleUnit &&
+                    string.IsNullOrEmpty(testCashUnits.Payload.Target.Unit))
                 {
-                    return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified CashUnit location is unknown.");
+                    return new TestCashUnitsCompletion.PayloadData(
+                        MessagePayload.CompletionCodeEnum.InvalidData,
+                        $"Specified location to {testCashUnits.Payload.Target.Target}, but target unit {testCashUnits.Payload.Target.Unit} property is an empty string.");
                 }
 
-                if (!string.IsNullOrEmpty(testCashUnits.Payload.Unit))
+                if (testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.SingleUnit &&
+                    !string.IsNullOrEmpty(testCashUnits.Payload.Target.Unit) &&
+                    !Storage.CashUnits.ContainsKey(testCashUnits.Payload.Target.Unit))
                 {
-                    itemPosition = new ItemPosition(testCashUnits.Payload.Unit);
+                    return new TestCashUnitsCompletion.PayloadData(
+                        MessagePayload.CompletionCodeEnum.InvalidData,
+                        $"Specified CashUnit location is unknown. {testCashUnits.Payload.Target.Unit}");
+                }
+
+                if (testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.SingleUnit)
+                {
+                    destination = new ItemDestination(CashUnit: testCashUnits.Payload.Target.Unit);
                 }
                 else
                 {
-                    if (testCashUnits.Payload.RetractArea is not null &&
-                        testCashUnits.Payload.OutputPosition is not null)
+                    if (testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Retract ||
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Transport ||
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Stacker ||
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.ItemCassette ||
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.CashIn)
                     {
-                        return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
-                    }
-
-                    if (testCashUnits.Payload.RetractArea is not null)
-                    {
-                        int? index = null;
-                        RetractClass retract = testCashUnits.Payload.RetractArea.IsA<RetractClass>("RetractArea object must be the RetractAreaClass.");
-
-                        CashManagementCapabilitiesClass.RetractAreaEnum retractArea = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
-                        if (retract.RetractArea is not null)
+                        CashManagementCapabilitiesClass.RetractAreaEnum retractArea = testCashUnits.Payload.Target.Target switch
                         {
-                            retractArea = retract.RetractArea switch
-                            {
-                                RetractAreaEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
-                                RetractAreaEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
-                                RetractAreaEnum.Retract => CashManagementCapabilitiesClass.RetractAreaEnum.Retract,
-                                RetractAreaEnum.Stacker => CashManagementCapabilitiesClass.RetractAreaEnum.Stacker,
-                                RetractAreaEnum.Transport => CashManagementCapabilitiesClass.RetractAreaEnum.Transport,
-                                _ => CashManagementCapabilitiesClass.RetractAreaEnum.Default
-                            };
-
-                            if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                                !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
-                            {
-                                return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                               $"Specified unsupported retract area. {retractArea}",
-                                                                               TestCashUnitsCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
-                            }
-                        }
-
-                        if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract &&
-                            retract.Index is null)
-                        {
-                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Index property is set to null where the retract area is specified to retract position.");
-                        }
-
-                        itemPosition = new ItemPosition(new Retract(retractArea, index));
-                    }
-                    else if (testCashUnits.Payload.OutputPosition is not null)
-                    {
-                        CashManagementCapabilitiesClass.PositionEnum position = testCashUnits.Payload.OutputPosition switch
-                        {
-                            OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
-                            OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
-                            OutputPositionEnum.OutDefault => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
-                            OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
-                            OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
-                            OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
-                            OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
-                            OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
-                            _ => CashManagementCapabilitiesClass.PositionEnum.NotSupported,
-
+                            ItemTargetEnumEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
+                            ItemTargetEnumEnum.CashIn => CashManagementCapabilitiesClass.RetractAreaEnum.CashIn,
+                            ItemTargetEnumEnum.Retract => CashManagementCapabilitiesClass.RetractAreaEnum.Retract,
+                            ItemTargetEnumEnum.Stacker => CashManagementCapabilitiesClass.RetractAreaEnum.Stacker,
+                            ItemTargetEnumEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
+                            _ => CashManagementCapabilitiesClass.RetractAreaEnum.Transport,
                         };
 
-                        if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                            !Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
+                        if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                         {
-                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Specified unsupported output position. {position}");
+                            return new TestCashUnitsCompletion.PayloadData(
+                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified unsupported retract area. {retractArea}",
+                                TestCashUnitsCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
                         }
 
-                        itemPosition = new ItemPosition(position);
+                        if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
+                        {
+                            int index = 0;
+                            if (testCashUnits.Payload.Target.Index is null)
+                            {
+                                Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
+                            }
+                            else
+                            {
+                                index = (int)testCashUnits.Payload.Target.Index;
+                            }
+
+                            if (index < 0)
+                            {
+                                Logger.Warning(Constants.Framework, $"Index property is set negative value {index}. default to zero.");
+                                index = 0;
+                            }
+
+                            // Check the index is valid
+                            int totalRetractUnits = (from unit in Storage.CashUnits
+                                                     where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract) ||
+                                                         unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract)
+                                                     select unit).Count();
+                            if ((int)index > totalRetractUnits)
+                            {
+                                return new TestCashUnitsCompletion.PayloadData(
+                                    MessagePayload.CompletionCodeEnum.InvalidData,
+                                    $"Unexpected index property value is set where the retract area is specified to retract position. " +
+                                    $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
+                            }
+
+                            destination = new ItemDestination(ItemTargetEnum.Retract, index);
+                        }
+                        else
+                        {
+                            destination = new ItemDestination(
+                            testCashUnits.Payload.Target.Target switch
+                               {
+                                   ItemTargetEnumEnum.ItemCassette => ItemTargetEnum.ItemCassette,
+                                   ItemTargetEnumEnum.CashIn => ItemTargetEnum.CashIn,
+                                   ItemTargetEnumEnum.Stacker => ItemTargetEnum.Stacker,
+                                   ItemTargetEnumEnum.Reject => ItemTargetEnum.Reject,
+                                   _ => ItemTargetEnum.Transport,
+                               });
+                        }
+                    }
+                    else
+                    {
+                        if (Common.CashManagementCapabilities.Positions == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
+                        {
+                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                   $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
+                        }
+
+                        CashManagementCapabilitiesClass.PositionEnum position = testCashUnits.Payload.Target.Target switch
+                        {
+                            ItemTargetEnumEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
+                            ItemTargetEnumEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
+                            ItemTargetEnumEnum.OutDefault => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
+                            ItemTargetEnumEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
+                            ItemTargetEnumEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
+                            ItemTargetEnumEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
+                            ItemTargetEnumEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
+                            ItemTargetEnumEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
+                            _ => throw new InvalidDataException($"Unsupported output position is specified. {testCashUnits.Payload.Target.Target}"),
+                        };
+
+                        if (!Common.CashManagementCapabilities.Positions.HasFlag(position))
+                        {
+                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                   $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
+                        }
+
+                        destination = new ItemDestination(
+                        testCashUnits.Payload.Target.Target switch
+                               {
+                                   ItemTargetEnumEnum.OutBottom => ItemTargetEnum.OutBottom,
+                                   ItemTargetEnumEnum.OutCenter => ItemTargetEnum.OutCenter,
+                                   ItemTargetEnumEnum.OutDefault => ItemTargetEnum.OutDefault,
+                                   ItemTargetEnumEnum.OutFront => ItemTargetEnum.OutFront,
+                                   ItemTargetEnumEnum.OutLeft => ItemTargetEnum.OutLeft,
+                                   ItemTargetEnumEnum.OutRear => ItemTargetEnum.OutRear,
+                                   ItemTargetEnumEnum.OutRight => ItemTargetEnum.OutRight,
+                                   _ => ItemTargetEnum.OutTop,
+                               });
                     }
                 }
             }
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.TestCashUnitsAsync()");
 
-            var result = await Device.TestCashUnitsAsync(new ItemErrorCommandEvents(events),
-                                                         new TestCashUnitsRequest(itemPosition),
+            var result = await Device.TestCashUnitsAsync(new TestCashUnitsCommandEvents(Storage, events),
+                                                         new TestCashUnitsRequest(destination),
                                                          cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.TestCashUnitsAsync() -> {result.CompletionCode}, {result.ErrorCode}");

@@ -16,6 +16,7 @@ namespace XFS4IoT.Camera.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Camera.InvalidDataEvent")]
     public sealed class InvalidDataEvent : Event<MessagePayloadBase>
     {

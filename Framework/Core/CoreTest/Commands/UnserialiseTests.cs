@@ -35,10 +35,11 @@ namespace XFS4IoTCoreTest.Command
                 ""header"":{
                     ""name"":""CardReader.ReadRawData"",
                     ""requestId"":123456,
-                    ""type"":""command""
+                    ""type"":""command"",
+                    ""version"":""2.0"",
+                    ""timeout"":5000
                 },
                 ""payload"":{
-                    ""timeout"":5000,
                     ""track1"":true,
                     ""track2"": true,
                     ""track3"":true,
@@ -176,12 +177,12 @@ namespace XFS4IoTCoreTest.Command
         [Command(Name = "Common.TestCommand1")]
         public class TestCommand1 : Command<XFS4IoT.Commands.MessagePayload>
         {
-            public TestCommand1() : base(123456, new XFS4IoT.Commands.MessagePayload(10000)) { }
+            public TestCommand1() : base(123456, null,  10000) { }
         }
         [Command(Name = "Common.TestCommand2")]
         public class TestCommand2 : Command<XFS4IoT.Commands.MessagePayload>
         {
-            public TestCommand2() : base(123456, new XFS4IoT.Commands.MessagePayload(20000)) { }
+            public TestCommand2() : base(123456, null, 20000) { }
         }
         [Completion(Name = "Common.TestResponse1")]
         public class TestResponse1 : Completion<XFS4IoT.Completions.MessagePayload>

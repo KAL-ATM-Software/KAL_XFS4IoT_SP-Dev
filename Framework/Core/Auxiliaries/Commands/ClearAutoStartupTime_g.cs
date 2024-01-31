@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * ClearAutoStartupTime_g.cs uses automatically generated parts.
+ * ClearAutoStartUpTime_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,24 +14,15 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.Auxiliaries.Commands
 {
-    //Original name = ClearAutoStartupTime
+    //Original name = ClearAutoStartUpTime
     [DataContract]
-    [Command(Name = "Auxiliaries.ClearAutoStartupTime")]
-    public sealed class ClearAutoStartupTimeCommand : Command<ClearAutoStartupTimeCommand.PayloadData>
+    [XFS4Version(Version = "2.0")]
+    [Command(Name = "Auxiliaries.ClearAutoStartUpTime")]
+    public sealed class ClearAutoStartUpTimeCommand : Command<MessagePayload>
     {
-        public ClearAutoStartupTimeCommand(int RequestId, ClearAutoStartupTimeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearAutoStartUpTimeCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

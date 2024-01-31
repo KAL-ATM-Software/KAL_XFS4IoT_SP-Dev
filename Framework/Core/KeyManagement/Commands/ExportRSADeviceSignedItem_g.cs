@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ExportRSADeviceSignedItem
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.ExportRSADeviceSignedItem")]
     public sealed class ExportRSADeviceSignedItemCommand : Command<ExportRSADeviceSignedItemCommand.PayloadData>
     {
-        public ExportRSADeviceSignedItemCommand(int RequestId, ExportRSADeviceSignedItemCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ExportRSADeviceSignedItemCommand(int RequestId, ExportRSADeviceSignedItemCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, TypeDataItemToExportEnum? ExportItemType = null, string Name = null, string SigKey = null, RSASignatureAlgorithmEnum? SignatureAlgorithm = null)
-                : base(Timeout)
+            public PayloadData(TypeDataItemToExportEnum? ExportItemType = null, string Name = null, string SigKey = null, RSASignatureAlgorithmEnum? SignatureAlgorithm = null)
+                : base()
             {
                 this.ExportItemType = ExportItemType;
                 this.Name = Name;
@@ -61,8 +62,8 @@ namespace XFS4IoT.KeyManagement.Commands
             /// signature fields, as one of the following:
             /// 
             /// * ```na``` - No signature will be provided in selfSignature or signature. The requested item may still
-            ///   be exported.  
-            /// * ```rsassaPkcs1V15``` - RSASSA-PKCS1-v1.5 algorithm used.  
+            ///   be exported.
+            /// * ```rsassaPkcs1V15``` - RSASSA-PKCS1-v1.5 algorithm used.
             /// * ```rsassaPss``` - RSASSA-PSS algorithm used.
             /// </summary>
             [DataMember(Name = "signatureAlgorithm")]

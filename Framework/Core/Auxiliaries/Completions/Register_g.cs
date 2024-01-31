@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Auxiliaries.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Auxiliaries.Register")]
     public sealed class RegisterCompletion : Completion<RegisterCompletion.PayloadData>
     {
@@ -38,7 +39,7 @@ namespace XFS4IoT.Auxiliaries.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```invalidAuxiliary``` - An attempt to register for or disable events to a auxiliary was invalid because the auxiliary does not exist.
             /// </summary>

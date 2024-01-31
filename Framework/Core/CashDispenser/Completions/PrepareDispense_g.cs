@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.PrepareDispense")]
     public sealed class PrepareDispenseCompletion : Completion<PrepareDispenseCompletion.PayloadData>
     {
@@ -26,10 +27,24 @@ namespace XFS4IoT.CashDispenser.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
                 : base(CompletionCode, ErrorDescription)
             {
+                this.ErrorCode = ErrorCode;
             }
+
+            public enum ErrorCodeEnum
+            {
+                ExchangeActive
+            }
+
+            /// <summary>
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
+            /// 
+            /// * ```exchangeActive``` - The device is in an exchange state (see [Storage.StartExchange](#storage.startexchange)).
+            /// </summary>
+            [DataMember(Name = "errorCode")]
+            public ErrorCodeEnum? ErrorCode { get; init; }
 
         }
     }

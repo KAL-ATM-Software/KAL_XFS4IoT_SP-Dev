@@ -16,6 +16,7 @@ namespace XFS4IoT.CashDispenser.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashDispenser.StartDispenseEvent")]
     public sealed class StartDispenseEvent : Event<MessagePayloadBase>
     {

@@ -16,11 +16,9 @@ namespace XFS4IoTFramework.Storage
     public interface IStorageUnsolicitedEvents
     {
 
-        Task StorageThresholdEvent(XFS4IoT.Storage.Events.StorageThresholdEvent.PayloadData Payload);
-
         Task StorageChangedEvent(XFS4IoT.Storage.Events.StorageChangedEvent.PayloadData Payload);
 
-        Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload);
+        Task StorageThresholdEvent(XFS4IoT.Storage.Events.StorageThresholdEvent.PayloadData Payload);
 
     }
 }

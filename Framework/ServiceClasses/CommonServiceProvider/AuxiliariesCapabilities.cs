@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class AuxiliariesCapabilities
+    public sealed class AuxiliariesCapabilitiesClass
     {
-        public AuxiliariesCapabilities(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
+        public AuxiliariesCapabilitiesClass(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
                                        AuxiliariesSupportedEnum AuxiliariesSupported = AuxiliariesSupportedEnum.None,
                                        EnhancedAudioCapabilitiesEnum EnhancedAudioSensor = EnhancedAudioCapabilitiesEnum.NotAvailable,
                                        HandsetSensorCapabilities HandsetSensor = HandsetSensorCapabilities.NotAvailable,
@@ -226,6 +226,7 @@ namespace XFS4IoTFramework.Common
         public enum DoorType
         {
             Safe,
+            Cabinet,
             FrontCabinet,
             RearCabinet,
             LeftCabinet,

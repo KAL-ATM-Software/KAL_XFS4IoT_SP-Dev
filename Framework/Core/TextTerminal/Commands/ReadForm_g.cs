@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = ReadForm
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.ReadForm")]
     public sealed class ReadFormCommand : Command<ReadFormCommand.PayloadData>
     {
-        public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, List<string> Fields = null)
-                : base(Timeout)
+            public PayloadData(string FormName = null, List<string> Fields = null)
+                : base()
             {
                 this.FormName = FormName;
                 this.Fields = Fields;
@@ -42,12 +43,12 @@ namespace XFS4IoT.TextTerminal.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// Specifies the field names from which to read input data. The fields 
-            /// are edited by the user in the order that the fields are specified 
-            /// within this parameter. If omitted, data is read 
-            /// from all input fields on the form in the order they appear in the 
+            /// Specifies the field names from which to read input data. The fields
+            /// are edited by the user in the order that the fields are specified
+            /// within this parameter. If this property is null, data is read
+            /// from all input fields on the form in the order they appear in the
             /// form (independent of the field screen position).
-            /// <example>'["Field1", "Field2"]'</example>
+            /// <example>["Field1", "Field2"]</example>
             /// </summary>
             [DataMember(Name = "fields")]
             public List<string> Fields { get; init; }

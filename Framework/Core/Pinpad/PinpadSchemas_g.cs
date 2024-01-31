@@ -60,7 +60,7 @@ namespace XFS4IoT.PinPad
             public bool? Ibm3624 { get; init; }
 
             /// <summary>
-            /// PIN is preceded by 0x00 and the length of the PIN (0x04 to 0x0C), filled with padding character 0x0F to the right, PIN length 4-12 digits, 
+            /// PIN is preceded by 0x00 and the length of the PIN (0x04 to 0x0C), filled with padding character 0x0F to the right, PIN length 4-12 digits,
             /// XORed with PAN (Primary Account Number, minimum 12 digits without check number).
             /// </summary>
             [DataMember(Name = "ansi")]
@@ -93,7 +93,7 @@ namespace XFS4IoT.PinPad
 
             /// <summary>
             /// PIN is preceded by the length (digit), PIN length 4-6 digits.
-            /// If the PIN length is less than six digits the PIN is filled with 0x0 to the length of six, the padding character can range from 0x0 
+            /// If the PIN length is less than six digits the PIN is filled with 0x0 to the length of six, the padding character can range from 0x0
             /// through 0x9 (This format is also referred to as VISA2).
             /// </summary>
             [DataMember(Name = "visa")]
@@ -106,14 +106,14 @@ namespace XFS4IoT.PinPad
             public bool? Diebold { get; init; }
 
             /// <summary>
-            /// PIN with the length of 4 to 12 digits, each one with a value of 0x0 to 0x9, is preceded by the one-digit coordination number with 
+            /// PIN with the length of 4 to 12 digits, each one with a value of 0x0 to 0x9, is preceded by the one-digit coordination number with
             /// a value from 0x0 to 0xF, padded with the padding character with a value from 0x0 to 0xF and may be not encrypted, single encrypted or double encrypted.
             /// </summary>
             [DataMember(Name = "dieboldCo")]
             public bool? DieboldCo { get; init; }
 
             /// <summary>
-            /// PIN with the length of 4 to 12 digits, each one with a value of 0x0 to 0x9, is followed by a delimiter with the value of 0xF and then padded 
+            /// PIN with the length of 4 to 12 digits, each one with a value of 0x0 to 0x9, is followed by a delimiter with the value of 0xF and then padded
             /// by the padding character with a value between 0x0 to 0xF.
             /// </summary>
             [DataMember(Name = "visa3")]
@@ -126,7 +126,7 @@ namespace XFS4IoT.PinPad
             public bool? Banksys { get; init; }
 
             /// <summary>
-            /// The PIN block is constructed as follows: PIN is preceded by 0x02 and the length of the PIN (0x04 to 0x0C), filled with padding character 0x0F 
+            /// The PIN block is constructed as follows: PIN is preceded by 0x02 and the length of the PIN (0x04 to 0x0C), filled with padding character 0x0F
             /// to the right, formatted up to 248 bytes of other data as defined within the EMV 4.0 specifications and finally encrypted with an RSA key.
             /// </summary>
             [DataMember(Name = "emv")]
@@ -139,7 +139,7 @@ namespace XFS4IoT.PinPad
             public bool? Iso3 { get; init; }
 
             /// <summary>
-            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. pinpad-5](#ref-pinpad-5)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN, 
+            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. pinpad-5](#ref-pinpad-5)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN,
             /// and the 8 digit CCS from the track data.
             /// </summary>
             [DataMember(Name = "ap")]
@@ -177,7 +177,7 @@ namespace XFS4IoT.PinPad
         }
 
         /// <summary>
-        /// Supported presentation algorithms.
+        /// Supported presentation algorithms. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "presentationAlgorithms")]
         public PresentationAlgorithmsClass PresentationAlgorithms { get; init; }
@@ -213,14 +213,14 @@ namespace XFS4IoT.PinPad
         }
 
         /// <summary>
-        /// Specifies the type of the display used in the PIN pad module.
+        /// Specifies the type of the display used in the PIN pad module. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "display")]
         public DisplayClass Display { get; init; }
 
         /// <summary>
         /// Specifies whether the PIN pad is directly physically connected to the ID card unit.
-        /// If the value is true, the PIN will be transported securely during the command 
+        /// If the value is true, the PIN will be transported securely during the command
         /// [PinPad.PresentIdc](#pinpad.presentidc).
         /// </summary>
         [DataMember(Name = "idcConnect")]
@@ -250,7 +250,7 @@ namespace XFS4IoT.PinPad
         }
 
         /// <summary>
-        /// Specifies the algorithms for PIN validation supported by the service.
+        /// Specifies the algorithms for PIN validation supported by the service. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "validationAlgorithms")]
         public ValidationAlgorithmsClass ValidationAlgorithms { get; init; }
@@ -262,19 +262,19 @@ namespace XFS4IoT.PinPad
         public bool? PinCanPersistAfterUse { get; init; }
 
         /// <summary>
-        /// Specifies whether the keypad used in the secure PIN pad module is integrated within a 
-        /// generic Win32 keyboard. true means the secure PIN keypad is integrated within a generic 
+        /// Specifies whether the keypad used in the secure PIN pad module is integrated within a
+        /// generic Win32 keyboard. true means the secure PIN keypad is integrated within a generic
         /// Win32 keyboard and standard Win32 key events will be generated for any key when there is
         /// no active [Keyboard.GetData](#keyboard.dataentry) or [Keyboard.GetPin](#keyboard.pinentry)
-        /// command.  Note that XFS continues to support defined PIN keys only, and is not extended 
+        /// command.  Note that XFS continues to support defined PIN keys only, and is not extended
         /// to support new alphanumeric keys.
         /// </summary>
         [DataMember(Name = "typeCombined")]
         public bool? TypeCombined { get; init; }
 
         /// <summary>
-        /// Specifies whether the command [PinPad.SetPinblockData](#pinpad.setpinblockdata) must be 
-        /// called before the PIN is entered via [Keyboard.GetPin](#keyboard.pinentry) and retrieved via 
+        /// Specifies whether the command [PinPad.SetPinblockData](#pinpad.setpinblockdata) must be
+        /// called before the PIN is entered via [Keyboard.GetPin](#keyboard.pinentry) and retrieved via
         /// [PinPad.GetPinblock](#pinpad.getpinblock).
         /// </summary>
         [DataMember(Name = "setPinblockDataRequired")]
@@ -354,19 +354,19 @@ namespace XFS4IoT.PinPad
             }
 
             /// <summary>
-            /// Specifies the cryptographic method supported. 
+            /// Specifies the cryptographic method supported.
             /// If the algorithm is 'A', 'D', or 'T', then the following properties can be true:
             /// 
-            /// * ```ecb``` - The ECB encryption method. 
-            /// * ```cbc``` - The CBC encryption method.  
-            /// * ```cfb``` - The CFB encryption method.  
-            /// * ```ofb``` - The OFB encryption method. 
+            /// * ```ecb``` - The ECB encryption method.
+            /// * ```cbc``` - The CBC encryption method.
+            /// * ```cfb``` - The CFB encryption method.
+            /// * ```ofb``` - The OFB encryption method.
             /// * ```ctr``` - The CTR method defined in NIST SP800-38A (See [[Ref. pinpad-7](#ref-pinpad-7)]).
             /// * ```xts``` - The XTS method defined in NIST SP800-38E (See [[Ref. pinpad-8](#ref-pinpad-8)]).
             /// 
             /// If the algorithm is 'R', then following properties can be true:
             /// 
-            /// * ```rsaesPkcs1V15``` - Use the RSAES_PKCS1-v1.5 algorithm. 
+            /// * ```rsaesPkcs1V15``` - Use the RSAES_PKCS1-v1.5 algorithm.
             /// * ```rsaesOaep``` - Use the RSAES OAEP algorithm.
             /// </summary>
             [DataMember(Name = "cryptoMethod")]
@@ -375,7 +375,7 @@ namespace XFS4IoT.PinPad
         }
 
         /// <summary>
-        /// Key-value pair of attributes supported by the [PinPad.GetPinblock](#pinpad.getpinblock) command
+        /// Attributes supported by the [PinPad.GetPinblock](#pinpad.getpinblock) command
         /// to generate encrypted PIN block.
         /// </summary>
         [DataMember(Name = "pinBlockAttributes")]

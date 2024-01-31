@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +15,8 @@ using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace XFS4IoTFramework.CashManagement
 {
@@ -25,120 +25,143 @@ namespace XFS4IoTFramework.CashManagement
 
         private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
-            ItemPosition itemPosition = null;
+            ItemDestination destination = new();
 
-            if (string.IsNullOrEmpty(reset.Payload.Unit) &&
-                reset.Payload.RetractArea is null &&
-                reset.Payload.OutputPosition is null)
+            if (reset.Payload.Position is null ||
+                reset.Payload.Position.Target is null)
             {
                 // Default position is device decide to move items
             }
             else
             {
-                if (!string.IsNullOrEmpty(reset.Payload.Unit) &&
-                    !Storage.CashUnits.ContainsKey(reset.Payload.Unit))
+                if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
+                    string.IsNullOrEmpty(reset.Payload.Position.Unit))
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Specified CashUnit location is unknown. {reset.Payload.Unit}");
+                                                           $"Specified location to {reset.Payload.Position.Target}, but target unit {reset.Payload.Position.Unit} property is an empty string.");
                 }
 
-                if (!string.IsNullOrEmpty(reset.Payload.Unit))
+                if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
+                    !string.IsNullOrEmpty(reset.Payload.Position.Unit) &&
+                    !Storage.CashUnits.ContainsKey(reset.Payload.Position.Unit))
                 {
-                    itemPosition = new ItemPosition(reset.Payload.Unit);
+                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                           $"Specified CashUnit location is unknown. {reset.Payload.Position.Unit}");
+                }
+
+                if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit)
+                {
+                    destination = new ItemDestination(CashUnit: reset.Payload.Position.Unit);
                 }
                 else
                 {
-                    if (reset.Payload.RetractArea is not null &&
-                        reset.Payload.OutputPosition is not null)
+                    if (reset.Payload.Position.Target == ItemTargetEnumEnum.Retract ||
+                        reset.Payload.Position.Target == ItemTargetEnumEnum.Transport ||
+                        reset.Payload.Position.Target == ItemTargetEnumEnum.Stacker ||
+                        reset.Payload.Position.Target == ItemTargetEnumEnum.ItemCassette ||
+                        reset.Payload.Position.Target == ItemTargetEnumEnum.CashIn)
                     {
-                        return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
-                    }
-
-                    if (reset.Payload.RetractArea is not null)
-                    {
-                        int? index = null;
-                        RetractClass retract = reset.Payload.RetractArea.IsA<RetractClass>("RetractArea object must be the RetractAreaClass.");
-
-                        CashManagementCapabilitiesClass.RetractAreaEnum retractArea = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
-                        if (retract.RetractArea is not null)
+                        CashManagementCapabilitiesClass.RetractAreaEnum retractArea = reset.Payload.Position.Target switch
                         {
-                            retractArea = retract.RetractArea switch
-                            {
-                                RetractAreaEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
-                                RetractAreaEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
-                                RetractAreaEnum.Retract => CashManagementCapabilitiesClass.RetractAreaEnum.Retract,
-                                RetractAreaEnum.Stacker => CashManagementCapabilitiesClass.RetractAreaEnum.Stacker,
-                                RetractAreaEnum.Transport => CashManagementCapabilitiesClass.RetractAreaEnum.Transport,
-                                _ => CashManagementCapabilitiesClass.RetractAreaEnum.Default
-                            };
-
-                            if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                                !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
-                            {
-                                return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"Specified unsupported retract area. {retractArea}",
-                                                                       ResetCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition);
-                            }
-
-                            if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
-                            {
-                                index = 0;
-                                if (retract.Index is null)
-                                {
-                                    Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
-                                }
-                                else
-                                {
-                                    index = (int)retract.Index;
-                                }
-
-                                if (index < 0)
-                                {
-                                    Logger.Warning(Constants.Framework, $"Index property is set negative value {index}. default to zero.");
-                                    index = 0;
-                                }
-
-                                // Check the index is valid
-                                int totalRetractUnits = (from unit in Storage.CashUnits
-                                                         where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract) ||
-                                                               unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract)
-                                                         select unit).Count();
-                                if ((int)index > totalRetractUnits)
-                                {
-                                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Unexpected index property value is set where the retract area is specified to retract position. " +
-                                                                           $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
-                                }
-                            }
-                        }
-
-                        itemPosition = new ItemPosition(new Retract(retractArea, index));
-                    }
-                    else if (reset.Payload.OutputPosition is not null)
-                    {
-                        CashManagementCapabilitiesClass.PositionEnum position = reset.Payload.OutputPosition switch
-                        {
-                            OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
-                            OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
-                            OutputPositionEnum.OutDefault => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
-                            OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
-                            OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
-                            OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
-                            OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
-                            OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
-                            _ => CashManagementCapabilitiesClass.PositionEnum.NotSupported,
-
+                            ItemTargetEnumEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
+                            ItemTargetEnumEnum.CashIn => CashManagementCapabilitiesClass.RetractAreaEnum.CashIn,
+                            ItemTargetEnumEnum.Retract => CashManagementCapabilitiesClass.RetractAreaEnum.Retract,
+                            ItemTargetEnumEnum.Stacker => CashManagementCapabilitiesClass.RetractAreaEnum.Stacker,
+                            ItemTargetEnumEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
+                            _ => CashManagementCapabilitiesClass.RetractAreaEnum.Transport,
                         };
 
-                        if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
-                            !Common.CashManagementCapabilities.Positions.HasFlag(position))
+                        if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                         {
-                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {position}");
+                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                   $"Specified unsupported retract area. {retractArea}",
+                                                                   ResetCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition);
                         }
 
-                        itemPosition = new ItemPosition(position);
+                        if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
+                        {
+                            int index = 0;
+                            if (reset.Payload.Position.Index is null)
+                            {
+                                Logger.Warning(Constants.Framework, $"Index property is set to null where the retract area is specified to retract position. default to zero.");
+                            }
+                            else
+                            {
+                                index = (int)reset.Payload.Position.Index;
+                            }
+
+                            if (index < 0)
+                            {
+                                Logger.Warning(Constants.Framework, $"Index property is set negative value {index}. default to zero.");
+                                index = 0;
+                            }
+
+                            // Check the index is valid
+                            int totalRetractUnits = (from unit in Storage.CashUnits
+                                                        where unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract) ||
+                                                            unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract)
+                                                        select unit).Count();
+                            if ((int)index > totalRetractUnits)
+                            {
+                                return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                        $"Unexpected index property value is set where the retract area is specified to retract position. " +
+                                                                        $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
+                            }
+
+                            destination = new ItemDestination(ItemTargetEnum.Retract, index);
+                        }
+                        else
+                        {
+                            destination = new ItemDestination(
+                               reset.Payload.Position.Target switch
+                               {
+                                   ItemTargetEnumEnum.ItemCassette => ItemTargetEnum.ItemCassette,
+                                   ItemTargetEnumEnum.CashIn => ItemTargetEnum.CashIn,
+                                   ItemTargetEnumEnum.Stacker => ItemTargetEnum.Stacker,
+                                   ItemTargetEnumEnum.Reject => ItemTargetEnum.Reject,
+                                   _ => ItemTargetEnum.Transport,
+                               });
+                        }
+                    }
+                    else
+                    {
+                        if (Common.CashManagementCapabilities.Positions == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
+                        {
+                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                   $"Specified unsupported output position. {reset.Payload.Position.Target}");
+                        }
+
+                        CashManagementCapabilitiesClass.PositionEnum position = reset.Payload.Position.Target switch
+                        {
+                            ItemTargetEnumEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
+                            ItemTargetEnumEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
+                            ItemTargetEnumEnum.OutDefault => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
+                            ItemTargetEnumEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
+                            ItemTargetEnumEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
+                            ItemTargetEnumEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
+                            ItemTargetEnumEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
+                            ItemTargetEnumEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
+                            _ => throw new InvalidDataException($"Unsupported output position is specified. {reset.Payload.Position.Target}"),
+                        };
+
+                        if (!Common.CashManagementCapabilities.Positions.HasFlag(position))
+                        {
+                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                   $"Specified unsupported output position. {reset.Payload.Position.Target}");
+                        }
+
+                        destination = new ItemDestination(
+                               reset.Payload.Position.Target switch
+                               {
+                                   ItemTargetEnumEnum.OutBottom => ItemTargetEnum.OutBottom,
+                                   ItemTargetEnumEnum.OutCenter => ItemTargetEnum.OutCenter,
+                                   ItemTargetEnumEnum.OutDefault => ItemTargetEnum.OutDefault,
+                                   ItemTargetEnumEnum.OutFront => ItemTargetEnum.OutFront,
+                                   ItemTargetEnumEnum.OutLeft => ItemTargetEnum.OutLeft,
+                                   ItemTargetEnumEnum.OutRear => ItemTargetEnum.OutRear,
+                                   ItemTargetEnumEnum.OutRight => ItemTargetEnum.OutRight,
+                                   _ => ItemTargetEnum.OutTop,
+                               });
                     }
                 }
             }
@@ -151,8 +174,8 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.ResetDeviceAsync()");
 
-            var result = await Device.ResetDeviceAsync(new ResetCommandEvents(events),
-                                                       new ResetDeviceRequest(itemPosition),
+            var result = await Device.ResetDeviceAsync(new ResetCommandEvents(Storage, events),
+                                                       new ResetDeviceRequest(destination),
                                                        cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -161,11 +184,69 @@ namespace XFS4IoTFramework.CashManagement
             CashManagement.CashInStatusManaged.Status = CashInStatusClass.StatusEnum.Reset;
             CashManagement.StoreCashInStatus();
 
+            Dictionary<string, StorageCashInClass> itemMovementResult = null;
+
+            if (result.MovementResult?.Count > 0)
+            {
+                itemMovementResult = [];
+                foreach (var movement in result.MovementResult)
+                {
+                    Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
+                    foreach (var item in movement.Value.StorageCashInCount.Deposited.ItemCounts)
+                        deposited.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> retracted = new();
+                    foreach (var item in movement.Value.StorageCashInCount.Retracted.ItemCounts)
+                        retracted.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> rejected = new();
+                    foreach (var item in movement.Value.StorageCashInCount.Rejected.ItemCounts)
+                        rejected.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> distributed = new();
+                    foreach (var item in movement.Value.StorageCashInCount.Distributed.ItemCounts)
+                        distributed.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> transport = new();
+                    foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
+                        transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+
+                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized)
+                    {
+                        ExtendedProperties = deposited
+                    };
+                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized)
+                    {
+                        ExtendedProperties = retracted
+                    };
+                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized)
+                    {
+                        ExtendedProperties = rejected
+                    };
+                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized)
+                    {
+                        ExtendedProperties = distributed
+                    };
+                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized)
+                    {
+                        ExtendedProperties = transport
+                    };
+
+                    itemMovementResult.Add(movement.Key, 
+                        new StorageCashInClass
+                        (
+                            movement.Value.StorageCashInCount.RetractOperations,
+                            depositedCount,
+                            retractedCount,
+                            rejectedCount,
+                            distributedCount,
+                            transportCount
+                        ));
+                }
+            }
+
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription,
-                                                   result.ErrorCode);
+            return new ResetCompletion.PayloadData(CompletionCode: result.CompletionCode,
+                                                   ErrorDescription: result.ErrorDescription,
+                                                   ErrorCode: result.ErrorCode,
+                                                   Storage: itemMovementResult);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

@@ -56,7 +56,7 @@ namespace XFS4IoTFramework.CashDispenser
                 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PresentCashAsync()");
 
-            var result = await Device.PresentCashAsync(new ItemInfoAvailableCommandEvent(events), new PresentCashRequest(position), cancel);
+            var result = await Device.PresentCashAsync(new PresentCashCommandEvents(events), new PresentCashRequest(position), cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.PresentCashAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -112,11 +112,12 @@ namespace XFS4IoTFramework.CashDispenser
                 _ => PositionEnum.OutDefault
             };
 
+            PositionInfoNullableClass positionInfo = new(resPostion, result.NumBunchesRemaining < 0 ? "unknown" : result.NumBunchesRemaining.ToString());
+
             return new PresentCompletion.PayloadData(result.CompletionCode,
                                                      result.ErrorDescription,
                                                      result.ErrorCode,
-                                                     resPostion,
-                                                     result.NumBunchesRemaining < 0 ? "unknown" : result.NumBunchesRemaining.ToString());
+                                                     positionInfo);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

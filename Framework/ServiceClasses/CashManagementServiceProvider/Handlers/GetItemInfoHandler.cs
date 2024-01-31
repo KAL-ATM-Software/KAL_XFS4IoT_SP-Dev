@@ -76,7 +76,7 @@ namespace XFS4IoTFramework.CashManagement
                                                                               OrientationEnum.FrontBottom => XFS4IoT.CashManagement.OrientationEnum.FrontBottom,
                                                                               OrientationEnum.FrontTop => XFS4IoT.CashManagement.OrientationEnum.FrontTop,
                                                                               OrientationEnum.Unknown => XFS4IoT.CashManagement.OrientationEnum.Unknown,
-                                                                              _ => XFS4IoT.CashManagement.OrientationEnum.NotSupported,
+                                                                              _ => null,
                                                                           },
                                                                           item.Value?.Signature,
                                                                           item.Value?.Level switch 

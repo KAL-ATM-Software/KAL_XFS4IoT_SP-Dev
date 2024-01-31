@@ -16,19 +16,20 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = Cancel
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.Cancel")]
     public sealed class CancelCommand : Command<CancelCommand.PayloadData>
     {
-        public CancelCommand(int RequestId, CancelCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CancelCommand(int RequestId, CancelCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<int> RequestIds = null)
-                : base(Timeout)
+            public PayloadData(List<int> RequestIds = null)
+                : base()
             {
                 this.RequestIds = RequestIds;
             }
@@ -40,7 +41,7 @@ namespace XFS4IoT.Common.Commands
             /// executing and which are associated with the client connection on which this command is received. All
             /// other requestIds will be ignored.
             /// 
-            /// If omitted, the Service will attempt to cancel all queued or executing command requests associated with
+            /// If null, the Service will attempt to cancel all queued or executing command requests associated with
             /// the client connection on which this command is received.
             /// <example>[1, 2]</example>
             /// </summary>

@@ -16,19 +16,20 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = StartAuthenticate
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "KeyManagement.StartAuthenticate")]
     public sealed class StartAuthenticateCommand : Command<StartAuthenticateCommand.PayloadData>
     {
-        public StartAuthenticateCommand(int RequestId, StartAuthenticateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartAuthenticateCommand(int RequestId, StartAuthenticateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CommandClass Command = null)
-                : base(Timeout)
+            public PayloadData(CommandClass Command = null)
+                : base()
             {
                 this.Command = Command;
             }
@@ -51,7 +52,7 @@ namespace XFS4IoT.KeyManagement.Commands
                     }
 
                     /// <summary>
-                    /// Specifies the name of key being deleted. if this property is omitted. all keys are deleted.
+                    /// The name of key being deleted.
                     /// <example>Key01</example>
                     /// </summary>
                     [DataMember(Name = "key")]
@@ -60,15 +61,13 @@ namespace XFS4IoT.KeyManagement.Commands
                 }
 
                 /// <summary>
-                /// This command can be used to delete a key with authentication. Details of
-                /// [KeyManagement.DeleteKey](#keymanagement.deletekey) command.
+                /// See [KeyManagement.DeleteKey](#keymanagement.deletekey) description.
                 /// </summary>
                 [DataMember(Name = "deleteKey")]
                 public DeleteKeyClass DeleteKey { get; init; }
 
                 /// <summary>
-                /// This command can be used to initialize encryption module with authentication. Details of
-                /// [KeyManagement.Initialization](#keymanagement.initialization) command.
+                /// See [KeyManagement.Initialization](#keymanagement.initialization) description.
                 /// </summary>
                 [DataMember(Name = "initialization")]
                 public object Initialization { get; init; }
@@ -76,11 +75,11 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// The command and the input parameters to which authentication is being applied. The possible command is
-            /// one of:
+            /// The command and associated command specific input properties which for which data to sign is requested.
+            /// This must be one of:
             /// 
-            /// * ```deleteKey``` - Delete a key with authentication.
-            /// * ```initialization``` - Initialize encryption module with authentication.
+            /// * ```deleteKey``` - The [KeyManagement.DeleteKey](#keymanagement.deletekey) command.
+            /// * ```initialization``` - [KeyManagement.Initialization](#keymanagement.initialization) command.
             /// </summary>
             [DataMember(Name = "command")]
             public CommandClass Command { get; init; }

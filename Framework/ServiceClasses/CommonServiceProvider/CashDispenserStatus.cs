@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CashDispenserStatusClass
+    public sealed class CashDispenserStatusClass : StatusBase
     {
         public enum IntermediateStackerEnum
         {
@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.Common
         public CashDispenserStatusClass(IntermediateStackerEnum IntermediateStacker,
                                         Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashManagementStatusClass.PositionStatusClass> Positions = null)
         {
-            this.IntermediateStacker = IntermediateStacker;
+            intermediateStacker = IntermediateStacker;
             this.Positions = Positions;
         }
 
@@ -45,7 +45,19 @@ namespace XFS4IoTFramework.Common
         /// * ```Unknown``` - Due to a hardware error or other condition, the state of the intermediate stacker cannot be determined.
         /// * ```NotSupported``` - The physical device has no intermediate stacker.
         /// </summary>
-        public IntermediateStackerEnum IntermediateStacker { get; set; }
+        public IntermediateStackerEnum IntermediateStacker 
+        {
+            get { return intermediateStacker; }
+            set
+            {
+                if (intermediateStacker != value)
+                {
+                    intermediateStacker = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private IntermediateStackerEnum intermediateStacker = IntermediateStackerEnum.NotSupported;
 
         /// <summary>
         /// Array of structures for each position to which items can be dispensed or presented.

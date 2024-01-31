@@ -53,11 +53,11 @@ namespace XFS4IoTFramework.Storage
                                                                                                                                            storage.Value.Unit.Status.RetainCount,
                                                                                                                                            storage.Value.Unit.Status.ReplenishmentStatus switch
                                                                                                                                            {
-                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Empty => ReplenishmentStatusEnumEnum.Empty,
-                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Full => ReplenishmentStatusEnumEnum.Full,
-                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.High => ReplenishmentStatusEnumEnum.High,
-                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Low => ReplenishmentStatusEnumEnum.Low,
-                                                                                                                                              _ => ReplenishmentStatusEnumEnum.Ok,
+                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
+                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
+                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
+                                                                                                                                               CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
+                                                                                                                                              _ => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
                                                                                                                                            })));
                     storageResponse.Add(storage.Key, thisStorage);
                 }
@@ -138,8 +138,8 @@ namespace XFS4IoTFramework.Storage
                                                                                                                       CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
                                                                                                                       CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
                                                                                                                       CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                                                                                                      CashStatusClass.AccuracyEnum.NotSupported => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.NotSupported,
-                                                                                                                      _ => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
+                                                                                                                      CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
+                                                                                                                      _ => null,
                                                                                                                   },
                                                                                                                   storage.Value.Unit.Status.ReplenishmentStatus switch
                                                                                                                   {

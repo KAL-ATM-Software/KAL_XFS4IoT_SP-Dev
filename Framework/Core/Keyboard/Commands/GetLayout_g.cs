@@ -16,19 +16,20 @@ namespace XFS4IoT.Keyboard.Commands
 {
     //Original name = GetLayout
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Keyboard.GetLayout")]
     public sealed class GetLayoutCommand : Command<GetLayoutCommand.PayloadData>
     {
-        public GetLayoutCommand(int RequestId, GetLayoutCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetLayoutCommand(int RequestId, GetLayoutCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, EntryModeEnum? EntryMode = null)
-                : base(Timeout)
+            public PayloadData(EntryModeEnum? EntryMode = null)
+                : base()
             {
                 this.EntryMode = EntryMode;
             }
@@ -41,8 +42,9 @@ namespace XFS4IoT.Keyboard.Commands
             }
 
             /// <summary>
-            /// Specifies entry mode to be returned.
-            /// If this property is omitted, all supported layouts will be returned.
+            /// Specifies entry mode to be returned. If this property is null, all layouts for the [Keyboard.DataEntry](#keyboard.dataentry),
+            /// [Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry) command are returned.
+            /// 
             /// The following values are possible:
             /// 
             /// * ```data``` - Get the layout for the [Keyboard.DataEntry](#keyboard.dataentry) command.

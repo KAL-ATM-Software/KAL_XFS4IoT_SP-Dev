@@ -47,12 +47,27 @@ namespace XFS4IoT
         public TypeEnum Type { get; private set; }
 
         /// <summary>
+        /// The version of the message. 1.0, 2.0, etc
+        /// </summary>
+        [DataMember(IsRequired = true, Name = "version")]
+        public string Version { get; private set; }
+
+        /// <summary>
+        /// Timeout in milliseconds for the command to complete. If set to 0, 
+        /// the command will not timeout but can be canceled.
+        /// </summary>
+[       DataMember(IsRequired = false, Name = "timeout")]
+        public int? Timeout { get; private set; }
+
+        /// <summary>
         /// MessageHeader class representing XFS4 message header
         /// </summary>
         /// <param name="Name"></param>
         /// <param name="RequestId"></param>
+        /// <param name="Version"></param>
         /// <param name="Type"></param>
-        public MessageHeader(string Name, int? RequestId, TypeEnum Type)
+        /// <param name="Timeout">This property is only applicable to command messages.</param>
+        public MessageHeader(string Name, int? RequestId, string Version, TypeEnum Type, int? Timeout = null)
         {
             Contracts.IsNotNullOrWhitespace(Name, $"Null or an empty value for {nameof(Name)} in the header.");
             // RequestionId may be null for unsolicited events
@@ -60,6 +75,8 @@ namespace XFS4IoT
             this.Name = Name;
             this.RequestId = RequestId;
             this.Type = Type;
+            this.Version = Version;
+            this.Timeout = Timeout;
         }
     }
 }

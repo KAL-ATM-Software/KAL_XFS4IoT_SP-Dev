@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Keyboard.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Keyboard.DataEntry")]
     public sealed class DataEntryCompletion : Completion<DataEntryCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.Keyboard.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
             /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
             ///                           Service Provider.
@@ -65,9 +66,6 @@ namespace XFS4IoT.Keyboard.Completions
             [DataMember(Name = "pinKeys")]
             public List<KeyPressedClass> PinKeys { get; init; }
 
-            /// <summary>
-            /// Specifies the reason for completion of the entry.
-            /// </summary>
             [DataMember(Name = "completion")]
             public EntryCompletionEnum? Completion { get; init; }
 

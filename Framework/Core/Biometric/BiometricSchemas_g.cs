@@ -29,26 +29,27 @@ namespace XFS4IoT.Biometric
         {
             Present,
             NotPresent,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
         /// Specifies the state of the subject to be scanned (e.g. finger, palm, retina, etc) as one of the following values:
         /// 
-        /// * ```present```\t- The subject to be scanned is on the scanning position. 
+        /// * ```present```\t- The subject to be scanned is on the scanning position.
         /// * ```notPresent``` - The subject to be scanned is not on the scanning position.
-        /// * ```unknown``` - The subject to be scanned cannot be determined with the device in its 
-        ///                          current state (e.g. the value of [device](#common.status.completion.properties.common.device) is noDevice, powerOff, offline, or hwError). 
-        /// * ```notSupported``` - The physical device does not support the ability to report whether a subject is on the scanning position.
+        /// * ```unknown``` - The subject to be scanned cannot be determined with the device in its
+        ///                          current state (e.g. the value of [device](#common.status.completion.properties.common.device) is noDevice, powerOff, offline, or hwError).
+        /// 
+        /// This property is null if the physical device does not support the ability to report whether or not a subject is on the scanning position.
         /// </summary>
         [DataMember(Name = "subject")]
         public SubjectEnum? Subject { get; init; }
 
         /// <summary>
-        /// Indicates whether or not scanned biometric data has been captured using the [Biometric.Read](#biometric.read) 
-        /// and is currently stored and ready for comparison. true if data has been captured and is stored, false if no scanned data is present.
+        /// Indicates whether scanned biometric data has been captured using the [Biometric.Read](#biometric.read)
+        /// and is currently stored and ready for comparison.
         /// This will be set to false when scanned data is cleared using the [Biometric.Clear](#biometric.clear).
+        /// This may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// </summary>
         [DataMember(Name = "capture")]
         public bool? Capture { get; init; }
@@ -60,23 +61,25 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the current data persistence mode. The data persistence mode controls how biometric data that has been captured using the 
+        /// Specifies the current data persistence mode. The data persistence mode controls how biometric data that has been captured using the
         /// [Biometric.Read](#biometric.read) will be handled.
+        /// This property is null if the property [persistenceModes](#common.capabilities.completion.description.biometric.persistencemodes) is null or
+        /// both properties [persist](#common.capabilities.completion.description.biometric.persistencemodes.persist) and [clear](#common.capabilities.completion.description.biometric.persistencemodes.clear) are false.
         /// The following values are possible:
         /// 
-        ///   * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all 
-        ///                     sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) 
-        ///                     is requested again. This captured biometric data can also be explicitly cleared using the 
+        ///   * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
+        ///                     sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read)
+        ///                     is requested again. This captured biometric data can also be explicitly cleared using the
         ///                     [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
-        ///   * ```clear``` - Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
+        ///   * ```clear``` - Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read)
         ///                   or used by the [Biometric.Match](#biometric.match), then the data is cleared from the device.
         /// </summary>
         [DataMember(Name = "dataPersistence")]
         public DataPersistenceEnum? DataPersistence { get; init; }
 
         /// <summary>
-        /// Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes. 
-        /// if omitted, this property is not supported.
+        /// Specifies how much of the reserved storage specified by the capability [templateStorage](#common.capabilities.completion.properties.biometric.templatestorage) is remaining for the storage of templates in bytes.
+        /// if null, this property is not supported.
         /// </summary>
         [DataMember(Name = "remainingStorage")]
         [DataTypes(Minimum = 0)]
@@ -88,13 +91,13 @@ namespace XFS4IoT.Biometric
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeClass Type = null, int? MaxCapture = null, int? TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionalAlgorithmClass EncryptionalAlgorithm = null, StorageClass Storage = null, PersistenceModesClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModesClass CompareModes = null, ClearDataClass ClearData = null)
+        public CapabilitiesClass(TypeClass Type = null, int? MaxCapture = null, int? TemplateStorage = null, DataFormatsClass DataFormats = null, EncryptionAlgorithmsClass EncryptionAlgorithms = null, StorageClass Storage = null, PersistenceModesClass PersistenceModes = null, MatchSupportedEnum? MatchSupported = null, ScanModesClass ScanModes = null, CompareModesClass CompareModes = null, ClearDataClass ClearData = null)
         {
             this.Type = Type;
             this.MaxCapture = MaxCapture;
             this.TemplateStorage = TemplateStorage;
             this.DataFormats = DataFormats;
-            this.EncryptionalAlgorithm = EncryptionalAlgorithm;
+            this.EncryptionAlgorithms = EncryptionAlgorithms;
             this.Storage = Storage;
             this.PersistenceModes = PersistenceModes;
             this.MatchSupported = MatchSupported;
@@ -196,8 +199,8 @@ namespace XFS4IoT.Biometric
         public TypeClass Type { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of times that the device can attempt to capture biometric data during a 
-        /// [Biometric.Read](#biometric.read). If this is zero then the device or the Service determines 
+        /// Specifies the maximum number of times that the device can attempt to capture biometric data during a
+        /// [Biometric.Read](#biometric.read). If this is zero then the device or the Service determines
         /// how many captures will be attempted.
         /// </summary>
         [DataMember(Name = "maxCapture")]
@@ -312,9 +315,9 @@ namespace XFS4IoT.Biometric
         public DataFormatsClass DataFormats { get; init; }
 
         [DataContract]
-        public sealed class EncryptionalAlgorithmClass
+        public sealed class EncryptionAlgorithmsClass
         {
-            public EncryptionalAlgorithmClass(bool? Ecb = null, bool? Cbc = null, bool? Cfb = null, bool? Rsa = null)
+            public EncryptionAlgorithmsClass(bool? Ecb = null, bool? Cbc = null, bool? Cfb = null, bool? Rsa = null)
             {
                 this.Ecb = Ecb;
                 this.Cbc = Cbc;
@@ -349,10 +352,10 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Supported encryption algorithms. Omitted if no encryption algorithms.
+        /// Supported encryption algorithms. This property is null if no encryption algorithms are supported.
         /// </summary>
-        [DataMember(Name = "encryptionalAlgorithm")]
-        public EncryptionalAlgorithmClass EncryptionalAlgorithm { get; init; }
+        [DataMember(Name = "encryptionAlgorithms")]
+        public EncryptionAlgorithmsClass EncryptionAlgorithms { get; init; }
 
         [DataContract]
         public sealed class StorageClass
@@ -378,8 +381,8 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Indicates whether or not biometric template data can be stored securely or 
-        /// none if Biometric template data is not stored in the device.
+        /// Indicates whether or not biometric template data can be stored securely.
+        /// This property is null if biometric template data is not stored in the device.
         /// </summary>
         [DataMember(Name = "storage")]
         public StorageClass Storage { get; init; }
@@ -394,16 +397,16 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all 
-            /// sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) 
-            /// is requested again. This captured biometric data can also be explicitly cleared using the 
+            /// Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
+            /// sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read)
+            /// is requested again. This captured biometric data can also be explicitly cleared using the
             /// [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
             /// </summary>
             [DataMember(Name = "persist")]
             public bool? Persist { get; init; }
 
             /// <summary>
-            /// Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
+            /// Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read)
             /// or used by the [Biometric.Match](#biometric.match), then the data is cleared from the device.
             /// </summary>
             [DataMember(Name = "clear")]
@@ -412,9 +415,9 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies which data persistence modes can be set using the [Biometric.SetDataPersistence](#biometric.setdatapersistence). 
+        /// Specifies which data persistence modes can be set using the [Biometric.SetDataPersistence](#biometric.setdatapersistence).
         /// This applies specifically to the biometric data that has been captured using the [Biometric.Read](#biometric.read).
-        /// A value of none indicates that persistence is entirely under device control and cannot be set.
+        /// This property is null if persistence is entirely under device control and cannot be set.
         /// </summary>
         [DataMember(Name = "persistenceModes")]
         public PersistenceModesClass PersistenceModes { get; init; }
@@ -426,17 +429,17 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies if matching is supported using the [Biometric.Match](#biometric.match) 
-        /// and/or [Biometric.SetMatch](#biometric.setmatch) command. Omitted if the device does not support matching.
+        /// Specifies if matching is supported using the [Biometric.Match](#biometric.match)
+        /// and/or [Biometric.SetMatch](#biometric.setmatch) command. This property is null if the device does not support matching.
         /// This will be one of the following values:
         /// 
-        ///   * ```storedMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command 
-        ///                         and stores it, then the scanned data can be compared with imported biometric data 
+        ///   * ```storedMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command
+        ///                         and stores it, then the scanned data can be compared with imported biometric data
         ///                         using the [Biometric.Match](#biometric.match).
-        ///   * ```combinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric 
-        ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch) 
+        ///   * ```combinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric
+        ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch)
         ///                           must be called before the [Biometric.Read](#biometric.read) in order to set
-        ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) can be 
+        ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) can be
         ///                           called to return the result.
         /// </summary>
         [DataMember(Name = "matchSupported")]
@@ -452,14 +455,14 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// The [Biometric.Read](#biometric.read) can be used to scan data only, for example to enroll a 
+            /// The [Biometric.Read](#biometric.read) can be used to scan data only, for example to enroll a
             /// user or collect data for matching in an external biometric system.
             /// </summary>
             [DataMember(Name = "scan")]
             public bool? Scan { get; init; }
 
             /// <summary>
-            /// The [Biometric.Read](#biometric.read) can be used to scan data for a match operation using 
+            /// The [Biometric.Read](#biometric.read) can be used to scan data for a match operation using
             /// the [Biometric.Match](#biometric.match).
             /// </summary>
             [DataMember(Name = "match")]
@@ -497,7 +500,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the type of match operations. A value of none indicates that matching is not supported.
+        /// Specifies the type of match operations. This property is null if the device does not support matching.
         /// </summary>
         [DataMember(Name = "compareModes")]
         public CompareModesClass CompareModes { get; init; }
@@ -533,8 +536,8 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the type of data that can be cleared from storage using the [Biometric.Clear](#biometric.clear) 
-        /// or [Biometric.Reset](#biometric.reset) command.
+        /// Specifies the type of data that can be cleared from storage using the [Biometric.Clear](#biometric.clear)
+        /// or [Biometric.Reset](#biometric.reset) command. This property is null if the device does not support clearing data from storage using commands.
         /// </summary>
         [DataMember(Name = "clearData")]
         public ClearDataClass ClearData { get; init; }
@@ -569,7 +572,7 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the format of the template data. 
+        /// Specifies the format of the template data.
         /// Available values are described in the [dataFormats](#common.capabilities.completion.description.biometric.dataformats).
         /// The following values are possible:
         /// 
@@ -598,8 +601,8 @@ namespace XFS4IoT.Biometric
         }
 
         /// <summary>
-        /// Specifies the encryption algorithm. This value is omitted if the biometric data is not encrypted. 
-        /// Available values are described in the [encryptionalAlgorithm](#common.capabilities.completion.description.biometric.encryptionalalgorithm).
+        /// Specifies the encryption algorithm. This value is null if the biometric data is not encrypted.
+        /// Available values are described in the [encryptionAlgorithms](#common.capabilities.completion.description.biometric.encryptionalgorithms).
         /// The following values are possible:
         /// 
         /// * ```ecb``` - Triple DES with Electronic Code Book.
@@ -611,8 +614,8 @@ namespace XFS4IoT.Biometric
         public AlgorithmEnum? Algorithm { get; init; }
 
         /// <summary>
-        /// Specifies the name of the key that is used to encrypt the biometric data. 
-        /// This property is omitted if the biometric data is not encrypted.
+        /// Specifies the name of the key that is used to encrypt the biometric data.
+        /// This property is null if the biometric data is not encrypted.
         /// The detailed key information is available through the [KeyManagement.GetKeyDetail](#keymanagement.getkeydetail).
         /// <example>Key01</example>
         /// </summary>
@@ -645,14 +648,6 @@ namespace XFS4IoT.Biometric
         [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
         public List<byte> Data { get; init; }
 
-    }
-
-
-    public enum ClearDataEnum
-    {
-        ScannedData,
-        ImportedData,
-        SetMatchedData
     }
 
 

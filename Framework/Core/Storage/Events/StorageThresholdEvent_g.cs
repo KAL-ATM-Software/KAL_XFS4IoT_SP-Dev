@@ -16,6 +16,7 @@ namespace XFS4IoT.Storage.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Storage.StorageThresholdEvent")]
     public sealed class StorageThresholdEvent : UnsolicitedEvent<StorageThresholdEvent.PayloadData>
     {

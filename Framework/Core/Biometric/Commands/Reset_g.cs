@@ -16,26 +16,34 @@ namespace XFS4IoT.Biometric.Commands
 {
     //Original name = Reset
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Biometric.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
-        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ClearDataEnum? ClearData = null)
-                : base(Timeout)
+            public PayloadData(ClearDataEnum? ClearData = null)
+                : base()
             {
                 this.ClearData = ClearData;
             }
 
+            public enum ClearDataEnum
+            {
+                ScannedData,
+                ImportedData,
+                SetMatchedData
+            }
+
             /// <summary>
-            /// This property indicates the type of data to be cleared from storage. 
-            /// If this property is omitted, then all stored data will be cleared.
+            /// This property indicates the type of data to be or which has been cleared from storage.
+            /// If this property is null, then all stored data will be or has been cleared.
             /// Available values are described in the [clearData](#common.capabilities.completion.properties.biometric.cleardata).
             /// The following values are possible:
             /// 

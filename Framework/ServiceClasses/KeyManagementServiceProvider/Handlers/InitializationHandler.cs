@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.KeyManagement
                     return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                     $"No authentication method specified.");
                 }
-                if (initialization.Payload.Authentication.Method != AuthenticationMethodEnum.None)
+                if (initialization.Payload.Authentication.Method is not null)
                 {
                     if (initialization.Payload.Authentication.Data is null ||
                         initialization.Payload.Authentication.Data.Count == 0)

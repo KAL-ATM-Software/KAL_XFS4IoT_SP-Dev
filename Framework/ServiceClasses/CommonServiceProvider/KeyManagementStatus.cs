@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyManagementStatusClass
+    public sealed class KeyManagementStatusClass : StatusBase
     {
         public enum EncryptionStateEnum
         {
@@ -34,26 +34,45 @@ namespace XFS4IoTFramework.Common
             NotReady
         }
 
-        public KeyManagementStatusClass()
-        {
-            EncryptionState = EncryptionStateEnum.Undefined;
-            CertificateState = CertificateStateEnum.NotSupported;
-        }
         public KeyManagementStatusClass(EncryptionStateEnum EncryptionState,
                                         CertificateStateEnum CertificateState)
         {
-            this.EncryptionState = EncryptionState;
-            this.CertificateState = CertificateState;
+            encryptionState = EncryptionState;
+            certificateState = CertificateState;
         }
 
         /// <summary>
         /// Specifies the state of the encryption module.
         /// </summary>
-        public EncryptionStateEnum EncryptionState { get; set; }
+        public EncryptionStateEnum EncryptionState
+        {
+            get { return encryptionState; } 
+            set
+            {
+                if (encryptionState != value)
+                {
+                    encryptionState = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private EncryptionStateEnum encryptionState = EncryptionStateEnum.Undefined;
 
         /// <summary>
         /// Specifies the state of the public verification or encryption key in the PIN certificate modules.
         /// </summary>
-        public CertificateStateEnum CertificateState { get; set; }
+        public CertificateStateEnum CertificateState
+        {
+            get { return certificateState; } 
+            set
+            {
+                if (certificateState != value)
+                {
+                    certificateState = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private CertificateStateEnum certificateState = CertificateStateEnum.NotSupported;
     }
 }

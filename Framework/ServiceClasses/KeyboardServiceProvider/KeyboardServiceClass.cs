@@ -14,6 +14,7 @@ using XFS4IoT;
 using XFS4IoTFramework.Keyboard;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -101,6 +102,7 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "KeyboardDev.KeyboardStatus=");
 
             CommonService.KeyboardStatus.IsNotNull($"The device class set KeyboardStatus property to null. The device class must report device status.");
+            CommonService.KeyboardStatus.PropertyChanged += StatusChangedEventFowarder;
         }
 
         private void GetCapabilities()
@@ -111,5 +113,12 @@ namespace XFS4IoTServer
 
             CommonService.KeyboardCapabilities.IsNotNull($"The device class set KeyboardCapabilities property to null. The device class must report device capabilities.");
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

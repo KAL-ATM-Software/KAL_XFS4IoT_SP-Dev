@@ -16,6 +16,7 @@ namespace XFS4IoT.CashDispenser.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashDispenser.DelayedDispenseEvent")]
     public sealed class DelayedDispenseEvent : Event<DelayedDispenseEvent.PayloadData>
     {

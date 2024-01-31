@@ -16,6 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Printer.FieldWarningEvent")]
     public sealed class FieldWarningEvent : Event<FieldWarningEvent.PayloadData>
     {
@@ -60,12 +61,12 @@ namespace XFS4IoT.Printer.Events
                 NotRead,
                 NotWrite,
                 Hwerror,
-                NotSupported,
                 Graphic
             }
 
             /// <summary>
-            /// Specifies the type of failure as one of the following:
+            /// Specifies the type of failure. This property will be null if the
+            /// form field type is not supported with the device, otherwsie one of the following:
             /// 
             /// * ```required``` - The specified field must be supplied by the application.
             /// * ```staticOverwrite``` - The specified field is static and thus cannot be overwritten by the application.
@@ -74,7 +75,6 @@ namespace XFS4IoT.Printer.Events
             /// * ```notRead``` - The specified field is not an input field.
             /// * ```notWrite``` - An attempt was made to write to an input field.
             /// * ```hwerror``` - The specified field uses special hardware (e.g. OCR, Low/High coercivity, etc) and an error occurred.
-            /// * ```notSupported``` - The form field type is not supported with device.
             /// * ```graphic``` - The specified graphic image could not be printed.
             /// </summary>
             [DataMember(Name = "failure")]

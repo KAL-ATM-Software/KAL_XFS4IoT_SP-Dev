@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified keys is invalid.
             /// * ```keyNotSupported``` - At least one of the specified keys is not supported by the Service.
             /// * ```noActiveKeys``` - There are no active keys specified.
@@ -50,8 +51,8 @@ namespace XFS4IoT.TextTerminal.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Specifies a string containing all the printable characters (numeric and alphanumeric) 
-            /// read from the text terminal unit key pad.
+            /// Specifies a string containing all the printable characters (numeric and alphanumeric)
+            /// read from the text terminal unit key pad. This property is null if no characters are read.
             /// <example>12345</example>
             /// </summary>
             [DataMember(Name = "input")]

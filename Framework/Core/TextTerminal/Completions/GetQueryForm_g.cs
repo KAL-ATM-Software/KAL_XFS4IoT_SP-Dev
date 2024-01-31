@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.GetQueryForm")]
     public sealed class GetQueryFormCompletion : Completion<GetQueryFormCompletion.PayloadData>
     {
@@ -45,7 +46,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```formInvalid``` - The specified form is invalid.
             /// </summary>
@@ -53,7 +54,7 @@ namespace XFS4IoT.TextTerminal.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Specifies the name of the form.
+            /// Specifies the name of the form. This property is null if the form is not loaded.
             /// <example>Example form</example>
             /// </summary>
             [DataMember(Name = "formName")]
@@ -61,7 +62,6 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the width of the form in columns.
-            /// <example>40</example>
             /// </summary>
             [DataMember(Name = "width")]
             [DataTypes(Minimum = 0)]
@@ -69,30 +69,27 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies the height of the form in rows.
-            /// <example>20</example>
             /// </summary>
             [DataMember(Name = "height")]
             [DataTypes(Minimum = 0)]
             public int? Height { get; init; }
 
             /// <summary>
-            /// Specifies the major version. Omitted if the version is not specified in the form.
-            /// <example>2</example>
+            /// Specifies the major version.
             /// </summary>
             [DataMember(Name = "versionMajor")]
             [DataTypes(Minimum = 0)]
             public int? VersionMajor { get; init; }
 
             /// <summary>
-            /// Specifies the minor version. Omitted if the version is not specified in the form.
-            /// <example>1</example>
+            /// Specifies the minor version.
             /// </summary>
             [DataMember(Name = "versionMinor")]
             [DataTypes(Minimum = 0)]
             public int? VersionMinor { get; init; }
 
             /// <summary>
-            /// A list of the field names.
+            /// A list of the field names. This property is null if the specified form is not loaded or no fields were defined.
             /// <example>["Field1", "Field2"]</example>
             /// </summary>
             [DataMember(Name = "fields")]

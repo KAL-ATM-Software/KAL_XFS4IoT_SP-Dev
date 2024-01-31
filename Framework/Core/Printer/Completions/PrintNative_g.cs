@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.PrintNative")]
     public sealed class PrintNativeCompletion : Completion<PrintNativeCompletion.PayloadData>
     {
@@ -56,7 +57,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.

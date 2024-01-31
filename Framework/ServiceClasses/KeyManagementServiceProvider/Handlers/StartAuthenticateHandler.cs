@@ -15,6 +15,7 @@ using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using XFS4IoT.Completions;
 using XFS4IoT.KeyManagement;
+using System.Security.Cryptography;
 
 namespace XFS4IoTFramework.KeyManagement
 {
@@ -49,22 +50,24 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.StartAuthenticate() -> {result.CompletionCode}");
 
-            return new StartAuthenticateCompletion.PayloadData(result.CompletionCode,
-                                                               result.ErrorDescription,
-                                                               result.DataToSign,
-                                                               result.SigningMethod switch
-                                                               {
-                                                                   AuthenticationData.SigningMethodEnum.CA => AuthenticationMethodEnum.Ca,
-                                                                   AuthenticationData.SigningMethodEnum.CBCMAC => AuthenticationMethodEnum.Cbcmac,
-                                                                   AuthenticationData.SigningMethodEnum.CertHost => AuthenticationMethodEnum.Certhost,
-                                                                   AuthenticationData.SigningMethodEnum.CMAC => AuthenticationMethodEnum.Cmac,
-                                                                   AuthenticationData.SigningMethodEnum.HL => AuthenticationMethodEnum.Hl,
-                                                                   AuthenticationData.SigningMethodEnum.SigHost => AuthenticationMethodEnum.SigHost,
-                                                                   AuthenticationData.SigningMethodEnum.Reserved1 => AuthenticationMethodEnum.Reserved1,
-                                                                   AuthenticationData.SigningMethodEnum.Reserved2 => AuthenticationMethodEnum.Reserved2,
-                                                                   AuthenticationData.SigningMethodEnum.Reserved3 => AuthenticationMethodEnum.Reserved3,
-                                                                   _ => AuthenticationMethodEnum.None,
-                                                               });
+            return new StartAuthenticateCompletion.PayloadData(CompletionCode: result.CompletionCode,
+                                                               ErrorDescription: result.ErrorDescription,
+                                                               DataToSign: result.DataToSign,
+                                                               Signers: result.SigningMethod == AuthenticationData.SigningMethodEnum.None ?
+                                                                        null :
+                                                                        new(CertHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost),
+                                                                            SigHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.SigHost),
+                                                                            Ca: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA),
+                                                                            Hl: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL),
+                                                                            Cbcmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CBCMAC),
+                                                                            Cmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CMAC),
+                                                                            CertHostTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost_TR34),
+                                                                            CaTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA_TR34),
+                                                                            HlTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL_TR34),
+                                                                            Reserved1: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved1),
+                                                                            Reserved2: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved2),
+                                                                            Reserved3: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved3)
+                                                                            ));
         }
     }
 }

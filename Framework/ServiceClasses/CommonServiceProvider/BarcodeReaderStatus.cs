@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class BarcodeReaderStatusClass
+    public sealed class BarcodeReaderStatusClass : StatusBase
     {
         public enum ScannerStatusEnum
         {
@@ -25,7 +25,7 @@ namespace XFS4IoTFramework.Common
 
         public BarcodeReaderStatusClass(ScannerStatusEnum ScannerStatus = ScannerStatusEnum.Unknown)
         {
-            this.ScannerStatus = ScannerStatus;
+            scannerStatus = ScannerStatus;
         }
 
         /// <summary>
@@ -36,6 +36,18 @@ namespace XFS4IoTFramework.Common
         /// * ```inoperative``` - Scanner is inoperative due to a hardware error.
         /// * ```unknown``` - Scanner status cannot be determined.
         /// </summary>
-        public ScannerStatusEnum ScannerStatus { get; set; }
+        public ScannerStatusEnum ScannerStatus 
+        {
+            get { return scannerStatus; } 
+            set
+            {
+                if (scannerStatus != value)
+                {
+                    scannerStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ScannerStatusEnum scannerStatus = ScannerStatusEnum.Unknown;
     }
 }

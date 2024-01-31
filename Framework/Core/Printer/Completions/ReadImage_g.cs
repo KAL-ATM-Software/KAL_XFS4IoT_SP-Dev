@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.ReadImage")]
     public sealed class ReadImageCompletion : Completion<ReadImageCompletion.PayloadData>
     {
@@ -43,7 +44,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
@@ -59,11 +60,10 @@ namespace XFS4IoT.Printer.Completions
             [DataContract]
             public sealed class ImagesClass
             {
-                public ImagesClass(FrontClass Front = null, BackClass Back = null, CodelineClass Codeline = null)
+                public ImagesClass(FrontClass Front = null, BackClass Back = null)
                 {
                     this.Front = Front;
                     this.Back = Back;
-                    this.Codeline = Codeline;
                 }
 
                 [DataContract]
@@ -78,33 +78,26 @@ namespace XFS4IoT.Printer.Completions
                     public enum StatusEnum
                     {
                         Ok,
-                        NotSupported,
                         Missing
                     }
 
                     /// <summary>
-                    /// Status of data source. Possible values are:
+                    /// Status of data source. This will be null if not supported, otherwise
+                    /// one of the following values:
                     /// 
                     /// * ```ok``` - The data is OK.
-                    /// * ```notSupported``` - The data source is not supported.
-                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
+                    /// * ```missing``` - The data source is missing.
+                    /// <example>missing</example>
                     /// </summary>
                     [DataMember(Name = "status")]
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// If the image source is a front or back image, this contains the Base64 encoded image.
-                    /// 
-                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
-                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in [printer-1](#ref-printer-1). If the code line was
-                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in [printer-2](#ref-printer-2). In both these
-                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
-                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// [Printer.GetCodelineMapping](#printer.getcodelinemapping) command for the symbols that are unique to MICR fonts.
+                    /// This contains the Base64 encoded image.
                     /// <example>SKHFFHGOWORIUNNNLSSL ...</example>
                     /// </summary>
                     [DataMember(Name = "data")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
                     public List<byte> Data { get; init; }
 
                 }
@@ -127,33 +120,26 @@ namespace XFS4IoT.Printer.Completions
                     public enum StatusEnum
                     {
                         Ok,
-                        NotSupported,
                         Missing
                     }
 
                     /// <summary>
-                    /// Status of data source. Possible values are:
+                    /// Status of data source. This will be null if not supported, otherwise
+                    /// one of the following values:
                     /// 
                     /// * ```ok``` - The data is OK.
-                    /// * ```notSupported``` - The data source is not supported.
-                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
+                    /// * ```missing``` - The data source is missing.
+                    /// <example>missing</example>
                     /// </summary>
                     [DataMember(Name = "status")]
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// If the image source is a front or back image, this contains the Base64 encoded image.
-                    /// 
-                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
-                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in [printer-1](#ref-printer-1). If the code line was
-                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in [printer-2](#ref-printer-2). In both these
-                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
-                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// [Printer.GetCodelineMapping](#printer.getcodelinemapping) command for the symbols that are unique to MICR fonts.
+                    /// This contains the Base64 encoded image.
                     /// <example>SKHFFHGOWORIUNNNLSSL ...</example>
                     /// </summary>
                     [DataMember(Name = "data")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
                     public List<byte> Data { get; init; }
 
                 }
@@ -164,59 +150,10 @@ namespace XFS4IoT.Printer.Completions
                 [DataMember(Name = "back")]
                 public BackClass Back { get; init; }
 
-                [DataContract]
-                public sealed class CodelineClass
-                {
-                    public CodelineClass(StatusEnum? Status = null, List<byte> Data = null)
-                    {
-                        this.Status = Status;
-                        this.Data = Data;
-                    }
-
-                    public enum StatusEnum
-                    {
-                        Ok,
-                        NotSupported,
-                        Missing
-                    }
-
-                    /// <summary>
-                    /// Status of data source. Possible values are:
-                    /// 
-                    /// * ```ok``` - The data is OK.
-                    /// * ```notSupported``` - The data source is not supported.
-                    /// * ```missing``` - The data source is missing, for example, the Service is unable to get the code line.
-                    /// </summary>
-                    [DataMember(Name = "status")]
-                    public StatusEnum? Status { get; init; }
-
-                    /// <summary>
-                    /// If the image source is a front or back image, this contains the Base64 encoded image.
-                    /// 
-                    /// If the image source is codeline, this contains characters in the ASCII range. If the code line was read
-                    /// using the OCR-A font then the ASCII codes will conform to Figure E1 in [printer-1](#ref-printer-1). If the code line was
-                    /// read using the OCR-B font then the ASCII codes will conform to Figure C2 in [printer-2](#ref-printer-2). In both these
-                    /// cases unrecognized characters will be reported as the REJECT code, 0x1A. The E13B and CMC7 fonts use the
-                    /// ASCII equivalents for the standard characters and use the byte values as reported by the
-                    /// [Printer.GetCodelineMapping](#printer.getcodelinemapping) command for the symbols that are unique to MICR fonts.
-                    /// <example>SKHFFHGOWORIUNNNLSSL ...</example>
-                    /// </summary>
-                    [DataMember(Name = "data")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
-                    public List<byte> Data { get; init; }
-
-                }
-
-                /// <summary>
-                /// The codeline status and data.
-                /// </summary>
-                [DataMember(Name = "codeline")]
-                public CodelineClass Codeline { get; init; }
-
             }
 
             /// <summary>
-            /// The status and data for each of the requested images.
+            /// The status and data for each of the requested images. Only requested images are returned.
             /// </summary>
             [DataMember(Name = "images")]
             public ImagesClass Images { get; init; }

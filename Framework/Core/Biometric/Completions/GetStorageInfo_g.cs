@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.GetStorageInfo")]
     public sealed class GetStorageInfoCompletion : Completion<GetStorageInfoCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noImportedData``` -\tNo data to return. Typically means that no data has been imported using the 
             ///                           [Biometric.Import](#biometric.import).
@@ -48,9 +49,10 @@ namespace XFS4IoT.Biometric.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// A list of the biometric template data that were successfully imported.
+            /// A list of biometric templates that were successfully imported.
             /// The object name of each biometric data type can be used in the *identifier* property for the
             /// [Biometric.Match](#biometric.match) command.
+            /// If no template data was imported, this property is null.
             /// </summary>
             [DataMember(Name = "templates")]
             public Dictionary<string, DataTypeClass> Templates { get; init; }

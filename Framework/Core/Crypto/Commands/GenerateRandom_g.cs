@@ -16,22 +16,13 @@ namespace XFS4IoT.Crypto.Commands
 {
     //Original name = GenerateRandom
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Crypto.GenerateRandom")]
-    public sealed class GenerateRandomCommand : Command<GenerateRandomCommand.PayloadData>
+    public sealed class GenerateRandomCommand : Command<MessagePayload>
     {
-        public GenerateRandomCommand(int RequestId, GenerateRandomCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GenerateRandomCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

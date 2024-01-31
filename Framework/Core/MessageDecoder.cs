@@ -100,6 +100,7 @@ namespace XFS4IoT
                 if (objMessage is null || objMessage is not MessageDeserializerHelper<MessagePayloadBase>)
                     Contracts.Fail($"Failed to unserialize JSON message in the {nameof(TryUnserialise)} nethod. SearchType:{searchType} Contents: {JSON}");
                 MessageDeserializerHelper<MessagePayloadBase> baseMessage = objMessage as MessageDeserializerHelper<MessagePayloadBase>;
+                baseMessage.IsNotNull($"Failed on type casing class to MessageDeserializerHelper.");
                 messageName = baseMessage.Header.Name;
                 messageType = baseMessage.Header.Type;
             }
@@ -108,7 +109,7 @@ namespace XFS4IoT
                 Contracts.Fail($"MessageDecoder requires to register for command or response to populate message classes.");
             }
 
-            Contracts.IsNotNull(messageType, $"Failed to unserialize JOSN message type. {JSON}");
+            messageType.IsNotNull($"Failed to unserialize JOSN message type. {JSON}");
             messageName.IsNotNullOrWhitespace($"Failed to unserialize JOSN message. {JSON}");
 
             Type thisMessageType;
@@ -180,12 +181,24 @@ namespace XFS4IoT
             {
                 //Check for Acknowledge and copy command name (RequestId, CommandName, Payload)
                 if (messageType == typeof(Acknowledge) && Header.RequestId.HasValue)
-                    return new Acknowledge((int)Header.RequestId, Header.Name, Payload.IsA<Acknowledge.PayloadData>());
+                {
+                    return new Acknowledge((int)Header.RequestId, Header.Name, Header.Version, Payload.IsA<Acknowledge.PayloadData>());
+                }
 
-                //Get constructor (RequestId, payloadType)
+                //Get constructor (RequestId, payloadType) (Completion)
                 ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T) });
                 if (ci != null && Header.RequestId.HasValue)
                     return ci.Invoke(new object[] { Header.RequestId.Value, Payload });
+
+                //Get constructor (RequestId, payloadType, timeout) (Command with Payload)
+                ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T), typeof(int) });
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Header.RequestId.Value, Payload, Header.Timeout ?? 0});
+
+                //Get constructor (RequestId, timeout) (Command without Payload)
+                ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(int) });
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke(new object[] { Header.RequestId.Value, Header.Timeout ?? 0});
                 
                 //Try to get constructor (RequestId) for events
                 ci = messageType.GetConstructor(new Type[] { typeof(int) });

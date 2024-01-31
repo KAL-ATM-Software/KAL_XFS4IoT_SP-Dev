@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.GetPresentStatus")]
     public sealed class GetPresentStatusCompletion : Completion<GetPresentStatusCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```unsupportedPosition``` - The specified output position is not supported.
             /// </summary>
@@ -50,9 +51,11 @@ namespace XFS4IoT.CashDispenser.Completions
 
             /// <summary>
             /// Denomination structure which contains the amount dispensed from the specified output position and the number
-            /// of items dispensed from each storage unit. 
-            /// This is cumulative across a series of [CashDispenser.Dispense](#cashdispenser.dispense) calls that add 
+            /// of items dispensed from each storage unit.
+            /// This is cumulative across a series of [CashDispenser.Dispense](#cashdispenser.dispense) calls that add
             /// additional items to the stacker.
+            /// 
+            /// May be null where no items were dispensed.
             /// </summary>
             [DataMember(Name = "denomination")]
             public DenominationClass Denomination { get; init; }
@@ -75,7 +78,8 @@ namespace XFS4IoT.CashDispenser.Completions
             public PresentStateEnum? PresentState { get; init; }
 
             /// <summary>
-            /// The present status token that protects the present status. See
+            /// The present status token that protects the present status. Only provided if the
+            /// command message contained the nonce property. See
             /// [end-to-end security](#api.e2esecurity) for more information.
             /// 
             /// An example is

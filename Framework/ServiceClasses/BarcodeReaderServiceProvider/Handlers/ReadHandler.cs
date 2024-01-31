@@ -389,7 +389,7 @@ namespace XFS4IoTFramework.BarcodeReader
 
             Logger.Log(Constants.DeviceClass, "BarcodeReaderDev.Read()");
 
-            var result = await Device.Read(new ReadRequest(symbologiesToRead, read.Payload.Timeout), cancel);
+            var result = await Device.Read(new ReadRequest(symbologiesToRead, read.Header.Timeout ?? 0), cancel);
 
             Logger.Log(Constants.DeviceClass, $"BarcodeReaderDev.Read() -> {result.CompletionCode} {result.ErrorCode}");
 

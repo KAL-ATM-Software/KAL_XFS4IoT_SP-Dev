@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -21,80 +19,67 @@ namespace XFS4IoTFramework.Auxiliaries
     public partial class SetAutoStartupTimeHandler
     {
 
-        private async Task<SetAutoStartupTimeCompletion.PayloadData> HandleSetAutoStartupTime(ISetAutoStartupTimeEvents events, SetAutoStartupTimeCommand setAutostartupTime, CancellationToken cancel)
+        private async Task<SetAutoStartUpTimeCompletion.PayloadData> HandleSetAutoStartupTime(ISetAutoStartupTimeEvents events, SetAutoStartUpTimeCommand setAutostartupTime, CancellationToken cancel)
         {
-            if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilities.AutoStartupModes.NotAvailable)
-                return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
+            if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
+                return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
 
             if (setAutostartupTime?.Payload?.Mode is null)
-                return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Auto startup Mode not specified.");
-
-            //Perform ClearAutoStartupTime
-            if(setAutostartupTime.Payload.Mode is SetAutoStartupTimeCommand.PayloadData.ModeEnum.Clear)
-            {
-                Logger.Log(Constants.DeviceClass, "AuxiliariesDev.ClearAutoStartupTime()");
-
-                var clearResult = await Device.ClearAutoStartupTime(cancel);
-
-                Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.ClearAutoStartupTime() -> {clearResult.CompletionCode}");
-
-                return new SetAutoStartupTimeCompletion.PayloadData(clearResult.CompletionCode,
-                                                                      clearResult.ErrorDescription);
-            }
+                return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Auto startup Mode not specified.");
 
             if (setAutostartupTime?.Payload?.StartTime is null)
-                return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Auto startup StartTime not specified.");
+                return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Auto startup StartTime not specified.");
 
             if (!Device.AuxiliariesCapabilities.AutoStartupMode.HasFlag(setAutostartupTime.Payload.Mode switch
                 {
-                    SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific => AuxiliariesCapabilities.AutoStartupModes.Specific,
-                    SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily => AuxiliariesCapabilities.AutoStartupModes.Daily,
-                    SetAutoStartupTimeCommand.PayloadData.ModeEnum.Weekly => AuxiliariesCapabilities.AutoStartupModes.Weekly,
+                    SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific => AuxiliariesCapabilitiesClass.AutoStartupModes.Specific,
+                    SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily => AuxiliariesCapabilitiesClass.AutoStartupModes.Daily,
+                    SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Weekly => AuxiliariesCapabilitiesClass.AutoStartupModes.Weekly,
                     _ => throw new NotImplementedException("Invalid mode supplied in HandleSetAutostartupTime")
                 }))
-                return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData, "Supplied auto startup mode is not supported by the device.");
+                return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData, "Supplied auto startup mode is not supported by the device.");
 
             StartupTime startupTime;
 
-            if(setAutostartupTime.Payload.Mode is SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific)
+            if(setAutostartupTime.Payload.Mode is SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific)
             {
                 if (setAutostartupTime.Payload.StartTime.Year is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Year must be provided when Mode = Specific.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Year must be provided when Mode = Specific.");
 
                 if (setAutostartupTime.Payload.StartTime.Month is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Month must be provided when Mode = Specific.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Month must be provided when Mode = Specific.");
 
                 if (setAutostartupTime.Payload.StartTime.Day is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Day must be provided when Mode = Specific.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Day must be provided when Mode = Specific.");
 
                 if (setAutostartupTime.Payload.StartTime.Hour is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Specific.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Specific.");
 
                 if (setAutostartupTime.Payload.StartTime.Minute is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Specific.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Specific.");
 
                 startupTime = new StartupTime(setAutostartupTime.Payload.StartTime.Year, setAutostartupTime.Payload.StartTime.Month, null, setAutostartupTime.Payload.StartTime.Day, setAutostartupTime.Payload.StartTime.Hour, setAutostartupTime.Payload.StartTime.Minute);
             }
-            else if(setAutostartupTime.Payload.Mode is SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily)
+            else if(setAutostartupTime.Payload.Mode is SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily)
             {
                 if(setAutostartupTime.Payload.StartTime.Hour is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Daily.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Daily.");
 
                 if(setAutostartupTime.Payload.StartTime.Minute is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Daily.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Daily.");
 
                 startupTime = new StartupTime(null, null, null, null, setAutostartupTime.Payload.StartTime.Hour, setAutostartupTime.Payload.StartTime.Minute);
             }
             else //ModeEnum.Weekly
             {
                 if (setAutostartupTime.Payload.StartTime.DayOfWeek is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.DayOfWeek must be provided when Mode = Weekly.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.DayOfWeek must be provided when Mode = Weekly.");
                 
                 if (setAutostartupTime.Payload.StartTime.Hour is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Weekly.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Hour must be provided when Mode = Weekly.");
 
                 if (setAutostartupTime.Payload.StartTime.Minute is null)
-                    return new SetAutoStartupTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Weekly.");
+                    return new SetAutoStartUpTimeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "StartTime.Minute must be provided when Mode = Weekly.");
 
                 startupTime = new StartupTime(null, null, setAutostartupTime.Payload.StartTime.DayOfWeek switch
                 {
@@ -114,15 +99,15 @@ namespace XFS4IoTFramework.Auxiliaries
 
             var result = await Device.SetAutostartupTime(new(startupTime, setAutostartupTime.Payload.Mode switch
             {
-                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific => AutoStartupTimeModeEnum.Specific,
-                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily => AutoStartupTimeModeEnum.Daily,
-                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Weekly => AutoStartupTimeModeEnum.Weekly,
+                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific => AutoStartupTimeModeEnum.Specific,
+                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily => AutoStartupTimeModeEnum.Daily,
+                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Weekly => AutoStartupTimeModeEnum.Weekly,
                 _ => throw new NotImplementedException("Unexpected ModeEnum in SetAutoStartupTime. " + setAutostartupTime.Payload.Mode)
             }), cancel);
 
             Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.SetAutostartupTime() -> {result.CompletionCode}");
 
-            return new SetAutoStartupTimeCompletion.PayloadData(result.CompletionCode,
+            return new SetAutoStartUpTimeCompletion.PayloadData(result.CompletionCode,
                                                                 result.ErrorDescription);
         }
 

@@ -16,12 +16,8 @@ using XFS4IoT.CashAcceptor.Events;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
-    public class ReplenishCommandEvents : ItemErrorCommandEvents
+    public sealed class ReplenishCommandEvents(IStorageService storage, IReplenishEvents events) : ItemErrorCommandEvents(events)
     {
-        public ReplenishCommandEvents(IReplenishEvents events) :
-            base(events)
-        { }
-
         public Task IncompleteReplenishEvent(ReplenishOperationResult result)
         {
             IncompleteReplenishEvent.PayloadData payload = new();
@@ -32,8 +28,7 @@ namespace XFS4IoTFramework.CashAcceptor
                 if (result.TargetResults is not null &&
                     result.TargetResults.Count > 0)
                 {
-                    targetResults = new();
-
+                    targetResults = [];
                     foreach (var targetResult in result.TargetResults)
                     {
                         targetResults.Add(new IncompleteReplenishEvent.PayloadData.ReplenishClass.ReplenishTargetResultsClass(targetResult.Key,
@@ -54,5 +49,9 @@ namespace XFS4IoTFramework.CashAcceptor
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(IncompleteDepleteEvent));
         }
+
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds) => StorageErrorCommandEvent?.StorageErrorEvent(Failure, CashUnitIds);
+
+        private StorageErrorCommandEvent StorageErrorCommandEvent { get; init; } = new(storage, events);
     }
 }

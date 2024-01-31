@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.SetMixTable")]
     public sealed class SetMixTableCompletion : Completion<SetMixTableCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```invalidMixNumber``` - The *mixNumber* is invalid.
             /// * ```invalidMixTable``` - The contents of at least one of the defined rows of the mix table is incorrect.

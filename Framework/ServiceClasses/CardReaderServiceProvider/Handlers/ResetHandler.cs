@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.Completions;
@@ -61,8 +60,7 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ResetDeviceAsync()");
             
-            var result = await Device.ResetDeviceAsync(new ResetCommandEvents(events),
-                                                       new ResetDeviceRequest(to, reset.Payload.StorageId),
+            var result = await Device.ResetDeviceAsync(new ResetDeviceRequest(to, reset.Payload.StorageId),
                                                        cancel);
             
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");

@@ -16,8 +16,9 @@ namespace XFS4IoT.Commands
         /// </summary>
         /// <param name="RequestId">request id</param>
         /// <param name="Payload">payload contents</param>
-        public Command(int RequestId, T Payload) :
-            base(RequestId, MessageHeader.TypeEnum.Command, Payload)
+        /// <param name="Timeout">command timeout</param>
+        public Command(int RequestId, T Payload, int Timeout) :
+            base(RequestId, MessageHeader.TypeEnum.Command, Payload, Timeout)
         { }
     }
 }

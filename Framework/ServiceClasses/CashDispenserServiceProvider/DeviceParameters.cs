@@ -583,24 +583,28 @@ namespace XFS4IoTFramework.CashDispenser
                               DispenseCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                               Dictionary<string, int> Values = null,
                               int? CashBox = null,
-                              Dictionary<string, CashUnitCountClass> MovementResult = null)
+                              Dictionary<string, CashUnitCountClass> MovementResult = null,
+                              int Bunches = 1)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Values = Values;
             this.CashBox = CashBox;
             this.MovementResult = MovementResult;
+            this.Bunches = Bunches;
         }
 
         public DispenseResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               Dictionary<string, int> Values,
-                              Dictionary<string, CashUnitCountClass> MovementResult = null)
+                              Dictionary<string, CashUnitCountClass> MovementResult = null,
+                              int Bunches = 1)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.Values = Values;
             this.CashBox = null;
             this.MovementResult = MovementResult;
+            this.Bunches = Bunches;
         }
 
         public DispenseCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
@@ -613,6 +617,11 @@ namespace XFS4IoTFramework.CashDispenser
         /// Specifies the detailed note movement while in present operation.
         /// </summary>
         public Dictionary<string, CashUnitCountClass> MovementResult { get; init; }
+
+        /// <summary>
+        /// Specifies how many bunches will be required to present the request, default to 1.
+        /// </summary>
+        public int Bunches { get; init; }
     }
 
     /// <summary>
@@ -625,7 +634,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// TestCashUnitsRequest
         /// The parameter class for the test cash units operation
         /// </summary>
-        public TestCashUnitsRequest(ItemPosition Position)
+        public TestCashUnitsRequest(ItemDestination Position)
         {
             this.Position = Position;
         }
@@ -634,7 +643,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// Specifies where the dispensed items should be moved to.
         /// If tnis value is null, the retract items to the default position.
         /// </summary>
-        public ItemPosition Position { get; init; }
+        public ItemDestination Position { get; init; }
     }
 
     /// <summary>

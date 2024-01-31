@@ -16,26 +16,25 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ReadImage
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.ReadImage")]
     public sealed class ReadImageCommand : Command<ReadImageCommand.PayloadData>
     {
-        public ReadImageCommand(int RequestId, ReadImageCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadImageCommand(int RequestId, ReadImageCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, FrontImageTypeEnum? FrontImageType = null, BackImageTypeEnum? BackImageType = null, FrontImageColorFormatEnum? FrontImageColorFormat = null, BackImageColorFormatEnum? BackImageColorFormat = null, CodelineFormatEnum? CodelineFormat = null, ImageSourceClass ImageSource = null)
-                : base(Timeout)
+            public PayloadData(FrontImageTypeEnum? FrontImageType = null, BackImageTypeEnum? BackImageType = null, FrontImageColorFormatEnum? FrontImageColorFormat = null, BackImageColorFormatEnum? BackImageColorFormat = null)
+                : base()
             {
                 this.FrontImageType = FrontImageType;
                 this.BackImageType = BackImageType;
                 this.FrontImageColorFormat = FrontImageColorFormat;
                 this.BackImageColorFormat = BackImageColorFormat;
-                this.CodelineFormat = CodelineFormat;
-                this.ImageSource = ImageSource;
             }
 
             public enum FrontImageTypeEnum
@@ -43,12 +42,13 @@ namespace XFS4IoT.Printer.Commands
                 Tif,
                 Wmf,
                 Bmp,
-                Jpg
+                Jpg,
+                None
             }
 
             /// <summary>
-            /// Specifies the format of the front image returned by this command as one of the following. If omitted,
-            /// no front image is returned.
+            /// Specifies the format of the front image returned by this command as one of the following. This can
+            /// be null if no front image is requested.
             /// 
             /// * ```tif``` - The returned image is in TIF 6.0 format.
             /// * ```wmf``` - The returned image is in WMF (Windows Metafile) format.
@@ -67,8 +67,8 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the format of the back image returned by this command as one of the following. If omitted,
-            /// no back image is returned.
+            /// Specifies the format of the back image returned by this command as one of the following. This can
+            /// be null if no back image is requested.
             /// 
             /// * ```tif``` - The returned image is in TIF 6.0 format.
             /// * ```wmf``` - The returned image is in WMF (Windows Metafile) format.
@@ -86,9 +86,10 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the color format of the requested front image as one of the following:
+            /// Specifies the color format of the requested front image as one of the following. This can
+            /// be null if no front image is requested.
             /// 
-            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors,  usually
+            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors, usually
             ///   the colors black and white).
             /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
             ///   colors).
@@ -106,9 +107,10 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifies the color format of the requested back image as one of the following:
+            /// Specifies the color format of the requested back image as one of the following. This can
+            /// be null if no back image is requested.
             /// 
-            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors,  usually
+            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors, usually
             ///   the colors black and white).
             /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
             ///   colors).
@@ -117,60 +119,6 @@ namespace XFS4IoT.Printer.Commands
             /// </summary>
             [DataMember(Name = "backImageColorFormat")]
             public BackImageColorFormatEnum? BackImageColorFormat { get; init; }
-
-            public enum CodelineFormatEnum
-            {
-                Cmc7,
-                E13b,
-                Ocr
-            }
-
-            /// <summary>
-            /// Specifies the code line (MICR data) format, as one of the following options (not applicable if no imageSource
-            /// selected):
-            /// 
-            /// * ```cmc7``` - Read CMC7 code line.
-            /// * ```e13b``` - Read E13B code line.
-            /// * ```ocr``` - Read code line using OCR.
-            /// </summary>
-            [DataMember(Name = "codelineFormat")]
-            public CodelineFormatEnum? CodelineFormat { get; init; }
-
-            [DataContract]
-            public sealed class ImageSourceClass
-            {
-                public ImageSourceClass(bool? Front = null, bool? Back = null, bool? Codeline = null)
-                {
-                    this.Front = Front;
-                    this.Back = Back;
-                    this.Codeline = Codeline;
-                }
-
-                /// <summary>
-                /// The front image of the document is requested.
-                /// </summary>
-                [DataMember(Name = "front")]
-                public bool? Front { get; init; }
-
-                /// <summary>
-                /// The back image of the document is requested.
-                /// </summary>
-                [DataMember(Name = "back")]
-                public bool? Back { get; init; }
-
-                /// <summary>
-                /// The code line of the document is requested.
-                /// </summary>
-                [DataMember(Name = "codeline")]
-                public bool? Codeline { get; init; }
-
-            }
-
-            /// <summary>
-            /// Specifies the source.
-            /// </summary>
-            [DataMember(Name = "imageSource")]
-            public ImageSourceClass ImageSource { get; init; }
 
         }
     }

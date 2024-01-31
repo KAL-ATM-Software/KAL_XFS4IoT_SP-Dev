@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.Cancel")]
     public sealed class CancelCompletion : Completion<CancelCompletion.PayloadData>
     {
@@ -38,9 +39,9 @@ namespace XFS4IoT.Common.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```noMatchingRequestIDs``` - No queued or executing command matches the 
+            /// * ```noMatchingRequestIDs``` - No queued or executing command matches the
             ///   [requestIds](#common.cancel.command.properties.requestids) property.
             /// </summary>
             [DataMember(Name = "errorCode")]

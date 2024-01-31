@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.GetMixTable")]
     public sealed class GetMixTableCompletion : Completion<GetMixTableCompletion.PayloadData>
     {
@@ -41,7 +42,7 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```invalidMix``` - The *mix* property does not correspond to a defined mix table.
             /// </summary>
@@ -49,7 +50,7 @@ namespace XFS4IoT.CashDispenser.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Number identifying the house mix table.
+            /// Number identifying the house mix table (optional).
             /// <example>21</example>
             /// </summary>
             [DataMember(Name = "mixNumber")]
@@ -57,7 +58,7 @@ namespace XFS4IoT.CashDispenser.Completions
             public int? MixNumber { get; init; }
 
             /// <summary>
-            /// Name of the house mix table.
+            /// Name of the house mix table. Null if not defined.
             /// <example>House mix 21</example>
             /// </summary>
             [DataMember(Name = "name")]

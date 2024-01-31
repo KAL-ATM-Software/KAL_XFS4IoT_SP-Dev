@@ -7,7 +7,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using XFS4IoT.CardReader;
 using XFS4IoT.Common.Events;
 
 namespace XFS4IoTFramework.Common
@@ -72,7 +74,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Stores Auxiliaries capabilities for an internal use
         /// </summary>
-        AuxiliariesCapabilities AuxiliariesCapabilities { get => null; set { } }
+        AuxiliariesCapabilitiesClass AuxiliariesCapabilities { get => null; set { } }
 
         /// <summary>
         /// Stores vendor application capabilites
@@ -147,7 +149,7 @@ namespace XFS4IoTFramework.Common
 		/// <summary>
         /// Stores auxiliaries status
         /// </summary>
-        AuxiliariesStatus AuxiliariesStatus { get => null; set { } }
+        AuxiliariesStatusClass AuxiliariesStatus { get => null; set { } }
 
         /// <summary>
         /// Stores vendor mode status
@@ -180,14 +182,9 @@ namespace XFS4IoTFramework.Common
         CashAcceptorStatusClass CashAcceptorStatus { get => null; set { } }
 
         /// <summary>
-        /// Status changed event
+        /// Sending status changed event.
         /// </summary>
-        Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                CommonStatusClass.PositionStatusEnum? Position,
-                                int? PowerSaveRecoveryTime,
-                                CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                CommonStatusClass.ExchangeEnum? Exchange,
-                                CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity);
+        Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo);
 
         /// <summary>
         /// Nonce cleared event
@@ -199,6 +196,7 @@ namespace XFS4IoTFramework.Common
         /// </summary>
         Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
                         CommonStatusClass.ErrorActionEnum Action,
+         
                         string VendorDescription);
     }
 

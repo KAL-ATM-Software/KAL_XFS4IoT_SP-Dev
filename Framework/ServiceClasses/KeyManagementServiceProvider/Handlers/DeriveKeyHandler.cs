@@ -62,20 +62,23 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             int ivKeySlot = -1;
-            if (!string.IsNullOrEmpty(deriveKey.Payload.IvKey))
+            if (!string.IsNullOrEmpty(deriveKey.Payload.Iv.Key))
             {
-                KeyDetail keyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.IvKey);
+                // Verify loaded key specified to use for decrypt the Iv.Value
+                // This specifies the name of a key(usage 'K0') used to decrypt the Iv.Value
+                // This is only used when the Iv.Key usage is 'D0' and cryptoMethod is either CBC or CFB.
+                KeyDetail keyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.Iv.Key);
                 if (keyDetail is null)
                 {
                     return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key name is not found. {deriveKey.Payload.IvKey}",
+                                                               $"Specified IV key name is not found. {deriveKey.Payload.Iv.Key}",
                                                                DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
                 }
                 if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded &&
                     keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Construct)
                 {
                     return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key is not loaded. {deriveKey.Payload.IvKey}",
+                                                               $"Specified IV key is not loaded. {deriveKey.Payload.Iv.Key}",
                                                                DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
@@ -122,8 +125,8 @@ namespace XFS4IoTFramework.KeyManagement
                                                                      deriveKey.Payload.KeyGenKey,
                                                                      keyGenKeyDetail.KeySlot,
                                                                      (int)deriveKey.Payload.DerivationAlgorithm,
-                                                                     deriveKey.Payload.Iv,
-                                                                     deriveKey.Payload.IvKey,
+                                                                     deriveKey.Payload.Iv.Value,
+                                                                     deriveKey.Payload.Iv.Key,
                                                                      ivKeySlot,
                                                                      (byte)deriveKey.Payload.Padding,
                                                                      deriveKey.Payload.InputData), 

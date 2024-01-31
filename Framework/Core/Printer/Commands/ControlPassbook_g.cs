@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ControlPassbook
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.ControlPassbook")]
     public sealed class ControlPassbookCommand : Command<ControlPassbookCommand.PayloadData>
     {
-        public ControlPassbookCommand(int RequestId, ControlPassbookCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ControlPassbookCommand(int RequestId, ControlPassbookCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ActionEnum? Action = null, int? Count = null)
-                : base(Timeout)
+            public PayloadData(ActionEnum? Action = null, int? Count = null)
+                : base()
             {
                 this.Action = Action;
                 this.Count = Count;

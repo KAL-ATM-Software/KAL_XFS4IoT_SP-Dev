@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.GetCommandNonce")]
     public sealed class GetCommandNonceCompletion : Completion<GetCommandNonceCompletion.PayloadData>
     {
@@ -33,7 +34,7 @@ namespace XFS4IoT.Common.Completions
             }
 
             /// <summary>
-            /// A nonce that should be included in the Authorization Token in a command used to provide 
+            /// A nonce that should be included in the Authorization Token in a command used to provide
             /// end to end protection.
             /// 
             /// The nonce will be given as an integer string, or HEX (upper case.)

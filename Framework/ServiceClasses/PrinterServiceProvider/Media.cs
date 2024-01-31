@@ -159,7 +159,7 @@ namespace XFS4IoTFramework.Printer
         /// <returns></returns>
         public GetQueryMediaCompletion.PayloadData QueryMedia()
         {
-            XFS4IoT.Printer.PaperSourcesClass paperSource = null;
+            GetQueryMediaCompletion.PayloadData.PaperSourcesClass paperSource = null;
 
             if (Sources != SourceEnum.ANY)
             {

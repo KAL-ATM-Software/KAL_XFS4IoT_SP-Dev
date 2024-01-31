@@ -19,19 +19,19 @@ namespace XFS4IoTCoreTest.Command
         [TestMethod]
         public void Constructor()
         {
-            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(1000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
+            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(true, true, true, true, true, true, true, true, true, true, true, true, true, true), 1000);
 
-            Assert.AreEqual(1000, command.Payload.Timeout);
+            Assert.AreEqual(1000, command.Header.Timeout);
         }
 
         [TestMethod]
         public void SerialiseString()
         {
-            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(5000, true, true, true, true, true, true, true, true, true, true, true, true, true, true));
+            var command = new ReadRawDataCommand(123456, new ReadRawDataCommand.PayloadData(true, true, true, true, true, true, true, true, true, true, true, true, true, true), 5000);
 
             string result = command.Serialise();
 
-            AreEqual(@"{""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command""},""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true,""timeout"":5000}}", result);
+            AreEqual(@"{""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""command"",""version"":""2.0"",""timeout"":5000},""payload"":{""track1"":true,""track2"":true,""track3"":true,""chip"":true,""security"":true,""fluxInactive"":true,""watermark"":true,""memoryChip"":true,""track1Front"":true,""frontImage"":true,""backImage"":true,""track1JIS"":true,""track3JIS"":true,""ddi"":true}}", result);
 
         }
 
@@ -41,7 +41,7 @@ namespace XFS4IoTCoreTest.Command
             var mediaInserted = new MediaInsertedEvent(123456);
 
             string result = mediaInserted.Serialise();
-            AreEqual(@"{""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event""},""payload"":{}}", result);
+            AreEqual(@"{""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event"",""version"":""2.0""},""payload"":{}}", result);
         }
     }
 }

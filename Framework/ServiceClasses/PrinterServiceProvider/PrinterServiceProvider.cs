@@ -15,6 +15,7 @@ using XFS4IoT.Common.Events;
 using XFS4IoT.Printer.Events;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -50,17 +51,22 @@ namespace XFS4IoTServer
 
         public Task MediaPresentedUnsolicitedEvent(int WadIndex, int TotalWads) => PrinterService.MediaPresentedUnsolicitedEvent(new MediaPresentedUnsolicitedEvent.PayloadData(WadIndex, TotalWads));
 
-        public Task MediaDetectedEvent(PositionEnum Position, int? RetractBinNumber = null) => PrinterService.MediaDetectedEvent(
-            new MediaDetectedEvent.PayloadData(Position switch
-                                               {
-                                                   PositionEnum.Entering => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Entering,
-                                                   PositionEnum.Expelled => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Expelled,
-                                                   PositionEnum.Jammed => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Jammed,
-                                                   PositionEnum.Present => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Present,
-                                                   PositionEnum.Retracted => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Retracted,
-                                                   _ => XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData.PositionEnum.Unknown,
-                                               }, 
-                                               RetractBinNumber));
+        public Task MediaDetectedEvent(PositionEnum Position, int? RetractBinNumber = null)
+        {
+            (Position == PositionEnum.Retracted && RetractBinNumber is not null).IsTrue($"No retract bin number specified in MediaDetectedEvent.");
+            (Position == PositionEnum.Retracted && RetractBinNumber >= 0 && RetractBinNumber <= 9).IsTrue($"Invalid retract bin number specified in MediaDetectedEvent. Must be 0 to 9.");
+
+            return PrinterService.MediaDetectedEvent(
+                new MediaDetectedEvent.PayloadData(Position: Position switch
+                {
+                    PositionEnum.Entering => "entering",
+                    PositionEnum.Expelled => "expelled",
+                    PositionEnum.Jammed => "jammed",
+                    PositionEnum.Present => "present",
+                    PositionEnum.Unknown => "unknown",
+                    _ => "unit" + RetractBinNumber,
+                }));
+        }
 
         public Task TonerThresholdEvent(CommonThresholdStatusEnum Status) => PrinterService.TonerThresholdEvent(
             new TonerThresholdEvent.PayloadData(Status switch
@@ -95,14 +101,18 @@ namespace XFS4IoTServer
                                                          _ => XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData.StateEnum.Ok,
                                                      }));
 
-        public Task MediaAutoRetractedEvent(int BinNumber, AutoRetractResultEnum AutoRetractResult) => PrinterService.MediaAutoRetractedEvent(
-            new MediaAutoRetractedEvent.PayloadData(AutoRetractResult switch
-                                                    {
-                                                        AutoRetractResultEnum.Ok => XFS4IoT.Printer.Events.MediaAutoRetractedEvent.PayloadData.RetractResultEnum.Ok,
-                                                        _ => XFS4IoT.Printer.Events.MediaAutoRetractedEvent.PayloadData.RetractResultEnum.Jammed,
-                                                    }, 
-                                                    BinNumber)
-            );
+        public Task MediaAutoRetractedEvent(int BinNumber, AutoRetractResultEnum AutoRetractResult)
+        {
+            (AutoRetractResult == AutoRetractResultEnum.Retracted && BinNumber >= 0 && BinNumber <= 9).IsTrue($"Invalid retract bin number specified in MediaAutoRetractedEvent. Must be 0 to 9.");
+
+            string position = AutoRetractResult switch
+            {
+                AutoRetractResultEnum.Transport => "transport",
+                AutoRetractResultEnum.Jammed => "jammed",
+                _ => "unit" + BinNumber,
+            };
+            return PrinterService.MediaAutoRetractedEvent(new MediaAutoRetractedEvent.PayloadData(position));
+        }
 
         public Task RetractBinStatusEvent(int BinNumber, PhysicalBinStatusEnum State) => PrinterService.RetractBinStatusEvent(
             new RetractBinStatusEvent.PayloadData(BinNumber, 
@@ -142,17 +152,9 @@ namespace XFS4IoTServer
 
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
+
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
+
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
 
         public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,

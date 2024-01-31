@@ -16,6 +16,7 @@ namespace XFS4IoT.Biometric.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Biometric.OrientationEvent")]
     public sealed class OrientationEvent : UnsolicitedEvent<MessagePayloadBase>
     {

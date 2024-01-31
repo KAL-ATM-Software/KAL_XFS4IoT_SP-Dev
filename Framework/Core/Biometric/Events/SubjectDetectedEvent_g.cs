@@ -16,12 +16,13 @@ namespace XFS4IoT.Biometric.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Biometric.SubjectDetectedEvent")]
-    public sealed class SubjectDetectedEvent : UnsolicitedEvent<MessagePayloadBase>
+    public sealed class SubjectDetectedEvent : Event<MessagePayloadBase>
     {
 
-        public SubjectDetectedEvent()
-            : base()
+        public SubjectDetectedEvent(int RequestId)
+            : base(RequestId)
         { }
 
     }

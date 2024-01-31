@@ -16,19 +16,20 @@ namespace XFS4IoT.TextTerminal.Commands
 {
     //Original name = GetQueryField
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "TextTerminal.GetQueryField")]
     public sealed class GetQueryFieldCommand : Command<GetQueryFieldCommand.PayloadData>
     {
-        public GetQueryFieldCommand(int RequestId, GetQueryFieldCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetQueryFieldCommand(int RequestId, GetQueryFieldCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, string FormName = null, string FieldName = null)
-                : base(Timeout)
+            public PayloadData(string FormName = null, string FieldName = null)
+                : base()
             {
                 this.FormName = FormName;
                 this.FieldName = FieldName;
@@ -42,7 +43,7 @@ namespace XFS4IoT.TextTerminal.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// Specifies the name of the field about which to retrieve details. If omitted, 
+            /// Specifies the name of the field about which to retrieve details. If this property is null,
             /// then retrieve details for all fields on the form.
             /// <example>My form field</example>
             /// </summary>

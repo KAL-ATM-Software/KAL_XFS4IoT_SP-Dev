@@ -105,7 +105,7 @@ namespace XFS4IoTFramework.CashAcceptor
         /// location of the notes retained to be reported in the output parameter.If no items are available for cash-in for any
         /// other reason, the NoItems error code is returned.
         /// </summary>
-        Task<CashInEndResult> CashInEnd(ItemErrorCommandEvents events, 
+        Task<CashInEndResult> CashInEnd(CashInEndCommandEvents events, 
                                         CancellationToken cancellation);
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace XFS4IoTFramework.CashAcceptor
         /// This event will not be generated if no items are returned. If no items are available to rollback for any other reason,
         /// the NoItems error code is returned.
         /// </summary>
-        Task<CashInRollbackResult> CashInRollback(ItemInfoAvailableCommandEvent events,
+        Task<CashInRollbackResult> CashInRollback(CashInRollbackCommandEvents events,
                                                   CancellationToken cancellation);
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace XFS4IoTFramework.CashAcceptor
         /// CashAcceptor.InputRefuseEvent](#cashacceptor.inputrefuseevent) will be sent and the command will complete. In this
         /// case, no note specific output properties will be returned.
         /// </summary>
-        Task<CreateSignatureResult> CreateSignature(CashInCommonCommandEvents events,
-                                                    CashInRequest request, 
+        Task<CreateSignatureResult> CreateSignature(CreateSignatureCommandEvents events,
+                                                    CreateSignatureRequest request, 
                                                     CancellationToken cancellation);
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace XFS4IoTFramework.CashAcceptor
         /// need to be automatically counted periodically. Upon successful completion, for those storage units that have been
         /// counted, the counts are accurately reported with the Storage.GetStorage command.
         /// </summary>
-        Task<CashUnitCountResult> CashUnitCount(ItemErrorCommandEvents events,
+        Task<CashUnitCountResult> CashUnitCount(CashUnitCountCommandEvents events,
                                                 CashUnitCountRequest request, 
                                                 CancellationToken cancellation);
 
@@ -315,14 +315,9 @@ namespace XFS4IoTFramework.CashAcceptor
         /// The application can tell whether the additional items were left by using the CashAcceptor.GetPresentStatus command.
         /// This command does not affect the status of the current cash-in transaction.
         /// </summary>
-        Task<PreparePresentResult> PreparePresent(ItemInfoAvailableCommandEvent events,
+        Task<PreparePresentResult> PreparePresent(PreparePresentCommandEvents events,
                                                   PreparePresentRequest request, 
                                                   CancellationToken cancellation);
-
-        /// <summary>
-        /// This command allows the application to get additional information about the use assigned to each position available in the device.
-        /// </summary>
-        Dictionary<CashManagementCapabilitiesClass.PositionEnum, PositionCapabilitiesClass> GetPositionCapabilities();
 
         /// <summary>
         /// The deplete target and destination information

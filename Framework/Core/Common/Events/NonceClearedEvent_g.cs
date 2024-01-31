@@ -16,6 +16,7 @@ namespace XFS4IoT.Common.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Common.NonceClearedEvent")]
     public sealed class NonceClearedEvent : UnsolicitedEvent<NonceClearedEvent.PayloadData>
     {

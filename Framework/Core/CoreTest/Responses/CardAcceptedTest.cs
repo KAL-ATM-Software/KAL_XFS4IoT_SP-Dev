@@ -24,7 +24,7 @@ namespace XFS4IoTCoreTest.Response
         {
             List<byte> rawData = System.Text.Encoding.UTF8.GetBytes("123456789").ToList();
             var payload = new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, "OK", null, 
-                new (CardDataStatusEnum.Ok, rawData), 
+                new (null, rawData), 
                 new (CardDataStatusEnum.DataMissing, rawData), 
                 new (CardDataStatusEnum.DataInvalid, rawData));
             var response = new ReadRawDataCompletion(123456, payload);
@@ -41,14 +41,14 @@ namespace XFS4IoTCoreTest.Response
         {
             List<byte> rawData = System.Text.Encoding.UTF8.GetBytes("123456789").ToList();
             var payload = new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, "OK", null,
-                new (CardDataStatusEnum.Ok, rawData),
+                new (null, rawData),
                 new (CardDataStatusEnum.DataMissing, rawData),
                 new (CardDataStatusEnum.DataInvalid, rawData));
             var response = new ReadRawDataCompletion(123456, payload);
 
             string res = response.Serialise();
             
-            AreEqual(@"{""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""},""payload"":{""track1"":{""status"":""ok"",""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""},""completionCode"":""success"",""errorDescription"":""OK""}}", res);
+            AreEqual(@"{""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion"",""version"":""2.0""},""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""},""completionCode"":""success"",""errorDescription"":""OK""}}", res);
         }
     }
 }

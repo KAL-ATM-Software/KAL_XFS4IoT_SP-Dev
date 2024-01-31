@@ -61,7 +61,7 @@ namespace XFS4IoTFramework.Common
             public FloatPositionEnum FloatFlags { get; init; }
         }
 
-        public KeyboardCapabilitiesClass(KeyboardBeepEnum AutoBeep, List<ETSCap> ETSCaps)
+        public KeyboardCapabilitiesClass(KeyboardBeepEnum AutoBeep, ETSCap ETSCaps)
         {
             this.AutoBeep = AutoBeep;
             this.ETSCaps = ETSCaps;
@@ -69,6 +69,6 @@ namespace XFS4IoTFramework.Common
 
         public KeyboardBeepEnum AutoBeep { get; init; }
 
-        public List<ETSCap> ETSCaps;
+        public ETSCap ETSCaps;
     }
 }

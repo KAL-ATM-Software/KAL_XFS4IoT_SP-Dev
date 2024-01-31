@@ -16,19 +16,20 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = SetTransactionState
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.SetTransactionState")]
     public sealed class SetTransactionStateCommand : Command<SetTransactionStateCommand.PayloadData>
     {
-        public SetTransactionStateCommand(int RequestId, SetTransactionStateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetTransactionStateCommand(int RequestId, SetTransactionStateCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, StateEnum? State = null, string TransactionID = null)
-                : base(Timeout)
+            public PayloadData(StateEnum? State = null, string TransactionID = null)
+                : base()
             {
                 this.State = State;
                 this.TransactionID = TransactionID;
@@ -51,6 +52,10 @@ namespace XFS4IoT.Common.Commands
 
             /// <summary>
             /// Specifies a string which identifies the transaction ID.
+            /// 
+            /// if *state* is *inactive*, this property:
+            ///   - Is ignored in [Common.SetTransactionState](#common.settransactionstate)
+            ///   - Is null in [Common.GetTransactionState](#common.gettransactionstate).
             /// <example>Example transaction ID</example>
             /// </summary>
             [DataMember(Name = "transactionID")]

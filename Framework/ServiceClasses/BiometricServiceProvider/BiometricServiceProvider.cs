@@ -7,10 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
 
@@ -44,17 +46,7 @@ namespace XFS4IoTServer
         private readonly KeyManagementServiceClass KeyManagementService;
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
 
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Biometric Service.");
@@ -100,15 +92,6 @@ namespace XFS4IoTServer
         #endregion
 
         #region Biometric unsolicited events
-        public Task PresentSubjectEvent()
-            => Biometric.PresentSubjectEvent();
-
-        public Task SubjectDetectedEvent()
-            => Biometric.SubjectDetectedEvent();
-
-        public Task RemoveSubjectEvent()
-            => Biometric.RemoveSubjectEvent();
-
         public Task SubjectRemovedEvent()
             => Biometric.SubjectRemovedEvent();
 
@@ -116,9 +99,9 @@ namespace XFS4IoTServer
             => Biometric.DataClearedEvent(new XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData(ClearMode switch
             {
                 BiometricCapabilitiesClass.ClearModesEnum.None => null,
-                BiometricCapabilitiesClass.ClearModesEnum.ScannedData => XFS4IoT.Biometric.ClearDataEnum.ScannedData,
-                BiometricCapabilitiesClass.ClearModesEnum.ImportedData => XFS4IoT.Biometric.ClearDataEnum.ImportedData,
-                BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData => XFS4IoT.Biometric.ClearDataEnum.SetMatchedData,
+                BiometricCapabilitiesClass.ClearModesEnum.ScannedData => XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData.ClearDataEnum.ScannedData,
+                BiometricCapabilitiesClass.ClearModesEnum.ImportedData => XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData.ClearDataEnum.ImportedData,
+                BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData => XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData.ClearDataEnum.SetMatchedData,
                 _ => throw Contracts.Fail<NotImplementedException>($"Unexpected ClearMode within {nameof(DataClearedEvent)}")
             }));
 

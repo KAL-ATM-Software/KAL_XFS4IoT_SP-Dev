@@ -16,6 +16,7 @@ namespace XFS4IoT.Keyboard.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Keyboard.LayoutEvent")]
     public sealed class LayoutEvent : Event<LayoutEvent.PayloadData>
     {

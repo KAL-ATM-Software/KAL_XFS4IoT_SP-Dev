@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.EMVClessQueryApplications")]
     public sealed class EMVClessQueryApplicationsCompletion : Completion<EMVClessQueryApplicationsCompletion.PayloadData>
     {
@@ -51,7 +52,7 @@ namespace XFS4IoT.CardReader.Completions
                 public List<byte> Aid { get; init; }
 
                 /// <summary>
-                /// Contains the Base64 encoded Kernel Identifier associated with the *aid*. This data may be empty
+                /// Contains the Base64 encoded Kernel Identifier associated with the *aid*. This data may be null
                 /// if the reader does not support Kernel Identifiers for example in the case of legacy approved
                 /// contactless readers.
                 /// <example>Ag==</example>

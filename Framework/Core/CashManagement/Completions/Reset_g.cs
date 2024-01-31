@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {
@@ -26,10 +27,13 @@ namespace XFS4IoT.CashManagement.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, StorageCashInClass> Storage = null, StorageCashCountsClass Transport = null, StorageCashCountsClass Stacker = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
+                this.Storage = Storage;
+                this.Transport = Transport;
+                this.Stacker = Stacker;
             }
 
             public enum ErrorCodeEnum
@@ -45,9 +49,9 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
-            /// * ```cashUnitError``` - There is a problem with a storage unit. A 
+            /// * ```cashUnitError``` - There is a problem with a storage unit. A
             /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The output position specified is not supported.
             /// * ```invalidCashUnit``` - The storage unit number specified is not valid.
@@ -59,6 +63,25 @@ namespace XFS4IoT.CashManagement.Completions
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
+
+            /// <summary>
+            /// Object containing the storage units which have had items inserted during the associated operation or
+            /// transaction. Only storage units whose contents have been modified are included.
+            /// </summary>
+            [DataMember(Name = "storage")]
+            public Dictionary<string, StorageCashInClass> Storage { get; init; }
+
+            /// <summary>
+            /// List of items moved to transport by this transaction or command.
+            /// </summary>
+            [DataMember(Name = "transport")]
+            public StorageCashCountsClass Transport { get; init; }
+
+            /// <summary>
+            /// List of items moved to stacker by this transaction or command.
+            /// </summary>
+            [DataMember(Name = "stacker")]
+            public StorageCashCountsClass Stacker { get; init; }
 
         }
     }

@@ -16,22 +16,13 @@ namespace XFS4IoT.VendorApplication.Commands
 {
     //Original name = GetActiveInterface
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "VendorApplication.GetActiveInterface")]
-    public sealed class GetActiveInterfaceCommand : Command<GetActiveInterfaceCommand.PayloadData>
+    public sealed class GetActiveInterfaceCommand : Command<MessagePayload>
     {
-        public GetActiveInterfaceCommand(int RequestId, GetActiveInterfaceCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetActiveInterfaceCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Camera.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Camera.TakePicture")]
     public sealed class TakePictureCompletion : Completion<TakePictureCompletion.PayloadData>
     {
@@ -26,10 +27,37 @@ namespace XFS4IoT.Camera.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> PictureFile = null)
                 : base(CompletionCode, ErrorDescription)
             {
+                this.ErrorCode = ErrorCode;
+                this.PictureFile = PictureFile;
             }
+
+            public enum ErrorCodeEnum
+            {
+                CameraNotSupported,
+                MediaFull,
+                CameraInoperable
+            }
+
+            /// <summary>
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
+            /// 
+            /// * ```cameraNotSupported``` - The specified camera is not supported.
+            /// * ```mediaFull``` - The recording media is full.
+            /// * ```cameraInoperable``` - The specified camera is inoperable.
+            /// </summary>
+            [DataMember(Name = "errorCode")]
+            public ErrorCodeEnum? ErrorCode { get; init; }
+
+            /// <summary>
+            /// The base64 encoded data representing the picture.
+            /// <example>Xhdjyedh736ydw7hdi</example>
+            /// </summary>
+            [DataMember(Name = "pictureFile")]
+            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            public List<byte> PictureFile { get; init; }
 
         }
     }

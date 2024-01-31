@@ -21,7 +21,5 @@ namespace XFS4IoTFramework.CardReader
             : base(connection, requestId)
         { }
 
-        public async Task MediaDetectedEvent(XFS4IoT.CardReader.Events.MediaDetectedEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.CardReader.Events.MediaDetectedEvent(requestId, Payload));
-
     }
 }

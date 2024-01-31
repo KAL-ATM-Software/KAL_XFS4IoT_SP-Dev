@@ -73,30 +73,25 @@ namespace XFS4IoTFramework.PinPad
                                                           LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
             }
 
-            if (key.KeyUsage != "V2")
+            if (localVisa.Payload.KeyEncKey is null ||
+                localVisa.Payload.KeyEncKey.Count == 0)
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          $"Specified key usage is not expected.{key.KeyUsage}",
-                                                          LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation);
-            }
-
-            if (!string.IsNullOrEmpty(localVisa.Payload.KeyEncKey))
-            {
-                KeyDetail keyEncKey = KeyManagement.GetKeyDetail(localVisa.Payload.KeyEncKey);
-                if (keyEncKey is null)
+                // Loaded key is to veirfy PIN using imported key
+                if (key.KeyUsage != "V2")
                 {
                     return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified key encryption key is not loaded.",
-                                                               LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                                                              $"Specified key usage is not having expected key usage to verify PIN.{key.KeyUsage}",
+                                                              LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation);
                 }
-
-                if (keyEncKey.KeyUsage != "K0" &&
-                    keyEncKey.KeyUsage != "K1" &&
-                    keyEncKey.KeyUsage != "K2" &&
-                    keyEncKey.KeyUsage != "K3")
+            }
+            else
+            {
+                // Loaded key is used to decrypt data
+                if (key.KeyUsage != "D0" &&
+                    key.KeyUsage != "D2")
                 {
                     return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified key encryption key usage is not expected.{keyEncKey.KeyUsage}",
+                                                               $"Specified key encryption key usage is not expected to decrypt KeyEncKey enctrypted key.{key.KeyUsage}",
                                                                LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation);
                 } 
             }

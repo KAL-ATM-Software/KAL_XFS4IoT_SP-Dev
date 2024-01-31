@@ -67,7 +67,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.Replenish()");
 
-            var result = await Device.Replenish(new ReplenishCommandEvents(events),
+            var result = await Device.Replenish(new ReplenishCommandEvents(Storage, events),
                                                 new ReplenishRequest(replenish.Payload.Source,
                                                                      replenish.Payload.ReplenishTargets.ToDictionary(t => t.Target, t => t.NumberOfItemsToMove is null ? 0 : (int)t.NumberOfItemsToMove)),
                                                 cancel);

@@ -16,6 +16,7 @@ namespace XFS4IoT.CashAcceptor.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CashAcceptor.IncompleteDepleteEvent")]
     public sealed class IncompleteDepleteEvent : Event<IncompleteDepleteEvent.PayloadData>
     {
@@ -80,8 +81,8 @@ namespace XFS4IoT.CashAcceptor.Events
                     public string CashUnitSource { get; init; }
 
                     /// <summary>
-                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
-                    /// specified if the item was not identified as a cash item.
+                    /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is null
+                    /// if the item was not identified as a cash item.
                     /// <example>type20USD1</example>
                     /// </summary>
                     [DataMember(Name = "cashItem")]
@@ -89,8 +90,8 @@ namespace XFS4IoT.CashAcceptor.Events
                     public string CashItem { get; init; }
 
                     /// <summary>
-                    /// Total number of items removed from this source storage unit of the *cashItem* item type. 
-                    /// Not reported if this source storage unit did not move any items of this item type, 
+                    /// Total number of items removed from this source storage unit of the *cashItem* item type.
+                    /// Not reported if this source storage unit did not move any items of this item type,
                     /// for example due to a storage unit or transport jam.
                     /// </summary>
                     [DataMember(Name = "numberOfItemsRemoved")]
@@ -100,14 +101,14 @@ namespace XFS4IoT.CashAcceptor.Events
                 }
 
                 /// <summary>
-                /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved, 
-                /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source 
-                /// can move several note types. 
+                /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved,
+                /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source
+                /// can move several note types.
                 /// 
                 /// For example:
-                /// * If one single source was specified with the input structure, and this source moved two different 
-                /// note types, then this will have two elements. 
-                /// * If two sources were specified and the first source moved two different note types and the second source 
+                /// * If one single source was specified with the input structure, and this source moved two different
+                /// note types, then this will have two elements.
+                /// * If two sources were specified and the first source moved two different note types and the second source
                 /// moved three different note types, then this will have five elements.
                 /// </summary>
                 [DataMember(Name = "depleteSourceResults")]
@@ -116,7 +117,7 @@ namespace XFS4IoT.CashAcceptor.Events
             }
 
             /// <summary>
-            /// Note that in this case the values in this structure report the amount and number of each denomination that 
+            /// Note that in this case the values in this structure report the amount and number of each denomination that
             /// have actually been moved during the depletion command.
             /// </summary>
             [DataMember(Name = "deplete")]

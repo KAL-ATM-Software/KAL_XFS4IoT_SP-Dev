@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Lights.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Lights.SetLight")]
     public sealed class SetLightCompletion : Completion<SetLightCompletion.PayloadData>
     {
@@ -39,7 +40,7 @@ namespace XFS4IoT.Lights.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```invalidLight``` - An attempt to set a light to a new value was invalid because the light does not exist.
             /// * ```lightError``` - A hardware error occurred while executing the command.
             /// </summary>

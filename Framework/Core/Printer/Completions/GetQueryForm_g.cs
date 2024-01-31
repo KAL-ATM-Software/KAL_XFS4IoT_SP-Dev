@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.GetQueryForm")]
     public sealed class GetQueryFormCompletion : Completion<GetQueryFormCompletion.PayloadData>
     {
@@ -53,7 +54,7 @@ namespace XFS4IoT.Printer.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```formInvalid``` - The specified form is invalid.
@@ -72,7 +73,8 @@ namespace XFS4IoT.Printer.Completions
             {
                 Inch,
                 Mm,
-                RowColumn
+                RowColumn,
+                Na
             }
 
             /// <summary>
@@ -81,6 +83,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```inch``` - The base unit is inches.
             /// * ```mm``` - The base unit is millimeters.
             /// * ```rowColumn``` - The base unit is rows and columns.
+            /// * ```na``` - Not applicable as the specified form cannot be found or is invalid.
             /// </summary>
             [DataMember(Name = "base")]
             public BaseEnum? Base { get; init; }
@@ -121,7 +124,8 @@ namespace XFS4IoT.Printer.Completions
                 TopLeft,
                 TopRight,
                 BottomLeft,
-                BottomRight
+                BottomRight,
+                Na
             }
 
             /// <summary>
@@ -131,6 +135,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```topRight``` - The form is aligned relative to the top and right edges of the media.
             /// * ```bottomLeft``` - The form is aligned relative to the bottom and left edges of the media.
             /// * ```bottomRight``` - The form is aligned relative to the bottom and right edges of the media.
+            /// * ```na``` - Not applicable as the specified form cannot be found or is invalid.
             /// </summary>
             [DataMember(Name = "alignment")]
             public AlignmentEnum? Alignment { get; init; }
@@ -138,7 +143,8 @@ namespace XFS4IoT.Printer.Completions
             public enum OrientationEnum
             {
                 Portrait,
-                Landscape
+                Landscape,
+                Na
             }
 
             /// <summary>
@@ -146,6 +152,7 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// * ```portrait``` - The orientation of the form is portrait.
             /// * ```landscape``` - The orientation of the form is landscape.
+            /// * ```na``` - Not applicable as the specified form cannot be found or is invalid.
             /// </summary>
             [DataMember(Name = "orientation")]
             public OrientationEnum? Orientation { get; init; }
@@ -153,7 +160,7 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// Specifies the horizontal offset of the position of the top-left corner of the form, relative to the
             /// left or right edge specified by [alignment](#printer.getqueryform.completion.properties.alignment).
-            /// This value is specified in terms of the base horizontal resolution and is always positive.
+            /// This value is specified in terms of the base horizontal resolution.
             /// </summary>
             [DataMember(Name = "offsetX")]
             [DataTypes(Minimum = 0)]
@@ -162,36 +169,36 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// Specifies the vertical offset of the position of the top-left corner of the form, relative to the top
             /// or bottom edge specified by *alignment*. This value is specified in terms of the base vertical
-            /// resolution and is always positive.
+            /// resolution.
             /// </summary>
             [DataMember(Name = "offsetY")]
             [DataTypes(Minimum = 0)]
             public int? OffsetY { get; init; }
 
             /// <summary>
-            /// Specifies the major version of the form. Omitted if the version is not specified in the form.
+            /// Specifies the major version of the form. This is null if the version is not specified in the form.
             /// </summary>
             [DataMember(Name = "versionMajor")]
             [DataTypes(Minimum = 0)]
             public int? VersionMajor { get; init; }
 
             /// <summary>
-            /// Specifies the minor version of the form. Omitted if the version is not specified in the form.
+            /// Specifies the minor version of the form. This is null if the version is not specified in the form.
             /// </summary>
             [DataMember(Name = "versionMinor")]
             [DataTypes(Minimum = 0)]
             public int? VersionMinor { get; init; }
 
             /// <summary>
-            /// The user prompt string. This will be omitted if the form does not define a value for the user prompt.
+            /// The user prompt string. This will be null if the form does not define a value for the user prompt.
             /// <example>User prompt1</example>
             /// </summary>
             [DataMember(Name = "userPrompt")]
             public string UserPrompt { get; init; }
 
             /// <summary>
-            /// The field names.
-            /// <example>["Field1, "Field2"]</example>
+            /// The field names. This will be null if the specified form cannot be found or is invalid.
+            /// <example>["Field1", "Field2"]</example>
             /// </summary>
             [DataMember(Name = "fields")]
             public List<string> Fields { get; init; }

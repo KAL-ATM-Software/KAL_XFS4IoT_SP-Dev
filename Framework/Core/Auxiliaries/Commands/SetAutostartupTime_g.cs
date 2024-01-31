@@ -16,19 +16,20 @@ namespace XFS4IoT.Auxiliaries.Commands
 {
     //Original name = SetAutoStartupTime
     [DataContract]
-    [Command(Name = "Auxiliaries.SetAutoStartupTime")]
-    public sealed class SetAutoStartupTimeCommand : Command<SetAutoStartupTimeCommand.PayloadData>
+    [XFS4Version(Version = "2.0")]
+    [Command(Name = "Auxiliaries.SetAutoStartUpTime")]
+    public sealed class SetAutoStartUpTimeCommand : Command<SetAutoStartUpTimeCommand.PayloadData>
     {
-        public SetAutoStartupTimeCommand(int RequestId, SetAutoStartupTimeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetAutoStartUpTimeCommand(int RequestId, SetAutoStartUpTimeCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ModeEnum? Mode = null, SystemTimeClass StartTime = null)
-                : base(Timeout)
+            public PayloadData(ModeEnum? Mode = null, SystemTimeClass StartTime = null)
+                : base()
             {
                 this.Mode = Mode;
                 this.StartTime = StartTime;
@@ -36,7 +37,6 @@ namespace XFS4IoT.Auxiliaries.Commands
 
             public enum ModeEnum
             {
-                Clear,
                 Specific,
                 Daily,
                 Weekly
@@ -45,12 +45,11 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// <summary>
             /// Specifies the current or desired auto start-up control mode configured. The following values are possible:
             /// 
-            /// * ```clear``` - No auto start-up time configured.
-            /// * ```specific``` - In the *startTime* object, only *year*, *month, *day*, *hour* and *minute* are relevant. 
+            /// * ```specific``` - In the *startTime* object, only *year*, *month, *day*, *hour* and *minute* are relevant.
             ///   All other properties must be ignored.
-            /// * ```daily``` - Auto start-up every day has been configured. In the *startTime* object, only *hour* and 
+            /// * ```daily``` - Auto start-up every day has been configured. In the *startTime* object, only *hour* and
             ///   *minute* are relevant. All other properties must be ignored.
-            /// * ```weekly``` - Auto start-up at a specified time on a specific day of every week has been configured. 
+            /// * ```weekly``` - Auto start-up at a specified time on a specific day of every week has been configured.
             ///   In the *startTime* parameter, only *dayOfWeek*, *hour* and *minute* are relevant. All other properties must be ignored.
             /// </summary>
             [DataMember(Name = "mode")]

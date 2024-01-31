@@ -13,6 +13,8 @@ using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoTFramework.Common;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static XFS4IoT.CardReader.Commands.WriteRawDataCommand.PayloadData;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -20,70 +22,142 @@ namespace XFS4IoTFramework.CardReader
     {
         private async Task<WriteRawDataCompletion.PayloadData> HandleWriteRawData(IWriteRawDataEvents events, WriteRawDataCommand writeRawData, CancellationToken cancel)
         {
-            Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, WriteCardRequest.CardData> dataToWrite = new ();
-            foreach (WriteRawDataCommand.PayloadData.DataClass data in writeRawData.Payload.Data)
+            Dictionary<WriteCardRequest.DestinationEnum, WriteCardRequest.CardData> dataToWrite = [];
+            if (writeRawData.Payload.Track1 is null &&
+                writeRawData.Payload.Track2 is null &&
+                writeRawData.Payload.Track3 is null &&
+                writeRawData.Payload.Track1JIS is null &&
+                writeRawData.Payload.Track1Front is null &&
+                writeRawData.Payload.Track3JIS is null)
+            {
+                return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                              "No track data is supplied.");
+            }
+
+
+            if (writeRawData.Payload.Track1 is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track1.WriteMethod switch
+                                    {
+                                        Track1Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track1Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track1.Data));
+            }
+            if (writeRawData.Payload.Track2 is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track2,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track2.WriteMethod switch
+                                    {
+                                        Track2Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track2Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track2.Data));
+            }
+            if (writeRawData.Payload.Track3 is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track3,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track3.WriteMethod switch
+                                    {
+                                        Track3Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track3Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track3.Data));
+            }
+            if (writeRawData.Payload.Track1JIS is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1JIS,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track1JIS.WriteMethod switch
+                                    {
+                                        Track1JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track1JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track1JIS.Data));
+            }
+            if (writeRawData.Payload.Track1Front is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1Front,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track1Front.WriteMethod switch
+                                    {
+                                        Track1FrontClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track1FrontClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track1Front.Data));
+            }
+            if (writeRawData.Payload.Track3JIS is not null)
+            {
+                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track3JIS,
+                                new WriteCardRequest.CardData(
+                                    WriteMethod: writeRawData.Payload.Track3JIS.WriteMethod switch
+                                    {
+                                        Track3JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        Track3JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                                    },
+                                    Data: writeRawData.Payload.Track3JIS.Data));
+            }
+
+            foreach (var data in dataToWrite)
             {
                 // First data check
-                if (data.Destination is null)
-                {
-                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  "No destination specified to write track data.");
-                }
-                
-                if (data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1 &&
+                if (data.Key == WriteCardRequest.DestinationEnum.Track1 &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1) ||
-                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track2 &&
+                    data.Key == WriteCardRequest.DestinationEnum.Track2 &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2) ||
-                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3 &&
+                    data.Key == WriteCardRequest.DestinationEnum.Track3 &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3) ||
-                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1Front &&
+                    data.Key == WriteCardRequest.DestinationEnum.Track1Front &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front) ||
-                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1JIS &&
+                    data.Key == WriteCardRequest.DestinationEnum.Track1JIS &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS) ||
-                    data.Destination == WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3JIS &&
+                    data.Key == WriteCardRequest.DestinationEnum.Track3JIS &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Specified destination is not supported. {data.Destination}");
+                                                                  $"Specified destination is not supported. {data.Key}");
                 }
 
-                if (data.WriteMethod is not null)
+                if (data.Value.WriteMethod == WriteCardRequest.CardData.WriteMethodEnum.Auto &&
+                    !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto) ||
+                    data.Value.WriteMethod == WriteCardRequest.CardData.WriteMethodEnum.Loco &&
+                    !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco) ||
+                    data.Value.WriteMethod == WriteCardRequest.CardData.WriteMethodEnum.Hico &&
+                    !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
                 {
-                    if (data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Auto &&
-                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto) ||
-                        data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Loco &&
-                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco) ||
-                        data.WriteMethod == WriteRawDataCommand.PayloadData.DataClass.WriteMethodEnum.Hico &&
-                        !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
-                    {
-                        return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"Specified write methods is not supported. {data.WriteMethod}");
-                    }
+                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                    $"Specified write methods is not supported. {data.Value.WriteMethod}");
                 }
 
-                if (data.Data is null ||
-                    data.Data.Count == 0)
+                if (data.Value.Data is null ||
+                    data.Value.Data.Count == 0)
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                   "No data specified to write track.");
                 }
 
-                List<byte> writeData = data.Data;
-                if (!ValidateData((WriteRawDataCommand.PayloadData.DataClass.DestinationEnum)data.Destination, writeData))
+                List<byte> writeData = data.Value.Data;
+                if (!ValidateData(data.Key, writeData))
                 {
                     return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Invalid track data is specified for the {data.Destination}");
+                                                                  $"Invalid track data is specified for the {data.Key}");
                 }
-
-                // Data seems to be ok and add it in the list to write data to the device class
-                dataToWrite.Add((WriteRawDataCommand.PayloadData.DataClass.DestinationEnum)data.Destination,
-                                 new WriteCardRequest.CardData(writeData, data.WriteMethod));
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            var acceptCardResult = await Device.AcceptCardAsync(new CommonCardCommandEvents(events),
-                                                                new AcceptCardRequest(ReadCardRequest.CardDataTypesEnum.NoDataRead, false, writeRawData.Payload.Timeout),
+            var acceptCardResult = await Device.AcceptCardAsync(new ReadRawDataCommandEvents(events),
+                                                                new AcceptCardRequest(ReadCardRequest.CardDataTypesEnum.NoDataRead, false, writeRawData.Header.Timeout ?? 0),
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
@@ -118,7 +192,7 @@ namespace XFS4IoTFramework.CardReader
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.WriteCardDataAsync()");
-            var writeCardDataResult = await Device.WriteCardAsync(new CommonCardCommandEvents(events),
+            var writeCardDataResult = await Device.WriteCardAsync(new WriteRawDataCommandEvents(events),
                                                                   new WriteCardRequest(dataToWrite),
                                                                   cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.WriteCardDataAsync() -> {writeCardDataResult.CompletionCode}, {writeCardDataResult.ErrorCode}");
@@ -135,22 +209,22 @@ namespace XFS4IoTFramework.CardReader
         /// <param name="Track">Track data to validate</param>
         /// <param name="Data">Data to validate</param>
         /// <returns></returns>
-        private bool ValidateData(WriteRawDataCommand.PayloadData.DataClass.DestinationEnum Track, List<byte> Data)
+        private bool ValidateData(WriteCardRequest.DestinationEnum Track, List<byte> Data)
         {
-            if (validTrackDataRange.ContainsKey(Track))
+            if (validTrackDataRange.TryGetValue(Track, out ValidTrackDataRange value))
             {
-                if (Data.Count > validTrackDataRange[Track].MaxLength)
+                if (Data.Count > value.MaxLength)
                     return false;
 
                 for (int i=0; i<Data.Count; i++)
                 {
-                    if (Data[i] < validTrackDataRange[Track].MinLegal ||
-                        Data[i] > validTrackDataRange[Track].MaxLegal)
+                    if (Data[i] < value.MinLegal ||
+                        Data[i] > value.MaxLegal)
                     {
                         return false;
                     }
 
-                    if (i < Data.Count - 1 && Data[i] == validTrackDataRange[Track].EndSentinel)
+                    if (i < Data.Count - 1 && Data[i] == value.EndSentinel)
                         return false;
                 }
             }
@@ -176,11 +250,11 @@ namespace XFS4IoTFramework.CardReader
             public byte EndSentinel { get; private set; }
         }
 
-        private readonly Dictionary<WriteRawDataCommand.PayloadData.DataClass.DestinationEnum, ValidTrackDataRange> validTrackDataRange = new()
+        private readonly Dictionary<WriteCardRequest.DestinationEnum, ValidTrackDataRange> validTrackDataRange = new()
         {
-            { WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track1, new ValidTrackDataRange(78,  0x20, 0x5f, 0x25, 0x3f) },
-            { WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track2, new ValidTrackDataRange(39,  0x30, 0x3e, 0x3b, 0x3f)},
-            { WriteRawDataCommand.PayloadData.DataClass.DestinationEnum.Track3, new ValidTrackDataRange(106, 0x30, 0x3e, 0x3b, 0x3f)},
+            { WriteCardRequest.DestinationEnum.Track1, new ValidTrackDataRange(78,  0x20, 0x5f, 0x25, 0x3f) },
+            { WriteCardRequest.DestinationEnum.Track2, new ValidTrackDataRange(39,  0x30, 0x3e, 0x3b, 0x3f)},
+            { WriteCardRequest.DestinationEnum.Track3, new ValidTrackDataRange(106, 0x30, 0x3e, 0x3b, 0x3f)},
         };
     }
 }

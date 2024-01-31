@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;

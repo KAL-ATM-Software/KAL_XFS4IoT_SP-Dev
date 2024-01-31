@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.VendorApplication.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorApplication.StartLocalApplication")]
     public sealed class StartLocalApplicationCompletion : Completion<StartLocalApplicationCompletion.PayloadData>
     {

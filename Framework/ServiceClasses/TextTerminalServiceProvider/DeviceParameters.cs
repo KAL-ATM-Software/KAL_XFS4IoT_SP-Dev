@@ -161,7 +161,7 @@ namespace XFS4IoTFramework.TextTerminal
             Password
         }
 
-        public ReadRequest(EchoModeEnum EchoMode, TextAttributesEnum EchoAttributes, int PositionX, int PositionY, int NumChars, bool Cursor, bool Flush, bool AutoEnd,string  ActiveKeys, List<string> ActiveCommandKeys, List<string> TerminateCommandKeys)
+        public ReadRequest(EchoModeEnum EchoMode, TextAttributesEnum EchoAttributes, int PositionX, int PositionY, int NumChars, bool Cursor, bool Flush, bool AutoEnd, List<string> ActiveKeys, List<string> ActiveCommandKeys, List<string> TerminateCommandKeys)
         {
             this.EchoMode = EchoMode;
             this.EchoAttributes = EchoAttributes;
@@ -213,7 +213,7 @@ namespace XFS4IoTFramework.TextTerminal
         /// <summary>
         /// String containing the ActiveKeys. e.g. "0123456789"
         /// </summary>
-        public string ActiveKeys { get; init; }
+        public List<string> ActiveKeys { get; init; }
         /// <summary>
         /// List of active command keys during the read operation
         /// </summary>

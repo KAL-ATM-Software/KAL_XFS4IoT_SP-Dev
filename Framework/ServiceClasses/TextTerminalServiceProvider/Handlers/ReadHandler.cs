@@ -23,10 +23,15 @@ namespace XFS4IoTFramework.TextTerminal
         private async Task<ReadCompletion.PayloadData> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
         {
             // Check for any active keys or command keys.
-            if (string.IsNullOrWhiteSpace(read.Payload.ActiveKeys) && 
-                (read.Payload.ActiveCommandKeys is null || read.Payload.ActiveCommandKeys.Count == 0))
+            if ((read.Payload.ActiveKeys is null ||
+                 read.Payload.ActiveKeys.Count == 0 ) && 
+                (read.Payload.ActiveCommandKeys is null || 
+                 read.Payload.ActiveCommandKeys.Count == 0))
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, "No Keys specified for Read command.", ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
+                return new ReadCompletion.PayloadData(
+                    CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode, 
+                    ErrorDescription: $"No Keys specified for Read command.", 
+                    ErrorCode: ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
             }
 
             // Get autoEnd value.
@@ -39,7 +44,9 @@ namespace XFS4IoTFramework.TextTerminal
             // Check for either AutoEnd or TerminateCommandKeys. Read will never end if neither are specified.
             if ((read.Payload.ActiveCommandKeys?.FirstOrDefault(c => c.Value.Terminate is true) is null) && !autoEnd)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Device cannot determine when to end Read operation.");
+                return new ReadCompletion.PayloadData(
+                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                    ErrorDescription: $"Device cannot determine when to end Read operation.");
             }
 
             // Get KeyDetails if not cached yet.
@@ -50,13 +57,13 @@ namespace XFS4IoTFramework.TextTerminal
             }
 
             // Check all ActiveKeys are supported.
-            if (!string.IsNullOrEmpty(read.Payload.ActiveKeys))
+            if (read.Payload.ActiveKeys is not null)
             {
-                foreach (char c in read.Payload.ActiveKeys)
+                foreach (var activeKey in read.Payload.ActiveKeys)
                 {
-                    if (!TextTerminal.SupportedKeys.Keys.Contains(c))
+                    if (!TextTerminal.SupportedKeys.Keys.Contains(activeKey))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"Key {c} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"Key {activeKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
                 }
             }
@@ -66,7 +73,7 @@ namespace XFS4IoTFramework.TextTerminal
             {
                 foreach (var cmdKey in read.Payload.ActiveCommandKeys)
                 {
-                    if (!TextTerminal.SupportedKeys.CommandKeys.Contains(cmdKey.Key))
+                    if (!TextTerminal.SupportedKeys.CommandKeys.ContainsKey(cmdKey.Key))
                     {
                         return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                     }
@@ -151,9 +158,9 @@ namespace XFS4IoTFramework.TextTerminal
                                                                 read.Payload.Visible.Value, 
                                                                 read.Payload.Flush.Value, 
                                                                 autoEnd, 
-                                                                read.Payload.ActiveKeys ?? string.Empty, 
-                                                                read.Payload.ActiveCommandKeys?.Keys.ToList() ?? new(), 
-                                                                read.Payload.ActiveCommandKeys?.Where(c => c.Value.Terminate is true).Select(c => c.Key).ToList() ?? new()),
+                                                                read.Payload.ActiveKeys ?? [], 
+                                                                read.Payload.ActiveCommandKeys?.Keys.ToList() ?? [], 
+                                                                read.Payload.ActiveCommandKeys?.Where(c => c.Value.Terminate is true).Select(c => c.Key).ToList() ?? []),
                                                 cancel);
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ReadAsync() -> {result.CompletionCode}");

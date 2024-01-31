@@ -25,14 +25,48 @@ namespace XFS4IoTFramework.Camera
         private async Task<TakePictureCompletion.PayloadData> HandleTakePicture(ITakePictureEvents events, TakePictureCommand takePicture, CancellationToken cancel)
         {
 
+            if (takePicture.Payload is null)
+                return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No Payload supplied for TakePicture command.");
+
+            if (takePicture.Payload.Camera is null)
+                return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No Camera supplied for TakePicture command.");
+
+            CameraCapabilitiesClass.CameraEnum Camera = takePicture.Payload.Camera switch
+            {
+                TakePictureCommand.PayloadData.CameraEnum.Room => CameraCapabilitiesClass.CameraEnum.Room,
+                TakePictureCommand.PayloadData.CameraEnum.Person => CameraCapabilitiesClass.CameraEnum.Person,
+                TakePictureCommand.PayloadData.CameraEnum.ExitSlot => CameraCapabilitiesClass.CameraEnum.ExitSlot,
+                _ => throw Contracts.Fail<NotImplementedException>($"Unexpected Camera supplied for TakePicture command. {takePicture.Payload.Camera}"),
+            };
+
+            string CamData = null;
+
+            if (takePicture.Payload.CamData is not null)
+            {
+                if (!Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.ManualAdd))
+                    return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "CamData specified when device does not support ManualAdd CamData.");
+
+                CamData = takePicture.Payload.CamData;
+
+                if(Common.CameraCapabilities.MaxDataLength.HasValue && CamData.Length > Common.CameraCapabilities.MaxDataLength)
+                {
+                    // We send InvalidDataEvent so the client knows we are altering the CamData.
+                    // But we continue to take the picture anyway
+                    await events.InvalidDataEvent();
+
+                    CamData = CamData[..Common.CameraCapabilities.MaxDataLength.Value];
+                }
+            }
+
             Logger.Log(Constants.DeviceClass, "CameraDev.TakePictureAsync()");
-            var result = await Device.TakePictureAsync(new TakePictureRequest(CameraCapabilitiesClass.CameraEnum.Person), cancel);
+            var result = await Device.TakePictureAsync(new TakePictureRequest(Camera, null, CamData), cancel);
             Logger.Log(Constants.DeviceClass, $"CameraDev.TakePictureAsync() -> {result.CompletionCode}");
 
 
-            //ToDo: Return picture data.
             return new TakePictureCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription);
+                                                         result.ErrorDescription,
+                                                         result.ErrorCode,
+                                                         result.PictureData);
         }
 
     }

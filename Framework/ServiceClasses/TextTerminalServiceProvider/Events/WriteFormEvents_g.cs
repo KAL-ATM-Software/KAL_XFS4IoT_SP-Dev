@@ -23,7 +23,7 @@ namespace XFS4IoTFramework.TextTerminal
 
         public async Task FieldErrorEvent(XFS4IoT.TextTerminal.Events.FieldErrorEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.FieldErrorEvent(requestId, Payload));
 
-        public async Task FieldWarningEvent() => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.FieldWarningEvent(requestId));
+        public async Task FieldWarningEvent(XFS4IoT.TextTerminal.Events.FieldWarningEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.TextTerminal.Events.FieldWarningEvent(requestId, Payload));
 
     }
 }

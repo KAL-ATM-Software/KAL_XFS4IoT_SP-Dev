@@ -16,19 +16,20 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = ChipPower
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCommand : Command<ChipPowerCommand.PayloadData>
     {
-        public ChipPowerCommand(int RequestId, ChipPowerCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ChipPowerCommand(int RequestId, ChipPowerCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ChipPowerEnum? ChipPower = null)
-                : base(Timeout)
+            public PayloadData(ChipPowerEnum? ChipPower = null)
+                : base()
             {
                 this.ChipPower = ChipPower;
             }

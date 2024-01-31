@@ -18,6 +18,7 @@ using XFS4IoT.Storage.Events;
 using XFS4IoTFramework.VendorApplication;
 using XFS4IoTFramework.VendorMode;
 using XFS4IoTFramework.Common;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -44,18 +45,8 @@ namespace XFS4IoTServer
         private readonly VendorApplicationServiceClass VendorApplicationService;
 
         #region Common unsolicited events
-        public Task StatusChangedEvent(CommonStatusClass.DeviceEnum? Device,
-                                       CommonStatusClass.PositionStatusEnum? Position,
-                                       int? PowerSaveRecoveryTime,
-                                       CommonStatusClass.AntiFraudModuleEnum? AntiFraudModule,
-                                       CommonStatusClass.ExchangeEnum? Exchange,
-                                       CommonStatusClass.EndToEndSecurityEnum? EndToEndSecurity) => CommonService.StatusChangedEvent(Device,
-                                                                                                                                     Position,
-                                                                                                                                     PowerSaveRecoveryTime,
-                                                                                                                                     AntiFraudModule,
-                                                                                                                                     Exchange,
-                                                                                                                                     EndToEndSecurity);
 
+        public Task StatusChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => CommonService.StatusChangedEvent(sender, propertyInfo);
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the VendorMode Service.");
 

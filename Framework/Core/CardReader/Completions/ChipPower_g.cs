@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCompletion : Completion<ChipPowerCompletion.PayloadData>
     {
@@ -44,7 +45,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```chipPowerNotSupported``` - The specified action is not supported by the hardware device.
             /// * ```mediaJam``` - The card is jammed (only applies to contact user chips). Operator intervention is required.
@@ -57,7 +58,7 @@ namespace XFS4IoT.CardReader.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The Base64 encoded data received from the chip.
+            /// The Base64 encoded data received from the chip. This property is null if no data received.
             /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "chipData")]

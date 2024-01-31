@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.GetTellerInfo")]
     public sealed class GetTellerInfoCompletion : Completion<GetTellerInfoCompletion.PayloadData>
     {
@@ -40,7 +41,7 @@ namespace XFS4IoT.CashManagement.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```invalidCurrency``` - Specified currency not currently available.
             /// * ```invalidTellerId``` - Invalid teller ID.
@@ -49,7 +50,7 @@ namespace XFS4IoT.CashManagement.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Array of teller detail objects.
+            /// Array of teller detail objects. May be null if no teller defined.
             /// </summary>
             [DataMember(Name = "tellerDetails")]
             public List<TellerDetailsClass> TellerDetails { get; init; }

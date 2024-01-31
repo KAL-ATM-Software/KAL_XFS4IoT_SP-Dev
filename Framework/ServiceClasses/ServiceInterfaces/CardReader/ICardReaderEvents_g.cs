@@ -20,5 +20,7 @@ namespace XFS4IoTFramework.CardReader
 
         Task CardActionEvent(XFS4IoT.CardReader.Events.CardActionEvent.PayloadData Payload);
 
+        Task MediaDetectedEvent(XFS4IoT.CardReader.Events.MediaDetectedEvent.PayloadData Payload);
+
     }
 }

@@ -16,19 +16,20 @@ namespace XFS4IoT.Biometric.Commands
 {
     //Original name = Read
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Biometric.Read")]
     public sealed class ReadCommand : Command<ReadCommand.PayloadData>
     {
-        public ReadCommand(int RequestId, ReadCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadCommand(int RequestId, ReadCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<DataTypeClass> DataTypes = null, int? NumCaptures = null, ModeEnum? Mode = null)
-                : base(Timeout)
+            public PayloadData(List<DataTypeClass> DataTypes = null, int? NumCaptures = null, ModeEnum? Mode = null)
+                : base()
             {
                 this.DataTypes = DataTypes;
                 this.NumCaptures = NumCaptures;
@@ -36,17 +37,17 @@ namespace XFS4IoT.Biometric.Commands
             }
 
             /// <summary>
-            /// Array of data types, each data element of which represents the data type(s) in which the data should be returned 
-            /// in the completion payload. If no data is to be returned *dataTypes* can be omitted. Single or multiple 
-            /// formats can be returned, or no data can be returned in the case where the scan is to be followed by a 
-            /// subsequent matching operation. 
+            /// Array of data types, each data element of which represents the data type(s) in which the data should be returned
+            /// in the completion payload. If no data is to be returned *dataTypes* can be null. Single or multiple
+            /// formats can be returned, or no data can be returned in the case where the scan is to be followed by a
+            /// subsequent matching operation.
             /// </summary>
             [DataMember(Name = "dataTypes")]
             public List<DataTypeClass> DataTypes { get; init; }
 
             /// <summary>
-            /// This property indicates the number of times to attempt capture of the biometric data from the subject. 
-            /// If this is zero or omitted, then the device determines how many attempts will be made. The maximum number of captures 
+            /// This property indicates the number of times to attempt capture of the biometric data from the subject.
+            /// If this is zero, then the device determines how many attempts will be made. The maximum number of captures
             /// possible is indicated by the [maxCapture](#common.capabilities.completion.properties.biometric.maxcapture) capability.
             /// </summary>
             [DataMember(Name = "numCaptures")]
@@ -60,7 +61,7 @@ namespace XFS4IoT.Biometric.Commands
             }
 
             /// <summary>
-            /// This optional property indicates the reason why the [Biometric.Read](#biometric.read) has been issued, 
+            /// This optional property indicates the reason why the [Biometric.Read](#biometric.read) has been issued,
             /// in order to allow for any necessary optimization.
             /// Available values are detailed in the [scanModes](#common.capabilities.completion.properties.biometric.scanmodes).
             /// The following values are possible:

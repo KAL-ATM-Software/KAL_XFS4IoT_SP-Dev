@@ -16,6 +16,7 @@ namespace XFS4IoT.VendorApplication.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "VendorApplication.InterfaceChangedEvent")]
     public sealed class InterfaceChangedEvent : UnsolicitedEvent<InterfaceChangedEvent.PayloadData>
     {

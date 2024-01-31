@@ -16,19 +16,20 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = PrepareDispense
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.PrepareDispense")]
     public sealed class PrepareDispenseCommand : Command<PrepareDispenseCommand.PayloadData>
     {
-        public PrepareDispenseCommand(int RequestId, PrepareDispenseCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PrepareDispenseCommand(int RequestId, PrepareDispenseCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, ActionEnum? Action = null)
-                : base(Timeout)
+            public PayloadData(ActionEnum? Action = null)
+                : base()
             {
                 this.Action = Action;
             }
@@ -43,7 +44,7 @@ namespace XFS4IoT.CashDispenser.Commands
             /// A value specifying the type of actions. Following values are possible:
             /// 
             /// * ```start``` - Initiates the action to prepare for the next dispense command. This command does not wait 
-            /// until the device is ready to dispense before returning a completion event, it completes as soon as the 
+            /// until the device is ready to dispense before returning a completion, it completes as soon as the 
             /// preparation has been initiated.
             /// * ```stop``` - Stops the previously activated dispense preparation. For example the motor of the transport 
             /// will be stopped. This should be used if for some reason the subsequent dispense operation is no longer

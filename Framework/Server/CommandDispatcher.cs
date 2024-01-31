@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-
 using XFS4IoT;
 
 namespace XFS4IoTServer
@@ -74,18 +73,29 @@ namespace XFS4IoTServer
                 Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
                 Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
 
-                await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, Command.Header.Name, new(Acknowledge.PayloadData.StatusEnum.Ok)));
+                await Connection.SendMessageAsync(new Acknowledge(Command.Header.RequestId.Value, Command.Header.Name, Command.Header.Version, new(Acknowledge.PayloadData.StatusEnum.Ok)));
 
-                //Get timeout if available
                 //Use linked cancellation token to ensure we cancel if the parent token is cancelled.
                 CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(token);
-                var payload = Command.GetType().GetProperty("Payload").GetValue(Command);
-
+                
                 //Use timeout if it is not infinite
-                if (payload is XFS4IoT.Commands.MessagePayload payloadBase && payloadBase.Timeout > 0)
-                    cts.CancelAfter(payloadBase.Timeout);
+                if (Command.Header.Timeout is not null && Command.Header.Timeout > 0)
+                    cts.CancelAfter((int)Command.Header.Timeout);
 
                 (ICommandHandler handler, bool async) = CreateHandler(Command.GetType(), Connection);
+
+                // Check supported command and version by the device class
+                if (!MessagesSupported.ContainsKey(Command.Header.Name) ||
+                    !MessagesSupported[Command.Header.Name].Versions.IsNotNull($"No command version stored internally for {Command.Header.Name} command.").Contains(Command.Header.Version))
+                {
+                    await handler.HandleError(Command, 
+                                              new NotSupportedException(!MessagesSupported.ContainsKey(Command.Header.Name) ?
+                                                $"{Command.Header.Name} Command is not supported by the service." :
+                                                $"{Command.Header.Name} Command version ({Command.Header.Version}) is not supported by the service."));
+                    return;
+                }
+
+                // Received command is supported by the device and process it.
                 if (async)
                 {
                     try
@@ -147,8 +157,6 @@ namespace XFS4IoTServer
                 typeof(ICommandHandler).IsAssignableFrom(handlerClass),
                 $"Class {handlerClass.Name} is registered to handle {type.Name} but isn't a {nameof(ICommandHandler)}");
 
-            //Logger.Log(Constants.Component, $"Dispatch: Handling {type} message with {handlerClass.Name}");
-
             // Create a new handler object. Effectively the same as: 
             // ICommandHandler handler = new handlerClass( this, Logger );
             var handler =  handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) })
@@ -178,7 +186,7 @@ namespace XFS4IoTServer
                 MessageHandlers.Add(Message, new HandlerDetails(Handler, async));
         }
 
-        private readonly Dictionary<Type, HandlerDetails > MessageHandlers = new();
+        private readonly Dictionary<Type, HandlerDetails > MessageHandlers = [];
 
         private record HandlerDetails(Type Type, bool Async);
 
@@ -186,5 +194,10 @@ namespace XFS4IoTServer
 
         public IEnumerable<Type> Commands { get => MessageHandlers.Keys; }
         public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; }
+
+        /// <summary>
+        /// Storing the commands and events supported by the device class for received command check
+        /// </summary>
+        public Dictionary<string, MessageTypeInfo> MessagesSupported { get; set; }
     }
 }

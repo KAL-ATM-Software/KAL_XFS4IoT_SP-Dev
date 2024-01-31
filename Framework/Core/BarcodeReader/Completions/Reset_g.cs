@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.BarcodeReader.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "BarcodeReader.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {

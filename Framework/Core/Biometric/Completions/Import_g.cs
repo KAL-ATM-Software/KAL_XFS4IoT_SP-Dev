@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.Import")]
     public sealed class ImportCompletion : Completion<ImportCompletion.PayloadData>
     {
@@ -42,24 +43,24 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible: 
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```invalidData``` - The data that was imported was malformed or invalid. No data has been imported into the device. 
+            /// * ```invalidData``` - The data that was imported was malformed or invalid. No data has been imported into the device.
             ///                       The presence of any previously loaded templates can be checked for using the [Biometric.Read](#biometric.getstorageinfo).
-            /// * ```formatNotSupported``` - The format of the biometric data that was specified is not supported. 
-            ///                         No data has been imported into the device. 
+            /// * ```formatNotSupported``` - The format of the biometric data that was specified is not supported.
+            ///                         No data has been imported into the device.
             ///                         A list of the supported values can be obtained through the [dataFormats](#common.capabilities.completion.properties.biometric.dataformats).
-            /// * ```capacityExceeded``` - An attempt has been made to import more templates than the maximum reserved storage space available. 
-            ///                            The maximum storage space available is reported in the capability [templateStorage](#common.capabilities.completion.properties.biometric.templatestorage). No data has been 
-            ///                            imported into the device. 
-            ///                            The amount of storage remaining is reported in the [remainingStorage](#common.status.completion.properties.biometric.remainingstorage).
+            /// * ```capacityExceeded``` - An attempt has been made to import more templates than the maximum reserved storage space available.
+            ///                             The maximum storage space available is reported in the capability [templateStorage](#common.capabilities.completion.properties.biometric.templatestorage). No data has been
+            ///                             imported into the device.
+            ///                             The amount of storage remaining is reported in the [remainingStorage](#common.status.completion.properties.biometric.remainingstorage).
             /// * ```keyNotFound``` - The specified key name is not found.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// A list of the biometric template data that were successfully imported. 
+            /// A list of the biometric template data that were successfully imported. If there are no template data imported, this property can be null.
             /// </summary>
             [DataMember(Name = "templates")]
             public Dictionary<string, DataTypeClass> Templates { get; init; }

@@ -20,7 +20,7 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartupTimeCommand))]
+    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartUpTimeCommand))]
     public partial class SetAutoStartupTimeHandler : ICommandHandler
     {
         public SetAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
@@ -40,42 +40,42 @@ namespace XFS4IoTFramework.Auxiliaries
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var setAutoStartupTimeCmd = command.IsA<SetAutoStartupTimeCommand>($"Invalid parameter in the SetAutoStartupTime Handle method. {nameof(SetAutoStartupTimeCommand)}");
+            var setAutoStartupTimeCmd = command.IsA<SetAutoStartUpTimeCommand>($"Invalid parameter in the SetAutoStartupTime Handle method. {nameof(SetAutoStartUpTimeCommand)}");
             setAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
 
             ISetAutoStartupTimeEvents events = new SetAutoStartupTimeEvents(Connection, setAutoStartupTimeCmd.Header.RequestId.Value);
 
             var result = await HandleSetAutoStartupTime(events, setAutoStartupTimeCmd, cancel);
-            await Connection.SendMessageAsync(new SetAutoStartupTimeCompletion(setAutoStartupTimeCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetAutoStartUpTimeCompletion(setAutoStartupTimeCmd.Header.RequestId.Value, result));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setAutoStartupTimecommand = command.IsA<SetAutoStartupTimeCommand>();
+            var setAutoStartupTimecommand = command.IsA<SetAutoStartUpTimeCommand>();
             setAutoStartupTimecommand.Header.RequestId.HasValue.IsTrue();
 
-            SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
+                _ => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetAutoStartupTimeCompletion(setAutoStartupTimecommand.Header.RequestId.Value, new SetAutoStartupTimeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetAutoStartUpTimeCompletion(setAutoStartupTimecommand.Header.RequestId.Value, new SetAutoStartUpTimeCompletion.PayloadData(errorCode, commandException.Message));
 
             await Connection.SendMessageAsync(response);
         }

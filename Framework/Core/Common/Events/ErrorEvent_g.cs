@@ -16,6 +16,7 @@ namespace XFS4IoT.Common.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Common.ErrorEvent")]
     public sealed class ErrorEvent : UnsolicitedEvent<ErrorEvent.PayloadData>
     {
@@ -69,7 +70,7 @@ namespace XFS4IoT.Common.Events
             }
 
             /// <summary>
-            /// The action required to manage the error. This can be omitted if no action is required. Possible values
+            /// The action required to manage the error. This can be null if no action is required. Possible values
             /// are:
             /// 
             /// * ```reset``` - Reset device to attempt recovery using a *Reset* command, but should not be used
@@ -78,12 +79,12 @@ namespace XFS4IoT.Common.Events
             /// * ```softwareError``` - A software error occurred. Contact software vendor.
             /// * ```configuration``` - A configuration error occurred. Check configuration.
             /// * ```clear``` - Recovery is not possible. A manual intervention for clearing the device is required. This
-            /// value is typically returned when a hardware error has occurred which banking personnel may be able to 
+            /// value is typically returned when a hardware error has occurred which banking personnel may be able to
             /// clear without calling for technical maintenance, e.g. 'replace paper', or 'remove cards from retain bin'.
             /// * ```maintenance``` - Recovery is not possible. A technical maintenance intervention is required.
             /// This value is only used for hardware errors and fraud attempts. This value is typically returned when a
             /// hardware error or fraud attempt has occurred which requires field engineer specific maintenance activity.
-            /// A *Reset* command may be used to attempt recovery after intervention, but should not be used excessively 
+            /// A *Reset* command may be used to attempt recovery after intervention, but should not be used excessively
             /// due to the potential risk of damage to the device. [Vendor Application](#vendorapplication) may be
             /// required to recover the device.
             /// * ```suspend``` - Device will attempt auto recovery and will advise any further action required via a
@@ -93,7 +94,7 @@ namespace XFS4IoT.Common.Events
             public ActionEnum? Action { get; init; }
 
             /// <summary>
-            /// A vendor-specific description of the error. May be omitted if not applicable.
+            /// A vendor-specific description of the error. May be null if not applicable.
             /// <example>An error occurred in position B.</example>
             /// </summary>
             [DataMember(Name = "vendorDescription")]

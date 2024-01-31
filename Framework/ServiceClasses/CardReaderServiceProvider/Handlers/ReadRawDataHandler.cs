@@ -14,6 +14,7 @@ using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoT.CardReader;
 using XFS4IoTFramework.Common;
+using System.Text;
 
 namespace XFS4IoTFramework.CardReader
 {
@@ -102,8 +103,8 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            var acceptCardResult = await Device.AcceptCardAsync(new CommonCardCommandEvents(events),
-                                                                new AcceptCardRequest(dataTypes, fluxInactive, readRawData.Payload.Timeout),
+            var acceptCardResult = await Device.AcceptCardAsync(new ReadRawDataCommandEvents(events),
+                                                                new AcceptCardRequest(dataTypes, fluxInactive, readRawData.Header.Timeout ?? 0),
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
@@ -154,16 +155,16 @@ namespace XFS4IoTFramework.CardReader
             }
 
             // build output data
-            CardDataClass track1 = null;
-            CardDataClass track2 = null;
-            CardDataClass track3 = null;
-            CardDataClass watermark = null;
-            CardDataClass track1Front = null;
+            CardDataNullableClass track1 = null;
+            CardDataNullableClass track2 = null;
+            CardDataNullableClass track3 = null;
+            CardDataNullableClass watermark = null;
+            CardDataNullableClass track1Front = null;
             List<byte> frontImage = null;
             List<byte> backImage = null;
-            CardDataClass track1JIS = null;
-            CardDataClass track3JIS = null;
-            CardDataClass ddi = null;
+            CardDataNullableClass track1JIS = null;
+            CardDataNullableClass track3JIS = null;
+            CardDataNullableClass ddi = null;
             ReadRawDataCompletion.PayloadData.SecurityClass security = null;
             ReadRawDataCompletion.PayloadData.MemoryChipClass memoryChip = null;
 
@@ -171,40 +172,90 @@ namespace XFS4IoTFramework.CardReader
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track1).IsTrue("Ttrack1 data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1].DataStatus, "Unexpected track1 data status is set by the device class. DataStatus field should not be null.");
-                track1 = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1].DataStatus, 
-                                           readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1].Data);
+                track1 = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track2))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track2).IsTrue("Track2 data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track2].DataStatus, "Unexpected track2 data status is set by the device class. DataStatus field should not be null.");
-                track2 = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track2].DataStatus,
-                                           readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track2].Data);
+                track2 = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track2].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track2].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track3))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track3).IsTrue("Track3 data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3].DataStatus, "Unexpected track3 data status is set by the device class. DataStatus field should not be null.");
-                track3 = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3].DataStatus,
-                                           readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3].Data);
+                track3 = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Watermark))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Watermark).IsTrue("Watermark data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Watermark].DataStatus, "Unexpected watermak data status is set by the device class. DataStatus field should not be null.");
-                watermark = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Watermark].DataStatus,
-                                              readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Watermark].Data);
+                watermark = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Watermark].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Watermark].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track1Front))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track1Front).IsTrue("Track1Front data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1Front].DataStatus, "Unexpected track1 front data status is set by the device class. DataStatus field should not be null.");
-                track1Front = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1Front].DataStatus,
-                                                readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1Front].Data);
+                track1Front = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1Front].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1Front].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.FrontImage))
@@ -225,40 +276,100 @@ namespace XFS4IoTFramework.CardReader
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track1JIS).IsTrue("Track1JIS data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1JIS].DataStatus, "Unexpected track JIS1 data status is set by the device class. DataStatus field should not be null.");
-                track1JIS = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1JIS].DataStatus,
-                                              readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1JIS].Data);
+                track1JIS = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1JIS].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track1JIS].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Track3JIS))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Track3JIS).IsTrue("Track3JIS data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3JIS].DataStatus, "Unexpected track JIS3 data status is set by the device class. DataStatus field should not be null.");
-                track3JIS = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3JIS].DataStatus,
-                                              readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3JIS].Data);
+                track3JIS = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3JIS].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Track3JIS].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Ddi))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Ddi).IsTrue("DDI data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Ddi].DataStatus, "Unexpected DDI data status is set by the device class. DataStatus field should not be null.");
-                ddi = new CardDataClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Ddi].DataStatus,
-                                        readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Ddi].Data);
+                ddi = new CardDataNullableClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Ddi].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Ddi].Data);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Security))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.Security).IsTrue("Security data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Security].DataStatus, "Unexpected security data status is set by the device class. DataStatus field should not be null.");
-                security = new ReadRawDataCompletion.PayloadData.SecurityClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Security].DataStatus,
-                                                                               readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Security].SecutiryDataStatus);
+                security = new ReadRawDataCompletion.PayloadData.SecurityClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Security].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Data: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.Security].SecutiryDataStatus);
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.MemoryChip))
             {
                 readCardDataResult.DataRead.ContainsKey(ReadCardRequest.CardDataTypesEnum.MemoryChip).IsTrue("MemoryChip data is not set by the device class.");
                 Contracts.IsNotNull(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].DataStatus, "Unexpected memocy chip data status is set by the device class. DataStatus field should not be null.");
-                memoryChip = new ReadRawDataCompletion.PayloadData.MemoryChipClass((CardDataStatusEnum)readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].DataStatus,
-                                                                                   readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].MemcoryChipDataStatus);
+
+                // Bug in the 2023-2 specification. missing pattern and format keywords in the spec.
+                // Should be fixed in the next version.
+                string base64Data = null;
+                if (readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].Data.Count > 0)
+                {
+                    base64Data = Convert.ToBase64String(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].Data.ToArray());
+                }
+
+                memoryChip = new ReadRawDataCompletion.PayloadData.MemoryChipClass(
+                    Status: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].DataStatus switch
+                    {
+                        ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                        ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                        ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                        ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                        _ => null
+                    },
+                    Protocol: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].MemcoryChipDataStatus,
+                    Data: base64Data);
             }
 
             List<CardDataClass> chip = null;

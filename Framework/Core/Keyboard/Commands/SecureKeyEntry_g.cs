@@ -16,19 +16,20 @@ namespace XFS4IoT.Keyboard.Commands
 {
     //Original name = SecureKeyEntry
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCommand : Command<SecureKeyEntryCommand.PayloadData>
     {
-        public SecureKeyEntryCommand(int RequestId, SecureKeyEntryCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SecureKeyEntryCommand(int RequestId, SecureKeyEntryCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, KeyLenEnum? KeyLen = null, bool? AutoEnd = null, Dictionary<string, KeyClass> ActiveKeys = null, VerificationTypeEnum? VerificationType = null, CryptoMethodEnum? CryptoMethod = null)
-                : base(Timeout)
+            public PayloadData(KeyLenEnum? KeyLen = null, bool? AutoEnd = null, Dictionary<string, ActiveKeysClass> ActiveKeys = null, VerificationTypeEnum? VerificationType = null, CryptoMethodEnum? CryptoMethod = null)
+                : base()
             {
                 this.KeyLen = KeyLen;
                 this.AutoEnd = AutoEnd;
@@ -62,6 +63,22 @@ namespace XFS4IoT.Keyboard.Commands
             [DataMember(Name = "autoEnd")]
             public bool? AutoEnd { get; init; }
 
+            [DataContract]
+            public sealed class ActiveKeysClass
+            {
+                public ActiveKeysClass(bool? Terminate = null)
+                {
+                    this.Terminate = Terminate;
+                }
+
+                /// <summary>
+                /// The key is a terminate key.
+                /// </summary>
+                [DataMember(Name = "terminate")]
+                public bool? Terminate { get; init; }
+
+            }
+
             /// <summary>
             /// Specifies all Function Keys which are active during the execution of the command.
             /// This should be the complete set or a subset of the keys returned in the payload of the
@@ -73,37 +90,9 @@ namespace XFS4IoT.Keyboard.Commands
             /// 
             /// For FDKs which must terminate the execution of the command. This should include the FDKs associated with
             /// Cancel and Enter.
-            /// 
-            /// The following standard names are defined:
-            /// 
-            /// * ```zero``` - Numeric digit 0
-            /// * ```one``` - Numeric digit 1
-            /// * ```two``` - Numeric digit 2
-            /// * ```three``` - Numeric digit 3
-            /// * ```four``` - Numeric digit 4
-            /// * ```five``` - Numeric digit 5
-            /// * ```six``` - Numeric digit 6
-            /// * ```seven``` - Numeric digit 7
-            /// * ```eight``` - Numeric digit 8
-            /// * ```nine``` - Numeric digit 9
-            /// * ```[a-f]``` - Hex digit A to F for secure key entry
-            /// * ```enter``` - Enter
-            /// * ```cancel``` - Cancel
-            /// * ```clear``` - Clear
-            /// * ```backspace``` - Backspace
-            /// * ```help``` - Help
-            /// * ```decPoint``` - Decimal point
-            /// * ```shift``` - Shift key used during hex entry
-            /// * ```doubleZero``` - 00
-            /// * ```tripleZero``` - 000
-            /// * ```fdk[01-32]``` - 32 FDK keys
-            /// 
-            /// Additional non-standard key names are also allowed:
-            /// 
-            /// * ```oem[a-zA-Z0-9]*``` - A non-standard key name
             /// </summary>
             [DataMember(Name = "activeKeys")]
-            public Dictionary<string, KeyClass> ActiveKeys { get; init; }
+            public Dictionary<string, ActiveKeysClass> ActiveKeys { get; init; }
 
             public enum VerificationTypeEnum
             {
@@ -116,8 +105,8 @@ namespace XFS4IoT.Keyboard.Commands
             /// The following values are possible:
             /// 
             /// * ```self``` - The key check value is created by an encryption of the key with itself.
-            ///                For a double-length or triple-length key the KCV is generated using 3DES encryption using
-            ///                the first 8 bytes of the key as the source data for the encryption.
+            ///                 For a double-length or triple-length key the KCV is generated using 3DES encryption using
+            ///                 the first 8 bytes of the key as the source data for the encryption.
             /// * ```zero``` - The key check value is created by encrypting a zero value with the key.
             /// </summary>
             [DataMember(Name = "verificationType")]
@@ -132,7 +121,7 @@ namespace XFS4IoT.Keyboard.Commands
 
             /// <summary>
             /// Specifies the cryptographic method to be used for the verification.
-            /// If this property is omitted, *keyLen* will determine the cryptographic method used.
+            /// If this property is null, *keyLen* will determine the cryptographic method used.
             /// If *keyLen* is 16, the cryptographic method will be Single DES.
             /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES
             /// The following values are possible:

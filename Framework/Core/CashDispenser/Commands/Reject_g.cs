@@ -16,22 +16,13 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Reject
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashDispenser.Reject")]
-    public sealed class RejectCommand : Command<RejectCommand.PayloadData>
+    public sealed class RejectCommand : Command<MessagePayload>
     {
-        public RejectCommand(int RequestId, RejectCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public RejectCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

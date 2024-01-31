@@ -99,12 +99,12 @@ namespace XFS4IoTFramework.Keyboard
                     List<LayoutFrameClass.KeysClass> functionKeys = new();
                     foreach (var functionKey in frame.FunctionKeys)
                     {
-                        functionKeys.Add(new LayoutFrameClass.KeysClass(functionKey.XPos,
-                                                                        functionKey.YPos,
-                                                                        functionKey.XSize,
-                                                                        functionKey.YSize,
-                                                                        functionKey.Key,
-                                                                        functionKey.ShiftKey));
+                        functionKeys.Add(new LayoutFrameClass.KeysClass(XPos: functionKey.XPos,
+                                                                        YPos: functionKey.YPos,
+                                                                        XSize: functionKey.XSize,
+                                                                        YSize:functionKey.YSize,
+                                                                        Key: functionKey.Key,
+                                                                        ShiftKey: functionKey.ShiftKey));
                     }
 
                     resultFrames.Add(new(frame.XPos,

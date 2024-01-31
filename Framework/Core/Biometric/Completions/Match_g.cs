@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.Match")]
     public sealed class MatchCompletion : Completion<MatchCompletion.PayloadData>
     {
@@ -43,12 +44,12 @@ namespace XFS4IoT.Biometric.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noImportedData``` - The command failed because no data was imported previously using the [Biometric.Import](#biometric.import).
             /// * ```invalidIdentifier``` - The command failed because data was imported but *identifier* was not found.
             /// * ```modeNotSupported``` -\tThe type of match specified in *compareMode* is not supported.
-            /// * ```noCaptureData``` -\tNo captured data is present. Typically means that the [Biometric.Read](#biometric.read) 
+            /// * ```noCaptureData``` -\tNo captured data is present. Typically means that the [Biometric.Read](#biometric.read)
             ///                         command has not been called, or the captured data has been cleared using the [Biometric.Clear](#biometric.clear).
             /// * ```invalidCompareMode``` - The compare mode specified by the *compareMode* input parameter is not supported.
             /// * ```invalidThreshold``` - The *Threshold* input parameter is greater than the maximum allowed of 100.
@@ -66,8 +67,8 @@ namespace XFS4IoT.Biometric.Completions
                 }
 
                 /// <summary>
-                /// Specifies the level of confidence for the match found. 
-                /// This value is in a scale of 0 - 100, where 0 is no match and 100 is an exact match. 
+                /// Specifies the level of confidence for the match found.
+                /// This value is in a scale of 0 - 100, where 0 is no match and 100 is an exact match.
                 /// The minimum value will be that which was set by the *threshold* property.
                 /// </summary>
                 [DataMember(Name = "confidenceLevel")]
@@ -75,24 +76,24 @@ namespace XFS4IoT.Biometric.Completions
                 public int? ConfidenceLevel { get; init; }
 
                 /// <summary>
-                /// Contains the biometric template data that was matched. 
-                /// This data may be used as justification for the biometric data match or confidence level. 
-                /// This property can be omitted if no additional comparison data is returned. 
+                /// Contains the biometric template data that was matched.
+                /// This data may be used as justification for the biometric data match or confidence level.
+                /// This property is null if no additional comparison data is returned.
                 /// <example>dGVtcGxhdGUgZGF0YQ==</example>
                 /// </summary>
                 [DataMember(Name = "templateData")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}?$")]
                 public List<byte> TemplateData { get; init; }
 
             }
 
             /// <summary>
             /// The object name has a unique number that positively identifies the biometric template data.
-            /// This corresponds to the list of template identifiers returned by 
+            /// This corresponds to the list of template identifiers returned by
             /// the [Biometric.GetStorageInfo](#biometric.getstorageinfo) command.
-            /// This property can be omitted if the [Biometric.Match](#biometric.match) operation completes with no match found. 
-            /// If there are matches found, this property contains all of the matching templates in order of confidence level, with the highest score first. 
-            /// Note that where the number of templates that match the input criteria of the threshold are greater than *maximum*, only the *maximum* templates 
+            /// This property can be null if the [Biometric.Match](#biometric.match) operation completes with no match found.
+            /// If there are matches found, this property contains all of the matching templates in order of confidence level, with the highest score first.
+            /// Note that where the number of templates that match the input criteria of the threshold are greater than *maximum*, only the *maximum* templates
             /// with the highest scores will be returned.
             /// </summary>
             [DataMember(Name = "candidates")]

@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 using System.Collections.Generic;
+using XFS4IoT.Commands;
 
 namespace XFS4IoTServer.Test
 {
@@ -22,12 +23,58 @@ namespace XFS4IoTServer.Test
         [TestMethod]
         public async Task NewMessageDispatcherTest()
         {
-            var dispatcher = new CommandDispatcher(new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger());
-
+            var dispatcher = new TestServiceProvider(new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger());
 
             await dispatcher.Dispatch(new TestConnection(), new TestMessage1(), CancellationToken.None);
             await dispatcher.Dispatch(new TestConnection(), new TestMessage2(), CancellationToken.None);
             await dispatcher.Dispatch(new TestConnection(), new TestMessage3(), CancellationToken.None);
+        }
+
+        public sealed class TestServiceProvider : CommandDispatcher, IServiceProvider
+        {
+            public TestServiceProvider(IEnumerable<XFSConstants.ServiceClass> Services, ILogger Logger)
+            : base(Services, Logger)
+            {
+                List<Type> testCommands = [typeof(TestMessage1), typeof(TestMessage2), typeof(TestMessage3)];
+                Dictionary<string, MessageTypeInfo> supportedMsgs = [];
+                foreach (var type in testCommands)
+                {
+                    CommandAttribute commandAttrib = Attribute.GetCustomAttribute(type, typeof(CommandAttribute)) as CommandAttribute;
+                    Assert.AreEqual(true, commandAttrib is not null);
+
+                    XFS4VersionAttribute versionAttrib = Attribute.GetCustomAttribute(type, typeof(XFS4VersionAttribute)) as XFS4VersionAttribute;
+                    Assert.AreEqual(true, versionAttrib is not null);
+
+                    supportedMsgs.Add(commandAttrib.Name, new MessageTypeInfo(MessageTypeInfo.MessageTypeEnum.Command, new([versionAttrib.Version])));
+                }
+
+                SetMessagesSupported(supportedMsgs);
+            }
+
+            public string Name { get; } = String.Empty;
+            public Uri Uri { get; }
+            public Uri WSUri { get; }
+            public IDevice Device { get => Contracts.Fail<IDevice>("A device object was requested from the Publisher service, but the publisher service does not have a device class"); }
+
+            public Task BroadcastEvent(object payload)
+            {
+                throw Contracts.Fail<Exception>($"No broadcast events defined for test method.");
+            }
+            public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator)
+            {
+                throw Contracts.Fail<Exception>($"No jason schema validator supported for test method.");
+            }
+
+            public Task BroadcastEvent(IEnumerable<IConnection> connections, object payload)
+            {
+                throw Contracts.Fail<Exception>($"No broadcast events defined for the service publisher. Do not call {nameof(BroadcastEvent)} on this class.");
+            }
+
+            public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported)
+            {
+                base.MessagesSupported = MessagesSupported;
+            }
+            public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => base.MessagesSupported;
         }
     }
 
@@ -45,6 +92,13 @@ namespace XFS4IoTServer.Test
         public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync(CancellationSource cancellationSource) => throw new NotImplementedException();
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => throw new NotImplementedException();
+        /// <summary>
+        /// Set supported commands and events to the dispatcher.
+        /// </summary>
+        /// <param name="MessagesSupported"></param>
+        public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported)
+        { }
+        public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => [];
     }
 
     internal class TestLogger : ILogger
@@ -69,22 +123,25 @@ namespace XFS4IoTServer.Test
         public Task SendMessageAsync(object result) => Task.CompletedTask; //Return CompletedTask when sending Acknowledge
     }
 
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.TestMessage1")]
     public class TestMessage1 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage1() : base(new Random().Next(), null)
+        public TestMessage1() : base(new Random().Next(), null, 0)
         { }
     }
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.TestMessage2")]
     public class TestMessage2 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage2() : base(new Random().Next(), null)
+        public TestMessage2() : base(new Random().Next(), null, 0)
         { }
     }
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.TestMessage3")]
     public class TestMessage3 : XFS4IoT.Commands.Command<XFS4IoT.Commands.MessagePayload>
     {
-        public TestMessage3() : base(new Random().Next(), null)
+        public TestMessage3() : base(new Random().Next(), null, 0)
         { }
     }
 

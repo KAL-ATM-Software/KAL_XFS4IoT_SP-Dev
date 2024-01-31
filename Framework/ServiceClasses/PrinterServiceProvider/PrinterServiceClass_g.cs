@@ -21,24 +21,6 @@ namespace XFS4IoTServer
         public async Task MediaTakenEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaTakenEvent());
 
-        public async Task PaperThresholdEvent(XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.PaperThresholdEvent(Payload));
-
-        public async Task TonerThresholdEvent(XFS4IoT.Printer.Events.TonerThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.TonerThresholdEvent(Payload));
-
-        public async Task RetractBinThresholdEvent(XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinThresholdEvent(Payload));
-
-        public async Task InkThresholdEvent(XFS4IoT.Printer.Events.InkThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.InkThresholdEvent(Payload));
-
-        public async Task MediaAutoRetractedEvent(XFS4IoT.Printer.Events.MediaAutoRetractedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaAutoRetractedEvent(Payload));
-
-        public async Task DefinitionLoadedEvent(XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.DefinitionLoadedEvent(Payload));
-
         public async Task MediaInsertedUnsolicitedEvent()
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaInsertedUnsolicitedEvent());
 
@@ -51,8 +33,26 @@ namespace XFS4IoTServer
         public async Task RetractBinStatusEvent(XFS4IoT.Printer.Events.RetractBinStatusEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinStatusEvent(Payload));
 
+        public async Task DefinitionLoadedEvent(XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.DefinitionLoadedEvent(Payload));
+
+        public async Task MediaAutoRetractedEvent(XFS4IoT.Printer.Events.MediaAutoRetractedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaAutoRetractedEvent(Payload));
+
+        public async Task RetractBinThresholdEvent(XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinThresholdEvent(Payload));
+
+        public async Task PaperThresholdEvent(XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.PaperThresholdEvent(Payload));
+
+        public async Task TonerThresholdEvent(XFS4IoT.Printer.Events.TonerThresholdEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.TonerThresholdEvent(Payload));
+
         public async Task LampThresholdEvent(XFS4IoT.Printer.Events.LampThresholdEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.LampThresholdEvent(Payload));
+
+        public async Task InkThresholdEvent(XFS4IoT.Printer.Events.InkThresholdEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.InkThresholdEvent(Payload));
 
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }

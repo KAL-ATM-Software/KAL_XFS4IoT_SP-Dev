@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = DeviceLockControl
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.DeviceLockControl")]
     public sealed class DeviceLockControlCommand : Command<DeviceLockControlCommand.PayloadData>
     {
-        public DeviceLockControlCommand(int RequestId, DeviceLockControlCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DeviceLockControlCommand(int RequestId, DeviceLockControlCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, DeviceActionEnum? DeviceAction = null, CashUnitActionEnum? CashUnitAction = null, List<UnitLockControlClass> UnitLockControl = null)
-                : base(Timeout)
+            public PayloadData(DeviceActionEnum? DeviceAction = null, CashUnitActionEnum? CashUnitAction = null, List<UnitLockControlClass> UnitLockControl = null)
+                : base()
             {
                 this.DeviceAction = DeviceAction;
                 this.CashUnitAction = CashUnitAction;
@@ -43,7 +44,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Specifies locking or unlocking the device in its normal operating position. The following values are 
+            /// Specifies locking or unlocking the device in its normal operating position. The following values are
             /// possible:
             /// 
             /// * ```lock``` - Locks the device so that it cannot be removed from its normal operating position.
@@ -66,7 +67,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             /// 
             /// * ```lockAll``` - Locks all storage units supported.
             /// * ```unlockAll``` - Unlocks all storage units supported.
-            /// * ```lockIndividual``` - Locks/unlocks storage units individually as specified in the *unitLockControl* parameter.
+            /// * ```lockIndividual``` - Locks/unlocks storage units individually as specified in the *unitLockControl* property.
             /// * ```noLockAction``` - No lock/unlock action will be performed on storage units.
             /// </summary>
             [DataMember(Name = "cashUnitAction")]
@@ -82,7 +83,7 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage) 
+                /// Name of the storage unit (as stated by the [Storage.GetStorage](#storage.getstorage)
                 /// command) to be locked or unlocked.
                 /// <example>unit1</example>
                 /// </summary>
@@ -97,10 +98,10 @@ namespace XFS4IoT.CashAcceptor.Commands
                 }
 
                 /// <summary>
-                /// Specifies whether to lock or unlock the storage unit indicated in the *storageUnit* parameter.
+                /// Specifies whether to lock or unlock the storage unit indicated in the *storageUnit* property.
                 /// The following values are possible:
                 /// 
-                /// * ```lock``` - Locks the specified storage unit so that it cannot be removed from the device. 
+                /// * ```lock``` - Locks the specified storage unit so that it cannot be removed from the device.
                 /// * ```unlock``` - Unlocks the specified storage unit so that it can be removed from the device.
                 /// </summary>
                 [DataMember(Name = "unitAction")]
@@ -109,7 +110,7 @@ namespace XFS4IoT.CashAcceptor.Commands
             }
 
             /// <summary>
-            /// Array of structures, one for each storage unit to be locked or unlocked. Only valid in the case where 
+            /// Array of structures, one for each storage unit to be locked or unlocked. Only valid in the case where
             /// *lockIndividual* is specified in the *cashUnitAction* property otherwise this will be ignored.
             /// </summary>
             [DataMember(Name = "unitLockControl")]

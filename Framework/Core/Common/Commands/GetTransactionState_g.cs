@@ -16,22 +16,13 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = GetTransactionState
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.GetTransactionState")]
-    public sealed class GetTransactionStateCommand : Command<GetTransactionStateCommand.PayloadData>
+    public sealed class GetTransactionStateCommand : Command<MessagePayload>
     {
-        public GetTransactionStateCommand(int RequestId, GetTransactionStateCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetTransactionStateCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

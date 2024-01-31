@@ -16,22 +16,13 @@ namespace XFS4IoT.Common.Commands
 {
     //Original name = Capabilities
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Common.Capabilities")]
-    public sealed class CapabilitiesCommand : Command<CapabilitiesCommand.PayloadData>
+    public sealed class CapabilitiesCommand : Command<MessagePayload>
     {
-        public CapabilitiesCommand(int RequestId, CapabilitiesCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CapabilitiesCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

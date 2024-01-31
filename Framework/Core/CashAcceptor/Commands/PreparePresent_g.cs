@@ -16,19 +16,20 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = PreparePresent
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.PreparePresent")]
     public sealed class PreparePresentCommand : Command<PreparePresentCommand.PayloadData>
     {
-        public PreparePresentCommand(int RequestId, PreparePresentCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PreparePresentCommand(int RequestId, PreparePresentCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, CashManagement.OutputPositionEnum? Position = null)
-                : base(Timeout)
+            public PayloadData(CashManagement.OutputPositionEnum? Position = null)
+                : base()
             {
                 this.Position = Position;
             }

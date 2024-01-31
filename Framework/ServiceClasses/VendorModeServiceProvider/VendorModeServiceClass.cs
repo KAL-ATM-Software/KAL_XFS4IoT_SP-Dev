@@ -15,6 +15,7 @@ using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.VendorMode;
 using XFS4IoT.Commands;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -28,8 +29,9 @@ namespace XFS4IoTServer
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(VendorModeServiceClass)}");
 
-            this.CommonService.VendorModeStatus = new VendorModeStatusClass(VendorModeStatusClass.DeviceStatusEnum.Online,
-                                                                            VendorModeStatusClass.ServiceStatusEnum.Inactive);
+            CommonService.VendorModeStatus = new VendorModeStatusClass(VendorModeStatusClass.DeviceStatusEnum.Online,
+                                                                       VendorModeStatusClass.ServiceStatusEnum.Inactive);
+            CommonService.VendorModeStatus.PropertyChanged += StatusChangedEventFowarder;
         }
 
         /// <summary>
@@ -76,5 +78,11 @@ namespace XFS4IoTServer
         /// </summary>
         public Dictionary<IConnection, string> RegisteredClients { get; set; } = new();
 
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

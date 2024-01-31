@@ -15,9 +15,6 @@ namespace XFS4IoTServer
 {
     public interface IBiometricService
     {
-        Task PresentSubjectEvent();
-        Task SubjectDetectedEvent();
-        Task RemoveSubjectEvent();
         Task SubjectRemovedEvent();
         Task DataClearedEvent(BiometricCapabilitiesClass.ClearModesEnum ClearMode);
         Task OrientationEvent();

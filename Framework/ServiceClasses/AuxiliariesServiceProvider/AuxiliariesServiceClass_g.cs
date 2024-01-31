@@ -18,9 +18,6 @@ namespace XFS4IoTServer
     public partial class AuxiliariesServiceClass : IAuxiliariesServiceClass
     {
 
-        public async Task AuxiliaryStatusEvent(XFS4IoT.Auxiliaries.Events.AuxiliaryStatusEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Auxiliaries.Events.AuxiliaryStatusEvent(Payload));
-
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }
         private IAuxiliariesDevice Device { get => ServiceProvider.Device.IsA<IAuxiliariesDevice>(); }

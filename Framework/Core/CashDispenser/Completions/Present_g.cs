@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashDispenser.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashDispenser.Present")]
     public sealed class PresentCompletion : Completion<PresentCompletion.PayloadData>
     {
@@ -26,12 +27,11 @@ namespace XFS4IoT.CashDispenser.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.PositionEnum? Position = null, string AdditionalBunches = null)
+            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.PositionInfoNullableClass Position = null)
                 : base(CompletionCode, ErrorDescription)
             {
                 this.ErrorCode = ErrorCode;
                 this.Position = Position;
-                this.AdditionalBunches = AdditionalBunches;
             }
 
             public enum ErrorCodeEnum
@@ -47,14 +47,14 @@ namespace XFS4IoT.CashDispenser.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. Following values are possible:
+            /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```shutterNotOpen``` - The shutter did not open when it should have. No items presented.
             /// * ```shutterOpen``` - The shutter is open when it should be closed. No items presented.
             /// * ```noItems``` - There are no items on the stacker.
-            /// * ```exchangeActive``` - The device is in an exchange state (see 
+            /// * ```exchangeActive``` - The device is in an exchange state (see
             /// [Storage.StartExchange](#storage.startexchange)).
-            /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were 
+            /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were
             /// presented.
             /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the
             /// items were presented.
@@ -66,18 +66,7 @@ namespace XFS4IoT.CashDispenser.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             [DataMember(Name = "position")]
-            public CashManagement.PositionEnum? Position { get; init; }
-
-            /// <summary>
-            /// Specifies how many more bunches will be required to present the request. Following values are possible:
-            /// 
-            ///   * ```&lt;number&gt;``` - The number of additional bunches to be presented.
-            ///   * ```unknown``` - More than one additional bunch is required but the precise number is unknown.
-            /// <example>1</example>
-            /// </summary>
-            [DataMember(Name = "additionalBunches")]
-            [DataTypes(Pattern = @"^unknown$|^[0-9]*$")]
-            public string AdditionalBunches { get; init; }
+            public CashManagement.PositionInfoNullableClass Position { get; init; }
 
         }
     }

@@ -17,6 +17,14 @@ using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoT;
+using Microsoft.VisualBasic.FileIO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Security.Policy;
+using System.Reflection.Metadata;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.Serialization;
 
 namespace XFS4IoTFramework.KeyManagement
 {
@@ -50,6 +58,9 @@ namespace XFS4IoTFramework.KeyManagement
             HL,
             CBCMAC,
             CMAC,
+            CertHost_TR34,
+            CA_TR34,
+            HL_TR34,
             Reserved1,
             Reserved2,
             Reserved3
@@ -1318,5 +1329,299 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> DataToSign { get; init; }
 
         public AuthenticationData.SigningMethodEnum SigningMethod { get; init; }
+    }
+
+    public sealed class ImportKeyTokenRequest
+    {
+        public enum LoadOptionEnum
+        {
+            NoRandom,
+            Random,
+            NoRandom_CRL,
+            Random_CRL
+        }
+
+        public ImportKeyTokenRequest(string KeyName,
+                                     string KeyUsage,
+                                     List<byte> KeyToken,
+                                     LoadOptionEnum LoadOption)
+        {
+            this.KeyName = KeyName;
+            this.KeyUsage = KeyUsage;
+            this.KeyToken = KeyToken;
+            this.LoadOption = LoadOption;
+        }
+
+        /// <summary>
+        /// Name of the key to load
+        /// </summary>
+        public string KeyName { get; init; }
+
+        /// <summary>
+        /// If NoRandom_CRL or Random_CRL, KeyUsage is an empty string as the key usage is embedded in the KeyToken.
+        /// </summary>
+        public string KeyUsage { get; init; }
+
+        /// <summary>
+        /// The binary encoded PKCS #7 represented in DER encoded ASN.1 notation. This allows the Host to
+        /// verify that key was imported correctly and to the correct device.The message has an outer Signed-data
+        /// content type with the SignerInfo encryptedDigest field containing the HOST’s signature.The inner content is
+        /// an Enveloped-data content type.The device identifier is included as the issuerAndSerialNumber within the RecipientInfo.
+        /// </summary>
+        public List<byte> KeyToken { get; init; }
+
+        /// <summary>
+        ///* ```NoRandom``` Import a key without generating a using a random number.
+        ///* ```Random``` Import a key by generating and using a random number.
+        ///* ```NoRandom_CRL``` Import a key with a Certificate Revocation List included in the token. A random
+        ///                    number is not generated nor used. This option is used for the
+        ///                    One - Pass Protocol described in X9 TR34-2019 [[Ref. keymanagement-9](#ref-keymanagement-9)]
+        ///* ```Random_CRL``` Import a key with a Certificate Revocation List included in the token. A random number
+        ///                   is generated and used.This option is used for the Two - Pass Protocol described in X9 TR34-2019.
+        ///                   If Random* or Random_CRL, the random number is included as an authenticated attribute within SignerInfo SignedAttributes.
+        /// </summary>
+        public LoadOptionEnum LoadOption { get; init; }
+    }
+
+    public sealed class ImportKeyTokenResult : DeviceResult
+    {
+        public enum AuthenticationAlgorithmEnum
+        {
+            None,
+            SHA1,
+            SHA256,
+        }
+
+        public enum KeyCheckValueEnum
+        {
+            None,
+            Self,
+            Zero,
+        }
+
+        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    int KeyLength,
+                                    AuthenticationAlgorithmEnum AuthenticationAlgorithm,
+                                    List<byte> AuthenticationData,
+                                    KeyCheckValueEnum KCVMode,
+                                    List<byte> KCV)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.KeyLength = KeyLength;
+            this.AuthenticationAlgorithm = AuthenticationAlgorithm;
+            this.AuthenticationData = AuthenticationData;
+            this.KCVMode = KCVMode;
+            this.KCV = KCV;
+        }
+
+        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            AuthenticationAlgorithm = AuthenticationAlgorithmEnum.None;
+            AuthenticationData = null;
+            KCVMode = KeyCheckValueEnum.None;
+            KCV = null;
+            KeyLength = 0;
+        }
+
+        public ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Loaded key length. if it's unknown, specify 0.
+        /// </summary>
+        public int KeyLength { get; init; }
+
+        /// <summary>
+        /// The algorithm used to generate the signature contained in the AuthenticationData property
+        /// sent to the host.
+        /// </summary>
+        public AuthenticationAlgorithmEnum AuthenticationAlgorithm { get; init; }
+
+        /// <summary>
+        /// If LoadOption is Random or Random_CRL, this data is a binary encoded PKCS #7, represented
+        /// in DER encoded ASN.1 notation.The message has an outer Signed-data content type with the SignerInfo
+        /// encryptedDigest field containing the ATM’s signature.The random numbers are included as
+        /// authenticatedAttributes within the SignerInfo. The inner content is a data content type, which contains the
+        /// HOST identifier as an issuerAndSerialNumber sequence.
+        /// If AuthenticationAlgorithm is None, then this will also be null or empty.
+        /// </summary>
+        public List<byte> AuthenticationData { get; init; }
+
+        /// <summary>
+        /// KCV mode is used to create the key check value.
+        /// </summary>
+        public KeyCheckValueEnum KCVMode { get; init; }
+
+        /// <summary>
+        /// key check value for the key verification code data that can be used for verification of the loaded key.
+        /// if KVCMode is None, this property is null or an empty.
+        /// </summary>
+        public List<byte> KCV { get; init; }
+    }
+
+    public sealed class ImportEMVPublicKeyRequest
+    {
+        public enum ImportSchemeEnum
+        {
+            PlainText_CA,
+            PlainText_Checksum_CA,
+            EPI_CA,
+            Issuer,
+            ICC,
+            ICC_PIN,
+            PKCSV1_5_CA
+        }
+
+        public ImportEMVPublicKeyRequest(string KeyName,
+                                         string KeyUsage,
+                                         ImportSchemeEnum ImportScheme,
+                                         List<byte> ImportData,
+                                         string VerificationKeyName)
+        {
+            this.KeyName = KeyName;
+            this.KeyUsage = KeyUsage;
+            this.ImportScheme = ImportScheme;
+            this.ImportData = ImportData;
+            this.VerificationKeyName = VerificationKeyName;
+        }
+
+        /// <summary>
+        /// Name of the key to load
+        /// </summary>
+        public string KeyName { get; init; }
+
+        /// <summary>
+        /// Specify the type of key usage for which the KeyName property can be used.
+        /// * ```E0``` - EMV / Chip Issuer Master Key: Application Cryptogram.
+        /// * ```E1``` - EMV / Chip Issuer Master Key: Secure Messaging for Confidentiality.
+        /// * ```E2``` - EMV / Chip Issuer Master Key: Secure Messaging for Integrity.
+        /// * ```E3``` - EMV / Chip Issuer Master Key: Data Authentication Code.
+        /// * ```E4``` - EMV / Chip Issuer Master Key: Dynamic.
+        /// * ```E5``` - EMV / Chip Issuer Master Key: Card Personalization.
+        /// * ```E6``` - EMV / Chip Issuer Master Key: Other Initialization Vector (IV).
+        /// * ```E7``` - EMV / Chip Asymmetric Key Pair for EMV/Smart Card based PIN/PIN Block Encryption.
+        /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
+        /// </summary>
+        public string KeyUsage { get; init; }
+
+        /// <summary>
+        /// The binary encoded PKCS #7 represented in DER encoded ASN.1 notation. This allows the Host to
+        /// verify that key was imported correctly and to the correct device.The message has an outer Signed-data
+        /// content type with the SignerInfo encryptedDigest field containing the HOST’s signature.The inner content is
+        /// an Enveloped-data content type.The device identifier is included as the issuerAndSerialNumber within the RecipientInfo.
+        /// </summary>
+        public List<byte> KeyToken { get; init; }
+
+        /// <summary>
+        /// * ```PlainText_CA``` This scheme is used by VISA. A plain text CA public key is imported with no verification.
+        ///                 The two parts of the key (modulus and exponent) are passed in clear mode as a DER encoded PKCS#1 public key.
+        ///                 The key is loaded directly in the security module.
+        /// * ```PlainText_Checksum_CA```  This scheme is used by VISA. A plain text CA public key is imported using the EMV 2000
+        ///                     Book II verification algorithm and it is verified before being loaded in the security module.
+        /// * ```EPI_CA``` This scheme is used by MasterCard Europe. A CA public key is imported using the self-signed
+        /// scheme.
+        /// * ```Issuer``` An Issuer public key is imported as defined in EMV 2000 Book II.
+        /// * ```ICC``` An ICC public key is imported as defined in EMV 2000 Book II.
+        /// * ```ICC_PIN``` An ICC PIN public key is imported as defined in EMV 2000 Book II.
+        /// * ```PKCSV1_5_CA``` A CA public key is imported and verified using a signature generated with a private
+        ///                     key for which the public key is already loaded.
+        /// </summary>
+        public ImportSchemeEnum ImportScheme { get; init; }
+
+        /// <summary>
+        /// Contains all the necessary data to complete the import using the scheme specified within ImportScheme.
+        /// 
+        /// If ImportScheme is PlainText_CA then ImportData contains a DER encoded PKCS#1 public key. No verification is
+        /// possible. VerificationKeyName is ignored.
+        /// 
+        /// If ImportScheme is PlainText_Checksum_CA then ImportData contains table 23 data, as specified in EMV 2000 Book 2 (See
+        /// [[Ref. keymanagement-3](#ref-keymanagement-3)]). The plain text key is verified as defined within EMV 2000
+        /// Book 2, page 73. VerificationKeyName is ignored (See [[Ref. keymanagement-3](#ref-keymanagement-3)]).
+        /// 
+        /// If ImportScheme is EPI_CA then ImportScheme contains the concatenation of tables 4 and 13,
+        /// as specified in [[Ref. keymanagement-4](#ref-keymanagement-4)], Europay International, EPI CA Module
+        /// Technical – Interface specification Version 1.4. These tables are also described in the EMV Support
+        /// Appendix. The self-signed public key is verified as defined by the reference document. KeyName is ignored.
+        /// 
+        /// If ImportScheme is Issure then ImportData contains the EMV public key certificate. Within the following
+        /// descriptions tags are documented to indicate the source of the data, but they are not sent down to the
+        /// service. The data consists of the concatenation of: the key exponent length (1 byte), the key exponent value
+        /// (variable length – EMV Tag value: ‘9F32’), the EMV certificate length (1 byte), the EMV certificate value
+        /// (variable length – EMV Tag value: ‘90’), the remainder length (1 byte). The remainder value (variable
+        /// length – EMV Tag value: ‘92’), the PAN length (1 byte) and the PAN value (variable length – EMV Tag
+        /// value: ‘5A’). The service will compare the leftmost three to eight hex digits (where each byte consists of
+        /// two hex digits) of the PAN to the Issuer Identification Number retrieved from the certificate. For more
+        /// explanations, the reader can refer to EMVCo, Book2 – Security &amp; Key Management Version 4.0, Table 4 (See
+        /// [[Ref. keymanagement-3](#ref-keymanagement-3)]). VerificationKeyName defines the previously loaded key used to
+        /// verify the signature.
+        /// 
+        /// If ImportScheme is ICC then ImportData contains the EMV public key certificate. Within the following
+        /// descriptions tags are documented to indicate the source of the data, but they are not sent down to the
+        /// service. The data consists of the concatenation of: the key exponent length (1 byte), the key exponent
+        /// value (variable length– EMV Tag value: ‘9F47’), the EMV certificate length (1 byte), the EMV certificate
+        /// value (variable length – EMV Tag value:’9F46’), the remainder length (1 byte), the remainder value
+        /// (variable length – EMV Tag value: ‘9F48’), the SDA length (1 byte), the SDA value (variable length), the
+        /// PAN length (1 byte) and the PAN value (variable length – EMV Tag value: ‘5A’). The service will compare the
+        /// PAN to the PAN retrieved from the certificate. For more explanations, the reader can refer to EMVCo,
+        /// Book2 – Security &amp; Key Management Version 4.0, Table 9 (See [[Ref. keymanagement-3](#ref-keymanagement-3)]).
+        /// VerificationKeyName defines the previously loaded key used to verify the signature.
+        /// 
+        /// If ImportScheme is ICC_PIN then ImportData contains the EMV public key certificate. Within the following
+        /// descriptions tags are documented to indicate the source of the data, but they are not sent down to the
+        /// service. The data consists of the concatenation of: the key exponent length (1 byte), the key exponent
+        /// value (variable length – EMV Tag value: ‘9F2E’), the EMV certificate length (1 byte), the EMV certificate
+        /// value (variable length – EMV Tag value:’9F2D’), the remainder length (1 byte), the remainder value
+        /// (variable length – EMV Tag value: ‘9F2F’), the SDA length (1 byte), the SDA value (variable length), the
+        /// PAN length (1 byte) and the PAN value (variable length – EMV Tag value: ‘5A’). The service will compare the
+        /// PAN to the PAN retrieved from the certificate. For more explanations, the reader can refer to EMVCo,
+        /// Book2 – Security &amp; Key Management Version 4.0, Table 9 (See [[Ref. keymanagement-3](#ref-keymanagement-3)]).
+        /// VerificationKeyName defines the previously loaded key used to verify the signature.
+        /// 
+        /// If ImportScheme is PKCSV1_5_CA then ImportData contains the CA public key signed with the previously
+        /// loaded public key specified in VerificationKeyName. ImportData consists of the concatenation of EMV 2000 Book II
+        /// Table 23 + 8 byte random number + Signature (See [[Ref. keymanagement-3](#ref-keymanagement-3)]). The
+        /// 8-byte random number is not used for validation; it is used to ensure the signature is unique. The
+        /// Signature consists of all the bytes in the ImportData buffer after table 23 and the 8-byte random number.
+        /// </summary>
+        public List<byte> ImportData { get; init; }
+
+        /// <summary>
+        /// The name of the previously loaded key used to verify the signature.
+        /// This property is null or empty string if verification is not required.
+        /// </summary>
+        public string VerificationKeyName { get; init; }
+    }
+
+    public sealed class ImportEMVPublicKeyResult : DeviceResult
+    {
+        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                        string ExpiryDate)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.ExpiryDate = ExpiryDate;
+        }
+
+        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            ExpiryDate = null;
+        }
+
+        public ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Contains the expiry date of the certificate in the following format MMYY. If null, the certificate does
+        /// not have an expiry date.
+        /// <example>0123</example>
+        /// </summary>
+        public string ExpiryDate { get; init; }
     }
 }

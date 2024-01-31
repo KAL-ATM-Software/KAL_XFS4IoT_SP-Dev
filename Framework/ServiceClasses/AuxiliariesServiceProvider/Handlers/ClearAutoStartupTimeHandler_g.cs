@@ -20,7 +20,7 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(ClearAutoStartupTimeCommand))]
+    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(ClearAutoStartUpTimeCommand))]
     public partial class ClearAutoStartupTimeHandler : ICommandHandler
     {
         public ClearAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
@@ -40,42 +40,42 @@ namespace XFS4IoTFramework.Auxiliaries
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var clearAutoStartupTimeCmd = command.IsA<ClearAutoStartupTimeCommand>($"Invalid parameter in the ClearAutoStartupTime Handle method. {nameof(ClearAutoStartupTimeCommand)}");
+            var clearAutoStartupTimeCmd = command.IsA<ClearAutoStartUpTimeCommand>($"Invalid parameter in the ClearAutoStartupTime Handle method. {nameof(ClearAutoStartUpTimeCommand)}");
             clearAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
 
             IClearAutoStartupTimeEvents events = new ClearAutoStartupTimeEvents(Connection, clearAutoStartupTimeCmd.Header.RequestId.Value);
 
             var result = await HandleClearAutoStartupTime(events, clearAutoStartupTimeCmd, cancel);
-            await Connection.SendMessageAsync(new ClearAutoStartupTimeCompletion(clearAutoStartupTimeCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ClearAutoStartUpTimeCompletion(clearAutoStartupTimeCmd.Header.RequestId.Value, result));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var clearAutoStartupTimecommand = command.IsA<ClearAutoStartupTimeCommand>();
+            var clearAutoStartupTimecommand = command.IsA<ClearAutoStartUpTimeCommand>();
             clearAutoStartupTimecommand.Header.RequestId.HasValue.IsTrue();
 
-            ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ClearAutoStartupTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
+                InternalErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
+                UserErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
+                FraudAttemptException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
+                _ => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
             };
 
-            var response = new ClearAutoStartupTimeCompletion(clearAutoStartupTimecommand.Header.RequestId.Value, new ClearAutoStartupTimeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ClearAutoStartUpTimeCompletion(clearAutoStartupTimecommand.Header.RequestId.Value, new ClearAutoStartUpTimeCompletion.PayloadData(errorCode, commandException.Message));
 
             await Connection.SendMessageAsync(response);
         }

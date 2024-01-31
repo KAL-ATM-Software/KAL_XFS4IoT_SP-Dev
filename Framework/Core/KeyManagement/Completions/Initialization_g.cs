@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "KeyManagement.Initialization")]
     public sealed class InitializationCompletion : Completion<InitializationCompletion.PayloadData>
     {
@@ -35,15 +36,29 @@ namespace XFS4IoT.KeyManagement.Completions
             public enum ErrorCodeEnum
             {
                 AccessDenied,
-                RandomInvalid
+                RandomInvalid,
+                KeyNoValue,
+                KeyNotFound,
+                UseViolation,
+                ModeOfUseNotSupported,
+                MacInvalid,
+                SignatureInvalid
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
-            /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one previously
-            ///  provided by the device. 
+            ///   specific reason.
+            /// * ```randomInvalid``` - The encrypted random number in *authentication/data* does not match the one
+            ///   previously provided by the device.
+            /// * ```keyNoValue``` - A required key was not specified in *authentication.key*.
+            /// * ```keyNotFound``` - The key specified in *authentication.key* was not found.
+            /// * ```useViolation``` - The key specified in *authentication.key* can not be used for the specified
+            /// *authentication.method*.
+            /// * ```modeOfUseNotSupported``` - The key specified in *authentication.key* can not be used for
+            ///   authentication.
+            /// * ```macInvalid``` - The MAC included in *authentication/data* is invalid.
+            /// * ```signatureInvalid``` - The signature included in *authentication/data* is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

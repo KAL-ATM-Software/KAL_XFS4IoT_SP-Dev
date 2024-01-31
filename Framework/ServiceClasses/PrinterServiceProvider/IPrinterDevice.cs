@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// This method is used to move paper (which can also be a new passbook) from a paper source into the print position.
         /// </summary>
-        Task<DispensePaperResult> DispensePaperAsync(MediaPresentedCommandEvent events,
+        Task<DispensePaperResult> DispensePaperAsync(DispensePaperCommandEvents events,
                                                      DispensePaperRequest request,
                                                      CancellationToken cancellation);
 
@@ -72,6 +72,7 @@ namespace XFS4IoTFramework.Printer
         /// stored in one of the retract bins.An event is sent if the storage capacity of the specified retract bin is
         /// reached. If the bin is already full and the command cannot be executed, an error is returned and the media remains
         /// in its present position.
+        /// if the binNumber is -1, move media to transport.
         /// </summary>
         Task<RetractResult> RetractAsync(int binNumber,
                                          CancellationToken cancellation);
@@ -111,7 +112,7 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// This method is used to send raw data (a byte string of device dependent data) to the physical device.
         /// </summary>
-        Task<RawPrintResult> RawPrintAsync(MediaPresentedCommandEvent events,
+        Task<RawPrintResult> RawPrintAsync(RawPrintCommandEvents events,
                                            RawPrintRequest request,
                                            CancellationToken cancellation);
 

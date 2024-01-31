@@ -37,12 +37,12 @@ namespace XFS4IoT.CashDispenser
             JammedPartiallyOpen,
             JammedClosed,
             JammedUnknown,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Supplies the state of the shutter. Following values are possible:
+        /// Supplies the state of the shutter. This property is null in [Common.Status](#common.status) if
+        /// the physical position has no shutter, otherwise the following values are possible:
         /// 
         /// * ```closed``` - The shutter is operational and is closed.
         /// * ```open``` - The shutter is operational and is open.
@@ -51,7 +51,6 @@ namespace XFS4IoT.CashDispenser
         /// * ```jammedClosed``` - The shutter is jammed, but fully closed. It is not operational.
         /// * ```jammedUnknown``` - The shutter is jammed, but its position is unknown. It is not operational.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
-        /// * ```notSupported``` - The physical device has no shutter or shutter state reporting is not supported.
         /// </summary>
         [DataMember(Name = "shutter")]
         public ShutterEnum? Shutter { get; init; }
@@ -60,19 +59,18 @@ namespace XFS4IoT.CashDispenser
         {
             Empty,
             NotEmpty,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Returns information regarding items which may be at the output position. 
+        /// Returns information regarding items which may be at the output position.
         /// If the device is a recycler it is possible that the output position will not be empty due to a previous cash-in operation.
-        /// Following values are possible:
+        /// This property is null in [Common.Status](#common.status) if the device is not capable of reporting whether
+        /// items are at the position, otherwise the following values are possible:
         /// 
         /// * ```empty``` - The position is empty.
         /// * ```notEmpty``` - The position is not empty.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the position cannot be determined.
-        /// * ```notSupported``` - The device is not capable of reporting whether items are at the position.
         /// </summary>
         [DataMember(Name = "positionStatus")]
         public PositionStatusEnum? PositionStatus { get; init; }
@@ -81,18 +79,17 @@ namespace XFS4IoT.CashDispenser
         {
             Ok,
             Inoperative,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
         /// Supplies the state of the transport mechanism. The transport is defined as any area leading to or from the position.
-        /// Following values are possible:
+        /// This property is null in [Common.Status](#common.status) if the device has no transport or
+        /// transport state reporting is not supported, otherwise the following values are possible:
         /// 
         /// * ```ok``` - The transport is in a good state.
         /// * ```inoperative``` - The transport is inoperative due to a hardware failure or media jam.
         /// * ```unknown``` - Due to a hardware error or other condition the state of the transport cannot be determined.
-        /// * ```notSupported``` - The physical device has no transport or transport state reporting is not supported.
         /// </summary>
         [DataMember(Name = "transport")]
         public TransportEnum? Transport { get; init; }
@@ -102,20 +99,19 @@ namespace XFS4IoT.CashDispenser
             Empty,
             NotEmpty,
             NotEmptyCustomer,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Returns information regarding items which may be on the transport. If the device is a recycler 
-        /// device it is possible that the transport will not be empty due to a previous cash-in operation. 
-        /// Following values are possible:
+        /// Returns information regarding items which may be on the transport. If the device is a recycler
+        /// device it is possible that the transport will not be empty due to a previous cash-in operation.
+        /// This property is null in [Common.Status](#common.status) if the device has no transport or
+        /// is not capable of reporting whether items are on the transport, otherwise the following values are possible:
         /// 
         /// * ```empty``` - The transport is empty.
         /// * ```notEmpty``` - The transport is not empty.
         /// * ```notEmptyCustomer``` - Items which a customer has had access to are on the transport.
         /// * ```unknown``` - Due to a hardware error or other condition it is not known whether there are items on the transport.
-        /// * ```notSupported``` - The device is not capable of reporting whether items are on the transport.
         /// </summary>
         [DataMember(Name = "transportStatus")]
         public TransportStatusEnum? TransportStatus { get; init; }
@@ -138,28 +134,28 @@ namespace XFS4IoT.CashDispenser
             NotEmpty,
             NotEmptyCustomer,
             NotEmptyUnknown,
-            Unknown,
-            NotSupported
+            Unknown
         }
 
         /// <summary>
-        /// Supplies the state of the intermediate stacker. These bills are typically present on the intermediate 
+        /// Supplies the state of the intermediate stacker. These bills are typically present on the intermediate
         /// stacker as a result of a retract operation or because a dispense has been performed without a subsequent present.
-        /// Following values are possible:
+        /// This property is null in [Common.Status](#common.status) if the physical device has no intermediate stacker,
+        /// otherwise the following values are possible:
         /// 
         /// * ```empty``` - The intermediate stacker is empty.
         /// * ```notEmpty``` - The intermediate stacker is not empty. The items have not been in customer access.
-        /// * ```notEmptyCustomer``` - The intermediate stacker is not empty. The items have been in customer access. If the device is 
+        /// * ```notEmptyCustomer``` - The intermediate stacker is not empty. The items have been in customer access. If the device is
         /// a recycler then the items on the intermediate stacker may be there as a result of a previous cash-in operation.
         /// * ```notEmptyUnknown``` - The intermediate stacker is not empty. It is not known if the items have been in customer access.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the intermediate stacker cannot be determined.
-        /// * ```notSupported``` - The physical device has no intermediate stacker.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
         public IntermediateStackerEnum? IntermediateStacker { get; init; }
 
         /// <summary>
-        /// Array of structures for each position to which items can be dispensed or presented.
+        /// Array of structures for each position to which items can be dispensed or presented. This may be null
+        /// in [Common.StatusChangedEvent](#common.statuschangedevent) if no position states have changed.
         /// </summary>
         [DataMember(Name = "positions")]
         public List<OutPosClass> Positions { get; init; }
@@ -211,12 +207,12 @@ namespace XFS4IoT.CashDispenser
         public int? MaxDispenseItems { get; init; }
 
         /// <summary>
-        /// If true the shutter is controlled implicitly by the Service. 
+        /// If true the shutter is controlled implicitly by the Service.
         /// If false the shutter must be controlled explicitly by the application using the
         /// [CashManagement.OpenShutter](#cashmanagement.openshutter) and
         /// [CashManagement.CloseShutter](#cashmanagement.closeshutter) commands.
         /// 
-        /// This property is always true if the device has no shutter. 
+        /// This property is always true if the device has no shutter.
         /// This property applies to all shutters and all output positions.
         /// </summary>
         [DataMember(Name = "shutterControl")]
@@ -274,8 +270,8 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// Specifies the area to which items may be retracted. 
-        /// If the device does not have a retract capability all flags will be set to false.
+        /// Specifies the area to which items may be retracted.
+        /// If the device does not have a retract capability this will be null.
         /// </summary>
         [DataMember(Name = "retractAreas")]
         public RetractAreasClass RetractAreas { get; init; }
@@ -325,9 +321,9 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// Specifies the actions which may be performed on items which have been retracted to the transport. 
-        /// If the device does not have the capability to retract items to the transport or move items from the 
-        /// transport all flags will be set to false.
+        /// Specifies the actions which may be performed on items which have been retracted to the transport.
+        /// If the device does not have the capability to retract items to the transport or move items from the
+        /// transport this will be null.
         /// </summary>
         [DataMember(Name = "retractTransportActions")]
         public RetractTransportActionsClass RetractTransportActions { get; init; }
@@ -377,25 +373,25 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// Specifies the actions which may be performed on items which have been retracted to the stacker. 
-        /// If the device does not have the capability to retract items to the stacker or move items from the stacker 
-        /// all flags will be set to false.
+        /// Specifies the actions which may be performed on items which have been retracted to the stacker.
+        /// If the device does not have the capability to retract items to the stacker or move items from the stacker
+        /// this will be null.
         /// </summary>
         [DataMember(Name = "retractStackerActions")]
         public RetractStackerActionsClass RetractStackerActions { get; init; }
 
         /// <summary>
-        /// Specifies whether the Dispenser supports stacking items to an intermediate position before 
+        /// Specifies whether the Dispenser supports stacking items to an intermediate position before
         /// the items are moved to the exit position.
         /// </summary>
         [DataMember(Name = "intermediateStacker")]
         public bool? IntermediateStacker { get; init; }
 
         /// <summary>
-        /// Specifies whether the Dispenser can detect when items at the exit position are taken by the user. This 
+        /// Specifies whether the Dispenser can detect when items at the exit position are taken by the user. This
         /// applies to all output positions.
         /// 
-        /// If true the Service generates an accompanying 
+        /// If true the Service generates an accompanying
         /// [CashManagement.ItemsTakenEvent](#cashmanagement.itemstakenevent).
         /// 
         /// If false this event is not generated.
@@ -509,7 +505,7 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// Specifies the Dispenser move item options which are available.
+        /// Specifies the Dispenser move item options which are available. If not applicable, this property is null.
         /// </summary>
         [DataMember(Name = "moveItems")]
         public MoveItemsClass MoveItems { get; init; }
@@ -548,13 +544,13 @@ namespace XFS4IoT.CashDispenser
 
         /// <summary>
         /// If *type* is *algorithm*, specifies the algorithm type as one of the following. There are three pre-defined
-        /// algorithms, additional vendor-defined algorithms can also be defined. Omitted if the mix is not an algorithm.
+        /// algorithms, additional vendor-defined algorithms can also be defined. null if the mix is not an algorithm.
         /// 
         /// * ```minimumBills``` - Select a mix requiring the minimum possible number of items.
-        /// * ```equalEmptying``` - The denomination is selected based upon criteria which ensure that over the course 
-        /// of its operation the storage units will empty as far as possible at the same rate and will therefore go 
+        /// * ```equalEmptying``` - The denomination is selected based upon criteria which ensure that over the course
+        /// of its operation the storage units will empty as far as possible at the same rate and will therefore go
         /// low and then empty at approximately the same time.
-        /// * ```maxCashUnits``` - The denomination is selected based upon criteria which ensures the maximum 
+        /// * ```maxCashUnits``` - The denomination is selected based upon criteria which ensures the maximum
         /// number of storage units are used.
         /// * ```&lt;vendor-defined mix&gt;``` - A vendor defined mix algorithm.
         /// <example>minimumBills</example>
@@ -564,7 +560,7 @@ namespace XFS4IoT.CashDispenser
         public string Algorithm { get; init; }
 
         /// <summary>
-        /// Name of the table or algorithm used. May be omitted.
+        /// Name of the table or algorithm used. May be null if not defined.
         /// <example>Minimum Bills</example>
         /// </summary>
         [DataMember(Name = "name")]
@@ -616,7 +612,7 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// The items used to create *amount*. Each element in this array defines the quantity of a given item used to 
+        /// The items used to create *amount*. Each element in this array defines the quantity of a given item used to
         /// create the mix. An example showing how 0.30 can be broken down would be:
         /// 
         /// ```
@@ -639,9 +635,27 @@ namespace XFS4IoT.CashDispenser
 
 
     [DataContract]
+    public sealed class DenominationCashBoxClass
+    {
+        public DenominationCashBoxClass(Dictionary<string, double> Currencies = null)
+        {
+            this.Currencies = Currencies;
+        }
+
+        /// <summary>
+        /// List of currency and amount combinations for denomination requests or output. There will be one entry for
+        /// each currency in the denomination.
+        /// </summary>
+        [DataMember(Name = "currencies")]
+        public Dictionary<string, double> Currencies { get; init; }
+
+    }
+
+
+    [DataContract]
     public sealed class DenominationClass
     {
-        public DenominationClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, Dictionary<string, double> CashBox = null)
+        public DenominationClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Values = null, DenominationCashBoxClass CashBox = null)
         {
             this.Currencies = Currencies;
             this.Values = Values;
@@ -649,8 +663,8 @@ namespace XFS4IoT.CashDispenser
         }
 
         /// <summary>
-        /// List of currency and amount combinations for denomination requests or output. There will be one entry for 
-        /// each currency in the denomination. This list can be omitted on a request if *values* specifies the entire request.
+        /// List of currency and amount combinations for denomination requests or output. There will be one entry for
+        /// each currency in the denomination.
         /// </summary>
         [DataMember(Name = "currencies")]
         public Dictionary<string, double> Currencies { get; init; }
@@ -665,11 +679,84 @@ namespace XFS4IoT.CashDispenser
         [DataMember(Name = "values")]
         public Dictionary<string, int> Values { get; init; }
 
-        /// <summary>
-        /// Only applies to Teller Dispensers. Amount to be paid from the teller’s cash box.
-        /// </summary>
         [DataMember(Name = "cashBox")]
-        public Dictionary<string, double> CashBox { get; init; }
+        public DenominationCashBoxClass CashBox { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class ApplicationMixClass
+    {
+        public ApplicationMixClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Counts = null, DenominationCashBoxClass CashBox = null)
+        {
+            this.Currencies = Currencies;
+            this.Counts = Counts;
+            this.CashBox = CashBox;
+        }
+
+        /// <summary>
+        /// List of currency and amount combinations for denomination requests or output. There will be one entry for
+        /// each currency in the denomination.
+        /// </summary>
+        [DataMember(Name = "currencies")]
+        public Dictionary<string, double> Currencies { get; init; }
+
+        /// <summary>
+        /// This list specifies the number of items to take or which have been taken from the storage units. If specified in
+        /// a request, the output denomination must include these items.
+        /// 
+        /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
+        /// command. The value of the entry is the number of items to take from that unit.
+        /// </summary>
+        [DataMember(Name = "counts")]
+        public Dictionary<string, int> Counts { get; init; }
+
+        [DataMember(Name = "cashBox")]
+        public DenominationCashBoxClass CashBox { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class ServiceMixClass
+    {
+        public ServiceMixClass(Dictionary<string, double> Currencies = null, Dictionary<string, int> Partial = null, string Mix = null, DenominationCashBoxClass CashBox = null)
+        {
+            this.Currencies = Currencies;
+            this.Partial = Partial;
+            this.Mix = Mix;
+            this.CashBox = CashBox;
+        }
+
+        /// <summary>
+        /// List of currency and amount combinations for denomination requests or output. There will be one entry for
+        /// each currency in the denomination.
+        /// </summary>
+        [DataMember(Name = "currencies")]
+        public Dictionary<string, double> Currencies { get; init; }
+
+        /// <summary>
+        /// This list specifies items which must be included in a denominate or dispense request. Mixes may only be valid if
+        /// they contain at least these specified items. This may be null if there are no minimum requirements.
+        /// 
+        /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
+        /// command. The value of the entry is the number of items to take from that unit.
+        /// </summary>
+        [DataMember(Name = "partial")]
+        public Dictionary<string, int> Partial { get; init; }
+
+        /// <summary>
+        /// Mix algorithm or house mix table to be used as defined by mixes reported by
+        /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes).
+        /// <example>mix1</example>
+        /// </summary>
+        [DataMember(Name = "mix")]
+        [DataTypes(Pattern = @"^mix[0-9A-Za-z]+$")]
+        public string Mix { get; init; }
+
+        [DataMember(Name = "cashBox")]
+        public DenominationCashBoxClass CashBox { get; init; }
 
     }
 
@@ -677,30 +764,41 @@ namespace XFS4IoT.CashDispenser
     [DataContract]
     public sealed class DenominateRequestClass
     {
-        public DenominateRequestClass(DenominationClass Denomination = null, string Mix = null, int? TellerID = null)
+        public DenominateRequestClass(DenominationClass Denomination = null, int? TellerID = null)
         {
             this.Denomination = Denomination;
-            this.Mix = Mix;
             this.TellerID = TellerID;
         }
 
+        [DataContract]
+        public sealed class DenominationClass
+        {
+            public DenominationClass(ApplicationMixClass App = null, ServiceMixClass Service = null)
+            {
+                this.App = App;
+                this.Service = Service;
+            }
+
+            [DataMember(Name = "app")]
+            public ApplicationMixClass App { get; init; }
+
+            [DataMember(Name = "service")]
+            public ServiceMixClass Service { get; init; }
+
+        }
+
+        /// <summary>
+        /// The items to be denominated or dispensed as appropriate. The mix of items is either determined by the
+        /// Service or the Application.
+        /// </summary>
         [DataMember(Name = "denomination")]
         public DenominationClass Denomination { get; init; }
 
         /// <summary>
-        /// Mix algorithm or house mix table to be used as defined by mixes reported by
-        /// [CashDispenser.GetMixTypes](#cashdispenser.getmixtypes). May be omitted if the request is entirely specified
-        /// by *counts*.
-        /// <example>mix1</example>
-        /// </summary>
-        [DataMember(Name = "mix")]
-        [DataTypes(Pattern = @"^mix[0-9A-Za-z]+$")]
-        public string Mix { get; init; }
-
-        /// <summary>
-        /// Only applies to Teller Dispensers. Identification of teller.
+        /// Only applies to Teller Dispensers, null if not applicable. Identification of teller.
         /// </summary>
         [DataMember(Name = "tellerID")]
+        [DataTypes(Minimum = 0)]
         public int? TellerID { get; init; }
 
     }

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,11 +51,11 @@ namespace XFS4IoTFramework.CashAcceptor
                     OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
                     OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
                     OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
-                    _ => CashManagementCapabilitiesClass.PositionEnum.NotSupported
+                    _ => throw new InternalErrorException($"Unexpected output position specified. {cashInStart.Payload.OutputPosition}"),
                 };
             }
 
-            if (!Common.CashAcceptorCapabilities.Positions.HasFlag(outputPosition))
+            if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
                 return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                              $"Unsupported output position. {outputPosition}");
@@ -82,11 +81,11 @@ namespace XFS4IoTFramework.CashAcceptor
                     InputPositionEnum.InRear => CashManagementCapabilitiesClass.PositionEnum.InRear,
                     InputPositionEnum.InRight => CashManagementCapabilitiesClass.PositionEnum.InRight,
                     InputPositionEnum.InTop => CashManagementCapabilitiesClass.PositionEnum.InTop,
-                    _ => CashManagementCapabilitiesClass.PositionEnum.NotSupported
+                    _ => throw new InternalErrorException($"Unexpected input position specified. {cashInStart.Payload.InputPosition}"),
                 };
             }
 
-            if (!Common.CashAcceptorCapabilities.Positions.HasFlag(inputPosition))
+            if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(inputPosition))
             {
                 return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                              $"Unsupported input position. {inputPosition}");

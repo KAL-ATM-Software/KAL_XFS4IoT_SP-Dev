@@ -16,56 +16,38 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = WriteRawData
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCommand : Command<WriteRawDataCommand.PayloadData>
     {
-        public WriteRawDataCommand(int RequestId, WriteRawDataCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public WriteRawDataCommand(int RequestId, WriteRawDataCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<DataClass> Data = null)
-                : base(Timeout)
+            public PayloadData(Track1Class Track1 = null, Track2Class Track2 = null, Track3Class Track3 = null, Track1FrontClass Track1Front = null, Track1JISClass Track1JIS = null, Track3JISClass Track3JIS = null, AdditonalPropertiesClass AdditonalProperties = null)
+                : base()
             {
-                this.Data = Data;
+                this.Track1 = Track1;
+                this.Track2 = Track2;
+                this.Track3 = Track3;
+                this.Track1Front = Track1Front;
+                this.Track1JIS = Track1JIS;
+                this.Track3JIS = Track3JIS;
+                this.AdditonalProperties = AdditonalProperties;
             }
 
             [DataContract]
-            public sealed class DataClass
+            public sealed class Track1Class
             {
-                public DataClass(DestinationEnum? Destination = null, List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                public Track1Class(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
                 {
-                    this.Destination = Destination;
                     this.Data = Data;
                     this.WriteMethod = WriteMethod;
                 }
-
-                public enum DestinationEnum
-                {
-                    Track1,
-                    Track2,
-                    Track3,
-                    Track1Front,
-                    Track1JIS,
-                    Track3JIS
-                }
-
-                /// <summary>
-                /// Specifies where the card data is to be written to as one of the following:
-                /// 
-                /// * ```track1``` - data is to be written to track 1.
-                /// * ```track2``` - data is to be written to track 2.
-                /// * ```track3``` - data is to be written to track 3.
-                /// * ```track1Front``` - data is to be written to the front track 1. In some countries this track
-                ///   is known as JIS II track.
-                /// * ```track1JIS``` - data is to be written to JIS I track 1 (8bits/char).
-                /// * ```track3JIS``` - data is to be written to JIS I track 3 (8bits/char).
-                /// </summary>
-                [DataMember(Name = "destination")]
-                public DestinationEnum? Destination { get; init; }
 
                 /// <summary>
                 /// Base64 encoded representation of the data
@@ -78,17 +60,17 @@ namespace XFS4IoT.CardReader.Commands
                 public enum WriteMethodEnum
                 {
                     Loco,
-                    Hico,
-                    Auto
+                    Hico
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written as one of
-                /// the following:
-                /// 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
-                /// * ```auto``` - Service will determine whether low or high coercivity is to be used.
                 /// </summary>
                 [DataMember(Name = "writeMethod")]
                 public WriteMethodEnum? WriteMethod { get; init; }
@@ -96,10 +78,268 @@ namespace XFS4IoT.CardReader.Commands
             }
 
             /// <summary>
-            /// An array of card data write instructions
+            /// Specifies data is to be written to track 1. This property is null if not applicable.
             /// </summary>
-            [DataMember(Name = "data")]
-            public List<DataClass> Data { get; init; }
+            [DataMember(Name = "track1")]
+            public Track1Class Track1 { get; init; }
+
+            [DataContract]
+            public sealed class Track2Class
+            {
+                public Track2Class(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to track 2. This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "track2")]
+            public Track2Class Track2 { get; init; }
+
+            [DataContract]
+            public sealed class Track3Class
+            {
+                public Track3Class(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to track 3. This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "track3")]
+            public Track3Class Track3 { get; init; }
+
+            [DataContract]
+            public sealed class Track1FrontClass
+            {
+                public Track1FrontClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to the front track 1. In some countries this track is known as JIS II track. This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "track1Front")]
+            public Track1FrontClass Track1Front { get; init; }
+
+            [DataContract]
+            public sealed class Track1JISClass
+            {
+                public Track1JISClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to JIS I track 1 (8bits/char). This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "track1JIS")]
+            public Track1JISClass Track1JIS { get; init; }
+
+            [DataContract]
+            public sealed class Track3JISClass
+            {
+                public Track3JISClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to JIS I track 3 (8bits/char). This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "track3JIS")]
+            public Track3JISClass Track3JIS { get; init; }
+
+            [DataContract]
+            public sealed class AdditonalPropertiesClass
+            {
+                public AdditonalPropertiesClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                {
+                    this.Data = Data;
+                    this.WriteMethod = WriteMethod;
+                }
+
+                /// <summary>
+                /// Base64 encoded representation of the data
+                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// </summary>
+                [DataMember(Name = "data")]
+                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                public List<byte> Data { get; init; }
+
+                public enum WriteMethodEnum
+                {
+                    Loco,
+                    Hico
+                }
+
+                /// <summary>
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// the service will determine whether low or high coercivity is to be used.
+                ///           
+                /// Specifies as one of the following:
+                ///           
+                /// * ```loco``` - Write using low coercivity.
+                /// * ```hico``` - Write using high coercivity.
+                /// </summary>
+                [DataMember(Name = "writeMethod")]
+                public WriteMethodEnum? WriteMethod { get; init; }
+
+            }
+
+            /// <summary>
+            /// Specifies data is to be written to vendor specific track. This property is null if not applicable.
+            /// </summary>
+            [DataMember(Name = "additonalProperties")]
+            public AdditonalPropertiesClass AdditonalProperties { get; init; }
 
         }
     }

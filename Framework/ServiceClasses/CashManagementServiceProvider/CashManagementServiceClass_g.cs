@@ -18,6 +18,9 @@ namespace XFS4IoTServer
     public partial class CashManagementServiceClass : ICashManagementServiceClass
     {
 
+        public async Task TellerInfoChangedEvent(XFS4IoT.CashManagement.Events.TellerInfoChangedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.TellerInfoChangedEvent(Payload));
+
         public async Task ItemsTakenEvent(XFS4IoT.CashManagement.Events.ItemsTakenEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.ItemsTakenEvent(Payload));
 
@@ -27,11 +30,8 @@ namespace XFS4IoTServer
         public async Task ItemsPresentedEvent(XFS4IoT.CashManagement.Events.ItemsPresentedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.ItemsPresentedEvent(Payload));
 
-        public async Task SafeDoorOpenEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.SafeDoorOpenEvent());
-
-        public async Task SafeDoorClosedEvent()
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.SafeDoorClosedEvent());
+        public async Task MediaDetectedEvent(XFS4IoT.CashManagement.Events.MediaDetectedEvent.PayloadData Payload)
+            => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.MediaDetectedEvent(Payload));
 
         public async Task ShutterStatusChangedEvent(XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.CashManagement.Events.ShutterStatusChangedEvent(Payload));

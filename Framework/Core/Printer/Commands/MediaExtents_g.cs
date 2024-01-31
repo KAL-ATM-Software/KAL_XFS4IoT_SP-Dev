@@ -16,19 +16,20 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = MediaExtents
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCommand : Command<MediaExtentsCommand.PayloadData>
     {
-        public MediaExtentsCommand(int RequestId, MediaExtentsCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public MediaExtentsCommand(int RequestId, MediaExtentsCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, BaseEnum? Base = null, int? UnitX = null, int? UnitY = null)
-                : base(Timeout)
+            public PayloadData(BaseEnum? Base = null, int? UnitX = null, int? UnitY = null)
+                : base()
             {
                 this.Base = Base;
                 this.UnitX = UnitX;

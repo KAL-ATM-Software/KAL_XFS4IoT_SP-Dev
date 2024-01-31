@@ -16,7 +16,5 @@ namespace XFS4IoTFramework.Auxiliaries
     public interface IAuxiliariesUnsolicitedEvents
     {
 
-        Task AuxiliaryStatusEvent(XFS4IoT.Auxiliaries.Events.AuxiliaryStatusEvent.PayloadData Payload);
-
     }
 }

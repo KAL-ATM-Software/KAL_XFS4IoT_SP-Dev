@@ -16,6 +16,7 @@ namespace XFS4IoT.Keyboard.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "Keyboard.KeyEvent")]
     public sealed class KeyEvent : Event<KeyEvent.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.Keyboard.Events
             /// <summary>
             /// Specifies the digit entered by the user. When working in encryption mode or secure key entry mode
             /// ([Keyboard.PinEntry](#keyboard.pinentry) and [Keyboard.SecureKeyEntry](#keyboard.securekeyentry)), this
-            /// property is omitted for the function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed,
+            /// property is null for the function keys 'one' to 'nine' and 'a' to 'f'. Otherwise, for each key pressed,
             /// the corresponding key value is stored in this property.
             /// 
             /// The following standard values are defined:

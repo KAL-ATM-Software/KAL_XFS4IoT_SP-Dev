@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.TextTerminal.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.GetQueryField")]
     public sealed class GetQueryFieldCompletion : Completion<GetQueryFieldCompletion.PayloadData>
     {
@@ -42,7 +43,7 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```formNotFound``` - The specified form cannot be found.
             /// * ```formInvalid``` - The specified form is invalid.
             /// * ```fieldNotFound``` - The specified field cannot be found.
@@ -53,6 +54,7 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Details of the field(s) requested. The key is the field name and the value contains the details of the fields.
+            /// This property is null if the specified form is not loaded.
             /// </summary>
             [DataMember(Name = "fields")]
             public Dictionary<string, FieldDetailsClass> Fields { get; init; }

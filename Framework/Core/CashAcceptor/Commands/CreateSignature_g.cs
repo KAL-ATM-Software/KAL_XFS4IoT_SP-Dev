@@ -16,22 +16,13 @@ namespace XFS4IoT.CashAcceptor.Commands
 {
     //Original name = CreateSignature
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "CashAcceptor.CreateSignature")]
-    public sealed class CreateSignatureCommand : Command<CreateSignatureCommand.PayloadData>
+    public sealed class CreateSignatureCommand : Command<MessagePayload>
     {
-        public CreateSignatureCommand(int RequestId, CreateSignatureCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CreateSignatureCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

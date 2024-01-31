@@ -21,5 +21,7 @@ namespace XFS4IoTFramework.CashDispenser
             : base(connection, requestId)
         { }
 
+        public async Task StorageErrorEvent(XFS4IoT.Storage.Events.StorageErrorEvent.PayloadData Payload) => await connection.SendMessageAsync(new XFS4IoT.Storage.Events.StorageErrorEvent(requestId, Payload));
+
     }
 }

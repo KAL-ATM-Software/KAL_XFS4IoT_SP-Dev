@@ -16,19 +16,20 @@ namespace XFS4IoT.Biometric.Commands
 {
     //Original name = Import
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Biometric.Import")]
     public sealed class ImportCommand : Command<ImportCommand.PayloadData>
     {
-        public ImportCommand(int RequestId, ImportCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ImportCommand(int RequestId, ImportCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, List<BioDataClass> Templates = null)
-                : base(Timeout)
+            public PayloadData(List<BioDataClass> Templates = null)
+                : base()
             {
                 this.Templates = Templates;
             }

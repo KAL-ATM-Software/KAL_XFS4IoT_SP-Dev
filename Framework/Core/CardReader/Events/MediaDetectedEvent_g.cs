@@ -16,12 +16,13 @@ namespace XFS4IoT.CardReader.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "CardReader.MediaDetectedEvent")]
-    public sealed class MediaDetectedEvent : Event<MediaDetectedEvent.PayloadData>
+    public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
     {
 
-        public MediaDetectedEvent(int RequestId, PayloadData Payload)
-            : base(RequestId, Payload)
+        public MediaDetectedEvent(PayloadData Payload)
+            : base(Payload)
         { }
 
 

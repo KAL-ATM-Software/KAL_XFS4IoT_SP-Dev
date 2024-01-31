@@ -78,22 +78,22 @@ namespace XFS4IoTFramework.Crypto
             }
 
             KeyDetail ivKeyDetail = null;
-            if (!string.IsNullOrEmpty(generateAuthentication.Payload.IvKey))
+            if (!string.IsNullOrEmpty(generateAuthentication.Payload.Iv?.Key))
             {
                 // Check stored IV key attributes
-                ivKeyDetail = KeyManagement.GetKeyDetail(generateAuthentication.Payload.IvKey);
+                ivKeyDetail = KeyManagement.GetKeyDetail(generateAuthentication.Payload.Iv.Key);
 
                 if (ivKeyDetail is null)
                 {
                     return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"No IV key stored. {generateAuthentication.Payload.IvKey}",
+                                                                            $"No IV key stored. {generateAuthentication.Payload.Iv.Key}",
                                                                             GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
                 }
 
                 if (ivKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
                     return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"Specified IV key is not loaded. {generateAuthentication.Payload.IvKey}",
+                                                                            $"Specified IV key is not loaded. {generateAuthentication.Payload.Iv.Key}",
                                                                             GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
                 }
 
@@ -172,11 +172,11 @@ namespace XFS4IoTFramework.Crypto
 
             List<byte> ivData = null;
             string ivKeyName = string.Empty;
-            if (!string.IsNullOrEmpty(generateAuthentication.Payload.IvKey) ||
-                generateAuthentication.Payload.Iv?.Count > 0)
+            if (!string.IsNullOrEmpty(generateAuthentication.Payload.Iv?.Key) ||
+                generateAuthentication.Payload.Iv?.Value?.Count > 0)
             {
 
-                if (!string.IsNullOrEmpty(generateAuthentication.Payload.IvKey))
+                if (!string.IsNullOrEmpty(generateAuthentication.Payload.Iv.Key))
                 {
                     // First to check capabilities of ECB decryption
                     bool verifyIVAttrib = false;
@@ -205,14 +205,14 @@ namespace XFS4IoTFramework.Crypto
                 ivData = (new byte[8]).Select(x => x = 0).ToList();
 
                 // Need an IV
-                if (string.IsNullOrEmpty(generateAuthentication.Payload.IvKey) &&
-                    generateAuthentication.Payload.Iv?.Count > 0)
+                if (string.IsNullOrEmpty(generateAuthentication.Payload.Iv?.Key) &&
+                    generateAuthentication.Payload.Iv?.Value?.Count > 0)
                 {
                     // ClearIV;
-                    ivData = generateAuthentication.Payload.Iv;
+                    ivData = generateAuthentication.Payload.Iv.Value;
                 }
-                else if (!string.IsNullOrEmpty(generateAuthentication.Payload.IvKey) &&
-                         generateAuthentication.Payload.Iv?.Count > 0)
+                else if (!string.IsNullOrEmpty(generateAuthentication.Payload.Iv?.Key) &&
+                         generateAuthentication.Payload.Iv?.Value?.Count > 0)
                 {
                     // In this last mode, the data is encrypted, so we have to decrypt
                     // it then send it as a clear IV
@@ -221,9 +221,9 @@ namespace XFS4IoTFramework.Crypto
                     var decryptResult = await Device.Crypto(null,
                                                             new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
                                                                                   CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                                  generateAuthentication.Payload.IvKey,
-                                                                                  KeyManagement.GetKeyDetail(generateAuthentication.Payload.IvKey).KeySlot,
-                                                                                  generateAuthentication.Payload.Iv,
+                                                                                  generateAuthentication.Payload.Iv.Key,
+                                                                                  KeyManagement.GetKeyDetail(generateAuthentication.Payload.Iv.Key).KeySlot,
+                                                                                  generateAuthentication.Payload.Iv.Value,
                                                                                   0),
                                                             cancel);
 
@@ -250,7 +250,7 @@ namespace XFS4IoTFramework.Crypto
                 }
                 else
                 {
-                    ivKeyName = generateAuthentication.Payload.IvKey;
+                    ivKeyName = generateAuthentication.Payload.Iv?.Key;
                 }
             }
 

@@ -13,6 +13,7 @@ using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoT.KeyManagement.Events;
+using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
@@ -215,6 +216,7 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.KeyManagementStatus=");
 
             CommonService.KeyManagementStatus.IsNotNull($"The device class set KeyManagementStatus property to null. The device class must report device status.");
+            CommonService.KeyManagementStatus.PropertyChanged += StatusChangedEventFowarder;
         }
 
         private void GetCapabilities()
@@ -225,5 +227,12 @@ namespace XFS4IoTServer
 
             CommonService.KeyManagementCapabilities.IsNotNull($"The device class set KeyManagementCapabilities property to null. The device class must report device capabilities.");
         }
+
+        /// <summary>
+        /// Status changed event handler defined in each of device status class
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StatusChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await CommonService.StatusChangedEvent(sender, propertyInfo);
     }
 }

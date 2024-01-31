@@ -16,6 +16,7 @@ namespace XFS4IoT.TextTerminal.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "TextTerminal.KeyEvent")]
     public sealed class KeyEvent : Event<KeyEvent.PayloadData>
     {
@@ -37,17 +38,18 @@ namespace XFS4IoT.TextTerminal.Events
             }
 
             /// <summary>
-            /// On a numeric or alphanumeric key press this parameter holds the value of the key pressed. 
-            /// This is omitted when no numeric or alphanumeric key was pressed.
-            /// <example>0</example>
+            /// Specifies the command key supported.
+            /// 
+            /// See predefined [keys](#textterminal.getkeydetail.completion.properties.keys).
             /// </summary>
             [DataMember(Name = "key")]
+            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|\\D)$")]
             public string Key { get; init; }
 
             /// <summary>
-            /// On a Command key press this parameter holds the value of the Command key pressed, e.g. 'enter'.
-            /// This is omitted when no command key was pressed.
-            /// <example>enter</example>
+            /// Specifies the command key supported.
+            /// 
+            /// See predefined [keys](#textterminal.getkeydetail.completion.properties.commandkeys).
             /// </summary>
             [DataMember(Name = "commandKey")]
             [DataTypes(Pattern = @"^(enter|cancel|clear|backspace|help|doubleZero|tripleZero|arrowUp|arrowDown|arrowLeft|arrowRight|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[A-Za-z0-9]*)$")]

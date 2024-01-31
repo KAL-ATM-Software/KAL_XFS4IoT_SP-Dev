@@ -15,6 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CashAcceptor.Completions
 {
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashAcceptor.Deplete")]
     public sealed class DepleteCompletion : Completion<DepleteCompletion.PayloadData>
     {
@@ -44,14 +45,14 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies the error code if applicable. The following values are possible:
+            /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```cashUnitError``` - A problem occurred with a storage unit. A 
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will 
-            /// be sent with the details. If appropriate a [CashAcceptor.IncompleteDepleteEvent](#cashacceptor.incompletedepleteevent) 
+            /// * ```cashUnitError``` - A problem occurred with a storage unit. A
+            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will
+            /// be sent with the details. If appropriate a [CashAcceptor.IncompleteDepleteEvent](#cashacceptor.incompletedepleteevent)
             /// will also be sent.
-            /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation. 
-            /// The [CashAcceptor.GetDepleteSource](#cashacceptor.getdepletesource) command can be used to determine which 
+            /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation.
+            /// The [CashAcceptor.GetDepleteSource](#cashacceptor.getdepletesource) command can be used to determine which
             /// source or target is valid.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
@@ -94,8 +95,8 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string CashUnitSource { get; init; }
 
                 /// <summary>
-                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is not 
-                /// specified if the item was not identified as a cash item.
+                /// A cash item as reported by [CashManagement.GetBankNoteTypes](#cashmanagement.getbanknotetypes). This is null
+                /// if the item was not identified as a cash item.
                 /// <example>type20USD1</example>
                 /// </summary>
                 [DataMember(Name = "cashItem")]
@@ -103,8 +104,8 @@ namespace XFS4IoT.CashAcceptor.Completions
                 public string CashItem { get; init; }
 
                 /// <summary>
-                /// Total number of items removed from this source storage unit of the *cashItem* item type. 
-                /// Not reported if this source storage unit did not move any items of this item type, 
+                /// Total number of items removed from this source storage unit of the *cashItem* item type.
+                /// Not reported if this source storage unit did not move any items of this item type,
                 /// for example due to a storage unit or transport jam.
                 /// </summary>
                 [DataMember(Name = "numberOfItemsRemoved")]
@@ -114,14 +115,14 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved, 
-            /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source 
-            /// can move several note types. 
+            /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved,
+            /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source
+            /// can move several note types.
             /// 
             /// For example:
-            /// * If one single source was specified with the input structure, and this source moved two different 
-            /// note types, then this will have two elements. 
-            /// * If two sources were specified and the first source moved two different note types and the second source 
+            /// * If one single source was specified with the input structure, and this source moved two different
+            /// note types, then this will have two elements.
+            /// * If two sources were specified and the first source moved two different note types and the second source
             /// moved three different note types, then this will have five elements.
             /// </summary>
             [DataMember(Name = "depleteSourceResults")]

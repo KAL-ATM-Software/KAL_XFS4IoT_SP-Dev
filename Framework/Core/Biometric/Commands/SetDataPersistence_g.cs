@@ -16,19 +16,20 @@ namespace XFS4IoT.Biometric.Commands
 {
     //Original name = SetDataPersistence
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "Biometric.SetDataPersistence")]
     public sealed class SetDataPersistenceCommand : Command<SetDataPersistenceCommand.PayloadData>
     {
-        public SetDataPersistenceCommand(int RequestId, SetDataPersistenceCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetDataPersistenceCommand(int RequestId, SetDataPersistenceCommand.PayloadData Payload, int Timeout)
+            : base(RequestId, Payload, Timeout)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(int Timeout, PersistenceModeEnum? PersistenceMode = null)
-                : base(Timeout)
+            public PayloadData(PersistenceModeEnum? PersistenceMode = null)
+                : base()
             {
                 this.PersistenceMode = PersistenceMode;
             }
@@ -40,17 +41,17 @@ namespace XFS4IoT.Biometric.Commands
             }
 
             /// <summary>
-            /// Specifies the data persistence mode. 
-            /// This controls how biometric data that has been captured using the [Biometric.Read](#biometric.read) 
+            /// Specifies the data persistence mode.
+            /// This controls how biometric data that has been captured using the [Biometric.Read](#biometric.read)
             /// command will persist. This value itself is persistent.
             /// Available values are described in the [persistenceModes](#common.capabilities.completion.properties.biometric.persistencemodes).
             /// The following values are possible:
             /// 
-            /// * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all 
-            ///                   sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read) 
-            ///                   is requested again. This captured biometric data can also be explicitly cleared using the 
+            /// * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
+            ///                   sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read)
+            ///                   is requested again. This captured biometric data can also be explicitly cleared using the
             ///                   [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
-            /// * ```clear``` - Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read) 
+            /// * ```clear``` - Captured biometric data will not persist. Once the data has been either returned in the [Biometric.Read](#biometric.read)
             ///                 command or used by the [Biometric.Match](#biometric.match), then the data is cleared from the device.
             /// </summary>
             [DataMember(Name = "persistenceMode")]

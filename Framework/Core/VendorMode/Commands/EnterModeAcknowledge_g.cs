@@ -16,22 +16,13 @@ namespace XFS4IoT.VendorMode.Commands
 {
     //Original name = EnterModeAcknowledge
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Command(Name = "VendorMode.EnterModeAcknowledge")]
-    public sealed class EnterModeAcknowledgeCommand : Command<EnterModeAcknowledgeCommand.PayloadData>
+    public sealed class EnterModeAcknowledgeCommand : Command<MessagePayload>
     {
-        public EnterModeAcknowledgeCommand(int RequestId, EnterModeAcknowledgeCommand.PayloadData Payload)
-            : base(RequestId, Payload)
+        public EnterModeAcknowledgeCommand(int RequestId, int Timeout)
+            : base(RequestId, null, Timeout)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(int Timeout)
-                : base(Timeout)
-            {
-            }
-
-        }
     }
 }

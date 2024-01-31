@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -75,7 +74,7 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.CountAsync()");
 
-            var result = await Device.CountAsync(new ItemErrorCommandEvents(events), request, cancel);
+            var result = await Device.CountAsync(new CountCommandEvents(Storage, events), request, cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.CountAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

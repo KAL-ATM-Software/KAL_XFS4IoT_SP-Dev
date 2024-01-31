@@ -70,7 +70,7 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             // Check key attributes supported
-            List<string> keyUsages = new() { importKey.Payload.KeyAttributes.KeyUsage };
+            List<string> keyUsages = [importKey.Payload.KeyAttributes.KeyUsage];
             for (int i = 0; i < 100; i++)
                 keyUsages.Add(i.ToString("00"));
             bool keyAttribSupported = false;
@@ -78,14 +78,14 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 if (Common.KeyManagementCapabilities.KeyAttributes.ContainsKey(keyUsage))
                 {
-                    List<string> algorithms = new() { importKey.Payload.KeyAttributes.Algorithm };
+                    List<string> algorithms = [importKey.Payload.KeyAttributes.Algorithm];
                     for (int i = 0; i < 10; i++)
                         algorithms.Add(i.ToString("0"));
                     foreach (string algorithm in algorithms)
                     {
                         if (Common.KeyManagementCapabilities.KeyAttributes[keyUsage].ContainsKey(algorithm))
                         {
-                            List<string> modes = new() { importKey.Payload.KeyAttributes.ModeOfUse };
+                            List<string> modes = [importKey.Payload.KeyAttributes.ModeOfUse];
                             for (int i = 0; i < 10; i++)
                                 modes.Add(i.ToString("0"));
                             foreach (string mode in modes)
