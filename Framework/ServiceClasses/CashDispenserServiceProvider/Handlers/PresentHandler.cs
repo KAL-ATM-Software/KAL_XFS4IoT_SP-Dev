@@ -25,7 +25,7 @@ namespace XFS4IoTFramework.CashDispenser
         private async Task<PresentCompletion.PayloadData> HandlePresent(IPresentEvents events, PresentCommand present, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
-            if (present.Payload.Position is not null)
+            if (present.Payload?.Position is not null)
             {
                 position = present.Payload.Position switch
                 {

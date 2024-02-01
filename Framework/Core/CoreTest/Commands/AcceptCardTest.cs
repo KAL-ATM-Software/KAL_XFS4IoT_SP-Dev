@@ -41,7 +41,7 @@ namespace XFS4IoTCoreTest.Command
             var mediaInserted = new MediaInsertedEvent(123456);
 
             string result = mediaInserted.Serialise();
-            AreEqual(@"{""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event"",""version"":""2.0""},""payload"":{}}", result);
+            AreEqual(@"{""header"":{""name"":""CardReader.MediaInsertedEvent"",""requestId"":123456,""type"":""event"",""version"":""2.0""}}", result);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace XFS4IoTFramework.Keyboard
             }
          
             EntryModeEnum? inquiry = null;
-            if (getLayout.Payload.EntryMode is not null)
+            if (getLayout.Payload?.EntryMode is not null)
             {
                 inquiry = getLayout.Payload.EntryMode switch
                 {

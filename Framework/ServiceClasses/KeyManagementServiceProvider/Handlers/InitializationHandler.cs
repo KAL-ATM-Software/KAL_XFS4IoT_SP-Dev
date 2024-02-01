@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
         private async Task<InitializationCompletion.PayloadData> HandleInitialization(IInitializationEvents events, InitializationCommand initialization, CancellationToken cancel)
         {
             AuthenticationData authData = null;
-            if (initialization.Payload.Authentication is not null)
+            if (initialization.Payload?.Authentication is not null)
             {
                 if (initialization.Payload.Authentication.Method is null)
                 {

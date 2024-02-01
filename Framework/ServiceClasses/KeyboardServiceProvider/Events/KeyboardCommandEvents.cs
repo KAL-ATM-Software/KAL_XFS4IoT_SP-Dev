@@ -36,20 +36,24 @@ namespace XFS4IoTFramework.Keyboard
 
         public Task KeyEvent(EntryCompletionEnum? Completion = null, string Digit = null)
         {
-            XFS4IoT.Keyboard.Events.KeyEvent.PayloadData payload = new(Completion switch
-                                                                       {
-                                                                           EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
-                                                                           EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
-                                                                           EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
-                                                                           EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
-                                                                           EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
-                                                                           EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
-                                                                           EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
-                                                                           EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
-                                                                           EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
-                                                                           EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
-                                                                           _ => null,
-                                                                       }, Digit);
+            XFS4IoT.Keyboard.Events.KeyEvent.PayloadData payload = null;
+            if (Completion is not null || Digit is not null)
+            {
+                payload = new(Completion switch
+                {
+                    EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                    EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                    EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                    EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                    EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                    EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                    EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                    EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                    EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                    EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                    _ => null,
+                }, Digit);
+            }
 
             if (PinEntryEvents is not null)
             {

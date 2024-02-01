@@ -91,8 +91,7 @@ namespace XFS4IoTCoreTest.Command
                     ""name"":""CardReader.MediaInsertedEvent"",
                     ""requestId"":123456,
                     ""type"":""event""
-                },
-                ""payload"":{}
+                }
             }";
 
             var assemblyName = Assembly.GetAssembly(typeof(XFS4IoT.CardReader.Events.MediaInsertedEvent))?.GetName();
@@ -115,9 +114,9 @@ namespace XFS4IoTCoreTest.Command
             IsInstanceOfType(result, typeof(XFS4IoT.CardReader.Events.MediaInsertedEvent));
             XFS4IoT.CardReader.Events.MediaInsertedEvent mediaInsertedEvent = result as XFS4IoT.CardReader.Events.MediaInsertedEvent;
             IsNotNull(mediaInsertedEvent);
-            IsNotNull(mediaInsertedEvent.Payload);
+            IsNull(mediaInsertedEvent.Payload);
             MessagePayloadBase mediaInsertedPayload = mediaInsertedEvent.Payload as MessagePayloadBase;
-            IsNotNull(mediaInsertedPayload);
+            IsNull(mediaInsertedPayload);
             AreEqual(mediaInsertedEvent.Header.RequestId, 123456);
         }
 

@@ -19,7 +19,7 @@ namespace XFS4IoTFramework.CardReader
         private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             ResetDeviceRequest.ToEnum to = ResetDeviceRequest.ToEnum.Default;
-            if (reset.Payload.To is not null)
+            if (reset.Payload?.To is not null)
             {
                 to = reset.Payload.To switch
                 {
@@ -40,10 +40,12 @@ namespace XFS4IoTFramework.CardReader
                 }
             }
 
+            string storageId = string.Empty;
             // Check storage ID with capabilities
-            if (!string.IsNullOrEmpty(reset.Payload.StorageId))
+            if (!string.IsNullOrEmpty(reset.Payload?.StorageId))
             {
-                if (!Storage.CardUnits.ContainsKey(reset.Payload.StorageId))
+                storageId = reset.Payload.StorageId;
+                if (!Storage.CardUnits.ContainsKey(storageId))
                 {
                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                            $"Invalid StorageId supplied. {reset.Payload.StorageId}");
@@ -54,46 +56,40 @@ namespace XFS4IoTFramework.CardReader
                 if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.Motor)
                 {
                      return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"Card reader type {reset.Payload.StorageId} is not supporting storage.");
+                                                            $"Card reader type {Common.CardReaderCapabilities.Type} is not supporting storage.");
                 }
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ResetDeviceAsync()");
             
-            var result = await Device.ResetDeviceAsync(new ResetDeviceRequest(to, reset.Payload.StorageId),
+            var result = await Device.ResetDeviceAsync(new ResetDeviceRequest(to, storageId),
                                                        cancel);
             
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
             {
-                string storageId = reset.Payload.StorageId;
-                if (string.IsNullOrEmpty(storageId))
+                string storageIdMediaMoved = storageId;
+                if (string.IsNullOrEmpty(storageIdMediaMoved))
                 {
                     // Use one storage id reported by the SP
-                    storageId = result.StorageId;
+                    storageIdMediaMoved = result.StorageId;
                 }
 
-                if (!string.IsNullOrEmpty(storageId))
+                if (!string.IsNullOrEmpty(storageIdMediaMoved))
                 {
-                    if (to == ResetDeviceRequest.ToEnum.Retain &&
-                        Storage.CardUnits.ContainsKey(storageId) &&
-                        Storage.CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain)
+                    if (!Storage.CardUnits.ContainsKey(storageIdMediaMoved))
                     {
-                        // Update counters and save persistently
-                        await Storage.UpdateCardStorageCount(storageId, result.CountMoved);
+                        Logger.Warning(Constants.Framework, $"The device class reported invalid storage ID. {storageIdMediaMoved}");
                     }
-                    else if (to == ResetDeviceRequest.ToEnum.Default)
+                    else
                     {
-                        if (string.IsNullOrEmpty(result.StorageId))
+                        if (to == ResetDeviceRequest.ToEnum.Retain &&
+                            Storage.CardUnits[storageIdMediaMoved].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain)
                         {
-                            Logger.Warning(Constants.Framework, $"The device class returned an empty storage ID for the default position. the counter for the storage won't be updated.");
+                            Logger.Warning(Constants.Framework, $"The client asked to move media in the retain bin. but the device class stored media to different type of bin. {Storage.CardUnits[storageIdMediaMoved].Unit.Capabilities.Type}");
                         }
-                        else
-                        {
-                            // Update counters and save persistently
-                            await Storage.UpdateCardStorageCount(result.StorageId, result.CountMoved);
-                        }
+                        await Storage.UpdateCardStorageCount(storageIdMediaMoved, result.CountMoved);
                     }
                 }
             }

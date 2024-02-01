@@ -25,6 +25,15 @@ namespace XFS4IoTFramework.CardReader
                                        bool? Watermark = null,
                                        bool? FrontTrack1 = null)
         {
+            if (Track1 is null &&
+                Track2 is null &&
+                Track3 is null &&
+                Watermark is null &&
+                FrontTrack1 is null)
+            {
+                return Task.CompletedTask;
+
+            }
             ReadRawDataEvents.IsNotNull($"Unexpected interface specified. " + nameof(TrackDetectedEvent));
             return ReadRawDataEvents.TrackDetectedEvent(new TrackDetectedEvent.PayloadData(Track1,
                                                                                            Track2,

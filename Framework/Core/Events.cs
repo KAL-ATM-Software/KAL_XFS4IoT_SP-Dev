@@ -19,10 +19,6 @@ namespace XFS4IoT.Events
         public Event(int RequestId, T Payload = null) :
             base(RequestId, MessageHeader.TypeEnum.Event, Payload, Timeout: null)
         {
-            if (Payload is null)
-            {
-                this.Payload = new MessagePayloadBase().IsA<T>($"Invalid Payload in {nameof(Event<T>)} constructor. Payload can not be null.");
-            }
         }
     }
 
@@ -36,10 +32,6 @@ namespace XFS4IoT.Events
         public UnsolicitedEvent(T Payload = null) :
             base(RequestId: null, MessageHeader.TypeEnum.Event, Payload, Timeout: null)
         {
-            if (Payload is null)
-            {
-                this.Payload = new MessagePayloadBase().IsA<T>($"Invalid Payload in {nameof(UnsolicitedEvent<T>)} constructor. Payload can not be null.");
-            }
         }
     }
 }
