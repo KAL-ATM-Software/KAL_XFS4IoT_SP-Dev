@@ -1098,81 +1098,88 @@ namespace XFS4IoTFramework.Common
                 XFS4IoT.Camera.StatusClass.CamerasClass camStatusLocation = null;
                 XFS4IoT.Camera.StatusClass.PicturesClass numPicsLocation = null;
 
-                foreach (var cam in Common.CameraStatus.CameraLocationStatus)
+                if (Common.CameraStatus.CameraLocationStatus is not null)
                 {
-                    XFS4IoT.Camera.MediaStateEnum mediaStatus = cam.Value.MediaState switch
+                    foreach (var cam in Common.CameraStatus.CameraLocationStatus)
                     {
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Ok => XFS4IoT.Camera.MediaStateEnum.Ok,
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.High => XFS4IoT.Camera.MediaStateEnum.High,
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Full => XFS4IoT.Camera.MediaStateEnum.Full,
-                        _ => XFS4IoT.Camera.MediaStateEnum.Unknown,
-                    };
-                    XFS4IoT.Camera.CamerasStateEnum camStatus = cam.Value.CamerasState switch
-                    {
-                        CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Ok => XFS4IoT.Camera.CamerasStateEnum.Ok,
-                        CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Inoperable => XFS4IoT.Camera.CamerasStateEnum.Inop,
-                        _ => XFS4IoT.Camera.CamerasStateEnum.Unknown,
-                    };
-                    int? numPictures = cam.Value.NumberOfPictures;
+                        XFS4IoT.Camera.MediaStateEnum mediaStatus = cam.Value.MediaState switch
+                        {
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Ok => XFS4IoT.Camera.MediaStateEnum.Ok,
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.High => XFS4IoT.Camera.MediaStateEnum.High,
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Full => XFS4IoT.Camera.MediaStateEnum.Full,
+                            _ => XFS4IoT.Camera.MediaStateEnum.Unknown,
+                        };
+                        XFS4IoT.Camera.CamerasStateEnum camStatus = cam.Value.CamerasState switch
+                        {
+                            CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Ok => XFS4IoT.Camera.CamerasStateEnum.Ok,
+                            CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Inoperable => XFS4IoT.Camera.CamerasStateEnum.Inop,
+                            _ => XFS4IoT.Camera.CamerasStateEnum.Unknown,
+                        };
+                        int? numPictures = cam.Value.NumberOfPictures;
 
-                    if (cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ||
-                        cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ||
-                        cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person)
-                    {
-                        mediaStatusLocation = new(
-                            Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
-                            mediaStatus : null,
-                            Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
-                            mediaStatus : null,
-                            ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
-                            mediaStatus : null
-                            );
+                        if (cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ||
+                            cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ||
+                            cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person)
+                        {
+                            mediaStatusLocation = new(
+                                Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
+                                mediaStatus : null,
+                                Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
+                                mediaStatus : null,
+                                ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
+                                mediaStatus : null
+                                );
 
-                        camStatusLocation = new(
-                            Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
-                            camStatus : null,
-                            Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
-                            camStatus : null,
-                            ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
-                            camStatus : null
-                            );
+                            camStatusLocation = new(
+                                Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
+                                camStatus : null,
+                                Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
+                                camStatus : null,
+                                ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
+                                camStatus : null
+                                );
 
-                        numPicsLocation = new(
-                            Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
-                            numPictures : null,
-                            Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
-                            numPictures : null,
-                            ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
-                            numPictures : null
-                            );
+                            numPicsLocation = new(
+                                Room: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Room ?
+                                numPictures : null,
+                                Person: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.Person ?
+                                numPictures : null,
+                                ExitSlot: cam.Key == CameraStatusClass.CameraLocationStatusClass.CameraLocationEnum.ExitSlot ?
+                                numPictures : null
+                                );
+                        }
                     }
                 }
-                foreach (var cam in Common.CameraStatus.CustomCameraLocationStatus)
+
+                if (Common.CameraStatus.CustomCameraLocationStatus is not null)
                 {
-                    XFS4IoT.Camera.MediaStateEnum mediaStatus = cam.Value.MediaState switch
+                    foreach (var cam in Common.CameraStatus.CustomCameraLocationStatus)
                     {
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Ok => XFS4IoT.Camera.MediaStateEnum.Ok,
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.High => XFS4IoT.Camera.MediaStateEnum.High,
-                        CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Full => XFS4IoT.Camera.MediaStateEnum.Full,
-                        _ => XFS4IoT.Camera.MediaStateEnum.Unknown,
-                    };
-                    mediaStatusLocation ??= new();
-                    mediaStatusLocation.ExtendedProperties.Add(cam.Key, mediaStatus);
+                        XFS4IoT.Camera.MediaStateEnum mediaStatus = cam.Value.MediaState switch
+                        {
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Ok => XFS4IoT.Camera.MediaStateEnum.Ok,
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.High => XFS4IoT.Camera.MediaStateEnum.High,
+                            CameraStatusClass.CameraLocationStatusClass.MediaStateEnum.Full => XFS4IoT.Camera.MediaStateEnum.Full,
+                            _ => XFS4IoT.Camera.MediaStateEnum.Unknown,
+                        };
+                        mediaStatusLocation ??= new();
+                        mediaStatusLocation.ExtendedProperties.Add(cam.Key, mediaStatus);
 
-                    XFS4IoT.Camera.CamerasStateEnum camStatus = cam.Value.CamerasState switch
-                    {
-                        CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Ok => XFS4IoT.Camera.CamerasStateEnum.Ok,
-                        CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Inoperable => XFS4IoT.Camera.CamerasStateEnum.Inop,
-                        _ => XFS4IoT.Camera.CamerasStateEnum.Unknown,
-                    };
-                    camStatusLocation ??= new();
-                    camStatusLocation.ExtendedProperties.Add(cam.Key, camStatus);
+                        XFS4IoT.Camera.CamerasStateEnum camStatus = cam.Value.CamerasState switch
+                        {
+                            CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Ok => XFS4IoT.Camera.CamerasStateEnum.Ok,
+                            CameraStatusClass.CameraLocationStatusClass.CamerasStateEnum.Inoperable => XFS4IoT.Camera.CamerasStateEnum.Inop,
+                            _ => XFS4IoT.Camera.CamerasStateEnum.Unknown,
+                        };
+                        camStatusLocation ??= new();
+                        camStatusLocation.ExtendedProperties.Add(cam.Key, camStatus);
 
-                    int? numPictures = cam.Value.NumberOfPictures;
-                    if (numPictures is not null)
-                    {
-                        numPicsLocation ??= new();
-                        numPicsLocation.ExtendedProperties.Add(cam.Key, (int)numPictures);
+                        int? numPictures = cam.Value.NumberOfPictures;
+                        if (numPictures is not null)
+                        {
+                            numPicsLocation ??= new();
+                            numPicsLocation.ExtendedProperties.Add(cam.Key, (int)numPictures);
+                        }
                     }
                 }
 
@@ -1200,7 +1207,8 @@ namespace XFS4IoTFramework.Common
                 VendorMode: vendorMode,
                 BarcodeReader: barcodeReader,
                 Biometric: biometric,
-                CashAcceptor: cashAcceptor)
+                CashAcceptor: cashAcceptor,
+                Camera: camera)
             );
         }
     }

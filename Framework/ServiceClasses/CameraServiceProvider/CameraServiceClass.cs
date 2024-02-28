@@ -55,15 +55,23 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, "CameraDev.CameraStatus=");
 
             CommonService.CameraStatus.IsNotNull($"The device class set CameraStatus property to null. The device class must report device status.");
-            foreach (var stdCam in CommonService.CameraStatus.CameraLocationStatus)
+
+            if (CommonService.CameraStatus.CameraLocationStatus is not null)
             {
-                stdCam.Value.Location = stdCam.Key;
-                stdCam.Value.PropertyChanged += StatusChangedEventFowarder;
+                foreach (var stdCam in CommonService.CameraStatus.CameraLocationStatus)
+                {
+                    stdCam.Value.Location = stdCam.Key;
+                    stdCam.Value.PropertyChanged += StatusChangedEventFowarder;
+                }
             }
-            foreach (var customCam in CommonService.CameraStatus.CustomCameraLocationStatus)
+
+            if (CommonService.CameraStatus.CustomCameraLocationStatus is not null)
             {
-                customCam.Value.CustomLocation = customCam.Key;
-                customCam.Value.PropertyChanged += StatusChangedEventFowarder;
+                foreach (var customCam in CommonService.CameraStatus.CustomCameraLocationStatus)
+                {
+                    customCam.Value.CustomLocation = customCam.Key;
+                    customCam.Value.PropertyChanged += StatusChangedEventFowarder;
+                }
             }
         }
 

@@ -28,7 +28,7 @@ namespace XFS4IoTFramework.CashAcceptor
                 Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> itemMovementResult = null;
                 foreach (var itemCount in itemCounts)
                 {
-                    itemMovementResult.Add(itemCount.Key, new XFS4IoT.CashManagement.StorageCashCountClass(itemCount.Value.Fit, itemCount.Value.Unfit, itemCount.Value.Suspect, itemCount.Value.Counterfeit, itemCount.Value.Inked));
+                    (itemMovementResult ??= []).Add(itemCount.Key, new XFS4IoT.CashManagement.StorageCashCountClass(itemCount.Value.Fit, itemCount.Value.Unfit, itemCount.Value.Suspect, itemCount.Value.Counterfeit, itemCount.Value.Inked));
                 }
                 payload = new(unrecognized)
                 {

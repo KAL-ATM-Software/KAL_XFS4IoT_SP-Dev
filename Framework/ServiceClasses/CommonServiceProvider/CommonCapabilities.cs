@@ -650,6 +650,7 @@ namespace XFS4IoTFramework.Common
                                        BarcodeReaderInterfaceClass BarcodeReaderInterface = null,
                                        BiometricInterfaceClass BiometricInterface = null,
                                        CashAcceptorInterfaceClass CashAcceptorInterface = null,
+                                       CameraInterfaceClass CameraInterface = null,
                                        List<DeviceInformationClass> DeviceInformation = null, 
                                        bool? PowerSaveControl = null, 
                                        bool? AntiFraudModule = null,
@@ -673,6 +674,7 @@ namespace XFS4IoTFramework.Common
             this.BarcodeReaderInterface = BarcodeReaderInterface;
             this.BiometricInterface = BiometricInterface;
             this.CashAcceptorInterface = CashAcceptorInterface;
+            this.CameraInterface = CameraInterface;
             this.DeviceInformation = DeviceInformation;
             this.PowerSaveControl = PowerSaveControl;
             this.AntiFraudModule = AntiFraudModule;
@@ -700,7 +702,7 @@ namespace XFS4IoTFramework.Common
         public BarcodeReaderInterfaceClass BarcodeReaderInterface { get; init; }
         public BiometricInterfaceClass BiometricInterface { get; init; }
         public CashAcceptorInterfaceClass CashAcceptorInterface { get; init; }
-        public CommonInterfaceClass CameraInterface { get; init; }
+        public CameraInterfaceClass CameraInterface { get; init; }
 
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
