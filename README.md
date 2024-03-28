@@ -10,6 +10,8 @@ Find out more about this exciting new project and how you can get involved in sh
 
 Sample code is available in the [KAL_XFS4IoT_SP-Dev-Samples repo](https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev-Samples)
 
+Documentation is available at [KAL_XFS4IoT_SP-Dev-Documentation](https://kal-atm-software.github.io/KAL_XFS4IoT_SP-Dev-Documentation/)
+
 ## Building the XFS4IoT_SP-Dev Framework
 
 1. Clone KAL_XFS4IoT_SP-Dev repository from https://github.com/KAL-ATM-Software/KAL_XFS4IoT_SP-Dev.
