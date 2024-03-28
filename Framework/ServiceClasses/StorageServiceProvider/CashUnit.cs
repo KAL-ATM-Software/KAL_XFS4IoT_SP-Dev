@@ -15,28 +15,18 @@ using XFS4IoT;
 namespace XFS4IoTFramework.Storage
 {
     [Serializable()]
-    public sealed record CashUnitStorage
+    public sealed record CashUnitStorage : UnitStorageBase
     {
-        public enum StatusEnum
+        public CashUnitStorage(CashUnitStorageConfiguration StorageConfiguration) :
+            base(StorageConfiguration.PositionName,
+                 StorageConfiguration.Capacity,
+                 StatusEnum.NotConfigured,
+                 StorageConfiguration.SerialNumber)
         {
-            Good,
-            Inoperative,
-            Missing,
-            NotConfigured,
-            Manipulated,
-        }
-
-        public CashUnitStorage(CashUnitStorageConfiguration StorageConfiguration)
-        {
-            this.Id = StorageConfiguration.Id;
-            this.PositionName = StorageConfiguration.PositionName;
-            this.Capacity = StorageConfiguration.Capacity;
-            this.Status = StatusEnum.NotConfigured;
-            this.SerialNumber = StorageConfiguration.SerialNumber;
-
-            this.Unit = new CashUnit(StorageConfiguration.Capabilities,
-                                     StorageConfiguration.Configuration,
-                                     StorageConfiguration.CashUnitAdditionalInfo);
+            Id = StorageConfiguration.Id;
+            Unit = new CashUnit(StorageConfiguration.Capabilities,
+                                StorageConfiguration.Configuration,
+                                StorageConfiguration.CashUnitAdditionalInfo);
         }
 
         /// <summary>
@@ -45,27 +35,7 @@ namespace XFS4IoTFramework.Storage
         public string Id { get; init; }
 
         /// <summary>
-        /// Fixed physical name for the position.
-        /// </summary>
-        public string PositionName { get; init; }
-
-        /// <summary>
-        /// Fixed physical name for the position.
-        /// </summary>
-        public int Capacity { get; init; }
-
-        /// <summary>
-        /// Status of this storage
-        /// </summary>
-        public StatusEnum Status { get; set; }
-
-        /// <summary>
-        /// The storage unit's serial number if it can be read electronically.
-        /// </summary>
-        public string SerialNumber { get; init; }
-
-        /// <summary>
-        /// Card Unit information
+        /// Cash Unit information
         /// </summary>
         public CashUnit Unit { get; init; }
     }
@@ -93,7 +63,7 @@ namespace XFS4IoTFramework.Storage
             Fit = 1 << 0,
             Unfit = 1 << 1,
             Unrecognized = 1 << 2,
-            Conterfeit = 1 << 3,
+            Counterfeit = 1 << 3,
             Suspect = 1 << 4,
             Inked = 1 << 5,
             Coupon = 1 << 6,
@@ -313,7 +283,7 @@ namespace XFS4IoTFramework.Storage
         public StorageCashCountClass()
         {
             Unrecognized = 0;
-            ItemCounts = new();
+            ItemCounts = [];
         }
 
         public StorageCashCountClass(int Unrecognized,
@@ -356,8 +326,10 @@ namespace XFS4IoTFramework.Storage
                                                                                        count.Value.Inked));
             }
 
-            XFS4IoT.CashManagement.StorageCashCountsClass countClass = new (Unrecognized);
-            countClass.ExtendedProperties = counts;
+            XFS4IoT.CashManagement.StorageCashCountsClass countClass = new(Unrecognized)
+            {
+                ExtendedProperties = counts
+            };
             return countClass;
         }
 
@@ -598,7 +570,6 @@ namespace XFS4IoTFramework.Storage
             Status = new(AdditionalInfo);
         }
 
-
         public CashCapabilitiesClass Capabilities { get; init; }
 
         public CashConfigurationClass Configuration { get; init; }
@@ -609,84 +580,71 @@ namespace XFS4IoTFramework.Storage
     /// <summary>
     /// Structure receiving from the device
     /// </summary>
-    public sealed class CashUnitStorageConfiguration
+    public sealed class CashUnitStorageConfiguration(
+        string Id,
+        string PositionName,
+        int Capacity,
+        string SerialNumber,
+        CashCapabilitiesClass Capabilities,
+        CashConfigurationClass Configuration,
+        CashUnitAdditionalInfoClass CashUnitAdditionalInfo)
     {
-        public CashUnitStorageConfiguration(string Id,
-                                            string PositionName,
-                                            int Capacity,
-                                            string SerialNumber,
-                                            CashCapabilitiesClass Capabilities,
-                                            CashConfigurationClass Configuration,
-                                            CashUnitAdditionalInfoClass CashUnitAdditionalInfo)
-        {
-            this.Id = Id;
-            this.PositionName = PositionName;
-            this.Capacity = Capacity;
-            this.SerialNumber = SerialNumber;
-            this.Capabilities = Capabilities;
-            this.Configuration = Configuration;
-            this.CashUnitAdditionalInfo = CashUnitAdditionalInfo;
-        }
 
         /// <summary>
         /// An identifier which can be used for cUnitID in CDM/CIM XFS 3.x migration. Not required if not applicable.
         /// </summary>
-        public string Id { get; init; }
+        public string Id { get; init; } = Id;
 
         /// <summary>
         /// Fixed physical name for the position.
         /// </summary>
-        public string PositionName { get; init; }
+        public string PositionName { get; init; } = PositionName;
 
         /// <summary>
         /// Fixed physical name for the position.
         /// </summary>
-        public int Capacity { get; init; }
+        public int Capacity { get; init; } = Capacity;
 
         /// <summary>
         /// The storage unit's serial number if it can be read electronically.
         /// </summary>
-        public string SerialNumber { get; init; }
+        public string SerialNumber { get; init; } = SerialNumber;
 
         /// <summary>
         /// The hardware capabilities of the cash unit
         /// </summary>
-        public CashCapabilitiesClass Capabilities { get; init; }
+        public CashCapabilitiesClass Capabilities { get; init; } = Capabilities;
 
         /// <summary>
         /// Current configuration set by the device
         /// </summary>
-        public CashConfigurationClass Configuration { get; init; }
+        public CashConfigurationClass Configuration { get; init; } = Configuration;
 
         /// <summary>
         /// Addtional cash unit information
         /// </summary>
-        public CashUnitAdditionalInfoClass CashUnitAdditionalInfo { get; init; }
+        public CashUnitAdditionalInfoClass CashUnitAdditionalInfo { get; init; } = CashUnitAdditionalInfo;
     }
 
     /// <summary>
     /// Additional cash unit information device supports
     /// </summary>
-    public sealed class CashUnitAdditionalInfoClass
+    public sealed class CashUnitAdditionalInfoClass(
+        int Index,
+        bool AccuracySupported)
     {
-        public CashUnitAdditionalInfoClass(int Index,
-                                           bool AccuracySupported)
-        {
-            this.Index = Index;
-            this.AccuracySupported = AccuracySupported;
-        }
 
         /// <summary>
         /// Assigned by the device class. Will be a unique number which can be used to determine 
         /// usNumber in XFS 3.x migration.This can change as cash storage units are added and removed
         /// from the storage collection.
         /// </summary>
-        public int Index { get; init; }
+        public int Index { get; init; } = Index;
 
         /// <summary>
         /// Accuracy of count supported or not
         /// </summary>
-        public bool AccuracySupported { get; set; }
+        public bool AccuracySupported { get; set; } = AccuracySupported;
     }
 
     /// <summary>

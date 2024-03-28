@@ -13,14 +13,9 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyboardStatusClass : StatusBase
+    public sealed class KeyboardStatusClass(
+        KeyboardStatusClass.AutoBeepModeEnum AutoBeepMode) : StatusBase
     {
-
-        public KeyboardStatusClass(AutoBeepModeEnum AutoBeepMode)
-        {
-            autoBeepMode = AutoBeepMode;
-        }
-
         [Flags]
         public enum AutoBeepModeEnum
         {
@@ -49,6 +44,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AutoBeepModeEnum autoBeepMode = AutoBeepModeEnum.NotSupported;
+        private AutoBeepModeEnum autoBeepMode = AutoBeepMode;
     }
 }

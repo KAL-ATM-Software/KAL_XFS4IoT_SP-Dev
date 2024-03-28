@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyManagementStatusClass : StatusBase
+    public sealed class KeyManagementStatusClass(
+        KeyManagementStatusClass.EncryptionStateEnum EncryptionState,
+        KeyManagementStatusClass.CertificateStateEnum CertificateState) : StatusBase
     {
         public enum EncryptionStateEnum
         {
@@ -34,13 +36,6 @@ namespace XFS4IoTFramework.Common
             NotReady
         }
 
-        public KeyManagementStatusClass(EncryptionStateEnum EncryptionState,
-                                        CertificateStateEnum CertificateState)
-        {
-            encryptionState = EncryptionState;
-            certificateState = CertificateState;
-        }
-
         /// <summary>
         /// Specifies the state of the encryption module.
         /// </summary>
@@ -56,7 +51,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private EncryptionStateEnum encryptionState = EncryptionStateEnum.Undefined;
+        private EncryptionStateEnum encryptionState = EncryptionState;
 
         /// <summary>
         /// Specifies the state of the public verification or encryption key in the PIN certificate modules.
@@ -73,6 +68,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private CertificateStateEnum certificateState = CertificateStateEnum.NotSupported;
+        private CertificateStateEnum certificateState = CertificateState;
     }
 }

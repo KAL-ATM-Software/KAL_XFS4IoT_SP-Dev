@@ -34,7 +34,7 @@ namespace XFS4IoTServer
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(CashDispenserServiceClass)}");
             CashManagementService = ServiceProvider.IsA<ICashManagementService>($"Invalid interface parameter specified for cash management service. {nameof(CashDispenserServiceClass)}");
 
-            this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set. " + typeof(Mix).FullName);
+            this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set in the " + nameof(CashDispenserServiceClass));
 
             // Load persistent data
             Dictionary<string, Mix> tableMixes = PersistentData.Load<Dictionary<string, Mix>>(typeof(Mix).FullName);
@@ -160,6 +160,7 @@ namespace XFS4IoTServer
                 if (position.Value.CashDispenserPosition is null)
                 {
                     position.Value.CashDispenserPosition = position.Key;
+                    position.Value.PropertyChanged += StatusChangedEventFowarder;
                 }
                 else
                 {
@@ -168,7 +169,6 @@ namespace XFS4IoTServer
                     // Need to handle multiple position status in one PropertyChanged event.
                     position.Value.CashDispenserPosition |= position.Key;
                 }
-                position.Value.PropertyChanged += StatusChangedEventFowarder;
             }
         }
 

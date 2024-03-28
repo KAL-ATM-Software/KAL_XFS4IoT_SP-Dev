@@ -10,33 +10,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static XFS4IoTFramework.Common.BiometricStatusClass;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class BiometricStatusClass : StatusBase
+    public sealed class BiometricStatusClass(
+        SubjectStatusEnum Subject = SubjectStatusEnum.NotSupported,
+        bool Capture = false,
+        BiometricCapabilitiesClass.PersistenceModesEnum DataPersistence = BiometricCapabilitiesClass.PersistenceModesEnum.Clear,
+        int? RemainingStorage = null) : StatusBase
     {
 
         public enum SubjectStatusEnum
         {
             NotSupported, NotPresent, Present, Unknown
-        }
-
-        /// <summary>
-        /// Biometric Status
-        /// </summary>
-        /// <param name="Subject">Specifies the state of the subject to be scanned</param>
-        /// <param name="Capture">Indicates whether or not scanned biometric data has been captured and is stored locally</param>
-        /// <param name="DataPersistence">Specifies the current data persistence mode</param>
-        /// <param name="RemainingStorage">Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes. Can be null if not supported.</param>
-        public BiometricStatusClass(SubjectStatusEnum Subject = SubjectStatusEnum.NotSupported,
-                                    bool Capture = false,
-                                    BiometricCapabilitiesClass.PersistenceModesEnum DataPersistence = BiometricCapabilitiesClass.PersistenceModesEnum.Clear,
-                                    int? RemainingStorage = null)
-        {
-            subject = Subject;
-            capture = Capture;
-            dataPersistence = DataPersistence;
-            remainingStorage = RemainingStorage;
         }
 
         /// <summary>
@@ -54,7 +41,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SubjectStatusEnum subject = SubjectStatusEnum.NotSupported;
+        private SubjectStatusEnum subject = Subject;
 
         /// <summary>
         /// Indicates whether or not scanned biometric data has been captured and is stored locally
@@ -71,7 +58,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private bool capture = false;
+        private bool capture = Capture;
 
         /// <summary>
         /// Specifies the current data persistence mode
@@ -88,7 +75,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private BiometricCapabilitiesClass.PersistenceModesEnum dataPersistence = BiometricCapabilitiesClass.PersistenceModesEnum.None;
+        private BiometricCapabilitiesClass.PersistenceModesEnum dataPersistence = DataPersistence;
 
         /// <summary>
         /// Specifies how much of the reserved storage specified by the *templateStorage* capability is remaining for the storage of templates in bytes.
@@ -106,6 +93,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int? remainingStorage = null;
+        private int? remainingStorage = RemainingStorage;
     }
 }

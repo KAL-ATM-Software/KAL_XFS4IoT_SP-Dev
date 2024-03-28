@@ -1,9 +1,8 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2024
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,47 +15,17 @@ namespace XFS4IoTFramework.Storage
     /// CardUnitStorage class representing XFS4IoT Storage class strcuture
     /// </summary>
     [Serializable()]
-    public sealed record CardUnitStorage
+    public sealed record CardUnitStorage : UnitStorageBase
     {
-        public enum StatusEnum
+        public CardUnitStorage(CardUnitStorageConfiguration StorageConfiguration) :
+            base(StorageConfiguration.PositionName,
+                 StorageConfiguration.Capacity,
+                 StatusEnum.NotConfigured,
+                 StorageConfiguration.SerialNumber)
         {
-            Good,
-            Inoperative,
-            Missing,
-            NotConfigured,
-            Manipulated,
+            Unit = new CardUnit(StorageConfiguration.Capabilities,
+                                StorageConfiguration.Configuration);
         }
-
-        public CardUnitStorage(CardUnitStorageConfiguration StorageConfiguration)
-        {
-            this.PositionName = StorageConfiguration.PositionName;
-            this.Capacity = StorageConfiguration.Capacity;
-            this.Status = StatusEnum.NotConfigured;
-            this.SerialNumber = StorageConfiguration.SerialNumber;
-
-            this.Unit = new CardUnit(StorageConfiguration.Capabilities,
-                                     StorageConfiguration.Configuration);
-        }
-
-        /// <summary>
-        /// Fixed physical name for the position.
-        /// </summary>
-        public string PositionName { get; init; }
-
-        /// <summary>
-        /// Fixed physical name for the position.
-        /// </summary>
-        public int Capacity { get; init; }
-
-        /// <summary>
-        /// Status of this storage
-        /// </summary>
-        public StatusEnum Status { get; set; }
-
-        /// <summary>
-        /// The storage unit's serial number if it can be read electronically.
-        /// </summary>
-        public string SerialNumber { get; init; }
 
         /// <summary>
         /// Card Unit information
@@ -191,39 +160,31 @@ namespace XFS4IoTFramework.Storage
     /// <summary>
     /// Structure receiving from the device
     /// </summary>
-    public sealed class CardUnitStorageConfiguration
+    public sealed class CardUnitStorageConfiguration(string PositionName,
+                                        int Capacity,
+                                        string SerialNumber,
+                                        CardCapabilitiesClass Capabilities,
+                                        CardConfigurationClass Configuration)
     {
-        public CardUnitStorageConfiguration(string PositionName,
-                                            int Capacity,
-                                            string SerialNumber,
-                                            CardCapabilitiesClass Capabilities,
-                                            CardConfigurationClass Configuration)
-        {
-            this.PositionName = PositionName;
-            this.Capacity = Capacity;
-            this.SerialNumber = SerialNumber;
-            this.Capabilities = Capabilities;
-            this.Configuration = Configuration;
-        }
 
         /// <summary>
         /// Fixed physical name for the position.
         /// </summary>
-        public string PositionName { get; init; }
+        public string PositionName { get; init; } = PositionName;
 
         /// <summary>
         /// Fixed physical name for the position.
         /// </summary>
-        public int Capacity { get; init; }
+        public int Capacity { get; init; } = Capacity;
 
         /// <summary>
         /// The storage unit's serial number if it can be read electronically.
         /// </summary>
-        public string SerialNumber { get; init; }
+        public string SerialNumber { get; init; } = SerialNumber;
 
-        public CardCapabilitiesClass Capabilities { get; init; }
+        public CardCapabilitiesClass Capabilities { get; init; } = Capabilities;
 
-        public CardConfigurationClass Configuration { get; init; }
+        public CardConfigurationClass Configuration { get; init; } = Configuration;
     }
 
     /// <summary>

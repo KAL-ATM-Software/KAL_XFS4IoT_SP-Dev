@@ -21,7 +21,7 @@ namespace XFS4IoTFramework.CashManagement
         public StorageErrorCommonCommandEvents(IStorageService storage, IResetEvents events) : 
             base(events)
         {
-            StorageErrorCommandEvent =new(storage, events);
+            StorageErrorCommandEvent = new(storage, events);
         }
 
         public StorageErrorCommonCommandEvents(IStorageService storage, ICashInRollbackEvents events) :

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoTFramework.Common;
-using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
 using XFS4IoT.CashAcceptor.Events;
 

@@ -98,14 +98,6 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.OpenCloseShutterAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
-            {
-                await CashManagement.ShutterStatusChangedEvent(position, CashManagementStatusClass.ShutterEnum.Open);
-            }
-            else if (result.CompletionCode == MessagePayload.CompletionCodeEnum.HardwareError)
-            {
-                await CashManagement.ShutterStatusChangedEvent(position, result.Jammed ? CashManagementStatusClass.ShutterEnum.JammedOpen : CashManagementStatusClass.ShutterEnum.Unknown);
-            }
             OpenShutterCompletion.PayloadData.ErrorCodeEnum? errorCode = null;
             if (result.ErrorCode is not null)
             {

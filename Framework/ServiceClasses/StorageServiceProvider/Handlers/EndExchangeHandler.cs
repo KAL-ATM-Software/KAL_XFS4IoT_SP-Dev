@@ -20,7 +20,7 @@ namespace XFS4IoTFramework.Storage
     {
         private async Task<EndExchangeCompletion.PayloadData> HandleEndExchange(IEndExchangeEvents events, EndExchangeCommand endExchange, CancellationToken cancel)
         {
-            if (Storage.StorageType == StorageTypeEnum.Cash)
+            if (Storage.StorageType.HasFlag(StorageTypeEnum.Cash))
             {
                 if (Common.CashManagementCapabilities is null ||
                     Common.CashManagementCapabilities.ExchangeTypes == CashManagementCapabilitiesClass.ExchangeTypesEnum.NotSupported)

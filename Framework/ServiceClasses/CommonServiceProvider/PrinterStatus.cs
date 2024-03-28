@@ -17,7 +17,16 @@ namespace XFS4IoTFramework.Common
     /// PrinterStatusClass
     /// Store device status for the printer
     /// </summary>
-    public sealed class PrinterStatusClass : StatusBase
+    public sealed class PrinterStatusClass(
+        PrinterStatusClass.MediaEnum Media,
+        Dictionary<PrinterStatusClass.PaperSourceEnum, PrinterStatusClass.SupplyStatusClass> Paper,
+        PrinterStatusClass.TonerEnum Toner,
+        PrinterStatusClass.InkEnum Ink,
+        PrinterStatusClass.LampEnum Lamp,
+        List<PrinterStatusClass.RetractBinsClass> RetractBins,
+        int MediaOnStacker,
+        PrinterStatusClass.BlackMarkModeEnum BlackMarkMode,
+        Dictionary<string, PrinterStatusClass.SupplyStatusClass> CustomPaper = null) : StatusBase
     {
         public enum MediaEnum
         {
@@ -221,27 +230,6 @@ namespace XFS4IoTFramework.Common
             private PaperTypeEnum paperType = PaperTypeEnum.NotSupported;
         }
 
-        public PrinterStatusClass(MediaEnum Media,
-                                  Dictionary<PaperSourceEnum, SupplyStatusClass> Paper,
-                                  TonerEnum Toner,
-                                  InkEnum Ink,
-                                  LampEnum Lamp,
-                                  List<RetractBinsClass> RetractBins,
-                                  int MediaOnStacker,
-                                  BlackMarkModeEnum BlackMarkMode,
-                                  Dictionary<string, SupplyStatusClass> CustomPaper = null)
-        {
-            media = Media;
-            this.Paper = Paper;
-            toner = Toner;
-            ink = Ink;
-            lamp = Lamp;
-            this.RetractBins = RetractBins;
-            mediaOnStacker = MediaOnStacker;
-            blackMarkMode = BlackMarkMode;
-            this.CustomPaper = CustomPaper;
-        }
-
         /// <summary>
         /// Specifies the state of the print media (i.e. receipt, statement, passbook, etc.) as one of the following
         /// values. This field does not apply to journal printers:
@@ -269,9 +257,9 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private MediaEnum media = MediaEnum.NotSupported;
+        private MediaEnum media = Media;
 
-        public Dictionary<PaperSourceEnum, SupplyStatusClass> Paper { get; init; }
+        public Dictionary<PaperSourceEnum, SupplyStatusClass> Paper { get; init; } = Paper;
 
         /// <summary>
         /// Specifies the state of the toner or ink supply or the state of the ribbon as one of the following:
@@ -296,7 +284,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private TonerEnum toner = TonerEnum.NotSupported;
+        private TonerEnum toner = Toner;
 
         /// <summary>
         /// Specifies the status of the stamping ink in the printer as one of the following values:
@@ -319,7 +307,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private InkEnum ink = InkEnum.NotSupported;
+        private InkEnum ink = Ink;
 
         /// <summary>
         /// Specifies the status of the printer imaging lamp as one of the following values:
@@ -342,12 +330,12 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private LampEnum lamp = LampEnum.NotSupported;
+        private LampEnum lamp = Lamp;
 
         /// <summary>
         /// An array of bin state objects. If no retain bins are supported, the array will be empty.
         /// </summary>
-        public List<RetractBinsClass> RetractBins { get; init; }
+        public List<RetractBinsClass> RetractBins { get; init; } = RetractBins;
 
         /// <summary>
         /// The number of media on stacker; applicable only to printers with stacking capability.
@@ -365,7 +353,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int mediaOnStacker = -1;
+        private int mediaOnStacker = MediaOnStacker;
 
         /// <summary>
         /// Specifies the status of the black mark detection and associated functionality:
@@ -387,11 +375,11 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private BlackMarkModeEnum blackMarkMode = BlackMarkModeEnum.NotSupported;
+        private BlackMarkModeEnum blackMarkMode = BlackMarkMode;
 
         /// <summary>
         /// Paper supply status for vendor specific supply not listed in the prefixed named paper supply
         /// </summary>
-        public Dictionary<string, SupplyStatusClass> CustomPaper { get; init; }
+        public Dictionary<string, SupplyStatusClass> CustomPaper { get; init; } = CustomPaper;
     }
 }

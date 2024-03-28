@@ -13,7 +13,29 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyManagementCapabilitiesClass
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public sealed class KeyManagementCapabilitiesClass(
+        int MaxKeys,
+        KeyManagementCapabilitiesClass.KeyCheckModeEnum KeyCheckModes,
+        string HSMVendor,
+        KeyManagementCapabilitiesClass.RSAAuthenticationSchemeEnum RSAAuthenticationScheme,
+        KeyManagementCapabilitiesClass.RSASignatureAlgorithmEnum RSASignatureAlgorithm,
+        KeyManagementCapabilitiesClass.RSACryptAlgorithmEnum RSACryptAlgorithm,
+        KeyManagementCapabilitiesClass.RSAKeyCheckModeEnum RSAKeyCheckMode,
+        KeyManagementCapabilitiesClass.SignatureSchemeEnum SignatureScheme,
+        KeyManagementCapabilitiesClass.EMVImportSchemeEnum EMVImportSchemes,
+        KeyManagementCapabilitiesClass.KeyBlockImportFormatEmum KeyBlockImportFormats,
+        bool KeyImportThroughParts,
+        KeyManagementCapabilitiesClass.DESKeyLengthEmum DESKeyLength,
+        KeyManagementCapabilitiesClass.CertificateTypeEnum CertificateTypes,
+        List<KeyManagementCapabilitiesClass.SingerCapabilities> LoadCertificationOptions,
+        KeyManagementCapabilitiesClass.CRKLLoadOptionEnum CRKLLoadOption,
+        KeyManagementCapabilitiesClass.SymmetricKeyManagementMethodEnum SymmetricKeyManagementMethods,
+        Dictionary<string, Dictionary<string, Dictionary<string, KeyManagementCapabilitiesClass.KeyAttributeOptionClass>>> KeyAttributes,
+        Dictionary<string, KeyManagementCapabilitiesClass.DecryptMethodClass> DecryptAttributes,
+        Dictionary<string, Dictionary<string, Dictionary<string, KeyManagementCapabilitiesClass.VerifyMethodClass>>> VerifyAttributes)
     {
         [Flags]
         public enum KeyCheckModeEnum
@@ -153,118 +175,74 @@ namespace XFS4IoTFramework.Common
         }
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public KeyManagementCapabilitiesClass(int MaxKeys,
-                                              KeyCheckModeEnum KeyCheckModes,
-                                              string HSMVendor,
-                                              RSAAuthenticationSchemeEnum RSAAuthenticationScheme,
-                                              RSASignatureAlgorithmEnum RSASignatureAlgorithm,
-                                              RSACryptAlgorithmEnum RSACryptAlgorithm,
-                                              RSAKeyCheckModeEnum RSAKeyCheckMode,
-                                              SignatureSchemeEnum SignatureScheme,
-                                              EMVImportSchemeEnum EMVImportSchemes,
-                                              KeyBlockImportFormatEmum KeyBlockImportFormats,
-                                              bool KeyImportThroughParts,
-                                              DESKeyLengthEmum DESKeyLength,
-                                              CertificateTypeEnum CertificateTypes,
-                                              List<SingerCapabilities> LoadCertificationOptions,
-                                              CRKLLoadOptionEnum CRKLLoadOption,
-                                              SymmetricKeyManagementMethodEnum SymmetricKeyManagementMethods,
-                                              Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributeOptionClass>>> KeyAttributes,
-                                              Dictionary<string, DecryptMethodClass> DecryptAttributes,
-                                              Dictionary<string, Dictionary<string, Dictionary<string, VerifyMethodClass>>> VerifyAttributes)
-        {
-            this.MaxKeys = MaxKeys;
-            this.KeyCheckModes = KeyCheckModes;
-            this.HSMVendor = HSMVendor;
-            this.RSAAuthenticationScheme = RSAAuthenticationScheme;
-            this.RSASignatureAlgorithm = RSASignatureAlgorithm;
-            this.RSACryptAlgorithm = RSACryptAlgorithm;
-            this.RSAKeyCheckMode = RSAKeyCheckMode;
-            this.SignatureScheme = SignatureScheme;
-            this.EMVImportSchemes = EMVImportSchemes;
-            this.KeyBlockImportFormats = KeyBlockImportFormats;
-            this.KeyImportThroughParts = KeyImportThroughParts;
-            this.DESKeyLength = DESKeyLength;
-            this.CertificateTypes = CertificateTypes;
-            this.LoadCertificationOptions = LoadCertificationOptions;
-            this.CRKLLoadOption = CRKLLoadOption;
-            this.SymmetricKeyManagementMethods = SymmetricKeyManagementMethods;
-            this.KeyAttributes = KeyAttributes;
-            this.DecryptAttributes = DecryptAttributes;
-            this.VerifyAttributes = VerifyAttributes;
-        }
-
-        /// <summary>
         /// Number of the keys which can be stored in the encryption/decryption module.
         /// </summary>
-        public int MaxKeys { get; init; }
+        public int MaxKeys { get; init; } = MaxKeys;
 
         /// <summary>
         /// Specifies the key check modes that are supported to check the correctness of an imported key value. 
         /// The encryption algorithm used (i.e. DES, 3DES, AES) is determined by the type of key being checked. 
         /// If the key size is larger than the algorithm block size, then only the first block will be used
         /// </summary>
-        public KeyCheckModeEnum KeyCheckModes { get; init; }
+        public KeyCheckModeEnum KeyCheckModes { get; init; } = KeyCheckModes;
 
         /// <summary>
         /// Identifies the hsm Vendor. 
         /// hsmVendor is an empty string or this property is not set when the hsm Vendor is unknown or the HSM is not supported.
         /// </summary>
-        public string HSMVendor { get; init; }
+        public string HSMVendor { get; init; } = HSMVendor;
 
         /// <summary>
         /// Specifies which type(s) of Remote Key Loading/Authentication is supported.
         /// </summary>
-        public RSAAuthenticationSchemeEnum RSAAuthenticationScheme { get; init; }
+        public RSAAuthenticationSchemeEnum RSAAuthenticationScheme { get; init; } = RSAAuthenticationScheme;
 
         /// <summary>
         /// Specifies which type(s) of RSA Signature Algorithm(s) is supported.
         /// </summary>
-        public RSASignatureAlgorithmEnum RSASignatureAlgorithm { get; init; }
+        public RSASignatureAlgorithmEnum RSASignatureAlgorithm { get; init; } = RSASignatureAlgorithm;
 
         /// <summary>
         /// Specifies which type of RSA Encipherment Algorithm.
         /// </summary>
-        public RSACryptAlgorithmEnum RSACryptAlgorithm { get; init; }
+        public RSACryptAlgorithmEnum RSACryptAlgorithm { get; init; } = RSACryptAlgorithm;
 
         /// <summary>
         /// Specifies which algorithm/method used to generate the public key check value/thumb print.
         /// </summary>
-        public RSAKeyCheckModeEnum RSAKeyCheckMode { get; init; }
+        public RSAKeyCheckModeEnum RSAKeyCheckMode { get; init; } = RSAKeyCheckMode;
 
         /// <summary>
         /// Specifies which capabilities are supported by the Signature scheme.
         /// </summary>
-        public SignatureSchemeEnum SignatureScheme { get; init; }
+        public SignatureSchemeEnum SignatureScheme { get; init; } = SignatureScheme;
 
         /// <summary>
         /// Identifies the supported emv Import Scheme(s).
         /// </summary>
-        public EMVImportSchemeEnum EMVImportSchemes { get; init; }
+        public EMVImportSchemeEnum EMVImportSchemes { get; init; } = EMVImportSchemes;
 
 
         /// <summary>
         /// Supported TR31 key block formats.
         /// </summary>
-        public KeyBlockImportFormatEmum KeyBlockImportFormats { get; init; }
+        public KeyBlockImportFormatEmum KeyBlockImportFormats { get; init; } = KeyBlockImportFormats;
 
         /// <summary>
         /// Specifies whether the device is capable of importing keys in multiple parts. TRUE means the 
         /// device supports the key import in multiple parts.
         /// </summary>
-        public bool KeyImportThroughParts { get; init; }
+        public bool KeyImportThroughParts { get; init; } = KeyImportThroughParts;
 
         /// <summary>
         /// Specifies which length of DES keys are supported.
         /// </summary>
-        public DESKeyLengthEmum DESKeyLength { get; init; }
+        public DESKeyLengthEmum DESKeyLength { get; init; } = DESKeyLength;
 
         /// <summary>
         /// Specifies supported certificate types.
         /// </summary>
-        public CertificateTypeEnum CertificateTypes { get; init; }
+        public CertificateTypeEnum CertificateTypes { get; init; } = CertificateTypes;
 
         public sealed class SingerCapabilities
         {
@@ -298,17 +276,17 @@ namespace XFS4IoTFramework.Common
         /// In each structure, there will be a Signers parameter with one bit set to indicate which signer the structure is referencing, 
         /// and there will be a Options parameter with one or more bits set to indicate all of the options that the Service Provider supports with the signer specified by signer.
         /// </summary>
-        public List<SingerCapabilities> LoadCertificationOptions { get; init; }
+        public List<SingerCapabilities> LoadCertificationOptions { get; init; } = LoadCertificationOptions;
 
         /// <summary>
         /// Supported options to load the Key Transport Key using the Certificate Remote Key Loading protocol.
         /// </summary>
-        public CRKLLoadOptionEnum CRKLLoadOption { get; init; }
+        public CRKLLoadOptionEnum CRKLLoadOption { get; init; } = CRKLLoadOption;
 
         /// <summary>
         /// Specifies the Symmentric Key Management modes.
         /// </summary>
-        public SymmetricKeyManagementMethodEnum SymmetricKeyManagementMethods { get; init; }
+        public SymmetricKeyManagementMethodEnum SymmetricKeyManagementMethods { get; init; } = SymmetricKeyManagementMethods;
 
         public sealed class KeyAttributeOptionClass
         {
@@ -366,7 +344,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Key-value pair of attributes supported by Importkey command for the key to be loaded.
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributeOptionClass>>> KeyAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributeOptionClass>>> KeyAttributes { get; init; } = KeyAttributes;
 
         public sealed class DecryptMethodClass
         {
@@ -412,7 +390,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Key-value pair of attributes supported by the ImportKey command for the key used to decrypt or unwrap the key being imported.
         /// </summary>
-        public Dictionary<string, DecryptMethodClass> DecryptAttributes { get; init; }
+        public Dictionary<string, DecryptMethodClass> DecryptAttributes { get; init; } = DecryptAttributes;
 
 
         public sealed class VerifyMethodClass
@@ -474,7 +452,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Key-value pair of attributes supported by the ImportKey for the key used for verification before importing the key.
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyMethodClass>>> VerifyAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyMethodClass>>> VerifyAttributes { get; init; } = VerifyAttributes;
 
     }
 }

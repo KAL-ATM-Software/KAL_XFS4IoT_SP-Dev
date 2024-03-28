@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.KeyManagement
         {
             List<KeyDetail> keyDetails = KeyManagement.GetKeyTable();
 
-            if (!string.IsNullOrEmpty(getKeyDetail.Payload.KeyName))
+            if (!string.IsNullOrEmpty(getKeyDetail.Payload?.KeyName))
             {
                 KeyDetail keyDetail = KeyManagement.GetKeyDetail(getKeyDetail.Payload.KeyName);
                 if (keyDetail is null)
@@ -41,7 +41,7 @@ namespace XFS4IoTFramework.KeyManagement
                 keyDetails.Add(keyDetail);
             }
 
-            Dictionary<string, GetKeyDetailCompletion.PayloadData.KeyDetailsClass> keyInfo = new();
+            Dictionary<string, GetKeyDetailCompletion.PayloadData.KeyDetailsClass> keyInfo = [];
             foreach (var key in keyDetails)
             {
                 GetKeyDetailCompletion.PayloadData.KeyDetailsClass.KeyBlockInfoClass keyblockInfo = new(key.KeyUsage,

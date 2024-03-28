@@ -102,6 +102,16 @@ namespace XFS4IoTFramework.Common
         CashAcceptorCapabilitiesClass CashAcceptorCapabilities { get => null; set { } }
 
         /// <summary>
+        /// Stores Check Scanner capabilites
+        /// </summary>
+        CheckScannerCapabilitiesClass CheckScannerCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Mixed media capabilites
+        /// </summary>
+        MixedMediaCapabilitiesClass MixedMediaCapabilities { get => null; set { } }
+
+        /// <summary>
         /// Stores Commons status
         /// </summary>
         CommonStatusClass CommonStatus { get; set; }
@@ -180,6 +190,16 @@ namespace XFS4IoTFramework.Common
         /// Stores CashAcceptor status
         /// </summary>
         CashAcceptorStatusClass CashAcceptorStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores Check Scanner status
+        /// </summary>
+        CheckScannerStatusClass CheckScannerStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores Mixed media status
+        /// </summary>
+        MixedMediaStatusClass MixedMediaStatus { get => null; set { } }
 
         /// <summary>
         /// Sending status changed event.

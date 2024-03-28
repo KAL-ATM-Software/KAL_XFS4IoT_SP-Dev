@@ -17,7 +17,8 @@ namespace XFS4IoTFramework.Common
     /// VendorApplicationStatusClass
     /// Store device status for the vendor application
     /// </summary>
-    public sealed class VendorApplicationStatusClass : StatusBase
+    public sealed class VendorApplicationStatusClass(
+        VendorApplicationStatusClass.AccessLevelEnum AccessLevel) : StatusBase
     {
 
         public enum AccessLevelEnum
@@ -26,11 +27,6 @@ namespace XFS4IoTFramework.Common
             Basic,        //The application is active for the basic access level.
             Intermediate, //The application is active for the intermediate access level.
             Full,         //The application is active for the full access level.
-        }
-
-        public VendorApplicationStatusClass(AccessLevelEnum AccessLevel)
-        {
-            accessLevel = AccessLevel;
         }
 
         /// <summary>
@@ -48,6 +44,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AccessLevelEnum accessLevel = AccessLevelEnum.NotActive;
+        private AccessLevelEnum accessLevel = AccessLevel;
     }
 }

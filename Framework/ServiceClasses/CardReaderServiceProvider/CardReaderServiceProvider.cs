@@ -37,7 +37,7 @@ namespace XFS4IoTServer
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CardReader, XFSConstants.ServiceClass.Storage },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CardReader, XFSConstants.ServiceClass.Storage],
                  device,
                  logger)
         {
@@ -85,66 +85,20 @@ namespace XFS4IoTServer
         #region Storage unsolic events
         public Task StorageThresholdEvent(List<string> CardUnitIds)
         {
-            StorageThresholdEvent.PayloadData paylod = new();
-            paylod.ExtendedProperties = GetStorages(CardUnitIds);
+            StorageThresholdEvent.PayloadData paylod = new()
+            {
+                ExtendedProperties = GetStorages(CardUnitIds)
+            };
             return StorageService.StorageThresholdEvent(paylod);
         }
 
         public Task StorageChangedEvent(List<string> CardUnitIds)
         {
-            StorageChangedEvent.PayloadData paylod = new();
-            paylod.ExtendedProperties = GetStorages(CardUnitIds);
-            return StorageService.StorageChangedEvent(paylod);
-        }
-
-        private Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> CardUnitIds)
-        {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = [];
-
-            foreach (var storageId in CardUnitIds)
+            StorageChangedEvent.PayloadData paylod = new()
             {
-                if (!StorageService.CardUnits.ContainsKey(storageId))
-                    continue;
-
-                storages.Add(storageId,
-                             new(PositionName: StorageService.CardUnits[storageId].PositionName,
-                                 Capacity: StorageService.CardUnits[storageId].Capacity,
-                                 Status: StorageService.CardUnits[storageId].Status switch
-                                 {
-                                     CardUnitStorage.StatusEnum.Good => XFS4IoT.Storage.StatusEnum.Ok,
-                                     CardUnitStorage.StatusEnum.Inoperative => XFS4IoT.Storage.StatusEnum.Inoperative,
-                                     CardUnitStorage.StatusEnum.Manipulated => XFS4IoT.Storage.StatusEnum.Manipulated,
-                                     CardUnitStorage.StatusEnum.Missing => XFS4IoT.Storage.StatusEnum.Missing,
-                                     _ => XFS4IoT.Storage.StatusEnum.NotConfigured,
-                                 },
-                                 SerialNumber: StorageService.CardUnits[storageId].SerialNumber,
-                                 Cash: null,
-                                 Card: new XFS4IoT.CardReader.StorageClass(
-                                        new XFS4IoT.CardReader.StorageCapabilitiesClass(StorageService.CardUnits[storageId].Unit.Capabilities.Type switch
-                                        {
-                                            CardCapabilitiesClass.TypeEnum.Dispense => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Dispense,
-                                            CardCapabilitiesClass.TypeEnum.Retain => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Retain,
-                                            _ => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Park,
-                                        },
-                                                                                        StorageService.CardUnits[storageId].Unit.Capabilities.HardwareSensors),
-                                        new XFS4IoT.CardReader.StorageConfigurationClass(StorageService.CardUnits[storageId].Unit.Configuration.CardId,
-                                                                                         StorageService.CardUnits[storageId].Unit.Configuration.Threshold),
-                                        new XFS4IoT.CardReader.StorageStatusClass(StorageService.CardUnits[storageId].Unit.Status.InitialCount,
-                                                                                  StorageService.CardUnits[storageId].Unit.Status.Count,
-                                                                                  StorageService.CardUnits[storageId].Unit.Status.RetainCount,
-                                                                                  StorageService.CardUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                                                                  {
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
-                                                                                      CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
-                                                                                      _ => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
-                                                                                  })
-                                        )
-                                 ));
-            }
-
-            return storages;
+                ExtendedProperties = GetStorages(CardUnitIds)
+            };
+            return StorageService.StorageChangedEvent(paylod);
         }
         #endregion
 
@@ -171,7 +125,12 @@ namespace XFS4IoTServer
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta, Dictionary<string, string> preservedStorage) => throw new NotSupportedException($"CardReader service provider doesn't support cash storage.");
+        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta, Dictionary<string, string> preservedStorage) => throw new NotSupportedException($"CardReader service doesn't support cash storage.");
+
+        /// <summary>
+        /// Update managed check storage information in the framework.
+        /// </summary>
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => throw new NotSupportedException($"CardReader service class doesn't support check storage.");
 
         /// <summary>
         /// Return which type of storage SP is using
@@ -192,6 +151,16 @@ namespace XFS4IoTServer
         /// Cash storage structure information of this device
         /// </summary>
         public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
+
+        /// <summary>
+        /// Check storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Return XFS4IoT storage structured object.
+        /// </summary>
+        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
 
         #endregion
 

@@ -121,6 +121,7 @@ namespace XFS4IoTServer
                     if (position.Value.CashAcceptorPosition is null)
                     {
                         position.Value.CashAcceptorPosition = position.Key;
+                        position.Value.PropertyChanged += StatusChangedEventFowarder;
                     }
                     else
                     {
@@ -129,7 +130,6 @@ namespace XFS4IoTServer
                         // Need to handle multiple position status in one PropertyChanged event.
                         position.Value.CashAcceptorPosition |= position.Key;
                     }
-                    position.Value.PropertyChanged += StatusChangedEventFowarder;
                 }
             }
         }

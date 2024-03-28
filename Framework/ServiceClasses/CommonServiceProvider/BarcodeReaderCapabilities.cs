@@ -17,7 +17,9 @@ namespace XFS4IoTFramework.Common
     /// BarcodeReaderCapabilitiesClass
     /// Store device capabilites for the barcode reader device
     /// </summary>
-    public sealed class BarcodeReaderCapabilitiesClass
+    public sealed class BarcodeReaderCapabilitiesClass(
+        bool CanFilterSymbologies,
+        BarcodeReaderCapabilitiesClass.SymbologiesEnum Symbologies = BarcodeReaderCapabilitiesClass.SymbologiesEnum.NotSupported)
     {
         [Flags]
         public enum SymbologiesEnum : long
@@ -83,22 +85,15 @@ namespace XFS4IoTFramework.Common
             KoreanPost = 1L << 57,
         }
 
-        public BarcodeReaderCapabilitiesClass(bool CanFilterSymbologies,
-                                              SymbologiesEnum Symbologies = SymbologiesEnum.NotSupported)
-        {
-            this.CanFilterSymbologies = CanFilterSymbologies;
-            this.Symbologies = Symbologies;
-        }
-
         /// <summary>
         /// Specifies whether the device is capable of discriminating between the presented barcode symbologies such
         /// that only the desired symbologies are recognized/reported
         /// </summary>
-        public bool CanFilterSymbologies { get; init; }
+        public bool CanFilterSymbologies { get; init; } = CanFilterSymbologies;
 
         /// <summary>
         /// Specifies the barcode symbologies readable by the scanner.
         /// </summary>
-        public SymbologiesEnum Symbologies { get; init; }
+        public SymbologiesEnum Symbologies { get; init; } = Symbologies;
     }
 }

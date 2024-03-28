@@ -1,17 +1,15 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2024
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
 
-// KAL specific implementation of storage. 
 namespace XFS4IoTFramework.Storage
 {
     public interface IStorageDevice : IDevice
@@ -19,7 +17,7 @@ namespace XFS4IoTFramework.Storage
         #region Card
 
         /// <summary>
-        /// Return storage information for current configuration and capabilities on the startup.
+        /// Return card storage information for current configuration and capabilities on the startup.
         /// </summary>
         /// <returns></returns>
         bool GetCardStorageConfiguration(out Dictionary<string, CardUnitStorageConfiguration> newCardUnits);
@@ -54,7 +52,7 @@ namespace XFS4IoTFramework.Storage
         #region Cash
 
         /// <summary>
-        /// Return storage information for current configuration and capabilities on the startup.
+        /// Return cash storage information for current configuration and capabilities on the startup.
         /// </summary>
         /// <returns>Return true if the cash unit configuration or capabilities are changed, otherwise false</returns>
         bool GetCashStorageConfiguration(out Dictionary<string, CashUnitStorageConfiguration> newCardUnits);
@@ -66,7 +64,7 @@ namespace XFS4IoTFramework.Storage
         bool GetCashUnitCounts(out Dictionary<string, CashUnitCountClass> unitCounts);
 
         /// <summary>
-        /// Return cash unit initial counts maintained by the device class and only this method is called on the start of day/
+        /// Return cash unit initial counts maintained by the device class and only this method is called on the start of day
         /// </summary>
         /// <returns>Return true if the device class maintained initial counts, otherwise false</returns>
         bool GetCashUnitInitialCounts(out Dictionary<string, StorageCashCountClass> initialCounts);
@@ -89,10 +87,49 @@ namespace XFS4IoTFramework.Storage
         void GetCashUnitAccuray(string storageId, out CashStatusClass.AccuracyEnum unitAccuracy);
 
         /// <summary>
-        /// Set new configuration and counters
+        /// Set new configuration and counters for cash units
         /// </summary>
         /// <returns>Return operation is completed successfully or not and report updates storage information.</returns>
         Task<SetCashStorageResult> SetCashStorageAsync(SetCashStorageRequest request, CancellationToken cancellation);
+
+        #endregion
+
+        #region Check
+        /// <summary>
+        /// Return cheeck storage information for current configuration and capabilities on the startup.
+        /// </summary>
+        /// <returns>Return true if the cash unit configuration or capabilities are changed, otherwise false</returns>
+        bool GetCheckStorageConfiguration(out Dictionary<string, CheckUnitStorageConfiguration> newCheckUnits);
+
+        /// <summary>
+        /// Return check unit counts maintained by the device class
+        /// </summary>
+        /// <returns>Return true if the device class maintained counts, otherwise false</returns>
+        bool GetCheckUnitCounts(out Dictionary<string, StorageCheckCountClass> unitCounts);
+
+        /// <summary>
+        /// Return check unit initial counts maintained by the device class and only this method is called on the start of day
+        /// </summary>
+        /// <returns>Return true if the device class maintained initial counts, otherwise false</returns>
+        bool GetCheckUnitInitialCounts(out Dictionary<string, StorageCheckCountClass> initialCounts);
+
+        /// <summary>
+        /// Return check storage status.
+        /// </summary>
+        /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
+        bool GetCheckStorageStatus(out Dictionary<string, CheckUnitStorage.StatusEnum> storageStatus);
+
+        /// <summary>
+        /// Return check unit status maintained by the device class
+        /// </summary>
+        /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
+        bool GetCheckUnitStatus(out Dictionary<string, CheckStatusClass.ReplenishmentStatusEnum> unitStatus);
+
+        /// <summary>
+        /// Set new configuration and counters for check units
+        /// </summary>
+        /// <returns>Return operation is completed successfully or not and report updates storage information.</returns>
+        Task<SetCheckStorageResult> SetCheckStorageAsync(SetCheckStorageRequest request, CancellationToken cancellation);
 
         #endregion
 

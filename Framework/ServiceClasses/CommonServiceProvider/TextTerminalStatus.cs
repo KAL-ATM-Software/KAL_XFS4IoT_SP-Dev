@@ -13,7 +13,11 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class TextTerminalStatusClass : StatusBase
+    public sealed class TextTerminalStatusClass(
+        TextTerminalStatusClass.KeyboardEnum Keyboard,
+        TextTerminalStatusClass.KeyLockEnum KeyLock,
+        int DisplaySizeX,
+        int DisplaySizeY) : StatusBase
     {
         public enum KeyboardEnum
         {
@@ -28,19 +32,6 @@ namespace XFS4IoTFramework.Common
             Off,
             NotAvailable
         }
-
-        public TextTerminalStatusClass(KeyboardEnum Keyboard, 
-                                       KeyLockEnum KeyLock , 
-                                       int DisplaySizeX, 
-                                       int DisplaySizeY)
-        {
-            keyboard = Keyboard;
-            keyLock = KeyLock;
-            displaySizeX = DisplaySizeX;
-            displaySizeY = DisplaySizeY;
-        }
-
-        
 
         /// <summary>
         /// Specifies the state of the keyboard in the text terminal unit as one of the following values:
@@ -60,7 +51,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private KeyboardEnum keyboard = KeyboardEnum.NotAvailable;
+        private KeyboardEnum keyboard = Keyboard;
 
         /// <summary>
         /// Specifies the state of the keyboard lock of the text terminal unit as one of the following values:
@@ -80,7 +71,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private KeyLockEnum keyLock = KeyLockEnum.NotAvailable;
+        private KeyLockEnum keyLock = KeyLock;
 
         /// <summary>
         /// Specifies the horizontal size of the display of the text terminal unit.
@@ -97,7 +88,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int displaySizeX = -1;
+        private int displaySizeX = DisplaySizeX;
 
         /// <summary>
         /// Specifies the vertical size of the display of the text terminal unit.
@@ -114,6 +105,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int displaySizeY = -1;
+        private int displaySizeY = DisplaySizeY;
     }
 }

@@ -17,39 +17,22 @@ namespace XFS4IoTFramework.Common
     /// CardReaderCapabilitiesClass
     /// Store device capabilites for the card reader device
     /// </summary>
-    public sealed class CardReaderCapabilitiesClass
+    public sealed class CardReaderCapabilitiesClass(
+        CardReaderCapabilitiesClass.DeviceTypeEnum Type,
+        CardReaderCapabilitiesClass.ReadableDataTypesEnum ReadTracks,
+        CardReaderCapabilitiesClass.WritableDataTypesEnum WriteTracks,
+        CardReaderCapabilitiesClass.ChipProtocolsEnum ChipProtocols,
+        CardReaderCapabilitiesClass.SecurityTypeEnum SecurityType,
+        CardReaderCapabilitiesClass.PowerOptionEnum PowerOnOption,
+        CardReaderCapabilitiesClass.PowerOptionEnum PowerOffOption,
+        bool FluxSensorProgrammable,
+        bool ReadWriteAccessFollowingExit,
+        CardReaderCapabilitiesClass.WriteMethodsEnum WriteMode,
+        CardReaderCapabilitiesClass.ChipPowerOptionsEnum ChipPower,
+        CardReaderCapabilitiesClass.MemoryChipProtocolsEnum MemoryChipProtocols,
+        CardReaderCapabilitiesClass.PositionsEnum Positions,
+        bool CardTakenSensor)
     {
-        public CardReaderCapabilitiesClass(DeviceTypeEnum Type,
-                                           ReadableDataTypesEnum ReadTracks,
-                                           WritableDataTypesEnum WriteTracks,
-                                           ChipProtocolsEnum ChipProtocols,
-                                           SecurityTypeEnum SecurityType,
-                                           PowerOptionEnum PowerOnOption,
-                                           PowerOptionEnum PowerOffOption,
-                                           bool FluxSensorProgrammable,
-                                           bool ReadWriteAccessFollowingExit,
-                                           WriteMethodsEnum WriteMode,
-                                           ChipPowerOptionsEnum ChipPower,
-                                           MemoryChipProtocolsEnum MemoryChipProtocols,
-                                           PositionsEnum Positions,
-                                           bool CardTakenSensor)
-        {
-            this.Type = Type;
-            this.ReadTracks = ReadTracks;
-            this.WriteTracks = WriteTracks;
-            this.ChipProtocols = ChipProtocols;
-            this.SecurityType = SecurityType;
-            this.PowerOnOption = PowerOnOption;
-            this.PowerOffOption = PowerOffOption;
-            this.FluxSensorProgrammable = FluxSensorProgrammable;
-            this.ReadWriteAccessFollowingExit = ReadWriteAccessFollowingExit;
-            this.WriteMode = WriteMode;
-            this.ChipPower = ChipPower;
-            this.MemoryChipProtocols = MemoryChipProtocols;
-            this.Positions = Positions;
-            this.CardTakenSensor = CardTakenSensor;
-        }
-
         public enum DeviceTypeEnum
         {
             Motor,
@@ -171,20 +154,20 @@ namespace XFS4IoTFramework.Common
         /// * ```permanent``` - The ID card unit is dedicated to a permanently housed chip card (no user interaction is
         /// available with this type of card).
         /// </summary>
-        public DeviceTypeEnum Type { get; init; }
+        public DeviceTypeEnum Type { get; init; } = Type;
 
         /// <summary>
         /// Specifies the tracks that can be read by the card reader.
         /// </summary>
-        public ReadableDataTypesEnum ReadTracks { get; init; }
+        public ReadableDataTypesEnum ReadTracks { get; init; } = ReadTracks;
 
         /// <summary>
         /// Specifies the tracks that can be read by the card reader.
         /// </summary>
-        public WritableDataTypesEnum WriteTracks { get; init; }
+        public WritableDataTypesEnum WriteTracks { get; init; } = WriteTracks;
 
-        
-        public ChipProtocolsEnum ChipProtocols { get; init; }
+
+        public ChipProtocolsEnum ChipProtocols { get; init; } = ChipProtocols;
 
         /// <summary>
         /// Specifies the type of security module as one of the following:
@@ -193,8 +176,8 @@ namespace XFS4IoTFramework.Common
         /// * ```mm``` - The security module is a MMBox.
         /// * ```cim86```` - The security module is a CIM86.
         /// </summary>
-        public SecurityTypeEnum SecurityType { get; init; }
- 
+        public SecurityTypeEnum SecurityType { get; init; } = SecurityType;
+
 
         /// <summary>
         /// Specifies the power-on (or off) capabilities of the device hardware as one of the following options
@@ -207,52 +190,52 @@ namespace XFS4IoTFramework.Common
         ///   retained. The time for which the card remains ejected is vendor dependent.
         /// * ```readPosition``` - The card will be moved to the read position.
         /// </summary>
-        public PowerOptionEnum PowerOnOption { get; init; }
+        public PowerOptionEnum PowerOnOption { get; init; } = PowerOnOption;
 
         /// <summary>
         /// Specifies the power-off capabilities of the device hardware.
         /// </summary>
-        public PowerOptionEnum PowerOffOption { get; init; }
+        public PowerOptionEnum PowerOffOption { get; init; } = PowerOffOption;
 
         /// <summary>
         /// Specifies whether the Flux Sensor on the card unit is programmable.
         /// </summary>
-        public bool FluxSensorProgrammable { get; init; }
+        public bool FluxSensorProgrammable { get; init; } = FluxSensorProgrammable;
 
         /// <summary>
         /// Specifies whether a card may be read or written after having been pushed to the exit slot with a
         /// CardReader.EjectCard command. The card will be retracted back into the card reader.
         /// </summary>
-        public bool ReadWriteAccessFollowingExit { get; init; }
+        public bool ReadWriteAccessFollowingExit { get; init; } = ReadWriteAccessFollowingExit;
 
 
         /// <summary>
         /// The write capabilities, with respect to whether the device can write low coercivity (loco) and/or high
         /// coercivity (hico) magnetic stripes as a combination of the following:
         /// </summary>
-        public WriteMethodsEnum WriteMode { get; init; }
+        public WriteMethodsEnum WriteMode { get; init; } = WriteMode;
 
 
         /// <summary>
         /// The chip power management capabilities (in relation to the user or permanent chip controlled by the
         /// service, as a combination of the following:
         /// </summary>
-        public ChipPowerOptionsEnum ChipPower { get; init; }
+        public ChipPowerOptionsEnum ChipPower { get; init; } = ChipPower;
 
         /// <summary>
         /// The memory card protocols that are supported, as a combination of the following:
         /// </summary>
-        public MemoryChipProtocolsEnum MemoryChipProtocols { get; init; }
+        public MemoryChipProtocolsEnum MemoryChipProtocols { get; init; } = MemoryChipProtocols;
 
         /// <summary>
         /// Specifies the target position that is supported for the eject operation, as a combination of the following:
         /// </summary>
-        public PositionsEnum Positions { get; init; }
+        public PositionsEnum Positions { get; init; } = Positions;
 
         /// <summary>
         /// Specifies whether or not the card reader has the ability to detect when a card is taken from the exit slot
         /// by a user.If true, a CardReader.MediaTakenEvent will be sent when the card is removed.
         /// </summary>
-        public bool CardTakenSensor { get; init; }
+        public bool CardTakenSensor { get; init; } = CardTakenSensor;
     }
 }

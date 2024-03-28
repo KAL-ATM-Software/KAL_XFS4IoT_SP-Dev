@@ -34,7 +34,7 @@ namespace XFS4IoTServer
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CashAcceptor, XFSConstants.ServiceClass.CashManagement, XFSConstants.ServiceClass.Storage },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CashAcceptor, XFSConstants.ServiceClass.CashManagement, XFSConstants.ServiceClass.Storage],
                  device,
                  logger)
         {
@@ -57,6 +57,10 @@ namespace XFS4IoTServer
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
+        /// <summary>
+        /// Common.StatusChanged event reports shutter status changed event.
+        /// Obsolete event interfacec after 2023-2.
+        /// </summary>
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
 
         #endregion
@@ -74,6 +78,11 @@ namespace XFS4IoTServer
         /// </summary>
         public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await StorageService.UpdateCashAccounting(countDelta, preservedStorage);
 
+        /// <summary>
+        /// Update managed check storage information in the framework.
+        /// </summary>
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => throw new NotSupportedException($"CashAcceptor service class doesn't support check storage.");
+
         public void StorePersistent() => StorageService.StorePersistent();
 
         /// <summary>
@@ -90,6 +99,17 @@ namespace XFS4IoTServer
         /// Cash storage structure information of this device
         /// </summary>
         public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
+
+        /// <summary>
+        /// Check storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Return XFS4IoT storage structured object.
+        /// </summary>
+        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
+
         #endregion
 
         #region Common unsolicited events

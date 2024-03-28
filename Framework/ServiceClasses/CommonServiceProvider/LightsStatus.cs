@@ -19,7 +19,10 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class LightsStatusClass : StatusBase
     {
-        public sealed class LightOperation
+        public sealed class LightOperation(LightOperation.PositionEnum Position,
+        LightOperation.FlashRateEnum FlashRate,
+        LightOperation.ColourEnum Colour,
+        LightOperation.DirectionEnum Direction)
         {
             public enum PositionEnum
             {
@@ -61,17 +64,6 @@ namespace XFS4IoTFramework.Common
                 None,
             }
 
-            public LightOperation(PositionEnum Position,
-                                  FlashRateEnum FlashRate,
-                                  ColourEnum Colour,
-                                  DirectionEnum Direction)
-            {
-                this.Position = Position;
-                this.FlashRate = FlashRate;
-                this.Colour = Colour;
-                this.Direction = Direction;
-            }
-
             /// <summary>
             /// The light position. If omitted then the default position is used. One of the following values:
             /// * ```left``` -  The left position.
@@ -82,7 +74,7 @@ namespace XFS4IoTFramework.Common
             /// * ```front``` -  The front position.
             /// * ```rear``` -  The rear position.
             /// </summary>
-            public PositionEnum Position { get; set; }
+            public PositionEnum Position { get; set; } = Position;
 
             /// <summary>
             /// The light flash rate as one of the following values:
@@ -92,7 +84,7 @@ namespace XFS4IoTFramework.Common
             /// * ```quick``` -  The light is flashing quickly.
             /// * ```continuous``` - The light is continuous (steady).
             /// </summary>
-            public FlashRateEnum FlashRate { get; set; }
+            public FlashRateEnum FlashRate { get; set; } = FlashRate;
 
             /// <summary>
             /// The light color as one of the following values:
@@ -104,14 +96,14 @@ namespace XFS4IoTFramework.Common
             /// * ```magenta``` -  The light is magenta.
             /// * ```white``` - The light is white.
             /// </summary>
-            public ColourEnum Colour { get; set; }
+            public ColourEnum Colour { get; set; } = Colour;
 
             /// <summary>
             /// The light direction as one of the following values:
             /// * ```entry``` -  The light is indicating entry.
             /// * ```exit``` -  The light is indicating exit.
             /// </summary>
-            public DirectionEnum Direction { get; set; }
+            public DirectionEnum Direction { get; set; } = Direction;
         }
 
         /// <summary>

@@ -121,6 +121,16 @@ namespace XFS4IoTServer
         /// </summary>
         public CashAcceptorCapabilitiesClass CashAcceptorCapabilities { get; set; } = null;
 
+        /// <summary>
+        /// Stores Check scanner capabilites
+        /// </summary>
+        public CheckScannerCapabilitiesClass CheckScannerCapabilities { get; set; } = null;
+
+        /// <summary>
+        /// Stores Mixed media capabilites
+        /// </summary>
+        public MixedMediaCapabilitiesClass MixedMediaCapabilities { get; set; } = null;
+
         private void GetCapabilities()
         {
             if (CommonCapabilities is not null)
@@ -440,7 +450,34 @@ namespace XFS4IoTServer
                     supportedFrameworkMessages,
                     CommonCapabilities.VendorModeInterface.Events);
             }
-
+            // Check interface supported
+            if (CommonCapabilities.CheckScannerInterface is not null)
+            {
+                supportedServiceMessages.AddMatches(
+                    InterfaceClass.NameEnum.Check,
+                    MessageTypeInfo.MessageTypeEnum.Command,
+                    supportedFrameworkMessages,
+                    CommonCapabilities.CheckScannerInterface.Commands);
+                supportedServiceMessages.AddMatches(
+                    InterfaceClass.NameEnum.Check,
+                    MessageTypeInfo.MessageTypeEnum.Event,
+                    supportedFrameworkMessages,
+                    CommonCapabilities.CheckScannerInterface.Events);
+            }
+            // MixedMedia interface supported
+            if (CommonCapabilities.MixedMediaInterface is not null)
+            {
+                supportedServiceMessages.AddMatches(
+                    InterfaceClass.NameEnum.MixedMedia,
+                    MessageTypeInfo.MessageTypeEnum.Command,
+                    supportedFrameworkMessages,
+                    CommonCapabilities.MixedMediaInterface.Commands);
+                supportedServiceMessages.AddMatches(
+                    InterfaceClass.NameEnum.MixedMedia,
+                    MessageTypeInfo.MessageTypeEnum.Event,
+                    supportedFrameworkMessages,
+                    CommonCapabilities.MixedMediaInterface.Events);
+            }
             ServiceProvider.SetMessagesSupported(supportedServiceMessages);
         }
 
@@ -526,6 +563,16 @@ namespace XFS4IoTServer
         /// Stores CashAcceptor status
         /// </summary>
         public CashAcceptorStatusClass CashAcceptorStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores Check scanner status
+        /// </summary>
+        public CheckScannerStatusClass CheckScannerStatus { get; set; } = null;
+
+        /// <summary>
+        /// Stores Mixed media status
+        /// </summary>
+        public MixedMediaStatusClass MixedMediaStatus { get; set; } = null;
 
         private void GetStatus()
         {
@@ -1780,6 +1827,220 @@ namespace XFS4IoTServer
                             Printer: new(PaperType: type)
                         ));
                     }
+                }
+            }
+            if (sender.GetType() == typeof(CheckScannerStatusClass) ||
+                sender.GetType() == typeof(CheckScannerStatusClass.PositionStatusClass))
+            {
+                if (sender.GetType() == typeof(CheckScannerStatusClass))
+                {
+                    CheckScannerStatusClass checkScannerStatus = sender as CheckScannerStatusClass;
+                    checkScannerStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        Check: new(
+                            Acceptor: propertyInfo.PropertyName != nameof(checkScannerStatus.Acceptor) ?
+                            null :
+                            checkScannerStatus.Acceptor switch
+                            {
+                                CheckScannerStatusClass.AcceptorEnum.Ok => XFS4IoT.Check.StatusClass.AcceptorEnum.Ok,
+                                CheckScannerStatusClass.AcceptorEnum.Attention => XFS4IoT.Check.StatusClass.AcceptorEnum.State,
+                                CheckScannerStatusClass.AcceptorEnum.Stop => XFS4IoT.Check.StatusClass.AcceptorEnum.Stop,
+                                CheckScannerStatusClass.AcceptorEnum.Unknown => XFS4IoT.Check.StatusClass.AcceptorEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected acceptor status specified. {checkScannerStatus.Acceptor}")
+                            },
+                            Media: propertyInfo.PropertyName != nameof(checkScannerStatus.Media) ?
+                            null :
+                            checkScannerStatus.Media switch
+                            {
+                                CheckScannerStatusClass.MediaEnum.Present => XFS4IoT.Check.StatusClass.MediaEnum.Present,
+                                CheckScannerStatusClass.MediaEnum.NotPresent => XFS4IoT.Check.StatusClass.MediaEnum.NotPresent,
+                                CheckScannerStatusClass.MediaEnum.Position => XFS4IoT.Check.StatusClass.MediaEnum.Position,
+                                CheckScannerStatusClass.MediaEnum.Jammed => XFS4IoT.Check.StatusClass.MediaEnum.Jammed,
+                                CheckScannerStatusClass.MediaEnum.Unknown => XFS4IoT.Check.StatusClass.MediaEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected media status specified. {checkScannerStatus.Media}")
+                            },
+                            Toner: propertyInfo.PropertyName != nameof(checkScannerStatus.Toner) ?
+                            null :
+                            checkScannerStatus.Toner switch
+                            {
+                                CheckScannerStatusClass.TonerEnum.Out => XFS4IoT.Check.TonerEnum.Out,
+                                CheckScannerStatusClass.TonerEnum.Full => XFS4IoT.Check.TonerEnum.Full,
+                                CheckScannerStatusClass.TonerEnum.Low => XFS4IoT.Check.TonerEnum.Low,
+                                CheckScannerStatusClass.TonerEnum.Unknown => XFS4IoT.Check.TonerEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected acceptor status specified. {checkScannerStatus.Toner}")
+                            },
+                            Ink: propertyInfo.PropertyName != nameof(checkScannerStatus.Ink) ?
+                            null :
+                            checkScannerStatus.Ink switch
+                            {
+                                CheckScannerStatusClass.InkEnum.Out => XFS4IoT.Check.InkEnum.Out,
+                                CheckScannerStatusClass.InkEnum.Full => XFS4IoT.Check.InkEnum.Full,
+                                CheckScannerStatusClass.InkEnum.Low => XFS4IoT.Check.InkEnum.Low,
+                                CheckScannerStatusClass.InkEnum.Unknown => XFS4IoT.Check.InkEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected ink status specified. {checkScannerStatus.Ink}")
+                            },
+                            FrontImageScanner: propertyInfo.PropertyName != nameof(checkScannerStatus.FrontImageScanner) ?
+                            null :
+                            checkScannerStatus.FrontImageScanner switch
+                            {
+                                CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.FrontImageScannerEnum.Ok,
+                                CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.FrontImageScannerEnum.Fading,
+                                CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.FrontImageScannerEnum.Inoperative,
+                                CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.FrontImageScannerEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected front image scanner specified. {checkScannerStatus.FrontImageScanner}")
+                            },
+                            BackImageScanner: propertyInfo.PropertyName != nameof(checkScannerStatus.BackImageScanner) ?
+                            null :
+                            checkScannerStatus.BackImageScanner switch
+                            {
+                                CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.BackImageScannerEnum.Ok,
+                                CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.BackImageScannerEnum.Fading,
+                                CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.BackImageScannerEnum.Inoperative,
+                                CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.BackImageScannerEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected back image scanner specified. {checkScannerStatus.BackImageScanner}")
+                            },
+                            MICRReader: propertyInfo.PropertyName != nameof(checkScannerStatus.MICRReader) ?
+                            null :
+                            checkScannerStatus.MICRReader switch
+                            {
+                                CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.MicrReaderEnum.Ok,
+                                CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.MicrReaderEnum.Fading,
+                                CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.MicrReaderEnum.Inoperative,
+                                CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.MicrReaderEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected MICR reader specified. {checkScannerStatus.MICRReader}")
+                            },
+                            Stacker: propertyInfo.PropertyName != nameof(checkScannerStatus.Stacker) ?
+                            null :
+                            checkScannerStatus.Stacker switch
+                            {
+                                CheckScannerStatusClass.StackerEnum.Empty => XFS4IoT.Check.StatusClass.StackerEnum.Empty,
+                                CheckScannerStatusClass.StackerEnum.NotEmpty => XFS4IoT.Check.StatusClass.StackerEnum.NotEmpty,
+                                CheckScannerStatusClass.StackerEnum.Full => XFS4IoT.Check.StatusClass.StackerEnum.Full,
+                                CheckScannerStatusClass.StackerEnum.Inoperative => XFS4IoT.Check.StatusClass.StackerEnum.Inoperative,
+                                CheckScannerStatusClass.StackerEnum.Unknown => XFS4IoT.Check.StatusClass.StackerEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected stacker status specified. {checkScannerStatus.Stacker}")
+                            },
+                            Rebuncher: propertyInfo.PropertyName != nameof(checkScannerStatus.ReBuncher) ?
+                            null :
+                            checkScannerStatus.ReBuncher switch
+                            {
+                                CheckScannerStatusClass.ReBuncherEnum.Empty => XFS4IoT.Check.StatusClass.RebuncherEnum.Empty,
+                                CheckScannerStatusClass.ReBuncherEnum.NotEmpty => XFS4IoT.Check.StatusClass.RebuncherEnum.NotEmpty,
+                                CheckScannerStatusClass.ReBuncherEnum.Full => XFS4IoT.Check.StatusClass.RebuncherEnum.Full,
+                                CheckScannerStatusClass.ReBuncherEnum.Inoperative => XFS4IoT.Check.StatusClass.RebuncherEnum.Inoperative,
+                                CheckScannerStatusClass.ReBuncherEnum.Unknown => XFS4IoT.Check.StatusClass.RebuncherEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected rebuncher status specified. {checkScannerStatus.ReBuncher}")
+                            },
+                            MediaFeeder: propertyInfo.PropertyName != nameof(checkScannerStatus.MediaFeeder) ?
+                            null :
+                            checkScannerStatus.MediaFeeder switch
+                            {
+                                CheckScannerStatusClass.MediaFeederEnum.Empty => XFS4IoT.Check.MediaFeederEnum.Empty,
+                                CheckScannerStatusClass.MediaFeederEnum.NotEmpty => XFS4IoT.Check.MediaFeederEnum.NotEmpty,
+                                CheckScannerStatusClass.MediaFeederEnum.Inoperative => XFS4IoT.Check.MediaFeederEnum.Inoperative,
+                                CheckScannerStatusClass.MediaFeederEnum.Unknown => XFS4IoT.Check.MediaFeederEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected media feeder status specified. {checkScannerStatus.MediaFeeder}")
+                            })
+                        ));
+                }
+                else
+                {
+                    CheckScannerStatusClass.PositionStatusClass positionStatus = sender as CheckScannerStatusClass.PositionStatusClass;
+                    positionStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    XFS4IoT.Check.PositionStatusClass input = null;
+                    XFS4IoT.Check.PositionStatusClass output = null;
+                    XFS4IoT.Check.PositionStatusClass refused = null;
+
+                    XFS4IoT.Check.PositionStatusClass stat = new(
+                            Shutter: propertyInfo.PropertyName != nameof(positionStatus.Shutter) ?
+                            null :
+                            positionStatus.Shutter switch
+                            {
+                                CheckScannerStatusClass.ShutterEnum.Open => XFS4IoT.Check.ShutterStateEnum.Open,
+                                CheckScannerStatusClass.ShutterEnum.Closed => XFS4IoT.Check.ShutterStateEnum.Closed,
+                                CheckScannerStatusClass.ShutterEnum.Jammed => XFS4IoT.Check.ShutterStateEnum.Jammed,
+                                CheckScannerStatusClass.ShutterEnum.Unknown => XFS4IoT.Check.ShutterStateEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected shutter status specified. {positionStatus.Shutter}")
+                            },
+                            PositionStatus: propertyInfo.PropertyName != nameof(positionStatus.PositionStatus) ?
+                            null :
+                            positionStatus.PositionStatus switch
+                            {
+                                CheckScannerStatusClass.PositionStatusEnum.Empty => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.Empty,
+                                CheckScannerStatusClass.PositionStatusEnum.NotEmpty => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.NotEmpty,
+                                CheckScannerStatusClass.PositionStatusEnum.Unknown => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected position status specified. {positionStatus.PositionStatus}")
+                            },
+                            Transport: propertyInfo.PropertyName != nameof(positionStatus.Transport) ?
+                            null :
+                            positionStatus.Transport switch
+                            {
+                                CheckScannerStatusClass.TransportEnum.Ok => XFS4IoT.Check.PositionStatusClass.TransportEnum.Ok,
+                                CheckScannerStatusClass.TransportEnum.Inoperative => XFS4IoT.Check.PositionStatusClass.TransportEnum.Inoperative,
+                                CheckScannerStatusClass.TransportEnum.Unknown => XFS4IoT.Check.PositionStatusClass.TransportEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected transport status specified. {positionStatus.Transport}")
+                            },
+                            TransportMediaStatus: propertyInfo.PropertyName != nameof(positionStatus.TransportMediaStatus) ?
+                            null :
+                            positionStatus.TransportMediaStatus switch
+                            {
+                                CheckScannerStatusClass.TransportMediaStatusEnum.Empty => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.Empty,
+                                CheckScannerStatusClass.TransportMediaStatusEnum.NotEmpty => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.NotEmpty,
+                                CheckScannerStatusClass.TransportMediaStatusEnum.Unknown => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected transport media status specified. {positionStatus.TransportMediaStatus}")
+                            },
+                            JammedShutterPosition: propertyInfo.PropertyName != nameof(positionStatus.JammedShutterPosition) ?
+                            null :
+                            positionStatus.JammedShutterPosition switch
+                            {
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Open => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Open,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Closed => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Closed,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.PartiallyOpen => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.PartiallyOpen,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.NotJammed => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.NotJammed,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Unknown => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected jammed shutter position status specified. {positionStatus.JammedShutterPosition}")
+                            });
+
+                    positionStatus.Position.IsNotNull($"Unexpected Position property set to null. {nameof(positionStatus.Position)}");
+
+                    CheckScannerStatusClass.PositionStatusClass.PositionBitmapEnum thisPosition = (CheckScannerStatusClass.PositionStatusClass.PositionBitmapEnum)positionStatus.Position;
+                    if (thisPosition.HasFlag(CheckScannerStatusClass.PositionStatusClass.PositionBitmapEnum.Input))
+                    {
+                        input = stat;
+                    }
+                    if (thisPosition.HasFlag(CheckScannerStatusClass.PositionStatusClass.PositionBitmapEnum.Output))
+                    {
+                        output = stat;
+                    }
+                    if (thisPosition.HasFlag(CheckScannerStatusClass.PositionStatusClass.PositionBitmapEnum.Refused))
+                    {
+                        refused = stat;
+                    }
+
+                    await StatusChangedEvent(new(
+                        Check: new(
+                            Positions: new(
+                                Input: input,
+                                Output: output,
+                                Refused: refused)
+                            )
+                        ));
+                }
+                if (sender.GetType() == typeof(MixedMediaStatusClass))
+                {
+                    MixedMediaStatusClass mixedMediaStatus = sender as MixedMediaStatusClass;
+                    mixedMediaStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        MixedMedia: new(
+                            Modes: new(
+                                CashAccept: mixedMediaStatus.CurrentModes.HasFlag(MixedMedia.ModeTypeEnum.Cash),
+                                CheckAccept: mixedMediaStatus.CurrentModes.HasFlag(MixedMedia.ModeTypeEnum.Check)
+                                )
+                            )
+                        ));
                 }
             }
         }

@@ -12,7 +12,35 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class AuxiliariesStatusClass : StatusBase
+    public sealed class AuxiliariesStatusClass(
+        AuxiliariesStatusClass.OperatorSwitchEnum OperatorSwitch = AuxiliariesStatusClass.OperatorSwitchEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum TamperSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum InternalTamperSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum SeismicSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum HeatSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.PresenceSensorEnum ProximitySensor = AuxiliariesStatusClass.PresenceSensorEnum.NotAvailable,
+        AuxiliariesStatusClass.AmbientLightSensorEnum AmbientLightSensor = AuxiliariesStatusClass.AmbientLightSensorEnum.NotAvailable,
+        AuxiliariesStatusClass.PresenceSensorEnum EnhancedAudioSensor = AuxiliariesStatusClass.PresenceSensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum BootSwitchSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.DisplaySensorEnum DisplaySensor = AuxiliariesStatusClass.DisplaySensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum OperatorCallButtonSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.HandsetSensorStatusEnum HandsetSensor = AuxiliariesStatusClass.HandsetSensorStatusEnum.NotAvailable,
+        AuxiliariesStatusClass.PresenceSensorEnum HeadsetMicrophoneSensor = AuxiliariesStatusClass.PresenceSensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum FasciaMicrophoneSensor = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.VandalShieldStatusEnum VandalShield = AuxiliariesStatusClass.VandalShieldStatusEnum.NotAvailable,
+        Dictionary<AuxiliariesCapabilitiesClass.DoorType, AuxiliariesStatusClass.DoorStatusClass> Doors = null,
+        AuxiliariesStatusClass.OpenClosedIndicatorEnum OpenClosedIndicator = AuxiliariesStatusClass.OpenClosedIndicatorEnum.NotAvailable,
+        AuxiliariesStatusClass.AudioRateEnum AudioRate = AuxiliariesStatusClass.AudioRateEnum.Off,
+        AuxiliariesStatusClass.AudioSignalEnum AudioSignal = AuxiliariesStatusClass.AudioSignalEnum.Keypress,
+        AuxiliariesStatusClass.SensorEnum Heating = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum ConsumerDisplayBacklight = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum SignageDisplay = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        int Volume = 0,
+        AuxiliariesStatusClass.UpsStatusEnum UPS = AuxiliariesStatusClass.UpsStatusEnum.NotAvailable,
+        AuxiliariesStatusClass.SensorEnum AudibleAlarm = AuxiliariesStatusClass.SensorEnum.NotAvailable,
+        AuxiliariesStatusClass.EnhancedAudioControlEnum EnhancedAudioControl = AuxiliariesStatusClass.EnhancedAudioControlEnum.NotAvailable,
+        AuxiliariesStatusClass.EnhancedAudioControlEnum EnhancedMicrophoneControl = AuxiliariesStatusClass.EnhancedAudioControlEnum.NotAvailable,
+        int MicrophoneVolume = 0) : StatusBase
     {
         public sealed class DoorStatusClass(DoorStatusEnum DoorStatus) : StatusBase
         {
@@ -35,65 +63,6 @@ namespace XFS4IoTFramework.Common
             }
 
             private DoorStatusEnum doorStatus = DoorStatus;
-        }
-
-        public AuxiliariesStatusClass(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
-                                 SensorEnum TamperSensor = SensorEnum.NotAvailable,
-                                 SensorEnum InternalTamperSensor = SensorEnum.NotAvailable,
-                                 SensorEnum SeismicSensor = SensorEnum.NotAvailable,
-                                 SensorEnum HeatSensor = SensorEnum.NotAvailable,
-                                 PresenceSensorEnum ProximitySensor = PresenceSensorEnum.NotAvailable,
-                                 AmbientLightSensorEnum AmbientLightSensor = AmbientLightSensorEnum.NotAvailable,
-                                 PresenceSensorEnum EnhancedAudioSensor = PresenceSensorEnum.NotAvailable,
-                                 SensorEnum BootSwitchSensor = SensorEnum.NotAvailable,
-                                 DisplaySensorEnum DisplaySensor = DisplaySensorEnum.NotAvailable,
-                                 SensorEnum OperatorCallButtonSensor = SensorEnum.NotAvailable,
-                                 HandsetSensorStatusEnum HandsetSensor = HandsetSensorStatusEnum.NotAvailable,
-                                 PresenceSensorEnum HeadsetMicrophoneSensor = PresenceSensorEnum.NotAvailable,
-                                 SensorEnum FasciaMicrophoneSensor = SensorEnum.NotAvailable,
-                                 VandalShieldStatusEnum VandalShield = VandalShieldStatusEnum.NotAvailable,
-                                 Dictionary<AuxiliariesCapabilitiesClass.DoorType, DoorStatusClass> Doors = null,
-                                 OpenClosedIndicatorEnum OpenClosedIndicator = OpenClosedIndicatorEnum.NotAvailable,
-                                 AudioRateEnum AudioRate = AudioRateEnum.Off,
-                                 AudioSignalEnum AudioSignal = AudioSignalEnum.Keypress,
-                                 SensorEnum Heating = SensorEnum.NotAvailable,
-                                 SensorEnum ConsumerDisplayBacklight = SensorEnum.NotAvailable,
-                                 SensorEnum SignageDisplay = SensorEnum.NotAvailable,
-                                 int Volume = 0,
-                                 UpsStatusEnum UPS = UpsStatusEnum.NotAvailable,
-                                 SensorEnum AudibleAlarm = SensorEnum.NotAvailable,
-                                 EnhancedAudioControlEnum EnhancedAudioControl = EnhancedAudioControlEnum.NotAvailable,
-                                 EnhancedAudioControlEnum EnhancedMicrophoneControl = EnhancedAudioControlEnum.NotAvailable,
-                                 int MicrophoneVolume = 0)
-        {
-            operatorSwitch = OperatorSwitch;
-            tamperSensor = TamperSensor;
-            internalTamperSensor = InternalTamperSensor;
-            seismicSensor = SeismicSensor;
-            heatSensor = HeatSensor;
-            proximitySensor = ProximitySensor;
-            ambientLightSensor = AmbientLightSensor;
-            enhancedAudioSensor = EnhancedAudioSensor;
-            bootSwitchSensor = BootSwitchSensor;
-            displaySensor = DisplaySensor;
-            operatorCallButtonSensor = OperatorCallButtonSensor;
-            handsetSensor = HandsetSensor;
-            headsetMicrophoneSensor = HeadsetMicrophoneSensor;
-            fasciaMicrophoneSensor = FasciaMicrophoneSensor;
-            vandalShield = VandalShield;
-            this.Doors = Doors;
-            openClosedIndicator = OpenClosedIndicator;
-            audioRate = AudioRate;
-            audioSignal = AudioSignal;
-            heating = Heating;
-            consumerDisplayBacklight = ConsumerDisplayBacklight;
-            signageDisplay = SignageDisplay;
-            volume = Volume;
-            ups = UPS;
-            audibleAlarm = AudibleAlarm;
-            enhancedAudioControl = EnhancedAudioControl;
-            enhancedMicrophoneControl = EnhancedMicrophoneControl;
-            microphoneVolume = MicrophoneVolume;
         }
 
         public enum SensorEnum
@@ -205,7 +174,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private OperatorSwitchEnum operatorSwitch = OperatorSwitchEnum.NotAvailable;
+        private OperatorSwitchEnum operatorSwitch = OperatorSwitch;
 
         public SensorEnum TamperSensor 
         { 
@@ -219,7 +188,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum tamperSensor = SensorEnum.NotAvailable;
+        private SensorEnum tamperSensor = TamperSensor;
 
         public SensorEnum InternalTamperSensor 
         { 
@@ -233,7 +202,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum internalTamperSensor = SensorEnum.NotAvailable;
+        private SensorEnum internalTamperSensor = InternalTamperSensor;
 
         public SensorEnum SeismicSensor 
         { 
@@ -247,7 +216,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum seismicSensor = SensorEnum.NotAvailable;
+        private SensorEnum seismicSensor = SeismicSensor;
 
         public SensorEnum HeatSensor 
         { 
@@ -261,7 +230,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum heatSensor = SensorEnum.NotAvailable;
+        private SensorEnum heatSensor = HeatSensor;
 
         public PresenceSensorEnum ProximitySensor 
         { 
@@ -275,7 +244,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private PresenceSensorEnum proximitySensor = PresenceSensorEnum.NotAvailable;
+        private PresenceSensorEnum proximitySensor = ProximitySensor;
 
         public AmbientLightSensorEnum AmbientLightSensor 
         { 
@@ -289,7 +258,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AmbientLightSensorEnum ambientLightSensor = AmbientLightSensorEnum.NotAvailable;
+        private AmbientLightSensorEnum ambientLightSensor = AmbientLightSensor;
 
         public PresenceSensorEnum EnhancedAudioSensor 
         { 
@@ -303,7 +272,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private PresenceSensorEnum enhancedAudioSensor = PresenceSensorEnum.NotAvailable;
+        private PresenceSensorEnum enhancedAudioSensor = EnhancedAudioSensor;
 
         public SensorEnum BootSwitchSensor 
         { 
@@ -317,7 +286,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum bootSwitchSensor = SensorEnum.NotAvailable;
+        private SensorEnum bootSwitchSensor = BootSwitchSensor;
 
         public DisplaySensorEnum DisplaySensor
         { 
@@ -331,7 +300,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private DisplaySensorEnum displaySensor = DisplaySensorEnum.NotAvailable;
+        private DisplaySensorEnum displaySensor = DisplaySensor;
 
         public SensorEnum OperatorCallButtonSensor 
         {
@@ -345,7 +314,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum operatorCallButtonSensor = SensorEnum.NotAvailable;
+        private SensorEnum operatorCallButtonSensor = OperatorCallButtonSensor;
 
         public HandsetSensorStatusEnum HandsetSensor 
         { 
@@ -359,7 +328,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private HandsetSensorStatusEnum handsetSensor = HandsetSensorStatusEnum.NotAvailable;
+        private HandsetSensorStatusEnum handsetSensor = HandsetSensor;
 
         public PresenceSensorEnum HeadsetMicrophoneSensor 
         { 
@@ -373,7 +342,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private PresenceSensorEnum headsetMicrophoneSensor = PresenceSensorEnum.NotAvailable;
+        private PresenceSensorEnum headsetMicrophoneSensor = HeadsetMicrophoneSensor;
 
         public SensorEnum FasciaMicrophoneSensor 
         { 
@@ -388,7 +357,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum fasciaMicrophoneSensor = SensorEnum.NotAvailable;
+        private SensorEnum fasciaMicrophoneSensor = FasciaMicrophoneSensor;
 
         public VandalShieldStatusEnum VandalShield 
         { 
@@ -402,9 +371,9 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private VandalShieldStatusEnum vandalShield = VandalShieldStatusEnum.NotAvailable;
+        private VandalShieldStatusEnum vandalShield = VandalShield;
 
-        public Dictionary<AuxiliariesCapabilitiesClass.DoorType, DoorStatusClass> Doors { get; init; }
+        public Dictionary<AuxiliariesCapabilitiesClass.DoorType, DoorStatusClass> Doors { get; init; } = Doors;
 
         public OpenClosedIndicatorEnum OpenClosedIndicator 
         { 
@@ -418,7 +387,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private OpenClosedIndicatorEnum openClosedIndicator = OpenClosedIndicatorEnum.NotAvailable;
+        private OpenClosedIndicatorEnum openClosedIndicator = OpenClosedIndicator;
 
         public enum AudioRateEnum 
         {
@@ -448,7 +417,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AudioRateEnum audioRate = AudioRateEnum.NotAvailable;
+        private AudioRateEnum audioRate = AudioRate;
 
         public AudioSignalEnum AudioSignal 
         { 
@@ -462,7 +431,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AudioSignalEnum audioSignal = AudioSignalEnum.NotAvailable;
+        private AudioSignalEnum audioSignal = AudioSignal;
 
         public SensorEnum Heating 
         { 
@@ -476,7 +445,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum heating = SensorEnum.NotAvailable;
+        private SensorEnum heating = Heating;
 
         public SensorEnum ConsumerDisplayBacklight 
         { 
@@ -490,7 +459,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum consumerDisplayBacklight = SensorEnum.NotAvailable;
+        private SensorEnum consumerDisplayBacklight = ConsumerDisplayBacklight;
 
         public SensorEnum SignageDisplay 
         { 
@@ -504,7 +473,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum signageDisplay = SensorEnum.NotAvailable;
+        private SensorEnum signageDisplay = SignageDisplay;
 
         /// <summary>
         /// This property is zero if the device doesn't support volume.
@@ -521,7 +490,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int volume = 0;
+        private int volume = Volume;
 
         public UpsStatusEnum UPS 
         { 
@@ -535,7 +504,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private UpsStatusEnum ups = UpsStatusEnum.NotAvailable;
+        private UpsStatusEnum ups = UPS;
 
         public SensorEnum AudibleAlarm 
         { 
@@ -549,7 +518,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SensorEnum audibleAlarm = SensorEnum.NotAvailable;
+        private SensorEnum audibleAlarm = AudibleAlarm;
 
         public EnhancedAudioControlEnum EnhancedAudioControl 
         {
@@ -563,7 +532,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private EnhancedAudioControlEnum enhancedAudioControl = EnhancedAudioControlEnum.NotAvailable;
+        private EnhancedAudioControlEnum enhancedAudioControl = EnhancedAudioControl;
 
         public EnhancedAudioControlEnum EnhancedMicrophoneControl 
         {
@@ -577,7 +546,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private EnhancedAudioControlEnum enhancedMicrophoneControl = EnhancedAudioControlEnum.NotAvailable;
+        private EnhancedAudioControlEnum enhancedMicrophoneControl = EnhancedMicrophoneControl;
         
         /// <summary>
         /// This property is zero if the device doesn't support volume.
@@ -594,6 +563,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int microphoneVolume = 0;
+        private int microphoneVolume = MicrophoneVolume;
     }
 }

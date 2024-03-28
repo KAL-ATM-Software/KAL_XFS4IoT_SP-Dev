@@ -12,19 +12,17 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using static XFS4IoTFramework.Common.CameraStatusClass;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CameraStatusClass
+    public sealed class CameraStatusClass(
+        Dictionary<CameraLocationStatusClass.CameraLocationEnum, CameraLocationStatusClass> CameraLocationStatus,
+        Dictionary<string, CameraLocationStatusClass> CustomCameraLocationStatus)
     {
-        public CameraStatusClass(Dictionary<CameraLocationStatusClass.CameraLocationEnum, CameraLocationStatusClass> CameraLocationStatus,
-                                 Dictionary<string, CameraLocationStatusClass> CustomCameraLocationStatus)
-        {
-            this.CameraLocationStatus = CameraLocationStatus;
-            this.CustomCameraLocationStatus = CustomCameraLocationStatus;
-        }
-
-        public sealed class CameraLocationStatusClass : StatusBase
+        public sealed class CameraLocationStatusClass(
+            CameraLocationStatusClass.MediaStateEnum MediaState,
+            int? NumberOfPictures) : StatusBase
         {
             public enum CameraLocationEnum
             {
@@ -46,13 +44,6 @@ namespace XFS4IoTFramework.Common
                 Ok,
                 Inoperable,
                 Unknown
-            }
-
-            public CameraLocationStatusClass(MediaStateEnum MediaState,
-                                             int? NumberOfPictures)
-            {
-                mediaState = MediaState;
-                numberOfPictures = NumberOfPictures;
             }
 
             /// <summary>
@@ -103,7 +94,7 @@ namespace XFS4IoTFramework.Common
                     }
                 }
             }
-            public MediaStateEnum mediaState = MediaStateEnum.Unknown;
+            public MediaStateEnum mediaState = MediaState;
 
             /// <summary>
             /// Specifies the number of pictures stored on the recording media of the cameras
@@ -123,11 +114,11 @@ namespace XFS4IoTFramework.Common
                     }
                 }
             }
-            private int? numberOfPictures = -1;
+            private int? numberOfPictures = NumberOfPictures;
         }
 
-        public Dictionary<CameraLocationStatusClass.CameraLocationEnum, CameraLocationStatusClass> CameraLocationStatus { get; init; }
+        public Dictionary<CameraLocationStatusClass.CameraLocationEnum, CameraLocationStatusClass> CameraLocationStatus { get; init; } = CameraLocationStatus;
 
-        public Dictionary<string, CameraLocationStatusClass> CustomCameraLocationStatus { get; init; }
+        public Dictionary<string, CameraLocationStatusClass> CustomCameraLocationStatus { get; init; } = CustomCameraLocationStatus;
     }
 }

@@ -123,6 +123,9 @@ namespace XFS4IoTFramework.Storage
         public Dictionary<string, SetCardUnitStorage> NewCardStorage { get; init; }
     }
 
+    /// <summary>
+    /// Configuration of the cash unit
+    /// </summary>
     public sealed record SetCashConfiguration
     {
         public SetCashConfiguration(CashCapabilitiesClass.TypesEnum? Types,
@@ -180,7 +183,7 @@ namespace XFS4IoTFramework.Storage
         public int? HighThreshold { get; set; }
 
         /// <summary>
-        /// IIf specified, ReplenishmentStatus is set to Low if the count is lower than this number.
+        /// If specified, ReplenishmentStatus is set to Low if the count is lower than this number.
         /// </summary>
         public int? LowThreshold { get; set; }
 
@@ -201,6 +204,7 @@ namespace XFS4IoTFramework.Storage
 
         /// <summary>
         /// Application configured name of the unit.
+        /// Null if the application doesn't set to change
         /// </summary>
         public string Name { get; set; }
 
@@ -211,34 +215,25 @@ namespace XFS4IoTFramework.Storage
         public int? MaxRetracts { get; set; }
     }
 
-    public sealed class SetCashUnitStorage
+    public sealed class SetCashUnitStorage(
+        SetCashConfiguration Configuration,
+        StorageCashCountClass InitialCounts)
     {
-        public SetCashUnitStorage(SetCashConfiguration Configuration,
-                                  StorageCashCountClass InitialCounts)
-        {
-            this.Configuration = Configuration;
-            this.InitialCounts = InitialCounts;
-        }
 
         /// <summary>
         /// If this property is null, no need to change card unit configuration
         /// </summary>
-        public SetCashConfiguration Configuration { get; init; }
+        public SetCashConfiguration Configuration { get; init; } = Configuration;
 
         /// <summary>
         /// Set to InitialCounts
         /// </summary>
-        public StorageCashCountClass InitialCounts { get; init; }
+        public StorageCashCountClass InitialCounts { get; init; } = InitialCounts;
     }
 
-    public sealed class SetCashStorageRequest
+    public sealed class SetCashStorageRequest(Dictionary<string, SetCashUnitStorage> CashStorageToSet)
     {
-        public SetCashStorageRequest(Dictionary<string, SetCashUnitStorage> CashStorageToSet)
-        {
-            this.CashStorageToSet = CashStorageToSet;
-        }
-
-        public Dictionary<string, SetCashUnitStorage> CashStorageToSet { get; init; }
+        public Dictionary<string, SetCashUnitStorage> CashStorageToSet { get; init; } = CashStorageToSet;
     }
 
     public sealed class SetCashStorageResult : DeviceResult
@@ -263,5 +258,109 @@ namespace XFS4IoTFramework.Storage
         public SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         public Dictionary<string, SetCashUnitStorage> NewCashStorage { get; init; }
+    }
+
+    /// <summary>
+    /// Configuration of the check unit
+    /// </summary>
+    public sealed record SetCheckConfiguration
+    {
+        public SetCheckConfiguration(CheckCapabilitiesClass.TypesEnum? Types,
+                                     string Id,
+                                     int? HighThreshold,
+                                     int? RetractHighThreshold)
+        {
+            this.Types = Types;
+            this.Id = Id;
+            this.HighThreshold = HighThreshold;
+            this.RetractHighThreshold = RetractHighThreshold;
+            this.HighThreshold = HighThreshold;
+        }
+
+        /// <summary>
+        /// If specified, The types of operation the unit is capable of or configured to perform. 
+        /// This is a combination of one or  more operations.
+        /// </summary>
+        public CheckCapabilitiesClass.TypesEnum? Types { get; set; }
+
+        /// <summary>
+        /// An application defined Storage Unit Identifier.
+        /// Null if the application doesn't set to change.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// If specified, ReplenishmentStatus is set to High if the total number of items
+        /// in the storage unit is greater than this number.
+        /// </summary>
+        public int? HighThreshold { get; set; }
+
+        /// <summary>
+        /// If specified and the storage unit is configured as Retract,
+        /// ReplenishmentStatus is set to High if the total number of retract operations 
+        /// in the storage unit is greater than this number.
+        /// </summary>
+        public int? RetractHighThreshold { get; set; }
+    }
+
+    public sealed class SetCheckUnitStorage(
+        SetCheckConfiguration Configuration,
+        int? MediaInCount,
+        int? Count,
+        int? RetractOperations)
+    {
+
+        /// <summary>
+        /// If this property is null, no need to change check unit configuration
+        /// </summary>
+        public SetCheckConfiguration Configuration { get; init; } = Configuration;
+
+        /// <summary>
+        /// If specified, Count of items added to the storage unit due to Check operations. 
+        /// If the number of items is not counted this is not reported and RetractOperations
+        /// is incremented as items are added to the unit.
+        /// </summary>
+        public int? MediaInCount { get; init; } = MediaInCount;
+
+        /// <summary>
+        /// If specified, Total number of items added to the storage unit due to any operations. 
+        /// If the number of items is not counted this is not reported and RetractOperations is 
+        /// incremented as items are added to the unit.
+        /// </summary>
+        public int? Count { get; init; } = Count;
+
+        /// <summary>
+        /// If specified, Total number of operations which resulted in items being retracted to the storage unit.
+        /// </summary>
+        public int? RetractOperations { get; init; } = RetractOperations;
+    }
+
+    public sealed class SetCheckStorageRequest(Dictionary<string, SetCheckUnitStorage> CashStorageToSet)
+    {
+        public Dictionary<string, SetCheckUnitStorage> CheckStorageToSet { get; init; } = CashStorageToSet;
+    }
+
+    public sealed class SetCheckStorageResult : DeviceResult
+    {
+        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                     string ErrorDescription = null,
+                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewCheckStorage = null;
+        }
+
+        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                     Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewCheckStorage = NewCheckStorage;
+        }
+
+        public SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        public Dictionary<string, SetCheckUnitStorage> NewCheckStorage { get; init; }
     }
 }

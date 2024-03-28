@@ -14,7 +14,12 @@ using XFS4IoT.Auxiliaries;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CashAcceptorStatusClass : StatusBase
+    public sealed class CashAcceptorStatusClass(
+        CashAcceptorStatusClass.IntermediateStackerEnum IntermediateStacker,
+        CashAcceptorStatusClass.StackerItemsEnum StackerItems,
+        CashAcceptorStatusClass.BanknoteReaderEnum BanknoteReader,
+        bool DropBox,
+        Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementStatusClass.PositionStatusClass> Positions) : StatusBase
     {
         public enum StackerItemsEnum
         {
@@ -42,19 +47,6 @@ namespace XFS4IoTFramework.Common
             NotSupported,
         }
 
-        public CashAcceptorStatusClass(IntermediateStackerEnum IntermediateStacker,
-                                       StackerItemsEnum StackerItems,
-                                       BanknoteReaderEnum BanknoteReader,
-                                       bool DropBox,
-                                       Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementStatusClass.PositionStatusClass> Positions)
-        {
-            intermediateStacker = IntermediateStacker;
-            stackerItems = StackerItems;
-            banknoteReader = BanknoteReader;
-            dropBox = DropBox;
-            this.Positions = Positions;
-        }
-
         /// <summary>
         /// Supplies the state of the intermediate stacker. The following values are possible:
         /// 
@@ -78,7 +70,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private IntermediateStackerEnum intermediateStacker = IntermediateStackerEnum.NotSupported;
+        private IntermediateStackerEnum intermediateStacker = IntermediateStacker;
 
         /// <summary>
         /// This field informs the application whether items on the intermediate stacker have been in customer access. 
@@ -104,7 +96,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private StackerItemsEnum stackerItems = StackerItemsEnum.NotSupported;
+        private StackerItemsEnum stackerItems = StackerItems;
 
         /// <summary>
         /// Supplies the state of the banknote reader. The following values are possible:
@@ -127,7 +119,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private BanknoteReaderEnum banknoteReader = BanknoteReaderEnum.NotSupported;
+        private BanknoteReaderEnum banknoteReader = BanknoteReader;
 
         /// <summary>
         /// The drop box is an area within the Cash Acceptor where items which have caused a problem during an operation 
@@ -147,11 +139,11 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private bool dropBox = false;
+        private bool dropBox = DropBox;
 
         /// <summary>
         /// Array of structures for each position to which items can be dispensed or presented.
         /// </summary>
-        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementStatusClass.PositionStatusClass> Positions { get; init; }
+        public Dictionary<CashManagementCapabilitiesClass.PositionEnum, CashManagementStatusClass.PositionStatusClass> Positions { get; init; } = Positions;
     }
 }

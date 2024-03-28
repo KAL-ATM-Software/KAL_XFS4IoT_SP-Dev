@@ -17,7 +17,9 @@ namespace XFS4IoTFramework.Common
     /// LightsCapabilitiesClass
     /// Store device capabilites for the lights supported by the device
     /// </summary>
-    public sealed class LightsCapabilitiesClass
+    public sealed class LightsCapabilitiesClass(
+        Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsCapabilitiesClass.Light> Lights,
+        Dictionary<string, LightsCapabilitiesClass.Light> CustomLights = null)
     {
         public enum DeviceEnum
         {
@@ -89,13 +91,6 @@ namespace XFS4IoTFramework.Common
             Rear = 1 << 6,
         }
 
-        public LightsCapabilitiesClass(Dictionary<DeviceEnum, Light> Lights,
-                                       Dictionary<string, Light> CustomLights = null)
-        {
-            this.Lights = Lights;
-            this.CustomLights = CustomLights;
-        }
-
         /// <summary>
         /// Light capabilities
         /// </summary>
@@ -124,11 +119,11 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Pre-defined lights device components in the XFS specification
         /// </summary>
-        public Dictionary<DeviceEnum, Light> Lights { get; init; }
+        public Dictionary<DeviceEnum, Light> Lights { get; init; } = Lights;
 
         /// <summary>
         /// Vendor specific type of lights
         /// </summary>
-        public Dictionary<string, Light> CustomLights { get; init; }
+        public Dictionary<string, Light> CustomLights { get; init; } = CustomLights;
     }
 }

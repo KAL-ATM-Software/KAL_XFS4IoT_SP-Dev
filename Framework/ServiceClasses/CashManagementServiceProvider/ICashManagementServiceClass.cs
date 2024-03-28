@@ -17,9 +17,6 @@ namespace XFS4IoTFramework.CashManagement
 {
     public interface ICashManagementService
     {
-
-        Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status);
-
         Task ItemsTakenEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches);
 
         Task ItemsInsertedEvent(CashManagementCapabilitiesClass.PositionEnum Position);

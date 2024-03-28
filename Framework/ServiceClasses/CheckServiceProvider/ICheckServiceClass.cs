@@ -18,7 +18,15 @@ namespace XFS4IoTFramework.Check
 {
     public interface ICheckService
     {
+        /// <summary>
+        /// Store transaction status
+        /// </summary>
+        TransactionStatus LastTransactionStatus { get; init; }
 
+        /// <summary>
+        /// Store transaction status persistently
+        /// </summary>
+        void StoreTransactionStatus();
     }
 
     public interface ICheckServiceClass : ICheckService, ICheckUnsolicitedEvents

@@ -13,7 +13,11 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CryptoCapabilitiesClass
+    public sealed class CryptoCapabilitiesClass(
+        CryptoCapabilitiesClass.EMVHashAlgorithmEnum EMVHashAlgorithms,
+        Dictionary<string, Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.CryptoAttributesClass>>> CryptoAttributes,
+        Dictionary<string, Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>>> AuthenticationAttributes,
+        Dictionary<string, Dictionary<string, Dictionary<string, CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass>>> VerifyAttributes)
     {
         [Flags]
         public enum EMVHashAlgorithmEnum
@@ -32,22 +36,11 @@ namespace XFS4IoTFramework.Common
             SHA256 = 1 << 1, //The SHA 256 digest algorithm
         }
 
-        public CryptoCapabilitiesClass(EMVHashAlgorithmEnum EMVHashAlgorithms,
-                                       Dictionary<string, Dictionary<string, Dictionary<string, CryptoAttributesClass>>> CryptoAttributes,
-                                       Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> AuthenticationAttributes,
-                                       Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> VerifyAttributes)
-        { 
-            this.EMVHashAlgorithms = EMVHashAlgorithms;
-            this.CryptoAttributes = CryptoAttributes;
-            this.AuthenticationAttributes = AuthenticationAttributes;
-            this.VerifyAttributes = VerifyAttributes;
-        }
-
 
         /// <summary>
         /// Specifies which hash algorithm is supported for the calculation of the HASH.
         /// </summary>
-        public EMVHashAlgorithmEnum EMVHashAlgorithms { get; init; }
+        public EMVHashAlgorithmEnum EMVHashAlgorithms { get; init; } = EMVHashAlgorithms;
 
         public sealed class CryptoAttributesClass
         {
@@ -94,7 +87,7 @@ namespace XFS4IoTFramework.Common
         /// Key-value pair of attributes supported by the CryptoData command to encrypt
         /// or decrypt data.
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, CryptoAttributesClass>>> CryptoAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, CryptoAttributesClass>>> CryptoAttributes { get; init; } = CryptoAttributes;
 
         public sealed class VerifyAuthenticationAttributesClass
         {
@@ -130,13 +123,13 @@ namespace XFS4IoTFramework.Common
         /// Key-value pair of attributes supported by the GenerateAuthentication command
         /// to generate authentication data.
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> AuthenticationAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> AuthenticationAttributes { get; init; } = AuthenticationAttributes;
 
         /// <summary>
         /// Key-value pair of attributes supported by the [Crypto.VerifyAuthentication](#crypto.verifyauthentication) command
         /// to verify authentication data.
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> VerifyAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, VerifyAuthenticationAttributesClass>>> VerifyAttributes { get; init; } = VerifyAttributes;
 
     }
 }

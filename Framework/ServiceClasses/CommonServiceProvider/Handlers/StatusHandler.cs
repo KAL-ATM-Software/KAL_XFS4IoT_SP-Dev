@@ -1,10 +1,9 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2024
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -1189,6 +1188,190 @@ namespace XFS4IoTFramework.Common
                     Pictures: numPicsLocation);
             }
 
+            XFS4IoT.Check.StatusClass checkScanner = null;
+            if (Common.CheckScannerStatus is not null)
+            {
+                XFS4IoT.Check.PositionStatusClass input = null;
+                XFS4IoT.Check.PositionStatusClass output = null;
+                XFS4IoT.Check.PositionStatusClass refused = null;
+                if (Common.CheckScannerStatus.Positions is not null)
+                {
+                    foreach (var positionStat in Common.CheckScannerStatus.Positions)
+                    {
+                        XFS4IoT.Check.PositionStatusClass stat = new(
+                            Shutter: positionStat.Value.Shutter == CheckScannerStatusClass.ShutterEnum.NotSupported ?
+                            null : positionStat.Value.Shutter switch
+                            {
+                                CheckScannerStatusClass.ShutterEnum.Open => XFS4IoT.Check.ShutterStateEnum.Open,
+                                CheckScannerStatusClass.ShutterEnum.Closed => XFS4IoT.Check.ShutterStateEnum.Closed,
+                                CheckScannerStatusClass.ShutterEnum.Jammed => XFS4IoT.Check.ShutterStateEnum.Jammed,
+                                CheckScannerStatusClass.ShutterEnum.Unknown => XFS4IoT.Check.ShutterStateEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected shutter status specified. {positionStat.Value.Shutter}")
+                            },
+                            PositionStatus: positionStat.Value.PositionStatus == CheckScannerStatusClass.PositionStatusEnum.NotSupported ?
+                            null : positionStat.Value.PositionStatus switch
+                            {
+                                CheckScannerStatusClass.PositionStatusEnum.Empty => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.Empty,
+                                CheckScannerStatusClass.PositionStatusEnum.NotEmpty => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.NotEmpty,
+                                CheckScannerStatusClass.PositionStatusEnum.Unknown => XFS4IoT.Check.PositionStatusClass.PositionStatusEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected position status specified. {positionStat.Value.PositionStatus}")
+                            },
+                            Transport: positionStat.Value.Transport == CheckScannerStatusClass.TransportEnum.NotSupported ?
+                            null : positionStat.Value.Transport switch
+                            {
+                                CheckScannerStatusClass.TransportEnum.Ok => XFS4IoT.Check.PositionStatusClass.TransportEnum.Ok,
+                                CheckScannerStatusClass.TransportEnum.Inoperative => XFS4IoT.Check.PositionStatusClass.TransportEnum.Inoperative,
+                                CheckScannerStatusClass.TransportEnum.Unknown => XFS4IoT.Check.PositionStatusClass.TransportEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected transport status specified. {positionStat.Value.Transport}")
+                            },
+                            TransportMediaStatus: positionStat.Value.TransportMediaStatus == CheckScannerStatusClass.TransportMediaStatusEnum.NotSupported ?
+                            null : positionStat.Value.TransportMediaStatus switch
+                            {
+                                CheckScannerStatusClass.TransportMediaStatusEnum.Empty => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.Empty,
+                                CheckScannerStatusClass.TransportMediaStatusEnum.NotEmpty => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.NotEmpty,
+                                CheckScannerStatusClass.TransportMediaStatusEnum.Unknown => XFS4IoT.Check.PositionStatusClass.TransportMediaStatusEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected transport media status specified. {positionStat.Value.TransportMediaStatus}")
+                            },
+                            JammedShutterPosition: positionStat.Value.JammedShutterPosition == CheckScannerStatusClass.JammedShutterPositionEnum.NotSupported ?
+                            null : positionStat.Value.JammedShutterPosition switch
+                            {
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Open => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Open,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Closed => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Closed,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.PartiallyOpen => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.PartiallyOpen,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.NotJammed => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.NotJammed,
+                                CheckScannerStatusClass.JammedShutterPositionEnum.Unknown => XFS4IoT.Check.PositionStatusClass.JammedShutterPositionEnum.Unknown,
+                                _ => throw new InternalErrorException($"Unexpected jammed shutter position status specified. {positionStat.Value.JammedShutterPosition}")
+                            });
+
+                        switch (positionStat.Key)
+                        {
+                            case CheckScannerCapabilitiesClass.PositionEnum.Input:
+                                input = stat;
+                                break;
+                            case CheckScannerCapabilitiesClass.PositionEnum.Output:
+                                output = stat;
+                                break;
+                            case CheckScannerCapabilitiesClass.PositionEnum.Refused:
+                                refused = stat;
+                                break;
+                            default:
+                                throw new InternalErrorException($"Unexpected position specified. {positionStat.Key}");
+                        }
+                    }
+                }
+
+                checkScanner = new(
+                    Acceptor: Common.CheckScannerStatus.Acceptor switch
+                    { 
+                        CheckScannerStatusClass.AcceptorEnum.Ok => XFS4IoT.Check.StatusClass.AcceptorEnum.Ok,
+                        CheckScannerStatusClass.AcceptorEnum.Attention => XFS4IoT.Check.StatusClass.AcceptorEnum.State,
+                        CheckScannerStatusClass.AcceptorEnum.Stop => XFS4IoT.Check.StatusClass.AcceptorEnum.Stop,
+                        CheckScannerStatusClass.AcceptorEnum.Unknown => XFS4IoT.Check.StatusClass.AcceptorEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected acceptor status specified. {Common.CheckScannerStatus.Acceptor}")
+                    },
+                    Media: Common.CheckScannerStatus.Media switch
+                    { 
+                        CheckScannerStatusClass.MediaEnum.Present => XFS4IoT.Check.StatusClass.MediaEnum.Present,
+                        CheckScannerStatusClass.MediaEnum.NotPresent => XFS4IoT.Check.StatusClass.MediaEnum.NotPresent,
+                        CheckScannerStatusClass.MediaEnum.Position => XFS4IoT.Check.StatusClass.MediaEnum.Position,
+                        CheckScannerStatusClass.MediaEnum.Jammed => XFS4IoT.Check.StatusClass.MediaEnum.Jammed,
+                        CheckScannerStatusClass.MediaEnum.Unknown => XFS4IoT.Check.StatusClass.MediaEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected media status specified. {Common.CheckScannerStatus.Media}")
+                    },
+                    Toner: Common.CheckScannerStatus.Toner == CheckScannerStatusClass.TonerEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.Toner switch
+                    { 
+                        CheckScannerStatusClass.TonerEnum.Out => XFS4IoT.Check.TonerEnum.Out,
+                        CheckScannerStatusClass.TonerEnum.Full => XFS4IoT.Check.TonerEnum.Full,
+                        CheckScannerStatusClass.TonerEnum.Low => XFS4IoT.Check.TonerEnum.Low,
+                        CheckScannerStatusClass.TonerEnum.Unknown => XFS4IoT.Check.TonerEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected acceptor status specified. {Common.CheckScannerStatus.Toner}")
+                    },
+                    Ink: Common.CheckScannerStatus.Ink == CheckScannerStatusClass.InkEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.Ink switch
+                    { 
+                        CheckScannerStatusClass.InkEnum.Out => XFS4IoT.Check.InkEnum.Out,
+                        CheckScannerStatusClass.InkEnum.Full => XFS4IoT.Check.InkEnum.Full,
+                        CheckScannerStatusClass.InkEnum.Low => XFS4IoT.Check.InkEnum.Low,
+                        CheckScannerStatusClass.InkEnum.Unknown => XFS4IoT.Check.InkEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected ink status specified. {Common.CheckScannerStatus.Ink}")
+                    },
+                    FrontImageScanner: Common.CheckScannerStatus.FrontImageScanner == CheckScannerStatusClass.ImageScannerEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.FrontImageScanner switch
+                    { 
+                        CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.FrontImageScannerEnum.Ok,
+                        CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.FrontImageScannerEnum.Fading,
+                        CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.FrontImageScannerEnum.Inoperative,
+                        CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.FrontImageScannerEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected front image scanner specified. {Common.CheckScannerStatus.FrontImageScanner}")
+                    },
+                    BackImageScanner: Common.CheckScannerStatus.BackImageScanner == CheckScannerStatusClass.ImageScannerEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.BackImageScanner switch
+                    {
+                        CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.BackImageScannerEnum.Ok,
+                        CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.BackImageScannerEnum.Fading,
+                        CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.BackImageScannerEnum.Inoperative,
+                        CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.BackImageScannerEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected back image scanner specified. {Common.CheckScannerStatus.BackImageScanner}")
+                    },
+                    MICRReader: Common.CheckScannerStatus.MICRReader == CheckScannerStatusClass.ImageScannerEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.MICRReader switch
+                    {
+                        CheckScannerStatusClass.ImageScannerEnum.Ok => XFS4IoT.Check.MicrReaderEnum.Ok,
+                        CheckScannerStatusClass.ImageScannerEnum.Fading => XFS4IoT.Check.MicrReaderEnum.Fading,
+                        CheckScannerStatusClass.ImageScannerEnum.Inoperative => XFS4IoT.Check.MicrReaderEnum.Inoperative,
+                        CheckScannerStatusClass.ImageScannerEnum.Unknown => XFS4IoT.Check.MicrReaderEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected MICR reader specified. {Common.CheckScannerStatus.MICRReader}")
+                    },
+                    Stacker: Common.CheckScannerStatus.Stacker == CheckScannerStatusClass.StackerEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.Stacker switch
+                    { 
+                        CheckScannerStatusClass.StackerEnum.Empty => XFS4IoT.Check.StatusClass.StackerEnum.Empty,
+                        CheckScannerStatusClass.StackerEnum.NotEmpty => XFS4IoT.Check.StatusClass.StackerEnum.NotEmpty,
+                        CheckScannerStatusClass.StackerEnum.Full => XFS4IoT.Check.StatusClass.StackerEnum.Full,
+                        CheckScannerStatusClass.StackerEnum.Inoperative => XFS4IoT.Check.StatusClass.StackerEnum.Inoperative,
+                        CheckScannerStatusClass.StackerEnum.Unknown => XFS4IoT.Check.StatusClass.StackerEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected stacker status specified. {Common.CheckScannerStatus.Stacker}")
+                    },
+                    Rebuncher: Common.CheckScannerStatus.ReBuncher == CheckScannerStatusClass.ReBuncherEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.ReBuncher switch
+                    { 
+                        CheckScannerStatusClass.ReBuncherEnum.Empty => XFS4IoT.Check.StatusClass.RebuncherEnum.Empty,
+                        CheckScannerStatusClass.ReBuncherEnum.NotEmpty => XFS4IoT.Check.StatusClass.RebuncherEnum.NotEmpty,
+                        CheckScannerStatusClass.ReBuncherEnum.Full => XFS4IoT.Check.StatusClass.RebuncherEnum.Full,
+                        CheckScannerStatusClass.ReBuncherEnum.Inoperative => XFS4IoT.Check.StatusClass.RebuncherEnum.Inoperative,
+                        CheckScannerStatusClass.ReBuncherEnum.Unknown => XFS4IoT.Check.StatusClass.RebuncherEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected rebuncher status specified. {Common.CheckScannerStatus.ReBuncher}")
+                    },
+                    MediaFeeder: Common.CheckScannerStatus.MediaFeeder == CheckScannerStatusClass.MediaFeederEnum.NotSupported ?
+                    null : Common.CheckScannerStatus.MediaFeeder switch
+                    { 
+                        CheckScannerStatusClass.MediaFeederEnum.Empty => XFS4IoT.Check.MediaFeederEnum.Empty,
+                        CheckScannerStatusClass.MediaFeederEnum.NotEmpty => XFS4IoT.Check.MediaFeederEnum.NotEmpty,
+                        CheckScannerStatusClass.MediaFeederEnum.Inoperative => XFS4IoT.Check.MediaFeederEnum.Inoperative,
+                        CheckScannerStatusClass.MediaFeederEnum.Unknown => XFS4IoT.Check.MediaFeederEnum.Unknown,
+                        _ => throw new InternalErrorException($"Unexpected media feeder status specified. {Common.CheckScannerStatus.MediaFeeder}")
+                    },
+                    Positions: input is null && output is null && refused is null ?
+                    null : new XFS4IoT.Check.StatusClass.PositionsClass(
+                        Input: input,
+                        Output: output,
+                        Refused: refused));
+            }
+
+            XFS4IoT.MixedMedia.StatusClass mixedMedia = null;
+            if (Common.MixedMediaStatus is not null)
+            {
+                mixedMedia = new XFS4IoT.MixedMedia.StatusClass(
+                    Modes: Common.MixedMediaStatus.CurrentModes == MixedMedia.ModeTypeEnum.None ?
+                        null :
+                        new XFS4IoT.MixedMedia.ModesClass(
+                            CashAccept: Common.MixedMediaStatus.CurrentModes.HasFlag(MixedMedia.ModeTypeEnum.Cash),
+                            CheckAccept: Common.MixedMediaStatus.CurrentModes.HasFlag(MixedMedia.ModeTypeEnum.Check)
+                            )
+                        );
+            }
+
             return Task.FromResult(
             new StatusCompletion.PayloadData(
                 MessagePayload.CompletionCodeEnum.Success,
@@ -1208,7 +1391,9 @@ namespace XFS4IoTFramework.Common
                 BarcodeReader: barcodeReader,
                 Biometric: biometric,
                 CashAcceptor: cashAcceptor,
-                Camera: camera)
+                Camera: camera,
+                Check: checkScanner,
+                MixedMedia: mixedMedia)
             );
         }
     }

@@ -13,7 +13,14 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CardReaderStatusClass : StatusBase
+    public sealed class CardReaderStatusClass(
+        CardReaderStatusClass.MediaEnum Media,
+        CardReaderStatusClass.SecurityEnum Security,
+        CardReaderStatusClass.ChipPowerEnum ChipPower,
+        CardReaderStatusClass.ChipModuleEnum ChipModule,
+        CardReaderStatusClass.MagWriteModuleEnum MagWriteModule,
+        CardReaderStatusClass.FrontImageModuleEnum FrontImageModule,
+        CardReaderStatusClass.BackImageModuleEnum BackImageModule) : StatusBase
     {
         public enum MediaEnum
         {
@@ -77,23 +84,6 @@ namespace XFS4IoTFramework.Common
             NotSupported
         }
 
-        public CardReaderStatusClass(MediaEnum Media, 
-                                     SecurityEnum Security, 
-                                     ChipPowerEnum ChipPower, 
-                                     ChipModuleEnum ChipModule, 
-                                     MagWriteModuleEnum MagWriteModule, 
-                                     FrontImageModuleEnum FrontImageModule, 
-                                     BackImageModuleEnum BackImageModule)
-        {
-            media = Media;
-            security = Security;
-            chipPower = ChipPower;
-            chipModule = ChipModule;
-            magWriteModule = MagWriteModule;
-            frontImageModule = FrontImageModule;
-            backImageModule = BackImageModule;
-        }
-
         /// <summary>
         /// Specifies the transport/exit position media state as one of the following values:
         /// 
@@ -121,7 +111,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private MediaEnum media = MediaEnum.NotSupported;
+        private MediaEnum media = Media;
 
         /// <summary>
         /// Specifies the state of the security module as one of the following:
@@ -142,7 +132,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private SecurityEnum security = SecurityEnum.NotSupported;
+        private SecurityEnum security = Security;
 
         /// <summary>
         /// Specifies the state of the chip controlled by this service. Depending on the value of capabilities response,
@@ -173,7 +163,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private ChipPowerEnum chipPower = ChipPowerEnum.NotSupported;
+        private ChipPowerEnum chipPower = ChipPower;
 
         /// <summary>
         /// Specifies the state of the chip card module reader as one of the following:
@@ -195,7 +185,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private ChipModuleEnum chipModule = ChipModuleEnum.NotSupported;
+        private ChipModuleEnum chipModule = ChipModule;
 
         /// <summary>
         /// Specifies the state of the magnetic card writer as one of the following:
@@ -217,7 +207,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private MagWriteModuleEnum magWriteModule = MagWriteModuleEnum.NotSupported;
+        private MagWriteModuleEnum magWriteModule = MagWriteModule;
 
         /// <summary>
         /// Specifies the state of the front image reader as one of the following:
@@ -239,7 +229,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private FrontImageModuleEnum frontImageModule = FrontImageModuleEnum.NotSupported;
+        private FrontImageModuleEnum frontImageModule = FrontImageModule;
 
         /// <summary>
         /// Specifies the state of the back image reader as one of the following:
@@ -261,7 +251,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private BackImageModuleEnum backImageModule = BackImageModuleEnum.NotSupported;
+        private BackImageModuleEnum backImageModule = BackImageModule;
 
     }
 }

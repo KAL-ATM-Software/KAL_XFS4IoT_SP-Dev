@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class KeyboardCapabilitiesClass
+    public sealed class KeyboardCapabilitiesClass(
+        KeyboardCapabilitiesClass.KeyboardBeepEnum AutoBeep, 
+        KeyboardCapabilitiesClass.ETSCap ETSCaps)
     {
         [Flags]
         public enum KeyboardBeepEnum
@@ -25,7 +27,14 @@ namespace XFS4IoTFramework.Common
             InActiveSelectable = 1 << 3,
         }
 
-        public sealed class ETSCap
+        public sealed class ETSCap(
+            int XPos,
+            int YPos,
+            int XSize,
+            int YSize,
+            int MaximumTouchFrames,
+            int MaximumTouchKeys,
+            ETSCap.FloatPositionEnum FloatFlags)
         {
             [Flags]
             public enum FloatPositionEnum
@@ -35,40 +44,17 @@ namespace XFS4IoTFramework.Common
                 FloatY = 1 << 1,
             }
 
-            public ETSCap(int XPos,
-                           int YPos,
-                           int XSize,
-                           int YSize,
-                           int MaximumTouchFrames,
-                           int MaximumTouchKeys,
-                           FloatPositionEnum FloatFlags)
-            {
-                this.XPos = XPos;
-                this.YPos = YPos;
-                this.XSize = XSize;
-                this.YSize = YSize;
-                this.MaximumTouchFrames = MaximumTouchFrames;
-                this.MaximumTouchKeys = MaximumTouchKeys;
-                this.FloatFlags = FloatFlags;
-            }
-
-            public int XPos { get; init; }
-            public int YPos { get; init; }
-            public int XSize { get; init; }
-            public int YSize { get; init; }
-            public int MaximumTouchFrames { get; init; }
-            public int MaximumTouchKeys { get; init;  }
-            public FloatPositionEnum FloatFlags { get; init; }
+            public int XPos { get; init; } = XPos;
+            public int YPos { get; init; } = YPos;
+            public int XSize { get; init; } = XSize;
+            public int YSize { get; init; } = YSize;
+            public int MaximumTouchFrames { get; init; } = MaximumTouchFrames;
+            public int MaximumTouchKeys { get; init; } = MaximumTouchKeys;
+            public FloatPositionEnum FloatFlags { get; init; } = FloatFlags;
         }
 
-        public KeyboardCapabilitiesClass(KeyboardBeepEnum AutoBeep, ETSCap ETSCaps)
-        {
-            this.AutoBeep = AutoBeep;
-            this.ETSCaps = ETSCaps;
-        }
+        public KeyboardBeepEnum AutoBeep { get; init; } = AutoBeep;
 
-        public KeyboardBeepEnum AutoBeep { get; init; }
-
-        public ETSCap ETSCaps;
+        public ETSCap ETSCaps = ETSCaps;
     }
 }

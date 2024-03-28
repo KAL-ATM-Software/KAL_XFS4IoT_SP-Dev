@@ -12,37 +12,21 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class AuxiliariesCapabilitiesClass
+    public sealed class AuxiliariesCapabilitiesClass(
+        AuxiliariesCapabilitiesClass.OperatorSwitchEnum OperatorSwitch = AuxiliariesCapabilitiesClass.OperatorSwitchEnum.NotAvailable,
+        AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum AuxiliariesSupported = AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.None,
+        AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum EnhancedAudioSensor = AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.NotAvailable,
+        AuxiliariesCapabilitiesClass.HandsetSensorCapabilities HandsetSensor = AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.NotAvailable,
+        AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities HeadsetMicrophoneSensor = AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.NotAvailable,
+        AuxiliariesCapabilitiesClass.VandalShieldCapabilities VandalShield = AuxiliariesCapabilitiesClass.VandalShieldCapabilities.NotAvailable,
+        Dictionary<AuxiliariesCapabilitiesClass.DoorType, AuxiliariesCapabilitiesClass.DoorCapabilities> SupportedDoorSensors = null,
+        int Volume = 1,
+        AuxiliariesCapabilitiesClass.UpsEnum Ups = AuxiliariesCapabilitiesClass.UpsEnum.NotAvailable,
+        AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum EnhancedAudioControl = AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.NotAvailable,
+        AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum EnhancedMicrophoneControlState = AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.NotAvailable,
+        int MicrophoneVolume = 1,
+        AuxiliariesCapabilitiesClass.AutoStartupModes AutoStartupMode = AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
     {
-        public AuxiliariesCapabilitiesClass(OperatorSwitchEnum OperatorSwitch = OperatorSwitchEnum.NotAvailable,
-                                       AuxiliariesSupportedEnum AuxiliariesSupported = AuxiliariesSupportedEnum.None,
-                                       EnhancedAudioCapabilitiesEnum EnhancedAudioSensor = EnhancedAudioCapabilitiesEnum.NotAvailable,
-                                       HandsetSensorCapabilities HandsetSensor = HandsetSensorCapabilities.NotAvailable,
-                                       HeadsetMicrophoneSensorCapabilities HeadsetMicrophoneSensor = HeadsetMicrophoneSensorCapabilities.NotAvailable,
-                                       VandalShieldCapabilities VandalShield = VandalShieldCapabilities.NotAvailable,
-                                       Dictionary<DoorType, DoorCapabilities> SupportedDoorSensors = null,
-                                       int Volume = 1,
-                                       UpsEnum Ups = UpsEnum.NotAvailable,
-                                       EnhancedAudioControlEnum EnhancedAudioControl = EnhancedAudioControlEnum.NotAvailable,
-                                       EnhancedAudioControlEnum EnhancedMicrophoneControlState = EnhancedAudioControlEnum.NotAvailable,
-                                       int MicrophoneVolume = 1,
-                                       AutoStartupModes AutoStartupMode = AutoStartupModes.NotAvailable)
-        {
-            this.OperatorSwitch = OperatorSwitch;
-            this.AuxiliariesSupported = AuxiliariesSupported;
-            this.EnhancedAudioSensor = EnhancedAudioSensor;
-            this.HandsetSensor = HandsetSensor;
-            this.HeadsetMicrophoneSensor = HeadsetMicrophoneSensor;
-            this.VandalShield = VandalShield;
-            this.SupportedDoorSensors = SupportedDoorSensors;
-            this.Volume = Volume;
-            this.Ups = Ups;
-            this.EnhancedAudioControl = EnhancedAudioControl;
-            this.EnhancedMicrophoneControlState = EnhancedMicrophoneControlState;
-            this.MicrophoneVolume = MicrophoneVolume;
-            this.AutoStartupMode = AutoStartupMode;
-        }
-
         [Flags]
         public enum OperatorSwitchEnum
         {
@@ -89,12 +73,12 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies which states the Operator Switch can be set to, if available.
         /// </summary>
-        public OperatorSwitchEnum OperatorSwitch { get; init; }
+        public OperatorSwitchEnum OperatorSwitch { get; init; } = OperatorSwitch;
 
         /// <summary>
         /// Specifies Auxiliaries which are supported as a combination of Enum flags.
         /// </summary>
-        public AuxiliariesSupportedEnum AuxiliariesSupported { get; init; }
+        public AuxiliariesSupportedEnum AuxiliariesSupported { get; init; } = AuxiliariesSupported;
 
         [Flags]
         public enum EnhancedAudioCapabilitiesEnum
@@ -125,7 +109,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies which mode the Audio Jack supports, if present.
         /// </summary>
-        public EnhancedAudioCapabilitiesEnum EnhancedAudioSensor { get; init; }
+        public EnhancedAudioCapabilitiesEnum EnhancedAudioSensor { get; init; } = EnhancedAudioSensor;
 
         [Flags]
         public enum HandsetSensorCapabilities
@@ -155,7 +139,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies which mode the Handset supports, if present.
         /// </summary>
-        public HandsetSensorCapabilities HandsetSensor { get; init; }
+        public HandsetSensorCapabilities HandsetSensor { get; init; } = HandsetSensor;
 
         [Flags]
         public enum HeadsetMicrophoneSensorCapabilities
@@ -183,7 +167,7 @@ namespace XFS4IoTFramework.Common
         /// enhancedAudio capability indicates the presence of a bi-directional Audio Jack then both sensors 
         /// reference the same physical jack.
         /// </summary>
-        public HeadsetMicrophoneSensorCapabilities HeadsetMicrophoneSensor { get; init; }
+        public HeadsetMicrophoneSensorCapabilities HeadsetMicrophoneSensor { get; init; } = HeadsetMicrophoneSensor;
 
         [Flags]
         public enum VandalShieldCapabilities
@@ -221,7 +205,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies the states the Vandal Shield can support, if available.
         /// </summary>
-        public VandalShieldCapabilities VandalShield { get; init; }
+        public VandalShieldCapabilities VandalShield { get; init; } = VandalShield;
 
         public enum DoorType
         {
@@ -261,12 +245,12 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies a list of doors supported by the device, and their capabilities as a combination of Enum flags.
         /// </summary>
-        public Dictionary<DoorType, DoorCapabilities> SupportedDoorSensors { get; init; }
+        public Dictionary<DoorType, DoorCapabilities> SupportedDoorSensors { get; init; } = SupportedDoorSensors;
 
         /// <summary>
         /// Specifies the Volume Control increment/decrement value recommended by the vendor.
         /// </summary>
-        public int Volume { get; init; }
+        public int Volume { get; init; } = Volume;
 
         [Flags]
         public enum UpsEnum
@@ -296,7 +280,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies what states the UPS device supports as a combination of the following values:
         /// </summary>
-        public UpsEnum Ups { get; init; }
+        public UpsEnum Ups { get; init; } = Ups;
 
         [Flags]
         public enum EnhancedAudioControlEnum
@@ -323,7 +307,7 @@ namespace XFS4IoTFramework.Common
         /// when the handset is off-hook/on-hook. In the following Privacy Device is used to refer to either the 
         /// headset or handset. The modes it supports are specified as a combination of the following values:
         /// </summary>
-        public EnhancedAudioControlEnum EnhancedAudioControl { get; init; }
+        public EnhancedAudioControlEnum EnhancedAudioControl { get; init; } = EnhancedAudioControl;
 
         /// <summary>
         /// Specifies the modes the Enhanced Microphone Controller can support. The Enhanced Microphone Controller 
@@ -332,12 +316,12 @@ namespace XFS4IoTFramework.Common
         /// to refer to either the headset or handset. The modes it supports are specified as a combination of the 
         /// following values:
         /// </summary>
-        public EnhancedAudioControlEnum EnhancedMicrophoneControlState { get; init; }
+        public EnhancedAudioControlEnum EnhancedMicrophoneControlState { get; init; } = EnhancedMicrophoneControlState;
 
         /// <summary>
         /// Specifies the Microphone Volume Control increment/decrement value recommended by the vendor.
         /// </summary>
-        public int MicrophoneVolume { get; init; }
+        public int MicrophoneVolume { get; init; } = MicrophoneVolume;
 
         public enum AutoStartupModes
         {
@@ -362,7 +346,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// AutoStartup Modes supported by the device
         /// </summary>
-        public AutoStartupModes AutoStartupMode { get; init; }
+        public AutoStartupModes AutoStartupMode { get; init; } = AutoStartupMode;
 
     }
 }

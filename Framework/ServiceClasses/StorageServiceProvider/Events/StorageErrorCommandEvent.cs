@@ -6,149 +6,190 @@
 \***********************************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoT.Events;
 using XFS4IoT.Storage.Events;
-using XFS4IoTFramework.CashAcceptor;
-using XFS4IoTFramework.CashDispenser;
-using XFS4IoTFramework.CashManagement;
 
 namespace XFS4IoTFramework.Storage
 {
     public class StorageErrorCommandEvent
     {
-        public StorageErrorCommandEvent(IStorageService StorageService, ICalibrateCashUnitEvents events)
+        #region CashManagement
+        public StorageErrorCommandEvent(IStorageService StorageService, CashManagement.ICalibrateCashUnitEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICalibrateCashUnitEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashManagement.ICalibrateCashUnitEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             CalibrateCashUnitEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IResetEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashManagement.IResetEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IResetEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
-            ResetEvents = events;
+            events.IsA<CashManagement.IResetEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            CashManagementResetEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IRetractEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashManagement.IRetractEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IRetractEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashManagement.IRetractEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             RetractEvents = events;
         }
+        #endregion
 
-        public StorageErrorCommandEvent(IStorageService StorageService, ICashInEvents events)
+        #region CashAcceptor
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.ICashInEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICashInEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.ICashInEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             CashInEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IReplenishEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.IReplenishEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IReplenishEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.IReplenishEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             ReplenishEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, ICashInEndEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.ICashInEndEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICashInEndEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.ICashInEndEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             CashInEndEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, ICashInRollbackEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.ICashInRollbackEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICashInRollbackEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.ICashInRollbackEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             CashInRollbackEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, ICountEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.ICashUnitCountEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICountEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
-            CountEvents = events;
-        }
-
-        public StorageErrorCommandEvent(IStorageService StorageService, ICashUnitCountEvents events)
-        {
-            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
-            this.StorageService = StorageService;
-            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ICashUnitCountEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.ICashUnitCountEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             CashUnitCountEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IPreparePresentEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.IPreparePresentEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IPreparePresentEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.IPreparePresentEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             PreparePresentEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IDispenseEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashAcceptor.IDepleteEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IDispenseEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashAcceptor.IDepleteEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            DepleteEvents = events;
+        }
+
+        #endregion
+
+        #region CashDispenser
+        public StorageErrorCommandEvent(IStorageService StorageService, CashDispenser.IDispenseEvents events)
+        {
+            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
+            this.StorageService = StorageService;
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashDispenser.IDispenseEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             DispenseEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IRejectEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashDispenser.IRejectEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IRejectEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashDispenser.IRejectEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             RejectEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, ITestCashUnitsEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashDispenser.ITestCashUnitsEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<ITestCashUnitsEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            events.IsA<CashDispenser.ITestCashUnitsEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
             TestCashUnitsEvents = events;
         }
 
-        public StorageErrorCommandEvent(IStorageService StorageService, IDepleteEvents events)
+        public StorageErrorCommandEvent(IStorageService StorageService, CashDispenser.ICountEvents events)
         {
             StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
             this.StorageService = StorageService;
             events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
-            events.IsA<IDepleteEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
-            DepleteEvents = events;
+            events.IsA<CashDispenser.ICountEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            CountEvents = events;
+        }
+
+        #endregion
+
+        #region Check
+        public StorageErrorCommandEvent(IStorageService StorageService, Check.IResetEvents events)
+        {
+            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
+            this.StorageService = StorageService;
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
+            events.IsA<Check.IResetEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            CheckResetEvents = events;
+        }
+
+        public StorageErrorCommandEvent(IStorageService StorageService, Check.IRetractMediaEvents events)
+        {
+            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
+            this.StorageService = StorageService;
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
+            events.IsA<Check.IRetractMediaEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            RetractMediaEvents = events;
+        }
+
+        public StorageErrorCommandEvent(IStorageService StorageService, Check.IMediaInEndEvents events)
+        {
+            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
+            this.StorageService = StorageService;
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
+            events.IsA<Check.IMediaInEndEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            MediaInEndEvents = events;
+        }
+
+        public StorageErrorCommandEvent(IStorageService StorageService, Check.IActionItemEvents events)
+        {
+            StorageService.IsA<IStorageService>($"Invalid storage interface passed in. {StorageService.GetType()} " + nameof(StorageErrorCommandEvent));
+            this.StorageService = StorageService;
+            events.IsNotNull($"Invalid parameter passed in. " + nameof(StorageErrorCommandEvent));
+            events.IsA<Check.IActionItemEvents>($"Invalid interface passed in. {events.GetType()} " + nameof(StorageErrorCommandEvent));
+            ActionItemEvents = events;
         }
         
-        public Task StorageErrorEvent(FailureEnum Failure, List<string> CashUnitIds)
+        #endregion
+
+        public Task StorageErrorEvent(FailureEnum Failure, List<string> UnitIds)
         {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = GetStorages(CashUnitIds);
+            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = StorageService.GetStorages(UnitIds);
             StorageErrorEvent.PayloadData payload = new(
                 Failure switch
                 {
@@ -162,19 +203,22 @@ namespace XFS4IoTFramework.Storage
                 },
                 storages);
 
+            #region CashManagement
             if (CalibrateCashUnitEvents is not null)
             {
                 return CalibrateCashUnitEvents.StorageErrorEvent(payload);
             }
-            if (ResetEvents is not null)
+            if (CashManagementResetEvents is not null)
             {
-                return ResetEvents.StorageErrorEvent(payload);
+                return CashManagementResetEvents.StorageErrorEvent(payload);
             }
             if (RetractEvents is not null)
             {
                 return RetractEvents.StorageErrorEvent(payload);
             }
+            #endregion
 
+            #region CashAcceptor
             if (CashInEvents is not null)
             {
                 return CashInEvents.StorageErrorEvent(payload);
@@ -203,7 +247,9 @@ namespace XFS4IoTFramework.Storage
             {
                 return DepleteEvents.StorageErrorEvent(payload);
             }
+            #endregion
 
+            #region CashDispenser
             if (DispenseEvents is not null)
             {
                 return DispenseEvents.StorageErrorEvent(payload);
@@ -220,133 +266,60 @@ namespace XFS4IoTFramework.Storage
             {
                 return CountEvents.StorageErrorEvent(payload);
             }
+            #endregion
+
+            #region Check
+            if (CheckResetEvents is not null)
+            {
+                return CheckResetEvents.StorageErrorEvent(payload);
+            }
+            if (RetractMediaEvents is not null)
+            {
+                return RetractMediaEvents.StorageErrorEvent(payload);
+            }
+            if (MediaInEndEvents is not null)
+            {
+                return MediaInEndEvents.StorageErrorEvent(payload);
+            }
+            if (ActionItemEvents is not null)
+            {
+                return ActionItemEvents.StorageErrorEvent(payload);
+            }
+            #endregion 
 
             throw new InvalidOperationException($"Unreachable code. " + nameof(StorageErrorEvent));
-        }
-        private Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> CashUnitIds)
-        {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = [];
-
-            foreach (var storageId in CashUnitIds)
-            {
-                if (!StorageService.CashUnits.ContainsKey(storageId))
-                    continue;
-
-                storages.Add(storageId,
-                             new(Id: StorageService.CashUnits[storageId].Id,
-                                 PositionName: StorageService.CashUnits[storageId].PositionName,
-                                 Capacity: StorageService.CashUnits[storageId].Capacity,
-                                 Status: StorageService.CashUnits[storageId].Status switch
-                                 {
-                                     CashUnitStorage.StatusEnum.Good => XFS4IoT.Storage.StatusEnum.Ok,
-                                     CashUnitStorage.StatusEnum.Inoperative => XFS4IoT.Storage.StatusEnum.Inoperative,
-                                     CashUnitStorage.StatusEnum.Manipulated => XFS4IoT.Storage.StatusEnum.Manipulated,
-                                     CashUnitStorage.StatusEnum.Missing => XFS4IoT.Storage.StatusEnum.Missing,
-                                     _ => XFS4IoT.Storage.StatusEnum.NotConfigured,
-                                 },
-                                 SerialNumber: StorageService.CashUnits[storageId].SerialNumber,
-                                 Cash: new XFS4IoT.CashManagement.StorageCashClass(
-                                        new XFS4IoT.CashManagement.StorageCashCapabilitiesClass(new XFS4IoT.CashManagement.StorageCashTypesClass(StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                                                                                                                                 StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                                                                                                                                 StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                                                                                                                                 StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                                                                                                                                 StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                                                                                                                                 StorageService.CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)),
-                                                                                                new XFS4IoT.CashManagement.StorageCashItemTypesClass(StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Conterfeit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)),
-                                                                                                StorageService.CashUnits[storageId].Unit.Capabilities.HardwareSensors,
-                                                                                                StorageService.CashUnits[storageId].Unit.Capabilities.RetractAreas,
-                                                                                                StorageService.CashUnits[storageId].Unit.Capabilities.RetractThresholds,
-                                                                                                StorageService.CashUnits[storageId].Unit.Capabilities.BanknoteItems),
-                                        new XFS4IoT.CashManagement.StorageCashConfigurationClass(new XFS4IoT.CashManagement.StorageCashTypesClass(StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                                                                                                                                  StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                                                                                                                                  StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                                                                                                                                  StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                                                                                                                                  StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                                                                                                                                  StorageService.CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)),
-                                                                                                new XFS4IoT.CashManagement.StorageCashItemTypesClass(StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Conterfeit),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                                                                                                                                     StorageService.CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)),
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.Currency,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.Value,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.HighThreshold,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.LowThreshold,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.AppLockIn,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.AppLockOut,
-                                                                                                StorageService.CashUnits[storageId].Unit.Configuration.BanknoteItems),
-                                        new XFS4IoT.CashManagement.StorageCashStatusClass(StorageService.CashUnits[storageId].Unit.Status.Index,
-                                                                                          StorageService.CashUnits[storageId].Unit.Status.InitialCounts.CopyTo(),
-                                                                                            new XFS4IoT.CashManagement.StorageCashOutClass(StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Presented.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Rejected.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Distributed.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Unknown.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Stacked.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Diverted.CopyTo(),
-                                                                                                                                           StorageService.CashUnits[storageId].Unit.Status.StorageCashOutCount?.Transport.CopyTo()),
-                                                                                            new XFS4IoT.CashManagement.StorageCashInClass(StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.RetractOperations,
-                                                                                                                                          StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.Deposited.CopyTo(),
-                                                                                                                                          StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.Retracted.CopyTo(),
-                                                                                                                                          StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.Rejected.CopyTo(),
-                                                                                                                                          StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.Distributed.CopyTo(),
-                                                                                                                                          StorageService.CashUnits[storageId].Unit.Status.StorageCashInCount?.Transport.CopyTo()),
-                                                                                            StorageService.CashUnits[storageId].Unit.Status.Accuracy switch
-                                                                                            {
-                                                                                                CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
-                                                                                                CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
-                                                                                                CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                                                                                CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
-                                                                                                _ => null,
-                                                                                            },
-                                                                                            StorageService.CashUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                                                                            {
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Empty,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Full,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Ok,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CashManagement.ReplenishmentStatusEnum.High,
-                                                                                                _ => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Low,
-                                                                                            })
-                                        ),
-                                Card: null)
-                             );
-            }
-
-            return storages;
         }
 
         private IStorageService StorageService { get; init; }
 
         #region CashManagement
-        protected IRetractEvents RetractEvents { get; init; } = null;
-        protected IResetEvents ResetEvents { get; init; } = null;
-        protected ICalibrateCashUnitEvents CalibrateCashUnitEvents { get; init; } = null;
+        protected CashManagement.IRetractEvents RetractEvents { get; init; } = null;
+        protected CashManagement.IResetEvents CashManagementResetEvents { get; init; } = null;
+        protected CashManagement.ICalibrateCashUnitEvents CalibrateCashUnitEvents { get; init; } = null;
         #endregion
 
         #region CashDispenser
-        protected IDispenseEvents DispenseEvents { get; init; } = null;
-        protected IRejectEvents RejectEvents { get; init; } = null;
-        protected ITestCashUnitsEvents TestCashUnitsEvents { get; init; } = null;
-        protected ICountEvents CountEvents { get; init; } = null;
+        protected CashDispenser.IDispenseEvents DispenseEvents { get; init; } = null;
+        protected CashDispenser.IRejectEvents RejectEvents { get; init; } = null;
+        protected CashDispenser.ITestCashUnitsEvents TestCashUnitsEvents { get; init; } = null;
+        protected CashDispenser.ICountEvents CountEvents { get; init; } = null;
         #endregion
 
         #region CashAcceptor
-        protected ICashInEvents CashInEvents { get; init; } = null;
-        protected ICashInEndEvents CashInEndEvents { get; init; } = null;
-        protected ICashInRollbackEvents CashInRollbackEvents { get; init; } = null;
-        protected IPreparePresentEvents PreparePresentEvents { get; init; } = null;
-        protected ICashUnitCountEvents CashUnitCountEvents { get; init; } = null;
-        protected IDepleteEvents DepleteEvents { get; init; } = null;
-        protected IReplenishEvents ReplenishEvents { get; init; } = null;
+        protected CashAcceptor.ICashInEvents CashInEvents { get; init; } = null;
+        protected CashAcceptor.ICashInEndEvents CashInEndEvents { get; init; } = null;
+        protected CashAcceptor.ICashInRollbackEvents CashInRollbackEvents { get; init; } = null;
+        protected CashAcceptor.IPreparePresentEvents PreparePresentEvents { get; init; } = null;
+        protected CashAcceptor.ICashUnitCountEvents CashUnitCountEvents { get; init; } = null;
+        protected CashAcceptor.IDepleteEvents DepleteEvents { get; init; } = null;
+        protected CashAcceptor.IReplenishEvents ReplenishEvents { get; init; } = null;
+        #endregion
+
+        #region Check
+        protected Check.IResetEvents CheckResetEvents { get; init; } = null;
+        protected Check.IRetractMediaEvents RetractMediaEvents { get; init; } = null;
+        protected Check.IMediaInEndEvents MediaInEndEvents { get; init;} = null;
+        protected Check.IActionItemEvents ActionItemEvents { get; init; } = null;
         #endregion
     }
 }

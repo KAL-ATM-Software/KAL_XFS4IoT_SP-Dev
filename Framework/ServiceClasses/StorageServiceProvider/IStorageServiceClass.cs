@@ -15,22 +15,27 @@ namespace XFS4IoTFramework.Storage
 {
     public enum StorageTypeEnum
     {
-        Cash,
-        Card,
+        Cash = 1 << 0,
+        Card = 1 << 1,
+        Check = 1 << 2,
     }
 
     public interface IStorageService
     {
         /// <summary>
-        /// Update storage count from the framework after media movement command is processed
+        /// Update managed card storage information in the framework.
         /// </summary>
         Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage = null);
 
         /// <summary>
-        /// UpdateCashAccounting
-        /// Update cash unit status and counts managed by the device specific class.
+        /// Update managed cash storage information in the framework.
         /// </summary>
         Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null);
+
+        /// <summary>
+        /// Update managed check storage information in the framework.
+        /// </summary>
+        Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null);
 
         /// <summary>
         /// Return which type of storage SP is using
@@ -51,6 +56,16 @@ namespace XFS4IoTFramework.Storage
         /// Cash storage structure information of this device
         /// </summary>
         Dictionary<string, CashUnitStorage> CashUnits { get; init; }
+
+        /// <summary>
+        /// Check storage structure information of this device
+        /// </summary>
+        Dictionary<string, CheckUnitStorage> CheckUnits { get; init; }
+
+        /// <summary>
+        /// Return XFS4IoT storage structured object.
+        /// </summary>
+        Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds);
     }
 
     public interface IStorageServiceClass : IStorageService, IStorageUnsolicitedEvents

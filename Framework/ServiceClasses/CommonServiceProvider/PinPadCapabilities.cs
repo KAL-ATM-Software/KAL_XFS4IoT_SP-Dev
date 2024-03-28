@@ -13,7 +13,16 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class PinPadCapabilitiesClass
+    public sealed class PinPadCapabilitiesClass(
+        PinPadCapabilitiesClass.PINFormatEnum PINFormat,
+        PinPadCapabilitiesClass.PresentationAlgorithmEnum PresentationAlgorithm,
+        PinPadCapabilitiesClass.DisplayTypeEnum DisplayType,
+        bool IDConnect,
+        PinPadCapabilitiesClass.ValidationAlgorithmEnum ValidationAlgorithm,
+        bool PinCanPersistAfterUse,
+        bool TypeCombined,
+        bool SetPinblockDataRequired,
+        Dictionary<string, Dictionary<string, Dictionary<string, PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm>>> PinBlockAttributes)
     {
         [Flags]
         public enum PINFormatEnum
@@ -59,68 +68,47 @@ namespace XFS4IoTFramework.Common
             VISA = 1 << 1,
         }
 
-        public PinPadCapabilitiesClass(PINFormatEnum PINFormat,
-                                       PresentationAlgorithmEnum PresentationAlgorithm,
-                                       DisplayTypeEnum DisplayType,
-                                       bool IDConnect,
-                                       ValidationAlgorithmEnum ValidationAlgorithm,
-                                       bool PinCanPersistAfterUse,
-                                       bool TypeCombined,
-                                       bool SetPinblockDataRequired,
-                                       Dictionary<string, Dictionary<string, Dictionary<string, PinBlockEncryptionAlgorithm>>> PinBlockAttributes)
-        {
-            this.PINFormat = PINFormat;
-            this.PresentationAlgorithm = PresentationAlgorithm;
-            this.DisplayType = DisplayType;
-            this.IDConnect = IDConnect;
-            this.ValidationAlgorithm = ValidationAlgorithm;
-            this.PinCanPersistAfterUse = PinCanPersistAfterUse;
-            this.TypeCombined = TypeCombined;
-            this.SetPinblockDataRequired = SetPinblockDataRequired;
-            this.PinBlockAttributes = PinBlockAttributes;
-        }
-
         /// <summary>
         /// Supported PIN block format
         /// </summary>
-        public PINFormatEnum PINFormat { get; init; }
+        public PINFormatEnum PINFormat { get; init; } = PINFormat;
 
         /// <summary>
         /// Supported presentation algorithms
         /// </summary>
-        public PresentationAlgorithmEnum PresentationAlgorithm { get; init; }
+        public PresentationAlgorithmEnum PresentationAlgorithm { get; init; } = PresentationAlgorithm;
 
         /// <summary>
         /// Specifies the type of the display used in the PIN pad module 
         /// </summary>
-        public DisplayTypeEnum DisplayType { get; init; }
+        public DisplayTypeEnum DisplayType { get; init; } = DisplayType;
 
         /// <summary>
         /// Specifies whether the PIN pad is directly physically connected to the ID card unit
         /// </summary>
-        public bool IDConnect { get; init; }
+        public bool IDConnect { get; init; } = IDConnect;
 
         /// <summary>
         /// Specifies the algorithms for PIN validation supported by the service
         /// </summary>
-        public ValidationAlgorithmEnum ValidationAlgorithm { get; init; }
+        public ValidationAlgorithmEnum ValidationAlgorithm { get; init; } = ValidationAlgorithm;
 
         /// <summary>
         /// Specifies whether the device can retain the PIN after a PIN processing command.
         /// </summary>
-        public bool PinCanPersistAfterUse { get; init; }
+        public bool PinCanPersistAfterUse { get; init; } = PinCanPersistAfterUse;
 
         /// <summary>
         /// Specifies whether the keypad used in the secure PIN pad module is integrated within a generic Win32 keyboard.
         /// </summary>
-        public bool TypeCombined { get; init; }
+        public bool TypeCombined { get; init; } = TypeCombined;
 
         /// <summary>
         /// Specifies whether the command SetPinblockData must be 
         /// called before the PIN is entered via Keyboard.PinEntry and retrieved via 
         /// GetPinblock
         /// </summary>
-        public bool SetPinblockDataRequired { get; init; }
+        public bool SetPinblockDataRequired { get; init; } = SetPinblockDataRequired;
 
         public sealed class PinBlockEncryptionAlgorithm
         {
@@ -166,7 +154,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Key-value pair of attributes supported by the GetPinBlock
         /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, PinBlockEncryptionAlgorithm>>> PinBlockAttributes { get; init; }
+        public Dictionary<string, Dictionary<string, Dictionary<string, PinBlockEncryptionAlgorithm>>> PinBlockAttributes { get; init; } = PinBlockAttributes;
 
     }
 }

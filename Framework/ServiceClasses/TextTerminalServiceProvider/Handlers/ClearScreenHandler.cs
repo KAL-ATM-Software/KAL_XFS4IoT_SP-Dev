@@ -24,7 +24,8 @@ namespace XFS4IoTFramework.TextTerminal
             ClearScreenRequest request;
 
             // First check if all values are null - then clear entire screen. 
-            if (clearScreen.Payload.Screen is null ||
+            if (clearScreen.Payload is null ||
+                clearScreen.Payload.Screen is null ||
                 (clearScreen.Payload.Screen.PositionX is null && 
                  clearScreen.Payload.Screen.PositionY is null && 
                  clearScreen.Payload.Screen.Width is null && 

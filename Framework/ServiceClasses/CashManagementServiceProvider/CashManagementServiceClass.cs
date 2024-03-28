@@ -38,7 +38,7 @@ namespace XFS4IoTServer
             GetStatus();
             GetCapabilities();
 
-            this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set in the " + typeof(CashManagementServiceClass));
+            this.PersistentData = PersistentData.IsNotNull($"No persistent data interface is set in the " + nameof(CashManagementServiceClass));
             
             CashInStatusManaged = PersistentData.Load<CashInStatusClass>(ServiceProvider.Name + typeof(CashInStatusClass).FullName);
             if (CashInStatusManaged is null)
@@ -195,41 +195,9 @@ namespace XFS4IoTServer
 
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status)
         {
-            ShutterStatusChangedEvent.PayloadData payload = new(
-                Position: Position switch
-                {
-                    CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
-                    CashManagementCapabilitiesClass.PositionEnum.InCenter => XFS4IoT.CashManagement.PositionEnum.InCenter,
-                    CashManagementCapabilitiesClass.PositionEnum.InDefault => XFS4IoT.CashManagement.PositionEnum.InDefault,
-                    CashManagementCapabilitiesClass.PositionEnum.InFront => XFS4IoT.CashManagement.PositionEnum.InFront,
-                    CashManagementCapabilitiesClass.PositionEnum.InLeft => XFS4IoT.CashManagement.PositionEnum.InLeft,
-                    CashManagementCapabilitiesClass.PositionEnum.InRear => XFS4IoT.CashManagement.PositionEnum.InRear,
-                    CashManagementCapabilitiesClass.PositionEnum.InRight => XFS4IoT.CashManagement.PositionEnum.InRight,
-                    CashManagementCapabilitiesClass.PositionEnum.InTop => XFS4IoT.CashManagement.PositionEnum.InTop,
-                    CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.PositionEnum.OutBottom,
-                    CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.PositionEnum.OutCenter,
-                    CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.PositionEnum.OutDefault,
-                    CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.PositionEnum.OutFront,
-                    CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.PositionEnum.OutLeft,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.PositionEnum.OutRear,
-                    CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.PositionEnum.OutRight,
-                    CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.PositionEnum.OutTop,
-                    _ => throw new InternalErrorException($"Invalid position is specified for the ShutterStatusChangedEvent event {Position}"),
-                },
-                Shutter: Status switch
-                {
-                    CashManagementStatusClass.ShutterEnum.Closed => XFS4IoT.CashManagement.ShutterEnum.Closed,
-                    CashManagementStatusClass.ShutterEnum.JammedClosed => XFS4IoT.CashManagement.ShutterEnum.Jammed,
-                    CashManagementStatusClass.ShutterEnum.JammedOpen => XFS4IoT.CashManagement.ShutterEnum.Jammed,
-                    CashManagementStatusClass.ShutterEnum.JammedPartiallyOpen => XFS4IoT.CashManagement.ShutterEnum.Jammed,
-                    CashManagementStatusClass.ShutterEnum.JammedUnknown => XFS4IoT.CashManagement.ShutterEnum.Jammed,
-                    CashManagementStatusClass.ShutterEnum.Open => XFS4IoT.CashManagement.ShutterEnum.Open,
-                    CashManagementStatusClass.ShutterEnum.Unknown => XFS4IoT.CashManagement.ShutterEnum.Unknown,
-                    _ => throw new InternalErrorException($"Invalid status is specified for the ShutterStatusChangedEvent event {Status}"),
-                }
-                );
-
-            return ShutterStatusChangedEvent(payload);
+            // Common.StatusChanged event reports shutter status changed event.
+            // Obsolete event interfacec after 2023-2.
+            return Task.CompletedTask;
         }
 
         private void GetStatus()

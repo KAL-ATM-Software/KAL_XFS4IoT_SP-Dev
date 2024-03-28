@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class BarcodeReaderStatusClass : StatusBase
+    public sealed class BarcodeReaderStatusClass(
+        BarcodeReaderStatusClass.ScannerStatusEnum ScannerStatus = BarcodeReaderStatusClass.ScannerStatusEnum.Unknown) : StatusBase
     {
         public enum ScannerStatusEnum
         {
@@ -21,11 +22,6 @@ namespace XFS4IoTFramework.Common
             Off,
             Inoperative,
             Unknown
-        }
-
-        public BarcodeReaderStatusClass(ScannerStatusEnum ScannerStatus = ScannerStatusEnum.Unknown)
-        {
-            scannerStatus = ScannerStatus;
         }
 
         /// <summary>
@@ -48,6 +44,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private ScannerStatusEnum scannerStatus = ScannerStatusEnum.Unknown;
+        private ScannerStatusEnum scannerStatus = ScannerStatus;
     }
 }

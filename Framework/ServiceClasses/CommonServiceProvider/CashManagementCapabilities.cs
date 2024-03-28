@@ -18,7 +18,17 @@ namespace XFS4IoTFramework.Common
     /// CashManagementCapabilities
     /// Store device capabilites for the cash management interface for cash devices
     /// </summary>
-    public sealed class CashManagementCapabilitiesClass
+    public sealed class CashManagementCapabilitiesClass(
+        CashManagementCapabilitiesClass.PositionEnum Positions,
+        bool ShutterControl,
+        CashManagementCapabilitiesClass.RetractAreaEnum RetractAreas,
+        CashManagementCapabilitiesClass.RetractTransportActionEnum RetractTransportActions,
+        CashManagementCapabilitiesClass.RetractStackerActionEnum RetractStackerActions,
+        CashManagementCapabilitiesClass.ExchangeTypesEnum ExchangeTypes,
+        CashManagementCapabilitiesClass.ItemInfoTypesEnum ItemInfoTypes,
+        bool CashBox,
+        bool ClassificationList,
+        Dictionary<string, CashManagementCapabilitiesClass.BanknoteItem> AllBanknoteItems)
     {
         /// <summary>
         /// Common output shutter position
@@ -158,30 +168,6 @@ namespace XFS4IoTFramework.Common
             SelfServiceCoin
         }
 
-
-        public CashManagementCapabilitiesClass(PositionEnum Positions,
-                                               bool ShutterControl,
-                                               RetractAreaEnum RetractAreas,
-                                               RetractTransportActionEnum RetractTransportActions,
-                                               RetractStackerActionEnum RetractStackerActions,
-                                               ExchangeTypesEnum ExchangeTypes,
-                                               ItemInfoTypesEnum ItemInfoTypes,
-                                               bool CashBox,
-                                               bool ClassificationList,
-                                               Dictionary<string, BanknoteItem> AllBanknoteItems)
-        {
-            this.Positions = Positions;
-            this.ShutterControl = ShutterControl;
-            this.RetractAreas = RetractAreas;
-            this.RetractTransportActions = RetractTransportActions;
-            this.RetractStackerActions = RetractStackerActions;
-            this.ExchangeTypes = ExchangeTypes;
-            this.ItemInfoTypes = ItemInfoTypes;
-            this.CashBox = CashBox;
-            this.ClassificationList = ClassificationList;
-            this.AllBanknoteItems = AllBanknoteItems;
-        }
-
         /// <summary>
         /// Details of banknote item
         /// </summary>
@@ -242,7 +228,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Supported positions
         /// </summary>
-        public PositionEnum Positions { get; init; }
+        public PositionEnum Positions { get; init; } = Positions;
 
         /// <summary>
         /// If set to TRUE the shutter is controlled implicitly by the Service. 
@@ -250,48 +236,48 @@ namespace XFS4IoTFramework.Common
         /// using the Dispenser.OpenShutter and the Dispenser.CloseShutter commands.
         /// This property is always true if the device has no shutter. This field applies to all shutters and all positions.
         /// </summary>
-        public bool ShutterControl { get; init; }
+        public bool ShutterControl { get; init; } = ShutterControl;
 
         /// <summary>
         /// Retract areas support of this device
         /// </summary>
-        public RetractAreaEnum RetractAreas { get; init; }
+        public RetractAreaEnum RetractAreas { get; init; } = RetractAreas;
 
         /// <summary>
         /// Action support on retracting cash to the transport
         /// </summary>
-        public RetractTransportActionEnum RetractTransportActions { get; init; }
+        public RetractTransportActionEnum RetractTransportActions { get; init; } = RetractTransportActions;
 
         /// <summary>
         /// Action support on retracting cash to the stacker
         /// </summary>
-        public RetractStackerActionEnum RetractStackerActions { get; init; }
+        public RetractStackerActionEnum RetractStackerActions { get; init; } = RetractStackerActions;
 
         /// <summary>
         /// Supported exchange types
         /// </summary>
-        public ExchangeTypesEnum ExchangeTypes { get; init; }
+        public ExchangeTypesEnum ExchangeTypes { get; init; } = ExchangeTypes;
 
         /// <summary>
         /// Specifies the types of information that can be retrieved through the CashManagement.GetItemInfo command.
         /// </summary>
-        public ItemInfoTypesEnum ItemInfoTypes { get; init; }
+        public ItemInfoTypesEnum ItemInfoTypes { get; init; } = ItemInfoTypes;
 
         /// <summary>
         /// This field is only applicable to teller type devices. 
         /// It specifies whether or not tellers have been assigned a cash box.
         /// </summary>
-        public bool CashBox { get; init; }
+        public bool CashBox { get; init; } = CashBox;
 
         /// <summary>
         /// Specifies whether the device has the capability to maintain a classification list of serial numbers as well as
         /// supporting the associated operations. This can either be TRUE if the device has the capability or FALSE if it does not.
         /// </summary>
-        public bool ClassificationList { get; init; }
+        public bool ClassificationList { get; init; } = ClassificationList;
 
         /// <summary>
         /// Cash item can be recognised and handled by the device component
         /// </summary>
-        public Dictionary<string, BanknoteItem> AllBanknoteItems { get; init; }
+        public Dictionary<string, BanknoteItem> AllBanknoteItems { get; init; } = AllBanknoteItems;
     }
 }

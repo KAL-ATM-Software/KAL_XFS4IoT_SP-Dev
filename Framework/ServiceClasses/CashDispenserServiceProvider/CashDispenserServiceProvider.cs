@@ -37,7 +37,7 @@ namespace XFS4IoTServer
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CashManagement, XFSConstants.ServiceClass.CashDispenser, XFSConstants.ServiceClass.Storage },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CashManagement, XFSConstants.ServiceClass.CashDispenser, XFSConstants.ServiceClass.Storage],
                  device,
                  logger)
         {
@@ -60,6 +60,10 @@ namespace XFS4IoTServer
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
+        /// <summary>
+        /// Common.StatusChanged event reports shutter status changed event.
+        /// Obsolete event interfacec after 2023-2.
+        /// </summary>
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
 
         #endregion
@@ -78,117 +82,20 @@ namespace XFS4IoTServer
         #region Storage unsolic events
         public Task StorageThresholdEvent(List<string> CashUnitIds)
         {
-            StorageThresholdEvent.PayloadData paylod = new();
-            paylod.ExtendedProperties = GetStorages(CashUnitIds);
+            StorageThresholdEvent.PayloadData paylod = new()
+            {
+                ExtendedProperties = GetStorages(CashUnitIds)
+            };
             return StorageService.StorageThresholdEvent(paylod);
         }
 
         public Task StorageChangedEvent(List<string> CashUnitIds)
         {
-            StorageChangedEvent.PayloadData paylod = new();
-            paylod.ExtendedProperties = GetStorages(CashUnitIds);
-            return StorageService.StorageChangedEvent(paylod);
-        }
-
-        private Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> CashUnitIds)
-        {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storages = new();
-
-            foreach (var storageId in CashUnitIds)
+            StorageChangedEvent.PayloadData paylod = new()
             {
-                if (!StorageService.CashUnits.ContainsKey(storageId))
-                    continue;
-
-                storages.Add(storageId,
-                             new(Id: CashUnits[storageId].Id,
-                                 PositionName: CashUnits[storageId].PositionName,
-                                 Capacity: CashUnits[storageId].Capacity,
-                                 Status: CashUnits[storageId].Status switch
-                                 {
-                                     CashUnitStorage.StatusEnum.Good => XFS4IoT.Storage.StatusEnum.Ok,
-                                     CashUnitStorage.StatusEnum.Inoperative => XFS4IoT.Storage.StatusEnum.Inoperative,
-                                     CashUnitStorage.StatusEnum.Manipulated => XFS4IoT.Storage.StatusEnum.Manipulated,
-                                     CashUnitStorage.StatusEnum.Missing => XFS4IoT.Storage.StatusEnum.Missing,
-                                     _ => XFS4IoT.Storage.StatusEnum.NotConfigured,
-                                 },
-                                 SerialNumber: CashUnits[storageId].SerialNumber,
-                                 Cash: new XFS4IoT.CashManagement.StorageCashClass(
-                                        new XFS4IoT.CashManagement.StorageCashCapabilitiesClass(new XFS4IoT.CashManagement.StorageCashTypesClass(CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                                                                                                                                 CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                                                                                                                                 CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                                                                                                                                 CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                                                                                                                                 CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                                                                                                                                 CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)),
-                                                                                                new XFS4IoT.CashManagement.StorageCashItemTypesClass(CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Conterfeit),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                                                                                                                                     CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)),
-                                                                                                CashUnits[storageId].Unit.Capabilities.HardwareSensors,
-                                                                                                CashUnits[storageId].Unit.Capabilities.RetractAreas,
-                                                                                                CashUnits[storageId].Unit.Capabilities.RetractThresholds,
-                                                                                                CashUnits[storageId].Unit.Capabilities.BanknoteItems),
-                                        new XFS4IoT.CashManagement.StorageCashConfigurationClass(new XFS4IoT.CashManagement.StorageCashTypesClass(CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                                                                                                                                  CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                                                                                                                                  CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                                                                                                                                  CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                                                                                                                                  CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                                                                                                                                  CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)),
-                                                                                                new XFS4IoT.CashManagement.StorageCashItemTypesClass(CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Conterfeit),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                                                                                                                                     CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)),
-                                                                                                CashUnits[storageId].Unit.Configuration.Currency,
-                                                                                                CashUnits[storageId].Unit.Configuration.Value,
-                                                                                                CashUnits[storageId].Unit.Configuration.HighThreshold,
-                                                                                                CashUnits[storageId].Unit.Configuration.LowThreshold,
-                                                                                                CashUnits[storageId].Unit.Configuration.AppLockIn,
-                                                                                                CashUnits[storageId].Unit.Configuration.AppLockOut,
-                                                                                                CashUnits[storageId].Unit.Configuration.BanknoteItems),
-                                        new XFS4IoT.CashManagement.StorageCashStatusClass(CashUnits[storageId].Unit.Status.Index,
-                                                                                          CashUnits[storageId].Unit.Status.InitialCounts.CopyTo(),
-                                                                                            new XFS4IoT.CashManagement.StorageCashOutClass(CashUnits[storageId].Unit.Status.StorageCashOutCount?.Presented.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Rejected.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Distributed.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Unknown.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Stacked.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Diverted.CopyTo(),
-                                                                                                                                           CashUnits[storageId].Unit.Status.StorageCashOutCount?.Transport.CopyTo()),
-                                                                                            new XFS4IoT.CashManagement.StorageCashInClass(CashUnits[storageId].Unit.Status.StorageCashInCount?.RetractOperations,
-                                                                                                                                          CashUnits[storageId].Unit.Status.StorageCashInCount?.Deposited.CopyTo(),
-                                                                                                                                          CashUnits[storageId].Unit.Status.StorageCashInCount?.Retracted.CopyTo(),
-                                                                                                                                          CashUnits[storageId].Unit.Status.StorageCashInCount?.Rejected.CopyTo(),
-                                                                                                                                          CashUnits[storageId].Unit.Status.StorageCashInCount?.Distributed.CopyTo(),
-                                                                                                                                          CashUnits[storageId].Unit.Status.StorageCashInCount?.Transport.CopyTo()),
-                                                                                            CashUnits[storageId].Unit.Status.Accuracy switch
-                                                                                            {
-                                                                                                CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
-                                                                                                CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
-                                                                                                CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                                                                                CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
-                                                                                                _ => null,
-                                                                                            },
-                                                                                            CashUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                                                                            {
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Empty,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Full,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Ok,
-                                                                                                CashStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CashManagement.ReplenishmentStatusEnum.High,
-                                                                                                _ => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Low,
-                                                                                            })
-                                        ),
-                                Card: null)
-                             );
-            }
-
-            return storages;
+                ExtendedProperties = GetStorages(CashUnitIds)
+            };
+            return StorageService.StorageChangedEvent(paylod);
         }
         #endregion
 
@@ -240,6 +147,11 @@ namespace XFS4IoTServer
         public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await StorageService.UpdateCashAccounting(countDelta, preservedStorage);
 
         /// <summary>
+        /// Update managed check storage information in the framework.
+        /// </summary>
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => throw new NotSupportedException($"CashDispenser service class doesn't support check storage.");
+
+        /// <summary>
         /// Return which type of storage SP is using
         /// </summary>
         public StorageTypeEnum StorageType { get => StorageService.StorageType; init { } }
@@ -258,6 +170,16 @@ namespace XFS4IoTServer
         /// Cash storage structure information of this device
         /// </summary>
         public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
+
+        /// <summary>
+        /// Check storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Return XFS4IoT storage structured object.
+        /// </summary>
+        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
 
         #endregion
 

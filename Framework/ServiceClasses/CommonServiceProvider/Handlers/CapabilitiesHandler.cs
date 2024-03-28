@@ -1,9 +1,8 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2024
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using XFS4IoT.Common;
 using XFS4IoT.Common.Commands;
 using XFS4IoT.Common.Completions;
 using XFS4IoT.Completions;
+using XFS4IoT.Printer.Events;
 
 namespace XFS4IoTFramework.Common
 {
@@ -123,6 +123,16 @@ namespace XFS4IoTFramework.Common
             if (Common.CommonCapabilities.CameraInterface is not null)
             {
                 supportedInterfaces.Add(InterfaceClass.NameEnum.Camera);
+            }
+            // Check scanner interface
+            if (Common.CommonCapabilities.CheckScannerInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.Check);
+            }
+            // Mixed media interface
+            if (Common.CommonCapabilities.MixedMediaInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.MixedMedia);
             }
 
             List<InterfaceClass> interfaces = [];
@@ -1394,28 +1404,200 @@ namespace XFS4IoTFramework.Common
                     Common.CameraCapabilities.MaxDataLength);
             }
 
+            XFS4IoT.Check.CapabilitiesClass checkScanner = null;
+            if (Common.CheckScannerCapabilities is not null)
+            {
+                XFS4IoT.Check.PositionCapabilitiesClass input = null;
+                XFS4IoT.Check.PositionCapabilitiesClass output = null;
+                XFS4IoT.Check.PositionCapabilitiesClass refused = null;
+                if (Common.CheckScannerCapabilities.Positions is not null)
+                {
+                    foreach (var positionCap in Common.CheckScannerCapabilities.Positions)
+                    {
+                        XFS4IoT.Check.PositionCapabilitiesClass cap = new(
+                            ItemsTakenSensor: positionCap.Value.ItemsTakenSensor,
+                            ItemsInsertedSensor: positionCap.Value.ItemsInsertedSensor,
+                            positionCap.Value.RetractAreas == CheckScannerCapabilitiesClass.PositonCapabilities.RetractAreasEnum.None ?
+                            null : new XFS4IoT.Check.PositionCapabilitiesClass.RetractAreasClass(
+                                RetractBin: positionCap.Value.RetractAreas.HasFlag(CheckScannerCapabilitiesClass.PositonCapabilities.RetractAreasEnum.RetractBin),
+                                Transport: positionCap.Value.RetractAreas.HasFlag(CheckScannerCapabilitiesClass.PositonCapabilities.RetractAreasEnum.Transport),
+                                Stacker: positionCap.Value.RetractAreas.HasFlag(CheckScannerCapabilitiesClass.PositonCapabilities.RetractAreasEnum.Stacker),
+                                Rebuncher: positionCap.Value.RetractAreas.HasFlag(CheckScannerCapabilitiesClass.PositonCapabilities.RetractAreasEnum.Rebuncher)
+                                ));
+
+                        switch (positionCap.Key)
+                        {
+                            case CheckScannerCapabilitiesClass.PositionEnum.Input:
+                                input = cap;
+                                break;
+                            case CheckScannerCapabilitiesClass.PositionEnum.Output:
+                                output = cap;
+                                break;
+                            case CheckScannerCapabilitiesClass.PositionEnum.Refused:
+                                refused = cap;
+                                break;
+                            default:
+                                throw new InternalErrorException($"Unexpected position specified. {positionCap.Key}");
+                        }
+                    }
+                }
+
+                checkScanner = new XFS4IoT.Check.CapabilitiesClass(
+                    Type: Common.CheckScannerCapabilities.Type switch
+                    { 
+                        CheckScannerCapabilitiesClass.TypeEnum.Single => XFS4IoT.Check.CapabilitiesClass.TypeEnum.SingleMediaInput,
+                        CheckScannerCapabilitiesClass.TypeEnum.Bunch => XFS4IoT.Check.CapabilitiesClass.TypeEnum.BunchMediaInput,
+                        _ => throw new InternalErrorException($"Unexpected check scanner type specified. {Common.CheckScannerCapabilities.Type}"),
+                    },
+                    MaxMediaOnStacker: Common.CheckScannerCapabilities.MaxMediaOnStacker < 0 ? null : Common.CheckScannerCapabilities.MaxMediaOnStacker,
+                    PrintSize: Common.CheckScannerCapabilities.PrintSize is null ? 
+                    null : new(
+                        Rows: Common.CheckScannerCapabilities.PrintSize.Rows, 
+                        Cols: Common.CheckScannerCapabilities.PrintSize.Cols),
+                    Stamp: Common.CheckScannerCapabilities.Stamp,
+                    Rescan: Common.CheckScannerCapabilities.Rescan,
+                    PresentControl: Common.CheckScannerCapabilities.PresentControl,
+                    ApplicationRefuse: Common.CheckScannerCapabilities.ApplicationRefuse,
+                    RetractLocation: Common.CheckScannerCapabilities.RetractLocations == CheckScannerCapabilitiesClass.RetractLocationEnum.Default ?
+                    null : new(
+                        Storage: Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Storage),
+                        Transport: Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Transport),
+                        Stacker: Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Stacker),
+                        Rebuncher: Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.ReBuncher)
+                        ),
+                    ResetControl: Common.CheckScannerCapabilities.ResetControls == CheckScannerCapabilitiesClass.ResetControlEnum.Default ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.ResetControlClass(
+                        Eject: Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Eject),
+                        StorageUnit: Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Storage),
+                        Transport: Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Transport),
+                        Rebuncher: Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.ReBuncher)
+                        ),
+                    ImageType: Common.CheckScannerCapabilities.ImageTypes == CheckScannerCapabilitiesClass.ImageTypeEnum.None ? 
+                    null : new XFS4IoT.Check.CapabilitiesClass.ImageTypeClass(
+                        Tif: Common.CheckScannerCapabilities.ImageTypes.HasFlag(CheckScannerCapabilitiesClass.ImageTypeEnum.TIF),
+                        Wmf: Common.CheckScannerCapabilities.ImageTypes.HasFlag(CheckScannerCapabilitiesClass.ImageTypeEnum.WMF),
+                        Bmp: Common.CheckScannerCapabilities.ImageTypes.HasFlag(CheckScannerCapabilitiesClass.ImageTypeEnum.BMP),
+                        Jpg: Common.CheckScannerCapabilities.ImageTypes.HasFlag(CheckScannerCapabilitiesClass.ImageTypeEnum.JPG)
+                        ),
+                    FrontImage: Common.CheckScannerCapabilities.FrontImage is null ?
+                    null : new XFS4IoT.Check.ImageCapabilitiesClass(
+                        ScanColor: new XFS4IoT.Check.ImageCapabilitiesClass.ScanColorClass(
+                            Red: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Red),
+                            Green: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Green),
+                            Blue: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Blue),
+                            Yellow: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Yellow),
+                            White: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.White),
+                            InfraRed: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.InfraRed),
+                            UltraViolet: Common.CheckScannerCapabilities.FrontImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.UltraViolet)
+                            ),
+                        DefaultScanColor: Common.CheckScannerCapabilities.FrontImage.DefaultScanColor == CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.None ?
+                        null : Common.CheckScannerCapabilities.FrontImage.DefaultScanColor switch
+                        { 
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.InfraRed => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.InfraRed,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.UltraViolet => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.UltraViolet,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Red => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Red,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Green => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Green,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Blue => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Blue,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.White => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.White,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Yellow => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Yellow,
+                            _ => throw new InternalErrorException($"Unexpected front image default color specified. {Common.CheckScannerCapabilities.FrontImage.DefaultScanColor}"),
+
+                        }),
+                    BackImage: Common.CheckScannerCapabilities.BackImage is null ?
+                    null : new XFS4IoT.Check.ImageCapabilitiesClass(
+                        ScanColor: new XFS4IoT.Check.ImageCapabilitiesClass.ScanColorClass(
+                            Red: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Red),
+                            Green: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Green),
+                            Blue: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Blue),
+                            Yellow: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.Yellow),
+                            White: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.White),
+                            InfraRed: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.InfraRed),
+                            UltraViolet: Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorFlagEnum.UltraViolet)
+                            ),
+                        DefaultScanColor: Common.CheckScannerCapabilities.BackImage.DefaultScanColor == CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.None ?
+                        null : Common.CheckScannerCapabilities.BackImage.DefaultScanColor switch
+                        {
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.InfraRed => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.InfraRed,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.UltraViolet => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.UltraViolet,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Red => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Red,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Green => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Green,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Blue => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Blue,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.White => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.White,
+                            CheckScannerCapabilitiesClass.ImageCapabilities.ScanColorEnum.Yellow => XFS4IoT.Check.ImageCapabilitiesClass.DefaultScanColorEnum.Yellow,
+                            _ => throw new InternalErrorException($"Unexpected front image default color specified. {Common.CheckScannerCapabilities.FrontImage.DefaultScanColor}"),
+                        }),
+                    CodelineFormat: Common.CheckScannerCapabilities.CodelineFormats == CheckScannerCapabilitiesClass.CodelineFormatEnum.None ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.CodelineFormatClass(
+                        Cmc7: Common.CheckScannerCapabilities.CodelineFormats.HasFlag(CheckScannerCapabilitiesClass.CodelineFormatEnum.CMC7),
+                        E13b: Common.CheckScannerCapabilities.CodelineFormats.HasFlag(CheckScannerCapabilitiesClass.CodelineFormatEnum.E13B),
+                        Ocr: Common.CheckScannerCapabilities.CodelineFormats.HasFlag(CheckScannerCapabilitiesClass.CodelineFormatEnum.OCR),
+                        Ocra: Common.CheckScannerCapabilities.CodelineFormats.HasFlag(CheckScannerCapabilitiesClass.CodelineFormatEnum.OCRA),
+                        Ocrb: Common.CheckScannerCapabilities.CodelineFormats.HasFlag(CheckScannerCapabilitiesClass.CodelineFormatEnum.OCRB)),
+                    DataSource: Common.CheckScannerCapabilities.DataSources == CheckScannerCapabilitiesClass.DataSourceEnum.None ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.DataSourceClass(
+                        ImageFront: Common.CheckScannerCapabilities.DataSources.HasFlag(CheckScannerCapabilitiesClass.DataSourceEnum.Front),
+                        ImageBack: Common.CheckScannerCapabilities.DataSources.HasFlag(CheckScannerCapabilitiesClass.DataSourceEnum.Back),
+                        CodeLine: Common.CheckScannerCapabilities.DataSources.HasFlag(CheckScannerCapabilitiesClass.DataSourceEnum.Codeline)),
+                    InsertOrientation: Common.CheckScannerCapabilities.InsertOrientations == CheckScannerCapabilitiesClass.InsertOrientationEnum.None ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.InsertOrientationClass(
+                        CodeLineRight: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.CodelineRight),
+                        CodeLineLeft: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.CodelineLeft),
+                        CodeLineBottom: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.CodelineBottom),
+                        CodeLineTop: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.CodelineTop),
+                        FaceUp: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.FaceUp),
+                        FaceDown: Common.CheckScannerCapabilities.InsertOrientations.HasFlag(CheckScannerCapabilitiesClass.InsertOrientationEnum.FaceDown)),
+                    Positions: input is null && output is null && refused is null ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.PositionsClass(input, output, refused),
+                    ImageAfterEndorse: Common.CheckScannerCapabilities.ImageAfterEndorse,
+                    ReturnedItemsProcessing: Common.CheckScannerCapabilities.ReturnedItemsProcessing == CheckScannerCapabilitiesClass.ReturnedItemsProcessingEnum.None ?
+                    null : new XFS4IoT.Check.CapabilitiesClass.ReturnedItemsProcessingClass(
+                        Endorse: Common.CheckScannerCapabilities.ReturnedItemsProcessing.HasFlag(CheckScannerCapabilitiesClass.ReturnedItemsProcessingEnum.Endorse),
+                        EndorseImage: Common.CheckScannerCapabilities.ReturnedItemsProcessing.HasFlag(CheckScannerCapabilitiesClass.ReturnedItemsProcessingEnum.EndorseImage)),
+                    PrintSizeFront: Common.CheckScannerCapabilities.PrintSizeFront is null ?
+                    null : new XFS4IoT.Check.PrintsizeClass(
+                        Rows: Common.CheckScannerCapabilities.PrintSizeFront.Rows,
+                        Cols: Common.CheckScannerCapabilities.PrintSizeFront.Cols)
+                    );
+            }
+
+            XFS4IoT.MixedMedia.CapabilitiesClass mixedMedia = null;
+            if (Common.MixedMediaCapabilities is not null)
+            {
+                mixedMedia = new XFS4IoT.MixedMedia.CapabilitiesClass(
+                    Modes: Common.MixedMediaCapabilities.Modes == MixedMedia.ModeTypeEnum.None ?
+                        null :
+                        new(
+                            CashAccept: Common.MixedMediaCapabilities.Modes.HasFlag(MixedMedia.ModeTypeEnum.Cash),
+                            CheckAccept: Common.MixedMediaCapabilities.Modes.HasFlag(MixedMedia.ModeTypeEnum.Check)
+                            ),
+                    Dynamic: Common.MixedMediaCapabilities.DynamicMode
+                    );
+            }
+
             return Task.FromResult(
-            new CapabilitiesCompletion.PayloadData(
-                MessagePayload.CompletionCodeEnum.Success,
-                string.Empty,
-                Interfaces: interfaces,
-                Common: commonCapabilities,
-                CardReader: cardReader,
-                CashDispenser: cashDispenser,
-                CashManagement: cashManagement,
-                PinPad: pinPad,
-                Crypto: crypto,
-                KeyManagement: keyManagement,
-                Keyboard: keyboard,
-                TextTerminal: textTerminal,
-                Lights: lights,
-                Printer: printer,
-				Auxiliaries: auxiliaries,
-                VendorApplication: vendorApplication,
-                BarcodeReader: barcodeReader,
-                Biometric: biometric,
-                CashAcceptor: cashAcceptor,
-                Camera: camera)
+                new CapabilitiesCompletion.PayloadData(
+                    MessagePayload.CompletionCodeEnum.Success,
+                    string.Empty,
+                    Interfaces: interfaces,
+                    Common: commonCapabilities,
+                    CardReader: cardReader,
+                    CashDispenser: cashDispenser,
+                    CashManagement: cashManagement,
+                    PinPad: pinPad,
+                    Crypto: crypto,
+                    KeyManagement: keyManagement,
+                    Keyboard: keyboard,
+                    TextTerminal: textTerminal,
+                    Lights: lights,
+                    Printer: printer,
+				    Auxiliaries: auxiliaries,
+                    VendorApplication: vendorApplication,
+                    BarcodeReader: barcodeReader,
+                    Biometric: biometric,
+                    CashAcceptor: cashAcceptor,
+                    Camera: camera,
+                    Check: checkScanner,
+                    MixedMedia: mixedMedia)
             );
         }
 
@@ -1450,6 +1632,5 @@ namespace XFS4IoTFramework.Common
                        Events: events,
                        MaximumRequests: XFSConstants.MaximumRequests);
         }
-        
     }
 }

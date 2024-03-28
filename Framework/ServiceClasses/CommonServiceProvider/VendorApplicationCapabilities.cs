@@ -13,7 +13,8 @@ namespace XFS4IoTFramework.Common
     /// VendorApplicationCapabilities
     /// Store device capabilites for the vendor mode application interface for VDM
     /// </summary>
-    public sealed class VendorApplicationCapabilitiesClass
+    public sealed class VendorApplicationCapabilitiesClass(
+        VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum SupportedAccessLevels)
     {
 
         [Flags]
@@ -25,18 +26,12 @@ namespace XFS4IoTFramework.Common
             Full = 1 << 2,
         }
 
-        
-        public VendorApplicationCapabilitiesClass(SupportedAccessLevelEnum SupportedAccessLevels)
-        {
-            this.SupportedAccessLevels = SupportedAccessLevels;
-        }
-
         /// <summary>
         /// Specifies the supported access levels. This allows the application to show a user interface with
         /// reduced or extended functionality depending on the access levels.The exact meaning or functionalities
         /// definition is left to the vendor.If no access levels are supported this property will be omitted.
         /// Otherwise this will report the supported access levels respectively.
         /// </summary>
-        public SupportedAccessLevelEnum SupportedAccessLevels { get; init; }
+        public SupportedAccessLevelEnum SupportedAccessLevels { get; init; } = SupportedAccessLevels;
     }
 }

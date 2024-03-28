@@ -17,7 +17,9 @@ namespace XFS4IoTFramework.Common
     /// VendorModeStatusClass
     /// Store device status for the vendor mode
     /// </summary>
-    public sealed class VendorModeStatusClass : StatusBase
+    public sealed class VendorModeStatusClass(
+        VendorModeStatusClass.DeviceStatusEnum DeviceStatus,
+        VendorModeStatusClass.ServiceStatusEnum ServiceStatus) : StatusBase
     {
         public enum DeviceStatusEnum
         {
@@ -31,14 +33,6 @@ namespace XFS4IoTFramework.Common
             Active,       //Vendor Mode active.
             ExitPending,  //Vendor Mode exit request pending.
             Inactive,     //Vendor Mode inactive.
-        }
-
-
-        public VendorModeStatusClass(DeviceStatusEnum DeviceStatus,
-                                     ServiceStatusEnum ServiceStatus)
-        {
-            deviceStatus = DeviceStatus;
-            serviceStatus = ServiceStatus;
         }
 
         /// <summary>
@@ -56,7 +50,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private DeviceStatusEnum deviceStatus = DeviceStatusEnum.Offline;
+        private DeviceStatusEnum deviceStatus = DeviceStatus;
 
         /// <summary>
         /// Specifies the service state
@@ -73,6 +67,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private ServiceStatusEnum serviceStatus = ServiceStatusEnum.Inactive;
+        private ServiceStatusEnum serviceStatus = ServiceStatus;
     }
 }

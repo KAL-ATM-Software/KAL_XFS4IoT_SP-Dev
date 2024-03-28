@@ -14,7 +14,13 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CommonStatusClass : StatusBase
+    public sealed class CommonStatusClass(
+        CommonStatusClass.DeviceEnum Device,
+        CommonStatusClass.PositionStatusEnum DevicePosition,
+        int PowerSaveRecoveryTime,
+        CommonStatusClass.AntiFraudModuleEnum AntiFraudModule,
+        CommonStatusClass.ExchangeEnum Exchange,
+        CommonStatusClass.EndToEndSecurityEnum EndToEndSecurity) : StatusBase
     {
         public enum PositionStatusEnum
         {
@@ -78,21 +84,6 @@ namespace XFS4IoTFramework.Common
             Suspend
         }
 
-        public CommonStatusClass(DeviceEnum Device, 
-                                 PositionStatusEnum DevicePosition, 
-                                 int PowerSaveRecoveryTime, 
-                                 AntiFraudModuleEnum AntiFraudModule, 
-                                 ExchangeEnum Exchange,
-                                 EndToEndSecurityEnum EndToEndSecurity)
-        {
-            device = Device;
-            devicePosition = DevicePosition;
-            powerSaveRecoveryTime = PowerSaveRecoveryTime;
-            antiFraudModule = AntiFraudModule;
-            exchange = Exchange;
-            endToEndSecurity = EndToEndSecurity;
-        }
-        
         /// <summary>
         /// Specifies the state of the device. Following values are possible:
         /// 
@@ -118,7 +109,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private DeviceEnum device = DeviceEnum.NoDevice;
+        private DeviceEnum device = Device;
 
         /// <summary>
         /// Position of the device. Following values are possible:
@@ -139,7 +130,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private PositionStatusEnum devicePosition = PositionStatusEnum.Unknown;
+        private PositionStatusEnum devicePosition = DevicePosition;
 
         /// <summary>
         /// Specifies the actual number of seconds required by the device to resume its normal operational state from
@@ -158,7 +149,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private int powerSaveRecoveryTime = 0;
+        private int powerSaveRecoveryTime = PowerSaveRecoveryTime;
 
         /// <summary>
         /// Specifies the state of the anti-fraud module. Following values are possible:
@@ -181,7 +172,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private AntiFraudModuleEnum antiFraudModule = AntiFraudModuleEnum.NotSupported;
+        private AntiFraudModuleEnum antiFraudModule = AntiFraudModule;
 
         /// <summary>
         /// Exchange status for storage
@@ -198,7 +189,7 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private ExchangeEnum exchange = ExchangeEnum.NotSupported;
+        private ExchangeEnum exchange = Exchange;
 
         /// <summary>
         /// Specifies the status of end to end security support on this device. 
@@ -227,6 +218,6 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private EndToEndSecurityEnum endToEndSecurity = EndToEndSecurityEnum.NotSupported;
+        private EndToEndSecurityEnum endToEndSecurity = EndToEndSecurity;
     }
 }

@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class CashDispenserStatusClass : StatusBase
+    public sealed class CashDispenserStatusClass(
+        CashDispenserStatusClass.IntermediateStackerEnum IntermediateStacker,
+        Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashManagementStatusClass.PositionStatusClass> Positions = null) : StatusBase
     {
         public enum IntermediateStackerEnum
         {
@@ -23,13 +25,6 @@ namespace XFS4IoTFramework.Common
             NotEmptyUnknown,
             Unknown,
             NotSupported,
-        }
-
-        public CashDispenserStatusClass(IntermediateStackerEnum IntermediateStacker,
-                                        Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashManagementStatusClass.PositionStatusClass> Positions = null)
-        {
-            intermediateStacker = IntermediateStacker;
-            this.Positions = Positions;
         }
 
         /// <summary>
@@ -57,11 +52,11 @@ namespace XFS4IoTFramework.Common
                 }
             }
         }
-        private IntermediateStackerEnum intermediateStacker = IntermediateStackerEnum.NotSupported;
+        private IntermediateStackerEnum intermediateStacker = IntermediateStacker;
 
         /// <summary>
         /// Array of structures for each position to which items can be dispensed or presented.
         /// </summary>
-        public Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashManagementStatusClass.PositionStatusClass> Positions { get; init; }
+        public Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashManagementStatusClass.PositionStatusClass> Positions { get; init; } = Positions;
     }
 }
