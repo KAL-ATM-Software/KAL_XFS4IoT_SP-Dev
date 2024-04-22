@@ -1074,30 +1074,11 @@ namespace XFS4IoTServer
                         }
                     }
 
-                    if (item.Value.Counterfeit > 0)
-                    {
-                        storageCashCount.ItemCounts[item.Key].Counterfeit += item.Value.Counterfeit;
-                    }
-
-                    if (item.Value.Fit > 0)
-                    {
-                        storageCashCount.ItemCounts[item.Key].Fit += item.Value.Fit;
-                    }
-
-                    if (item.Value.Inked > 0)
-                    {
-                        storageCashCount.ItemCounts[item.Key].Inked += item.Value.Inked;
-                    }
-
-                    if (item.Value.Suspect > 0)
-                    {
-                        storageCashCount.ItemCounts[item.Key].Suspect += item.Value.Suspect;
-                    }
-
-                    if (item.Value.Unfit > 0)
-                    {
-                        storageCashCount.ItemCounts[item.Key].Unfit += item.Value.Unfit;
-                    }
+                    storageCashCount.ItemCounts[item.Key].Counterfeit += item.Value.Counterfeit;
+                    storageCashCount.ItemCounts[item.Key].Fit += item.Value.Fit;
+                    storageCashCount.ItemCounts[item.Key].Inked += item.Value.Inked;
+                    storageCashCount.ItemCounts[item.Key].Suspect += item.Value.Suspect;
+                    storageCashCount.ItemCounts[item.Key].Unfit += item.Value.Unfit;
                 }
             }
 

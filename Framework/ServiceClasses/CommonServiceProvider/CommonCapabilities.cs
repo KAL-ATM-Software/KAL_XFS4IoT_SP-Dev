@@ -61,6 +61,7 @@ namespace XFS4IoTFramework.Common
                 PowerSaveControl,
                 SetTransactionState,
                 SetVersions,
+                Cancel,
             }
 
             public enum EventEnum

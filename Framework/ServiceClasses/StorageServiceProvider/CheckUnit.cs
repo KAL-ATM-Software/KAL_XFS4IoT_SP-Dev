@@ -154,15 +154,15 @@ namespace XFS4IoTFramework.Storage
         {
             this.Index = Index;
             ReplenishmentStatus = ReplenishmentStatusEnum.Healthy;
-            InitialCounts = new();
-            CheckInCounts = new();
+            initialCounts = new();
+            checkInCounts = new();
         }
         public CheckStatusClass(CheckStatusClass Status)
         {
             Index = Status.Index;
             ReplenishmentStatus = Status.ReplenishmentStatus;
-            InitialCounts = Status.InitialCounts;
-            CheckInCounts = Status.CheckInCounts;
+            initialCounts = Status.InitialCounts;
+            checkInCounts = Status.CheckInCounts;
         }
 
         /// <summary>
@@ -176,12 +176,22 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The check related items which are in the storage unit at the last replenishment.
         /// </summary>
-        public StorageCheckCountClass InitialCounts { get; set; }
+        public StorageCheckCountClass InitialCounts 
+        {
+            get { return initialCounts; }
+            set { initialCounts = value with { }; }
+        }
+        private StorageCheckCountClass initialCounts = new();
 
         /// <summary>
         /// The check items added to the unit since the last replenishment.
         /// </summary>
-        public StorageCheckCountClass CheckInCounts { get; set; }
+        public StorageCheckCountClass CheckInCounts 
+        { 
+            get { return checkInCounts; }
+            set { checkInCounts = value with { }; } 
+        }
+        private StorageCheckCountClass checkInCounts { get; set; }
 
         /// <summary>
         /// The state of the media in the unit if it can be determined.
@@ -299,7 +309,7 @@ namespace XFS4IoTFramework.Storage
     /// <summary>
     /// Counts of the check unit updated by the device class
     /// </summary>
-    public sealed class CheckUnitCountClass
+    public sealed record CheckUnitCountClass
     {
         public CheckUnitCountClass(int Count,
                                    bool MediaRetracted = false)

@@ -190,7 +190,7 @@ namespace XFS4IoTFramework.Storage
     /// <summary>
     /// Structure to update card unit from the device
     /// </summary>
-    public sealed class CardUnitCount
+    public sealed record CardUnitCount
     {
         public CardUnitCount(int InitialCount,
                              int Count,
@@ -207,7 +207,7 @@ namespace XFS4IoTFramework.Storage
             this.InitialCount = InitialCount;
             this.Count = Count;
             // Only used for dispensing unit
-            this.RetainCount = 0;
+            RetainCount = 0;
         }
 
         public int InitialCount { get; init; }

@@ -59,45 +59,72 @@ namespace XFS4IoTFramework.CashAcceptor
             Dictionary<string, StorageCashInClass> itemMovementResult = null;
             if (result.MovementResult?.Count > 0)
             {
-                itemMovementResult = new();
+                itemMovementResult = [];
                 foreach (var movement in result.MovementResult)
                 {
+                    if (movement.Value.StorageCashInCount is null)
+                    {
+                        // Ignore if the device class reports no cash count information.
+                    }
+
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
                     foreach (var item in movement.Value.StorageCashInCount.Deposited.ItemCounts)
+                    {
                         deposited.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> retracted = new();
                     foreach (var item in movement.Value.StorageCashInCount.Retracted.ItemCounts)
+                    {
                         retracted.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> rejected = new();
                     foreach (var item in movement.Value.StorageCashInCount.Rejected.ItemCounts)
+                    {
                         rejected.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> distributed = new();
                     foreach (var item in movement.Value.StorageCashInCount.Distributed.ItemCounts)
+                    {
                         distributed.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> transport = new();
                     foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
+                    {
                         transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
 
-                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized);
-                    depositedCount.ExtendedProperties = deposited;
-                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized);
-                    retractedCount.ExtendedProperties = retracted;
-                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized);
-                    rejectedCount.ExtendedProperties = rejected;
-                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized);
-                    distributedCount.ExtendedProperties = distributed;
-                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized);
-                    transportCount.ExtendedProperties = transport;
+                    StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized)
+                    {
+                        ExtendedProperties = deposited
+                    };
+                    StorageCashCountsClass retractedCount = new(movement.Value.StorageCashInCount.Retracted.Unrecognized)
+                    {
+                        ExtendedProperties = retracted
+                    };
+                    StorageCashCountsClass rejectedCount = new(movement.Value.StorageCashInCount.Rejected.Unrecognized)
+                    {
+                        ExtendedProperties = rejected
+                    };
+                    StorageCashCountsClass distributedCount = new(movement.Value.StorageCashInCount.Distributed.Unrecognized)
+                    {
+                        ExtendedProperties = distributed
+                    };
+                    StorageCashCountsClass transportCount = new(movement.Value.StorageCashInCount.Transport.Unrecognized)
+                    {
+                        ExtendedProperties = transport
+                    };
 
-                    itemMovementResult.Add(movement.Key, new StorageCashInClass
-                                                             (
-                                                                movement.Value.StorageCashInCount.RetractOperations,
-                                                                depositedCount,
-                                                                retractedCount,
-                                                                rejectedCount,
-                                                                distributedCount,
-                                                                transportCount
-                                                             ));
+                    itemMovementResult.Add(
+                        movement.Key, 
+                        new StorageCashInClass
+                        (
+                            movement.Value.StorageCashInCount.RetractOperations,
+                            depositedCount,
+                            retractedCount,
+                            rejectedCount,
+                            distributedCount,
+                            transportCount
+                        ));
                 }
             }
 

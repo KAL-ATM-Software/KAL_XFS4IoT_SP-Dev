@@ -138,21 +138,37 @@ namespace XFS4IoTFramework.CashManagement
                 itemMovementResult = [];
                 foreach (var movement in result.MovementResult)
                 {
+                    if (movement.Value.StorageCashInCount is null)
+                    {
+                        // Ignore if the device class reports no cash count information.
+                        continue;
+                    }
+
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> deposited = new();
                     foreach (var item in movement.Value.StorageCashInCount.Deposited.ItemCounts)
+                    {
                         deposited.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> retracted = new();
                     foreach (var item in movement.Value.StorageCashInCount.Retracted.ItemCounts)
+                    {
                         retracted.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> rejected = new();
                     foreach (var item in movement.Value.StorageCashInCount.Rejected.ItemCounts)
+                    {
                         rejected.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> distributed = new();
                     foreach (var item in movement.Value.StorageCashInCount.Distributed.ItemCounts)
+                    {
                         distributed.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
                     Dictionary<string, XFS4IoT.CashManagement.StorageCashCountClass> transport = new();
                     foreach (var item in movement.Value.StorageCashInCount.Transport.ItemCounts)
+                    {
                         transport.Add(item.Key, new XFS4IoT.CashManagement.StorageCashCountClass(item.Value.Fit, item.Value.Unfit, item.Value.Suspect, item.Value.Counterfeit, item.Value.Inked));
+                    }
 
                     StorageCashCountsClass depositedCount = new(movement.Value.StorageCashInCount.Deposited.Unrecognized)
                     {
