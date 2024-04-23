@@ -79,10 +79,16 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyManagement.GetSecureKeyEntryStatus()?.Reset();
 
                 // Delete internal key information
-                foreach (var key in KeyManagement.GetKeyTable())
+                var keyTable = KeyManagement.GetKeyTable();
+                if (keyTable is not null)
                 {
-                    if (!key.Preloaded)
-                        KeyManagement.DeleteKey(key.KeyName);
+                    foreach (var key in keyTable)
+                    {
+                        if (!key.Preloaded)
+                        {
+                            KeyManagement.DeleteKey(key.KeyName);
+                        }
+                    }
                 }
             }
 

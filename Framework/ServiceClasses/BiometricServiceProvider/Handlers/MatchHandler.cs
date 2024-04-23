@@ -23,19 +23,31 @@ namespace XFS4IoTFramework.Biometric
 
         private async Task<MatchCompletion.PayloadData> HandleMatch(IMatchEvents events, MatchCommand match, CancellationToken cancel)
         {
-            if (match?.Payload?.CompareMode is null)
+            if (match is null)
+            {
                 return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          "CompareMode was not specified.");
+                                                       "No payload specified.");
+            }
 
-            if (match?.Payload?.Threshold is null)
+            if (match.Payload?.CompareMode is null)
+            {
+                return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
+                                                       "CompareMode was not specified.");
+            }
+
+            if (match.Payload?.Threshold is null)
+            {
                 return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          "Threshold was not specified.",
-                                                          MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+                                                       "Threshold was not specified.",
+                                                       MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+            }
 
             if (match.Payload.Threshold.Value < 0 || match.Payload.Threshold.Value > 100)
+            {
                 return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          "Threshold must be within range 0-100.",
-                                                          MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+                                                       "Threshold must be within range 0-100.",
+                                                       MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+            }
 
             BiometricCapabilitiesClass.CompareModesEnum compareMode;
 

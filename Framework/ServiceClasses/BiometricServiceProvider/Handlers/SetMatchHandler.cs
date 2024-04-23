@@ -22,19 +22,31 @@ namespace XFS4IoTFramework.Biometric
 
         private async Task<SetMatchCompletion.PayloadData> HandleSetMatch(ISetMatchEvents events, SetMatchCommand setMatch, CancellationToken cancel)
         {
-            if (setMatch?.Payload?.CompareMode is null)
+            if (setMatch is null)
+            {
+                return new SetMatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
+                                                          "No payload specified.");
+            }
+
+            if (setMatch.Payload?.CompareMode is null)
+            {
                 return new SetMatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
                                                           "CompareMode was not specified.");
+            }
 
-            if (setMatch?.Payload?.Threshold is null)
+            if (setMatch.Payload?.Threshold is null)
+            {
                 return new SetMatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                           "Threshold was not specified.",
                                                           SetMatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+            }
 
             if (setMatch.Payload.Threshold.Value < 0 || setMatch.Payload.Threshold.Value > 100)
+            {
                 return new SetMatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                           "Threshold must be within range 0-100.",
                                                           SetMatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+            }
 
             BiometricCapabilitiesClass.CompareModesEnum compareMode;
 

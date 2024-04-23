@@ -289,7 +289,11 @@ namespace XFS4IoTServer
             if (!fontFound)
             {
                 // Use one of monospace font available
-                requiredFontName = FontFamily.GenericMonospace.Name;
+                FontFamily defaultMono = FontFamily.GenericMonospace;
+                defaultMono.IsNotNull($"Failed to find default monospace font.");
+                requiredFontName = defaultMono.Name;
+                defaultMono.Dispose();
+
                 Logger.Warning(Constants.Framework, $"Specified font '{fontName}' is not found. Use {requiredFontName} instead.");
             }
 

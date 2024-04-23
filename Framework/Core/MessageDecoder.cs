@@ -155,11 +155,14 @@ namespace XFS4IoT
         /// <param name="type">Type of a message class</param>
         public void Add(Type type)
         {
-            string attribNameValue = MessageBase.LookupMessageName(type);
-            Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure. {type}");
+            if (type is not null)
+            {
+                string attribNameValue = MessageBase.LookupMessageName(type);
+                Contracts.IsNotNullOrWhitespace(attribNameValue, $"Invalid command Name attribute is set for the command or response structure. {type}");
 
-            if (!MessageTypes.ContainsKey(attribNameValue))
-                MessageTypes.Add(attribNameValue, type);
+                if (!MessageTypes.ContainsKey(attribNameValue))
+                    MessageTypes.Add(attribNameValue, type);
+            }
         }
 
         public IEnumerator GetEnumerator() => MessageTypes.Keys.GetEnumerator();

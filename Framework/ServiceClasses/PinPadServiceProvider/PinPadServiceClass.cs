@@ -32,7 +32,16 @@ namespace XFS4IoTServer
 
             PCIPTSDeviceIdClass deviceId = Device.GetPCIPTSDeviceId();
 
-            Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()-> " + deviceId is null ? "No information" : "Received information");
+            string log = "No information";
+            if (deviceId is not null)
+            {
+                log = $"{nameof(deviceId.FirmwareIdentifier)}={deviceId.FirmwareIdentifier}," +
+                      $"{nameof(deviceId.ApplicationIdentifier)}={deviceId.ApplicationIdentifier}," +
+                      $"{nameof(deviceId.HardwareIdentifier)}={deviceId.HardwareIdentifier}," +
+                      $"{nameof(deviceId.ManufacturerIdentifier)}={deviceId.ManufacturerIdentifier}," +
+                      $"{nameof(deviceId.ModelIdentifier)}={deviceId.ModelIdentifier}";
+            }
+            Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()-> " + log);
 
             PCIPTSDeviceId = deviceId;
 

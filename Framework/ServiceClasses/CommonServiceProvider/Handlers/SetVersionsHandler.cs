@@ -21,10 +21,19 @@ namespace XFS4IoTFramework.Common
 
         private Task<SetVersionsCompletion.PayloadData> HandleSetVersions(ISetVersionsEvents events, SetVersionsCommand setVersions, CancellationToken cancel)
         {
-            if (setVersions is null)
+            if (setVersions.Payload is null)
             {
                 Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                                       $"No payload specified."));
+            }
+
+            if ((setVersions.Payload.Commands is null ||
+                 setVersions.Payload.Commands is not null && setVersions.Payload.Commands.Count == 0) &&
+                (setVersions.Payload.Events is null ||
+                 setVersions.Payload.Events is not null && setVersions.Payload.Events.Count == 0))
+            {
+                Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                                      $"No commands and events specified."));
             }
 
             if (setVersions.Payload.Commands is not null)
