@@ -485,12 +485,22 @@ namespace XFS4IoTFramework.Common
                     loadCertOptions = null;
                     foreach (var certOption in Common.KeyManagementCapabilities.LoadCertificationOptions)
                     {
-                        if (certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.NotSupported)
+                        if (certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.NotSupported ||
+                            certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA)
                         {
                             continue;
                         }
                         (loadCertOptions ??= []).Add(
-                            key: certOption.Signer.ToString().ToCamelCase(), 
+                            key: certOption.Signer switch
+                            {
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHost => "certHost",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.SigHost => "sigHost",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.HL => "hl",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHot_TR34 => "certHostTr34",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA_TR34 => "caTr34",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.HL_TR34 => "hlTr34",
+                                _ => throw new InternalErrorException($"Unexpected signer for the certification option is specified. {certOption.Signer}"),
+                            },
                             value: new(
                                 NewHost: certOption.Option.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateOptionEnum.NewHost),
                                 ReplaceHost: certOption.Option.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateOptionEnum.ReplaceHost)
