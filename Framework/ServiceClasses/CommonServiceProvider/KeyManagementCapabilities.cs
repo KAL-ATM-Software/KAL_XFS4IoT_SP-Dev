@@ -144,7 +144,7 @@ namespace XFS4IoTFramework.Common
             CertHost, //The current Host RSA Private Key is used to sign the token
             SigHost,  //The current Host RSA Private Key is used to sign the token, signature format is used.
             HL,       //A Higher-Level Authority RSA Private Key is used to sign the token
-            CertHot_TR34, //The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2019
+            CertHost_TR34, //The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             CA_TR34, // The Certificate Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             HL_TR34, // A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             CA, // Obsolete since 2023-2

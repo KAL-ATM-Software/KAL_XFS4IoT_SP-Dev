@@ -496,7 +496,7 @@ namespace XFS4IoTFramework.Common
                                 KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHost => "certHost",
                                 KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.SigHost => "sigHost",
                                 KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.HL => "hl",
-                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHot_TR34 => "certHostTr34",
+                                KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHost_TR34 => "certHostTr34",
                                 KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA_TR34 => "caTr34",
                                 KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.HL_TR34 => "hlTr34",
                                 _ => throw new InternalErrorException($"Unexpected signer for the certification option is specified. {certOption.Signer}"),
