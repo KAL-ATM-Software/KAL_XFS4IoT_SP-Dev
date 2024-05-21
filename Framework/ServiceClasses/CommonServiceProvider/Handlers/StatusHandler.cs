@@ -892,7 +892,7 @@ namespace XFS4IoTFramework.Common
                             null,
                     UPS: Common.AuxiliariesStatus.UPS == AuxiliariesStatusClass.UpsStatusEnum.NotAvailable ?
                          null :
-                         new XFS4IoT.Auxiliaries.UPSStateClass(Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Low),
+                         new XFS4IoT.Auxiliaries.UPSStateClass(!Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Good) && Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Low),
                                                                Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Engaged),
                                                                Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Powering),
                                                                Common.AuxiliariesStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Recovered)

@@ -99,6 +99,12 @@ namespace XFS4IoTFramework.CashDispenser
                 }
 
                 currencies = dispense.Payload.Denomination.Denomination.Service.Currencies;
+
+                if (dispense.Payload.Denomination.Denomination.Service?.Partial is not null &&
+                    dispense.Payload.Denomination.Denomination.Service?.Partial.Count > 0)
+                {
+                    counts = dispense.Payload.Denomination.Denomination.Service.Partial;
+                }
             }
             else
             {
@@ -127,6 +133,23 @@ namespace XFS4IoTFramework.CashDispenser
                 return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                           $"Invalid currency specified.",
                                                           DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency);
+            }
+
+            // Negative count check
+            if (counts is not null)
+            {
+                foreach (var count in counts)
+                {
+                    if (count.Value >= 0)
+                    {
+                        continue;
+                    }
+
+                    return new DispenseCompletion.PayloadData(
+                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                        $"Negative count is specified. Unit:{count.Key}:{count.Value}",
+                        DispenseCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination);
+                }
             }
 
             double totalAmount = currencies.Select(c => c.Value).Sum();
@@ -217,12 +240,30 @@ namespace XFS4IoTFramework.CashDispenser
                 {
                     // Complete a partially specified denomination for a given amount.
                     Denomination mixDenom = CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
-                    if (!mixDenom.Values.OrderBy((denom) => denom.Key).SequenceEqual(denomToDispense.Values.OrderBy((denom) => denom.Key)))
+                    // denomToDispense contains minimum number of notes required.
+                    foreach (var denom in denomToDispense.Values)
                     {
-                        return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                  $"Specified counts each cash unit to be dispensed is different from the result of mix algorithm. internal mix result " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)),
-                                                                  DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                        if (mixDenom.Values.ContainsKey(denom.Key))
+                        {
+                            if (denom.Value > mixDenom.Values[denom.Key])
+                            {
+                                return new DispenseCompletion.PayloadData(
+                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                    $"Specified partial count is greater than mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)) + $", minimum count: {denom.Key}: {denom.Value}",
+                                    DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                            }
+                        }
+                        else
+                        {
+                            return new DispenseCompletion.PayloadData(
+                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                    $"Specified partial count is not included in the mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))) + $", minimum count: {denom.Key}: {denom.Value}",
+                                    DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                        }
                     }
+
+                    // minimum counts each cash units are covered by the mix result.
+                    denomToDispense.Denomination = mixDenom;
                 }
             }
 

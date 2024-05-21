@@ -160,6 +160,7 @@ namespace XFS4IoTFramework.Common
             Engaged = 1 << 1,
             Powering = 1 << 2,
             Recovered = 1 << 3,
+            Good = 1 << 4, // Good battery state, either Low or Good.
         }
 
         public OperatorSwitchEnum OperatorSwitch 

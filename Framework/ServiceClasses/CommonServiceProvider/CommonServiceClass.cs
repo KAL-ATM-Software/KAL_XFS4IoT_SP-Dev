@@ -817,6 +817,7 @@ namespace XFS4IoTServer
                                         VendorModeStatusClass.ServiceStatusEnum.EnterPending => XFS4IoT.VendorMode.StatusClass.ServiceEnum.EnterPending,
                                         VendorModeStatusClass.ServiceStatusEnum.ExitPending => XFS4IoT.VendorMode.StatusClass.ServiceEnum.ExitPending,
                                         VendorModeStatusClass.ServiceStatusEnum.Active => XFS4IoT.VendorMode.StatusClass.ServiceEnum.Active,
+                                        VendorModeStatusClass.ServiceStatusEnum.Inactive => XFS4IoT.VendorMode.StatusClass.ServiceEnum.Inactive,
                                         _ => throw new InternalErrorException($"Unexpected {nameof(vendorModeStatus.ServiceStatus)} property value specified. {vendorModeStatus.ServiceStatus}"),
                                     })
                     )
@@ -1042,11 +1043,11 @@ namespace XFS4IoTServer
                     AuxiliariesStatusClass.DoorStatusClass doorStatus = sender as AuxiliariesStatusClass.DoorStatusClass;
                     doorStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
 
-                    if (propertyInfo.PropertyName != nameof(doorStatus.DoorStatus))
+                    if (propertyInfo.PropertyName == nameof(doorStatus.DoorStatus))
                     {
                         await StatusChangedEvent(new(
                             Auxiliaries: new(
-                                CabinetFrontDoor: doorStatus.Type == AuxiliariesCapabilitiesClass.DoorType.FrontCabinet ?
+                                CabinetFrontDoor: doorStatus.Type != AuxiliariesCapabilitiesClass.DoorType.FrontCabinet ?
                                 null :
                                 doorStatus.DoorStatus switch
                                 {
@@ -1058,7 +1059,7 @@ namespace XFS4IoTServer
                                     AuxiliariesStatusClass.DoorStatusEnum.NotAvailable => null,
                                     _ => throw new InternalErrorException($"Unexpected door status is specified. {doorStatus.Type} {doorStatus.DoorStatus}")
                                 },
-                                CabinetLeftDoor: doorStatus.Type == AuxiliariesCapabilitiesClass.DoorType.LeftCabinet ?
+                                CabinetLeftDoor: doorStatus.Type != AuxiliariesCapabilitiesClass.DoorType.LeftCabinet ?
                                 null :
                                 doorStatus.DoorStatus switch
                                 {
@@ -1070,7 +1071,7 @@ namespace XFS4IoTServer
                                     AuxiliariesStatusClass.DoorStatusEnum.NotAvailable => null,
                                     _ => throw new InternalErrorException($"Unexpected door status is specified. {doorStatus.Type} {doorStatus.DoorStatus}")
                                 },
-                                CabinetRearDoor: doorStatus.Type == AuxiliariesCapabilitiesClass.DoorType.RearCabinet ?
+                                CabinetRearDoor: doorStatus.Type != AuxiliariesCapabilitiesClass.DoorType.RearCabinet ?
                                 null :
                                 doorStatus.DoorStatus switch
                                 {
@@ -1082,7 +1083,7 @@ namespace XFS4IoTServer
                                     AuxiliariesStatusClass.DoorStatusEnum.NotAvailable => null,
                                     _ => throw new InternalErrorException($"Unexpected door status is specified. {doorStatus.Type} {doorStatus.DoorStatus}")
                                 },
-                                CabinetRightDoor: doorStatus.Type == AuxiliariesCapabilitiesClass.DoorType.RightCabinet ?
+                                CabinetRightDoor: doorStatus.Type != AuxiliariesCapabilitiesClass.DoorType.RightCabinet ?
                                 null :
                                 doorStatus.DoorStatus switch
                                 {
@@ -1094,7 +1095,7 @@ namespace XFS4IoTServer
                                     AuxiliariesStatusClass.DoorStatusEnum.NotAvailable => null,
                                     _ => throw new InternalErrorException($"Unexpected door status is specified. {doorStatus.Type} {doorStatus.DoorStatus}")
                                 },
-                                SafeDoor: doorStatus.Type == AuxiliariesCapabilitiesClass.DoorType.Safe ?
+                                SafeDoor: doorStatus.Type != AuxiliariesCapabilitiesClass.DoorType.Safe ?
                                 null :
                                 doorStatus.DoorStatus switch
                                 {
@@ -1330,7 +1331,7 @@ namespace XFS4IoTServer
                             UPS: propertyInfo.PropertyName != nameof(auxStatus.UPS) ?
                             null :
                             new(
-                                Low: auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Low),
+                                Low: !auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Good) && auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Low),
                                 Engaged: auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Engaged),
                                 Powering: auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Powering),
                                 Recovered: auxStatus.UPS.HasFlag(AuxiliariesStatusClass.UpsStatusEnum.Recovered)
