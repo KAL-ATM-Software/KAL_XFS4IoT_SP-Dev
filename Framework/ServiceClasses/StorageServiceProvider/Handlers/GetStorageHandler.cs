@@ -268,7 +268,7 @@ namespace XFS4IoTFramework.Storage
 
             return Task.FromResult(new GetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
                                                                         null,
-                                                                        storageResponse));
+                                                                        storageResponse.Count == 0 ? null : storageResponse));
         }
     }
 }

@@ -435,8 +435,6 @@ namespace XFS4IoTServer
 
             Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashStorageConfiguration()-> {newConfiguration}");
 
-            Contracts.Assert(newCashUnits is not null && newCashUnits.Count != 0, "The device class returned an empty cash unit structure information on the GetCashStorageConfiguration.");
-
             bool updateCashUnitFromDeviceClass = newConfiguration;
             if (newConfiguration)
             {
@@ -489,11 +487,13 @@ namespace XFS4IoTServer
                 if (!identical)
                 {
                     CashUnits.Clear();
-                    foreach (var unit in newCashUnits)
+                    if (newCashUnits is not null)
                     {
-                        CashUnits.Add(unit.Key, new CashUnitStorage(unit.Value));
+                        foreach (var unit in newCashUnits)
+                        {
+                            CashUnits.Add(unit.Key, new CashUnitStorage(unit.Value));
+                        }
                     }
-
                     updateCashUnitFromDeviceClass = true;
                 }
             }
@@ -1101,8 +1101,6 @@ namespace XFS4IoTServer
 
             Logger.Log(Constants.DeviceClass, $"StorageDev.GetCheckStorageConfiguration()-> {newConfiguration}");
 
-            Contracts.Assert(newCheckUnits is not null && newCheckUnits.Count != 0, "The device class returned an empty cash unit structure information on the GetCheckStorageConfiguration.");
-            
             bool updateCheckUnitFromDeviceClass = newConfiguration;
             if (newConfiguration)
             {
@@ -1153,11 +1151,13 @@ namespace XFS4IoTServer
                 if (!identical)
                 {
                     CheckUnits.Clear();
-                    foreach (var unit in newCheckUnits)
+                    if (newCheckUnits is not null)
                     {
-                        CheckUnits.Add(unit.Key, new CheckUnitStorage(unit.Value));
+                        foreach (var unit in newCheckUnits)
+                        {
+                            CheckUnits.Add(unit.Key, new CheckUnitStorage(unit.Value));
+                        }
                     }
-
                     updateCheckUnitFromDeviceClass = true;
                 }
             }
