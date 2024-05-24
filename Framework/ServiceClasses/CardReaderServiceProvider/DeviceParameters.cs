@@ -535,13 +535,27 @@ namespace XFS4IoTFramework.CardReader
     {
         public ChipPowerResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
-                               ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+                               ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                               List<byte> ChipATRData = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            this.ChipATRData = ChipATRData;
         }
 
-        public ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ChipPowerResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               List<byte> ChipATRData)
+            : base(CompletionCode, null)
+        {
+            this.ChipATRData = ChipATRData;
+        }
+
+        public ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = null;
+
+        /// <summary>
+        /// ATR data responded from the chip. null if the action was not a power on
+        /// </summary>
+        public List<byte> ChipATRData { get; init; } = null;
     }
 
     /// <summary>

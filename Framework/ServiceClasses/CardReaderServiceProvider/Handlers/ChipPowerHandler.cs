@@ -42,7 +42,8 @@ namespace XFS4IoTFramework.CardReader
 
             return new ChipPowerCompletion.PayloadData(result.CompletionCode,
                                                        result.ErrorDescription,
-                                                       result.ErrorCode);
+                                                       result.ErrorCode,
+                                                       result.ChipATRData);
         }
 
     }
