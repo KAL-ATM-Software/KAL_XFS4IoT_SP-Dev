@@ -859,6 +859,7 @@ namespace XFS4IoTFramework.Common
                     ReceiptPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter] : null,
                     PassbookPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PassbookPrinter] : null,
                     EnvelopeDepository: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository] : null,
+                    CheckUnit: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CheckUnit) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CheckUnit] : null,
                     BillAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor] : null,
                     EnvelopeDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser] : null,
                     DocumentPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.DocumentPrinter] : null,

@@ -74,7 +74,7 @@ namespace XFS4IoTFramework.CashDispenser
         /// <summary>
         /// Check there are enough notes to be dispensed
         /// </summary>
-        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnitStorage> CashUnits)
+        public DispensableResultEnum IsDispensable(Dictionary<string, CashUnitStorage> CashUnits, int MaxDispensableItems)
         {
             if (Values is null ||
                 Values.Count == 0)
@@ -98,14 +98,14 @@ namespace XFS4IoTFramework.CashDispenser
 
                 if (!CashUnits[unit.Key].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
                 {
-                    Logger.Warning(Constants.Framework, $"Invalid counts to pick from none dispensable unit. {unit.Key}, {CashUnits[unit.Key].Unit.Configuration.Types}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Invalid counts to pick from none dispensable unit. {unit.Key}, {CashUnits[unit.Key].Unit.Configuration.Types}. " + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitError;
                 }
 
                 // Check counts first
                 if (CashUnits[unit.Key].Unit.Status.Count < unit.Value)
                 {
-                    Logger.Warning(Constants.Framework, $"Not enough cash to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Not enough cash to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}. " + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitNotEnough;
                 }
 
@@ -114,7 +114,7 @@ namespace XFS4IoTFramework.CashDispenser
                     (CashUnits[unit.Key].Status == CashUnitStorage.StatusEnum.Good &&
                      CashUnits[unit.Key].Unit.Status.ReplenishmentStatus == CashStatusClass.ReplenishmentStatusEnum.Empty))
                 {
-                    Logger.Warning(Constants.Framework, $"Not good cash unit status to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Status}" + nameof(IsDispensable));
+                    Logger.Warning(Constants.Framework, $"Not good cash unit status to dispense item. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Status}. " + nameof(IsDispensable));
                     return DispensableResultEnum.CashUnitError;
                 }
 
@@ -134,7 +134,7 @@ namespace XFS4IoTFramework.CashDispenser
 
                     if (!currencyOK)
                     {
-                        Logger.Warning(Constants.Framework, $"Specified currency ID not found to dispense. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Unit.Configuration.Currency}" + nameof(IsDispensable));
+                        Logger.Warning(Constants.Framework, $"Specified currency ID not found to dispense. {unit.Key}, {CashUnits[unit.Key].Unit.Status.Count}, {CashUnits[unit.Key].Unit.Configuration.Currency}. " + nameof(IsDispensable));
                         return DispensableResultEnum.InvalidCurrency;
                     }
 
@@ -144,7 +144,9 @@ namespace XFS4IoTFramework.CashDispenser
 
             double total = 0;
             if (CurrencyAmounts is not null)
+            {
                 total = CurrencyAmounts.Select(c => c.Value).Sum();
+            }
             if (total != 0)
             {
                 // If amount is zero, no need to check total amount of cash units
@@ -154,6 +156,14 @@ namespace XFS4IoTFramework.CashDispenser
                     Logger.Warning(Constants.Framework, $"Total amount to dispense doesn't match with requested. Amount specified to dispense each units {internalAmount}, Amount to dispense {total} " + nameof(IsDispensable));
                     return DispensableResultEnum.InvalidDenomination;
                 }
+            }
+
+            int totalNumToDispense = Values.Select(c => c.Value).Sum();
+            if (MaxDispensableItems > 0 &&
+                totalNumToDispense > MaxDispensableItems)
+            {
+                Logger.Warning(Constants.Framework, $"Unable to dispense from cash because number of items {totalNumToDispense} exceed the MaxDispenseItems capability {MaxDispensableItems}. " + nameof(IsDispensable));
+                return DispensableResultEnum.CashUnitError;
             }
 
             return DispensableResultEnum.Good;

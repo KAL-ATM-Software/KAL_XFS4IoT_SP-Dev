@@ -45,6 +45,7 @@ namespace XFS4IoTFramework.Common
             StatusSupervisorIndicator,
             StatusInServiceIndicator,
             FasciaLight,
+            CheckUnit,
         }
 
         [Flags]

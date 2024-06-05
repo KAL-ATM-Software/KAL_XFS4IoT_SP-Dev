@@ -99,12 +99,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
 
                 currencies = dispense.Payload.Denomination.Denomination.Service.Currencies;
-
-                if (dispense.Payload.Denomination.Denomination.Service?.Partial is not null &&
-                    dispense.Payload.Denomination.Denomination.Service?.Partial.Count > 0)
-                {
-                    counts = dispense.Payload.Denomination.Denomination.Service.Partial;
-                }
+                counts = dispense.Payload.Denomination.Denomination.Service.Partial;
             }
             else
             {
@@ -153,21 +148,112 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             double totalAmount = currencies.Select(c => c.Value).Sum();
+            if (totalAmount > int.MaxValue)
+            {
+                return new DispenseCompletion.PayloadData(
+                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                        $"Large amount to dispense. {totalAmount}",
+                        DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+            }
+
+            // Check total amount remaining in the dispenser
+            if (totalAmount > 0)
+            {
+                double maxAmountLeftInDispenser = 0;
+                foreach (var unit in Storage.CashUnits)
+                {
+                    if (!unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
+                    {
+                        continue;
+                    }
+                    // Check status
+                    if (unit.Value.Status != UnitStorageBase.StatusEnum.Good &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Full &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.High &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Low &&
+                        unit.Value.Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Healthy)
+                    {
+                        continue;
+                    }
+                    // Check counts first
+                    if (unit.Value.Unit.Status.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    maxAmountLeftInDispenser += unit.Value.Unit.Status.Count * unit.Value.Unit.Configuration.Value;
+                }
+
+                // We can't dispense requested amount as dispenser has short remaining items.
+                if (totalAmount > maxAmountLeftInDispenser)
+                {
+                    return new DispenseCompletion.PayloadData(
+                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                        $"The total of amount in the dispenser has {maxAmountLeftInDispenser} smaller than requested amount {totalAmount}.",
+                        DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                }
+            }
+            if (counts?.Count > 0 &&
+                counts?.Select(c => c.Value).Sum() != 0)
+            {
+                // Check minimum set of items for service mix or application mix
+                foreach (var count in counts)
+                {
+                    if (!Storage.CashUnits.ContainsKey(count.Key))
+                    {
+                        return new DispenseCompletion.PayloadData(
+                            MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                            $"Requested count from unrecognized cash unit {count.Key}.",
+                            DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                    }
+
+                    if (count.Value > 0)
+                    {
+                        if (!Storage.CashUnits[count.Key].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
+                        {
+                            return new DispenseCompletion.PayloadData(
+                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}",
+                                DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                        }
+
+                        if (Storage.CashUnits[count.Key].Status != UnitStorageBase.StatusEnum.Good &&
+                            Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Full &&
+                            Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.High &&
+                            Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Low &&
+                            Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Healthy)
+                        {
+                            return new DispenseCompletion.PayloadData(
+                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}",
+                                DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                        }
+
+                        if (Storage.CashUnits[count.Key].Unit.Status.Count < count.Value)
+                        {
+                            return new DispenseCompletion.PayloadData(
+                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                $"Requested count to be dispensed from {count.Key}, whih has only {Storage.CashUnits[count.Key].Unit.Status.Count} against requested items{count.Value}.",
+                                DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                        }
+                    }
+                }
+            }
+
             Denominate denomToDispense = new(currencies, counts, Logger);
 
             if (dispense.Payload.Denomination.Denomination.App is not null)
             {
-                if (totalAmount == 0 &&
-                    (counts is null ||
-                     counts.Count == 0 ||
-                     counts.Select(c => c.Value).Sum() == 0))
+                if (denomToDispense.Values is null ||
+                    denomToDispense.Values.Count == 0 ||
+                    denomToDispense.Values.Select(c => c.Value).Sum() == 0)
                 {
                     return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
                                                               $"No counts specified to dispense items from the cash units.");
                 }
 
                 // Check that a given denomination can currently be paid out or Test that a given amount matches a given denomination.
-                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(Storage.CashUnits);
+                Denominate.DispensableResultEnum Result = denomToDispense.IsDispensable(Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
                 switch (Result)
                 {
                     case Denominate.DispensableResultEnum.Good:
@@ -206,13 +292,6 @@ namespace XFS4IoTFramework.CashDispenser
                         Contracts.Assert(Result == Denominate.DispensableResultEnum.Good, $"Unexpected result received after an internal IsDispense call. {Result}");
                         break;
                 }
-
-                if (denomToDispense.Values is null)
-                {
-                    return new DispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Mix failed to denominate on application mix. {denomToDispense.CurrencyAmounts}",
-                                                              DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
-                }
             }
             else
             {
@@ -222,9 +301,9 @@ namespace XFS4IoTFramework.CashDispenser
                                                               $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well.");
                 }
 
-                if (counts is null ||
-                    counts.Count == 0 ||
-                    counts.Select(c => c.Value).Sum() == 0)
+                if (denomToDispense.Values is null ||
+                    denomToDispense.Values.Count == 0 ||
+                    denomToDispense.Values.Select(c => c.Value).Sum() == 0)
                 {
                     // Calculate the denomination, given an amount and mix number.
                     denomToDispense.Denomination = CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
@@ -240,6 +319,15 @@ namespace XFS4IoTFramework.CashDispenser
                 {
                     // Complete a partially specified denomination for a given amount.
                     Denomination mixDenom = CashDispenser.GetMix(dispense.Payload.Denomination.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
+
+                    if (mixDenom.Values is null)
+                    {
+                        return new DispenseCompletion.PayloadData(
+                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                    $"Specified amount is not dispensable. " + string.Join(", ", denomToDispense.CurrencyAmounts.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))),
+                                    DispenseCompletion.PayloadData.ErrorCodeEnum.NotDispensable);
+                    }
+
                     // denomToDispense contains minimum number of notes required.
                     foreach (var denom in denomToDispense.Values)
                     {

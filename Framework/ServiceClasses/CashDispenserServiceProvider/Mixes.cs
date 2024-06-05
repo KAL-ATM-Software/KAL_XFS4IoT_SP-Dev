@@ -116,7 +116,7 @@ namespace XFS4IoTFramework.CashDispenser
                         return new Denomination(CurrencyAmounts);
                     }
 
-                    if (new Denominate(CurrencyAmounts, newDenom, Logger).IsDispensable(CashUnits) == Denominate.DispensableResultEnum.Good)
+                    if (new Denominate(CurrencyAmounts, newDenom, Logger).IsDispensable(CashUnits, MaxDispensableItems) == Denominate.DispensableResultEnum.Good)
                     {
                         // Go to next currency and amount
                         foreach (var d in newDenom)
@@ -209,6 +209,12 @@ namespace XFS4IoTFramework.CashDispenser
                     return new Denomination(CurrencyAmounts);
                 }
 
+                if (!CashUnits.ContainsKey(currentCashUnit))
+                {
+                    Logger.Warning(Constants.Framework, $"No cash unit information available for the {currentCashUnit}");
+                    return new Denomination(CurrencyAmounts);
+                }
+
                 // Find the greatest number from this cash unit which could be needed, and  can be 
                 // dispensed. If we can't get enough notes we have to make up the rest with smaller
                 // denominations.
@@ -290,7 +296,7 @@ namespace XFS4IoTFramework.CashDispenser
             Denominate denom = new(CurrencyAmounts, totalSmallest, Logger);
 
             // Check that this denomination can actually be dispensed.
-            if (denom.IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
+            if (denom.IsDispensable(CashUnits, MaxDispensableItems) != Denominate.DispensableResultEnum.Good)
             {
                 return new Denomination(CurrencyAmounts);
             }
@@ -316,11 +322,22 @@ namespace XFS4IoTFramework.CashDispenser
         {
             Contracts.Assert(Amount != 0, "Invalid parameter used for amount in CalculateR.");
 
+            if (!CashUnits.ContainsKey(LastCashUnit))
+            {
+                return false;
+            }
+
             // Find the next cash unit to check
             string currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref UnitsUsed);
             // We've run out of cash units. The remaining amount shouldn't be zero so we can't dispense.
             if (string.IsNullOrEmpty(currentCashUnit))
                 return false;
+
+            if (!CashUnits.ContainsKey(currentCashUnit))
+            {
+                Logger.Warning(Constants.Framework, $"No cash unit information available for the {currentCashUnit}");
+                return false;
+            }
 
             // Check now if this is the last cash unit.
             bool finalCashUnit = false;
@@ -489,14 +506,19 @@ namespace XFS4IoTFramework.CashDispenser
                     {
                         if (!CalculateLow(ca.Value, ca.Key, biggestCashUnit, CashUnits, ref CassetteUsed, ref newDenom, Logger))
                         {
-                            CalculateLow(ca.Value, ca.Key, string.Empty, CashUnits, ref CassetteUsed, ref newDenom, Logger);
+                            if (!CalculateLow(ca.Value, ca.Key, string.Empty, CashUnits, ref CassetteUsed, ref newDenom, Logger))
+                            {
+                                return new Denomination(CurrencyAmounts);
+                            }
                         }
                     }
                     else
                     {
-                        CalculateLow(ca.Value, ca.Key, string.Empty, CashUnits, ref CassetteUsed, ref newDenom, Logger);
+                        if (!CalculateLow(ca.Value, ca.Key, string.Empty, CashUnits, ref CassetteUsed, ref newDenom, Logger))
+                        {
+                            return new Denomination(CurrencyAmounts);
+                        }
                     }
-
                 }
                 else
                 {
@@ -570,7 +592,7 @@ namespace XFS4IoTFramework.CashDispenser
 
                         // Check that this denomination can actually be dispensed.
                         if (mixFailure == false &&
-                            new Denominate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
+                            new Denominate(new Dictionary<string, double>() { { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits, MaxDispensableItems) != Denominate.DispensableResultEnum.Good)
                         {
                             if (equalNumNotes > 0)
                             {
@@ -601,7 +623,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
 
                 // Check that this denomination can actually be dispensed.
-                if (new Denominate(new Dictionary<string, double>(){ { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
+                if (new Denominate(new Dictionary<string, double>(){ { ca.Key, ca.Value } }, newDenom, Logger).IsDispensable(CashUnits, MaxDispensableItems) != Denominate.DispensableResultEnum.Good)
                 {
                     return new Denomination(CurrencyAmounts);
                 }
@@ -621,7 +643,7 @@ namespace XFS4IoTFramework.CashDispenser
             Denominate denom = new(CurrencyAmounts, totalEqualEmptying, Logger);
 
             // Check that this denomination can actually be dispensed.
-            if (denom.IsDispensable(CashUnits) != Denominate.DispensableResultEnum.Good)
+            if (denom.IsDispensable(CashUnits, MaxDispensableItems) != Denominate.DispensableResultEnum.Good)
             {
                 return new Denomination(CurrencyAmounts);
             }
@@ -642,7 +664,16 @@ namespace XFS4IoTFramework.CashDispenser
             if (string.IsNullOrEmpty(LastCashUnit))
                 currentCashUnit = FindNextGreatest(0, Currency, CashUnits, ref UnitsUsed);
             else
+            {
+                if (!CashUnits.ContainsKey(LastCashUnit))
+                {
+                    Logger.Warning(Constants.Framework, $"No cash unit information available for the {LastCashUnit}");
+                    return false;
+                }
+
                 currentCashUnit = FindNextGreatest(CashUnits[LastCashUnit].Unit.Configuration.Value, Currency, CashUnits, ref UnitsUsed);
+            }
+
             if (string.IsNullOrEmpty(currentCashUnit))
             {
                 Logger.Warning(Constants.Framework, "Failed to find cash unit to denominate in " + nameof(CalculateLow));
@@ -692,7 +723,7 @@ namespace XFS4IoTFramework.CashDispenser
             }
 
             // Don't check the total value of the Denomination, because we do that in the caller.
-            return Denom.Select(c => c.Value).Sum() != 0;
+            return true;
         }
     }
 }
