@@ -60,7 +60,8 @@ namespace XFS4IoTFramework.CashDispenser
                         testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Transport ||
                         testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Stacker ||
                         testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.ItemCassette ||
-                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.CashIn)
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.CashIn ||
+                        testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.Reject)
                     {
                         CashManagementCapabilitiesClass.RetractAreaEnum retractArea = testCashUnits.Payload.Target.Target switch
                         {

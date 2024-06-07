@@ -58,7 +58,8 @@ namespace XFS4IoTFramework.CashManagement
                         calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.Transport ||
                         calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.Stacker ||
                         calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.ItemCassette ||
-                        calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.CashIn)
+                        calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.CashIn ||
+                        calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.Reject)
                     {
                         CashManagementCapabilitiesClass.RetractAreaEnum retractArea = calibrateCashUnit.Payload.Position.Target switch
                         {
