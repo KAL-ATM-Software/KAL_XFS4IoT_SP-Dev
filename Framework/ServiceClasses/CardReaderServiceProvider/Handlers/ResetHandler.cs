@@ -42,22 +42,24 @@ namespace XFS4IoTFramework.CardReader
 
             string storageId = string.Empty;
             // Check storage ID with capabilities
-            if (!string.IsNullOrEmpty(reset.Payload?.StorageId))
+            if (to == ResetDeviceRequest.ToEnum.Retain)
             {
-                storageId = reset.Payload.StorageId;
-                if (!Storage.CardUnits.ContainsKey(storageId))
+                if (!string.IsNullOrEmpty(reset.Payload?.StorageId))
                 {
-                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Invalid StorageId supplied. {reset.Payload.StorageId}");
+                    if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.Motor)
+                    {
+                        return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                               $"Card reader type {Common.CardReaderCapabilities.Type} is not supporting storage.");
+                    }
+
+                    storageId = reset.Payload.StorageId;
+                    if (!Storage.CardUnits.ContainsKey(storageId))
+                    {
+                        return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                                                               $"Invalid StorageId supplied. {reset.Payload.StorageId}");
+                    }
                 }
-            }
-            else
-            {
-                if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.Motor)
-                {
-                     return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"Card reader type {Common.CardReaderCapabilities.Type} is not supporting storage.");
-                }
+                // if the storage id is null, device class can decide the location
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ResetDeviceAsync()");
