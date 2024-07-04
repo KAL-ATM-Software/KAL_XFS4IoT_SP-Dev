@@ -87,6 +87,10 @@ namespace XFS4IoTFramework.CashManagement
 
                     retractPosition = new RetractPosition(new Retract(retractArea, index));
                 }
+                else
+                {
+                    retractPosition = new RetractPosition(new Retract(retractArea));
+                }
             }
             else if (retract.Payload.Location.OutputPosition is not null)
             {
