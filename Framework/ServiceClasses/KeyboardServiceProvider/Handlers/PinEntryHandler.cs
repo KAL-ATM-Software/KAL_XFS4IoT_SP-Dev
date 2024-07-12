@@ -41,8 +41,8 @@ namespace XFS4IoTFramework.Keyboard
             {
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Pin].Contains(key.Key))
                 {
-                    return new PinEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Invalid key specified. {key.Key}");
+                    return new PinEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                              $"Invalid key specified. {key.Key}", PinEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                 }
                 keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }

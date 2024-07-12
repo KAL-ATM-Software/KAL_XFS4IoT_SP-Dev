@@ -30,8 +30,8 @@ namespace XFS4IoTFramework.Keyboard
             if (dataEntry.Payload.ActiveKeys is null || 
                 dataEntry.Payload.ActiveKeys.Count == 0)
             {
-                return new DataEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No active keys are specified.");
+                return new DataEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                           $"No active keys are specified.", DataEntryCompletion.PayloadData.ErrorCodeEnum.NoActivekeys);
             }
 
             if (!Keyboard.SupportedFunctionKeys.ContainsKey(EntryModeEnum.Data))
@@ -45,8 +45,8 @@ namespace XFS4IoTFramework.Keyboard
             {
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Data].Contains(key.Key))
                 {
-                    return new DataEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Invalid key specified. {key.Key}");
+                    return new DataEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                               $"Invalid key specified. {key.Key}", DataEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                 }
                 keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }

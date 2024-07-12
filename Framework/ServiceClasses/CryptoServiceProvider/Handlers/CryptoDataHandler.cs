@@ -115,7 +115,7 @@ namespace XFS4IoTFramework.Crypto
             }
 
             if (!string.IsNullOrEmpty(cryptoData.Payload.ModeOfUse) &&
-                keyDetail.ModeOfUse != "B")
+                keyDetail.ModeOfUse != "B" && keyDetail.ModeOfUse != cryptoData.Payload.ModeOfUse)
             {
                 return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
                                                             $"Specified key doesn't have a mode of use 'B', however ModeOfUse property is set.  {cryptoData.Payload.Key} {cryptoData.Payload.ModeOfUse}",

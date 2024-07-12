@@ -48,8 +48,8 @@ namespace XFS4IoTFramework.Keyboard
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Secure].Contains(key.Key) &&
                     !Keyboard.SupportedFunctionKeysWithShift[EntryModeEnum.Secure].Contains(key.Key))
                 {
-                    return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"Invalid key specified. {key.Key}");
+                    return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
+                                                                    $"Invalid key specified. {key.Key}", SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
                 }
                 keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }

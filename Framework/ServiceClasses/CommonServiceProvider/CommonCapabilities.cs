@@ -205,7 +205,7 @@ namespace XFS4IoTFramework.Common
             {
                 DeleteKey,
                 DeriveKey,
-                ExportRSAEPPSignedItem,
+                ExportRSADeviceSignedItem,
                 ExportRSAIssuerSignedItem,
                 GenerateKCV,
                 GenerateRSAKeyPair,
