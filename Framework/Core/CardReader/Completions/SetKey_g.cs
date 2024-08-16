@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.SetKey")]
     public sealed class SetKeyCompletion : Completion<SetKeyCompletion.PayloadData>
     {
-        public SetKeyCompletion(int RequestId, SetKeyCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetKeyCompletion(int RequestId, SetKeyCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

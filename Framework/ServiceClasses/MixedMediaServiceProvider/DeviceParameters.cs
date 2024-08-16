@@ -8,8 +8,7 @@ using System;
 using System.Collections.Generic;
 using XFS4IoTServer;
 using XFS4IoT.MixedMedia.Completions;
-using XFS4IoTFramework.Common;
-using XFS4IoT.Commands;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.MixedMedia
 {
@@ -31,7 +30,7 @@ namespace XFS4IoTFramework.MixedMedia
     /// Return result of mode changes
     /// </summary>
     public sealed class SetModeResult(
-        XFS4IoT.Completions.MessagePayload.CompletionCodeEnum CompletionCode,
+        MessageHeader.CompletionCodeEnum CompletionCode,
         string ErrorDescription = null,
         SetModeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {

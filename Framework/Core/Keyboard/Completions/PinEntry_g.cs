@@ -19,16 +19,16 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.PinEntry")]
     public sealed class PinEntryCompletion : Completion<PinEntryCompletion.PayloadData>
     {
-        public PinEntryCompletion(int RequestId, PinEntryCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PinEntryCompletion(int RequestId, PinEntryCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Digits = Digits;

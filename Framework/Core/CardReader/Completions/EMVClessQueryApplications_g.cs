@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.EMVClessQueryApplications")]
     public sealed class EMVClessQueryApplicationsCompletion : Completion<EMVClessQueryApplicationsCompletion.PayloadData>
     {
-        public EMVClessQueryApplicationsCompletion(int RequestId, EMVClessQueryApplicationsCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public EMVClessQueryApplicationsCompletion(int RequestId, EMVClessQueryApplicationsCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<AppDataClass> AppData = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(List<AppDataClass> AppData = null)
+                : base()
             {
                 this.AppData = AppData;
             }

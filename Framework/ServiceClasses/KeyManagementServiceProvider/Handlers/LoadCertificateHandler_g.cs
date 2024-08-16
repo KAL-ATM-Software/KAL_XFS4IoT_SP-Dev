@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.KeyManagement
             ILoadCertificateEvents events = new LoadCertificateEvents(Connection, loadCertificateCmd.Header.RequestId.Value);
 
             var result = await HandleLoadCertificate(events, loadCertificateCmd, cancel);
-            await Connection.SendMessageAsync(new LoadCertificateCompletion(loadCertificateCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new LoadCertificateCompletion(loadCertificateCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var loadCertificatecommand = command.IsA<LoadCertificateCommand>();
-            loadCertificatecommand.Header.RequestId.HasValue.IsTrue();
+            var loadCertificateCommand = command.IsA<LoadCertificateCommand>();
+            loadCertificateCommand.Header.RequestId.HasValue.IsTrue();
 
-            LoadCertificateCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => LoadCertificateCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new LoadCertificateCompletion(loadCertificatecommand.Header.RequestId.Value, new LoadCertificateCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new LoadCertificateCompletion(loadCertificateCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

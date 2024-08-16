@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -22,23 +21,26 @@ namespace XFS4IoTFramework.Crypto
 {
     public partial class CryptoDataHandler
     {
-        private async Task<CryptoDataCompletion.PayloadData> HandleCryptoData(ICryptoDataEvents events, CryptoDataCommand cryptoData, CancellationToken cancel)
+        private async Task<CommandResult<CryptoDataCompletion.PayloadData>> HandleCryptoData(ICryptoDataEvents events, CryptoDataCommand cryptoData, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(cryptoData.Payload.Key))
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                            $"No key name is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key name is specified.");
             }
             if (cryptoData.Payload.Data is null ||
                 cryptoData.Payload.Data.Count == 0)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                            $"No data specified to encrypt or decrypt.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No data specified to encrypt or decrypt.");
             }
             if (cryptoData.Payload.CryptoMethod is null)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                            $"No algorith, modeOfUse or cryptoMethod specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No algorith, modeOfUse or cryptoMethod specified.");
             }
 
             KeyDetail ivKeyDetail = null;
@@ -49,36 +51,41 @@ namespace XFS4IoTFramework.Crypto
 
                 if (ivKeyDetail is null)
                 {
-                    return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                                $"No IV key stored.", 
-                                                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No IV key stored.");
                 }
 
                 if (ivKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
-                    return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"No IV key loaded.",
-                                                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No IV key loaded.");
                 }
 
                 if (ivKeyDetail.KeyUsage != "I0")
                 {
-                    return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"No IV key stored.",
-                                                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No IV key stored.");
                 }
                 if (ivKeyDetail.Algorithm != "D" &&
                     ivKeyDetail.Algorithm != "T")
                 {
-                    return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The key {ivKeyDetail.KeyName} doesn't have a DES or TDES algorithm supported for IV decryption.",
-                                                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"The key {ivKeyDetail.KeyName} doesn't have a DES or TDES algorithm supported for IV decryption.");
                 }
                 if (ivKeyDetail.ModeOfUse != "D")
                 {
-                    return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The key {ivKeyDetail.KeyName} doesn't support mode of use for IV decryption.",
-                                                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"The key {ivKeyDetail.KeyName} doesn't support mode of use for IV decryption.");
                 }
             }
 
@@ -86,40 +93,45 @@ namespace XFS4IoTFramework.Crypto
             KeyDetail keyDetail = KeyManagement.GetKeyDetail(cryptoData.Payload.Key);
             if (keyDetail is null)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                            $"Specified key name is not found. {cryptoData.Payload.Key}", 
-                                                            CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key name is not found. {cryptoData.Payload.Key}");
             }
             if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"Specified key is not loaded. {cryptoData.Payload.Key}",
-                                                            CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                return new(
+                    new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key is not loaded. {cryptoData.Payload.Key}");
             }
 
             if (!string.IsNullOrEmpty(cryptoData.Payload.ModeOfUse) &&
                 cryptoData.Payload.ModeOfUse != "E" &&
                 cryptoData.Payload.ModeOfUse != "D")
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"Specified ModeOfUse property is incorrect. only E or D are valid.  {cryptoData.Payload.ModeOfUse}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified ModeOfUse property is incorrect. only E or D are valid.  {cryptoData.Payload.ModeOfUse}");
             }
 
             if (keyDetail.ModeOfUse != "E" &&
                 keyDetail.ModeOfUse != "D" &&
                 keyDetail.ModeOfUse != "B")
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"Specified key doesn't have a right mode of use. {cryptoData.Payload.Key} {keyDetail.ModeOfUse}",
-                                                            CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key doesn't have a right mode of use. {cryptoData.Payload.Key} {keyDetail.ModeOfUse}");
             }
 
             if (!string.IsNullOrEmpty(cryptoData.Payload.ModeOfUse) &&
                 keyDetail.ModeOfUse != "B" && keyDetail.ModeOfUse != cryptoData.Payload.ModeOfUse)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"Specified key doesn't have a mode of use 'B', however ModeOfUse property is set.  {cryptoData.Payload.Key} {cryptoData.Payload.ModeOfUse}",
-                                                            CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key doesn't have a mode of use 'B', however ModeOfUse property is set.  {cryptoData.Payload.Key} {cryptoData.Payload.ModeOfUse}");
             }
 
             // Chcek the crypto capabilities, check must be done before loading keys. but just double checking here
@@ -149,9 +161,10 @@ namespace XFS4IoTFramework.Crypto
             }
             if (!verifyCryptAttrib)
             {
-                return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"The crypto attribute doesn't support specified RSA signature algorithm or unsupported mode of use for MAC.",
-                                                            CryptoDataCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                return new(
+                    new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The crypto attribute doesn't support specified RSA signature algorithm or unsupported mode of use for MAC.");
             }
 
             List<byte> ivData = null;
@@ -179,9 +192,10 @@ namespace XFS4IoTFramework.Crypto
 
                     if (!verifyIVAttrib)
                     {
-                        return new CryptoDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"The crypto attribute doesn't support decrypt IV data with IV key.",
-                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                        return new(
+                            new(CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"The crypto attribute doesn't support decrypt IV data with IV key.");
                     }
                 }
 
@@ -212,11 +226,12 @@ namespace XFS4IoTFramework.Crypto
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
-                    if (decryptResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                    if (decryptResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
                     {
-                        return new CryptoDataCompletion.PayloadData(decryptResult.CompletionCode,
-                                                                    decryptResult.ErrorDescription,
-                                                                    decryptResult.ErrorCode);
+                        return new(
+                            decryptResult.ErrorCode is not null ? new(decryptResult.ErrorCode) : null,
+                            decryptResult.CompletionCode,
+                            decryptResult.ErrorDescription);
                     }
 
                     ivData = decryptResult.CryptoData;
@@ -266,10 +281,19 @@ namespace XFS4IoTFramework.Crypto
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new CryptoDataCompletion.PayloadData(result.CompletionCode,
-                                                        result.ErrorDescription,
-                                                        result.ErrorCode,
-                                                        result.CryptoData);
+            CryptoDataCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.CryptoData?.Count > 0)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Data: result.CryptoData);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

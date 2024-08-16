@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CardReader
             IEMVClessQueryApplicationsEvents events = new EMVClessQueryApplicationsEvents(Connection, eMVClessQueryApplicationsCmd.Header.RequestId.Value);
 
             var result = await HandleEMVClessQueryApplications(events, eMVClessQueryApplicationsCmd, cancel);
-            await Connection.SendMessageAsync(new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationsCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationsCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var eMVClessQueryApplicationscommand = command.IsA<EMVClessQueryApplicationsCommand>();
-            eMVClessQueryApplicationscommand.Header.RequestId.HasValue.IsTrue();
+            var eMVClessQueryApplicationsCommand = command.IsA<EMVClessQueryApplicationsCommand>();
+            eMVClessQueryApplicationsCommand.Header.RequestId.HasValue.IsTrue();
 
-            EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => EMVClessQueryApplicationsCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationscommand.Header.RequestId.Value, new EMVClessQueryApplicationsCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new EMVClessQueryApplicationsCompletion(eMVClessQueryApplicationsCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

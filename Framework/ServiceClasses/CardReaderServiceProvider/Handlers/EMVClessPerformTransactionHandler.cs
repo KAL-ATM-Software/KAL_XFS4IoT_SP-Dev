@@ -18,12 +18,13 @@ namespace XFS4IoTFramework.CardReader
 {
     public partial class EMVClessPerformTransactionHandler
     {
-        private async Task<EMVClessPerformTransactionCompletion.PayloadData> HandleEMVClessPerformTransaction(IEMVClessPerformTransactionEvents events, EMVClessPerformTransactionCommand eMVClessPerformTransaction, CancellationToken cancel)
+        private async Task<CommandResult<EMVClessPerformTransactionCompletion.PayloadData>> HandleEMVClessPerformTransaction(IEMVClessPerformTransactionEvents events, EMVClessPerformTransactionCommand eMVClessPerformTransaction, CancellationToken cancel)
         {
             if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
             {
-                return new EMVClessPerformTransactionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                            $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessPerformTransactionAsync()");
@@ -32,7 +33,7 @@ namespace XFS4IoTFramework.CardReader
                                                                             cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessPerformTransactionAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success &&
                 result.TransactionResults is not null &&
                 result.TransactionResults.Count > 0)
             {
@@ -62,19 +63,32 @@ namespace XFS4IoTFramework.CardReader
                     Chip = ToOutputClass(result.TransactionResults[EMVContactlessPerformTransactionResult.DataSourceTypeEnum.Chip]);
                 }
 
-                return new EMVClessPerformTransactionCompletion.PayloadData(CompletionCode: result.CompletionCode,
-                                                                            ErrorDescription: result.ErrorDescription,
-                                                                            ErrorCode: result.ErrorCode,
-                                                                            Track1: Track1,
-                                                                            Track2: Track2,
-                                                                            Track3: Track3,
-                                                                            Chip: Chip);
+                EMVClessPerformTransactionCompletion.PayloadData payload = null;
+                if (result.ErrorCode is not null ||
+                    Track1 is not null ||
+                    Track2 is not null ||
+                    Track3 is not null ||
+                    Chip is not null)
+                {
+                    payload = new(
+                        ErrorCode: result.ErrorCode,
+                        Track1: Track1,
+                        Track2: Track2,
+                        Track3: Track3,
+                        Chip: Chip);
+                }
+
+                return new(
+                    payload,
+                    CompletionCode: result.CompletionCode,
+                    ErrorDescription: result.ErrorDescription);
             }
             else
             {
-                return new EMVClessPerformTransactionCompletion.PayloadData(result.CompletionCode,
-                                                                            result.ErrorDescription,
-                                                                            result.ErrorCode);
+                return new(
+                    result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                    result.CompletionCode,
+                    result.ErrorDescription);
             }
         }
 

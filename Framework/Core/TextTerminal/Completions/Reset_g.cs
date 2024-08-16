@@ -17,21 +17,11 @@ namespace XFS4IoT.TextTerminal.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.Reset")]
-    public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
+    public sealed class ResetCompletion : Completion<MessagePayload>
     {
-        public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

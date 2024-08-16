@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCompletion : Completion<EMVClessPerformTransactionCompletion.PayloadData>
     {
-        public EMVClessPerformTransactionCompletion(int RequestId, EMVClessPerformTransactionCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public EMVClessPerformTransactionCompletion(int RequestId, EMVClessPerformTransactionCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Chip = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track1 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track2 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track3 = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Chip = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track1 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track2 = null, EMVClessPerformTransactionEMVClessTxOutputDataClass Track3 = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Chip = Chip;

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,10 +18,13 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class PrintNativeHandler
     {
-        private Task<PrintNativeCompletion.PayloadData> HandlePrintNative(IPrintNativeEvents events, PrintNativeCommand printNative, CancellationToken cancel)
+        private Task<CommandResult<PrintNativeCompletion.PayloadData>> HandlePrintNative(IPrintNativeEvents events, PrintNativeCommand printNative, CancellationToken cancel)
         {
-            return Task.FromResult(new PrintNativeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                         $"PrintNative command is not supported."));
+            return Task.FromResult(
+                new CommandResult<PrintNativeCompletion.PayloadData>(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"PrintNative command is not supported.")
+                );
         }
     }
 }

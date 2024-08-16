@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,7 +21,7 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class PresentHandler
     {
-        private async Task<PresentCompletion.PayloadData> HandlePresent(IPresentEvents events, PresentCommand present, CancellationToken cancel)
+        private async Task<CommandResult<PresentCompletion.PayloadData>> HandlePresent(IPresentEvents events, PresentCommand present, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
             if (present.Payload?.Position is not null)
@@ -43,15 +42,17 @@ namespace XFS4IoTFramework.CashDispenser
 
             if (position == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported)
             {
-                return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                         $"Invalid position specified. {position}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid position specified. {position}");
             }
 
             if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
-                return new PresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                         $"Unsupported position specified. {position}",
-                                                         PresentCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(PresentCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Unsupported position specified. {position}");
             }
                 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PresentCashAsync()");
@@ -82,7 +83,7 @@ namespace XFS4IoTFramework.CashDispenser
             // Update an internal present status
             CashDispenser.LastCashDispenserPresentStatus[position].Status = result.CompletionCode switch
             {
-                MessagePayload.CompletionCodeEnum.Success => CashDispenserPresentStatus.PresentStatusEnum.Presented,
+                MessageHeader.CompletionCodeEnum.Success => CashDispenserPresentStatus.PresentStatusEnum.Presented,
                 _ => CashDispenserPresentStatus.PresentStatusEnum.Unknown
             };
 
@@ -114,10 +115,12 @@ namespace XFS4IoTFramework.CashDispenser
 
             PositionInfoNullableClass positionInfo = new(resPostion, result.NumBunchesRemaining < 0 ? "unknown" : result.NumBunchesRemaining.ToString());
 
-            return new PresentCompletion.PayloadData(result.CompletionCode,
-                                                     result.ErrorDescription,
-                                                     result.ErrorCode,
-                                                     positionInfo);
+            return new(
+                new(
+                    result.ErrorCode,
+                    positionInfo),
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

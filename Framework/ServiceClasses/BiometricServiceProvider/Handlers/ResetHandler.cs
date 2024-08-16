@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,16 +18,21 @@ namespace XFS4IoTFramework.Biometric
     public partial class ResetHandler
     {
 
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             if (Common.BiometricCapabilities.ClearData == BiometricCapabilitiesClass.ClearModesEnum.None)
-                return new ResetCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Reset is not supported by this device.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand, 
+                    "Reset is not supported by this device.");
+            }
 
             BiometricCapabilitiesClass.ClearModesEnum clearMode;
 
             if (reset?.Payload?.ClearData is null)
+            {
                 clearMode = Common.BiometricCapabilities.ClearData;
-
+            }
             else
             {
                 clearMode = reset.Payload.ClearData switch
@@ -41,16 +44,19 @@ namespace XFS4IoTFramework.Biometric
                 };
 
                 if (!Common.BiometricCapabilities.ClearData.HasFlag(clearMode))
-                    return new ResetCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Unsupported ClearData specified in Reset payload.");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "Unsupported ClearData specified in Reset payload.");
+                }
             }
-
 
             Logger.Log(Constants.DeviceClass, "BiometricDev.ResetDeviceAsync()");
             var result = await Device.ResetDeviceAsync(new ClearDataRequest(clearMode), cancel);
             Logger.Log(Constants.DeviceClass, $"BiometricDev.ResetDeviceAsync() -> {result.CompletionCode}");
 
             // Send DataClearedEvent
-            if (result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 if (clearMode.HasFlag(BiometricCapabilitiesClass.ClearModesEnum.ScannedData))
                     await Biometric.DataClearedEvent(BiometricCapabilitiesClass.ClearModesEnum.ScannedData);
@@ -62,8 +68,9 @@ namespace XFS4IoTFramework.Biometric
                     await Biometric.DataClearedEvent(BiometricCapabilitiesClass.ClearModesEnum.SetMatchedData);
             }
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
     }

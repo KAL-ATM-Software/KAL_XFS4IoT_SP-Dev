@@ -19,16 +19,16 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.ImportEmvPublicKey")]
     public sealed class ImportEmvPublicKeyCompletion : Completion<ImportEmvPublicKeyCompletion.PayloadData>
     {
-        public ImportEmvPublicKeyCompletion(int RequestId, ImportEmvPublicKeyCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ImportEmvPublicKeyCompletion(int RequestId, ImportEmvPublicKeyCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ExpiryDate = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, string ExpiryDate = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.ExpiryDate = ExpiryDate;

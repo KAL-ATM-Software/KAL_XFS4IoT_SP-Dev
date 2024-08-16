@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.CashIn")]
     public sealed class CashInCompletion : Completion<CashInCompletion.PayloadData>
     {
-        public CashInCompletion(int RequestId, CashInCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CashInCompletion(int RequestId, CashInCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CashManagement.StorageCashCountsClass Items = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, CashManagement.StorageCashCountsClass Items = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Items = Items;

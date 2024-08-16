@@ -19,11 +19,14 @@ namespace XFS4IoTFramework.BarcodeReader
 {
     public partial class ReadHandler
     {
-        private async Task<ReadCompletion.PayloadData> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
+        private async Task<CommandResult<ReadCompletion.PayloadData>> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
         {
             if (Common.BarcodeReaderCapabilities.Symbologies == BarcodeReaderCapabilitiesClass.SymbologiesEnum.NotSupported)
-                return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                  $"No barcode symbologies are supported by the device.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand, 
+                    $"No barcode symbologies are supported by the device.");
+            }
 
             BarcodeReaderCapabilitiesClass.SymbologiesEnum symbologiesToRead = 0;
 
@@ -150,8 +153,8 @@ namespace XFS4IoTFramework.BarcodeReader
                 read.Payload.Symbologies?.UpcE1_5 is true && 
                 !Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_5))
             {
-                return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
-                                                      $"One or more barcode symbologies specified are not supported by the device. {read.Payload.Symbologies}");
+                return new(MessageHeader.CompletionCodeEnum.UnsupportedData,
+                           $"One or more barcode symbologies specified are not supported by the device. {read.Payload.Symbologies}");
             }
 
             if (read.Payload.Symbologies?.AustralianPost is true)
@@ -397,7 +400,7 @@ namespace XFS4IoTFramework.BarcodeReader
 
             if (result.ReadData is not null)
             {
-                output = new();
+                output = [];
                 foreach (ReadResult.ReadBarcodeData data in result.ReadData)
                 {
                     ReadCompletion.PayloadData.ReadOutputClass.SymbologyEnum? symbol = data.SymbologyRead switch
@@ -467,14 +470,16 @@ namespace XFS4IoTFramework.BarcodeReader
                 }
             }
 
-            return new ReadCompletion.PayloadData(result.CompletionCode,
-                                                  result.ErrorDescription,
-                                                  result.ErrorCode switch
-                                                  {
-                                                      ReadResult.ErrorCodeEnum.BarcodeInvalid => ReadCompletion.PayloadData.ErrorCodeEnum.BarcodeInvalid,
-                                                      _ => null,
-                                                  },
-                                                  output);
+            return new(
+                new(
+                    result.ErrorCode is not null ? result.ErrorCode switch
+                    {
+                        ReadResult.ErrorCodeEnum.BarcodeInvalid => ReadCompletion.PayloadData.ErrorCodeEnum.BarcodeInvalid,
+                        _ => throw new InternalErrorException($"Unsupported read command error code specified. {result.ErrorCode}"),
+                    } : null, 
+                    ReadOutput: output),
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

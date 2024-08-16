@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.PinPad
             ILocalDESEvents events = new LocalDESEvents(Connection, localDESCmd.Header.RequestId.Value);
 
             var result = await HandleLocalDES(events, localDESCmd, cancel);
-            await Connection.SendMessageAsync(new LocalDESCompletion(localDESCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new LocalDESCompletion(localDESCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var localDEScommand = command.IsA<LocalDESCommand>();
-            localDEScommand.Header.RequestId.HasValue.IsTrue();
+            var localDESCommand = command.IsA<LocalDESCommand>();
+            localDESCommand.Header.RequestId.HasValue.IsTrue();
 
-            LocalDESCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => LocalDESCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => LocalDESCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => LocalDESCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => LocalDESCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => LocalDESCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => LocalDESCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => LocalDESCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => LocalDESCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => LocalDESCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => LocalDESCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => LocalDESCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => LocalDESCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => LocalDESCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => LocalDESCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => LocalDESCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new LocalDESCompletion(localDEScommand.Header.RequestId.Value, new LocalDESCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new LocalDESCompletion(localDESCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

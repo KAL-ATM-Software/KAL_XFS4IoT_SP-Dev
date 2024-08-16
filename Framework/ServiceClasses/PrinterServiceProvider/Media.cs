@@ -157,7 +157,7 @@ namespace XFS4IoTFramework.Printer
         /// Return properties required for the GetQueryForm command
         /// </summary>
         /// <returns></returns>
-        public GetQueryMediaCompletion.PayloadData QueryMedia()
+        public CommandResult<GetQueryMediaCompletion.PayloadData> QueryMedia()
         {
             GetQueryMediaCompletion.PayloadData.PaperSourcesClass paperSource = null;
 
@@ -177,9 +177,8 @@ namespace XFS4IoTFramework.Printer
             }
             
 
-            return new GetQueryMediaCompletion.PayloadData(
-                    XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success,
-                    ErrorDescription: null,
+            return new(
+                new(
                     MediaType: Type switch
                     {
                         TypeEnum.GENERIC => GetQueryMediaCompletion.PayloadData.MediaTypeEnum.Generic,
@@ -213,7 +212,8 @@ namespace XFS4IoTFramework.Printer
                         FoldEnum.VERTICAL => GetQueryMediaCompletion.PayloadData.FoldTypeEnum.Vertical,
                         _ => GetQueryMediaCompletion.PayloadData.FoldTypeEnum.None,
                     },
-                    PaperSources: paperSource
+                    PaperSources: paperSource),
+                    MessageHeader.CompletionCodeEnum.Success
                 );
         }
 

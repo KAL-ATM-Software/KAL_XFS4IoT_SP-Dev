@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,16 +11,16 @@ using System.Threading;
 using XFS4IoT.Storage.Commands;
 using XFS4IoT.Storage.Completions;
 using XFS4IoT.Storage;
-using XFS4IoT.Completions;
 using XFS4IoTServer;
 using XFS4IoT;
+using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.Storage
 {
     [CommandHandlerAsync]
     public partial class GetStorageHandler
     { 
-        private Task<GetStorageCompletion.PayloadData> HandleGetStorage(IGetStorageEvents events, GetStorageCommand getStorage, CancellationToken cancel)
+        private Task<CommandResult<GetStorageCompletion.PayloadData>> HandleGetStorage(IGetStorageEvents events, GetStorageCommand getStorage, CancellationToken cancel)
         {
             Dictionary<string, StorageUnitClass> storageResponse = [];
 
@@ -266,9 +265,11 @@ namespace XFS4IoTFramework.Storage
                 }
             }
 
-            return Task.FromResult(new GetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                        null,
-                                                                        storageResponse.Count == 0 ? null : storageResponse));
+            return Task.FromResult(
+                new CommandResult<GetStorageCompletion.PayloadData>(
+                    storageResponse.Count == 0 ? null : new(storageResponse),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

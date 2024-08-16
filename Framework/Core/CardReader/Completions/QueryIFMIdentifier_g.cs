@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.QueryIFMIdentifier")]
     public sealed class QueryIFMIdentifierCompletion : Completion<QueryIFMIdentifierCompletion.PayloadData>
     {
-        public QueryIFMIdentifierCompletion(int RequestId, QueryIFMIdentifierCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public QueryIFMIdentifierCompletion(int RequestId, QueryIFMIdentifierCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, Dictionary<string, string> IfmIdentifiers = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(Dictionary<string, string> IfmIdentifiers = null)
+                : base()
             {
                 this.IfmIdentifiers = IfmIdentifiers;
             }

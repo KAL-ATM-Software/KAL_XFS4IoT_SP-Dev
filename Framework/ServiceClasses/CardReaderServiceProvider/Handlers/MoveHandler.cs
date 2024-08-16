@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,12 +20,13 @@ namespace XFS4IoTFramework.CardReader
 {
     public partial class MoveHandler
     {
-        private async Task<MoveCompletion.PayloadData> HandleMove(IMoveEvents events, MoveCommand move, CancellationToken cancel)
+        private async Task<CommandResult<MoveCompletion.PayloadData>> HandleMove(IMoveEvents events, MoveCommand move, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(move.Payload.From))
             {
-                return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                      "The property From is not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "The property From is not specified.");
             }
 
             MovePosition.MovePositionEnum fromPos = MovePosition.MovePositionEnum.Storage;
@@ -37,8 +37,9 @@ namespace XFS4IoTFramework.CardReader
             {
                 if (!Storage.CardUnits.ContainsKey(move.Payload.From))
                 {
-                    return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Invalid StorageId supplied for From property. {move.Payload.From}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid StorageId supplied for From property. {move.Payload.From}");
                 }
             }
             else
@@ -51,8 +52,9 @@ namespace XFS4IoTFramework.CardReader
 
             if (string.IsNullOrEmpty(move.Payload.To))
             {
-                return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                      "The property To is not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "The property To is not specified.");
             }
 
             MovePosition.MovePositionEnum toPos = MovePosition.MovePositionEnum.Storage;
@@ -61,8 +63,9 @@ namespace XFS4IoTFramework.CardReader
             {
                 if (!Storage.CardUnits.ContainsKey(move.Payload.To))
                 {
-                    return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Invalid StorageId supplied for To property. {move.Payload.To}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid StorageId supplied for To property. {move.Payload.To}");
                 }
             }
             else
@@ -81,8 +84,9 @@ namespace XFS4IoTFramework.CardReader
                 if (toPos == MovePosition.MovePositionEnum.Storage ||
                     fromPos == MovePosition.MovePositionEnum.Storage)
                 {
-                    return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Invalid location specified to or from move mdeia as the contractless cardreader won't have a retain bin or dispensing unit. {move.Payload.To}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid location specified to or from move mdeia as the contractless cardreader won't have a retain bin or dispensing unit. {move.Payload.To}");
                 }
                 // passing other cases to the device class as may need to turn off RFID or unlatch card
             }
@@ -93,8 +97,9 @@ namespace XFS4IoTFramework.CardReader
                 if (!string.IsNullOrEmpty(move.Payload.To) ||
                     !string.IsNullOrEmpty(move.Payload.From))
                 {
-                    return new MoveCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {Common.CardReaderCapabilities.Type} To:{move.Payload.To} From:{move.Payload.From}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {Common.CardReaderCapabilities.Type} To:{move.Payload.To} From:{move.Payload.From}");
                 }
             }
 
@@ -109,7 +114,7 @@ namespace XFS4IoTFramework.CardReader
                                                     cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.MoveCardAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 // Update counters and save persistently
                 if (to.Position == MovePosition.MovePositionEnum.Storage)
@@ -132,9 +137,10 @@ namespace XFS4IoTFramework.CardReader
                 }
             }
 
-            return new MoveCompletion.PayloadData(result.CompletionCode,
-                                                  result.ErrorDescription,
-                                                  result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

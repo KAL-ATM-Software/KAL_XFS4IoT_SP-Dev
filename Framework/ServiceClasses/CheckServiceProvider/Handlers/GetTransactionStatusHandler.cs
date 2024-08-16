@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class GetTransactionStatusHandler
     {
-        private Task<GetTransactionStatusCompletion.PayloadData> HandleGetTransactionStatus(IGetTransactionStatusEvents events, GetTransactionStatusCommand getTransactionStatus, CancellationToken cancel)
+        private Task<CommandResult<GetTransactionStatusCompletion.PayloadData>> HandleGetTransactionStatus(IGetTransactionStatusEvents events, GetTransactionStatusCommand getTransactionStatus, CancellationToken cancel)
         {
             List<XFS4IoT.Check.MediaStatusClass> mediaInfo = null;
 
@@ -138,40 +138,40 @@ namespace XFS4IoTFramework.Check
             }
 
             return Task.FromResult(
-                new GetTransactionStatusCompletion.PayloadData(
-                    CompletionCode: XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success,
-                    ErrorDescription: null,
-                    MediaInTransaction: Check.LastTransactionStatus.MediaInTransactionState switch
-                    { 
-                        TransactionStatus.MediaInTransactionStateEnum.Ok => GetTransactionStatusCompletion.PayloadData .MediaInTransactionEnum.Ok,
-                        TransactionStatus.MediaInTransactionStateEnum.Active => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Active,
-                        TransactionStatus.MediaInTransactionStateEnum.Rollback => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Rollback,
-                        TransactionStatus.MediaInTransactionStateEnum.RollbackAfterDeposit => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.RollbackAfterDeposit,
-                        TransactionStatus.MediaInTransactionStateEnum.Retract => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Retract,
-                        TransactionStatus.MediaInTransactionStateEnum.Failure => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Failure,
-                        TransactionStatus.MediaInTransactionStateEnum.Unknown => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Unknown,
-                        TransactionStatus.MediaInTransactionStateEnum.Reset => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Reset,
-                        _ => throw new InternalErrorException($"Unexpected transaction status is specified. {Check.LastTransactionStatus.MediaInTransactionState}")
-                    },
-                    MediaOnStacker: Check.LastTransactionStatus.MediaOnStacker < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.MediaOnStacker.ToString(),
-                    LastMediaInTotal: Check.LastTransactionStatus.LastMediaInTotal < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.LastMediaInTotal.ToString(),
-                    LastMediaAddedToStacker: Check.LastTransactionStatus.LastMediaAddedToStacker < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.LastMediaAddedToStacker.ToString(),
-                    TotalItems: Check.LastTransactionStatus.TotalItems < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.TotalItems.ToString(),
-                    TotalItemsRefused: Check.LastTransactionStatus.TotalItemsRefused < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.TotalItemsRefused.ToString(),
-                    TotalBunchesRefused: Check.LastTransactionStatus.TotalBunchesRefused < 0 ?
-                        "unknown" :
-                        Check.LastTransactionStatus.TotalBunchesRefused.ToString(),
-                    MediaInfo: mediaInfo)
+                new CommandResult<GetTransactionStatusCompletion.PayloadData>(
+                    new(
+                        MediaInTransaction: Check.LastTransactionStatus.MediaInTransactionState switch
+                        {
+                            TransactionStatus.MediaInTransactionStateEnum.Ok => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Ok,
+                            TransactionStatus.MediaInTransactionStateEnum.Active => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Active,
+                            TransactionStatus.MediaInTransactionStateEnum.Rollback => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Rollback,
+                            TransactionStatus.MediaInTransactionStateEnum.RollbackAfterDeposit => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.RollbackAfterDeposit,
+                            TransactionStatus.MediaInTransactionStateEnum.Retract => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Retract,
+                            TransactionStatus.MediaInTransactionStateEnum.Failure => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Failure,
+                            TransactionStatus.MediaInTransactionStateEnum.Unknown => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Unknown,
+                            TransactionStatus.MediaInTransactionStateEnum.Reset => GetTransactionStatusCompletion.PayloadData.MediaInTransactionEnum.Reset,
+                            _ => throw new InternalErrorException($"Unexpected transaction status is specified. {Check.LastTransactionStatus.MediaInTransactionState}")
+                        },
+                        MediaOnStacker: Check.LastTransactionStatus.MediaOnStacker < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.MediaOnStacker.ToString(),
+                        LastMediaInTotal: Check.LastTransactionStatus.LastMediaInTotal < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.LastMediaInTotal.ToString(),
+                        LastMediaAddedToStacker: Check.LastTransactionStatus.LastMediaAddedToStacker < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.LastMediaAddedToStacker.ToString(),
+                        TotalItems: Check.LastTransactionStatus.TotalItems < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.TotalItems.ToString(),
+                        TotalItemsRefused: Check.LastTransactionStatus.TotalItemsRefused < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.TotalItemsRefused.ToString(),
+                        TotalBunchesRefused: Check.LastTransactionStatus.TotalBunchesRefused < 0 ?
+                            "unknown" :
+                            Check.LastTransactionStatus.TotalBunchesRefused.ToString(),
+                        MediaInfo: mediaInfo),
+                    CompletionCode: MessageHeader.CompletionCodeEnum.Success)
                 );
         }
     }

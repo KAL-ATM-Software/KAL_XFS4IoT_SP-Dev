@@ -17,21 +17,11 @@ namespace XFS4IoT.VendorApplication.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorApplication.StartLocalApplication")]
-    public sealed class StartLocalApplicationCompletion : Completion<StartLocalApplicationCompletion.PayloadData>
+    public sealed class StartLocalApplicationCompletion : Completion<MessagePayload>
     {
-        public StartLocalApplicationCompletion(int RequestId, StartLocalApplicationCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartLocalApplicationCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -22,20 +20,26 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class SetMixTableHandler
     {
-        private Task<SetMixTableCompletion.PayloadData> HandleSetMixTable(ISetMixTableEvents events, SetMixTableCommand setMixTable, CancellationToken cancel)
+        private Task<CommandResult<SetMixTableCompletion.PayloadData>> HandleSetMixTable(ISetMixTableEvents events, SetMixTableCommand setMixTable, CancellationToken cancel)
         {
             if (setMixTable.Payload.MixNumber is null ||
                 setMixTable.Payload.Name is null)
             {
-                return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                             $"Supplied MixNumber or Name is null."));
+                return Task.FromResult(
+                    new CommandResult<SetMixTableCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Supplied MixNumber or Name is null.")
+                    );
             }
 
             if (setMixTable.Payload.MixRows is null ||
                 setMixTable.Payload.MixRows.Count == 0)
             {
-                return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                             $"Supplied MixRows is empty."));
+                return Task.FromResult(
+                    new CommandResult<SetMixTableCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Supplied MixRows is empty.")
+                    );
             }
 
             foreach (var mix in CashDispenser.GetMixAlgorithms())
@@ -45,9 +49,12 @@ namespace XFS4IoTFramework.CashDispenser
 
                 if (((MixTable)mix.Value).MixNumber == setMixTable.Payload.MixNumber)
                 {
-                    return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                 $"Specified mix number is already being used.",
-                                                                                 SetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber));
+                    return Task.FromResult(
+                        new CommandResult<SetMixTableCompletion.PayloadData>(
+                            new(SetMixTableCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Specified mix number is already being used.")
+                        );
                 }
             }
 
@@ -56,26 +63,38 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 if (row.Amount is null)
                 {
-                    return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                 $"Supplied amount in the MixRows is null."));
+                    return Task.FromResult(
+                        new CommandResult<SetMixTableCompletion.PayloadData>(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Supplied amount in the MixRows is null.")
+                        );
                 }
 
                 foreach (var v in row.Mix)
                 {
                     if (v is null)
                     {
-                        return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                     $"Supplied value in the Mix is null."));
+                        return Task.FromResult(
+                            new CommandResult<SetMixTableCompletion.PayloadData>(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Supplied value in the Mix is null.")
+                            );
                     }
                     if (v.Value is null)
                     {
-                        return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                     $"Supplied value in the Mix value is null."));
+                        return Task.FromResult(
+                            new CommandResult<SetMixTableCompletion.PayloadData>(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Supplied value in the Mix value is null.")
+                            );
                     }
                     if (v.Count is null)
                     {
-                        return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                     $"Supplied value in the Mix count is null."));
+                        return Task.FromResult(
+                            new CommandResult<SetMixTableCompletion.PayloadData>(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Supplied value in the Mix count is null.")
+                            );
                     }
                 }
 
@@ -97,7 +116,9 @@ namespace XFS4IoTFramework.CashDispenser
                                               mixTables, 
                                               Logger));
 
-            return Task.FromResult(new SetMixTableCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, null));
+            return Task.FromResult(
+                new CommandResult<SetMixTableCompletion.PayloadData>(MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

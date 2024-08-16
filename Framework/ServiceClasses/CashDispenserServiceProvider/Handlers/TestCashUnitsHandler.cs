@@ -23,7 +23,7 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class TestCashUnitsHandler
     {
-        private async Task<TestCashUnitsCompletion.PayloadData> HandleTestCashUnits(ITestCashUnitsEvents events, TestCashUnitsCommand testCashUnits, CancellationToken cancel)
+        private async Task<CommandResult<TestCashUnitsCompletion.PayloadData>> HandleTestCashUnits(ITestCashUnitsEvents events, TestCashUnitsCommand testCashUnits, CancellationToken cancel)
         {
             ItemDestination destination = new();
 
@@ -36,8 +36,8 @@ namespace XFS4IoTFramework.CashDispenser
                 if (testCashUnits.Payload.Target.Target == ItemTargetEnumEnum.SingleUnit &&
                     string.IsNullOrEmpty(testCashUnits.Payload.Target.Unit))
                 {
-                    return new TestCashUnitsCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified location to {testCashUnits.Payload.Target.Target}, but target unit {testCashUnits.Payload.Target.Unit} property is an empty string.");
                 }
 
@@ -45,8 +45,8 @@ namespace XFS4IoTFramework.CashDispenser
                     !string.IsNullOrEmpty(testCashUnits.Payload.Target.Unit) &&
                     !Storage.CashUnits.ContainsKey(testCashUnits.Payload.Target.Unit))
                 {
-                    return new TestCashUnitsCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified CashUnit location is unknown. {testCashUnits.Payload.Target.Unit}");
                 }
 
@@ -75,10 +75,10 @@ namespace XFS4IoTFramework.CashDispenser
 
                         if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                         {
-                            return new TestCashUnitsCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Specified unsupported retract area. {retractArea}",
-                                TestCashUnitsCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                            return new(
+                                new(TestCashUnitsCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified unsupported retract area. {retractArea}");
                         }
 
                         if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
@@ -106,8 +106,8 @@ namespace XFS4IoTFramework.CashDispenser
                                                      select unit).Count();
                             if ((int)index > totalRetractUnits)
                             {
-                                return new TestCashUnitsCompletion.PayloadData(
-                                    MessagePayload.CompletionCodeEnum.InvalidData,
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
                                     $"Unexpected index property value is set where the retract area is specified to retract position. " +
                                     $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
                             }
@@ -131,8 +131,9 @@ namespace XFS4IoTFramework.CashDispenser
                     {
                         if (Common.CashManagementCapabilities.Positions == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
                         {
-                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
                         }
 
                         CashManagementCapabilitiesClass.PositionEnum position = testCashUnits.Payload.Target.Target switch
@@ -150,8 +151,9 @@ namespace XFS4IoTFramework.CashDispenser
 
                         if (!Common.CashManagementCapabilities.Positions.HasFlag(position))
                         {
-                            return new TestCashUnitsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {testCashUnits.Payload.Target.Target}");
                         }
 
                         destination = new ItemDestination(
@@ -182,9 +184,10 @@ namespace XFS4IoTFramework.CashDispenser
             await Storage.UpdateCashAccounting(result.MovementResult);
 
 
-            return new TestCashUnitsCompletion.PayloadData(result.CompletionCode,
-                                                           result.ErrorDescription,
-                                                           result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

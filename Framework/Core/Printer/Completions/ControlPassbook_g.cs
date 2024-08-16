@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ControlPassbook")]
     public sealed class ControlPassbookCompletion : Completion<ControlPassbookCompletion.PayloadData>
     {
-        public ControlPassbookCompletion(int RequestId, ControlPassbookCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ControlPassbookCompletion(int RequestId, ControlPassbookCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

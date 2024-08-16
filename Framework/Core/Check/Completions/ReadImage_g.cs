@@ -19,16 +19,16 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.ReadImage")]
     public sealed class ReadImageCompletion : Completion<ReadImageCompletion.PayloadData>
     {
-        public ReadImageCompletion(int RequestId, ReadImageCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadImageCompletion(int RequestId, ReadImageCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, MediaDataClass Data = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, MediaDataClass Data = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Data = Data;

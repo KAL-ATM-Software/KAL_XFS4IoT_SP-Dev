@@ -4,13 +4,11 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
@@ -19,12 +17,13 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class SetBlackMarkModeHandler
     {
-        private async Task<SetBlackMarkModeCompletion.PayloadData> HandleSetBlackMarkMode(ISetBlackMarkModeEvents events, SetBlackMarkModeCommand setBlackMarkMode, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleSetBlackMarkMode(ISetBlackMarkModeEvents events, SetBlackMarkModeCommand setBlackMarkMode, CancellationToken cancel)
         {
             if (setBlackMarkMode.Payload.BlackMarkMode is null)
             {
-                return new SetBlackMarkModeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"No black mark mode specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No black mark mode specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.SetBlackMarkModeAsync()");
@@ -32,8 +31,9 @@ namespace XFS4IoTFramework.Printer
                                                             cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.SetBlackMarkModeAsync() -> {result.CompletionCode}");
 
-            return new SetBlackMarkModeCompletion.PayloadData(result.CompletionCode,
-                                                              result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

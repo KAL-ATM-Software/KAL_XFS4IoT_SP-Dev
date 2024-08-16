@@ -19,12 +19,12 @@ namespace XFS4IoTFramework.Check
 {
     public partial class ActionItemHandler
     {
-        private async Task<ActionItemCompletion.PayloadData> HandleActionItem(IActionItemEvents events, ActionItemCommand actionItem, CancellationToken cancel)
+        private async Task<CommandResult<ActionItemCompletion.PayloadData>> HandleActionItem(IActionItemEvents events, ActionItemCommand actionItem, CancellationToken cancel)
         {
             if (Common.CheckScannerCapabilities.MaxMediaOnStacker != 0)
             {
-                return new ActionItemCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.UnsupportedCommand,
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
                     $"{nameof(ActionItemCommand)} is valid for the device does not have a stacker. {nameof(Common.CheckScannerCapabilities.MaxMediaOnStacker)} is {Common.CheckScannerCapabilities.MaxMediaOnStacker}");
             }
 
@@ -52,10 +52,10 @@ namespace XFS4IoTFramework.Check
                 await Storage.UpdateCheckStorageCount(countDelta);
             }
 
-            return new ActionItemCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

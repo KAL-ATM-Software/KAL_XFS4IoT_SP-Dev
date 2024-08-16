@@ -19,16 +19,16 @@ namespace XFS4IoT.CashDispenser.Completions
     [Completion(Name = "CashDispenser.Denominate")]
     public sealed class DenominateCompletion : Completion<DenominateCompletion.PayloadData>
     {
-        public DenominateCompletion(int RequestId, DenominateCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DenominateCompletion(int RequestId, DenominateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, DenominationClass Result = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, DenominationClass Result = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Result = Result;

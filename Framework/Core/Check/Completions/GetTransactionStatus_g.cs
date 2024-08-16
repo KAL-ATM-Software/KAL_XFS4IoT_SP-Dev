@@ -19,16 +19,16 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.GetTransactionStatus")]
     public sealed class GetTransactionStatusCompletion : Completion<GetTransactionStatusCompletion.PayloadData>
     {
-        public GetTransactionStatusCompletion(int RequestId, GetTransactionStatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetTransactionStatusCompletion(int RequestId, GetTransactionStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, MediaInTransactionEnum? MediaInTransaction = null, string MediaOnStacker = null, string LastMediaInTotal = null, string LastMediaAddedToStacker = null, string TotalItems = null, string TotalItemsRefused = null, string TotalBunchesRefused = null, List<MediaStatusClass> MediaInfo = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(MediaInTransactionEnum? MediaInTransaction = null, string MediaOnStacker = null, string LastMediaInTotal = null, string LastMediaAddedToStacker = null, string TotalItems = null, string TotalItemsRefused = null, string TotalBunchesRefused = null, List<MediaStatusClass> MediaInfo = null)
+                : base()
             {
                 this.MediaInTransaction = MediaInTransaction;
                 this.MediaOnStacker = MediaOnStacker;

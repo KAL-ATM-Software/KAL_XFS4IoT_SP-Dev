@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCompletion : Completion<ChipPowerCompletion.PayloadData>
     {
-        public ChipPowerCompletion(int RequestId, ChipPowerCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ChipPowerCompletion(int RequestId, ChipPowerCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> ChipData = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<byte> ChipData = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.ChipData = ChipData;

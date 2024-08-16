@@ -4,20 +4,19 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
-using XFS4IoT.Completions;
 using XFS4IoT.VendorApplication.Commands;
 using XFS4IoT.VendorApplication.Completions;
 using XFS4IoTFramework.Common;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.VendorApplication
 {
     public partial class StartLocalApplicationHandler
     {
-        private async Task<StartLocalApplicationCompletion.PayloadData> HandleStartLocalApplication(IStartLocalApplicationEvents events, StartLocalApplicationCommand startLocalApplication, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleStartLocalApplication(IStartLocalApplicationEvents events, StartLocalApplicationCommand startLocalApplication, CancellationToken cancel)
         {
             if (startLocalApplication.Payload.AccessLevel is not null)
             {
@@ -28,8 +27,9 @@ namespace XFS4IoTFramework.VendorApplication
                     startLocalApplication.Payload.AccessLevel == StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Full &&
                     !Common.VendorApplicationCapabilities.SupportedAccessLevels.HasFlag(VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.Full))
                 {
-                    return new StartLocalApplicationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Specified access level is not supported by the device. {startLocalApplication.Payload.AccessLevel}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified access level is not supported by the device. {startLocalApplication.Payload.AccessLevel}");
                 }
             }
 
@@ -45,7 +45,7 @@ namespace XFS4IoTFramework.VendorApplication
                                                             cancel);
             Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.StartLocalApplicationRequest() -> {result.CompletionCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success &&
                 Common.VendorApplicationCapabilities.SupportedAccessLevels != VendorApplicationCapabilitiesClass.SupportedAccessLevelEnum.NotSupported)
             {
                 if (startLocalApplication.Payload.AccessLevel is not null)
@@ -63,8 +63,9 @@ namespace XFS4IoTFramework.VendorApplication
                 }
             }
 
-            return new StartLocalApplicationCompletion.PayloadData(result.CompletionCode,
-                                                                   result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

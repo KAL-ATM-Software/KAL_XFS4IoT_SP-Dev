@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Keyboard
             IKeypressBeepEvents events = new KeypressBeepEvents(Connection, keypressBeepCmd.Header.RequestId.Value);
 
             var result = await HandleKeypressBeep(events, keypressBeepCmd, cancel);
-            await Connection.SendMessageAsync(new KeypressBeepCompletion(keypressBeepCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new KeypressBeepCompletion(keypressBeepCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var keypressBeepcommand = command.IsA<KeypressBeepCommand>();
-            keypressBeepcommand.Header.RequestId.HasValue.IsTrue();
+            var keypressBeepCommand = command.IsA<KeypressBeepCommand>();
+            keypressBeepCommand.Header.RequestId.HasValue.IsTrue();
 
-            KeypressBeepCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => KeypressBeepCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new KeypressBeepCompletion(keypressBeepcommand.Header.RequestId.Value, new KeypressBeepCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new KeypressBeepCompletion(keypressBeepCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

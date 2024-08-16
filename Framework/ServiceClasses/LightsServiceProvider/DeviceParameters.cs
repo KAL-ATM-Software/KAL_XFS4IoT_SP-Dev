@@ -4,10 +4,10 @@
  * See the LICENSE file in the project root for more information.
 
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using XFS4IoTServer;
+using XFS4IoT;
 using XFS4IoT.Completions;
 using XFS4IoT.Lights.Completions;
 using XFS4IoTFramework.Common;
@@ -36,6 +36,17 @@ namespace XFS4IoTFramework.Lights
 
     public sealed class SetLightResult : DeviceResult
     {
+        public SetLightResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              SetLightCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SetLightResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               SetLightCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)

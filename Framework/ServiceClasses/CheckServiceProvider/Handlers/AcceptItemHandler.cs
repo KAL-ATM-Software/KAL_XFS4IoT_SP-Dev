@@ -17,13 +17,13 @@ namespace XFS4IoTFramework.Check
 {
     public partial class AcceptItemHandler
     {
-        private async Task<AcceptItemCompletion.PayloadData> HandleAcceptItem(IAcceptItemEvents events, AcceptItemCommand acceptItem, CancellationToken cancel)
+        private async Task<CommandResult<AcceptItemCompletion.PayloadData>> HandleAcceptItem(IAcceptItemEvents events, AcceptItemCommand acceptItem, CancellationToken cancel)
         {
             if (acceptItem.Payload is null ||
                 acceptItem.Payload.Accept is null)
             {
-                return new AcceptItemCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"Required property Accept is not specified.");
             }
 
@@ -35,10 +35,10 @@ namespace XFS4IoTFramework.Check
 
             Logger.Log(Constants.DeviceClass, $"CheckDev.AcceptItemAsync() -> {result.CompletionCode}");
 
-            return new AcceptItemCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

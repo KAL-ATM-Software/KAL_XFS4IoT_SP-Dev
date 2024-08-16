@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -15,23 +14,23 @@ using XFS4IoT.Storage.Commands;
 using XFS4IoT.Storage.Completions;
 using XFS4IoT;
 using XFS4IoT.Completions;
-using System.Diagnostics;
 
 namespace XFS4IoTFramework.Storage
 {
     public partial class SetStorageHandler
     {
-        private async Task<SetStorageCompletion.PayloadData> HandleSetStorage(ISetStorageEvents events, SetStorageCommand setStorage, CancellationToken cancel)
+        private async Task<CommandResult<SetStorageCompletion.PayloadData>> HandleSetStorage(ISetStorageEvents events, SetStorageCommand setStorage, CancellationToken cancel)
         {
-            MessagePayload.CompletionCodeEnum completionCode = MessagePayload.CompletionCodeEnum.InternalError;
+            MessageHeader.CompletionCodeEnum completionCode = MessageHeader.CompletionCodeEnum.InternalError;
             string errorDescription = string.Empty;
             SetStorageCompletion.PayloadData.ErrorCodeEnum? errorCode = null;
 
             if (setStorage.Payload.Storage is null ||
                 setStorage.Payload.Storage.Count == 0)
             {
-                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No storage information is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No storage information is specified.");
             }
 
             if (Storage.StorageType.HasFlag(StorageTypeEnum.Card))
@@ -42,8 +41,9 @@ namespace XFS4IoTFramework.Storage
                 {
                     if (!Storage.CardUnits.ContainsKey(storage.Key))
                     {
-                        return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"Unrecognised storage ID for card unit specified. {storage.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Unrecognised storage ID for card unit specified. {storage.Key}");
                     }
 
                     if (storage.Value.Card is null ||
@@ -61,8 +61,9 @@ namespace XFS4IoTFramework.Storage
                         (storage.Value.Card.Configuration?.Threshold >= Storage.CardUnits[storage.Key].Capacity ||
                          storage.Value.Card.Configuration?.Threshold < 0))
                     {
-                        return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"Invalid threshold specified for card unit. The value must be smaller than capacity or positive value. {storage.Value.Card.Configuration.Threshold}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Invalid threshold specified for card unit. The value must be smaller than capacity or positive value. {storage.Value.Card.Configuration.Threshold}");
                     }
 
                     cardStorageToSet.Add(storage.Key, new SetCardUnitStorage(storage.Value.Card.Configuration is null ? null : new SetCardConfiguration(storage.Value.Card.Configuration.Threshold,
@@ -72,8 +73,9 @@ namespace XFS4IoTFramework.Storage
 
                 if (cardStorageToSet.Count == 0)
                 {
-                    return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No card configuration is set to all card units.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No card configuration is set to all card units.");
                 }
 
                 Logger.Log(Constants.DeviceClass, "StorageDev.SetCardStorageAsync()");
@@ -82,7 +84,7 @@ namespace XFS4IoTFramework.Storage
 
                 Logger.Log(Constants.DeviceClass, $"StorageDev.SetCardStorageAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-                if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     foreach (var storageToUpdate in cardStorageToSet)
                     {
@@ -130,8 +132,9 @@ namespace XFS4IoTFramework.Storage
                     {
                         if (!Storage.CashUnits.ContainsKey(storage.Key))
                         {
-                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"Unrecognised storage ID for cash unit specified. {storage.Key}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unrecognised storage ID for cash unit specified. {storage.Key}");
                         }
 
                         if (storage.Value.Cash is null ||
@@ -161,22 +164,25 @@ namespace XFS4IoTFramework.Storage
                             (storage.Value.Cash.Configuration.HighThreshold >= Storage.CashUnits[storage.Key].Capacity ||
                              storage.Value.Cash.Configuration.HighThreshold < 0))
                             {
-                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                            $"Invalid threshold specified for cash unit. The value must be smaller than capacity or positive value. {storage.Value.Cash.Configuration.HighThreshold}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Invalid threshold specified for cash unit. The value must be smaller than capacity or positive value. {storage.Value.Cash.Configuration.HighThreshold}");
                             }
 
                             if (storage.Value.Cash.Configuration.LowThreshold is not null &&
                                 storage.Value.Cash.Configuration.LowThreshold < 0)
                             {
-                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                            $"Invalid low threshold specified for cash unit. The value must be positive value. {storage.Value.Cash.Configuration.LowThreshold}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Invalid low threshold specified for cash unit. The value must be positive value. {storage.Value.Cash.Configuration.LowThreshold}");
                             }
 
                             if (storage.Value.Cash.Configuration.MaxRetracts is not null &&
                                 storage.Value.Cash.Configuration.MaxRetracts < 0)
                             {
-                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                            $"Invalid max retracts specified for cash unit. The value must be positive value. {storage.Value.Cash.Configuration.MaxRetracts}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Invalid max retracts specified for cash unit. The value must be positive value. {storage.Value.Cash.Configuration.MaxRetracts}");
                             }
 
                             CashCapabilitiesClass.TypesEnum? types = null;
@@ -217,8 +223,9 @@ namespace XFS4IoTFramework.Storage
                                                      where !Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item)
                                                      select item)
                                 {
-                                    return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");
+                                    return new(
+                                        MessageHeader.CompletionCodeEnum.InvalidData,
+                                        $"Invalid banknote item specified. Unit: {storage.Key}, Invalid item: {item}");
                                 }
                             }
 
@@ -248,18 +255,20 @@ namespace XFS4IoTFramework.Storage
                                     {
                                         if (!storage.Value.Cash.Configuration.CashItems.Contains(item.Key))
                                         {
-                                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                        $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                            return new(
+                                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                                $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
                                         }
                                     }
 
-                                    if (Storage.CashUnits[storage.Key].Unit.Status.InitialCounts?.ItemCounts?.Count != 0)
+                                    if (Storage.CashUnits[storage.Key].Unit.Status.InitialCounts?.ItemCounts?.Count > 0)
                                     {
                                         // Initial count is setup already
                                         if (!Storage.CashUnits[storage.Key].Unit.Status.InitialCounts.ItemCounts.ContainsKey(item.Key))
                                         {
-                                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                        $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                            return new(
+                                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                                $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
                                         }
                                     }
                                     else
@@ -271,8 +280,9 @@ namespace XFS4IoTFramework.Storage
                                             if (storage.Value.Cash.Configuration?.CashItems is not null &&
                                                 !storage.Value.Cash.Configuration.CashItems.Contains(item.Key))
                                             {
-                                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                            $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                                return new(
+                                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                                    $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
                                             }
                                         }
                                         else
@@ -280,8 +290,9 @@ namespace XFS4IoTFramework.Storage
                                             // No initial counts are set in an internal structure and check denomination assiged to this unit
                                             if (!Storage.CashUnits[storage.Key].Unit.Configuration.BanknoteItems.Contains(item.Key))
                                             {
-                                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                            $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
+                                                return new(
+                                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                                    $"Invalid banknote item specified for an initial counts. Unit: {storage.Key}, Invalid item: {item.Key}");
                                             }
                                         }
                                     }
@@ -306,7 +317,7 @@ namespace XFS4IoTFramework.Storage
 
                     Logger.Log(Constants.DeviceClass, $"StorageDev.SetCashStorageAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-                    if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                    if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                     {
                         foreach (var storageToUpdate in cashStorageToSet)
                         {
@@ -386,8 +397,9 @@ namespace XFS4IoTFramework.Storage
                     {
                         if (!Storage.CheckUnits.ContainsKey(storage.Key))
                         {
-                            return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"Unrecognised storage ID for check unit specified. {storage.Key}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unrecognised storage ID for check unit specified. {storage.Key}");
                         }
 
                         if (storage.Value.Check is null &&
@@ -410,15 +422,17 @@ namespace XFS4IoTFramework.Storage
                                 (storage.Value.Check.Configuration.HighThreshold >= Storage.CashUnits[storage.Key].Capacity ||
                                  storage.Value.Check.Configuration.HighThreshold <= 0))
                             {
-                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                            $"Invalid threshold specified for check unit. The value must be smaller than capacity or positive value. {storage.Value.Cash.Configuration.HighThreshold}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Invalid threshold specified for check unit. The value must be smaller than capacity or positive value. {storage.Value.Cash.Configuration.HighThreshold}");
                             }
 
                             if (storage.Value.Check.Configuration.RetractHighThreshold is not null &&
                                 storage.Value.Check.Configuration.RetractHighThreshold <= 0)
                             {
-                                return new SetStorageCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                            $"Invalid retract high threshold specified for check unit. The value must be positive value. {storage.Value.Cash.Configuration.MaxRetracts}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Invalid retract high threshold specified for check unit. The value must be positive value. {storage.Value.Cash.Configuration.MaxRetracts}");
                             }
 
                             CheckCapabilitiesClass.TypesEnum? types = null;
@@ -450,7 +464,7 @@ namespace XFS4IoTFramework.Storage
 
                     Logger.Log(Constants.DeviceClass, $"StorageDev.SetCheckStorageAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-                    if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                    if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                     {
                         foreach (var storageToUpdate in checkStorageToSet)
                         {
@@ -505,7 +519,10 @@ namespace XFS4IoTFramework.Storage
             // Keep updated storage information on the hard disk
             Storage.StorePersistent();
 
-            return new SetStorageCompletion.PayloadData(completionCode, errorDescription, errorCode);
+            return new(
+                errorCode is not null ? new(errorCode) : null,
+                completionCode, 
+                errorDescription);
         }
     }
 }

@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.TextTerminal
             IReadEvents events = new ReadEvents(Connection, readCmd.Header.RequestId.Value);
 
             var result = await HandleRead(events, readCmd, cancel);
-            await Connection.SendMessageAsync(new ReadCompletion(readCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ReadCompletion(readCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var readcommand = command.IsA<ReadCommand>();
-            readcommand.Header.RequestId.HasValue.IsTrue();
+            var readCommand = command.IsA<ReadCommand>();
+            readCommand.Header.RequestId.HasValue.IsTrue();
 
-            ReadCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ReadCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ReadCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ReadCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ReadCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ReadCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ReadCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ReadCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ReadCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ReadCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ReadCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ReadCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ReadCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ReadCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ReadCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ReadCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadCompletion(readcommand.Header.RequestId.Value, new ReadCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadCompletion(readCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

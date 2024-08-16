@@ -82,12 +82,31 @@ namespace XFS4IoTFramework.Auxiliaries
         /// <param name="CompletionCode">Completion code</param>
         /// <param name="StartupTime">Auto startup time</param>
         /// <param name="Mode">Auto startup mode</param>
+        public GetAutostartupTimeResult(MessageHeader.CompletionCodeEnum CompletionCode, StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
+            : base(CompletionCode, null)
+        {
+            this.StartupTime = StartupTime;
+            this.Mode = Mode;
+        }
+        public GetAutostartupTimeResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.StartupTime = null;
+            this.Mode = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetAutostartupTimeResult(MessagePayload.CompletionCodeEnum CompletionCode, StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
             : base(CompletionCode, null)
         {
             this.StartupTime = StartupTime;
             this.Mode = Mode;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetAutostartupTimeResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
         {

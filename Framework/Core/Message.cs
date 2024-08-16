@@ -6,6 +6,7 @@
 
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using static XFS4IoT.MessageHeader;
 
 namespace XFS4IoT
 {
@@ -38,7 +39,7 @@ namespace XFS4IoT
 
         /// <summary>
         /// Internal constructor of the message object for response
-        /// The Payload property must be set by the derived class and passing paramters for the header to the base class
+        /// The Payload property must be set by the derived class and passing parameters for the header to the base class
         /// For use by JsonSerializer.
         /// </summary>
         /// <param name="Header">header contents</param>
@@ -50,15 +51,30 @@ namespace XFS4IoT
         }
 
         /// <summary>
-        /// Constructor of the message object for response
-        /// The Payload property must be set by the derived class and passing paramters for the header to the base class
+        /// Constructor of the message object for command
+        /// The Payload property must be set by the derived class and passing parameters for the header to the base class
         /// </summary>
         /// <param name="RequestId"></param>
         /// <param name="Type"></param>
         /// <param name="Payload"></param>
         /// <param name="Timeout"></param>
         public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload, int? Timeout) :
-            base(RequestId, Type, Timeout)
+            base(RequestId, Type, Timeout, null, null, null)
+        {
+            this.Payload = Payload.Ignore();
+        }
+
+        /// <summary>
+        /// Constructor of the message object for completion
+        /// The Payload property must be set by the derived class and passing parameters for the header to the base class
+        /// </summary>
+        /// <param name="RequestId"></param>
+        /// <param name="Type"></param>
+        /// <param name="Payload"></param>
+        /// <param name="CompletionCode"></param>
+        /// <param name="ErrorDescription"></param>
+        public Message(int? RequestId, MessageHeader.TypeEnum Type, T Payload, CompletionCodeEnum CompletionCode, string ErrorDescription) :
+            base(RequestId, Type, null, null, CompletionCode, ErrorDescription)
         {
             this.Payload = Payload.Ignore();
         }

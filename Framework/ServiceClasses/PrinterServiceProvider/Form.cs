@@ -346,14 +346,13 @@ namespace XFS4IoTFramework.Printer
         /// Return properties required for the GetQueryForm command
         /// </summary>
         /// <returns></returns>
-        public GetQueryFormCompletion.PayloadData QueryForm()
+        public CommandResult<GetQueryFormCompletion.PayloadData> QueryForm()
         {
-            List<string> fields = new();
+            List<string> fields = [];
             fields.AddRange(from field in Fields
                             select field.Key);
-            return new GetQueryFormCompletion.PayloadData(
-                    XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success,
-                    ErrorDescription: null,
+            return new(
+                new(
                     FormName: Name,
                     Base: Base switch
                     {
@@ -366,14 +365,14 @@ namespace XFS4IoTFramework.Printer
                     Width: Width,
                     Height: Height,
                     Alignment: Alignment switch
-                    { 
+                    {
                         AlignmentEnum.BOTTOMLEFT => GetQueryFormCompletion.PayloadData.AlignmentEnum.BottomLeft,
                         AlignmentEnum.BOTTOMRIGHT => GetQueryFormCompletion.PayloadData.AlignmentEnum.BottomRight,
                         AlignmentEnum.TOPLEFT => GetQueryFormCompletion.PayloadData.AlignmentEnum.TopLeft,
                         _ => GetQueryFormCompletion.PayloadData.AlignmentEnum.TopRight,
                     },
                     Orientation: Orientation switch
-                    { 
+                    {
                         FormOrientationEnum.LANDSCAPE => GetQueryFormCompletion.PayloadData.OrientationEnum.Landscape,
                         _ => GetQueryFormCompletion.PayloadData.OrientationEnum.Portrait,
                     },
@@ -382,7 +381,8 @@ namespace XFS4IoTFramework.Printer
                     VersionMajor: VersionMajor,
                     VersionMinor: VersionMinor,
                     UserPrompt: Prompt,
-                    Fields: fields
+                    Fields: fields),
+                    MessageHeader.CompletionCodeEnum.Success
                 );
         }
 

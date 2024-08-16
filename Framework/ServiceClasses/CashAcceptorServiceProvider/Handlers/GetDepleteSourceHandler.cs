@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -22,30 +21,32 @@ namespace XFS4IoTFramework.CashAcceptor
     public partial class GetDepleteSourceHandler
     {
 
-        private Task<GetDepleteSourceCompletion.PayloadData> HandleGetDepleteSource(IGetDepleteSourceEvents events, GetDepleteSourceCommand getDepleteSource, CancellationToken cancel)
+        private Task<CommandResult<GetDepleteSourceCompletion.PayloadData>> HandleGetDepleteSource(IGetDepleteSourceEvents events, GetDepleteSourceCommand getDepleteSource, CancellationToken cancel)
         {
             if (CashAcceptor.DepleteCashUnitSources is null ||
                 CashAcceptor.DepleteCashUnitSources.Count == 0)
             {
-                Task.FromResult(new GetDepleteSourceCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                           string.Empty));
+                Task.FromResult(new CommandResult<GetDepleteSourceCompletion.PayloadData>(MessageHeader.CompletionCodeEnum.UnsupportedCommand));
             }
 
             if (!Storage.CashUnits.ContainsKey(getDepleteSource.Payload.CashUnitTarget))
             {
-                Task.FromResult(new GetDepleteSourceCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"Invalid target of storage id specified. {getDepleteSource.Payload.CashUnitTarget}"));
+                Task.FromResult(new CommandResult<GetDepleteSourceCompletion.PayloadData>
+                    (MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid target of storage id specified. {getDepleteSource.Payload.CashUnitTarget}"));
             }
 
-            List<GetDepleteSourceCompletion.PayloadData.DepleteSourcesClass> depleteSources = new();
+            List<GetDepleteSourceCompletion.PayloadData.DepleteSourcesClass> depleteSources = null;
             foreach (var source in CashAcceptor.DepleteCashUnitSources[getDepleteSource.Payload.CashUnitTarget])
             {
-                depleteSources.Add(new GetDepleteSourceCompletion.PayloadData.DepleteSourcesClass(source));
+                (depleteSources ??= []).Add(new GetDepleteSourceCompletion.PayloadData.DepleteSourcesClass(source));
             }
 
-            return Task.FromResult(new GetDepleteSourceCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                              string.Empty,
-                                                                              depleteSources));
+            return Task.FromResult(
+                new CommandResult<GetDepleteSourceCompletion.PayloadData>(
+                    depleteSources is not null ? new(depleteSources) : null,
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

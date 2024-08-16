@@ -19,24 +19,27 @@ namespace XFS4IoTFramework.Keyboard
 {
     public partial class SecureKeyEntryHandler
     {
-        private async Task<SecureKeyEntryCompletion.PayloadData> HandleSecureKeyEntry(ISecureKeyEntryEvents events, SecureKeyEntryCommand secureKeyEntry, CancellationToken cancel)
+        private async Task<CommandResult<SecureKeyEntryCompletion.PayloadData>> HandleSecureKeyEntry(ISecureKeyEntryEvents events, SecureKeyEntryCommand secureKeyEntry, CancellationToken cancel)
         {
             if (secureKeyEntry.Payload.KeyLen is null)
             {
-                return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No KeyLen specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No KeyLen specified.");
             }
 
             if (secureKeyEntry.Payload.VerificationType is null)
             {
-                return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No VerificationType specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No VerificationType specified.");
             }
 
             if (!Keyboard.SupportedFunctionKeys.ContainsKey(EntryModeEnum.Secure))
             {
-                return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No secure key entry layout supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No secure key entry layout supported.");
             }
 
             if (secureKeyEntry.Payload.AutoEnd is null)
@@ -48,8 +51,10 @@ namespace XFS4IoTFramework.Keyboard
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Secure].Contains(key.Key) &&
                     !Keyboard.SupportedFunctionKeysWithShift[EntryModeEnum.Secure].Contains(key.Key))
                 {
-                    return new SecureKeyEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"Invalid key specified. {key.Key}", SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                    return new(
+                        new(SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Invalid key specified. {key.Key}");
                 }
                 keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }
@@ -82,30 +87,40 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.SecureKeyEntry() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 KeyManagement.GetSecureKeyEntryStatus().SecureKeyBuffered();
             }
 
-            return new SecureKeyEntryCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            result.Digits,
-                                                            result.Completion switch
-                                                            {
-                                                                EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
-                                                                EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
-                                                                EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
-                                                                EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
-                                                                EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
-                                                                EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
-                                                                EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
-                                                                EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
-                                                                EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
-                                                                EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
-                                                                _ => null,
-                                                            },
-                                                            result.KeyCheckValue);
+            SecureKeyEntryCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Completion is not null ||
+                result.KeyCheckValue?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.Digits,
+                    result.Completion switch
+                    {
+                        EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                        EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                        EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                        EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                        EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                        EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                        EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                        EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                        EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                        EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                        _ => null,
+                    },
+                    result.KeyCheckValue);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

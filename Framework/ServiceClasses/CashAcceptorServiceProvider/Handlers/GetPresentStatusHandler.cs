@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +21,7 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class GetPresentStatusHandler
     {
-        private Task<GetPresentStatusCompletion.PayloadData> HandleGetPresentStatus(IGetPresentStatusEvents events, GetPresentStatusCommand getPresentStatus, CancellationToken cancel)
+        private Task<CommandResult<GetPresentStatusCompletion.PayloadData>> HandleGetPresentStatus(IGetPresentStatusEvents events, GetPresentStatusCommand getPresentStatus, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.PositionEnum position = CashManagementCapabilitiesClass.PositionEnum.NotSupported;
             foreach (var presentStatus in CashManagement.LastCashManagementPresentStatus)
@@ -46,40 +45,44 @@ namespace XFS4IoTFramework.CashAcceptor
 
             if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
             {
-                return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                                  $"The device doesn't support output position."));
+                return Task.FromResult(new CommandResult<GetPresentStatusCompletion.PayloadData>(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"The device doesn't support output position."));
             }
 
-            return Task.FromResult(new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                              string.Empty,
-                                                                              position switch
-                                                                              {
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.OutputPositionEnum.OutBottom,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.OutputPositionEnum.OutCenter,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.OutputPositionEnum.OutDefault,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.OutputPositionEnum.OutFront,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.OutputPositionEnum.OutLeft,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.OutputPositionEnum.OutRear,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.OutputPositionEnum.OutRight,
-                                                                                  CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.OutputPositionEnum.OutTop,
-                                                                                  _ => null,
-                                                                              },
-                                                                              CashManagement.LastCashManagementPresentStatus[position].PresentState switch
-                                                                              { 
-                                                                                  CashManagementPresentStatus.PresentStateEnum.NotPresented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.NotPresented,
-                                                                                  CashManagementPresentStatus.PresentStateEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
-                                                                                  _ => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Unknown,
-                                                                              },
-                                                                              CashManagement.LastCashManagementPresentStatus[position].AdditionalBunches switch
-                                                                              {
-                                                                                  CashManagementPresentStatus.AdditionalBunchesEnum.None => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.None,
-                                                                                  CashManagementPresentStatus.AdditionalBunchesEnum.OneMore => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.OneMore,
-                                                                                  _ => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.Unknown,
-                                                                              },
-                                                                              CashManagement.LastCashManagementPresentStatus[position].BunchesRemaining,
-                                                                              CashManagement.LastCashManagementPresentStatus[position].ReturnedItems.CopyTo(),
-                                                                              CashManagement.LastCashManagementPresentStatus[position].TotalReturnedItems.CopyTo(),
-                                                                              CashManagement.LastCashManagementPresentStatus[position].RemainingItems.CopyTo()));
+            return Task.FromResult(
+                new CommandResult<GetPresentStatusCompletion.PayloadData>(
+                    new(
+                        position switch
+                        {
+                            CashManagementCapabilitiesClass.PositionEnum.OutBottom => XFS4IoT.CashManagement.OutputPositionEnum.OutBottom,
+                            CashManagementCapabilitiesClass.PositionEnum.OutCenter => XFS4IoT.CashManagement.OutputPositionEnum.OutCenter,
+                            CashManagementCapabilitiesClass.PositionEnum.OutDefault => XFS4IoT.CashManagement.OutputPositionEnum.OutDefault,
+                            CashManagementCapabilitiesClass.PositionEnum.OutFront => XFS4IoT.CashManagement.OutputPositionEnum.OutFront,
+                            CashManagementCapabilitiesClass.PositionEnum.OutLeft => XFS4IoT.CashManagement.OutputPositionEnum.OutLeft,
+                            CashManagementCapabilitiesClass.PositionEnum.OutRear => XFS4IoT.CashManagement.OutputPositionEnum.OutRear,
+                            CashManagementCapabilitiesClass.PositionEnum.OutRight => XFS4IoT.CashManagement.OutputPositionEnum.OutRight,
+                            CashManagementCapabilitiesClass.PositionEnum.OutTop => XFS4IoT.CashManagement.OutputPositionEnum.OutTop,
+                            _ => null,
+                        },
+                        CashManagement.LastCashManagementPresentStatus[position].PresentState switch
+                        {
+                            CashManagementPresentStatus.PresentStateEnum.NotPresented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.NotPresented,
+                            CashManagementPresentStatus.PresentStateEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
+                            _ => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Unknown,
+                        },
+                        CashManagement.LastCashManagementPresentStatus[position].AdditionalBunches switch
+                        {
+                            CashManagementPresentStatus.AdditionalBunchesEnum.None => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.None,
+                            CashManagementPresentStatus.AdditionalBunchesEnum.OneMore => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.OneMore,
+                            _ => GetPresentStatusCompletion.PayloadData.AdditionalBunchesEnum.Unknown,
+                        },
+                        CashManagement.LastCashManagementPresentStatus[position].BunchesRemaining,
+                        CashManagement.LastCashManagementPresentStatus[position].ReturnedItems.CopyTo(),
+                        CashManagement.LastCashManagementPresentStatus[position].TotalReturnedItems.CopyTo(),
+                        CashManagement.LastCashManagementPresentStatus[position].RemainingItems.CopyTo()),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
 
         private ICashManagementService CashManagement { get => Provider.IsA<ICashManagementService>(); }

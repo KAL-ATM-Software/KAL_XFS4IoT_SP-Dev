@@ -3,17 +3,16 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoT;
+using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.TextTerminal
 {
@@ -226,11 +225,21 @@ namespace XFS4IoTFramework.TextTerminal
 
     public sealed class ReadResult : DeviceResult
     {
-        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, string Input = null) 
+        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription = null, string Input = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.Input = Input;
         }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, string Input = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.Input = Input;
+        }
+
         /// <summary>
         /// Text read in during the Read operation.
         /// </summary>

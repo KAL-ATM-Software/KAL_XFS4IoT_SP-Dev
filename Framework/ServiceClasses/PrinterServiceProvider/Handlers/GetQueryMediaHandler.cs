@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,14 +18,17 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class GetQueryMediaHandler
     {
-        private Task<GetQueryMediaCompletion.PayloadData> HandleGetQueryMedia(IGetQueryMediaEvents events, GetQueryMediaCommand getQueryMedia, CancellationToken cancel)
+        private Task<CommandResult<GetQueryMediaCompletion.PayloadData>> HandleGetQueryMedia(IGetQueryMediaEvents events, GetQueryMediaCommand getQueryMedia, CancellationToken cancel)
         {
             Dictionary<string, Media> medias = Printer.GetMedias();
             if (!medias.ContainsKey(getQueryMedia.Payload.MediaName))
             {
-                return Task.FromResult(new GetQueryMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                               $"Specified form doesn't exist. {getQueryMedia.Payload.MediaName}",
-                                                                               GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaNotFound));
+                return Task.FromResult(
+                    new CommandResult<GetQueryMediaCompletion.PayloadData>(
+                        new(GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified form doesn't exist. {getQueryMedia.Payload.MediaName}")
+                    );
             }
             return Task.FromResult((medias[getQueryMedia.Payload.MediaName]).QueryMedia());
         }

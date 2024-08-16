@@ -4,14 +4,13 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
+using XFS4IoT;
 using XFS4IoTFramework.Common;
 using XFS4IoT.KeyManagement;
 
@@ -19,35 +18,39 @@ namespace XFS4IoTFramework.KeyManagement
 {
     public partial class InitializationHandler
     {
-        private async Task<InitializationCompletion.PayloadData> HandleInitialization(IInitializationEvents events, InitializationCommand initialization, CancellationToken cancel)
+        private async Task<CommandResult<InitializationCompletion.PayloadData>> HandleInitialization(IInitializationEvents events, InitializationCommand initialization, CancellationToken cancel)
         {
             AuthenticationData authData = null;
             if (initialization.Payload?.Authentication is not null)
             {
                 if (initialization.Payload.Authentication.Method is null)
                 {
-                    return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"No authentication method specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No authentication method specified.");
                 }
                 if (initialization.Payload.Authentication.Method is not null)
                 {
                     if (initialization.Payload.Authentication.Data is null ||
                         initialization.Payload.Authentication.Data.Count == 0)
                     {
-                        return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"No authentication data specified.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No authentication data specified.");
                     }
                     if (initialization.Payload.Authentication.Method is null)
                     {
-                        return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"No authentication method specified.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No authentication method specified.");
                     }
 
                     KeyDetail keyDetail = KeyManagement.GetKeyDetail(initialization.Payload.Authentication.Key);
                     if (keyDetail is null)
                     {
-                        return new InitializationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"Specified authentication key doesn't exist. {initialization.Payload.Authentication.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Specified authentication key doesn't exist. {initialization.Payload.Authentication.Key}");
                     }
 
                     authData = new AuthenticationData(initialization.Payload.Authentication.Method switch
@@ -74,7 +77,7 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.Initialization() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 KeyManagement.GetSecureKeyEntryStatus()?.Reset();
 
@@ -92,9 +95,10 @@ namespace XFS4IoTFramework.KeyManagement
                 }
             }
 
-            return new InitializationCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

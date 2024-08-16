@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -17,21 +16,25 @@ namespace XFS4IoTFramework.VendorApplication
 {
     public partial class GetActiveInterfaceHandler
     {
-        private Task<GetActiveInterfaceCompletion.PayloadData> HandleGetActiveInterface(IGetActiveInterfaceEvents events, GetActiveInterfaceCommand getActiveInterface, CancellationToken cancel)
+        private Task<CommandResult<GetActiveInterfaceCompletion.PayloadData>> HandleGetActiveInterface(IGetActiveInterfaceEvents events, GetActiveInterfaceCommand getActiveInterface, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "VendorApplicationDev.GetActiveInterface()");
             var result = Device.GetActiveInterface();
 
             Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.GetActiveInterface() -> {result.CompletionCode}");
 
-            return Task.FromResult(new GetActiveInterfaceCompletion.PayloadData(result.CompletionCode,
-                                                                                result.ErrorDescription,
-                                                                                result.ActiveInterface switch
-                                                                                {
-                                                                                    ActiveInterfaceEnum.Consumer => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Consumer,
-                                                                                    ActiveInterfaceEnum.Operator => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Operator,
-                                                                                    _ => null,
-                                                                                }));
+            return Task.FromResult(
+                new CommandResult<GetActiveInterfaceCompletion.PayloadData>(
+                    result.ActiveInterface is null ? null : new(
+                        result.ActiveInterface switch
+                        {
+                            ActiveInterfaceEnum.Consumer => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Consumer,
+                            ActiveInterfaceEnum.Operator => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Operator,
+                            _ => throw new InternalErrorException($"Unsupported active interface is set. {result.ActiveInterface}"),
+                        }),
+                    result.CompletionCode,
+                    result.ErrorDescription)
+                );
         }
     }
 }

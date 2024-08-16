@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.Replenish")]
     public sealed class ReplenishCompletion : Completion<ReplenishCompletion.PayloadData>
     {
-        public ReplenishCompletion(int RequestId, ReplenishCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReplenishCompletion(int RequestId, ReplenishCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? NumberOfItemsRemoved = null, int? NumberOfItemsRejected = null, List<ReplenishTargetResultsClass> ReplenishTargetResults = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, int? NumberOfItemsRemoved = null, int? NumberOfItemsRejected = null, List<ReplenishTargetResultsClass> ReplenishTargetResults = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.NumberOfItemsRemoved = NumberOfItemsRemoved;

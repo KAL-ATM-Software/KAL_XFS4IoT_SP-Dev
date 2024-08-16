@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class MediaInEndHandler
     {
-        private async Task<MediaInEndCompletion.PayloadData> HandleMediaInEnd(IMediaInEndEvents events, MediaInEndCommand mediaInEnd, CancellationToken cancel)
+        private async Task<CommandResult<MediaInEndCompletion.PayloadData>> HandleMediaInEnd(IMediaInEndEvents events, MediaInEndCommand mediaInEnd, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CheckDev.MediaInEndAsync()");
 
@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Check
 
             if (Check.LastTransactionStatus.MediaInTransactionState == TransactionStatus.MediaInTransactionStateEnum.Active)
             {
-                if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Ok;
                 }
@@ -98,11 +98,19 @@ namespace XFS4IoTFramework.Check
                     new(units));
             }
 
-            return new MediaInEndCompletion.PayloadData(
+            MediaInEndCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                count is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    MediaInEnd: count);
+            }
+
+            return new(
+                payload,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode,
-                MediaInEnd: count);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

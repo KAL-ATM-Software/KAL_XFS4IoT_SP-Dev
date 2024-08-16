@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class ExpelMediaHandler
     {
-        private async Task<ExpelMediaCompletion.PayloadData> HandleExpelMedia(IExpelMediaEvents events, ExpelMediaCommand expelMedia, CancellationToken cancel)
+        private async Task<CommandResult<ExpelMediaCompletion.PayloadData>> HandleExpelMedia(IExpelMediaEvents events, ExpelMediaCommand expelMedia, CancellationToken cancel)
         {
             // No status check or capabilities
 
@@ -24,10 +24,10 @@ namespace XFS4IoTFramework.Check
             var result = await Device.ExpelMediaAsync(cancel);
             Logger.Log(Constants.DeviceClass, $"CheckDev.ExpelMediaAsync() -> {result.CompletionCode}");
 
-            return new ExpelMediaCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

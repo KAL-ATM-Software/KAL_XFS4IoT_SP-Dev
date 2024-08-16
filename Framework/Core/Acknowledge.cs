@@ -10,12 +10,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using static XFS4IoT.MessageHeader;
 
 namespace XFS4IoT
 {
     [DataContract]
     [Acknowledge(Name = "Common.Acknowledge")]
-    public class Acknowledge : Message<Acknowledge.PayloadData>
+    public class Acknowledge : Message<MessagePayloadBase>
     {
         /// <summary>
         /// Initialise any response object
@@ -23,50 +24,9 @@ namespace XFS4IoT
         /// <param name="RequestId">request id</param>
         /// <param name="CommandName">acknowledge command name</param>
         /// <param name="Version">version of command, completion or event</param>
-        /// <param name="Payload">payload contents</param>
-        public Acknowledge(int RequestId, string CommandName, string Version, PayloadData Payload) :
-            base(new MessageHeader(CommandName, RequestId, Version, MessageHeader.TypeEnum.Acknowledge), Payload)
+        /// <param name="Status">acknowledge status or null</param>
+        public Acknowledge(int RequestId, string CommandName, string Version, StatusEnum? Status) :
+            base(new MessageHeader(CommandName, RequestId, Version, MessageHeader.TypeEnum.Acknowledge, null, Status), null)
         { }
-
-        [DataContract]
-        public sealed class PayloadData : MessagePayloadBase
-        {
-            public PayloadData(StatusEnum? Status = null, string ErrorDescription = null)
-            {
-                this.Status = Status;
-                this.ErrorDescription = ErrorDescription;
-            }
-
-            public enum StatusEnum
-            {
-                Ok,
-                InvalidMessage,
-                InvalidRequestID,
-                TooManyRequests
-            }
-
-            /// <summary>
-            /// "ok" if the command was successful and has been queued. The command 
-            /// will complete with a completion message.Otherwise there is an error that
-            /// stops the command from being queued and there will be no further messages. 
-            /// 
-            /// * ````ok```` - The command has been accepted for execution
-            /// * ````invalidMessage```` - The JSON in the message is invalid and can't be parsed. 
-            /// * ````invalidRequestID```` - The request ID on the command is invalid.This could be because the value was
-            /// not an integer, had a zero value, or because a command with the same request ID was already queued or
-            ///      is executing.
-            /// * ````tooManyRequests```` - The service has currently received and queued more requests than it can
-            /// process.
-            /// </summary>
-            public StatusEnum? Status { get; init; }
-
-            /// <summary>
-            /// If the status is not ok this will give a human readable description of what caused the error. This may include
-            /// details which help diagnose the cause.The format of this string should not be relied on. 
-            /// </summary>
-            public string ErrorDescription { get; init; }
-
-        }
-
     }
 }

@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.PinPad
             ISetPinBlockDataEvents events = new SetPinBlockDataEvents(Connection, setPinBlockDataCmd.Header.RequestId.Value);
 
             var result = await HandleSetPinBlockData(events, setPinBlockDataCmd, cancel);
-            await Connection.SendMessageAsync(new SetPinBlockDataCompletion(setPinBlockDataCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetPinBlockDataCompletion(setPinBlockDataCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setPinBlockDatacommand = command.IsA<SetPinBlockDataCommand>();
-            setPinBlockDatacommand.Header.RequestId.HasValue.IsTrue();
+            var setPinBlockDataCommand = command.IsA<SetPinBlockDataCommand>();
+            setPinBlockDataCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetPinBlockDataCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetPinBlockDataCompletion(setPinBlockDatacommand.Header.RequestId.Value, new SetPinBlockDataCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetPinBlockDataCompletion(setPinBlockDataCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

@@ -3,8 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,10 +17,13 @@ namespace XFS4IoTFramework.TextTerminal
     public partial class GetFormListHandler
     {
 
-        private Task<GetFormListCompletion.PayloadData> HandleGetFormList(IGetFormListEvents events, GetFormListCommand getFormList, CancellationToken cancel)
+        private Task<CommandResult<GetFormListCompletion.PayloadData>> HandleGetFormList(IGetFormListEvents events, GetFormListCommand getFormList, CancellationToken cancel)
         {
-            return Task.FromResult(new GetFormListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                         $"The XFS form is not supported."));
+            return Task.FromResult(
+                new CommandResult<GetFormListCompletion.PayloadData>(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"The XFS form is not supported.")
+                );
         }
 
     }

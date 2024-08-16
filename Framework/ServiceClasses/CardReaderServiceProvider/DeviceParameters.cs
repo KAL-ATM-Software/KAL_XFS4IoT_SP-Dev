@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,7 +60,7 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class AcceptCardResult : DeviceResult
     {
-        public AcceptCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public AcceptCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                 string ErrorDescription = null,
                                 ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -69,6 +68,25 @@ namespace XFS4IoTFramework.CardReader
             this.ErrorCode = ErrorCode;
         }
 
+        public AcceptCardResult(MessageHeader.CompletionCodeEnum CompletionCode)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public AcceptCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                string ErrorDescription = null,
+                                ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public AcceptCardResult(MessagePayload.CompletionCodeEnum CompletionCode)
             : base(CompletionCode, null)
         {
@@ -220,6 +238,46 @@ namespace XFS4IoTFramework.CardReader
         /// <param name="ErrorDescription">Details of error description</param>
         /// <param name="DataRead">Card data read in binary</param>
         /// <param name="ChipATRRead">Read chip ATR received</param>
+        public ReadCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              ReadRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                              string ErrorDescription = null,
+                              Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead = null,
+                              List<CardData> ChipATRRead = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.DataRead = DataRead;
+            this.ChipATRRead = ChipATRRead;
+        }
+        public ReadCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead = null,
+                              List<CardData> ChipATRRead = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.DataRead = DataRead;
+            this.ChipATRRead = ChipATRRead;
+        }
+        public ReadCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.DataRead = DataRead;
+            this.ChipATRRead = null;
+        }
+        public ReadCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              List<CardData> ChipATRRead = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.DataRead = null;
+            this.ChipATRRead = ChipATRRead;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               ReadRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                               string ErrorDescription = null,
@@ -231,6 +289,9 @@ namespace XFS4IoTFramework.CardReader
             this.DataRead = DataRead;
             this.ChipATRRead = ChipATRRead;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead = null,
                               List<CardData> ChipATRRead = null)
@@ -240,6 +301,9 @@ namespace XFS4IoTFramework.CardReader
             this.DataRead = DataRead;
             this.ChipATRRead = ChipATRRead;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               Dictionary<ReadCardRequest.CardDataTypesEnum, CardData> DataRead = null)
             : base(CompletionCode, null)
@@ -248,6 +312,9 @@ namespace XFS4IoTFramework.CardReader
             this.DataRead = DataRead;
             this.ChipATRRead = null;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               List<CardData> ChipATRRead = null)
             : base(CompletionCode, null)
@@ -256,6 +323,7 @@ namespace XFS4IoTFramework.CardReader
             this.DataRead = null;
             this.ChipATRRead = ChipATRRead;
         }
+
 
         /// <summary>
         /// ErrorCode
@@ -338,6 +406,17 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class WriteCardResult : DeviceResult
     {
+        public WriteCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               WriteRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public WriteCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                WriteRawDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -409,6 +488,29 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class MoveCardResult : DeviceResult
     {
+        public MoveCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              MoveCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.StorageId = null;
+            this.CountMoved = 0;
+        }
+
+        public MoveCardResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              string StorageId,
+                              int CountMoved)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.StorageId = StorageId;
+            this.CountMoved = CountMoved;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public MoveCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               MoveCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -419,6 +521,9 @@ namespace XFS4IoTFramework.CardReader
             this.CountMoved = 0;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public MoveCardResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               string StorageId,
                               int CountMoved)
@@ -485,7 +590,7 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class ChipIOResult : DeviceResult
     {
-        public ChipIOResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ChipIOResult(MessageHeader.CompletionCodeEnum CompletionCode,
                             string ErrorDescription = null,
                             ChipIOCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                             List<byte> ChipData = null)
@@ -495,6 +600,29 @@ namespace XFS4IoTFramework.CardReader
             this.ChipData = ChipData;
         }
 
+        public ChipIOResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                            List<byte> ChipData = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.ChipData = ChipData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ChipIOResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                            string ErrorDescription = null,
+                            ChipIOCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                            List<byte> ChipData = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.ChipData = ChipData;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ChipIOResult(MessagePayload.CompletionCodeEnum CompletionCode,
                             List<byte> ChipData = null)
             : base(CompletionCode, null)
@@ -533,7 +661,7 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class ChipPowerResult : DeviceResult
     {
-        public ChipPowerResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ChipPowerResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                                List<byte> ChipATRData = null)
@@ -543,6 +671,28 @@ namespace XFS4IoTFramework.CardReader
             this.ChipATRData = ChipATRData;
         }
 
+        public ChipPowerResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               List<byte> ChipATRData)
+            : base(CompletionCode, null)
+        {
+            this.ChipATRData = ChipATRData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ChipPowerResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               ChipPowerCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                               List<byte> ChipATRData = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.ChipATRData = ChipATRData;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ChipPowerResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                List<byte> ChipATRData)
             : base(CompletionCode, null)
@@ -594,7 +744,7 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class ResetDeviceResult : DeviceResult
     {
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                  string ErrorDescription = null,
                                  ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -604,6 +754,31 @@ namespace XFS4IoTFramework.CardReader
             this.CountMoved = 0;
         }
 
+        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 int CountMoved,
+                                 string StorageId = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.StorageId = StorageId;
+            this.CountMoved = CountMoved;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.StorageId = string.Empty;
+            this.CountMoved = 0;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  int CountMoved,
                                  string StorageId = null)
@@ -651,6 +826,17 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class SetCIM86KeyResult : DeviceResult
     {
+        public SetCIM86KeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 SetKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SetCIM86KeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  string ErrorDescription = null,
                                  SetKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -827,6 +1013,17 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class EMVContactlessConfigureResult : DeviceResult
     {
+        public EMVContactlessConfigureResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                             string ErrorDescription = null,
+                                             EMVClessConfigureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public EMVContactlessConfigureResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                              string ErrorDescription = null,
                                              EMVClessConfigureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -834,6 +1031,7 @@ namespace XFS4IoTFramework.CardReader
         {
             this.ErrorCode = ErrorCode;
         }
+
 
         public EMVClessConfigureCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
@@ -1088,6 +1286,27 @@ namespace XFS4IoTFramework.CardReader
     public sealed class EMVContactlessPerformTransactionResult : DeviceResult
     {
 
+        public EMVContactlessPerformTransactionResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                                      string ErrorDescription = null,
+                                                      EMVClessPerformTransactionCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                                      Dictionary<DataSourceTypeEnum, EMVContactlessTransactionDataOutput> TransactionResults = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.TransactionResults = TransactionResults;
+        }
+
+        public EMVContactlessPerformTransactionResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                                      Dictionary<DataSourceTypeEnum, EMVContactlessTransactionDataOutput> TransactionResults = null)
+           : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.TransactionResults = TransactionResults;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public EMVContactlessPerformTransactionResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                                       string ErrorDescription = null,
                                                       EMVClessPerformTransactionCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
@@ -1098,6 +1317,9 @@ namespace XFS4IoTFramework.CardReader
             this.TransactionResults = TransactionResults;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public EMVContactlessPerformTransactionResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                                       Dictionary<DataSourceTypeEnum, EMVContactlessTransactionDataOutput> TransactionResults = null)
            : base(CompletionCode, null)
@@ -1150,7 +1372,7 @@ namespace XFS4IoTFramework.CardReader
     public sealed class EMVContactlessIssuerUpdateResult : DeviceResult
     {
 
-        public EMVContactlessIssuerUpdateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public EMVContactlessIssuerUpdateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                                 string ErrorDescription = null,
                                                 EMVClessIssuerUpdateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                                                 EMVContactlessTransactionDataOutput TransactionResult = null)
@@ -1160,6 +1382,29 @@ namespace XFS4IoTFramework.CardReader
             this.TransactionResult = TransactionResult;
         }
 
+        public EMVContactlessIssuerUpdateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                                EMVContactlessTransactionDataOutput TransactionResult = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.TransactionResult = TransactionResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public EMVContactlessIssuerUpdateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                                string ErrorDescription = null,
+                                                EMVClessIssuerUpdateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                                EMVContactlessTransactionDataOutput TransactionResult = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.TransactionResult = TransactionResult;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public EMVContactlessIssuerUpdateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                                 EMVContactlessTransactionDataOutput TransactionResult = null)
             : base(CompletionCode, null)
@@ -1205,6 +1450,25 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class QueryEMVApplicationResult : DeviceResult
     {
+        public QueryEMVApplicationResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                         ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                         string ErrorDescription = null,
+                                         List<EMVApplication> EMVApplications = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.EMVApplications = EMVApplications;
+        }
+
+        public QueryEMVApplicationResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                         List<EMVApplication> EMVApplications = null)
+            : base(CompletionCode, null)
+        {
+            this.EMVApplications = EMVApplications;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public QueryEMVApplicationResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                                          string ErrorDescription = null,
@@ -1214,6 +1478,9 @@ namespace XFS4IoTFramework.CardReader
             this.EMVApplications = EMVApplications;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public QueryEMVApplicationResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          List<EMVApplication> EMVApplications = null)
             : base(CompletionCode, null)
@@ -1261,6 +1528,24 @@ namespace XFS4IoTFramework.CardReader
     /// </summary>
     public sealed class QueryIFMIdentifierResult : DeviceResult
     {
+        public QueryIFMIdentifierResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        List<IFMIdentifierInfo> IFMIdentifiers = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.IFMIdentifiers = IFMIdentifiers;
+        }
+
+        public QueryIFMIdentifierResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        List<IFMIdentifierInfo> IFMIdentifiers = null)
+            : base(CompletionCode, null)
+        {
+            this.IFMIdentifiers = IFMIdentifiers;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public QueryIFMIdentifierResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription = null,
                                         List<IFMIdentifierInfo> IFMIdentifiers = null)
@@ -1269,6 +1554,9 @@ namespace XFS4IoTFramework.CardReader
             this.IFMIdentifiers = IFMIdentifiers;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public QueryIFMIdentifierResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         List<IFMIdentifierInfo> IFMIdentifiers = null)
             : base(CompletionCode, null)

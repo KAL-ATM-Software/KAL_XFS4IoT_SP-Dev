@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class MediaInRollbackHandler
     {
-        private async Task<MediaInRollbackCompletion.PayloadData> HandleMediaInRollback(IMediaInRollbackEvents events, MediaInRollbackCommand mediaInRollback, CancellationToken cancel)
+        private async Task<CommandResult<MediaInRollbackCompletion.PayloadData>> HandleMediaInRollback(IMediaInRollbackEvents events, MediaInRollbackCommand mediaInRollback, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CheckDev.MediaInRollbackAsync()");
 
@@ -35,7 +35,7 @@ namespace XFS4IoTFramework.Check
 
             if (Check.LastTransactionStatus.MediaInTransactionState == TransactionStatus.MediaInTransactionStateEnum.Active)
             {
-                if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Rollback;
                 }
@@ -97,11 +97,19 @@ namespace XFS4IoTFramework.Check
                     new(units));
             }
 
-            return new MediaInRollbackCompletion.PayloadData(
+            MediaInRollbackCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                count is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    MediaInRollback: count);
+            }
+
+            return new(
+                payload,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode,
-                MediaInRollback: count);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

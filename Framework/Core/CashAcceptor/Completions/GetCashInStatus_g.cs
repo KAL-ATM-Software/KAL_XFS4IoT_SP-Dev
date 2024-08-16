@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.GetCashInStatus")]
     public sealed class GetCashInStatusCompletion : Completion<GetCashInStatusCompletion.PayloadData>
     {
-        public GetCashInStatusCompletion(int RequestId, GetCashInStatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetCashInStatusCompletion(int RequestId, GetCashInStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusEnum? Status = null, int? NumOfRefused = null, CashManagement.StorageCashCountsClass NoteNumberList = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(StatusEnum? Status = null, int? NumOfRefused = null, CashManagement.StorageCashCountsClass NoteNumberList = null)
+                : base()
             {
                 this.Status = Status;
                 this.NumOfRefused = NumOfRefused;

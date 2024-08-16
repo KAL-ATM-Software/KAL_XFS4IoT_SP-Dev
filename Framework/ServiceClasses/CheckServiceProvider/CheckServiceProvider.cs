@@ -78,10 +78,6 @@ namespace XFS4IoTServer
             }));
         }
 
-        /*
-         * No ShutterStatusChangeEvent is supported as Common.StatusChanged event sends updated shutter status.
-         * Specification after 2023-2 will be updated and ShutterStatusChangeEvent will be obsolete.
-        */
         #endregion
 
         #region Storage unsolic events

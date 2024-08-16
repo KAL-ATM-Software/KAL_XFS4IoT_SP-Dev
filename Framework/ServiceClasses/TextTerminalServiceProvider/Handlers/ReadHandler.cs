@@ -3,15 +3,12 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
 
@@ -20,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     public partial class ReadHandler
     {
 
-        private async Task<ReadCompletion.PayloadData> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
+        private async Task<CommandResult<ReadCompletion.PayloadData>> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
         {
             // Check for any active keys or command keys.
             if ((read.Payload.ActiveKeys is null ||
@@ -28,10 +25,10 @@ namespace XFS4IoTFramework.TextTerminal
                 (read.Payload.ActiveCommandKeys is null || 
                  read.Payload.ActiveCommandKeys.Count == 0))
             {
-                return new ReadCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                    ErrorDescription: $"No Keys specified for Read command.", 
-                    ErrorCode: ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys);
+                return new(
+                    new(ErrorCode: ReadCompletion.PayloadData.ErrorCodeEnum.NoActiveKeys),
+                    CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                    ErrorDescription: $"No Keys specified for Read command.");
             }
 
             // Get autoEnd value.
@@ -44,8 +41,8 @@ namespace XFS4IoTFramework.TextTerminal
             // Check for either AutoEnd or TerminateCommandKeys. Read will never end if neither are specified.
             if ((read.Payload.ActiveCommandKeys?.FirstOrDefault(c => c.Value.Terminate is true) is null) && !autoEnd)
             {
-                return new ReadCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"Device cannot determine when to end Read operation.");
             }
 
@@ -63,7 +60,10 @@ namespace XFS4IoTFramework.TextTerminal
                 {
                     if (!TextTerminal.SupportedKeys.Keys.Contains(activeKey))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"Key {activeKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new(
+                            new(ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                            $"Key {activeKey} is not supported by the device.");
                     }
                 }
             }
@@ -75,30 +75,43 @@ namespace XFS4IoTFramework.TextTerminal
                 {
                     if (!TextTerminal.SupportedKeys.CommandKeys.ContainsKey(cmdKey.Key))
                     {
-                        return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, $"CommandKey {cmdKey} is not supported by the device.", ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                        return new(
+                            new(ReadCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                            $"CommandKey {cmdKey} is not supported by the device.");
                     }
                 }
             }
 
             if (read.Payload.NumOfChars is null)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "NumOfChars is not supplied");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "NumOfChars is not supplied");
             }
             else if(read.Payload.Mode is null)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Mode is not supplied");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Mode is not supplied");
             }
             else if (read.Payload.PosX is null)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "PosX is not supplied");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "PosX is not supplied");
             }
             else if (read.Payload.PosY is null)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "PosY is not supplied");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "PosY is not supplied");
             }
             else if (read.Payload.Flush is null)
             {
-                return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "Flush is not supplied");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Flush is not supplied");
             }
 
             ReadRequest.EchoModeEnum echo = read.Payload.EchoMode.Value switch
@@ -134,17 +147,23 @@ namespace XFS4IoTFramework.TextTerminal
             // Check x,y are valid
             if(PosX >= Device.CurrentWidth)
             {
-                return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Invalid PosX supplied. Value is outside terminal Width.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Invalid PosX supplied. Value is outside terminal Width.");
             }
             if(PosY >= Device.CurrentHeight)
             {
-                return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Invalid PosY supplied. Value is outside terminal Height.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Invalid PosY supplied. Value is outside terminal Height.");
             }
 
             // Check x + num chars is within the current width
             if(PosX + read.Payload.NumOfChars.Value > Device.CurrentWidth)
             {
-                return new ReadCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Attempted to read outside current width.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Attempted to read outside current width.");
             }
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.ReadAsync()");
@@ -165,7 +184,10 @@ namespace XFS4IoTFramework.TextTerminal
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ReadAsync() -> {result.CompletionCode}");
 
-            return new ReadCompletion.PayloadData(result.CompletionCode, result.ErrorDescription, null, result.Input);
+            return new(
+                string.IsNullOrEmpty(result.Input) ? null : new(Input: result.Input),
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
 
     }

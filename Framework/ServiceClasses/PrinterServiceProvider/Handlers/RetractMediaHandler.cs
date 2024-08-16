@@ -4,29 +4,27 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 namespace XFS4IoTFramework.Printer
 {
     public partial class RetractMediaHandler
     {
-        private async Task<RetractMediaCompletion.PayloadData> HandleRetractMedia(IRetractMediaEvents events, RetractMediaCommand retractMedia, CancellationToken cancel)
+        private async Task<CommandResult<RetractMediaCompletion.PayloadData>> HandleRetractMedia(IRetractMediaEvents events, RetractMediaCommand retractMedia, CancellationToken cancel)
         {
             if (Common.PrinterCapabilities.RetractBins == 0)
             {
-                return new RetractMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Invalid bin number specifid.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid bin number specifid.");
             }
 
             int binNumber = -1; // default to move transport.
@@ -34,8 +32,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Regex.IsMatch(retractMedia.Payload.MediaControl, "^transport$|^unit[0-9]+$"))
                 {
-                    return new RetractMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Specified media control is not supported by the device.{retractMedia.Payload.MediaControl}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified media control is not supported by the device.{retractMedia.Payload.MediaControl}");
                 }
             }
 
@@ -55,15 +54,24 @@ namespace XFS4IoTFramework.Printer
             {
                 mediaResult = "nomedia";
             }
-            else if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            else if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 mediaResult = retractMedia.Payload.MediaControl;
             }
 
-            return new RetractMediaCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          result.ErrorCode,
-                                                          mediaResult);
+            RetractMediaCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                !string.IsNullOrEmpty(mediaResult))
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Result: mediaResult);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

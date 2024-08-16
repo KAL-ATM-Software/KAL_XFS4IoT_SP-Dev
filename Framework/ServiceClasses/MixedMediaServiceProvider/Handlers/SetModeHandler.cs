@@ -11,19 +11,18 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.MixedMedia.Commands;
 using XFS4IoT.MixedMedia.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.MixedMedia
 {
     public partial class SetModeHandler
     {
-        private async Task<SetModeCompletion.PayloadData> HandleSetMode(ISetModeEvents events, SetModeCommand setMode, CancellationToken cancel)
+        private async Task<CommandResult<SetModeCompletion.PayloadData>> HandleSetMode(ISetModeEvents events, SetModeCommand setMode, CancellationToken cancel)
         {
             if (setMode.Payload is null)
             {
-                return new SetModeCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No payload specified.");
             }
 
@@ -35,8 +34,8 @@ namespace XFS4IoTFramework.MixedMedia
                 {
                     if (!Common.MixedMediaCapabilities.Modes.HasFlag(XFS4IoTFramework.Common.MixedMedia.ModeTypeEnum.Cash))
                     {
-                        return new SetModeCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified mode is not supported by the device. {Common.MixedMediaCapabilities.Modes}");
                     }
                     modes |= XFS4IoTFramework.Common.MixedMedia.ModeTypeEnum.Cash;
@@ -46,8 +45,8 @@ namespace XFS4IoTFramework.MixedMedia
                 {
                     if (!Common.MixedMediaCapabilities.Modes.HasFlag(XFS4IoTFramework.Common.MixedMedia.ModeTypeEnum.Check))
                     {
-                        return new SetModeCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified mode is not supported by the device. {Common.MixedMediaCapabilities.Modes}");
                     }
                     modes |= XFS4IoTFramework.Common.MixedMedia.ModeTypeEnum.Check;
@@ -62,10 +61,10 @@ namespace XFS4IoTFramework.MixedMedia
 
             Logger.Log(Constants.DeviceClass, $"MixedMediaDev.SetModeAsync() -> {result.CompletionCode}");
 
-            return new SetModeCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
 
     }

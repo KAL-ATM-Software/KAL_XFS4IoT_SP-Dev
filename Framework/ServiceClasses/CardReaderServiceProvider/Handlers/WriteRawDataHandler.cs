@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,14 +12,12 @@ using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoTFramework.Common;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static XFS4IoT.CardReader.Commands.WriteRawDataCommand.PayloadData;
 
 namespace XFS4IoTFramework.CardReader
 {
     public partial class WriteRawDataHandler
     {
-        private async Task<WriteRawDataCompletion.PayloadData> HandleWriteRawData(IWriteRawDataEvents events, WriteRawDataCommand writeRawData, CancellationToken cancel)
+        private async Task<CommandResult<WriteRawDataCompletion.PayloadData>> HandleWriteRawData(IWriteRawDataEvents events, WriteRawDataCommand writeRawData, CancellationToken cancel)
         {
             Dictionary<WriteCardRequest.DestinationEnum, WriteCardRequest.CardData> dataToWrite = [];
             if (writeRawData.Payload.Track1 is null &&
@@ -30,8 +27,9 @@ namespace XFS4IoTFramework.CardReader
                 writeRawData.Payload.Track1Front is null &&
                 writeRawData.Payload.Track3JIS is null)
             {
-                return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              "No track data is supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "No track data is supplied.");
             }
 
 
@@ -41,8 +39,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track1.WriteMethod switch
                                     {
-                                        Track1Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track1Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track1.Data));
@@ -53,8 +51,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track2.WriteMethod switch
                                     {
-                                        Track2Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track2Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track2.Data));
@@ -65,8 +63,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track3.WriteMethod switch
                                     {
-                                        Track3Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track3Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track3.Data));
@@ -77,8 +75,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track1JIS.WriteMethod switch
                                     {
-                                        Track1JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track1JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track1JIS.Data));
@@ -89,8 +87,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track1Front.WriteMethod switch
                                     {
-                                        Track1FrontClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track1FrontClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track1Front.Data));
@@ -101,8 +99,8 @@ namespace XFS4IoTFramework.CardReader
                                 new WriteCardRequest.CardData(
                                     WriteMethod: writeRawData.Payload.Track3JIS.WriteMethod switch
                                     {
-                                        Track3JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        Track3JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                                        WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                                        WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
                                         _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
                                     },
                                     Data: writeRawData.Payload.Track3JIS.Data));
@@ -124,8 +122,9 @@ namespace XFS4IoTFramework.CardReader
                     data.Key == WriteCardRequest.DestinationEnum.Track3JIS &&
                     !Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS))
                 {
-                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Specified destination is not supported. {data.Key}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified destination is not supported. {data.Key}");
                 }
 
                 if (data.Value.WriteMethod == WriteCardRequest.CardData.WriteMethodEnum.Auto &&
@@ -135,22 +134,25 @@ namespace XFS4IoTFramework.CardReader
                     data.Value.WriteMethod == WriteCardRequest.CardData.WriteMethodEnum.Hico &&
                     !Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico))
                 {
-                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"Specified write methods is not supported. {data.Value.WriteMethod}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified write methods is not supported. {data.Value.WriteMethod}");
                 }
 
                 if (data.Value.Data is null ||
                     data.Value.Data.Count == 0)
                 {
-                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  "No data specified to write track.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No data specified to write track.");
                 }
 
                 List<byte> writeData = data.Value.Data;
                 if (!ValidateData(data.Key, writeData))
                 {
-                    return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Invalid track data is specified for the {data.Key}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid track data is specified for the {data.Key}");
                 }
             }
 
@@ -161,7 +163,7 @@ namespace XFS4IoTFramework.CardReader
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
-            if (acceptCardResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+            if (acceptCardResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
             {
                 // Map to XFS erro code
                 WriteRawDataCompletion.PayloadData.ErrorCodeEnum? errorCode = acceptCardResult.ErrorCode switch
@@ -176,9 +178,10 @@ namespace XFS4IoTFramework.CardReader
                 };
 
 
-                return new WriteRawDataCompletion.PayloadData(acceptCardResult.CompletionCode,
-                                                              acceptCardResult.ErrorDescription,
-                                                              errorCode);
+                return new(
+                    new(errorCode),
+                    acceptCardResult.CompletionCode,
+                    acceptCardResult.ErrorDescription);
             }
 
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader before writing data.
@@ -186,9 +189,10 @@ namespace XFS4IoTFramework.CardReader
                 (Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.Present &&
                  Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.NotSupported))
             {
-                return new WriteRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.HardwareError,
-                                                              "Accept operation is completed successfully, but the media is not present.",
-                                                              WriteRawDataCompletion.PayloadData.ErrorCodeEnum.NoMedia);
+                return new(
+                    new(WriteRawDataCompletion.PayloadData.ErrorCodeEnum.NoMedia),
+                    MessageHeader.CompletionCodeEnum.HardwareError,
+                    "Accept operation is completed successfully, but the media is not present.");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.WriteCardDataAsync()");
@@ -197,9 +201,10 @@ namespace XFS4IoTFramework.CardReader
                                                                   cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.WriteCardDataAsync() -> {writeCardDataResult.CompletionCode}, {writeCardDataResult.ErrorCode}");
 
-            return new WriteRawDataCompletion.PayloadData(writeCardDataResult.CompletionCode,
-                                                          writeCardDataResult.ErrorDescription,
-                                                          writeCardDataResult.ErrorCode);
+            return new(
+                writeCardDataResult.ErrorCode is not null ? new(writeCardDataResult.ErrorCode) : null,
+                writeCardDataResult.CompletionCode,
+                writeCardDataResult.ErrorDescription);
         }
 
         /// <summary>

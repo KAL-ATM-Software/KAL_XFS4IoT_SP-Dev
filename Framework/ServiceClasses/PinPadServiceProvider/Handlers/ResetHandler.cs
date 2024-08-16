@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -18,7 +16,7 @@ namespace XFS4IoTFramework.PinPad
 {
     public partial class ResetHandler
     {
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "PinPadDev.ResetDevice()");
 
@@ -26,8 +24,9 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.ResetDevice() -> {result.CompletionCode}");
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

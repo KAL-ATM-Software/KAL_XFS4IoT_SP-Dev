@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,28 +18,36 @@ namespace XFS4IoTFramework.Biometric
 {
     public partial class ImportHandler
     {
-
-        private async Task<ImportCompletion.PayloadData> HandleImport(IImportEvents events, ImportCommand import, CancellationToken cancel)
+        private async Task<CommandResult<ImportCompletion.PayloadData>> HandleImport(IImportEvents events, ImportCommand import, CancellationToken cancel)
         {
 
             if (import?.Payload?.Templates is null || import.Payload.Templates.Count == 0)
-                return new ImportCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                        "No Templates specified for Import command.",
-                                                        ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData);
+            {
+                return new(
+                    new(ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    "No Templates specified for Import command.");
+            }
 
             var biometricData = new List<BiometricData>();
 
             foreach(var item in import.Payload.Templates)
             {
                 if (item.Data is null || item.Data.Count == 0)
-                    return new ImportCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            "No Data specified for Template",
-                                                            ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData);
+                {
+                    return new(
+                        new(ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        "No Data specified for Template");
+                }
 
                 if (item.Type is null || item.Type.Format is null)
-                    return new ImportCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            "No DataType specified for Template",
-                                                            ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData);
+                {
+                    return new(
+                        new(ImportCompletion.PayloadData.ErrorCodeEnum.InvalidData),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        "No DataType specified for Template");
+                }
 
                 biometricData.Add(new BiometricData(
                     new BiometricDataType(
@@ -83,9 +89,9 @@ namespace XFS4IoTFramework.Biometric
             Logger.Log(Constants.DeviceClass, $"BiometricDev.ImportAsync() -> {result.CompletionCode}");
 
             Dictionary<string, XFS4IoT.Biometric.DataTypeClass> importedTemplates = null;
-            if (result.Templates != null && result.Templates.Count > 0)
+            if (result.Templates?.Count > 0)
             {
-                importedTemplates = new();
+                importedTemplates = [];
                 foreach (var item in result.Templates)
                 {
                     item.Key.IsNotNullOrWhitespace("BiometricDataType id passed by the Device should not be null or whitespace.");
@@ -122,10 +128,19 @@ namespace XFS4IoTFramework.Biometric
                 }
             }
 
-            return new ImportCompletion.PayloadData(result.CompletionCode,
-                                                    result.ErrorDescription,
-                                                    result.ErrorCode,
-                                                    importedTemplates);
+            ImportCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                importedTemplates is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    importedTemplates);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
 
         }
 

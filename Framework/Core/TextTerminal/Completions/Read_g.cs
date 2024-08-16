@@ -19,16 +19,16 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
-        public ReadCompletion(int RequestId, ReadCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadCompletion(int RequestId, ReadCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Input = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, string Input = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Input = Input;

@@ -10,9 +10,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoTServer;
+using XFS4IoT;
 using XFS4IoT.Completions;
-using XFS4IoT.Common.Commands;
-using XFS4IoT.Common.Completions;
 
 namespace XFS4IoTFramework.Common
 {
@@ -22,6 +21,17 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class GetCommandNonceResult : DeviceResult
     {
+        public GetCommandNonceResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                            string ErrorDescription = null,
+                                            string Nonce = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.Nonce = Nonce;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetCommandNonceResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                             string ErrorDescription = null,
                                             string Nonce = null)
@@ -30,12 +40,6 @@ namespace XFS4IoTFramework.Common
             this.Nonce = Nonce;
         }
 
-        public GetCommandNonceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     string Nonce = null)
-            : base(CompletionCode, null)
-        {
-            this.Nonce = Nonce;
-        }
 
         /// <summary>
         /// A nonce that should be included in the authorisation token in a command used to provide 
@@ -67,6 +71,25 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class GetTransactionStateResult : DeviceResult
     {
+        public GetTransactionStateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                         string ErrorDescription)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.State = null;
+            this.TransactionID = null;
+        }
+        public GetTransactionStateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                         TransactionStateEnum State,
+                                         string TransactionID)
+            : base(CompletionCode, null)
+        {
+            this.State = State;
+            this.TransactionID = TransactionID;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetTransactionStateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
@@ -74,6 +97,9 @@ namespace XFS4IoTFramework.Common
             this.State = null;
             this.TransactionID = null;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetTransactionStateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          TransactionStateEnum State,
                                          string TransactionID)

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -59,7 +58,7 @@ namespace XFS4IoTFramework.Keyboard
 
     public sealed class DefineLayoutResult : DeviceResult
     {
-        public DefineLayoutResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public DefineLayoutResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                   string ErrorDescription = null,
                                   DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -67,6 +66,25 @@ namespace XFS4IoTFramework.Keyboard
             this.ErrorCode = ErrorCode;
         }
 
+        public DefineLayoutResult(MessageHeader.CompletionCodeEnum CompletionCode)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public DefineLayoutResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                  string ErrorDescription = null,
+                                  DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DefineLayoutResult(MessagePayload.CompletionCodeEnum CompletionCode)
                 : base(CompletionCode, null)
         {
@@ -128,7 +146,7 @@ namespace XFS4IoTFramework.Keyboard
             public EntryCompletionEnum? Completion { get; init; }
         }
 
-        public DataEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public DataEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -139,6 +157,34 @@ namespace XFS4IoTFramework.Keyboard
             Completion = null;
         }
 
+        public DataEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               int Keys,
+                               List<EnteredKey> EnteredKeys,
+                               EntryCompletionEnum? Completion)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Keys = Keys;
+            this.EnteredKeys = EnteredKeys;
+            this.Completion = Completion;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public DataEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Keys = 0;
+            EnteredKeys = null;
+            Completion = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DataEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                int Keys,
                                List<EnteredKey> EnteredKeys,
@@ -217,7 +263,7 @@ namespace XFS4IoTFramework.Keyboard
 
     public sealed class PinEntryResult : DeviceResult
     {
-        public PinEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public PinEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               PinEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -227,6 +273,31 @@ namespace XFS4IoTFramework.Keyboard
             Completion = null;
         }
 
+        public PinEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              int Digits,
+                              EntryCompletionEnum? Completion)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Digits = Digits;
+            this.Completion = Completion;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public PinEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              PinEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Digits = 0;
+            Completion = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PinEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               int Digits,
                               EntryCompletionEnum? Completion)
@@ -317,7 +388,7 @@ namespace XFS4IoTFramework.Keyboard
 
     public sealed class SecureKeyEntryResult : DeviceResult
     {
-        public SecureKeyEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public SecureKeyEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -328,6 +399,34 @@ namespace XFS4IoTFramework.Keyboard
             KeyCheckValue = null;
         }
 
+        public SecureKeyEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    int Digits,
+                                    EntryCompletionEnum? Completion,
+                                    List<byte> KeyCheckValue)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Digits = Digits;
+            this.Completion = Completion;
+            this.KeyCheckValue = KeyCheckValue;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SecureKeyEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Digits = 0;
+            Completion = null;
+            KeyCheckValue = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SecureKeyEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     int Digits,
                                     EntryCompletionEnum? Completion,

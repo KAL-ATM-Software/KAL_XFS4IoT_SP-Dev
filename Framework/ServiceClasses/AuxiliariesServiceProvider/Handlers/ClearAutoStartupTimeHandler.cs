@@ -15,13 +15,14 @@ using XFS4IoT.Auxiliaries.Completions;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    public partial class ClearAutoStartupTimeHandler
+    public partial class ClearAutoStartUpTimeHandler
     {
-
-        private async Task<ClearAutoStartUpTimeCompletion.PayloadData> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartUpTimeCommand clearAutoStartupTime, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleClearAutoStartUpTime(IClearAutoStartUpTimeEvents events, ClearAutoStartUpTimeCommand clearAutoStartupTime, CancellationToken cancel)
         {
             if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
-                return new ClearAutoStartUpTimeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
+            {
+                return new(MessageHeader.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
+            }
 
             Logger.Log(Constants.DeviceClass, "AuxiliariesDev.ClearAutoStartupTime()");
 
@@ -29,9 +30,9 @@ namespace XFS4IoTFramework.Auxiliaries
 
             Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.ClearAutoStartupTime() -> {result.CompletionCode}");
 
-            return new ClearAutoStartUpTimeCompletion.PayloadData(result.CompletionCode,
-                                                                  result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
-
     }
 }

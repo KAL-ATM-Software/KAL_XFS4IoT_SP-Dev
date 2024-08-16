@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class DenominateHandler
     {
-        private Task<DenominateCompletion.PayloadData> HandleDenominate(IDenominateEvents events, DenominateCommand denominate, CancellationToken cancel)
+        private Task<CommandResult<DenominateCompletion.PayloadData>> HandleDenominate(IDenominateEvents events, DenominateCommand denominate, CancellationToken cancel)
         {
             // Validate command parameters
             if (denominate.Payload.Request is null ||
@@ -30,17 +30,21 @@ namespace XFS4IoTFramework.CashDispenser
                 (denominate.Payload.Request.Denomination.Service is null &&
                  denominate.Payload.Request.Denomination.App is null))
             {
-                return Task.FromResult(new DenominateCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
-                    $"No denomination specified."));
+                return Task.FromResult(
+                    new CommandResult<DenominateCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No denomination specified.")
+                    );
             }
 
             if (denominate.Payload.Request.Denomination.Service is not null &&
                 denominate.Payload.Request.Denomination.App is not null)
             {
-                return Task.FromResult(new DenominateCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
-                    $"Invalid parameter specified for both application and service mix. it should be either application or service mix to be specified."));
+                return Task.FromResult(
+                    new CommandResult<DenominateCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid parameter specified for both application and service mix. it should be either application or service mix to be specified.")
+                    );
             }
 
             // Check parameter either application or service mix.
@@ -52,18 +56,22 @@ namespace XFS4IoTFramework.CashDispenser
                 if (!string.IsNullOrEmpty(denominate.Payload.Request.Denomination.Service.Mix) &&
                     CashDispenser.GetMix(denominate.Payload.Request.Denomination.Service.Mix) is null)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"Invalid MixNumber specified. {denominate.Payload.Request.Denomination.Service.Mix}",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber));
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                            new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidMixNumber),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Invalid MixNumber specified. {denominate.Payload.Request.Denomination.Service.Mix}")
+                        );
                 }
 
                 if (denominate.Payload.Request.Denomination.Service.Currencies is null)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"No currency specified for service to get mix result.",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination));
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                            new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"No currency specified for service to get mix result.")
+                        );
                 }
 
                 currencies = denominate.Payload.Request.Denomination.Service.Currencies;
@@ -78,19 +86,23 @@ namespace XFS4IoTFramework.CashDispenser
                 // check application mix
                 if (denominate.Payload.Request.Denomination.App.Currencies is null)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"No currency specified for service to get mix result.",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination));
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                            new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"No currency specified for service to get mix result.")
+                        );
                 }
 
                 if (denominate.Payload.Request.Denomination.App.Counts is null ||
                     denominate.Payload.Request.Denomination.App.Counts.Count == 0)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"No currency specified for service to get mix result.",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination));
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                            new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"No currency specified for service to get mix result.")
+                        );
                 }
 
                 currencies = denominate.Payload.Request.Denomination.App.Currencies;
@@ -99,19 +111,23 @@ namespace XFS4IoTFramework.CashDispenser
 
             if (currencies.Select(c => string.IsNullOrEmpty(c.Key) || Regex.IsMatch(c.Key, "^[A-Z]{3}$")).ToList().Count == 0)
             {
-                return Task.FromResult(new DenominateCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                    $"Invalid currency specified.",
-                    DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency));
+                return Task.FromResult(
+                    new CommandResult<DenominateCompletion.PayloadData>(
+                        new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Invalid currency specified.")
+                    );
             }
 
             double totalAmount = currencies.Select(c => c.Value).Sum();
             if (totalAmount > int.MaxValue)
             {
-                return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"Large amount to dispense. {totalAmount}",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                return Task.FromResult(
+                    new CommandResult<DenominateCompletion.PayloadData>(
+                        new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Large amount to dispense. {totalAmount}")
+                    );
             }
 
             // Check total amount remaining in the dispenser
@@ -145,10 +161,12 @@ namespace XFS4IoTFramework.CashDispenser
                 // We can't dispense requested amount as dispenser has short remaining items.
                 if (totalAmount > maxAmountLeftInDispenser)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"The total of amount in the dispenser has {maxAmountLeftInDispenser} smaller than requested amount {totalAmount}.",
-                        DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                            new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"The total of amount in the dispenser has {maxAmountLeftInDispenser} smaller than requested amount {totalAmount}.")
+                        );
                 }
             }
             if (counts?.Count > 0 &&
@@ -159,20 +177,24 @@ namespace XFS4IoTFramework.CashDispenser
                 {
                     if (!Storage.CashUnits.ContainsKey(count.Key)) 
                     {
-                        return Task.FromResult(new DenominateCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                            $"Requested count from unrecognized cash unit {count.Key}.",
-                            DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                        return Task.FromResult(
+                            new CommandResult<DenominateCompletion.PayloadData>(
+                                new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Requested count from unrecognized cash unit {count.Key}.")
+                            );
                     }
 
                     if (count.Value > 0)
                     {
                         if (!Storage.CashUnits[count.Key].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut))
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}")
+                                );
                         }
 
                         if (Storage.CashUnits[count.Key].Status != UnitStorageBase.StatusEnum.Good &&
@@ -181,18 +203,22 @@ namespace XFS4IoTFramework.CashDispenser
                             Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Low &&
                             Storage.CashUnits[count.Key].Unit.Status.ReplenishmentStatus != CashStatusClass.ReplenishmentStatusEnum.Healthy)
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Requested count to be dispensed from invalid cash unit type. {count.Key}:{Storage.CashUnits[count.Key].Unit.Configuration.Types}")
+                                );
                         }
 
                         if (Storage.CashUnits[count.Key].Unit.Status.Count < count.Value)
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Requested count to be dispensed from {count.Key}, whih has only {Storage.CashUnits[count.Key].Unit.Status.Count} against requested items{count.Value}.",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Requested count to be dispensed from {count.Key}, whih has only {Storage.CashUnits[count.Key].Unit.Status.Count} against requested items{count.Value}.")
+                                );
                         }
                     }
                 }
@@ -206,8 +232,9 @@ namespace XFS4IoTFramework.CashDispenser
                     denomToDispense.Values.Count == 0 ||
                     denomToDispense.Values.Select(c => c.Value).Sum() == 0)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"No counts specified to dispense items from the cash units."));
                 }
 
@@ -219,38 +246,48 @@ namespace XFS4IoTFramework.CashDispenser
                         break;
                     case Denominate.DispensableResultEnum.CashUnitError:
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Invalid Cash Unit specified to dispense.",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.CashUnitError));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.CashUnitError),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Invalid Cash Unit specified to dispense.")
+                                );
                         }
                     case Denominate.DispensableResultEnum.CashUnitLocked:
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Cash unit is locked.",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.CashUnitError));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.CashUnitError),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Cash unit is locked.")
+                                );
                         }
                     case Denominate.DispensableResultEnum.CashUnitNotEnough:
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Cash unit doesn't have enough notes to dispense.",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.TooManyItems));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.TooManyItems),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Cash unit doesn't have enough notes to dispense.")
+                                );
                         }
                     case Denominate.DispensableResultEnum.InvalidCurrency:
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Invalid currency specified. ",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidCurrency),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Invalid currency specified. ")
+                                );
                         }
                     case Denominate.DispensableResultEnum.InvalidDenomination:
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                $"Invalid denomination specified. ",
-                                DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.InvalidDenomination),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Invalid denomination specified. ")
+                                );
                         }
                     default:
                         Contracts.Assert(Result == Denominate.DispensableResultEnum.Good, $"Unexpected result received after an internal IsDispense call. {Result}");
@@ -261,8 +298,9 @@ namespace XFS4IoTFramework.CashDispenser
             {
                 if (totalAmount == 0)
                 {
-                    return Task.FromResult(new DenominateCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return Task.FromResult(
+                        new CommandResult<DenominateCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified amount is zero to dispense, but number of notes from each cash unit is not specified as well."));
                 }
 
@@ -275,10 +313,12 @@ namespace XFS4IoTFramework.CashDispenser
 
                     if (denomToDispense.Values is null)
                     {
-                        return Task.FromResult(new DenominateCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                            $"Mix failed to denominate on service mix. {denominate.Payload.Request.Denomination.Service.Mix}. " + string.Join(", ", denomToDispense.CurrencyAmounts.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))),
-                            DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                        return Task.FromResult(
+                            new CommandResult<DenominateCompletion.PayloadData>(
+                                new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Mix failed to denominate on service mix. {denominate.Payload.Request.Denomination.Service.Mix}. " + string.Join(", ", denomToDispense.CurrencyAmounts.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))))
+                            );
                     }
                 }
                 else
@@ -287,10 +327,12 @@ namespace XFS4IoTFramework.CashDispenser
                     Denomination mixDenom = CashDispenser.GetMix(denominate.Payload.Request.Denomination.Service.Mix).Calculate(denomToDispense.CurrencyAmounts, Storage.CashUnits, Common.CashDispenserCapabilities.MaxDispenseItems);
                     if (mixDenom.Values is null)
                     {
-                        return Task.FromResult(new DenominateCompletion.PayloadData(
-                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                    $"Specified amount is not dispensable. " + string.Join(", ", denomToDispense.CurrencyAmounts.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))),
-                                    DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                        return Task.FromResult(
+                            new CommandResult<DenominateCompletion.PayloadData>(
+                                new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified amount is not dispensable. " + string.Join(", ", denomToDispense.CurrencyAmounts.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))))
+                            );
                     }
 
                     // denomToDispense contains minimum number of notes required.
@@ -300,18 +342,22 @@ namespace XFS4IoTFramework.CashDispenser
                         {
                             if (denom.Value > mixDenom.Values[denom.Key])
                             {
-                                return Task.FromResult(new DenominateCompletion.PayloadData(
-                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                    $"Specified partial count is greater than mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)) + $", minimum count: {denom.Key}: {denom.Value}",
-                                    DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                                return Task.FromResult(
+                                    new CommandResult<DenominateCompletion.PayloadData>(
+                                        new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                        $"Specified partial count is greater than mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => d.Key + ":" + d.Value)) + $", minimum count: {denom.Key}: {denom.Value}")
+                                    );
                             }
                         }
                         else
                         {
-                            return Task.FromResult(new DenominateCompletion.PayloadData(
-                                    MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                    $"Specified partial count is not included in the mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))) + $", minimum count: {denom.Key}: {denom.Value}",
-                                    DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                            return Task.FromResult(
+                                new CommandResult<DenominateCompletion.PayloadData>(
+                                    new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                    $"Specified partial count is not included in the mix result. Mix: " + string.Join(", ", mixDenom.Values.Select(d => string.Format("{0}{1}{2}", d.Key, ":", d.Value))) + $", minimum count: {denom.Key}: {denom.Value}")
+                                );
                         }
                     }
 
@@ -322,22 +368,26 @@ namespace XFS4IoTFramework.CashDispenser
 
             if (denomToDispense.Values is null)
             {
-                return Task.FromResult(new DenominateCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            ErrorDescription: $"Requested amount is not dispensable. {totalAmount}",
-                                                                            ErrorCode: DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable));
+                return Task.FromResult(
+                    new CommandResult<DenominateCompletion.PayloadData>(
+                        new(DenominateCompletion.PayloadData.ErrorCodeEnum.NotDispensable),
+                    CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    ErrorDescription: $"Requested amount is not dispensable. {totalAmount}")
+                    );
             }
 
-            return Task.FromResult(new DenominateCompletion.PayloadData(
-                CompletionCode: MessagePayload.CompletionCodeEnum.Success,
-                ErrorDescription: null,
-                ErrorCode: null,
-                Result: new(
-                    Currencies: denomToDispense.CurrencyAmounts,
-                    Values: denomToDispense.Values,
-                    CashBox: denominate.Payload.Request.Denomination.Service is not null ?
-                             denominate.Payload.Request.Denomination.Service.CashBox :
-                             denominate.Payload.Request.Denomination.App.CashBox)
-                ));
+            return Task.FromResult(
+                new CommandResult<DenominateCompletion.PayloadData>(
+                    new(
+                        Result: new(
+                            Currencies: denomToDispense.CurrencyAmounts,
+                            Values: denomToDispense.Values,
+                            CashBox: denominate.Payload.Request.Denomination.Service is not null ?
+                                     denominate.Payload.Request.Denomination.Service.CashBox :
+                                     denominate.Payload.Request.Denomination.App.CashBox)
+                        ),
+                        CompletionCode: MessageHeader.CompletionCodeEnum.Success)
+                );
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

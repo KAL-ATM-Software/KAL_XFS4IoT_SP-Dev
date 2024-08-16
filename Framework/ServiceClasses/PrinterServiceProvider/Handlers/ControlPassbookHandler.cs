@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,12 +18,13 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class ControlPassbookHandler
     {
-        private async Task<ControlPassbookCompletion.PayloadData> HandleControlPassbook(IControlPassbookEvents events, ControlPassbookCommand controlPassbook, CancellationToken cancel)
+        private async Task<CommandResult<ControlPassbookCompletion.PayloadData>> HandleControlPassbook(IControlPassbookEvents events, ControlPassbookCommand controlPassbook, CancellationToken cancel)
         {
             if (controlPassbook.Payload.Action is null)
             {
-                return new ControlPassbookCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"no action specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"no action specified.");
 
             }
 
@@ -38,8 +38,9 @@ namespace XFS4IoTFramework.Printer
                 (controlPassbook.Payload.Action == ControlPassbookCommand.PayloadData.ActionEnum.CloseForward &&
                 !Common.PrinterCapabilities.ControlPassbook.HasFlag(PrinterCapabilitiesClass.ControlPassbookEnum.CloseForward)))
             {
-                return new ControlPassbookCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"Specified action is not supported by the device. {controlPassbook.Payload.Action}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified action is not supported by the device. {controlPassbook.Payload.Action}");
             }
 
             int count = 0;
@@ -48,8 +49,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (controlPassbook.Payload.Count is null)
                 {
-                    return new ControlPassbookCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                     $"No count is specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No count is specified.");
                 }
                 count = (int)controlPassbook.Payload.Count;
             }
@@ -66,9 +68,10 @@ namespace XFS4IoTFramework.Printer
                                                            cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ControlPassbookAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new ControlPassbookCompletion.PayloadData(result.CompletionCode,
-                                                             result.ErrorDescription,
-                                                             result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

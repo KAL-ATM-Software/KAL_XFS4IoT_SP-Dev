@@ -17,21 +17,11 @@ namespace XFS4IoT.VendorMode.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorMode.Register")]
-    public sealed class RegisterCompletion : Completion<RegisterCompletion.PayloadData>
+    public sealed class RegisterCompletion : Completion<MessagePayload>
     {
-        public RegisterCompletion(int RequestId, RegisterCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public RegisterCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

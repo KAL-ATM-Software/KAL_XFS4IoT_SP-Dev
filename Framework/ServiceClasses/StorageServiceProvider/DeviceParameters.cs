@@ -4,12 +4,12 @@
  * See the LICENSE file in the project root for more information.
 
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoTServer;
+using XFS4IoT;
 using XFS4IoT.Completions;
 using XFS4IoT.Storage.Commands;
 using XFS4IoT.Storage.Completions;
@@ -30,6 +30,17 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class StartExchangeResult : DeviceResult
     {
+        public StartExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public StartExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                    string ErrorDescription = null,
                                    StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -43,6 +54,17 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class EndExchangeResult : DeviceResult
     {
+        public EndExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public EndExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  string ErrorDescription = null,
                                  EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -101,7 +123,7 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class SetCardStorageResult : DeviceResult
     {
-        public SetCardStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public SetCardStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -110,6 +132,28 @@ namespace XFS4IoTFramework.Storage
             NewCardStorage = null;
         }
 
+        public SetCardStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    Dictionary<string, SetCardUnitStorage> NewCardStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewCardStorage = NewCardStorage;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SetCardStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewCardStorage = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SetCardStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     Dictionary<string, SetCardUnitStorage> NewCardStorage)
             : base(CompletionCode, null)
@@ -238,7 +282,7 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class SetCashStorageResult : DeviceResult
     {
-        public SetCashStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public SetCashStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -247,6 +291,28 @@ namespace XFS4IoTFramework.Storage
             NewCashStorage = null;
         }
 
+        public SetCashStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    Dictionary<string, SetCashUnitStorage> NewCashStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewCashStorage = NewCashStorage;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SetCashStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewCashStorage = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SetCashStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     Dictionary<string, SetCashUnitStorage> NewCashStorage)
             : base(CompletionCode, null)
@@ -342,7 +408,7 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class SetCheckStorageResult : DeviceResult
     {
-        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public SetCheckStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                      string ErrorDescription = null,
                                      SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -351,6 +417,28 @@ namespace XFS4IoTFramework.Storage
             NewCheckStorage = null;
         }
 
+        public SetCheckStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                     Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewCheckStorage = NewCheckStorage;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                     string ErrorDescription = null,
+                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewCheckStorage = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                      Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
             : base(CompletionCode, null)

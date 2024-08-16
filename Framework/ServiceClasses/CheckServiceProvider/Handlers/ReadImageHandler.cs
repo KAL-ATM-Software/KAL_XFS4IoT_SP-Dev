@@ -19,20 +19,20 @@ namespace XFS4IoTFramework.Check
 {
     public partial class ReadImageHandler
     {
-        private async Task<ReadImageCompletion.PayloadData> HandleReadImage(IReadImageEvents events, ReadImageCommand readImage, CancellationToken cancel)
+        private async Task<CommandResult<ReadImageCompletion.PayloadData>> HandleReadImage(IReadImageEvents events, ReadImageCommand readImage, CancellationToken cancel)
         {
             if (readImage.Payload is null)
             {
-                return new ReadImageCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No payload specified.");
             }
 
             if (readImage.Payload.MediaID is null ||
                 readImage.Payload.MediaID <= 0)
             {
-                return new ReadImageCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"Invalid MediaID specified. {readImage.Payload.MediaID}");
             }
 
@@ -50,8 +50,8 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Common.CheckScannerCapabilities.DataSources.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.DataSourceEnum.Codeline))
                 {
-                    return new ReadImageCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Codeline format is specified but the device doesn't support codeline data source. check capabilities.dataSource. {readImage.Payload.CodelineFormat}");
                 }
 
@@ -66,8 +66,8 @@ namespace XFS4IoTFramework.Check
                     codelineFormat == CodelineFomratEnum.OCRB &&
                     !Common.CheckScannerCapabilities.CodelineFormats.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.CodelineFormatEnum.OCRB))
                 {
-                    return new ReadImageCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported codeline format is specified. {readImage.Payload.CodelineFormat}");
                 }
             }
@@ -85,8 +85,8 @@ namespace XFS4IoTFramework.Check
                         info.ScanColor is null ||
                         info.ColorFormat is null)
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"One of required field for {nameof(readImage.Payload.Image)} is missing.");
                     }
 
@@ -102,8 +102,8 @@ namespace XFS4IoTFramework.Check
                         imageSource == ImageSourceEnum.Back &&
                         !Common.CheckScannerCapabilities.DataSources.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.DataSourceEnum.Back))
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified data source is not supported by the device. {info.Source}");
                     }
 
@@ -125,8 +125,8 @@ namespace XFS4IoTFramework.Check
                         imageType == ImageInfo.ImageFormatEnum.TIF &&
                         !Common.CheckScannerCapabilities.ImageTypes.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.ImageTypeEnum.TIF))
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified image format is not supported by the device. {info.Type}");
                     }
 
@@ -158,8 +158,8 @@ namespace XFS4IoTFramework.Check
                         imageSource == ImageSourceEnum.Back &&
                         !Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(scanColorCap))
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified scan color is not supported by the device. {info.ScanColor}");
                     }
 
@@ -183,16 +183,16 @@ namespace XFS4IoTFramework.Check
                         imageSource == ImageSourceEnum.Back &&
                         !Common.CheckScannerCapabilities.BackImage.ColorFormats.HasFlag(colorFormatCap))
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified scan color is not supported by the device. {info.ScanColor}");
                     }
 
                     if (imageInfo is not null &&
                         imageInfo.ContainsKey(imageSource))
                     {
-                        return new ReadImageCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified same data source already exist. {imageSource}");
                     }
                     (imageInfo ??= []).Add(imageSource, new(imageType, colorFormat, scanColor));
@@ -222,10 +222,10 @@ namespace XFS4IoTFramework.Check
 
             Check.StoreTransactionStatus();
 
-            return new ReadImageCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

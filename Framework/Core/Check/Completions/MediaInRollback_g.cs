@@ -19,16 +19,16 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.MediaInRollback")]
     public sealed class MediaInRollbackCompletion : Completion<MediaInRollbackCompletion.PayloadData>
     {
-        public MediaInRollbackCompletion(int RequestId, MediaInRollbackCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public MediaInRollbackCompletion(int RequestId, MediaInRollbackCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, MediaInEndDataClass MediaInRollback = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, MediaInEndDataClass MediaInRollback = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.MediaInRollback = MediaInRollback;

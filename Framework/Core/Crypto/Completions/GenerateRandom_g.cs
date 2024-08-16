@@ -19,16 +19,16 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.GenerateRandom")]
     public sealed class GenerateRandomCompletion : Completion<GenerateRandomCompletion.PayloadData>
     {
-        public GenerateRandomCompletion(int RequestId, GenerateRandomCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GenerateRandomCompletion(int RequestId, GenerateRandomCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> RandomNumber = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<byte> RandomNumber = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.RandomNumber = RandomNumber;

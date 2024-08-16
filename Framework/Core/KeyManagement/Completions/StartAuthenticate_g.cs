@@ -19,16 +19,16 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.StartAuthenticate")]
     public sealed class StartAuthenticateCompletion : Completion<StartAuthenticateCompletion.PayloadData>
     {
-        public StartAuthenticateCompletion(int RequestId, StartAuthenticateCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartAuthenticateCompletion(int RequestId, StartAuthenticateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<byte> DataToSign = null, SignersClass Signers = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(List<byte> DataToSign = null, SignersClass Signers = null)
+                : base()
             {
                 this.DataToSign = DataToSign;
                 this.Signers = Signers;

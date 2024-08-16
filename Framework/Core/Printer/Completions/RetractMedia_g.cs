@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCompletion : Completion<RetractMediaCompletion.PayloadData>
     {
-        public RetractMediaCompletion(int RequestId, RetractMediaCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public RetractMediaCompletion(int RequestId, RetractMediaCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string Result = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, string Result = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Result = Result;

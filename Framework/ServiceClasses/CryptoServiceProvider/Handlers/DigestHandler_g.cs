@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Crypto
             IDigestEvents events = new DigestEvents(Connection, digestCmd.Header.RequestId.Value);
 
             var result = await HandleDigest(events, digestCmd, cancel);
-            await Connection.SendMessageAsync(new DigestCompletion(digestCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new DigestCompletion(digestCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var digestcommand = command.IsA<DigestCommand>();
-            digestcommand.Header.RequestId.HasValue.IsTrue();
+            var digestCommand = command.IsA<DigestCommand>();
+            digestCommand.Header.RequestId.HasValue.IsTrue();
 
-            DigestCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => DigestCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => DigestCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => DigestCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => DigestCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => DigestCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => DigestCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => DigestCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => DigestCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => DigestCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => DigestCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => DigestCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new DigestCompletion(digestcommand.Header.RequestId.Value, new DigestCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DigestCompletion(digestCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

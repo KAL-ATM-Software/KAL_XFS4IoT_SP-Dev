@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,13 +19,14 @@ namespace XFS4IoTFramework.Printer
     [CommandHandlerAsync]
     public partial class GetMediaListHandler
     {
-        private Task<GetMediaListCompletion.PayloadData> HandleGetMediaList(IGetMediaListEvents events, GetMediaListCommand getMediaList, CancellationToken cancel)
+        private Task<CommandResult<GetMediaListCompletion.PayloadData>> HandleGetMediaList(IGetMediaListEvents events, GetMediaListCommand getMediaList, CancellationToken cancel)
         {
             Dictionary<string, Media> medias = Printer.GetMedias();
-            return Task.FromResult(new GetMediaListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                          null,
-                                                                          medias.Count == 0 ? null :
-                                                                          new List<string>(medias.Keys)));
+            return Task.FromResult(
+                new CommandResult<GetMediaListCompletion.PayloadData>(
+                    medias.Count == 0 ? null : new(new List<string>(medias.Keys)),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

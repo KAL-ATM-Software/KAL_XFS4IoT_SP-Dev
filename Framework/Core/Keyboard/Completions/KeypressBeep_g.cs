@@ -17,21 +17,11 @@ namespace XFS4IoT.Keyboard.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Keyboard.KeypressBeep")]
-    public sealed class KeypressBeepCompletion : Completion<KeypressBeepCompletion.PayloadData>
+    public sealed class KeypressBeepCompletion : Completion<MessagePayload>
     {
-        public KeypressBeepCompletion(int RequestId, KeypressBeepCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public KeypressBeepCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.KeyManagement
             IImportEmvPublicKeyEvents events = new ImportEmvPublicKeyEvents(Connection, importEmvPublicKeyCmd.Header.RequestId.Value);
 
             var result = await HandleImportEmvPublicKey(events, importEmvPublicKeyCmd, cancel);
-            await Connection.SendMessageAsync(new ImportEmvPublicKeyCompletion(importEmvPublicKeyCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ImportEmvPublicKeyCompletion(importEmvPublicKeyCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var importEmvPublicKeycommand = command.IsA<ImportEmvPublicKeyCommand>();
-            importEmvPublicKeycommand.Header.RequestId.HasValue.IsTrue();
+            var importEmvPublicKeyCommand = command.IsA<ImportEmvPublicKeyCommand>();
+            importEmvPublicKeyCommand.Header.RequestId.HasValue.IsTrue();
 
-            ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ImportEmvPublicKeyCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ImportEmvPublicKeyCompletion(importEmvPublicKeycommand.Header.RequestId.Value, new ImportEmvPublicKeyCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ImportEmvPublicKeyCompletion(importEmvPublicKeyCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

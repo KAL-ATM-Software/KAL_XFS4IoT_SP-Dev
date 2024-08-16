@@ -19,12 +19,12 @@ namespace XFS4IoTFramework.Check
 {
     public partial class MediaInHandler
     {
-        private async Task<MediaInCompletion.PayloadData> HandleMediaIn(IMediaInEvents events, MediaInCommand mediaIn, CancellationToken cancel)
+        private async Task<CommandResult<MediaInCompletion.PayloadData>> HandleMediaIn(IMediaInEvents events, MediaInCommand mediaIn, CancellationToken cancel)
         {
             if (mediaIn.Payload is null)
             {
-                return new MediaInCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No payload specified.");
             }
 
@@ -42,8 +42,8 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Common.CheckScannerCapabilities.DataSources.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.DataSourceEnum.Codeline))
                 {
-                    return new MediaInCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Codeline format is specified but the device doesn't support codeline data source. check capabilities.dataSource. {mediaIn.Payload.CodelineFormat}");
                 }
 
@@ -58,8 +58,8 @@ namespace XFS4IoTFramework.Check
                     codelineFormat == CodelineFomratEnum.OCRB &&
                     !Common.CheckScannerCapabilities.CodelineFormats.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.CodelineFormatEnum.OCRB))
                 {
-                    return new MediaInCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported codeline format is specified. {mediaIn.Payload.CodelineFormat}");
                 }
             }
@@ -77,8 +77,8 @@ namespace XFS4IoTFramework.Check
                         info.ScanColor is null ||
                         info.ColorFormat is null)
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"One of required field for {nameof(mediaIn.Payload.Image)} is missing.");
                     }
 
@@ -94,8 +94,8 @@ namespace XFS4IoTFramework.Check
                         (imageSource == ImageSourceEnum.Back &&
                          !Common.CheckScannerCapabilities.DataSources.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.DataSourceEnum.Back)))
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified data source is not supported by the device. {info.Source}");
                     }
 
@@ -117,8 +117,8 @@ namespace XFS4IoTFramework.Check
                         imageType == ImageInfo.ImageFormatEnum.TIF &&
                         !Common.CheckScannerCapabilities.ImageTypes.HasFlag(XFS4IoTFramework.Common.CheckScannerCapabilitiesClass.ImageTypeEnum.TIF))
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified image format is not supported by the device. {info.Type}");
                     }
 
@@ -150,8 +150,8 @@ namespace XFS4IoTFramework.Check
                         (imageSource == ImageSourceEnum.Back &&
                          !Common.CheckScannerCapabilities.BackImage.ScanColor.HasFlag(scanColorCap)))
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified scan color is not supported by the device. {info.ScanColor}");
                     }
 
@@ -175,16 +175,16 @@ namespace XFS4IoTFramework.Check
                         imageSource == ImageSourceEnum.Back &&
                         !Common.CheckScannerCapabilities.BackImage.ColorFormats.HasFlag(colorFormatCap))
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified scan color is not supported by the device. {info.ScanColor}");
                     }
 
                     if (imageInfo is not null &&
                         imageInfo.ContainsKey(imageSource))
                     {
-                        return new MediaInCompletion.PayloadData(
-                            MessagePayload.CompletionCodeEnum.InvalidData,
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
                             $"Specified same data source already exist. {imageSource}");
                     }
                     (imageInfo ??= []).Add(imageSource, new(imageType, colorFormat, scanColor));
@@ -252,7 +252,7 @@ namespace XFS4IoTFramework.Check
             }
 
             Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Failure;
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Active;
             }
@@ -284,11 +284,19 @@ namespace XFS4IoTFramework.Check
                     });
             }
 
-            return new MediaInCompletion.PayloadData(
+            MediaInCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                mediaInResult is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    MediaIn: mediaInResult);
+            }
+
+            return new(
+                payload,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode,
-                MediaIn: mediaInResult);
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

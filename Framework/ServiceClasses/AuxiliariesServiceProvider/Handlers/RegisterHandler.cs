@@ -17,9 +17,9 @@ namespace XFS4IoTFramework.Auxiliaries
 {
     public partial class RegisterHandler
     {
-        private Task<RegisterCompletion.PayloadData> HandleRegister(IRegisterEvents events, RegisterCommand register, CancellationToken cancel)
+        private Task<CommandResult<RegisterCompletion.PayloadData>> HandleRegister(IRegisterEvents events, RegisterCommand register, CancellationToken cancel)
         {
-            return Task.FromResult(new RegisterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, $"The Reginster command is an obsolete command since 2023-2 specification."));
+            return Task.FromResult(new CommandResult<RegisterCompletion.PayloadData>(MessageHeader.CompletionCodeEnum.Success, $"The Reginster command is an obsolete command since 2023-2 specification. Remove handle this command in the package version 3.0."));
         }
     }
 }

@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Printer
             IPrintNativeEvents events = new PrintNativeEvents(Connection, printNativeCmd.Header.RequestId.Value);
 
             var result = await HandlePrintNative(events, printNativeCmd, cancel);
-            await Connection.SendMessageAsync(new PrintNativeCompletion(printNativeCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new PrintNativeCompletion(printNativeCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var printNativecommand = command.IsA<PrintNativeCommand>();
-            printNativecommand.Header.RequestId.HasValue.IsTrue();
+            var printNativeCommand = command.IsA<PrintNativeCommand>();
+            printNativeCommand.Header.RequestId.HasValue.IsTrue();
 
-            PrintNativeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => PrintNativeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => PrintNativeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => PrintNativeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new PrintNativeCompletion(printNativecommand.Header.RequestId.Value, new PrintNativeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PrintNativeCompletion(printNativeCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

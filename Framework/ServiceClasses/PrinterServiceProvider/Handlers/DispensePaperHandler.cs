@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,12 +18,13 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class DispensePaperHandler
     {
-        private async Task<DispensePaperCompletion.PayloadData> HandleDispensePaper(IDispensePaperEvents events, DispensePaperCommand dispensePaper, CancellationToken cancel)
+        private async Task<CommandResult<DispensePaperCompletion.PayloadData>> HandleDispensePaper(IDispensePaperEvents events, DispensePaperCommand dispensePaper, CancellationToken cancel)
         {
             if (!Common.PrinterCapabilities.DispensePaper)
             {
-                return new DispensePaperCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"The device doesn't support dispensing paper capability.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The device doesn't support dispensing paper capability.");
             }
 
             PaperSourceEnum? source = null;
@@ -57,8 +57,9 @@ namespace XFS4IoTFramework.Printer
                         (dispensePaper.Payload.PaperSource == "park" &&
                         !Common.PrinterCapabilities.PaperSources.HasFlag(PrinterCapabilitiesClass.PaperSourceEnum.Park)))
                     {
-                        return new DispensePaperCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       $"Specified paper source is not supported by the device. {dispensePaper.Payload.PaperSource}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Specified paper source is not supported by the device. {dispensePaper.Payload.PaperSource}");
                     }
 
                     source = dispensePaper.Payload.PaperSource switch
@@ -75,8 +76,9 @@ namespace XFS4IoTFramework.Printer
                 {
                     if (!Common.PrinterCapabilities.CustomPaperSources.ContainsKey(dispensePaper.Payload.PaperSource))
                     {
-                        return new DispensePaperCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       $"Specified paper source is not supported by the device. {dispensePaper.Payload.PaperSource}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Specified paper source is not supported by the device. {dispensePaper.Payload.PaperSource}");
                     }
                     customSource = dispensePaper.Payload.PaperSource;
                 }
@@ -88,9 +90,10 @@ namespace XFS4IoTFramework.Printer
                                                          cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.DispensePaperAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new DispensePaperCompletion.PayloadData(result.CompletionCode,
-                                                           result.ErrorDescription,
-                                                           result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

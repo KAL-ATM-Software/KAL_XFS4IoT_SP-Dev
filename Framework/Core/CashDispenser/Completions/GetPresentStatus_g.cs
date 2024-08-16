@@ -19,16 +19,16 @@ namespace XFS4IoT.CashDispenser.Completions
     [Completion(Name = "CashDispenser.GetPresentStatus")]
     public sealed class GetPresentStatusCompletion : Completion<GetPresentStatusCompletion.PayloadData>
     {
-        public GetPresentStatusCompletion(int RequestId, GetPresentStatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetPresentStatusCompletion(int RequestId, GetPresentStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, DenominationClass Denomination = null, PresentStateEnum? PresentState = null, string Token = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, DenominationClass Denomination = null, PresentStateEnum? PresentState = null, string Token = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Denomination = Denomination;

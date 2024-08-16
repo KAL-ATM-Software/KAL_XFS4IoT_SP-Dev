@@ -620,11 +620,11 @@ namespace XFS4IoTServer
                     }
                 }
 
-                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashStorageStatus()");
+                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitStatus()");
 
                 updateStatus = Device.GetCashUnitStatus(out Dictionary<string, CashStatusClass.ReplenishmentStatusEnum> unitStatus);
 
-                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashStorageStatus()-> {updateStatus}");
+                Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitStatus()-> {updateStatus}");
 
                 if (updateCounts &&
                     unitStatus is not null)

@@ -21,7 +21,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class RetractMediaHandler
     {
-        private async Task<RetractMediaCompletion.PayloadData> HandleRetractMedia(IRetractMediaEvents events, RetractMediaCommand retractMedia, CancellationToken cancel)
+        private async Task<CommandResult<RetractMediaCompletion.PayloadData>> HandleRetractMedia(IRetractMediaEvents events, RetractMediaCommand retractMedia, CancellationToken cancel)
         {
             RetractMediaRequest.LocationEnum location = RetractMediaRequest.LocationEnum.Default;
             string storageId = string.Empty;
@@ -30,8 +30,8 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Regex.IsMatch(retractMedia.Payload.RetractLocation, "^stacker$|^transport$|^rebuncher$|^unit[0-9A-Za-z]+$"))
                 {
-                    return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified media control is not supported by the device.{retractMedia.Payload.RetractLocation}");
                 }
                 switch (retractMedia.Payload.RetractLocation)
@@ -56,39 +56,39 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Storage.CheckUnits.ContainsKey(storageId))
                 {
-                    return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"Specified storage unit doesn't exist. {storageId}",
-                        RetractMediaCompletion.PayloadData.ErrorCodeEnum.InvalidBin);
+                    return new(
+                        new(RetractMediaCompletion.PayloadData.ErrorCodeEnum.InvalidBin),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified storage unit doesn't exist. {storageId}");
                 }
             }
 
             if (location == RetractMediaRequest.LocationEnum.Stacker &&
                 !Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Stacker))
             {
-                return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {location}");
             }
             if (location == RetractMediaRequest.LocationEnum.Unit &&
                 !Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Storage))
             {
-                return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {location}");
             }
             if (location == RetractMediaRequest.LocationEnum.Transport &&
                 !Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.Transport))
             {
-                return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {location}");
             }
             if (location == RetractMediaRequest.LocationEnum.ReBuncher &&
                 !Common.CheckScannerCapabilities.RetractLocations.HasFlag(CheckScannerCapabilitiesClass.RetractLocationEnum.ReBuncher))
             {
-                return new RetractMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {location}");
             }
 
@@ -103,7 +103,7 @@ namespace XFS4IoTFramework.Check
 
             if (Check.LastTransactionStatus.MediaInTransactionState == TransactionStatus.MediaInTransactionStateEnum.Active)
             {
-                if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Retract;
                 }
@@ -129,10 +129,10 @@ namespace XFS4IoTFramework.Check
                 await Storage.UpdateCheckStorageCount(countDelta);
             }
 
-            return new RetractMediaCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

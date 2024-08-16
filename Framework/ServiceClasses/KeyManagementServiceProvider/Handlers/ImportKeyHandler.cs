@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -14,59 +13,66 @@ using System.Text.RegularExpressions;
 using XFS4IoT;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class ImportKeyHandler
     {
-        private async Task<ImportKeyCompletion.PayloadData> HandleImportKey(IImportKeyEvents events, ImportKeyCommand importKey, CancellationToken cancel)
+        private async Task<CommandResult<ImportKeyCompletion.PayloadData>> HandleImportKey(IImportKeyEvents events, ImportKeyCommand importKey, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(importKey.Payload.Key))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key name specified.",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key name specified.");
             }
 
             if (importKey.Payload.KeyAttributes is null)
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key attribute specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key attribute specified.");
             }
 
             if (string.IsNullOrEmpty(importKey.Payload.KeyAttributes.KeyUsage))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key usage specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key usage specified.");
             }
             if (!Regex.IsMatch(importKey.Payload.KeyAttributes.KeyUsage, KeyDetail.regxKeyUsage))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Invalid key usage specified. {importKey.Payload.KeyAttributes.KeyUsage}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid key usage specified. {importKey.Payload.KeyAttributes.KeyUsage}");
             }
 
             if (string.IsNullOrEmpty(importKey.Payload.KeyAttributes.Algorithm))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key algorith specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key algorith specified.");
             }
             if (!Regex.IsMatch(importKey.Payload.KeyAttributes.Algorithm, KeyDetail.regxAlgorithm))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Invalid algorith specified. {importKey.Payload.KeyAttributes.Algorithm}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid algorith specified. {importKey.Payload.KeyAttributes.Algorithm}");
             }
 
             if (string.IsNullOrEmpty(importKey.Payload.KeyAttributes.ModeOfUse))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key mode specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key mode specified.");
             }
             if (!Regex.IsMatch(importKey.Payload.KeyAttributes.ModeOfUse, KeyDetail.regxModeOfUse))
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Invalid key mode specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid key mode specified.");
             }
 
             // Check key attributes supported
@@ -105,29 +111,33 @@ namespace XFS4IoTFramework.KeyManagement
 
             if (!keyAttribSupported)
             {
-                return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"Specified key attribute is not supported.",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
+                return new(
+                    new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key attribute is not supported.");
             }
 
             int keySlot = KeyManagement.FindKeySlot(importKey.Payload.Key);
             SecureKeyEntryStatusClass secureKeyEntryStatus = KeyManagement.GetSecureKeyEntryStatus();
             bool assemblyParts;
+            ImportKeyCompletion.PayloadData payload = null;
 
             if (importKey.Payload.Constructing is not null &&
                 (bool)importKey.Payload.Constructing)
             {
                 if (!Common.KeyManagementCapabilities.KeyImportThroughParts)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"The constructing property is enabled, but the device doesn't support secure key entry.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"The constructing property is enabled, but the device doesn't support secure key entry.");
                 }
 
                 if (!secureKeyEntryStatus.KeyBuffered)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"There are not key component buffered.",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"There are not key component buffered.");
                 }
 
                 if (importKey.Payload.Value?.Count > 0)
@@ -147,14 +157,16 @@ namespace XFS4IoTFramework.KeyManagement
                     // first part of key component is already loaded
                     if (keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.Second].Stored)
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Both 2 parts of key components already stored.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Both 2 parts of key components already stored.");
                     }
 
                     if (keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName != importKey.Payload.Key)
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Invalid key name specified. first part stored {keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName}, attempt to load {importKey.Payload.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Invalid key name specified. first part stored {keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName}, attempt to load {importKey.Payload.Key}");
                     }
 
                     componentNumber = (int)SecureKeyEntryStatusClass.KeyPartEnum.Second;
@@ -173,7 +185,7 @@ namespace XFS4IoTFramework.KeyManagement
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportKeyPart() -> {importKeyPartResult.CompletionCode}, {importKeyPartResult.ErrorCode}");
 
                 ImportKeyCompletion.PayloadData.VerifyAttributesClass verifyAttribute = null;
-                if (importKeyPartResult.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (importKeyPartResult.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     secureKeyEntryStatus.KeyPartLoaded((SecureKeyEntryStatusClass.KeyPartEnum)componentNumber, importKey.Payload.Key);
                     // Successfully loaded and add key information managing internally
@@ -210,12 +222,21 @@ namespace XFS4IoTFramework.KeyManagement
                     }
                 }
 
-                return new ImportKeyCompletion.PayloadData(importKeyPartResult.CompletionCode,
-                                                           importKeyPartResult.ErrorDescription,
-                                                           importKeyPartResult.ErrorCode,
-                                                           importKeyPartResult.VerificationData,
-                                                           verifyAttribute,
-                                                           importKeyPartResult.KeyLength);
+                if (importKeyPartResult.ErrorCode is not null ||
+                    importKeyPartResult.VerificationData?.Count > 0 ||
+                    verifyAttribute is not null)
+                {
+                    payload = new(
+                        importKeyPartResult.ErrorCode,
+                        importKeyPartResult.VerificationData,
+                        verifyAttribute,
+                        importKeyPartResult.KeyLength);
+                }
+
+                return new(
+                    payload,
+                    importKeyPartResult.CompletionCode,
+                    importKeyPartResult.ErrorDescription);
             }
             else
             {
@@ -231,12 +252,12 @@ namespace XFS4IoTFramework.KeyManagement
 
                     Contracts.Assert(keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName == keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.Second].KeyName, $"Stored key component name should be identical. {keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName}, {keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.Second].KeyName}");
 
-
                     if (keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].KeyName != importKey.Payload.Key)
                     {
                         // Some of firmware allows to load different encryption key while secure key components are already loaded, however the SP framework returns error.
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.SequenceError,
-                                                                   $"Invalid sequence for importing encryption key as the secure key entry process is enabled. the key name preserved for the key components different on assemblying key components.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.SequenceError,
+                            $"Invalid sequence for importing encryption key as the secure key entry process is enabled. the key name preserved for the key components different on assemblying key components.");
                     }
                 }
                 else
@@ -244,17 +265,18 @@ namespace XFS4IoTFramework.KeyManagement
                     if (keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.First].Stored ||
                         keyStatus[SecureKeyEntryStatusClass.KeyPartEnum.Second].Stored)
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.SequenceError,
-                                                                   $"Invalid sequence for importing encryption key as the secure key entry process is enabled.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.SequenceError,
+                            $"Invalid sequence for importing encryption key as the secure key entry process is enabled.");
                     }
 
                     if (importKey.Payload.Value is null ||
                         importKey.Payload.Value.Count == 0)
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"No key value specified. {importKey.Payload.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No key value specified. {importKey.Payload.Key}");
                     }
-
                 }
             }
 
@@ -264,31 +286,35 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyDetail decryptKeyDetail = KeyManagement.GetKeyDetail(importKey.Payload.DecryptKey);
                 if (decryptKeyDetail is null)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"Specified decrypt key is not stored. {importKey.Payload.DecryptKey}",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified decrypt key is not stored. {importKey.Payload.DecryptKey}");
                 }
 
                 if (decryptKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"Specified decrypt key is not loaded. {importKey.Payload.DecryptKey}",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified decrypt key is not loaded. {importKey.Payload.DecryptKey}");
                 }
 
                 if (!Common.KeyManagementCapabilities.DecryptAttributes.ContainsKey(decryptKeyDetail.Algorithm))
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified decrypt key doesn't support required algorithm. {importKey.Payload.DecryptKey}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified decrypt key doesn't support required algorithm. {importKey.Payload.DecryptKey}");
                 }
 
                 KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum decryptMethodCap = Common.KeyManagementCapabilities.DecryptAttributes[decryptKeyDetail.Algorithm].DecryptMethods;
                 if (decryptMethodCap == KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum.NotSupported)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"No decrypt method is not supported. {importKey.Payload.DecryptMethod}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No decrypt method is not supported. {importKey.Payload.DecryptMethod}");
                 }
 
                 ImportKeyRequest.DecryptAttributeClass.DecryptMethodEnum decryptMethod = ImportKeyRequest.DecryptAttributeClass.DecryptMethodEnum.TR31;
@@ -309,9 +335,10 @@ namespace XFS4IoTFramework.KeyManagement
                             (importKey.Payload.DecryptMethod == ImportKeyCommand.PayloadData.DecryptMethodEnum.Xts &&
                              !decryptMethodCap.HasFlag(KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum.XTS)))
                         {
-                            return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"No decrypt method is not supported. {importKey.Payload.DecryptMethod}",
-                                                                       ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                            return new(
+                                new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"No decrypt method is not supported. {importKey.Payload.DecryptMethod}");
                         }
 
                         decryptMethod = importKey.Payload.DecryptMethod switch
@@ -331,9 +358,10 @@ namespace XFS4IoTFramework.KeyManagement
                             (importKey.Payload.DecryptMethod == ImportKeyCommand.PayloadData.DecryptMethodEnum.RsaesPkcs1V15 &&
                              !decryptMethodCap.HasFlag(KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum.RSAES_PKCS1_V1_5)))
                         {
-                            return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"No decrypt method is supported. {importKey.Payload.DecryptMethod}",
-                                                                       ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                            return new(
+                                new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"No decrypt method is supported. {importKey.Payload.DecryptMethod}");
                         }
 
                         decryptMethod = importKey.Payload.DecryptMethod switch
@@ -353,16 +381,18 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyDetail verifyKeyDetail = KeyManagement.GetKeyDetail(importKey.Payload.VerifyKey);
                 if (verifyKeyDetail is null)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"Specified verify key is not stored. {importKey.Payload.VerifyKey}",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified verify key is not stored. {importKey.Payload.VerifyKey}");
                 }
 
                 if (verifyKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"Specified verify key is not loaded. {importKey.Payload.VerifyKey}",
-                                                           ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified verify key is not loaded. {importKey.Payload.VerifyKey}");
                 }
 
                 if (verifyKeyDetail.KeyName != "_HostCert" &&
@@ -370,49 +400,54 @@ namespace XFS4IoTFramework.KeyManagement
                     importKey.Payload.VerifyAttributes is null)
                 {
                     // _HostCert is a public key loaded with the host token to verify key token, key token contains vertification data and no need to specify verification data and attribute
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"No verification data and verify attribute specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No verification data and verify attribute specified.");
                 }
 
                 if (!Common.KeyManagementCapabilities.VerifyAttributes.ContainsKey(verifyKeyDetail.KeyUsage))
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified verify key doesn't support required key usage. {importKey.Payload.VerifyKey}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified verify key doesn't support required key usage. {importKey.Payload.VerifyKey}");
                 }
 
                 if (!Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage].ContainsKey(verifyKeyDetail.Algorithm))
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified verify key doesn't support required algorithm. {importKey.Payload.VerifyKey}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified verify key doesn't support required algorithm. {importKey.Payload.VerifyKey}");
                 }
 
                 if (Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm].ContainsKey("V"))
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified verify key doesn't support required mode of use. {importKey.Payload.VerifyKey}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified verify key doesn't support required mode of use. {importKey.Payload.VerifyKey}");
                 }
 
                 if (importKey.Payload.VerifyAttributes is null)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
                                                                $"No verify attributes specified when verify key name is specified. {importKey.Payload.VerifyKey}");
                 }
 
                 if (importKey.Payload.VerifyAttributes.CryptoMethod is null)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
                                                                $"No cryptoMethod specified when verify key name is specified. {importKey.Payload.VerifyKey}");
                 }
 
                 KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum cryptoMethodCap = Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].CryptoMethod;
                 if (cryptoMethodCap == KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.NotSupported)
                 {
-                    return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Crypto method is not supported. {importKey.Payload.VerifyAttributes.CryptoMethod}",
-                                                               ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                    return new(
+                        new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Crypto method is not supported. {importKey.Payload.VerifyAttributes.CryptoMethod}");
                 }
 
                 ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum verifyMethod;
@@ -426,9 +461,10 @@ namespace XFS4IoTFramework.KeyManagement
                         (importKey.Payload.VerifyAttributes.CryptoMethod == ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvZero &&
                          !cryptoMethodCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVZero)))
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"No crypto method is supported. {importKey.Payload.VerifyAttributes.CryptoMethod}",
-                                                                   ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                        return new(
+                            new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"No crypto method is supported. {importKey.Payload.VerifyAttributes.CryptoMethod}");
                     }
 
                     verifyMethod = importKey.Payload.VerifyAttributes.CryptoMethod switch
@@ -447,9 +483,10 @@ namespace XFS4IoTFramework.KeyManagement
                         (importKey.Payload.VerifyAttributes.CryptoMethod == ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPs &&
                          !cryptoMethodCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PSS)))
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"No decrypt method is not supported. {importKey.Payload.VerifyAttributes.CryptoMethod}",
-                                                                   ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                        return new(
+                            new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"No decrypt method is not supported. {importKey.Payload.VerifyAttributes.CryptoMethod}");
                     }
 
                     verifyMethod = importKey.Payload.VerifyAttributes.CryptoMethod switch
@@ -462,8 +499,9 @@ namespace XFS4IoTFramework.KeyManagement
                     if (importKey.Payload.VerifyAttributes.HashAlgorithm is null &&
                         verifyMethod != ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.SignatureNone)
                     {
-                        return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"No hash algorithm specified when verify method is {importKey.Payload.VerifyAttributes.CryptoMethod}.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No hash algorithm specified when verify method is {importKey.Payload.VerifyAttributes.CryptoMethod}.");
                     }
 
                     if (verifyMethod != ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.SignatureNone)
@@ -471,9 +509,10 @@ namespace XFS4IoTFramework.KeyManagement
                         KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum hashAlgorithmCap = Common.KeyManagementCapabilities.VerifyAttributes[verifyKeyDetail.KeyUsage][verifyKeyDetail.Algorithm]["V"].HashAlgorithm;
                         if (hashAlgorithmCap == KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.NotSupported)
                         {
-                            return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"No hash algorithm supported to verify.",
-                                                                       ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
+                            return new(
+                                new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"No hash algorithm supported to verify.");
                         }
 
                         if ((importKey.Payload.VerifyAttributes.HashAlgorithm == ImportKeyCommand.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha1 &&
@@ -481,9 +520,10 @@ namespace XFS4IoTFramework.KeyManagement
                             (importKey.Payload.VerifyAttributes.HashAlgorithm == ImportKeyCommand.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha256 &&
                              !hashAlgorithmCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.HashAlgorithmEnum.SHA256)))
                         {
-                            return new ImportKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"No hash algorithm supported to verify. {importKey.Payload.VerifyAttributes.HashAlgorithm}",
-                                                                       ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
+                            return new(
+                                new(ImportKeyCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"No hash algorithm supported to verify. {importKey.Payload.VerifyAttributes.HashAlgorithm}");
                         }
                     }
                 }
@@ -528,7 +568,7 @@ namespace XFS4IoTFramework.KeyManagement
             }
 
             ImportKeyCompletion.PayloadData.VerifyAttributesClass importKeyVerifyAttib = null;
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 secureKeyEntryStatus.Reset();
 
@@ -572,12 +612,21 @@ namespace XFS4IoTFramework.KeyManagement
                                      result.KeyInformation?.Version);
             }
 
-            return new ImportKeyCompletion.PayloadData(result.CompletionCode,
-                                                       result.ErrorDescription,
-                                                       result.ErrorCode,
-                                                       result.VerificationData,
-                                                       importKeyVerifyAttib,
-                                                       result.KeyLength);
+            if (result.ErrorCode is not null ||
+                result.VerificationData?.Count > 0 ||
+                importKeyVerifyAttib is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.VerificationData,
+                    importKeyVerifyAttib,
+                    result.KeyLength);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

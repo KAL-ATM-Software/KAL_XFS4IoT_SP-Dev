@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -14,13 +13,12 @@ using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoT.CardReader;
 using XFS4IoTFramework.Common;
-using System.Text;
 
 namespace XFS4IoTFramework.CardReader
 {
     public partial class ReadRawDataHandler
     {
-        private async Task<ReadRawDataCompletion.PayloadData> HandleReadRawData(IReadRawDataEvents events, ReadRawDataCommand readRawData, CancellationToken cancel)
+        private async Task<CommandResult<ReadRawDataCompletion.PayloadData>> HandleReadRawData(IReadRawDataEvents events, ReadRawDataCommand readRawData, CancellationToken cancel)
         {
             ReadCardRequest.CardDataTypesEnum dataTypes = ReadCardRequest.CardDataTypesEnum.NoDataRead;
 
@@ -76,29 +74,33 @@ namespace XFS4IoTFramework.CardReader
                 dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.FrontImage) &&
                 !Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.FrontImage))
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Specified data to read is not supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified data to read is not supported.");
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.MemoryChip) &&
                 Common.CardReaderCapabilities.MemoryChipProtocols == CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.NotSupported)
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Memmory chip is not supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Memmory chip is not supported.");
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Chip) &&
                 Common.CardReaderCapabilities.ChipProtocols == CardReaderCapabilitiesClass.ChipProtocolsEnum.NotSupported)
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Chip is not supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Chip is not supported.");
             }
 
             if (dataTypes.HasFlag(ReadCardRequest.CardDataTypesEnum.Security) &&
                 Common.CardReaderCapabilities.SecurityType == CardReaderCapabilitiesClass.SecurityTypeEnum.NotSupported)
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Security module is not supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Security module is not supported.");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
@@ -108,7 +110,7 @@ namespace XFS4IoTFramework.CardReader
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
-            if (acceptCardResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success ||
+            if (acceptCardResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success ||
                 dataTypes == ReadCardRequest.CardDataTypesEnum.NoDataRead)
             {
                 // Map to XFS error code
@@ -123,9 +125,10 @@ namespace XFS4IoTFramework.CardReader
                     _ => null
                 };
 
-                return new ReadRawDataCompletion.PayloadData(acceptCardResult.CompletionCode,
-                                                             acceptCardResult.ErrorDescription,
-                                                             errorCode);
+                return new(
+                    new(errorCode),
+                    acceptCardResult.CompletionCode,
+                    acceptCardResult.ErrorDescription);
             }
 
             // The device specific class completed accepting card operation check the media status must be present for motorised cardreader
@@ -134,9 +137,10 @@ namespace XFS4IoTFramework.CardReader
                 (Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.Present  &&
                  Common.CardReaderStatus.Media != CardReaderStatusClass.MediaEnum.NotPresent))
             {
-                return new ReadRawDataCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             "Accept operation is completed successfully, but the media is not present.", 
-                                                             ReadRawDataCompletion.PayloadData.ErrorCodeEnum.NoMedia);
+                return new(
+                    new(ReadRawDataCompletion.PayloadData.ErrorCodeEnum.NoMedia),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    "Accept operation is completed successfully, but the media is not present.");
             }
 
             // Card is accepted now and in the device, try to read card data now
@@ -146,12 +150,13 @@ namespace XFS4IoTFramework.CardReader
                                                                 cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ReadCardAsync() -> {readCardDataResult.CompletionCode}, {readCardDataResult.ErrorCode}");
 
-            if (readCardDataResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success ||
+            if (readCardDataResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success ||
                 readCardDataResult.ErrorCode is not null)
             {
-                return new ReadRawDataCompletion.PayloadData(readCardDataResult.CompletionCode,
-                                                             readCardDataResult.ErrorDescription,
-                                                             readCardDataResult.ErrorCode);
+                return new(
+                    new(readCardDataResult.ErrorCode),
+                    readCardDataResult.CompletionCode,
+                    readCardDataResult.ErrorDescription);
             }
 
             // build output data
@@ -378,7 +383,7 @@ namespace XFS4IoTFramework.CardReader
                 readCardDataResult.ChipATRRead is not null && 
                 readCardDataResult.ChipATRRead.Count > 0)
             {
-                chip = new List<CardDataClass>();
+                chip = [];
                 foreach (ReadCardResult.CardData atr in readCardDataResult.ChipATRRead)
                 {
                     Contracts.IsNotNull(atr.DataStatus, "Unexpected chip data status is set by the device class. DataStatus field should not be null.");
@@ -387,22 +392,43 @@ namespace XFS4IoTFramework.CardReader
                 }
             }
 
-            return new ReadRawDataCompletion.PayloadData(readCardDataResult.CompletionCode,
-                                                         readCardDataResult.ErrorDescription,
-                                                         readCardDataResult.ErrorCode,
-                                                         track1,
-                                                         track2,
-                                                         track3,
-                                                         chip,
-                                                         security,
-                                                         watermark,
-                                                         memoryChip,
-                                                         track1Front,
-                                                         frontImage,
-                                                         backImage,
-                                                         track1JIS,
-                                                         track3JIS,
-                                                         ddi);
+            ReadRawDataCompletion.PayloadData payload = null;
+            if (readCardDataResult.ErrorCode is not null ||
+                track1 is not null ||
+                track2 is not null ||
+                track3 is not null ||
+                chip is not null ||
+                security is not null ||
+                watermark is not null ||
+                memoryChip is not null ||
+                track1Front is not null ||
+                frontImage is not null ||
+                backImage is not null ||
+                track1JIS is not null ||
+                track3JIS is not null ||
+                ddi is not null)
+            {
+                payload = new(
+                    readCardDataResult.ErrorCode,
+                    track1,
+                    track2,
+                    track3,
+                    chip,
+                    security,
+                    watermark,
+                    memoryChip,
+                    track1Front,
+                    frontImage,
+                    backImage,
+                    track1JIS,
+                    track3JIS,
+                    ddi);
+            }
+
+            return new(
+                payload,
+                readCardDataResult.CompletionCode,
+                readCardDataResult.ErrorDescription);
         }
     }
 }

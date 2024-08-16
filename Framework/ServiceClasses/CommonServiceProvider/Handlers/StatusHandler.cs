@@ -19,11 +19,15 @@ namespace XFS4IoTFramework.Common
     [CommandHandlerAsync]
     public partial class StatusHandler
     {
-        private Task<StatusCompletion.PayloadData> HandleStatus(IStatusEvents events, StatusCommand status, CancellationToken cancel)
+        private Task<CommandResult<StatusCompletion.PayloadData>> HandleStatus(IStatusEvents events, StatusCommand status, CancellationToken cancel)
         {
             if (Common.CommonStatus is null)
             {
-                return Task.FromResult(new StatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError, $"No common status is reported by the device class."));
+                return Task.FromResult(
+                    new CommandResult<StatusCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InternalError, 
+                        $"No common status is reported by the device class.")
+                    );
             }
 
             XFS4IoT.Common.StatusPropertiesClass common = new(
@@ -1376,28 +1380,28 @@ namespace XFS4IoTFramework.Common
             }
 
             return Task.FromResult(
-            new StatusCompletion.PayloadData(
-                MessagePayload.CompletionCodeEnum.Success,
-                string.Empty,
-                Common: common,
-                CardReader: cardReader,
-                CashDispenser: cashDispenser,
-                CashManagement: cashManagement,
-                KeyManagement: keyManagement,
-                Keyboard: keyboard,
-                TextTerminal: textTerminal,
-                Printer: printer,
-                Lights: lights,
-				Auxiliaries: auxiliaries,
-                VendorApplication: vendorApplication,
-                VendorMode: vendorMode,
-                BarcodeReader: barcodeReader,
-                Biometric: biometric,
-                CashAcceptor: cashAcceptor,
-                Camera: camera,
-                Check: checkScanner,
-                MixedMedia: mixedMedia)
-            );
+                new CommandResult<StatusCompletion.PayloadData>(
+                    new StatusCompletion.PayloadData(
+                        Common: common,
+                        CardReader: cardReader,
+                        CashDispenser: cashDispenser,
+                        CashManagement: cashManagement,
+                        KeyManagement: keyManagement,
+                        Keyboard: keyboard,
+                        TextTerminal: textTerminal,
+                        Printer: printer,
+                        Lights: lights,
+                        Auxiliaries: auxiliaries,
+                        VendorApplication: vendorApplication,
+                        VendorMode: vendorMode,
+                        BarcodeReader: barcodeReader,
+                        Biometric: biometric,
+                        CashAcceptor: cashAcceptor,
+                        Camera: camera,
+                        Check: checkScanner,
+                        MixedMedia: mixedMedia),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

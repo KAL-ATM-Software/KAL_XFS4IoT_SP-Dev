@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,21 +11,22 @@ using System.Threading;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using XFS4IoT.KeyManagement;
-using XFS4IoT.Completions;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class DeleteKeyHandler
     {
-        private async Task<DeleteKeyCompletion.PayloadData> HandleDeleteKey(IDeleteKeyEvents events, DeleteKeyCommand deleteKey, CancellationToken cancel)
+        private async Task<CommandResult<DeleteKeyCompletion.PayloadData>> HandleDeleteKey(IDeleteKeyEvents events, DeleteKeyCommand deleteKey, CancellationToken cancel)
         {
             if (!string.IsNullOrEmpty(deleteKey.Payload.Key))
             {
                 KeyDetail keyDetail = KeyManagement.GetKeyDetail(deleteKey.Payload.Key);
                 if (keyDetail is null)
                 {
-                    return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Specified key doesn't exist. {deleteKey.Payload.Key}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified key doesn't exist. {deleteKey.Payload.Key}");
                 }
             }
 
@@ -35,28 +35,32 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 if (deleteKey.Payload.Authentication.Method is null)
                 {
-                    return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"No authentication method specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No authentication method specified.");
                 }
                 if (deleteKey.Payload.Authentication.Method is not null)
                 {
                     if (deleteKey.Payload.Authentication.Data is null ||
                         deleteKey.Payload.Authentication.Data.Count == 0)
                     {
-                        return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"No authentication data specified.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No authentication data specified.");
                     }
                     if (deleteKey.Payload.Authentication.Method is null)
                     {
-                        return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"No authentication method specified.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No authentication method specified.");
                     }
 
                     KeyDetail keyDetail = KeyManagement.GetKeyDetail(deleteKey.Payload.Authentication.Key);
                     if (keyDetail is null)
                     {
-                        return new DeleteKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified authentication key doesn't exist. {deleteKey.Payload.Authentication.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Specified authentication key doesn't exist. {deleteKey.Payload.Authentication.Key}");
                     }
 
                     authData = new AuthenticationData(deleteKey.Payload.Authentication.Method switch
@@ -82,7 +86,7 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.DeleteKey() -> {result.CompletionCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 // Delete internal key information
                 if (string.IsNullOrEmpty(deleteKey.Payload.Key))
@@ -100,8 +104,9 @@ namespace XFS4IoTFramework.KeyManagement
                 }
             }
 
-            return new DeleteKeyCompletion.PayloadData(result.CompletionCode,
-                                                       result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

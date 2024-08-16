@@ -20,7 +20,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class GetNextItemHandler
     {
-        private async Task<GetNextItemCompletion.PayloadData> HandleGetNextItem(IGetNextItemEvents events, GetNextItemCommand getNextItem, CancellationToken cancel)
+        private async Task<CommandResult<GetNextItemCompletion.PayloadData>> HandleGetNextItem(IGetNextItemEvents events, GetNextItemCommand getNextItem, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CheckDev.GetNextItemAsync()");
 
@@ -31,18 +31,19 @@ namespace XFS4IoTFramework.Check
 
             Logger.Log(Constants.DeviceClass, $"CheckDev.GetNextItemAsync() -> {result.CompletionCode}");
 
-            return new GetNextItemCompletion.PayloadData(
+            return new(
+                new(
+                    ErrorCode: result.ErrorCode,
+                    MediaFeeder: Device.CheckScannerStatus.MediaFeeder switch
+                    {
+                        XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Empty => MediaFeederEnum.Empty,
+                        XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.NotEmpty => MediaFeederEnum.NotEmpty,
+                        XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Inoperative => MediaFeederEnum.Inoperative,
+                        XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Unknown => MediaFeederEnum.Unknown,
+                        _ => null,
+                    }),
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode,
-                MediaFeeder: Device.CheckScannerStatus.MediaFeeder switch
-                {
-                    XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Empty => MediaFeederEnum.Empty,
-                    XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.NotEmpty => MediaFeederEnum.NotEmpty,
-                    XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Inoperative => MediaFeederEnum.Inoperative,
-                    XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Unknown => MediaFeederEnum.Unknown,
-                    _ => null,
-                });
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

@@ -22,20 +22,22 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CashInStartHandler
     {
-        private async Task<CashInStartCompletion.PayloadData> HandleCashInStart(ICashInStartEvents events, CashInStartCommand cashInStart, CancellationToken cancel)
+        private async Task<CommandResult<CashInStartCompletion.PayloadData>> HandleCashInStart(ICashInStartEvents events, CashInStartCommand cashInStart, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"The exchange state is already in active.",
-                                                             CashInStartCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CashInStartCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"The cash-in state is already in active.",
-                                                             CashInStartCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(CashInStartCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is already in active.");
             }
 
             CashManagementCapabilitiesClass.PositionEnum outputPosition = CashManagementCapabilitiesClass.PositionEnum.OutDefault;
@@ -57,15 +59,17 @@ namespace XFS4IoTFramework.CashAcceptor
 
             if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Unsupported output position. {outputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Unsupported output position. {outputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[outputPosition].PositionStatus == CashManagementStatusClass.PositionStatusEnum.NotSupported)
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"The specified output position is not supported. {outputPosition}",
-                                                             CashInStartCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(CashInStartCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified output position is not supported. {outputPosition}");
             }
 
             CashManagementCapabilitiesClass.PositionEnum inputPosition = CashManagementCapabilitiesClass.PositionEnum.InDefault;
@@ -87,15 +91,17 @@ namespace XFS4IoTFramework.CashAcceptor
 
             if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(inputPosition))
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Unsupported input position. {inputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Unsupported input position. {inputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[inputPosition].PositionStatus == CashManagementStatusClass.PositionStatusEnum.NotSupported)
             {
-                return new CashInStartCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"The specified input position is not supported. {inputPosition}",
-                                                             CashInStartCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(CashInStartCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified input position is not supported. {inputPosition}");
             }
 
             // Clear TotalReturnedItems for the present status
@@ -117,7 +123,7 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashInStart() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 CashManagement.CashInStatusManaged.NumOfRefusedItems = 0;
                 CashManagement.CashInStatusManaged.CashCounts = new();
@@ -125,9 +131,10 @@ namespace XFS4IoTFramework.CashAcceptor
                 CashManagement.StoreCashInStatus();
             }
 
-            return new CashInStartCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription,
-                                                         result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private ICashManagementService CashManagement { get => Provider.IsA<ICashManagementService>(); }

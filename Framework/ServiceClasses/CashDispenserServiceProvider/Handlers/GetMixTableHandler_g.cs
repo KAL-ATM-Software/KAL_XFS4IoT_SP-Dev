@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashDispenser
             IGetMixTableEvents events = new GetMixTableEvents(Connection, getMixTableCmd.Header.RequestId.Value);
 
             var result = await HandleGetMixTable(events, getMixTableCmd, cancel);
-            await Connection.SendMessageAsync(new GetMixTableCompletion(getMixTableCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetMixTableCompletion(getMixTableCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var getMixTablecommand = command.IsA<GetMixTableCommand>();
-            getMixTablecommand.Header.RequestId.HasValue.IsTrue();
+            var getMixTableCommand = command.IsA<GetMixTableCommand>();
+            getMixTableCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetMixTableCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GetMixTableCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GetMixTableCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GetMixTableCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetMixTableCompletion(getMixTablecommand.Header.RequestId.Value, new GetMixTableCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetMixTableCompletion(getMixTableCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

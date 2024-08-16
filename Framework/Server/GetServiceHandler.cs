@@ -43,12 +43,10 @@ namespace Server
             getServiceCommand.Header.RequestId.HasValue.IsTrue();
 
             // For now just return good result and fixed services available
-            GetServicesCompletion.PayloadData payLoad = new(GetServicesCompletion.PayloadData.CompletionCodeEnum.Success,
-                                                            "ok",
-                                                            "KAL",
+            GetServicesCompletion.PayloadData payload = new("KAL",
                                                             ServicePublisher.Services.Select(c => new XFS4IoT.ServicePublisher.ServiceClass(c.WSUri.AbsoluteUri)).ToList());
 
-            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, payLoad));
+            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, payload, MessageHeader.CompletionCodeEnum.Success, null));
         }
 
         public async Task HandleError(object command, Exception commandErrorException)
@@ -61,13 +59,11 @@ namespace Server
             getServiceCommand.IsNotNull($"Unexpected command received in the {nameof(Handle)} method. {nameof(command)}");
             getServiceCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetServicesCompletion.PayloadData.CompletionCodeEnum errorCode = GetServicesCompletion.PayloadData.CompletionCodeEnum.InternalError;
+            MessageHeader.CompletionCodeEnum errorCode = MessageHeader.CompletionCodeEnum.InternalError;
             if (commandErrorException.GetType() == typeof(InvalidDataException))
-                errorCode = GetServicesCompletion.PayloadData.CompletionCodeEnum.InvalidData;
-
-            GetServicesCompletion.PayloadData payLoad = new(errorCode, commandErrorException.Message);
+                errorCode = MessageHeader.CompletionCodeEnum.InvalidData;
   
-            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, payLoad));
+            await Connection.SendMessageAsync(new GetServicesCompletion(getServiceCommand.Header.RequestId.Value, null, errorCode, commandErrorException.Message));
         }
     }
 }

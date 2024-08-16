@@ -17,21 +17,11 @@ namespace XFS4IoT.Common.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.ClearCommandNonce")]
-    public sealed class ClearCommandNonceCompletion : Completion<ClearCommandNonceCompletion.PayloadData>
+    public sealed class ClearCommandNonceCompletion : Completion<MessagePayload>
     {
-        public ClearCommandNonceCompletion(int RequestId, ClearCommandNonceCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearCommandNonceCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

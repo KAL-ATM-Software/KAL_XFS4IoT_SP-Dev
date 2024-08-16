@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.ConfigureNoteReader")]
     public sealed class ConfigureNoteReaderCompletion : Completion<ConfigureNoteReaderCompletion.PayloadData>
     {
-        public ConfigureNoteReaderCompletion(int RequestId, ConfigureNoteReaderCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ConfigureNoteReaderCompletion(int RequestId, ConfigureNoteReaderCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, bool? RebootNecessary = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, bool? RebootNecessary = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.RebootNecessary = RebootNecessary;

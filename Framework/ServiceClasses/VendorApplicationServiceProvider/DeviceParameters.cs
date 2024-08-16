@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,9 +11,6 @@ using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
-using XFS4IoT.Printer.Commands;
-using XFS4IoT.Printer.Completions;
-using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.VendorApplication
 {
@@ -61,7 +57,7 @@ namespace XFS4IoTFramework.VendorApplication
         /// GetActiveInterfaceResult
         /// Return result of active interface
         /// </summary>
-        public GetActiveInterfaceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GetActiveInterfaceResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
         {
@@ -72,6 +68,25 @@ namespace XFS4IoTFramework.VendorApplication
         /// GetActiveInterfaceResult
         /// Return result of active interface
         /// </summary>
+        public GetActiveInterfaceResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        ActiveInterfaceEnum ActiveInterface)
+            : base(CompletionCode, null)
+        {
+            this.ActiveInterface = ActiveInterface;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GetActiveInterfaceResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ActiveInterface = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GetActiveInterfaceResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         ActiveInterfaceEnum ActiveInterface)
             : base(CompletionCode, null)

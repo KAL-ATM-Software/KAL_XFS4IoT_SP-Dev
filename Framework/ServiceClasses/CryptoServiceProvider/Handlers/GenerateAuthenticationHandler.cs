@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,49 +22,55 @@ namespace XFS4IoTFramework.Crypto
 {
     public partial class GenerateAuthenticationHandler
     {
-        private async Task<GenerateAuthenticationCompletion.PayloadData> HandleGenerateAuthentication(IGenerateAuthenticationEvents events, GenerateAuthenticationCommand generateAuthentication, CancellationToken cancel)
+        private async Task<CommandResult<GenerateAuthenticationCompletion.PayloadData>> HandleGenerateAuthentication(IGenerateAuthenticationEvents events, GenerateAuthenticationCommand generateAuthentication, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(generateAuthentication.Payload.Key))
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"No key name specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key name specified.");
             }
 
             if (generateAuthentication.Payload.Data is null ||
                 generateAuthentication.Payload.Data.Count == 0)
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"No authentication data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No authentication data specified.");
             }
 
             // Check key is stored and available
             KeyDetail keyDetail = KeyManagement.GetKeyDetail(generateAuthentication.Payload.Key);
             if (keyDetail is null)
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                        $"Specified key name is not found. {generateAuthentication.Payload.Key}",
-                                                                        GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key name is not found. {generateAuthentication.Payload.Key}");
             }
 
             if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                        $"Specified key name is not loaded. {generateAuthentication.Payload.Key}",
-                                                                        GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                return new(
+                    new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key name is not loaded. {generateAuthentication.Payload.Key}");
             }
 
             if (!Regex.IsMatch(keyDetail.KeyUsage, "^S[0-2]$|^M[0-8]$"))
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"Specified key {generateAuthentication.Payload.Key} has no valid key usage for generating authentication data.");
+                return new (
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified key {generateAuthentication.Payload.Key} has no valid key usage for generating authentication data.");
             }
 
             if (Regex.IsMatch(keyDetail.KeyUsage, "^S[0-2]$") &&
                 (generateAuthentication.Payload.CryptoMethod is null &&
                  generateAuthentication.Payload.HashAlgorithm is null))
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                                        $"No hash algorith, or cryptoMethod specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No hash algorith, or cryptoMethod specified.");
             }
 
             if (keyDetail.ModeOfUse != "C" &&
@@ -73,8 +78,9 @@ namespace XFS4IoTFramework.Crypto
                 keyDetail.ModeOfUse != "S" &&
                 keyDetail.ModeOfUse != "T")
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                                        $"Specified key {generateAuthentication.Payload.Key} has no mode of use for generating authentication data.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key {generateAuthentication.Payload.Key} has no mode of use for generating authentication data.");
             }
 
             KeyDetail ivKeyDetail = null;
@@ -85,38 +91,43 @@ namespace XFS4IoTFramework.Crypto
 
                 if (ivKeyDetail is null)
                 {
-                    return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"No IV key stored. {generateAuthentication.Payload.Iv.Key}",
-                                                                            GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No IV key stored. {generateAuthentication.Payload.Iv.Key}");
                 }
 
                 if (ivKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
-                    return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                            $"Specified IV key is not loaded. {generateAuthentication.Payload.Iv.Key}",
-                                                                            GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                        $"Specified IV key is not loaded. {generateAuthentication.Payload.Iv.Key}");
                 }
 
                 if (ivKeyDetail.KeyUsage != "I0")
                 {
-                    return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"No IV key stored.",
-                                                                GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No IV key stored.");
                 }
 
                 if (ivKeyDetail.Algorithm != "D" &&
                     ivKeyDetail.Algorithm != "T")
                 {
-                    return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The key {ivKeyDetail.KeyName} doesn't have a DES or TDES algorithm supported for decryption.",
-                                                                GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported);
+                    return new(
+                        new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.AlgorithmNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"The key {ivKeyDetail.KeyName} doesn't have a DES or TDES algorithm supported for decryption.");
                 }
 
                 if (ivKeyDetail.ModeOfUse != "D")
                 {
-                    return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The key {ivKeyDetail.KeyName} doesn't support mode of use for IV decryption.",
-                                                                GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported);
+                    return new(
+                        new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"The key {ivKeyDetail.KeyName} doesn't support mode of use for IV decryption.");
                 }
             }
 
@@ -139,9 +150,10 @@ namespace XFS4IoTFramework.Crypto
                         };
                         if (sigAlgorithm is not null)
                         {
-                            return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                    $"Specified crypto method is not supported. {generateAuthentication.Payload.CryptoMethod}",
-                                                                                    GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                            return new(
+                                new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified crypto method is not supported. {generateAuthentication.Payload.CryptoMethod}");
                         }
 
                         CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass.RSASignatureAlgorithmEnum algorithmFlag = (GenerateSignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm switch
@@ -165,9 +177,10 @@ namespace XFS4IoTFramework.Crypto
             }
             if (!verifyCryptAttrib)
             {
-                return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                        $"The crypto attribute doesn't support specified RSA signature algorithm or unsupported mode of use for MAC.",
-                                                                        GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported);
+                return new(
+                    new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The crypto attribute doesn't support specified RSA signature algorithm or unsupported mode of use for MAC.");
             }
 
             List<byte> ivData = null;
@@ -196,9 +209,10 @@ namespace XFS4IoTFramework.Crypto
 
                     if (!verifyIVAttrib)
                     {
-                        return new GenerateAuthenticationCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                $"The crypto attribute doesn't support decrypt IV data with IV key.",
-                                                                                GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                        return new(
+                            new(GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"The crypto attribute doesn't support decrypt IV data with IV key.");
                     }
                 }
 
@@ -229,21 +243,29 @@ namespace XFS4IoTFramework.Crypto
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
-                    if (decryptResult.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                    if (decryptResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
                     {
-                        return new GenerateAuthenticationCompletion.PayloadData(decryptResult.CompletionCode,
-                                                                                decryptResult.ErrorDescription,
-                                                                                decryptResult.ErrorCode switch
-                                                                                {
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.AccessDenied => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported,
-                                                                                    CryptoDataCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive,
-                                                                                    _ => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation,
-                                                                                });
+                        GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum? errorCode = null;
+                        if (decryptResult.CompletionCode == MessageHeader.CompletionCodeEnum.CommandErrorCode)
+                        {
+                            errorCode = decryptResult.ErrorCode switch
+                            {
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.AccessDenied => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.CryptoMethodNotSupported,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNotFound => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.KeyNoValue => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.KeyNoValue,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.ModeOfUseNotSupported,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.NoChipTransactionActive,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum.UseViolation => GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum.UseViolation,
+                                _ => null,
+                            };
+                        }
+
+                        return new(
+                            errorCode is not null ? new(errorCode) : null,
+                            decryptResult.CompletionCode,
+                            decryptResult.ErrorDescription);
                     }
 
                     ivData = decryptResult.CryptoData;
@@ -290,10 +312,19 @@ namespace XFS4IoTFramework.Crypto
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateMAC() -> {result.CompletionCode}, {result.ErrorCode}");
             }
 
-            return new GenerateAuthenticationCompletion.PayloadData(result.CompletionCode,
-                                                                    result.ErrorDescription,
-                                                                    result.ErrorCode,
-                                                                    result.AuthenticationData);
+            GenerateAuthenticationCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.AuthenticationData?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.AuthenticationData);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

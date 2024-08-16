@@ -19,16 +19,16 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.Status")]
     public sealed class StatusCompletion : Completion<StatusCompletion.PayloadData>
     {
-        public StatusCompletion(int RequestId, StatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StatusCompletion(int RequestId, StatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
+                : base()
             {
                 this.Common = Common;
                 this.CardReader = CardReader;

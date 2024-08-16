@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,18 +12,19 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.VendorMode.Commands;
 using XFS4IoT.VendorMode.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.VendorMode
 {
     public partial class EnterModeRequestHandler
     { 
-        private async Task<EnterModeRequestCompletion.PayloadData> HandleEnterModeRequest(IEnterModeRequestEvents events, EnterModeRequestCommand enterModeRequest, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleEnterModeRequest(IEnterModeRequestEvents events, EnterModeRequestCommand enterModeRequest, CancellationToken cancel)
         {
             if (Common.VendorModeStatus.ServiceStatus != VendorModeStatusClass.ServiceStatusEnum.Inactive)
             {
-                return new EnterModeRequestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.SequenceError, $"EnterModeRequest command should be called when vendor mode is inactive. {Common.VendorModeStatus.ServiceStatus}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.SequenceError, 
+                    $"EnterModeRequest command should be called when vendor mode is inactive. {Common.VendorModeStatus.ServiceStatus}");
             }
 
             if (VendorMode.RegisteredClients.Count > 0)
@@ -43,10 +43,12 @@ namespace XFS4IoTFramework.VendorMode
 
                     Logger.Log(Constants.DeviceClass, $"VendorModeDev.EnterVendorMode() -> {result.CompletionCode}");
 
-                    if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                    if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
                     {
                         Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Inactive;
-                        return new EnterModeRequestCompletion.PayloadData(result.CompletionCode, result.ErrorDescription);
+                        return new(
+                            result.CompletionCode, 
+                            result.ErrorDescription);
                     }
                 }
                 catch (NotImplementedException)
@@ -61,13 +63,13 @@ namespace XFS4IoTFramework.VendorMode
             }
             
             // Broadcast EnterModeRequestEvent to registered clients
-            return new EnterModeRequestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+            return new(MessageHeader.CompletionCodeEnum.Success);
         }
         public async Task CommandPostProcessing(object enterModeResult)
         {
-            EnterModeRequestCompletion.PayloadData result = enterModeResult as EnterModeRequestCompletion.PayloadData;
+            CommandResult<MessagePayloadBase> result = enterModeResult as CommandResult<MessagePayloadBase>;
 
-            if (result.IsNotNull().CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            if (result.IsNotNull().CompletionCode == MessageHeader.CompletionCodeEnum.Success &&
                 Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.EnterPending && 
                 VendorMode.PendingAcknowledge.Count == 0)
             {

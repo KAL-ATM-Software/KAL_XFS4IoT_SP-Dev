@@ -28,9 +28,78 @@ namespace XFS4IoTCoreTest.Response
         }
 
         [TestMethod]
-        public void UnserialiseStringToObject()
+        public void UnserialiseStringToObject1()
         {
-            var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""},""completionCode"":""success"",""errorDescription"":""OK""},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}";
+            // header has completion code and error description
+            var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion"",""completionCode"":""success"",""errorDescription"":""OK""}}";
+
+            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
+            IsNotNull(assemblyName);
+
+            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, assemblyName)
+            {
+                { typeof(ReadRawDataCompletion) }
+            };
+
+            bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
+
+            IsTrue(rc);
+            IsNotNull(resultMessage);
+
+            Completion<ReadRawDataCompletion.PayloadData> result = resultMessage as Completion<ReadRawDataCompletion.PayloadData> ?? throw new Exception();
+
+            IsNotNull(result);
+
+            IsInstanceOfType(result, typeof(ReadRawDataCompletion));
+            ReadRawDataCompletion readCardCompletion = result as ReadRawDataCompletion;
+            IsNotNull(readCardCompletion);
+            IsNotNull(readCardCompletion.Payload);
+            ReadRawDataCompletion.PayloadData readCardPayload = readCardCompletion.Payload as ReadRawDataCompletion.PayloadData;
+            IsNotNull(readCardPayload);
+            IsNotNull(readCardPayload.Track1);
+            IsNotNull(readCardPayload.Track2);
+            IsNotNull(readCardPayload.Track3);
+        }
+
+        [TestMethod]
+        public void UnserialiseStringToObject2()
+        {
+            // No error description in the header
+            var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion"",""completionCode"":""success""}}";
+
+            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
+            IsNotNull(assemblyName);
+
+            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, assemblyName)
+            {
+                { typeof(ReadRawDataCompletion) }
+            };
+
+            bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
+
+            IsTrue(rc);
+            IsNotNull(resultMessage);
+
+            Completion<ReadRawDataCompletion.PayloadData> result = resultMessage as Completion<ReadRawDataCompletion.PayloadData> ?? throw new Exception();
+
+            IsNotNull(result);
+
+            IsInstanceOfType(result, typeof(ReadRawDataCompletion));
+            ReadRawDataCompletion readCardCompletion = result as ReadRawDataCompletion;
+            IsNotNull(readCardCompletion);
+            IsNotNull(readCardCompletion.Payload);
+            ReadRawDataCompletion.PayloadData readCardPayload = readCardCompletion.Payload as ReadRawDataCompletion.PayloadData;
+            IsNotNull(readCardPayload);
+            IsNotNull(readCardPayload.Track1);
+            IsNotNull(readCardPayload.Track2);
+            IsNotNull(readCardPayload.Track3);
+        }
+
+        [TestMethod]
+        public void UnserialiseStringToObject3()
+        {
+            // No completion and error description in the header
+            var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}";
 
             var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
             IsNotNull(assemblyName);

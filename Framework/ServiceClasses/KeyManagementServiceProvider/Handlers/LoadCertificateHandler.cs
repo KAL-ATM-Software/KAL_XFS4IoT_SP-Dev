@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections;
@@ -15,31 +14,33 @@ using XFS4IoTServer;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using XFS4IoTFramework.Common;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class LoadCertificateHandler
     {
-        private async Task<LoadCertificateCompletion.PayloadData> HandleLoadCertificate(ILoadCertificateEvents events, LoadCertificateCommand loadCertificate, CancellationToken cancel)
+        private async Task<CommandResult<LoadCertificateCompletion.PayloadData>> HandleLoadCertificate(ILoadCertificateEvents events, LoadCertificateCommand loadCertificate, CancellationToken cancel)
         {
             if (loadCertificate.Payload.CertificateData is null ||
                 loadCertificate.Payload.CertificateData.Count == 0)
             {
-                return new LoadCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"No certificate data to be loaded specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No certificate data to be loaded specified.");
             }
 
             if (loadCertificate.Payload.LoadOption is null)
             {
-                return new LoadCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"No load option is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No load option is specified.");
             }
 
             if (loadCertificate.Payload.Signer is null)
             {
-                return new LoadCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"No signer is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No signer is specified.");
             }
 
             bool certOptionOK = false;
@@ -63,8 +64,9 @@ namespace XFS4IoTFramework.KeyManagement
 
             if (!certOptionOK)
             {
-                return new LoadCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"No capabilties support for loading certificate. {loadCertificate.Payload.LoadOption} {loadCertificate.Payload.Signer}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No capabilties support for loading certificate. {loadCertificate.Payload.LoadOption} {loadCertificate.Payload.Signer}");
             }
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ImportCertificate()");
@@ -85,16 +87,25 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new LoadCertificateCompletion.PayloadData(result.CompletionCode,
-                                                             result.ErrorDescription,
-                                                             result.ErrorCode,
-                                                             result.RSAKeyCheckMode switch
-                                                             {
-                                                                 ImportCertificateResult.RSAKeyCheckModeEnum.SHA1 => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.Sha1,
-                                                                 ImportCertificateResult.RSAKeyCheckModeEnum.SHA256 => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.Sha256,
-                                                                 _ => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.None,
-                                                             },
-                                                             result.RSAData);
+            LoadCertificateCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.RSAData?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.RSAKeyCheckMode switch
+                    {
+                        ImportCertificateResult.RSAKeyCheckModeEnum.SHA1 => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.Sha1,
+                        ImportCertificateResult.RSAKeyCheckModeEnum.SHA256 => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.Sha256,
+                        _ => LoadCertificateCompletion.PayloadData.RsaKeyCheckModeEnum.None,
+                    },
+                    result.RSAData);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

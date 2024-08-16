@@ -19,16 +19,16 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.GetCommandNonce")]
     public sealed class GetCommandNonceCompletion : Completion<GetCommandNonceCompletion.PayloadData>
     {
-        public GetCommandNonceCompletion(int RequestId, GetCommandNonceCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetCommandNonceCompletion(int RequestId, GetCommandNonceCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string CommandNonce = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(string CommandNonce = null)
+                : base()
             {
                 this.CommandNonce = CommandNonce;
             }

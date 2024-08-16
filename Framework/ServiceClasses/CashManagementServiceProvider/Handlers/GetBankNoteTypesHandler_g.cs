@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashManagement
             IGetBankNoteTypesEvents events = new GetBankNoteTypesEvents(Connection, getBankNoteTypesCmd.Header.RequestId.Value);
 
             var result = await HandleGetBankNoteTypes(events, getBankNoteTypesCmd, cancel);
-            await Connection.SendMessageAsync(new GetBankNoteTypesCompletion(getBankNoteTypesCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetBankNoteTypesCompletion(getBankNoteTypesCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var getBankNoteTypescommand = command.IsA<GetBankNoteTypesCommand>();
-            getBankNoteTypescommand.Header.RequestId.HasValue.IsTrue();
+            var getBankNoteTypesCommand = command.IsA<GetBankNoteTypesCommand>();
+            getBankNoteTypesCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GetBankNoteTypesCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetBankNoteTypesCompletion(getBankNoteTypescommand.Header.RequestId.Value, new GetBankNoteTypesCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetBankNoteTypesCompletion(getBankNoteTypesCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

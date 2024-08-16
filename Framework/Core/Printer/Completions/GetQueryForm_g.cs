@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetQueryForm")]
     public sealed class GetQueryFormCompletion : Completion<GetQueryFormCompletion.PayloadData>
     {
-        public GetQueryFormCompletion(int RequestId, GetQueryFormCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetQueryFormCompletion(int RequestId, GetQueryFormCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string FormName = null, BaseEnum? Base = null, int? UnitX = null, int? UnitY = null, int? Width = null, int? Height = null, AlignmentEnum? Alignment = null, OrientationEnum? Orientation = null, int? OffsetX = null, int? OffsetY = null, int? VersionMajor = null, int? VersionMinor = null, string UserPrompt = null, List<string> Fields = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, string FormName = null, BaseEnum? Base = null, int? UnitX = null, int? UnitY = null, int? Width = null, int? Height = null, AlignmentEnum? Alignment = null, OrientationEnum? Orientation = null, int? OffsetX = null, int? OffsetY = null, int? VersionMajor = null, int? VersionMinor = null, string UserPrompt = null, List<string> Fields = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.FormName = FormName;

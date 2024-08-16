@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Printer
             ISetBlackMarkModeEvents events = new SetBlackMarkModeEvents(Connection, setBlackMarkModeCmd.Header.RequestId.Value);
 
             var result = await HandleSetBlackMarkMode(events, setBlackMarkModeCmd, cancel);
-            await Connection.SendMessageAsync(new SetBlackMarkModeCompletion(setBlackMarkModeCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetBlackMarkModeCompletion(setBlackMarkModeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setBlackMarkModecommand = command.IsA<SetBlackMarkModeCommand>();
-            setBlackMarkModecommand.Header.RequestId.HasValue.IsTrue();
+            var setBlackMarkModeCommand = command.IsA<SetBlackMarkModeCommand>();
+            setBlackMarkModeCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetBlackMarkModeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetBlackMarkModeCompletion(setBlackMarkModecommand.Header.RequestId.Value, new SetBlackMarkModeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetBlackMarkModeCompletion(setBlackMarkModeCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

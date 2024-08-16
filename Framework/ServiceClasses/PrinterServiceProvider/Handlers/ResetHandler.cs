@@ -4,13 +4,11 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
@@ -20,7 +18,7 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class ResetHandler
     {
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<ResetCompletion.PayloadData>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             ResetDeviceRequest.MediaControlEnum mediaControl = ResetDeviceRequest.MediaControlEnum.Default;
             int binNumber = -1;
@@ -28,8 +26,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Regex.IsMatch(reset.Payload.MediaControl, "^eject$|^expel$|^unit[0-9]+$"))
                 {
-                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Specified media control is not supported by the device.{reset.Payload.MediaControl}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified media control is not supported by the device.{reset.Payload.MediaControl}");
                 }
                 switch (reset.Payload.MediaControl)
                 {
@@ -54,9 +53,10 @@ namespace XFS4IoTFramework.Printer
                                                        cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription,
-                                                   result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

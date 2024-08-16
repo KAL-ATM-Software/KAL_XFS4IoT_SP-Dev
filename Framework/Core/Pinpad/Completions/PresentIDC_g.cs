@@ -19,16 +19,16 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.PresentIDC")]
     public sealed class PresentIDCCompletion : Completion<PresentIDCCompletion.PayloadData>
     {
-        public PresentIDCCompletion(int RequestId, PresentIDCCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PresentIDCCompletion(int RequestId, PresentIDCCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, List<byte> ChipData = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, string ChipProtocol = null, List<byte> ChipData = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.ChipProtocol = ChipProtocol;

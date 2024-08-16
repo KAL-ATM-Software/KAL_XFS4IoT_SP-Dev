@@ -2,9 +2,8 @@
  * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
+ * 
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,12 +18,14 @@ namespace XFS4IoTFramework.TextTerminal
     public partial class SetResolutionHandler
     {
 
-        private async Task<SetResolutionCompletion.PayloadData> HandleSetResolution(ISetResolutionEvents events, SetResolutionCommand setResolution, CancellationToken cancel)
+        private async Task<CommandResult<SetResolutionCompletion.PayloadData>> HandleSetResolution(ISetResolutionEvents events, SetResolutionCommand setResolution, CancellationToken cancel)
         {
             
             if(setResolution.Payload.Resolution is null || setResolution.Payload.Resolution.SizeX is null || setResolution.Payload.Resolution.SizeY is null)
             {
-                return new SetResolutionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Resolution is not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Resolution is not specified.");
             }
 
             // Ensure the selected resolution is valid 
@@ -39,7 +40,10 @@ namespace XFS4IoTFramework.TextTerminal
             }
             if (!found)
             {
-                return new SetResolutionCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, "Selected resolution is not supported.", SetResolutionCompletion.PayloadData.ErrorCodeEnum.ResolutionNotSupported);
+                return new(
+                    new(SetResolutionCompletion.PayloadData.ErrorCodeEnum.ResolutionNotSupported),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                    "Selected resolution is not supported.");
             }
 
             //Clear screen before setting resolution.
@@ -57,7 +61,9 @@ namespace XFS4IoTFramework.TextTerminal
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.SetResolutionAsync() -> {result.CompletionCode}");
             
 
-            return new SetResolutionCompletion.PayloadData(result.CompletionCode, result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
 
         }
 

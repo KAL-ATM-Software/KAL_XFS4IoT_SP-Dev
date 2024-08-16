@@ -17,98 +17,165 @@ namespace XFS4IoTFramework.Auxiliaries
 {
     public partial class SetAuxiliariesHandler
     {
-
-        private async Task<SetAuxiliariesCompletion.PayloadData> HandleSetAuxiliaries(ISetAuxiliariesEvents events, SetAuxiliariesCommand setAuxiliaries, CancellationToken cancel)
+        private async Task<CommandResult<SetAuxiliariesCompletion.PayloadData>> HandleSetAuxiliaries(ISetAuxiliariesEvents events, SetAuxiliariesCommand setAuxiliaries, CancellationToken cancel)
         {
             if (setAuxiliaries.Payload.CabinetDoors.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Cabinet))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "CabinetDoor is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "CabinetDoor is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.SafeDoor.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Safe))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "SafeDoor is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "SafeDoor is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.VandalShield.HasValue)
             {
                 if (Device.AuxiliariesCapabilities.VandalShield == AuxiliariesCapabilitiesClass.VandalShieldCapabilities.NotAvailable)
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "VandalShield is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "VandalShield is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.FrontCabinetDoors.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.FrontCabinet))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "FrontCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "FrontCabinetDoors is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.RearCabinetDoors.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RearCabinet))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "RearCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "RearCabinetDoors is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.LeftCabinetDoors.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.LeftCabinet))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "LeftCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "LeftCabinetDoors is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.RightCabinetDoors.HasValue)
             {
                 if (!Device.AuxiliariesCapabilities.SupportedDoorSensors.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RightCabinet))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "RightCabinetDoors is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "RightCabinetDoors is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.OpenClose.HasValue) 
+            if (setAuxiliaries.Payload.OpenClose.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.OpenCloseIndicator))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "OpenClose is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.OpenCloseIndicator))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "OpenClose is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.Audio is not null)
             {
                 if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Audio))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Audio is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new
+                        (MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "Audio is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.Heating.HasValue) 
+            if (setAuxiliaries.Payload.Heating.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Heating))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Heating is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Heating))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "Heating is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.ConsumerDisplayBackLight.HasValue) 
+            if (setAuxiliaries.Payload.ConsumerDisplayBackLight.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ConsumerDisplayBacklight))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "DisplayBackLight is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ConsumerDisplayBacklight))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "DisplayBackLight is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.SignageDisplay.HasValue) 
+            if (setAuxiliaries.Payload.SignageDisplay.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.SignageDisplay))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "SignageDisplay is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.SignageDisplay))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "SignageDisplay is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.Volume.HasValue) 
+            if (setAuxiliaries.Payload.Volume.HasValue)
             {
                 if (Device.AuxiliariesCapabilities.Volume == -1)
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Volume is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "Volume is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.Ups.HasValue) 
+            if (setAuxiliaries.Payload.Ups.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Engaged))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Engage/Disengage Ups is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Engaged))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "Engage/Disengage Ups is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.AudibleAlarm.HasValue) 
+            if (setAuxiliaries.Payload.AudibleAlarm.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.AudibleAlarm))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "AudibleAlarm is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.AudibleAlarm))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "AudibleAlarm is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.EnhancedAudioControl.HasValue) 
+            if (setAuxiliaries.Payload.EnhancedAudioControl.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "EnhancedAudioControl is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "EnhancedAudioControl is not supported by this device.");
+                }
             }
-            if (setAuxiliaries.Payload.EnhancedMicrophoneControl.HasValue) 
+            if (setAuxiliaries.Payload.EnhancedMicrophoneControl.HasValue)
             {
-                if(!Device.AuxiliariesCapabilities.EnhancedMicrophoneControlState.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
-                    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "EnhancedMicrophoneControl is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                if (!Device.AuxiliariesCapabilities.EnhancedMicrophoneControlState.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable))
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.UnsupportedData,
+                        "EnhancedMicrophoneControl is not supported by this device.");
+                }
             }
             if (setAuxiliaries.Payload.MicrophoneVolume.HasValue) 
             {
                 //if(!Device.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilities.AuxiliariesSupportedEnum.MicrophoneVolume))
-                //    return new SetAuxiliariesCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "MicrophoneVolume is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
+                //    return new SetAuxiliariesCompletion.PayloadData(MessageHeader.CompletionCodeEnum.UnsupportedData, "MicrophoneVolume is not supported by this device.", SetAuxiliariesCompletion.PayloadData.ErrorCodeEnum.InvalidAuxiliary);
             }
 
             
@@ -234,8 +301,9 @@ namespace XFS4IoTFramework.Auxiliaries
 
             Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.SetAuxiliaries() -> {result.CompletionCode}");
 
-            return new SetAuxiliariesCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
 
     }

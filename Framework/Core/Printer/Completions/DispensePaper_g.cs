@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.DispensePaper")]
     public sealed class DispensePaperCompletion : Completion<DispensePaperCompletion.PayloadData>
     {
-        public DispensePaperCompletion(int RequestId, DispensePaperCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public DispensePaperCompletion(int RequestId, DispensePaperCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

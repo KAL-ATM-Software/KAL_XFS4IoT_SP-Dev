@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,33 +22,37 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class ConfigureNoteTypesHandler
     {
-        private async Task<ConfigureNoteTypesCompletion.PayloadData> HandleConfigureNoteTypes(IConfigureNoteTypesEvents events, ConfigureNoteTypesCommand configureNoteTypes, CancellationToken cancel)
+        private async Task<CommandResult<ConfigureNoteTypesCompletion.PayloadData>> HandleConfigureNoteTypes(IConfigureNoteTypesEvents events, ConfigureNoteTypesCommand configureNoteTypes, CancellationToken cancel)
         {
             if (configureNoteTypes.Payload.Items == null ||
                 configureNoteTypes.Payload.Items?.Count == 0)
             {
-                return new ConfigureNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                    $"No banknote items to be enabled or disabled.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.Success,
+                    $"No banknote items to be enabled or disabled.");
             }
 
             if (configureNoteTypes.Payload.Items.Select(i => string.IsNullOrEmpty(i.Item) || Regex.IsMatch(i.Item, "^type[0-9A-Z]+$")).ToList().Count == 0)
             {
-                return new ConfigureNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"Invalid item name specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Invalid item name specified.");
             }
 
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new ConfigureNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"The exchange state is already in active.",
-                                                                    ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new ConfigureNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                                    ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             // check specified banknote type is valid
@@ -57,8 +60,8 @@ namespace XFS4IoTFramework.CashAcceptor
                                  where !Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(item.Item)
                                  select item)
             {
-                return new ConfigureNoteTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"The specified item name doesn't exist. {item.Item}");
+                return new(MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The specified item name doesn't exist. {item.Item}");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ConfigureNoteTypes()");
@@ -67,9 +70,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.ConfigureNoteTypes() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new ConfigureNoteTypesCompletion.PayloadData(result.CompletionCode,
-                                                                result.ErrorDescription,
-                                                                result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private ICashManagementService CashManagement { get => Provider.IsA<ICashManagementService>(); }

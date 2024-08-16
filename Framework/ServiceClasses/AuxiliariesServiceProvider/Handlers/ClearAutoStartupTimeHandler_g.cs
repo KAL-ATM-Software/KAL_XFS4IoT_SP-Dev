@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * ClearAutoStartupTimeHandler_g.cs uses automatically generated parts.
+ * ClearAutoStartUpTimeHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -21,61 +21,61 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 namespace XFS4IoTFramework.Auxiliaries
 {
     [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(ClearAutoStartUpTimeCommand))]
-    public partial class ClearAutoStartupTimeHandler : ICommandHandler
+    public partial class ClearAutoStartUpTimeHandler : ICommandHandler
     {
-        public ClearAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
+        public ClearAutoStartUpTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
-            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Dispatcher)}");
+            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Provider.Device)}")
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IAuxiliariesDevice>();
 
             Auxiliaries = Provider.IsA<IAuxiliariesService>();
             Common = Provider.IsA<ICommonService>();
 
-            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(logger)}");
-            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Connection)}");
+            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Connection)}");
         }
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var clearAutoStartupTimeCmd = command.IsA<ClearAutoStartUpTimeCommand>($"Invalid parameter in the ClearAutoStartupTime Handle method. {nameof(ClearAutoStartUpTimeCommand)}");
-            clearAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
+            var clearAutoStartUpTimeCmd = command.IsA<ClearAutoStartUpTimeCommand>($"Invalid parameter in the ClearAutoStartUpTime Handle method. {nameof(ClearAutoStartUpTimeCommand)}");
+            clearAutoStartUpTimeCmd.Header.RequestId.HasValue.IsTrue();
 
-            IClearAutoStartupTimeEvents events = new ClearAutoStartupTimeEvents(Connection, clearAutoStartupTimeCmd.Header.RequestId.Value);
+            IClearAutoStartUpTimeEvents events = new ClearAutoStartUpTimeEvents(Connection, clearAutoStartUpTimeCmd.Header.RequestId.Value);
 
-            var result = await HandleClearAutoStartupTime(events, clearAutoStartupTimeCmd, cancel);
-            await Connection.SendMessageAsync(new ClearAutoStartUpTimeCompletion(clearAutoStartupTimeCmd.Header.RequestId.Value, result));
+            var result = await HandleClearAutoStartUpTime(events, clearAutoStartUpTimeCmd, cancel);
+            await Connection.SendMessageAsync(new ClearAutoStartUpTimeCompletion(clearAutoStartUpTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var clearAutoStartupTimecommand = command.IsA<ClearAutoStartUpTimeCommand>();
-            clearAutoStartupTimecommand.Header.RequestId.HasValue.IsTrue();
+            var clearAutoStartUpTimeCommand = command.IsA<ClearAutoStartUpTimeCommand>();
+            clearAutoStartUpTimeCommand.Header.RequestId.HasValue.IsTrue();
 
-            ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ClearAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ClearAutoStartUpTimeCompletion(clearAutoStartupTimecommand.Header.RequestId.Value, new ClearAutoStartUpTimeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ClearAutoStartUpTimeCompletion(clearAutoStartUpTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

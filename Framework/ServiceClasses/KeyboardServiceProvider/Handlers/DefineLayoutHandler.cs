@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,26 +18,29 @@ namespace XFS4IoTFramework.Keyboard
 {
     public partial class DefineLayoutHandler
     {
-        private async Task<DefineLayoutCompletion.PayloadData> HandleDefineLayout(IDefineLayoutEvents events, DefineLayoutCommand defineLayout, CancellationToken cancel)
+        private async Task<CommandResult<DefineLayoutCompletion.PayloadData>> HandleDefineLayout(IDefineLayoutEvents events, DefineLayoutCommand defineLayout, CancellationToken cancel)
         {
             if (defineLayout.Payload.Layout is null)
             {
-                return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"No key layout data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key layout data specified.");
             }
 
             if (defineLayout.Payload.Layout is null)
             {
-                return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"No key layout data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key layout data specified.");
             }
 
             if (defineLayout.Payload.Layout.Data is null &&
                 defineLayout.Payload.Layout.Pin is null &&
                 defineLayout.Payload.Layout.Secure is null)
             {
-                return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No key mode data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key mode data specified.");
             }
 
             Dictionary<EntryModeEnum, List<LayoutFrameClass>> updateEntryModes = new();
@@ -57,8 +59,9 @@ namespace XFS4IoTFramework.Keyboard
                 if (entryMode.Value is null ||
                     entryMode.Value.Count == 0)
                 {
-                    return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"No frames specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No frames specified.");
                 }
 
                 List<FrameClass> frames = new();
@@ -78,15 +81,17 @@ namespace XFS4IoTFramework.Keyboard
                         frame.XSize is null ||
                         frame.YSize is null)
                     {
-                        return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"XPos, YPos, XSize, YSize are not specified in the frame. {entryMode.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"XPos, YPos, XSize, YSize are not specified in the frame. {entryMode.Key}");
                     }
 
                     if (frame.Keys is null ||
                         frame.Keys.Count == 0)
                     {
-                        return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"No function keys are specified in the frame. {entryMode.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No function keys are specified in the frame. {entryMode.Key}");
                     }
 
                     List<FrameClass.FunctionKeyClass> functionKeys = new();
@@ -97,15 +102,17 @@ namespace XFS4IoTFramework.Keyboard
                             key.XSize is null ||
                             key.YSize is null)
                         {
-                            return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                          $"XPos, YPos, XSize, YSize are not specified in function keys. {entryMode.Key}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"XPos, YPos, XSize, YSize are not specified in function keys. {entryMode.Key}");
                         }
 
                         if (string.IsNullOrEmpty(key.Key) &&
                             string.IsNullOrEmpty(key.ShiftKey))
                         {
-                            return new DefineLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                          $"No function key with shift and non-shift mode is specified. {entryMode.Key}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"No function key with shift and non-shift mode is specified. {entryMode.Key}");
                         }
 
                         functionKeys.Add(new FrameClass.FunctionKeyClass((int)key.XPos,
@@ -133,7 +140,7 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.DefineLayout() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 // Update internal layout
                 Logger.Log(Constants.DeviceClass, "KeyboardDev.GetLayoutInfo()");
@@ -175,9 +182,10 @@ namespace XFS4IoTFramework.Keyboard
                 }
             }
             
-            return new DefineLayoutCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

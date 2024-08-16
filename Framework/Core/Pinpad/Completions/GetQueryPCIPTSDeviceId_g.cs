@@ -19,16 +19,16 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.GetQueryPCIPTSDeviceId")]
     public sealed class GetQueryPCIPTSDeviceIdCompletion : Completion<GetQueryPCIPTSDeviceIdCompletion.PayloadData>
     {
-        public GetQueryPCIPTSDeviceIdCompletion(int RequestId, GetQueryPCIPTSDeviceIdCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetQueryPCIPTSDeviceIdCompletion(int RequestId, GetQueryPCIPTSDeviceIdCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string ManufacturerIdentifier = null, string ModelIdentifier = null, string HardwareIdentifier = null, string FirmwareIdentifier = null, string ApplicationIdentifier = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(string ManufacturerIdentifier = null, string ModelIdentifier = null, string HardwareIdentifier = null, string FirmwareIdentifier = null, string ApplicationIdentifier = null)
+                : base()
             {
                 this.ManufacturerIdentifier = ManufacturerIdentifier;
                 this.ModelIdentifier = ModelIdentifier;

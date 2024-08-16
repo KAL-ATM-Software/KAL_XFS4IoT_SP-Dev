@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.TextTerminal
             ISetResolutionEvents events = new SetResolutionEvents(Connection, setResolutionCmd.Header.RequestId.Value);
 
             var result = await HandleSetResolution(events, setResolutionCmd, cancel);
-            await Connection.SendMessageAsync(new SetResolutionCompletion(setResolutionCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetResolutionCompletion(setResolutionCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setResolutioncommand = command.IsA<SetResolutionCommand>();
-            setResolutioncommand.Header.RequestId.HasValue.IsTrue();
+            var setResolutionCommand = command.IsA<SetResolutionCommand>();
+            setResolutionCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetResolutionCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetResolutionCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetResolutionCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetResolutionCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetResolutionCompletion(setResolutioncommand.Header.RequestId.Value, new SetResolutionCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetResolutionCompletion(setResolutionCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

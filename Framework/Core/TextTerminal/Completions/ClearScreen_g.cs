@@ -17,21 +17,11 @@ namespace XFS4IoT.TextTerminal.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.ClearScreen")]
-    public sealed class ClearScreenCompletion : Completion<ClearScreenCompletion.PayloadData>
+    public sealed class ClearScreenCompletion : Completion<MessagePayload>
     {
-        public ClearScreenCompletion(int RequestId, ClearScreenCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearScreenCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

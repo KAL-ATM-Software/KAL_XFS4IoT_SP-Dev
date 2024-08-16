@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,7 +21,7 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class PreparePresentHandler
     {
-        private async Task<PreparePresentCompletion.PayloadData> HandlePreparePresent(IPreparePresentEvents events, PreparePresentCommand preparePresent, CancellationToken cancel)
+        private async Task<CommandResult<PreparePresentCompletion.PayloadData>> HandlePreparePresent(IPreparePresentEvents events, PreparePresentCommand preparePresent, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.PositionEnum outputPosition = CashManagementCapabilitiesClass.PositionEnum.OutDefault;
             if (preparePresent.Payload.Position is not null)
@@ -43,28 +42,32 @@ namespace XFS4IoTFramework.CashAcceptor
 
             if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
-                return new PreparePresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"Unsupported output position. {outputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Unsupported output position. {outputPosition}");
             }
 
             if (!Common.CashAcceptorStatus.Positions.ContainsKey(outputPosition))
             {
-                return new PreparePresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                                $"The device class does not report supported position status. {outputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InternalError,
+                    $"The device class does not report supported position status. {outputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[outputPosition].PositionStatus == CashManagementStatusClass.PositionStatusEnum.NotSupported)
             {
-                return new PreparePresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The specified position is not supported. {outputPosition}",
-                                                                PreparePresentCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(PreparePresentCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified position is not supported. {outputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[outputPosition].PositionStatus != CashManagementStatusClass.PositionStatusEnum.Empty)
             {
-                return new PreparePresentCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The specified position is not empty. {outputPosition}",
-                                                                PreparePresentCompletion.PayloadData.ErrorCodeEnum.PositionNotEmpty);
+                return new(
+                    new(PreparePresentCompletion.PayloadData.ErrorCodeEnum.PositionNotEmpty),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified position is not empty. {outputPosition}");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.PreparePresent()");
@@ -75,9 +78,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.PreparePresent() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new PreparePresentCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
 
         }
 

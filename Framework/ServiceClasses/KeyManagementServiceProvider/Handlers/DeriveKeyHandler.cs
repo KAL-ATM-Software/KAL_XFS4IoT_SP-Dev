@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -22,43 +21,48 @@ namespace XFS4IoTFramework.KeyManagement
 {
     public partial class DeriveKeyHandler
     {
-        private async Task<DeriveKeyCompletion.PayloadData> HandleDeriveKey(IDeriveKeyEvents events, DeriveKeyCommand deriveKey, CancellationToken cancel)
+        private async Task<CommandResult<DeriveKeyCompletion.PayloadData>> HandleDeriveKey(IDeriveKeyEvents events, DeriveKeyCommand deriveKey, CancellationToken cancel)
         {
             if (deriveKey.Payload.DerivationAlgorithm is null)
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No DerivationAlgorithm specified.");
+                return new(MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No DerivationAlgorithm specified.");
             }
             if (string.IsNullOrEmpty(deriveKey.Payload.KeyGenKey))
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No key generation key specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key generation key specified.");
             }
             if (deriveKey.Payload.Padding is null)
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No padding value specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No padding value specified.");
             }
             if (deriveKey.Payload.InputData is null ||
                 deriveKey.Payload.InputData.Count == 0)
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"No derive key data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No derive key data specified.");
             }
 
             KeyDetail keyGenKeyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.KeyGenKey);
             if (keyGenKeyDetail is null)
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"Specified key generating key name is not found. {deriveKey.Payload.KeyGenKey}",
-                                                            DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key generating key name is not found. {deriveKey.Payload.KeyGenKey}");
             }
             if (keyGenKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded &&
                 keyGenKeyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Construct)
             {
-                return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                            $"Specified key generating key is not loaded. {deriveKey.Payload.KeyGenKey}",
-                                                            DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                return new(
+                    new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key generating key is not loaded. {deriveKey.Payload.KeyGenKey}");
             }
 
             int ivKeySlot = -1;
@@ -70,25 +74,28 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyDetail keyDetail = KeyManagement.GetKeyDetail(deriveKey.Payload.Iv.Key);
                 if (keyDetail is null)
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key name is not found. {deriveKey.Payload.Iv.Key}",
-                                                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified IV key name is not found. {deriveKey.Payload.Iv.Key}");
                 }
                 if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded &&
                     keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Construct)
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified IV key is not loaded. {deriveKey.Payload.Iv.Key}",
-                                                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue);
+                    return new(
+                        new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.KeyNoValue),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified IV key is not loaded. {deriveKey.Payload.Iv.Key}");
                 }
 
                 if (!(Regex.IsMatch(keyDetail.KeyUsage, "^D[0-1]$|^[0-9][0-9]$") &&
                       Regex.IsMatch(keyDetail.Algorithm, "^[ADT0-9]$") &&
                       Regex.IsMatch(keyDetail.ModeOfUse, "^[X0-9]$")))
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified key doesn't have a usage to derive.",
-                                                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key doesn't have a usage to derive.");
                 }
 
                 ivKeySlot = keyDetail.KeySlot;
@@ -111,9 +118,10 @@ namespace XFS4IoTFramework.KeyManagement
 
                 if (!verifyIVAttrib)
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"The crypto attribute doesn't support decrypt IV data with IV key.",
-                                                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(DeriveKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"The crypto attribute doesn't support decrypt IV data with IV key.");
                 }
             }
 
@@ -134,31 +142,35 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.DeriveKey() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 if (result.LoadedKeyDetail is null)
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"No key information provided from the device class.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"No key information provided from the device class.");
                 }
 
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.KeyUsage) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.KeyUsage, KeyDetail.regxKeyUsage))
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid key usage specified by the device class. {result.LoadedKeyDetail?.KeyUsage}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid key usage specified by the device class. {result.LoadedKeyDetail?.KeyUsage}");
                 }
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.Algorithm) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.Algorithm, KeyDetail.regxAlgorithm))
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid algorithm specified by the device class. {result.LoadedKeyDetail?.Algorithm}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid algorithm specified by the device class. {result.LoadedKeyDetail?.Algorithm}");
                 }
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.ModeOfUse) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.ModeOfUse, KeyDetail.regxModeOfUse))
                 {
-                    return new DeriveKeyCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid mode specified by the device class. {result.LoadedKeyDetail?.ModeOfUse}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid mode specified by the device class. {result.LoadedKeyDetail?.ModeOfUse}");
                 }
 
                 // Successfully loaded and add key information managing internally
@@ -180,9 +192,10 @@ namespace XFS4IoTFramework.KeyManagement
                                      result.LoadedKeyDetail.Version);
             }
 
-            return new DeriveKeyCompletion.PayloadData(result.CompletionCode,
-                                                       result.ErrorDescription,
-                                                       result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

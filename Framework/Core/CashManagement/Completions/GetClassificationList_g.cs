@@ -19,16 +19,16 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.GetClassificationList")]
     public sealed class GetClassificationListCompletion : Completion<GetClassificationListCompletion.PayloadData>
     {
-        public GetClassificationListCompletion(int RequestId, GetClassificationListCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetClassificationListCompletion(int RequestId, GetClassificationListCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, string Version = null, List<ClassificationElementClass> ClassificationElements = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(string Version = null, List<ClassificationElementClass> ClassificationElements = null)
+                : base()
             {
                 this.Version = Version;
                 this.ClassificationElements = ClassificationElements;

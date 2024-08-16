@@ -19,16 +19,16 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.GetTransactionState")]
     public sealed class GetTransactionStateCompletion : Completion<GetTransactionStateCompletion.PayloadData>
     {
-        public GetTransactionStateCompletion(int RequestId, GetTransactionStateCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetTransactionStateCompletion(int RequestId, GetTransactionStateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, StateEnum? State = null, string TransactionID = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(StateEnum? State = null, string TransactionID = null)
+                : base()
             {
                 this.State = State;
                 this.TransactionID = TransactionID;

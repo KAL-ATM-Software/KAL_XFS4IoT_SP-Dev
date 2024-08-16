@@ -19,16 +19,16 @@ namespace XFS4IoT.VendorApplication.Completions
     [Completion(Name = "VendorApplication.GetActiveInterface")]
     public sealed class GetActiveInterfaceCompletion : Completion<GetActiveInterfaceCompletion.PayloadData>
     {
-        public GetActiveInterfaceCompletion(int RequestId, GetActiveInterfaceCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetActiveInterfaceCompletion(int RequestId, GetActiveInterfaceCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ActiveInterfaceEnum? ActiveInterface = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ActiveInterfaceEnum? ActiveInterface = null)
+                : base()
             {
                 this.ActiveInterface = ActiveInterface;
             }

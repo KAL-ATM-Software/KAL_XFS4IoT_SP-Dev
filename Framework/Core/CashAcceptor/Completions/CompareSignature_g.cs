@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.CompareSignature")]
     public sealed class CompareSignatureCompletion : Completion<CompareSignatureCompletion.PayloadData>
     {
-        public CompareSignatureCompletion(int RequestId, CompareSignatureCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CompareSignatureCompletion(int RequestId, CompareSignatureCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<SignaturesIndexClass> SignaturesIndex = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<SignaturesIndexClass> SignaturesIndex = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.SignaturesIndex = SignaturesIndex;

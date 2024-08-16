@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Check
             IMediaInRollbackEvents events = new MediaInRollbackEvents(Connection, mediaInRollbackCmd.Header.RequestId.Value);
 
             var result = await HandleMediaInRollback(events, mediaInRollbackCmd, cancel);
-            await Connection.SendMessageAsync(new MediaInRollbackCompletion(mediaInRollbackCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new MediaInRollbackCompletion(mediaInRollbackCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var mediaInRollbackcommand = command.IsA<MediaInRollbackCommand>();
-            mediaInRollbackcommand.Header.RequestId.HasValue.IsTrue();
+            var mediaInRollbackCommand = command.IsA<MediaInRollbackCommand>();
+            mediaInRollbackCommand.Header.RequestId.HasValue.IsTrue();
 
-            MediaInRollbackCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => MediaInRollbackCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new MediaInRollbackCompletion(mediaInRollbackcommand.Header.RequestId.Value, new MediaInRollbackCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new MediaInRollbackCompletion(mediaInRollbackCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

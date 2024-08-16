@@ -4,32 +4,33 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using XFS4IoT;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.Printer
 {
     public partial class PrintRawHandler
     {
-        private async Task<PrintRawCompletion.PayloadData> HandlePrintRaw(IPrintRawEvents events, PrintRawCommand printRaw, CancellationToken cancel)
+        private async Task<CommandResult<PrintRawCompletion.PayloadData>> HandlePrintRaw(IPrintRawEvents events, PrintRawCommand printRaw, CancellationToken cancel)
         {
             if (printRaw.Payload.InputData is null)
             {
-                return new PrintRawCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"No InputData is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No InputData is specified.");
             }
 
             if (printRaw.Payload.Data is null || 
                 printRaw.Payload.Data.Count == 0)
             {
-                return new PrintRawCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"No raw data is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No raw data is specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.RawPrintAsync()");
@@ -39,10 +40,19 @@ namespace XFS4IoTFramework.Printer
                                                     cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.RawPrintAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new PrintRawCompletion.PayloadData(result.CompletionCode,
-                                                      result.ErrorDescription,
-                                                      result.ErrorCode,
-                                                      result.Data);
+            PrintRawCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Data?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.Data);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

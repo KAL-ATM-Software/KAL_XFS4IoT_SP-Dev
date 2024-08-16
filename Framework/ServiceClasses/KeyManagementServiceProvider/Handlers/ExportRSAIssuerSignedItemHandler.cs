@@ -4,29 +4,25 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
-using XFS4IoTFramework.Common;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class ExportRSAIssuerSignedItemHandler
     {
-        private async Task<ExportRSAIssuerSignedItemCompletion.PayloadData> HandleExportRSAIssuerSignedItem(IExportRSAIssuerSignedItemEvents events, ExportRSAIssuerSignedItemCommand exportRSAIssuerSignedItem, CancellationToken cancel)
+        private async Task<CommandResult<ExportRSAIssuerSignedItemCompletion.PayloadData>> HandleExportRSAIssuerSignedItem(IExportRSAIssuerSignedItemEvents events, ExportRSAIssuerSignedItemCommand exportRSAIssuerSignedItem, CancellationToken cancel)
         {
             if (exportRSAIssuerSignedItem.Payload.ExportItemType is null)
             {
-                return new ExportRSAIssuerSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"No item type specified to export.");
+                return new(MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No item type specified to export.");
             }
-
 
             RSASignedItemResult result;
             if (exportRSAIssuerSignedItem.Payload.ExportItemType == XFS4IoT.KeyManagement.TypeDataItemToExportEnum.DeviceId)
@@ -48,22 +44,33 @@ namespace XFS4IoTFramework.KeyManagement
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportRSAPublicKey() -> {result.CompletionCode}, {result.ErrorCode}");
             }
 
-            return new ExportRSAIssuerSignedItemCompletion.PayloadData(result.CompletionCode,
-                                                                       result.ErrorDescription,
-                                                                       result.ErrorCode is not null ? result.ErrorCode switch
-                                                                       {
-                                                                           RSASignedItemResult.ErrorCodeEnum.AccessDenied => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                                           RSASignedItemResult.ErrorCodeEnum.KeyNotFound => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
-                                                                           _ => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair,
-                                                                       } : null,
-                                                                       result.Data,
-                                                                       result.SignatureAlgorithm switch
-                                                                       {
-                                                                           RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5 => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15,
-                                                                           RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PSS => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss,
-                                                                           _ => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.Na,
-                                                                       },
-                                                                       result.Signature);
+            ExportRSAIssuerSignedItemCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Data?.Count > 0 ||
+                result.Signature?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode switch
+                    {
+                        RSASignedItemResult.ErrorCodeEnum.AccessDenied => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
+                        RSASignedItemResult.ErrorCodeEnum.KeyNotFound => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
+                        RSASignedItemResult.ErrorCodeEnum.NoRSAKeyPair => ExportRSAIssuerSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair,
+                        _ => null
+                    },
+                    result.Data,
+                    result.SignatureAlgorithm switch
+                    {
+                        RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5 => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15,
+                        RSASignedItemResult.RSASignatureAlgorithmEnum.RSASSA_PSS => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss,
+                        _ => XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.Na,
+                    },
+                    result.Signature);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

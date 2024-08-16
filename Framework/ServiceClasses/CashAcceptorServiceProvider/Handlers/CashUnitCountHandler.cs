@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,43 +21,48 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CashUnitCountHandler
     {
-        private async Task<CashUnitCountCompletion.PayloadData> HandleCashUnitCount(ICashUnitCountEvents events, CashUnitCountCommand cashUnitCount, CancellationToken cancel)
+        private async Task<CommandResult<CashUnitCountCompletion.PayloadData>> HandleCashUnitCount(ICashUnitCountEvents events, CashUnitCountCommand cashUnitCount, CancellationToken cancel)
         {
             if (Common.CashAcceptorCapabilities.CountActions == CashAcceptorCapabilitiesClass.CountActionEnum.NotSupported)
             {
-                return new CashUnitCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"The device does not support count operation.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The device does not support count operation.");
             }
 
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CashUnitCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"The exchange state is already in active.",
-                                                               CashUnitCountCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CashUnitCountCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new CashUnitCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                               CashUnitCountCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(CashUnitCountCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             if (cashUnitCount.Payload.Units is null ||
-                cashUnitCount.Payload.Units?.Count == 0)
+                cashUnitCount.Payload.Units?.Count > 0)
             {
-                return new CashUnitCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"No cash units specified.",
-                                                               CashUnitCountCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
+                return new(
+                    new(CashUnitCountCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"No cash units specified.");
             }
 
             foreach (var storageId in from storageId in cashUnitCount.Payload.Units
                                       where !Storage.CashUnits.ContainsKey(storageId)
                                       select storageId)
             {
-                return new CashUnitCountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"The specified cash unit is not valid. {storageId}",
-                                                               CashUnitCountCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
+                return new(
+                    new(CashUnitCountCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified cash unit is not valid. {storageId}");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashUnitCount()");
@@ -71,9 +75,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new CashUnitCountCompletion.PayloadData(result.CompletionCode,
-                                                           result.ErrorDescription,
-                                                           result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

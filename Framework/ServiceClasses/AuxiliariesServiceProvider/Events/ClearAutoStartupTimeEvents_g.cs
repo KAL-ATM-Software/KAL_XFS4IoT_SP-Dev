@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * ClearAutoStartupTimeEvents_g.cs uses automatically generated parts.
+ * ClearAutoStartUpTimeEvents_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    internal class ClearAutoStartupTimeEvents : AuxiliariesEvents, IClearAutoStartupTimeEvents
+    internal class ClearAutoStartUpTimeEvents : AuxiliariesEvents, IClearAutoStartUpTimeEvents
     {
 
-        public ClearAutoStartupTimeEvents(IConnection connection, int requestId)
+        public ClearAutoStartUpTimeEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

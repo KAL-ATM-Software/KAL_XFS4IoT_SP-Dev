@@ -19,16 +19,16 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.GetFormList")]
     public sealed class GetFormListCompletion : Completion<GetFormListCompletion.PayloadData>
     {
-        public GetFormListCompletion(int RequestId, GetFormListCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetFormListCompletion(int RequestId, GetFormListCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<string> FormList = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(List<string> FormList = null)
+                : base()
             {
                 this.FormList = FormList;
             }

@@ -12,13 +12,13 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.BarcodeReader.Commands;
 using XFS4IoT.BarcodeReader.Completions;
+using static XFS4IoT.MessageHeader;
 
 namespace XFS4IoTFramework.BarcodeReader
 {
     public partial class ResetHandler
     {
-
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "BarcodeReaderDev.ResetDevice()");
 
@@ -26,8 +26,7 @@ namespace XFS4IoTFramework.BarcodeReader
 
             Logger.Log(Constants.DeviceClass, $"BarcodeReaderDev.ResetDevice() -> {result.CompletionCode}");
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription);
+            return new(result.CompletionCode, result.ErrorDescription);
         }
     }
 }

@@ -17,21 +17,11 @@ namespace XFS4IoT.Printer.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.SetBlackMarkMode")]
-    public sealed class SetBlackMarkModeCompletion : Completion<SetBlackMarkModeCompletion.PayloadData>
+    public sealed class SetBlackMarkModeCompletion : Completion<MessagePayload>
     {
-        public SetBlackMarkModeCompletion(int RequestId, SetBlackMarkModeCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetBlackMarkModeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

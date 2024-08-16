@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -16,25 +15,26 @@ using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 
-
 namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class ConfigureNoteReaderHandler
     {
-        private async Task<ConfigureNoteReaderCompletion.PayloadData> HandleConfigureNoteReader(IConfigureNoteReaderEvents events, ConfigureNoteReaderCommand configureNoteReader, CancellationToken cancel)
+        private async Task<CommandResult<ConfigureNoteReaderCompletion.PayloadData>> HandleConfigureNoteReader(IConfigureNoteReaderEvents events, ConfigureNoteReaderCommand configureNoteReader, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new ConfigureNoteReaderCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                     $"The exchange state is already in active.",
-                                                                     ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new ConfigureNoteReaderCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                     $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                                     ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ConfigureNoteReader()");
@@ -43,9 +43,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.ConfigureNoteReader() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new ConfigureNoteReaderCompletion.PayloadData(result.CompletionCode,
-                                                                 result.ErrorDescription,
-                                                                 result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

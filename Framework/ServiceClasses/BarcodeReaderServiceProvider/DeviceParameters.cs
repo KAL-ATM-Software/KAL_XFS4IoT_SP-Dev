@@ -145,6 +145,25 @@ namespace XFS4IoTFramework.BarcodeReader
             SymbologyUnknown
         }
 
+        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                          string ErrorDescription = null,
+                          ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                          List<ReadBarcodeData> ReadData)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.ReadData = ReadData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode,
                           string ErrorDescription = null,
                           ErrorCodeEnum? ErrorCode = null)
@@ -153,6 +172,9 @@ namespace XFS4IoTFramework.BarcodeReader
             this.ErrorCode = ErrorCode;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode,
                           List<ReadBarcodeData> ReadData)
             : base(CompletionCode, null)

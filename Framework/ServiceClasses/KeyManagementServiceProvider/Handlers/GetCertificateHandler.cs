@@ -4,25 +4,25 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class GetCertificateHandler
     {
-        private async Task<GetCertificateCompletion.PayloadData> HandleGetCertificate(IGetCertificateEvents events, GetCertificateCommand getCertificate, CancellationToken cancel)
+        private async Task<CommandResult<GetCertificateCompletion.PayloadData>> HandleGetCertificate(IGetCertificateEvents events, GetCertificateCommand getCertificate, CancellationToken cancel)
         {
             if (getCertificate.Payload.GetCertificate is null)
             {
-                return new GetCertificateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No certification type specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No certification type specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ExportCertificate()");
@@ -36,10 +36,19 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new GetCertificateCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            result.Certificate);
+            GetCertificateCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Certificate?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.Certificate);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

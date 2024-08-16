@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,12 +18,15 @@ namespace XFS4IoTFramework.Common
     public partial class SetVersionsHandler
     {
 
-        private Task<SetVersionsCompletion.PayloadData> HandleSetVersions(ISetVersionsEvents events, SetVersionsCommand setVersions, CancellationToken cancel)
+        private Task<CommandResult<MessagePayloadBase>> HandleSetVersions(ISetVersionsEvents events, SetVersionsCommand setVersions, CancellationToken cancel)
         {
             if (setVersions.Payload is null)
             {
-                Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"No payload specified."));
+                Task.FromResult(
+                    new CommandResult<MessagePayloadBase>(
+                        MessageHeader.CompletionCodeEnum.InvalidData, 
+                        $"No payload specified.")
+                    );
             }
 
             if ((setVersions.Payload.Commands is null ||
@@ -32,8 +34,7 @@ namespace XFS4IoTFramework.Common
                 (setVersions.Payload.Events is null ||
                  setVersions.Payload.Events is not null && setVersions.Payload.Events.Count == 0))
             {
-                Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"No commands and events specified."));
+                Task.FromResult(new CommandResult<MessagePayloadBase>(MessageHeader.CompletionCodeEnum.InvalidData, $"No commands and events specified."));
             }
 
             if (setVersions.Payload.Commands is not null)
@@ -42,14 +43,20 @@ namespace XFS4IoTFramework.Common
                 {
                     if (!Provider.GetMessagesSupported().ContainsKey(cmd.Key))
                     {
-                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
-                                                                                     $"Unsupported command specified. {cmd.Key}"));
+                        return Task.FromResult(
+                            new CommandResult<MessagePayloadBase>(
+                                MessageHeader.CompletionCodeEnum.UnsupportedData,
+                                $"Unsupported command specified. {cmd.Key}")
+                            );
                     }
 
                     if (!Provider.GetMessagesSupported()[cmd.Key].Versions.Contains($"{cmd.Value}.0"))
                     {
-                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
-                                                                                     $"Unsupported version specified. {cmd.Value}, The Service only support version {Provider.GetMessagesSupported()[cmd.Key].Versions[0]}"));
+                        return Task.FromResult(
+                            new CommandResult<MessagePayloadBase>(
+                                MessageHeader.CompletionCodeEnum.UnsupportedData,
+                                $"Unsupported version specified. {cmd.Value}, The Service only support version {Provider.GetMessagesSupported()[cmd.Key].Versions[0]}")
+                            );
                     }
                 }
             }
@@ -60,19 +67,27 @@ namespace XFS4IoTFramework.Common
                 {
                     if (!Provider.GetMessagesSupported().ContainsKey(ev.Key))
                     {
-                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
-                                                                                     $"Unsupported event specified. {ev.Key}"));
+                        return Task.FromResult(
+                            new CommandResult<MessagePayloadBase>(
+                                MessageHeader.CompletionCodeEnum.UnsupportedData,
+                                $"Unsupported event specified. {ev.Key}")
+                            );
                     }
 
                     if (!Provider.GetMessagesSupported()[ev.Key].Versions.Contains($"{ev.Value}.0"))
                     {
-                        return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedData,
-                                                                                     $"Unsupported event specified. {ev.Value}, The Service only support version {Provider.GetMessagesSupported()[ev.Key].Versions[0]}"));
+                        return Task.FromResult(
+                            new CommandResult<MessagePayloadBase>(
+                                MessageHeader.CompletionCodeEnum.UnsupportedData,
+                                $"Unsupported event specified. {ev.Value}, The Service only support version {Provider.GetMessagesSupported()[ev.Key].Versions[0]}")
+                            );
                     }
                 }
             }
 
-            return Task.FromResult(new SetVersionsCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty));
+            return Task.FromResult(
+                new CommandResult<MessagePayloadBase>(MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

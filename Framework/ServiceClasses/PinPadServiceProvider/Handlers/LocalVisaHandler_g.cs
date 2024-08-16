@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.PinPad
             ILocalVisaEvents events = new LocalVisaEvents(Connection, localVisaCmd.Header.RequestId.Value);
 
             var result = await HandleLocalVisa(events, localVisaCmd, cancel);
-            await Connection.SendMessageAsync(new LocalVisaCompletion(localVisaCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new LocalVisaCompletion(localVisaCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var localVisacommand = command.IsA<LocalVisaCommand>();
-            localVisacommand.Header.RequestId.HasValue.IsTrue();
+            var localVisaCommand = command.IsA<LocalVisaCommand>();
+            localVisaCommand.Header.RequestId.HasValue.IsTrue();
 
-            LocalVisaCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => LocalVisaCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => LocalVisaCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => LocalVisaCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new LocalVisaCompletion(localVisacommand.Header.RequestId.Value, new LocalVisaCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new LocalVisaCompletion(localVisaCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

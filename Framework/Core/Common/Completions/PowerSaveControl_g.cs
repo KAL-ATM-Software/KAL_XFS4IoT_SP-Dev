@@ -17,21 +17,11 @@ namespace XFS4IoT.Common.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.PowerSaveControl")]
-    public sealed class PowerSaveControlCompletion : Completion<PowerSaveControlCompletion.PayloadData>
+    public sealed class PowerSaveControlCompletion : Completion<MessagePayload>
     {
-        public PowerSaveControlCompletion(int RequestId, PowerSaveControlCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PowerSaveControlCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

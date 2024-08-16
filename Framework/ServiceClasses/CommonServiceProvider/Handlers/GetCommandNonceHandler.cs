@@ -7,8 +7,6 @@
  * GetCommandNonceHandler.cs uses automatically generated parts.
  * 
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,7 +20,7 @@ namespace XFS4IoTFramework.Common
     public partial class GetCommandNonceHandler
     {
 
-        private async Task<GetCommandNonceCompletion.PayloadData> HandleGetCommandNonce(IGetCommandNonceEvents events, GetCommandNonceCommand getCommandNonce, CancellationToken cancel)
+        private async Task<CommandResult<GetCommandNonceCompletion.PayloadData>> HandleGetCommandNonce(IGetCommandNonceEvents events, GetCommandNonceCommand getCommandNonce, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CommonDev.GetCommandRandomNumber()");
             var result = await Device.GetCommandNonce();
@@ -30,9 +28,10 @@ namespace XFS4IoTFramework.Common
 
             // TODO: validate returned token
 
-            return new GetCommandNonceCompletion.PayloadData(result.CompletionCode,
-                                                             result.ErrorDescription,
-                                                             result.Nonce);
+            return new(
+                string.IsNullOrEmpty(result.Nonce) ? null : new GetCommandNonceCompletion.PayloadData(result.Nonce),
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -17,7 +16,7 @@ namespace XFS4IoTFramework.KeyManagement
 {
     public partial class StartKeyExchangeHandler
     {
-        private async Task<StartKeyExchangeCompletion.PayloadData> HandleStartKeyExchange(IStartKeyExchangeEvents events, StartKeyExchangeCommand startKeyExchange, CancellationToken cancel)
+        private async Task<CommandResult<StartKeyExchangeCompletion.PayloadData>> HandleStartKeyExchange(IStartKeyExchangeEvents events, StartKeyExchangeCommand startKeyExchange, CancellationToken cancel)
         {
             if (!Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.RandomNumber))
             {
@@ -35,9 +34,10 @@ namespace XFS4IoTFramework.KeyManagement
 
                 if (!certOptionOK)
                 {
-                    return new StartKeyExchangeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                      $"No certificate or signature RKL scheme supported.",
-                                                                      StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum.AccessDenied);
+                    return new(
+                        new(StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum.AccessDenied),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No certificate or signature RKL scheme supported.");
                 }
             }
 
@@ -47,11 +47,19 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.StartKeyExchange() -> {result.CompletionCode}, {result.ErrorCode}");
 
+            StartKeyExchangeCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.RandomItem?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.RandomItem);
+            }
 
-            return new StartKeyExchangeCompletion.PayloadData(result.CompletionCode,
-                                                              result.ErrorDescription,
-                                                              result.ErrorCode,
-                                                              result.RandomItem);
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,26 +19,29 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CreateSignatureHandler
     {
-        private async Task<CreateSignatureCompletion.PayloadData> HandleCreateSignature(ICreateSignatureEvents events, CreateSignatureCommand createSignature, CancellationToken cancel)
+        private async Task<CommandResult<CreateSignatureCompletion.PayloadData>> HandleCreateSignature(ICreateSignatureEvents events, CreateSignatureCommand createSignature, CancellationToken cancel)
         {
             if (!Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.Signature))
             {
-                return new CreateSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"The device does not support signature. {Common.CashManagementCapabilities.ItemInfoTypes}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The device does not support signature. {Common.CashManagementCapabilities.ItemInfoTypes}");
             }
 
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CreateSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                 $"The exchange state is already in active.",
-                                                                 CreateSignatureCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CreateSignatureCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new CreateSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                 $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                                 CreateSignatureCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(CreateSignatureCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CreateSignature()");
@@ -50,19 +52,28 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CreateSignature() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new CreateSignatureCompletion.PayloadData(result.CompletionCode,
-                                                             result.ErrorDescription,
-                                                             result.ErrorCode,
-                                                             result.SignatureCaptured.NoteType,
-                                                             result.SignatureCaptured.Orientation switch
-                                                             {
-                                                                 OrientationEnum.BackBottom => XFS4IoT.CashManagement.OrientationEnum.BackBottom,
-                                                                 OrientationEnum.BackTop => XFS4IoT.CashManagement.OrientationEnum.BackTop,
-                                                                 OrientationEnum.FrontBottom => XFS4IoT.CashManagement.OrientationEnum.FrontBottom,
-                                                                 OrientationEnum.FrontTop => XFS4IoT.CashManagement.OrientationEnum.FrontTop,
-                                                                 _ => XFS4IoT.CashManagement.OrientationEnum.Unknown,
-                                                             },
-                                                             result.SignatureCaptured.Signature);
+            CreateSignatureCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.SignatureCaptured is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.SignatureCaptured.NoteType,
+                    result.SignatureCaptured.Orientation switch
+                    {
+                        OrientationEnum.BackBottom => XFS4IoT.CashManagement.OrientationEnum.BackBottom,
+                        OrientationEnum.BackTop => XFS4IoT.CashManagement.OrientationEnum.BackTop,
+                        OrientationEnum.FrontBottom => XFS4IoT.CashManagement.OrientationEnum.FrontBottom,
+                        OrientationEnum.FrontTop => XFS4IoT.CashManagement.OrientationEnum.FrontTop,
+                        _ => XFS4IoT.CashManagement.OrientationEnum.Unknown,
+                    },
+                    result.SignatureCaptured.Signature);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

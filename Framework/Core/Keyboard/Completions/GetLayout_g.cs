@@ -19,16 +19,16 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.GetLayout")]
     public sealed class GetLayoutCompletion : Completion<GetLayoutCompletion.PayloadData>
     {
-        public GetLayoutCompletion(int RequestId, GetLayoutCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetLayoutCompletion(int RequestId, GetLayoutCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, LayoutNullableClass Layout = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, LayoutNullableClass Layout = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Layout = Layout;

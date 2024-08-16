@@ -17,21 +17,11 @@ namespace XFS4IoT.Printer.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Printer.ResetCount")]
-    public sealed class ResetCountCompletion : Completion<ResetCountCompletion.PayloadData>
+    public sealed class ResetCountCompletion : Completion<MessagePayload>
     {
-        public ResetCountCompletion(int RequestId, ResetCountCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCountCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

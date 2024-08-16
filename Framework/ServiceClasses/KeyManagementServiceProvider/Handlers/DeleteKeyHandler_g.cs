@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.KeyManagement
             IDeleteKeyEvents events = new DeleteKeyEvents(Connection, deleteKeyCmd.Header.RequestId.Value);
 
             var result = await HandleDeleteKey(events, deleteKeyCmd, cancel);
-            await Connection.SendMessageAsync(new DeleteKeyCompletion(deleteKeyCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new DeleteKeyCompletion(deleteKeyCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var deleteKeycommand = command.IsA<DeleteKeyCommand>();
-            deleteKeycommand.Header.RequestId.HasValue.IsTrue();
+            var deleteKeyCommand = command.IsA<DeleteKeyCommand>();
+            deleteKeyCommand.Header.RequestId.HasValue.IsTrue();
 
-            DeleteKeyCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => DeleteKeyCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new DeleteKeyCompletion(deleteKeycommand.Header.RequestId.Value, new DeleteKeyCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DeleteKeyCompletion(deleteKeyCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

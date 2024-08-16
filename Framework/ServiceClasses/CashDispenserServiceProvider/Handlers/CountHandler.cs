@@ -22,7 +22,7 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class CountHandler
     {
-        private async Task<CountCompletion.PayloadData> HandleCount(ICountEvents events, CountCommand count, CancellationToken cancel)
+        private async Task<CommandResult<CountCompletion.PayloadData>> HandleCount(ICountEvents events, CountCommand count, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported;
             if (count.Payload.Position is not null)
@@ -43,8 +43,9 @@ namespace XFS4IoTFramework.CashDispenser
 
             if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
             {
-                return new CountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                       $"Unsupported position. {position}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Unsupported position. {position}");
             }
 
             CountRequest request = new (position);
@@ -63,8 +64,9 @@ namespace XFS4IoTFramework.CashDispenser
                 {
                     if (!Storage.CashUnits.ContainsKey(count.Payload.Unit))
                     {
-                        return new CountCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Specified storage id is invalid. {count.Payload.Unit}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Specified storage id is invalid. {count.Payload.Unit}");
                     }
                     storageFrom.Add(count.Payload.Unit);
                 }
@@ -80,9 +82,10 @@ namespace XFS4IoTFramework.CashDispenser
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new CountCompletion.PayloadData(result.CompletionCode, 
-                                                   result.ErrorDescription, 
-                                                   result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

@@ -4,7 +4,7 @@
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutoStartupTimeHandler_g.cs uses automatically generated parts.
+ * SetAutoStartUpTimeHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -21,61 +21,61 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 namespace XFS4IoTFramework.Auxiliaries
 {
     [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartUpTimeCommand))]
-    public partial class SetAutoStartupTimeHandler : ICommandHandler
+    public partial class SetAutoStartUpTimeHandler : ICommandHandler
     {
-        public SetAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
+        public SetAutoStartUpTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
-            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Dispatcher)}");
+            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Provider.Device)}")
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IAuxiliariesDevice>();
 
             Auxiliaries = Provider.IsA<IAuxiliariesService>();
             Common = Provider.IsA<ICommonService>();
 
-            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(logger)}");
-            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Connection)}");
+            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Connection)}");
         }
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var setAutoStartupTimeCmd = command.IsA<SetAutoStartUpTimeCommand>($"Invalid parameter in the SetAutoStartupTime Handle method. {nameof(SetAutoStartUpTimeCommand)}");
-            setAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartUpTimeCmd = command.IsA<SetAutoStartUpTimeCommand>($"Invalid parameter in the SetAutoStartUpTime Handle method. {nameof(SetAutoStartUpTimeCommand)}");
+            setAutoStartUpTimeCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetAutoStartupTimeEvents events = new SetAutoStartupTimeEvents(Connection, setAutoStartupTimeCmd.Header.RequestId.Value);
+            ISetAutoStartUpTimeEvents events = new SetAutoStartUpTimeEvents(Connection, setAutoStartUpTimeCmd.Header.RequestId.Value);
 
-            var result = await HandleSetAutoStartupTime(events, setAutoStartupTimeCmd, cancel);
-            await Connection.SendMessageAsync(new SetAutoStartUpTimeCompletion(setAutoStartupTimeCmd.Header.RequestId.Value, result));
+            var result = await HandleSetAutoStartUpTime(events, setAutoStartUpTimeCmd, cancel);
+            await Connection.SendMessageAsync(new SetAutoStartUpTimeCompletion(setAutoStartUpTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setAutoStartupTimecommand = command.IsA<SetAutoStartUpTimeCommand>();
-            setAutoStartupTimecommand.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartUpTimeCommand = command.IsA<SetAutoStartUpTimeCommand>();
+            setAutoStartUpTimeCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetAutoStartUpTimeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetAutoStartUpTimeCompletion(setAutoStartupTimecommand.Header.RequestId.Value, new SetAutoStartUpTimeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetAutoStartUpTimeCompletion(setAutoStartUpTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

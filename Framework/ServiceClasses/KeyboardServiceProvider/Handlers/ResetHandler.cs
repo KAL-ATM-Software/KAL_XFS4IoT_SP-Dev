@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -18,7 +17,7 @@ namespace XFS4IoTFramework.Keyboard
 {
     public partial class ResetHandler
     {
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "KeyboardDev.ResetDevice()");
 
@@ -26,14 +25,15 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.ResetDevice() -> {result.CompletionCode}");
 
-            if (result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 SecureKeyEntryStatusClass status = KeyManagement.GetSecureKeyEntryStatus();
                 status.ResetSecureKeyBuffered();
             }
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

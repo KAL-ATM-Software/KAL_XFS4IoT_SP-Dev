@@ -4,17 +4,16 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
+using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.Printer
 {
@@ -125,6 +124,17 @@ namespace XFS4IoTFramework.Printer
         /// ControlMediaResult
         /// Return result of controlling media.
         /// </summary>
+        public ControlMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                  string ErrorDescription = null,
+                                  ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ControlMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                   string ErrorDescription = null,
                                   ErrorCodeEnum? ErrorCode = null)
@@ -177,6 +187,17 @@ namespace XFS4IoTFramework.Printer
         /// ControlPassbookResult
         /// Return result of controlling passbook.
         /// </summary>
+        public ControlPassbookResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                     string ErrorDescription = null,
+                                     ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ControlPassbookResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                      string ErrorDescription = null,
                                      ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -220,6 +241,17 @@ namespace XFS4IoTFramework.Printer
         /// DispensePaperResult
         /// Return result of moving paper.
         /// </summary>
+        public DispensePaperResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DispensePaperResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                    string ErrorDescription = null,
                                    DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -334,6 +366,25 @@ namespace XFS4IoTFramework.Printer
         /// AcceptAndReadImageResult
         /// Return result of reading image
         /// </summary>
+        public AcceptAndReadImageResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Data = null;
+        }
+        public AcceptAndReadImageResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Data = Data;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public AcceptAndReadImageResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription = null,
                                         ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -342,6 +393,9 @@ namespace XFS4IoTFramework.Printer
             this.ErrorCode = ErrorCode;
             this.Data = null;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public AcceptAndReadImageResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data)
             : base(CompletionCode, null)
@@ -399,6 +453,17 @@ namespace XFS4IoTFramework.Printer
         /// ResetResult
         /// Return result of reset operation
         /// </summary>
+        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  string ErrorDescription = null,
                                  ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -419,7 +484,7 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
                              string ErrorDescription = null,
                              RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -428,6 +493,28 @@ namespace XFS4IoTFramework.Printer
             this.BinNumber = null;
         }
 
+        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                             int BinNumber)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.BinNumber = BinNumber;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                             string ErrorDescription = null,
+                             RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.BinNumber = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
                              int BinNumber)
             : base(CompletionCode, null)
@@ -453,6 +540,17 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
+        public PrintFormResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PrintFormResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -527,6 +625,17 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
+        public PrintTaskResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PrintTaskResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -605,6 +714,25 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
+        public RawPrintResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              PrintRawCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Data = null;
+        }
+        public RawPrintResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              List<byte> Data)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Data = Data;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public RawPrintResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               PrintRawCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -613,6 +741,9 @@ namespace XFS4IoTFramework.Printer
             this.ErrorCode = ErrorCode;
             this.Data = null;
         }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public RawPrintResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               List<byte> Data)
             : base(CompletionCode, null)

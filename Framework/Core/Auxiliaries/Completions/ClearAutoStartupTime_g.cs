@@ -17,21 +17,11 @@ namespace XFS4IoT.Auxiliaries.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Auxiliaries.ClearAutoStartUpTime")]
-    public sealed class ClearAutoStartUpTimeCompletion : Completion<ClearAutoStartUpTimeCompletion.PayloadData>
+    public sealed class ClearAutoStartUpTimeCompletion : Completion<MessagePayload>
     {
-        public ClearAutoStartUpTimeCompletion(int RequestId, ClearAutoStartUpTimeCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearAutoStartUpTimeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

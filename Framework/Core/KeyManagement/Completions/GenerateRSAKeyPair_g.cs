@@ -19,16 +19,16 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.GenerateRSAKeyPair")]
     public sealed class GenerateRSAKeyPairCompletion : Completion<GenerateRSAKeyPairCompletion.PayloadData>
     {
-        public GenerateRSAKeyPairCompletion(int RequestId, GenerateRSAKeyPairCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GenerateRSAKeyPairCompletion(int RequestId, GenerateRSAKeyPairCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

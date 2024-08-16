@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,10 +18,14 @@ namespace XFS4IoTFramework.Biometric
     public partial class SetDataPersistenceHandler
     {
 
-        private async Task<SetDataPersistenceCompletion.PayloadData> HandleSetDataPersistence(ISetDataPersistenceEvents events, SetDataPersistenceCommand setDataPersistence, CancellationToken cancel)
+        private async Task<CommandResult<SetDataPersistenceCompletion.PayloadData>> HandleSetDataPersistence(ISetDataPersistenceEvents events, SetDataPersistenceCommand setDataPersistence, CancellationToken cancel)
         {
             if (setDataPersistence?.Payload?.PersistenceMode is null)
-                return new SetDataPersistenceCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No PersistenceMode supplied.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "No PersistenceMode supplied.");
+            }
 
             BiometricCapabilitiesClass.PersistenceModesEnum mode = setDataPersistence.Payload.PersistenceMode switch
             {
@@ -33,14 +35,19 @@ namespace XFS4IoTFramework.Biometric
             };
 
             if (!Common.BiometricCapabilities.PersistenceModes.HasFlag(mode))
-                return new SetDataPersistenceCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedData, "Specified PersistenceMode is not supported.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedData, 
+                    "Specified PersistenceMode is not supported.");
+            }
 
             Logger.Log(Constants.DeviceClass, "BiometricDev.SetDataPersistenceAsync()");
             var result = await Device.SetDataPersistenceAsync(mode, cancel);
             Logger.Log(Constants.DeviceClass, $"BiometricDev.SetDataPersistenceAsync() -> {result.CompletionCode}");
 
-            return new SetDataPersistenceCompletion.PayloadData(result.CompletionCode,
-                                                                result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
     }

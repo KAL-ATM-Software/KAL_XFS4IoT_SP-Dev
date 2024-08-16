@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ using System.Threading;
 using XFS4IoT;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTServer;
 
 namespace XFS4IoTFramework.PinPad
@@ -20,15 +18,18 @@ namespace XFS4IoTFramework.PinPad
     [CommandHandlerAsync]
     public partial class GetQueryPCIPTSDeviceIdHandler
     {
-        private Task<GetQueryPCIPTSDeviceIdCompletion.PayloadData> HandleGetQueryPCIPTSDeviceId(IGetQueryPCIPTSDeviceIdEvents events, GetQueryPCIPTSDeviceIdCommand getQueryPCIPTSDeviceId, CancellationToken cancel)
+        private Task<CommandResult<GetQueryPCIPTSDeviceIdCompletion.PayloadData>> HandleGetQueryPCIPTSDeviceId(IGetQueryPCIPTSDeviceIdEvents events, GetQueryPCIPTSDeviceIdCommand getQueryPCIPTSDeviceId, CancellationToken cancel)
         {
-            return Task.FromResult(new GetQueryPCIPTSDeviceIdCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                                    null,
-                                                                                    PinPad.PCIPTSDeviceId?.ManufacturerIdentifier,
-                                                                                    PinPad.PCIPTSDeviceId?.ModelIdentifier,
-                                                                                    PinPad.PCIPTSDeviceId?.HardwareIdentifier,
-                                                                                    PinPad.PCIPTSDeviceId?.FirmwareIdentifier,
-                                                                                    PinPad.PCIPTSDeviceId?.ApplicationIdentifier));
+            return Task.FromResult(
+                new CommandResult<GetQueryPCIPTSDeviceIdCompletion.PayloadData>(
+                    PinPad.PCIPTSDeviceId is null ? null : new(
+                        PinPad.PCIPTSDeviceId.ManufacturerIdentifier,
+                        PinPad.PCIPTSDeviceId.ModelIdentifier,
+                        PinPad.PCIPTSDeviceId.HardwareIdentifier,
+                        PinPad.PCIPTSDeviceId.FirmwareIdentifier,
+                        PinPad.PCIPTSDeviceId.ApplicationIdentifier),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

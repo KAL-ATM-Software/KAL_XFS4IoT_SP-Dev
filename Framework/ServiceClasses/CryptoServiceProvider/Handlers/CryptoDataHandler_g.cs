@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Crypto
             ICryptoDataEvents events = new CryptoDataEvents(Connection, cryptoDataCmd.Header.RequestId.Value);
 
             var result = await HandleCryptoData(events, cryptoDataCmd, cancel);
-            await Connection.SendMessageAsync(new CryptoDataCompletion(cryptoDataCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CryptoDataCompletion(cryptoDataCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var cryptoDatacommand = command.IsA<CryptoDataCommand>();
-            cryptoDatacommand.Header.RequestId.HasValue.IsTrue();
+            var cryptoDataCommand = command.IsA<CryptoDataCommand>();
+            cryptoDataCommand.Header.RequestId.HasValue.IsTrue();
 
-            CryptoDataCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => CryptoDataCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => CryptoDataCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => CryptoDataCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new CryptoDataCompletion(cryptoDatacommand.Header.RequestId.Value, new CryptoDataCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CryptoDataCompletion(cryptoDataCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

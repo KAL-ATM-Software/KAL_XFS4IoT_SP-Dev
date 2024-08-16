@@ -16,6 +16,7 @@ namespace XFS4IoT.ServicePublisher.Events
 {
 
     [DataContract]
+    [XFS4Version(Version = "2.0")]
     [Event(Name = "ServicePublisher.ServiceDetailEvent")]
     public sealed class ServiceDetailEvent : Event<ServiceDetailEvent.PayloadData>
     {
@@ -44,7 +45,7 @@ namespace XFS4IoT.ServicePublisher.Events
             public string VendorName { get; init; }
 
             /// <summary>
-            /// Array of one or more services exposed by the publisher.
+            /// Array of one or more services exposed by the publisher. This property is null if no services available.
             /// </summary>
             [DataMember(Name = "services")]
             public List<ServiceClass> Services { get; init; }

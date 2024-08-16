@@ -17,21 +17,11 @@ namespace XFS4IoT.VendorApplication.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "VendorApplication.SetActiveInterface")]
-    public sealed class SetActiveInterfaceCompletion : Completion<SetActiveInterfaceCompletion.PayloadData>
+    public sealed class SetActiveInterfaceCompletion : Completion<MessagePayload>
     {
-        public SetActiveInterfaceCompletion(int RequestId, SetActiveInterfaceCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetActiveInterfaceCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

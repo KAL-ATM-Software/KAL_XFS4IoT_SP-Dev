@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -24,20 +23,22 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CashInHandler
     {
-        private async Task<CashInCompletion.PayloadData> HandleCashIn(ICashInEvents events, CashInCommand cashIn, CancellationToken cancel)
+        private async Task<CommandResult<CashInCompletion.PayloadData>> HandleCashIn(ICashInEvents events, CashInCommand cashIn, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CashInCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                        $"The exchange state is already in active.",
-                                                        CashInCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CashInCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status != CashInStatusClass.StatusEnum.Active)
             {
-                return new CashInCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                        $"The cash-in state is not in active. {CashAcceptor.CashInStatus.Status}",
-                                                        CashInCompletion.PayloadData.ErrorCodeEnum.NoCashInActive);
+                return new(
+                    new(CashInCompletion.PayloadData.ErrorCodeEnum.NoCashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is not in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             // Clear TotalReturnedItems for the present status
@@ -83,15 +84,22 @@ namespace XFS4IoTFramework.CashAcceptor
                 movement.ExtendedProperties = itemAcceptedResult;
             }
 
-            CashInCompletion.PayloadData payload = new(result.CompletionCode,
-                                                       result.ErrorDescription,
-                                                       result.ErrorCode,
-                                                       movement);
+            CashInCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                movement is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Items: movement);
+            }
 
             CashManagement.CashInStatusManaged.CashCounts.Unrecognized = result.Unrecognized;
             CashManagement.StoreCashInStatus();
 
-            return payload;
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

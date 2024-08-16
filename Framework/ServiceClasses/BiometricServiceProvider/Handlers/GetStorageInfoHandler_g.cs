@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Biometric
             IGetStorageInfoEvents events = new GetStorageInfoEvents(Connection, getStorageInfoCmd.Header.RequestId.Value);
 
             var result = await HandleGetStorageInfo(events, getStorageInfoCmd, cancel);
-            await Connection.SendMessageAsync(new GetStorageInfoCompletion(getStorageInfoCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetStorageInfoCompletion(getStorageInfoCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var getStorageInfocommand = command.IsA<GetStorageInfoCommand>();
-            getStorageInfocommand.Header.RequestId.HasValue.IsTrue();
+            var getStorageInfoCommand = command.IsA<GetStorageInfoCommand>();
+            getStorageInfoCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetStorageInfoCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GetStorageInfoCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetStorageInfoCompletion(getStorageInfocommand.Header.RequestId.Value, new GetStorageInfoCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetStorageInfoCompletion(getStorageInfoCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

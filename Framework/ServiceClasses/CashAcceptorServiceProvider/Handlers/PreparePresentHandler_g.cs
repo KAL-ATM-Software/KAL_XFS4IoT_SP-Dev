@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashAcceptor
             IPreparePresentEvents events = new PreparePresentEvents(Connection, preparePresentCmd.Header.RequestId.Value);
 
             var result = await HandlePreparePresent(events, preparePresentCmd, cancel);
-            await Connection.SendMessageAsync(new PreparePresentCompletion(preparePresentCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new PreparePresentCompletion(preparePresentCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var preparePresentcommand = command.IsA<PreparePresentCommand>();
-            preparePresentcommand.Header.RequestId.HasValue.IsTrue();
+            var preparePresentCommand = command.IsA<PreparePresentCommand>();
+            preparePresentCommand.Header.RequestId.HasValue.IsTrue();
 
-            PreparePresentCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => PreparePresentCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => PreparePresentCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => PreparePresentCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new PreparePresentCompletion(preparePresentcommand.Header.RequestId.Value, new PreparePresentCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new PreparePresentCompletion(preparePresentCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

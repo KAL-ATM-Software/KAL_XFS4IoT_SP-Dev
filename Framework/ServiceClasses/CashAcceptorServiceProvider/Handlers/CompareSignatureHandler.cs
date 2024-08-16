@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,34 +21,38 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CompareSignatureHandler
     {
-        private async Task<CompareSignatureCompletion.PayloadData> HandleCompareSignature(ICompareSignatureEvents events, CompareSignatureCommand compareSignature, CancellationToken cancel)
+        private async Task<CommandResult<CompareSignatureCompletion.PayloadData>> HandleCompareSignature(ICompareSignatureEvents events, CompareSignatureCommand compareSignature, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                  $"The exchange state is already in active.",
-                                                                  CompareSignatureCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CompareSignatureCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                  $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                                  CompareSignatureCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(CompareSignatureCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             if (!Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.Signature))
             {
-                return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"The device does not support signature. {Common.CashManagementCapabilities.ItemInfoTypes}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The device does not support signature. {Common.CashManagementCapabilities.ItemInfoTypes}");
             }
 
             if (compareSignature.Payload.ReferenceSignatures is null ||
                 compareSignature.Payload.ReferenceSignatures.Count == 0)
             {
-                return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                  $"No signature data supplied for the references.",
-                                                                  CompareSignatureCompletion.PayloadData.ErrorCodeEnum.InvalidReferenceSignature);
+                return new(
+                    new(CompareSignatureCompletion.PayloadData.ErrorCodeEnum.InvalidReferenceSignature),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"No signature data supplied for the references.");
             }
 
             List<SignatureInfo> referenceSignatures = new();
@@ -57,8 +60,9 @@ namespace XFS4IoTFramework.CashAcceptor
             {
                 if (!Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(reference.NoteType))
                 {
-                    return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"Unsupported note type supplied for references. {reference.NoteType}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported note type supplied for references. {reference.NoteType}");
                 }
 
                 referenceSignatures.Add(new SignatureInfo(reference.NoteType,
@@ -79,8 +83,9 @@ namespace XFS4IoTFramework.CashAcceptor
             {
                 if (!Common.CashManagementCapabilities.AllBanknoteItems.ContainsKey(signature.NoteType))
                 {
-                    return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                      $"Unsupported note type supplied for signature to compare. {signature.NoteType}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported note type supplied for signature to compare. {signature.NoteType}");
                 }
 
                 signaturesToCompare.Add(index++, new SignatureInfo(signature.NoteType,
@@ -99,9 +104,10 @@ namespace XFS4IoTFramework.CashAcceptor
             if (compareSignature.Payload.Signatures is null ||
                 compareSignature.Payload.Signatures.Count == 0)
             {
-                return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                  $"No signature data supplied for the search.",
-                                                                  CompareSignatureCompletion.PayloadData.ErrorCodeEnum.InvalidTransactionSignature);
+                return new(
+                    new(CompareSignatureCompletion.PayloadData.ErrorCodeEnum.InvalidTransactionSignature),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"No signature data supplied for the search.");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CompareSignature()");
@@ -114,13 +120,14 @@ namespace XFS4IoTFramework.CashAcceptor
             List<CompareSignatureCompletion.PayloadData.SignaturesIndexClass> sigReuslt = null;
             if (result.ConfidenceLevels?.Count > 0)
             {
-                sigReuslt = new();
+                sigReuslt = [];
                 foreach (var confLevel in result.ConfidenceLevels)
                 {
                     if (confLevel.Value.ConfidenceLevel > 100)
                     {
-                        return new CompareSignatureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                                          $"The device class reported unexpected confidence level. should be in the range of 0 to 100 inclusive. {confLevel.Value.ConfidenceLevel}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InternalError,
+                            $"The device class reported unexpected confidence level. should be in the range of 0 to 100 inclusive. {confLevel.Value.ConfidenceLevel}");
                     }
 
                     sigReuslt.Add(new CompareSignatureCompletion.PayloadData.SignaturesIndexClass(confLevel.Key,
@@ -129,10 +136,19 @@ namespace XFS4IoTFramework.CashAcceptor
                 }
             }
 
-            return new CompareSignatureCompletion.PayloadData(result.CompletionCode,
-                                                              result.ErrorDescription,
-                                                              result.ErrorCode,
-                                                              sigReuslt);
+            CompareSignatureCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                sigReuslt is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    SignaturesIndex: sigReuslt);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

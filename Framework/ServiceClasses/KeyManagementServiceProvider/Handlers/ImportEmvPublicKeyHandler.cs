@@ -13,55 +13,54 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
-using XFS4IoT.Completions;
 using System.Text.RegularExpressions;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class ImportEmvPublicKeyHandler
     {
-        private async Task<ImportEmvPublicKeyCompletion.PayloadData> HandleImportEmvPublicKey(IImportEmvPublicKeyEvents events, ImportEmvPublicKeyCommand importEmvPublicKey, CancellationToken cancel)
+        private async Task<CommandResult<ImportEmvPublicKeyCompletion.PayloadData>> HandleImportEmvPublicKey(IImportEmvPublicKeyEvents events, ImportEmvPublicKeyCommand importEmvPublicKey, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(importEmvPublicKey.Payload.Key))
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No key name is specified.");
             }
 
             if (string.IsNullOrEmpty(importEmvPublicKey.Payload.KeyUsage))
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No key usage is specified.");
             }
             if (!Regex.IsMatch(importEmvPublicKey.Payload.KeyUsage, KeyDetail.regxEMVKeyUsage))
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"Invalid key usage specified. {importEmvPublicKey.Payload.KeyUsage}");
             }
             // Check key attributes supported
             if (!Common.KeyManagementCapabilities.KeyAttributes.ContainsKey(importEmvPublicKey.Payload.KeyUsage))
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                    ErrorDescription: $"Specified key attribute is not supported. {importEmvPublicKey.Payload.KeyUsage}",
-                    ErrorCode: ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(ErrorCode: ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    ErrorDescription: $"Specified key attribute is not supported. {importEmvPublicKey.Payload.KeyUsage}");
             }
 
             if (importEmvPublicKey.Payload.ImportScheme is null)
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No import scheme is specified.");
             }
 
             if (importEmvPublicKey.Payload.Value is null ||
                 importEmvPublicKey.Payload.Value.Count == 0)
             {
-                return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No import data is specified.");
             }
 
@@ -77,9 +76,9 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 if (string.IsNullOrEmpty(verificationKey))
                 {
-                    return new ImportEmvPublicKeyCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
-                    ErrorDescription: $"No verify key specified for this import scheme. {importEmvPublicKey.Payload.ImportScheme}");
+                    return new(
+                        CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
+                        ErrorDescription: $"No verify key specified for this import scheme. {importEmvPublicKey.Payload.ImportScheme}");
                 }
             }
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ImportEMVPublicKey()");
@@ -104,11 +103,19 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportEMVPublicKey() -> {importEMVPublicKeyResult.CompletionCode}, {importEMVPublicKeyResult.ErrorCode}");
 
-            return new ImportEmvPublicKeyCompletion.PayloadData(
+            ImportEmvPublicKeyCompletion.PayloadData payload = null;
+            if (importEMVPublicKeyResult.ErrorCode is not null ||
+                !string.IsNullOrEmpty(importEMVPublicKeyResult.ExpiryDate))
+            {
+                payload = new(
+                    ErrorCode: importEMVPublicKeyResult.ErrorCode,
+                    ExpiryDate: importEMVPublicKeyResult.ExpiryDate);
+            }
+
+            return new(
+                payload,
                 CompletionCode: importEMVPublicKeyResult.CompletionCode,
-                ErrorDescription: importEMVPublicKeyResult.ErrorDescription,
-                ErrorCode: importEMVPublicKeyResult.ErrorCode,
-                ExpiryDate: importEMVPublicKeyResult.ExpiryDate);
+                ErrorDescription: importEMVPublicKeyResult.ErrorDescription);
         }
     }
 }

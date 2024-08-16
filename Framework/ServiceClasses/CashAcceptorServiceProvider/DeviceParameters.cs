@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
 
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,6 +15,7 @@ using XFS4IoT.CashAcceptor.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
 using XFS4IoTFramework.CashManagement;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.CashAcceptor
 {
@@ -209,6 +209,17 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CashInStartResult : DeviceResult
     {
+        public CashInStartResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 string ErrorDescription = null,
+                                 CashInStartCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CashInStartResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  string ErrorDescription = null,
                                  CashInStartCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -246,7 +257,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CashInResult : DeviceResult
     {
-        public CashInResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CashInResult(MessageHeader.CompletionCodeEnum CompletionCode,
                             string ErrorDescription = null,
                             CashInCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -257,6 +268,34 @@ namespace XFS4IoTFramework.CashAcceptor
             MovementResult = null;
         }
 
+        public CashInResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                            Dictionary<string, CashItemCountClass> ItemCounts,
+                            Dictionary<string, CashUnitCountClass> MovementResult,
+                            int Unrecognized = 0)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.Unrecognized = Unrecognized;
+            this.ItemCounts = ItemCounts;
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CashInResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                            string ErrorDescription = null,
+                            CashInCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            Unrecognized = 0;
+            ItemCounts = null;
+            MovementResult = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CashInResult(MessagePayload.CompletionCodeEnum CompletionCode,
                             Dictionary<string, CashItemCountClass> ItemCounts,
                             Dictionary<string, CashUnitCountClass> MovementResult,
@@ -297,7 +336,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CashInRollbackResult : DeviceResult
     {
-        public CashInRollbackResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CashInRollbackResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     CashInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -306,6 +345,28 @@ namespace XFS4IoTFramework.CashAcceptor
             MovementResult = null;
         }
 
+        public CashInRollbackResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CashInRollbackResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    CashInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            MovementResult = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CashInRollbackResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     Dictionary<string, CashUnitCountClass> MovementResult)
             : base(CompletionCode, null)
@@ -331,7 +392,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CashInEndResult : DeviceResult
     {
-        public CashInEndResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CashInEndResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                CashInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -340,6 +401,28 @@ namespace XFS4IoTFramework.CashAcceptor
             MovementResult = null;
         }
 
+        public CashInEndResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CashInEndResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               CashInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            MovementResult = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CashInEndResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                Dictionary<string, CashUnitCountClass> MovementResult)
             : base(CompletionCode, null)
@@ -347,6 +430,7 @@ namespace XFS4IoTFramework.CashAcceptor
             ErrorCode = null;
             this.MovementResult = MovementResult;
         }
+
 
         /// <summary>
         /// Specifies the error code for the cash-in end operation.
@@ -382,6 +466,17 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class ConfigureNoteTypesResult : DeviceResult
     {
+        public ConfigureNoteTypesResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ConfigureNoteTypesResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription = null,
                                         ConfigureNoteTypesCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -420,6 +515,17 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class ConfigureNoteReaderResult : DeviceResult
     {
+        public ConfigureNoteReaderResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                         string ErrorDescription = null,
+                                         ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ConfigureNoteReaderResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                          string ErrorDescription = null,
                                          ConfigureNoteReaderCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -457,7 +563,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CreateSignatureResult : DeviceResult
     {
-        public CreateSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CreateSignatureResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                      string ErrorDescription = null,
                                      CreateSignatureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -466,6 +572,28 @@ namespace XFS4IoTFramework.CashAcceptor
             SignatureCaptured = null;
         }
 
+        public CreateSignatureResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                     SignatureInfo SignatureCaptured)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.SignatureCaptured = SignatureCaptured;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CreateSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                     string ErrorDescription = null,
+                                     CreateSignatureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            SignatureCaptured = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CreateSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                      SignatureInfo SignatureCaptured)
             : base(CompletionCode, null)
@@ -473,6 +601,7 @@ namespace XFS4IoTFramework.CashAcceptor
             ErrorCode = null;
             this.SignatureCaptured = SignatureCaptured;
         }
+
         /// <summary>
         /// Specifies the error code on scanning note signature data
         /// </summary>
@@ -507,6 +636,17 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class PreparePresentResult : DeviceResult
     {
+        public PreparePresentResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    PreparePresentCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PreparePresentResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     PreparePresentCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -544,7 +684,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class CashUnitCountResult : DeviceResult
     {
-        public CashUnitCountResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CashUnitCountResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                    string ErrorDescription = null,
                                    CashUnitCountCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -552,6 +692,26 @@ namespace XFS4IoTFramework.CashAcceptor
             this.ErrorCode = ErrorCode;
         }
 
+        public CashUnitCountResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                   Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CashUnitCountResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   CashUnitCountCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CashUnitCountResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                    Dictionary<string, CashUnitCountClass> MovementResult)
             : base(CompletionCode, null)
@@ -622,6 +782,27 @@ namespace XFS4IoTFramework.CashAcceptor
             public string ComparisonData { get; init; }
         }
 
+        public CompareSignatureResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                      string ErrorDescription = null,
+                                      CompareSignatureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.ConfidenceLevels = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CompareSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                      Dictionary<int, ConfidenceLevelClass> ConfidenceLevels)
+            : base(CompletionCode, null)
+        {
+            this.ConfidenceLevels = ConfidenceLevels;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CompareSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                       string ErrorDescription = null,
                                       CompareSignatureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -631,7 +812,7 @@ namespace XFS4IoTFramework.CashAcceptor
             this.ConfidenceLevels = null;
         }
 
-        public CompareSignatureResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CompareSignatureResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                       Dictionary<int, ConfidenceLevelClass> ConfidenceLevels)
             : base(CompletionCode, null)
         {
@@ -680,7 +861,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class DepleteResult : DeviceResult
     {
-        public DepleteResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public DepleteResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                       string ErrorDescription = null,
                                       DepleteCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -690,6 +871,30 @@ namespace XFS4IoTFramework.CashAcceptor
             this.MovementResult = null;
         }
 
+        public DepleteResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                             DepleteOperationResult OperationResult,
+                             Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            this.OperationResult = OperationResult;
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public DepleteResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                      string ErrorDescription = null,
+                                      DepleteCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.OperationResult = null;
+            this.MovementResult = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DepleteResult(MessagePayload.CompletionCodeEnum CompletionCode,
                              DepleteOperationResult OperationResult,
                              Dictionary<string, CashUnitCountClass> MovementResult)
@@ -784,6 +989,17 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class DeviceLockResult : DeviceResult
     {
+        public DeviceLockResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                string ErrorDescription = null,
+                                DeviceLockControlCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DeviceLockResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                 string ErrorDescription = null,
                                 DeviceLockControlCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -828,7 +1044,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class ReplenishResult : DeviceResult
     {
-        public ReplenishResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ReplenishResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                ReplenishCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -838,6 +1054,31 @@ namespace XFS4IoTFramework.CashAcceptor
             MovementResult = null;
         }
 
+        public ReplenishResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               ReplenishOperationResult OperationResult,
+                               Dictionary<string, CashUnitCountClass> MovementResult)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = ErrorCode;
+            this.OperationResult = OperationResult;
+            this.MovementResult = MovementResult;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ReplenishResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               ReplenishCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            OperationResult = null;
+            MovementResult = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReplenishResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                ReplenishOperationResult OperationResult,
                                Dictionary<string, CashUnitCountClass> MovementResult)
@@ -894,7 +1135,7 @@ namespace XFS4IoTFramework.CashAcceptor
     /// </summary>
     public sealed class PresentMediaResult : DeviceResult
     {
-        public PresentMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public PresentMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                   string ErrorDescription = null,
                                   PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
                                   CashManagementPresentStatus LastPresentStatus = null)
@@ -904,6 +1145,29 @@ namespace XFS4IoTFramework.CashAcceptor
             this.LastPresentStatus = LastPresentStatus;
         }
 
+        public PresentMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                  CashManagementPresentStatus LastPresentStatus)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.LastPresentStatus = LastPresentStatus;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public PresentMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                  string ErrorDescription = null,
+                                  PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+                                  CashManagementPresentStatus LastPresentStatus = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.LastPresentStatus = LastPresentStatus;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PresentMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                   CashManagementPresentStatus LastPresentStatus)
             : base(CompletionCode, null)

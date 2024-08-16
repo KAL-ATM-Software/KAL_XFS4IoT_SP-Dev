@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.VendorMode
 {
     public partial class RegisterHandler
     {
-        private Task<RegisterCompletion.PayloadData> HandleRegister(IRegisterEvents events, RegisterCommand register, CancellationToken cancel)
+        private Task<CommandResult<MessagePayloadBase>> HandleRegister(IRegisterEvents events, RegisterCommand register, CancellationToken cancel)
         {
             if (!VendorMode.RegisteredClients.ContainsKey(Connection))
             {
@@ -26,7 +26,9 @@ namespace XFS4IoTFramework.VendorMode
                 VendorMode.RegisteredClients.Add(Connection, register.Payload.AppName);
             }
 
-            return Task.FromResult(new RegisterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty));
+            return Task.FromResult(
+                new CommandResult<MessagePayloadBase>(MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

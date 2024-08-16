@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Keyboard
             IDefineLayoutEvents events = new DefineLayoutEvents(Connection, defineLayoutCmd.Header.RequestId.Value);
 
             var result = await HandleDefineLayout(events, defineLayoutCmd, cancel);
-            await Connection.SendMessageAsync(new DefineLayoutCompletion(defineLayoutCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new DefineLayoutCompletion(defineLayoutCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var defineLayoutcommand = command.IsA<DefineLayoutCommand>();
-            defineLayoutcommand.Header.RequestId.HasValue.IsTrue();
+            var defineLayoutCommand = command.IsA<DefineLayoutCommand>();
+            defineLayoutCommand.Header.RequestId.HasValue.IsTrue();
 
-            DefineLayoutCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => DefineLayoutCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new DefineLayoutCompletion(defineLayoutcommand.Header.RequestId.Value, new DefineLayoutCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DefineLayoutCompletion(defineLayoutCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

@@ -48,14 +48,33 @@ namespace XFS4IoTFramework.Biometric
 
     public sealed class ImportResult : DeviceResult
     {
-        public ImportResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ImportCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        public ImportResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ImportCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Templates = null;
         }
 
-        public ImportResult(MessagePayload.CompletionCodeEnum CompletionCode, Dictionary<string, BiometricDataType> Templates) 
+        public ImportResult(MessageHeader.CompletionCodeEnum CompletionCode, Dictionary<string, BiometricDataType> Templates) 
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Templates = Templates;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ImportCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Templates = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportResult(MessagePayload.CompletionCodeEnum CompletionCode, Dictionary<string, BiometricDataType> Templates)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -78,14 +97,33 @@ namespace XFS4IoTFramework.Biometric
 
     public sealed class ReadResult : DeviceResult
     {   
-        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ReadCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ReadCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Data = null;
         }
 
-        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, List<BiometricData> Templates) 
+        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode, List<BiometricData> Templates) 
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Data = Templates;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, ReadCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Data = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode, List<BiometricData> Templates)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -109,13 +147,30 @@ namespace XFS4IoTFramework.Biometric
 
     public sealed class SetMatchResult : DeviceResult
     {   
-        public SetMatchResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, SetMatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        public SetMatchResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription = null, SetMatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
         }
 
-        public SetMatchResult(MessagePayload.CompletionCodeEnum CompletionCode) 
+        public SetMatchResult(MessageHeader.CompletionCodeEnum CompletionCode) 
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SetMatchResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, SetMatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public SetMatchResult(MessagePayload.CompletionCodeEnum CompletionCode)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -135,14 +190,33 @@ namespace XFS4IoTFramework.Biometric
 
     public sealed class MatchResult : DeviceResult
     {   
-        public MatchResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, MatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        public MatchResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription = null, MatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Candidates = null;
         }
 
-        public MatchResult(MessagePayload.CompletionCodeEnum CompletionCode, Dictionary<string, MatchCandidate> Candidates) 
+        public MatchResult(MessageHeader.CompletionCodeEnum CompletionCode, Dictionary<string, MatchCandidate> Candidates) 
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Candidates = Candidates;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public MatchResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription = null, MatchCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Candidates = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public MatchResult(MessagePayload.CompletionCodeEnum CompletionCode, Dictionary<string, MatchCandidate> Candidates)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -153,6 +227,4 @@ namespace XFS4IoTFramework.Biometric
 
         public Dictionary<string, MatchCandidate> Candidates { get; init; }
     }
-
-    
 }

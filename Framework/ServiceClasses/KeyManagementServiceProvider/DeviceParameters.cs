@@ -4,27 +4,16 @@
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Threading;
 using XFS4IoTServer;
 using XFS4IoT.Completions;
 using XFS4IoT.KeyManagement.Commands;
 using XFS4IoT.KeyManagement.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoT;
-using Microsoft.VisualBasic.FileIO;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Security.Policy;
-using System.Reflection.Metadata;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Serialization;
 
 namespace XFS4IoTFramework.KeyManagement
 {
@@ -421,7 +410,7 @@ namespace XFS4IoTFramework.KeyManagement
             public ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum? HashAlgorithm { get; init; }
         }
 
-        public ImportKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ImportKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                ImportKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -431,6 +420,37 @@ namespace XFS4IoTFramework.KeyManagement
             this.KeyLength = 0;
         }
 
+        public ImportKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               KeyInformationBase KeyInformation,
+                               List<byte> VerificationData,
+                               VerifyAttributeClass VerifyAttribute,
+                               int KeyLength,
+                               int? UpdatedKeySlot = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.KeyInformation = KeyInformation;
+            this.VerificationData = VerificationData;
+            this.VerifyAttribute = VerifyAttribute;
+            this.KeyLength = KeyLength;
+            this.UpdatedKeySlot = UpdatedKeySlot;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               ImportKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.VerificationData = null;
+            this.KeyLength = 0;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ImportKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                KeyInformationBase KeyInformation,
                                List<byte> VerificationData,
@@ -491,7 +511,7 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class InitializationResult : DeviceResult
     {
-        public InitializationResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public InitializationResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     InitializationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -500,6 +520,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.Identification = null;
         }
 
+        public InitializationResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    List<byte> Identification)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Identification = Identification;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public InitializationResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    InitializationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Identification = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public InitializationResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     List<byte> Identification)
                 : base(CompletionCode, null)
@@ -562,7 +604,7 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class GenerateKCVResult : DeviceResult
     {
-        public GenerateKCVResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GenerateKCVResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     GenerateKCVCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -571,6 +613,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.KCV = null;
         }
 
+        public GenerateKCVResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                 List<byte> KCV)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.KCV = KCV;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GenerateKCVResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    GenerateKCVCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.KCV = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GenerateKCVResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                  List<byte> KCV)
                 : base(CompletionCode, null)
@@ -709,7 +773,7 @@ namespace XFS4IoTFramework.KeyManagement
             public int KeyLength { get; init; }
         }
 
-        public DeriveKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public DeriveKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                string ErrorDescription = null,
                                DeriveKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -718,6 +782,30 @@ namespace XFS4IoTFramework.KeyManagement
             this.LoadedKeyDetail = null;
         }
 
+        public DeriveKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                               LoadedKeyInformation LoadedKeyDetail,
+                               int? UpdatedKeySlot)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.LoadedKeyDetail = LoadedKeyDetail;
+            this.UpdatedKeySlot = UpdatedKeySlot;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public DeriveKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                               string ErrorDescription = null,
+                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.LoadedKeyDetail = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public DeriveKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                LoadedKeyInformation LoadedKeyDetail,
                                int? UpdatedKeySlot)
@@ -836,7 +924,7 @@ namespace XFS4IoTFramework.KeyManagement
             KeyNotFound
         }
 
-        public RSASignedItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public RSASignedItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                    string ErrorDescription = null,
                                    ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -848,6 +936,37 @@ namespace XFS4IoTFramework.KeyManagement
             this.Signature = null;
         }
 
+        public RSASignedItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                   List<byte> Data,
+                                   RSASignatureAlgorithmEnum SignatureAlgorithm,
+                                   List<byte> Signature = null,
+                                   List<byte> SelfSignature = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Data = Data;
+            this.SignatureAlgorithm = SignatureAlgorithm;
+            this.SelfSignature = SelfSignature;
+            this.Signature = Signature;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public RSASignedItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                   string ErrorDescription = null,
+                                   ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Data = null;
+            this.SignatureAlgorithm = RSASignatureAlgorithmEnum.NoSignature;
+            this.SelfSignature = null;
+            this.Signature = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public RSASignedItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                    List<byte> Data,
                                    RSASignatureAlgorithmEnum SignatureAlgorithm,
@@ -913,7 +1032,7 @@ namespace XFS4IoTFramework.KeyManagement
     public sealed class ExportCertificateResult : DeviceResult
     {
 
-        public ExportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ExportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                        string ErrorDescription = null,
                                        GetCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -922,6 +1041,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.Certificate = null;
         }
 
+        public ExportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                       List<byte> Certificate)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Certificate = Certificate;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ExportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                       string ErrorDescription = null,
+                                       GetCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Certificate = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ExportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                        List<byte> Certificate)
             : base(CompletionCode, null)
@@ -1047,7 +1188,7 @@ namespace XFS4IoTFramework.KeyManagement
             public int KeyLength { get; init; }
         }
 
-        public GenerateRSAKeyPairResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GenerateRSAKeyPairResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription = null,
                                         GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -1056,6 +1197,30 @@ namespace XFS4IoTFramework.KeyManagement
             this.UpdatedKeySlot = null;
         }
 
+        public GenerateRSAKeyPairResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        LoadedKeyInformation LoadedKeyDetail,
+                                        int? UpdatedKeySlot = null)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.LoadedKeyDetail = LoadedKeyDetail;
+            this.UpdatedKeySlot = UpdatedKeySlot;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GenerateRSAKeyPairResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.UpdatedKeySlot = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GenerateRSAKeyPairResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         LoadedKeyInformation LoadedKeyDetail,
                                         int? UpdatedKeySlot = null)
@@ -1102,8 +1267,7 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class ReplaceCertificateResult : DeviceResult
     {
-
-        public ReplaceCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ReplaceCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                        string ErrorDescription = null,
                                        ReplaceCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -1112,6 +1276,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.Digest = null;
         }
 
+        public ReplaceCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                       List<byte> Digest)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Digest = Digest;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ReplaceCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                       string ErrorDescription = null,
+                                       ReplaceCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Digest = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ReplaceCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                        List<byte> Digest)
             : base(CompletionCode, null)
@@ -1178,7 +1364,7 @@ namespace XFS4IoTFramework.KeyManagement
             SHA256,
         }
 
-        public ImportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ImportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                        string ErrorDescription = null,
                                        LoadCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -1187,6 +1373,30 @@ namespace XFS4IoTFramework.KeyManagement
             this.RSAData = null;
         }
 
+        public ImportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                       RSAKeyCheckModeEnum KeyCheckMode,
+                                       List<byte> RSAData)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.RSAKeyCheckMode = RSAKeyCheckMode;
+            this.RSAData = RSAData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                       string ErrorDescription = null,
+                                       LoadCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.RSAData = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ImportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                        RSAKeyCheckModeEnum KeyCheckMode,
                                        List<byte> RSAData)
@@ -1222,7 +1432,7 @@ namespace XFS4IoTFramework.KeyManagement
             SHA256,
         }
 
-        public StartKeyExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public StartKeyExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                       string ErrorDescription = null,
                                       StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
@@ -1231,6 +1441,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.RandomItem = null;
         }
 
+        public StartKeyExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                      List<byte> RandomItem)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.RandomItem = RandomItem;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public StartKeyExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                      string ErrorDescription = null,
+                                      StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.RandomItem = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public StartKeyExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                       List<byte> RandomItem)
             : base(CompletionCode, null)
@@ -1308,7 +1540,7 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class StartAuthenticateResult : DeviceResult
     {
-        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public StartAuthenticateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                        string ErrorDescription = null)
             : base(CompletionCode, null)
         {
@@ -1316,7 +1548,7 @@ namespace XFS4IoTFramework.KeyManagement
             this.SigningMethod =  AuthenticationData.SigningMethodEnum.None;
         }
 
-        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public StartAuthenticateResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                        List<byte> DataToSign,
                                        AuthenticationData.SigningMethodEnum SigningMethod)
             : base(CompletionCode, null)
@@ -1325,6 +1557,27 @@ namespace XFS4IoTFramework.KeyManagement
             this.SigningMethod = SigningMethod;
         }
 
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                       string ErrorDescription = null)
+            : base(CompletionCode, null)
+        {
+            this.DataToSign = null;
+            this.SigningMethod = AuthenticationData.SigningMethodEnum.None;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                       List<byte> DataToSign,
+                                       AuthenticationData.SigningMethodEnum SigningMethod)
+            : base(CompletionCode, null)
+        {
+            this.DataToSign = DataToSign;
+            this.SigningMethod = SigningMethod;
+        }
 
         public List<byte> DataToSign { get; init; }
 
@@ -1399,7 +1652,7 @@ namespace XFS4IoTFramework.KeyManagement
             Zero,
         }
 
-        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ImportKeyTokenResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     int KeyLength,
                                     AuthenticationAlgorithmEnum AuthenticationAlgorithm,
                                     List<byte> AuthenticationData,
@@ -1415,6 +1668,40 @@ namespace XFS4IoTFramework.KeyManagement
             this.KCV = KCV;
         }
 
+        public ImportKeyTokenResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            AuthenticationAlgorithm = AuthenticationAlgorithmEnum.None;
+            AuthenticationData = null;
+            KCVMode = KeyCheckValueEnum.None;
+            KCV = null;
+            KeyLength = 0;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    int KeyLength,
+                                    AuthenticationAlgorithmEnum AuthenticationAlgorithm,
+                                    List<byte> AuthenticationData,
+                                    KeyCheckValueEnum KCVMode,
+                                    List<byte> KCV)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.KeyLength = KeyLength;
+            this.AuthenticationAlgorithm = AuthenticationAlgorithm;
+            this.AuthenticationData = AuthenticationData;
+            this.KCVMode = KCVMode;
+            this.KCV = KCV;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -1598,7 +1885,7 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class ImportEMVPublicKeyResult : DeviceResult
     {
-        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public ImportEMVPublicKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                         string ExpiryDate)
             : base(CompletionCode, null)
         {
@@ -1606,6 +1893,28 @@ namespace XFS4IoTFramework.KeyManagement
             this.ExpiryDate = ExpiryDate;
         }
 
+        public ImportEMVPublicKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                        string ErrorDescription = null,
+                                        ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+           : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            ExpiryDate = null;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                        string ExpiryDate)
+            : base(CompletionCode, null)
+        {
+            ErrorCode = null;
+            this.ExpiryDate = ExpiryDate;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                         string ErrorDescription = null,
                                         ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)

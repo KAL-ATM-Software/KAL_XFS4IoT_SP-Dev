@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Lights
             ISetLightEvents events = new SetLightEvents(Connection, setLightCmd.Header.RequestId.Value);
 
             var result = await HandleSetLight(events, setLightCmd, cancel);
-            await Connection.SendMessageAsync(new SetLightCompletion(setLightCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetLightCompletion(setLightCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setLightcommand = command.IsA<SetLightCommand>();
-            setLightcommand.Header.RequestId.HasValue.IsTrue();
+            var setLightCommand = command.IsA<SetLightCommand>();
+            setLightCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetLightCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetLightCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetLightCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetLightCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetLightCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetLightCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetLightCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetLightCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetLightCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetLightCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetLightCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetLightCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetLightCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetLightCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetLightCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetLightCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetLightCompletion(setLightcommand.Header.RequestId.Value, new SetLightCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetLightCompletion(setLightCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

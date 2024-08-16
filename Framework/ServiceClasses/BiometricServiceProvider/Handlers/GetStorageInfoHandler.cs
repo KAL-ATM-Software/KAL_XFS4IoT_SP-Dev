@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,20 +19,19 @@ namespace XFS4IoTFramework.Biometric
 {
     public partial class GetStorageInfoHandler
     {
-
-        private Task<GetStorageInfoCompletion.PayloadData> HandleGetStorageInfo(IGetStorageInfoEvents events, GetStorageInfoCommand getStorageInfo, CancellationToken cancel)
+        private Task<CommandResult<GetStorageInfoCompletion.PayloadData>> HandleGetStorageInfo(IGetStorageInfoEvents events, GetStorageInfoCommand getStorageInfo, CancellationToken cancel)
         {
             if (Common.BiometricCapabilities.Storage == XFS4IoTFramework.Common.BiometricCapabilitiesClass.StorageEnum.None)
-                return Task.FromResult(new GetStorageInfoCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "This device has no storage."));
+                return Task.FromResult(new CommandResult<GetStorageInfoCompletion.PayloadData>(MessageHeader.CompletionCodeEnum.UnsupportedCommand, "This device has no storage."));
 
             var deviceStorageInfo = Device.StorageInfo;
             if (deviceStorageInfo == null || deviceStorageInfo.Count == 0)
-                return Task.FromResult(new GetStorageInfoCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode, "No imported data stored", GetStorageInfoCompletion.PayloadData.ErrorCodeEnum.NoImportedData));
+                return Task.FromResult(new CommandResult<GetStorageInfoCompletion.PayloadData>(new (GetStorageInfoCompletion.PayloadData.ErrorCodeEnum.NoImportedData), MessageHeader.CompletionCodeEnum.CommandErrorCode, "No imported data stored"));
 
-            Dictionary<string, XFS4IoT.Biometric.DataTypeClass> storageInfo = new();
+            Dictionary<string, XFS4IoT.Biometric.DataTypeClass> storageInfo = null;
             foreach(var kv in deviceStorageInfo)
             {
-                storageInfo.Add(kv.Key, new XFS4IoT.Biometric.DataTypeClass(
+                (storageInfo ??= []).Add(kv.Key, new XFS4IoT.Biometric.DataTypeClass(
                     kv.Value.Format switch
                     {
                         BiometricCapabilitiesClass.FormatEnum.IsoFid => XFS4IoT.Biometric.DataTypeClass.FormatEnum.IsoFid,
@@ -63,7 +60,11 @@ namespace XFS4IoTFramework.Biometric
                     kv.Value.KeyName));
             }
 
-            return Task.FromResult(new GetStorageInfoCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, null, null, storageInfo)); 
+            return Task.FromResult(
+                new CommandResult<GetStorageInfoCompletion.PayloadData>(
+                    storageInfo is not null ? new GetStorageInfoCompletion.PayloadData(Templates: storageInfo) : null,
+                    MessageHeader.CompletionCodeEnum.Success)
+                ); 
         }
 
     }

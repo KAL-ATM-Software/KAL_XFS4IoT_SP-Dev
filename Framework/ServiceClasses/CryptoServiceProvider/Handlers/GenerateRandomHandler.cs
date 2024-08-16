@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -18,7 +16,7 @@ namespace XFS4IoTFramework.Crypto
 {
     public partial class GenerateRandomHandler
     {
-        private async Task<GenerateRandomCompletion.PayloadData> HandleGenerateRandom(IGenerateRandomEvents events, GenerateRandomCommand generateRandom, CancellationToken cancel)
+        private async Task<CommandResult<GenerateRandomCompletion.PayloadData>> HandleGenerateRandom(IGenerateRandomEvents events, GenerateRandomCommand generateRandom, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateRandomNumber()");
 
@@ -26,10 +24,19 @@ namespace XFS4IoTFramework.Crypto
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateRandomNumber() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new GenerateRandomCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            result.RandomNumber);
+            GenerateRandomCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.RandomNumber?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.RandomNumber);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

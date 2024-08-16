@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,13 +19,14 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class PresentMediaHandler
     {
-        private async Task<PresentMediaCompletion.PayloadData> HandlePresentMedia(IPresentMediaEvents events, PresentMediaCommand presentMedia, CancellationToken cancel)
+        private async Task<CommandResult<PresentMediaCompletion.PayloadData>> HandlePresentMedia(IPresentMediaEvents events, PresentMediaCommand presentMedia, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"The exchange state is already in active.",
-                                                              PresentMediaCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(PresentMediaCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             // First check the position capabilities
@@ -49,35 +49,39 @@ namespace XFS4IoTFramework.CashAcceptor
 
             if (!Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
-                return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported output position. {outputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Unsupported output position. {outputPosition}");
             }
 
             if (!Common.CashAcceptorStatus.Positions.ContainsKey(outputPosition))
             {
-                return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                              $"The device class does not report supported position status. {outputPosition}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InternalError,
+                    $"The device class does not report supported position status. {outputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[outputPosition].PositionStatus == CashManagementStatusClass.PositionStatusEnum.NotSupported)
             {
-                return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"The specified position is not supported. {outputPosition}",
-                                                              PresentMediaCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(PresentMediaCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified position is not supported. {outputPosition}");
             }
 
             if (Common.CashAcceptorStatus.Positions[outputPosition].PositionStatus == CashManagementStatusClass.PositionStatusEnum.Empty)
             {
-                return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"The specified position is empty. {outputPosition}",
-                                                              PresentMediaCompletion.PayloadData.ErrorCodeEnum.NoItems);
+                return new(
+                    new(PresentMediaCompletion.PayloadData.ErrorCodeEnum.NoItems),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified position is empty. {outputPosition}");
             }
 
             if (Common.CashAcceptorCapabilities.Positions.ContainsKey(outputPosition))
             {
                 if (!Common.CashAcceptorCapabilities.Positions[outputPosition].PresentControl)
                 {
-                    return new PresentMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
                                                                   $"Specified position reported by the PresentControl property in PositionCapabilities is {Common.CashAcceptorCapabilities.Positions[outputPosition].PresentControl}");
                 }
             }
@@ -96,9 +100,10 @@ namespace XFS4IoTFramework.CashAcceptor
                 CashManagement.StoreCashManagementPresentStatus();
             }
 
-            return new PresentMediaCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
 
         }
 

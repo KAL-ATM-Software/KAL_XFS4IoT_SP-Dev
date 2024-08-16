@@ -21,12 +21,12 @@ namespace XFS4IoTFramework.Check
 {
     public partial class SetMediaParametersHandler
     {
-        private async Task<SetMediaParametersCompletion.PayloadData> HandleSetMediaParameters(ISetMediaParametersEvents events, SetMediaParametersCommand setMediaParameters, CancellationToken cancel)
+        private async Task<CommandResult<SetMediaParametersCompletion.PayloadData>> HandleSetMediaParameters(ISetMediaParametersEvents events, SetMediaParametersCommand setMediaParameters, CancellationToken cancel)
         {
             if (setMediaParameters.Payload is null)
             {
-                return new SetMediaParametersCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"Specified empty payload.");
             }
 
@@ -36,23 +36,23 @@ namespace XFS4IoTFramework.Check
                 mediaId = (int)setMediaParameters.Payload.MediaID;
                 if (!Check.LastTransactionStatus.MediaInfo.ContainsKey(mediaId))
                 {
-                    return new SetMediaParametersCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified media ID is not recognized. {mediaId}");
                 }
             }
 
             if (string.IsNullOrEmpty(setMediaParameters.Payload.Destination))
             {
-                return new SetMediaParametersCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No destination is specified.");
             }
 
             if (!Regex.IsMatch(setMediaParameters.Payload.Destination, "^customer$|^unit[0-9A-Za-z]+$"))
             {
-                return new SetMediaParametersCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
                     $"Invalid destination is specified. {setMediaParameters.Payload.Destination}");
             }
 
@@ -62,8 +62,8 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Storage.CheckUnits.ContainsKey(setMediaParameters.Payload.Destination))
                 {
-                    return new SetMediaParametersCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified destination does not exist. {setMediaParameters.Payload.Destination}");
                 }
                 destination = SetMediaParametersRequest.DestinationEnum.Unit;
@@ -127,10 +127,10 @@ namespace XFS4IoTFramework.Check
 
             Logger.Log(Constants.DeviceClass, $"CheckDev.SetMediaParametersAsync() -> {result.CompletionCode}");
 
-            return new SetMediaParametersCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

@@ -19,16 +19,16 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.ImportKey")]
     public sealed class ImportKeyCompletion : Completion<ImportKeyCompletion.PayloadData>
     {
-        public ImportKeyCompletion(int RequestId, ImportKeyCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ImportKeyCompletion(int RequestId, ImportKeyCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> VerificationData = null, VerifyAttributesClass VerifyAttributes = null, int? KeyLength = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<byte> VerificationData = null, VerifyAttributesClass VerifyAttributes = null, int? KeyLength = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.VerificationData = VerificationData;

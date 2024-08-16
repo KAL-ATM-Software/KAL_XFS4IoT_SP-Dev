@@ -44,7 +44,10 @@ namespace XFS4IoT
         /// <param name="RequestId">Request ID</param>
         /// <param name="Type">Type of the message, Command, Response, Events</param>
         /// <param name="Timeout">Timeout is only valid for commands.</param>
-        public MessageBase(int? RequestId, MessageHeader.TypeEnum Type, int? Timeout)
+        /// <param name="Status">Status is only valid for acknowledge.</param>
+        /// <param name="CompletionCode">CompletionCode is only valid for completions.</param>
+        /// <param name="ErrorDescription">ErrorDescription is only valid for completions.</param>
+        public MessageBase(int? RequestId, MessageHeader.TypeEnum Type, int? Timeout, MessageHeader.StatusEnum? Status, MessageHeader.CompletionCodeEnum? CompletionCode, string ErrorDescription)
         {
             string attribNameValue = LookupMessageName(GetType());
             string version = LookupMessageVersion(GetType());
@@ -58,7 +61,7 @@ namespace XFS4IoT
             {
                 Timeout ??= 0; // default
             }
-            this.Header = new MessageHeader(attribNameValue, RequestId, version, Type, Timeout);
+            this.Header = new MessageHeader(attribNameValue, RequestId, version, Type, Timeout, Status, CompletionCode, ErrorDescription);
         }
 
         /// <summary>

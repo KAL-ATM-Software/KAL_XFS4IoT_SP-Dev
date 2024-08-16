@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.MixedMedia
             ISetModeEvents events = new SetModeEvents(Connection, setModeCmd.Header.RequestId.Value);
 
             var result = await HandleSetMode(events, setModeCmd, cancel);
-            await Connection.SendMessageAsync(new SetModeCompletion(setModeCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetModeCompletion(setModeCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setModecommand = command.IsA<SetModeCommand>();
-            setModecommand.Header.RequestId.HasValue.IsTrue();
+            var setModeCommand = command.IsA<SetModeCommand>();
+            setModeCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetModeCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetModeCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetModeCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetModeCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetModeCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetModeCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetModeCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetModeCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetModeCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetModeCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetModeCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetModeCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetModeCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetModeCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetModeCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetModeCompletion(setModecommand.Header.RequestId.Value, new SetModeCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetModeCompletion(setModeCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

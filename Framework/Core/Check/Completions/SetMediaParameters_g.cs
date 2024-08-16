@@ -19,16 +19,16 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.SetMediaParameters")]
     public sealed class SetMediaParametersCompletion : Completion<SetMediaParametersCompletion.PayloadData>
     {
-        public SetMediaParametersCompletion(int RequestId, SetMediaParametersCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetMediaParametersCompletion(int RequestId, SetMediaParametersCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

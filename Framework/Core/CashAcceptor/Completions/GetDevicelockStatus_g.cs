@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.GetDeviceLockStatus")]
     public sealed class GetDeviceLockStatusCompletion : Completion<GetDeviceLockStatusCompletion.PayloadData>
     {
-        public GetDeviceLockStatusCompletion(int RequestId, GetDeviceLockStatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetDeviceLockStatusCompletion(int RequestId, GetDeviceLockStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, DeviceLockStatusEnum? DeviceLockStatus = null, List<UnitLockClass> UnitLock = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(DeviceLockStatusEnum? DeviceLockStatus = null, List<UnitLockClass> UnitLock = null)
+                : base()
             {
                 this.DeviceLockStatus = DeviceLockStatus;
                 this.UnitLock = UnitLock;

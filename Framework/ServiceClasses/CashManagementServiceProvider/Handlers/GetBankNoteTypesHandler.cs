@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,18 +13,19 @@ using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.CashManagement;
 using XFS4IoT.Completions;
 using XFS4IoTServer;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.CashManagement
 {
     [CommandHandlerAsync]
     public partial class GetBankNoteTypesHandler
     {
-        private Task<GetBankNoteTypesCompletion.PayloadData> HandleGetBankNoteTypes(IGetBankNoteTypesEvents events, GetBankNoteTypesCommand getBankNoteTypes, CancellationToken cancel)
+        private Task<CommandResult<GetBankNoteTypesCompletion.PayloadData>> HandleGetBankNoteTypes(IGetBankNoteTypesEvents events, GetBankNoteTypesCommand getBankNoteTypes, CancellationToken cancel)
         {
             Dictionary<string, BankNoteClass> items = null;
             if (Common.CashManagementCapabilities.AllBanknoteItems?.Count > 0)
             {
-                items = new Dictionary<string, BankNoteClass>();
+                items = [];
                 foreach (var item in Common.CashManagementCapabilities.AllBanknoteItems)
                 {
                     items.Add(item.Key, new BankNoteClass(new (item.Value.NoteId,
@@ -36,9 +36,11 @@ namespace XFS4IoTFramework.CashManagement
                 }
             }
 
-            return Task.FromResult(new GetBankNoteTypesCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.Success,
-                                                                              ErrorDescription: null,
-                                                                              Items: items));
+            return Task.FromResult(
+                new CommandResult<GetBankNoteTypesCompletion.PayloadData>(
+                    items is not null ? new(Items: items) : null,
+                    CompletionCode: MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

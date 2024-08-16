@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetMediaList")]
     public sealed class GetMediaListCompletion : Completion<GetMediaListCompletion.PayloadData>
     {
-        public GetMediaListCompletion(int RequestId, GetMediaListCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetMediaListCompletion(int RequestId, GetMediaListCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, List<string> MediaList = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(List<string> MediaList = null)
+                : base()
             {
                 this.MediaList = MediaList;
             }

@@ -4,13 +4,11 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
@@ -19,7 +17,7 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class SupplyReplenishHandler
     {
-        private async Task<SupplyReplenishCompletion.PayloadData> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
         {
             SupplyReplenishedRequest.SupplyEnum supplies = SupplyReplenishedRequest.SupplyEnum.NotSupported;
 
@@ -63,8 +61,9 @@ namespace XFS4IoTFramework.Printer
             var result = await Device.SupplyReplenishedAsync(new (supplies), cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.SupplyReplenishedAsync() -> {result.CompletionCode}");
 
-            return new SupplyReplenishCompletion.PayloadData(result.CompletionCode,
-                                                             result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

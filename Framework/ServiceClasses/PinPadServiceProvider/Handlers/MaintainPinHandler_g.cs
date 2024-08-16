@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.PinPad
             IMaintainPinEvents events = new MaintainPinEvents(Connection, maintainPinCmd.Header.RequestId.Value);
 
             var result = await HandleMaintainPin(events, maintainPinCmd, cancel);
-            await Connection.SendMessageAsync(new MaintainPinCompletion(maintainPinCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new MaintainPinCompletion(maintainPinCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var maintainPincommand = command.IsA<MaintainPinCommand>();
-            maintainPincommand.Header.RequestId.HasValue.IsTrue();
+            var maintainPinCommand = command.IsA<MaintainPinCommand>();
+            maintainPinCommand.Header.RequestId.HasValue.IsTrue();
 
-            MaintainPinCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => MaintainPinCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => MaintainPinCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => MaintainPinCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new MaintainPinCompletion(maintainPincommand.Header.RequestId.Value, new MaintainPinCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new MaintainPinCompletion(maintainPinCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

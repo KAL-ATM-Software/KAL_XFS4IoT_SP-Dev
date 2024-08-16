@@ -15,25 +15,27 @@ using XFS4IoT.Auxiliaries.Completions;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    public partial class GetAutoStartupTimeHandler
+    public partial class GetAutoStartUpTimeHandler
     {
 
-        private async Task<GetAutoStartUpTimeCompletion.PayloadData> HandleGetAutoStartupTime(IGetAutoStartupTimeEvents events, GetAutoStartUpTimeCommand getAutoStartupTime, CancellationToken cancel)
+        private async Task<CommandResult<GetAutoStartUpTimeCompletion.PayloadData>> HandleGetAutoStartUpTime(IGetAutoStartUpTimeEvents events, GetAutoStartUpTimeCommand getAutoStartupTime, CancellationToken cancel)
         {
             if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
-                return new GetAutoStartUpTimeCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.UnsupportedCommand, "Device reported no supported AutoStartupModes.");
-            
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand, 
+                    "Device reported no supported AutoStartupModes.");
+            }
+
             Logger.Log(Constants.DeviceClass, "AuxiliariesDev.GetAutoStartupTime()");
 
             var result = await Device.GetAutoStartupTime(cancel);
 
             Logger.Log(Constants.DeviceClass, $"AuxiliariesDev.GetAutoStartupTime() -> {result.CompletionCode}");
 
-            if (result.CompletionCode == XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
-                return new GetAutoStartUpTimeCompletion.PayloadData(
-                    CompletionCode: result.CompletionCode,
-                    ErrorDescription: result.ErrorDescription,
+                return new (new GetAutoStartUpTimeCompletion.PayloadData(
                     Mode: result.Mode switch
                     {
                         AutoStartupTimeModeEnum.Specific => GetAutoStartUpTimeCompletion.PayloadData.ModeEnum.Specific,
@@ -58,11 +60,14 @@ namespace XFS4IoTFramework.Auxiliaries
                                    },
                                    Day: result.StartupTime.Day,
                                    Hour: result.StartupTime.Hour,
-                                   Minute: result.StartupTime.Minute));
+                                   Minute: result.StartupTime.Minute)),
+                    CompletionCode: result.CompletionCode,
+                    ErrorDescription: result.ErrorDescription);
             }
 
-            return new GetAutoStartUpTimeCompletion.PayloadData(CompletionCode:result.CompletionCode,
-                                                                ErrorDescription: result.ErrorDescription);
+            return new(
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription);
         }
 
     }

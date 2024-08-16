@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.TextTerminal
             IBeepEvents events = new BeepEvents(Connection, beepCmd.Header.RequestId.Value);
 
             var result = await HandleBeep(events, beepCmd, cancel);
-            await Connection.SendMessageAsync(new BeepCompletion(beepCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new BeepCompletion(beepCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var beepcommand = command.IsA<BeepCommand>();
-            beepcommand.Header.RequestId.HasValue.IsTrue();
+            var beepCommand = command.IsA<BeepCommand>();
+            beepCommand.Header.RequestId.HasValue.IsTrue();
 
-            BeepCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => BeepCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => BeepCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => BeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => BeepCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => BeepCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => BeepCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => BeepCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => BeepCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => BeepCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => BeepCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => BeepCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => BeepCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => BeepCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => BeepCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => BeepCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new BeepCompletion(beepcommand.Header.RequestId.Value, new BeepCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new BeepCompletion(beepCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

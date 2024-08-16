@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,19 +18,21 @@ namespace XFS4IoTFramework.KeyManagement
 {
     public partial class ExportRSADeviceSignedItemHandler
     {
-        private async Task<ExportRSADeviceSignedItemCompletion.PayloadData> HandleExportRSADeviceSignedItem(IExportRSADeviceSignedItemEvents events, ExportRSADeviceSignedItemCommand exportRSADeviceSignedItem, CancellationToken cancel)
+        private async Task<CommandResult<ExportRSADeviceSignedItemCompletion.PayloadData>> HandleExportRSADeviceSignedItem(IExportRSADeviceSignedItemEvents events, ExportRSADeviceSignedItemCommand exportRSADeviceSignedItem, CancellationToken cancel)
         {
             if (exportRSADeviceSignedItem.Payload.ExportItemType is null)
             {
-                return new ExportRSADeviceSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"No item type specified to export.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No item type specified to export.");
             }
 
             if (!Common.KeyManagementCapabilities.SignatureScheme.HasFlag(KeyManagementCapabilitiesClass.SignatureSchemeEnum.ExportEPPID))
             {
-                return new ExportRSADeviceSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                           $"The device doesn't support to RSA signature scheme.",
-                                                                           ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair);
+                return new(
+                    new(ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair),
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"The device doesn't support to RSA signature scheme.");
             }
 
             if (!string.IsNullOrEmpty(exportRSADeviceSignedItem.Payload.SigKey))
@@ -39,15 +40,17 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyDetail keyDetail = KeyManagement.GetKeyDetail(exportRSADeviceSignedItem.Payload.SigKey);
                 if (keyDetail is null)
                 {
-                    return new ExportRSADeviceSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                               $"Specified signature key is not found. {exportRSADeviceSignedItem.Payload.SigKey}",
-                                                                               ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified signature key is not found. {exportRSADeviceSignedItem.Payload.SigKey}");
                 }
                 if (keyDetail.KeyStatus != KeyDetail.KeyStatusEnum.Loaded)
                 {
-                    return new ExportRSADeviceSignedItemCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                               $"Specified signature key is not loaded or unknown state. {exportRSADeviceSignedItem.Payload.SigKey}",
-                                                                               ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied);
+                    return new(
+                        new(ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied),
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified signature key is not loaded or unknown state. {exportRSADeviceSignedItem.Payload.SigKey}");
                 }
             }
 
@@ -86,18 +89,29 @@ namespace XFS4IoTFramework.KeyManagement
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportRSAPublicKey() -> {result.CompletionCode}, {result.ErrorCode}");
             }
 
-            return new ExportRSADeviceSignedItemCompletion.PayloadData(result.CompletionCode,
-                                                                       result.ErrorDescription,
-                                                                       result.ErrorCode switch
-                                                                       {
-                                                                           RSASignedItemResult.ErrorCodeEnum.AccessDenied => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                                           RSASignedItemResult.ErrorCodeEnum.KeyNotFound => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
-                                                                           RSASignedItemResult.ErrorCodeEnum.NoRSAKeyPair => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair,
-                                                                           _ => null,
-                                                                       },
-                                                                       result.Data,
-                                                                       result.SelfSignature,
-                                                                       result.Signature);
+            ExportRSADeviceSignedItemCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Data?.Count > 0 ||
+                result.SelfSignature?.Count > 0 ||
+                result.Signature?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode switch
+                    {
+                        RSASignedItemResult.ErrorCodeEnum.AccessDenied => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
+                        RSASignedItemResult.ErrorCodeEnum.KeyNotFound => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
+                        RSASignedItemResult.ErrorCodeEnum.NoRSAKeyPair => ExportRSADeviceSignedItemCompletion.PayloadData.ErrorCodeEnum.NoRSAKeyPair,
+                        _ => null,
+                    },
+                    result.Data,
+                    result.SelfSignature,
+                    result.Signature);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

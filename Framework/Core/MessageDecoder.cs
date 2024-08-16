@@ -185,40 +185,50 @@ namespace XFS4IoT
                 //Check for Acknowledge and copy command name (RequestId, CommandName, Payload)
                 if (messageType == typeof(Acknowledge) && Header.RequestId.HasValue)
                 {
-                    return new Acknowledge((int)Header.RequestId, Header.Name, Header.Version, Payload.IsA<Acknowledge.PayloadData>());
+                    return new Acknowledge((int)Header.RequestId, Header.Name, Header.Version, Header.Status);
                 }
 
-                //Get constructor (RequestId, payloadType) (Completion)
-                ConstructorInfo ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T) });
+                //Get constructor (RequestId, payloadType, completion, errorDescription) (Completion)
+                ConstructorInfo ci = messageType.GetConstructor([typeof(int), typeof(T), typeof(MessageHeader.CompletionCodeEnum), typeof(string)]);
                 if (ci != null && Header.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Header.RequestId.Value, Payload });
+                    return ci.Invoke([Header.RequestId.Value, Payload, Header.CompletionCode ?? MessageHeader.CompletionCodeEnum.Success, Header.ErrorDescription]);
+
+                //Get constructor (RequestId, completion, errorDescription) (Completion without payload)
+                ci = messageType.GetConstructor([typeof(int), typeof(MessageHeader.CompletionCodeEnum), typeof(string)]);
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke([Header.RequestId.Value, Header.CompletionCode ?? MessageHeader.CompletionCodeEnum.Success, Header.ErrorDescription]);
 
                 //Get constructor (RequestId, payloadType, timeout) (Command with Payload)
-                ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(T), typeof(int) });
+                ci = messageType.GetConstructor([typeof(int), typeof(T), typeof(int)]);
                 if (ci != null && Header.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Header.RequestId.Value, Payload, Header.Timeout ?? 0});
+                    return ci.Invoke([Header.RequestId.Value, Payload, Header.Timeout ?? 0]);
 
                 //Get constructor (RequestId, timeout) (Command without Payload)
-                ci = messageType.GetConstructor(new Type[] { typeof(int), typeof(int) });
+                ci = messageType.GetConstructor([typeof(int), typeof(int)]);
                 if (ci != null && Header.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Header.RequestId.Value, Header.Timeout ?? 0});
-                
+                    return ci.Invoke([Header.RequestId.Value, Header.Timeout ?? 0]);
+
+                //Try to get constructor (RequestId, Payload) for events
+                ci = messageType.GetConstructor([typeof(int), typeof(T)]);
+                if (ci != null && Header.RequestId.HasValue)
+                    return ci.Invoke([Header.RequestId.Value, Payload]);
+
                 //Try to get constructor (RequestId) for events
-                ci = messageType.GetConstructor(new Type[] { typeof(int) });
+                ci = messageType.GetConstructor([typeof(int)]);
                 if (ci != null && Header.RequestId.HasValue)
-                    return ci.Invoke(new object[] { Header.RequestId.Value });
+                    return ci.Invoke([ Header.RequestId.Value ]);
 
                 //Try to get constructor (payloadType) for events
-                ci = messageType.GetConstructor(new Type[] { typeof(T) });
+                ci = messageType.GetConstructor([typeof(T)]);
                 if (ci != null)
-                    return ci.Invoke(new object[] { Payload });
+                    return ci.Invoke([Payload]);
 
                 //Try to get constructor () for unsolic events (no request ID.) 
-                ci = messageType.GetConstructor(Array.Empty<Type>());
+                ci = messageType.GetConstructor([]);
                 if (ci != null)
-                    return ci.Invoke(Array.Empty<object>());
+                    return ci.Invoke([]);
 
-                return Contracts.Fail<object>($"Unable to find constructor for type {nameof(messageType)} with parameters (RequestId, Payload) or (RequestId).");
+                return Contracts.Fail<object>($"Unable to find constructor for type {nameof(messageType)} with parameters (RequestId, Payload, Completion) or (RequestId).");
             }
         }
 

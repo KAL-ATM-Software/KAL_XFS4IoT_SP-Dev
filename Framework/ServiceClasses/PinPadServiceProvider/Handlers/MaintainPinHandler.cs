@@ -4,26 +4,24 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.PinPad.Commands;
-using XFS4IoT.PinPad.Completions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.PinPad
 {
     public partial class MaintainPinHandler
     {
-        private async Task<MaintainPinCompletion.PayloadData> HandleMaintainPin(IMaintainPinEvents events, MaintainPinCommand maintainPin, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleMaintainPin(IMaintainPinEvents events, MaintainPinCommand maintainPin, CancellationToken cancel)
         {
             if (maintainPin.Payload.MaintainPIN is null)
             {
-                return new MaintainPinCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"MaintainPIN is not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"MaintainPIN is not specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.VerifyPINLocalDES()");
@@ -32,7 +30,9 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.VerifyPINLocalDES() -> {result.CompletionCode}");
 
-            return new MaintainPinCompletion.PayloadData(result.CompletionCode, result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
     }
 }

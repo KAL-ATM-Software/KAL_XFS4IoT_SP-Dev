@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Crypto
             IVerifyAuthenticationEvents events = new VerifyAuthenticationEvents(Connection, verifyAuthenticationCmd.Header.RequestId.Value);
 
             var result = await HandleVerifyAuthentication(events, verifyAuthenticationCmd, cancel);
-            await Connection.SendMessageAsync(new VerifyAuthenticationCompletion(verifyAuthenticationCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new VerifyAuthenticationCompletion(verifyAuthenticationCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var verifyAuthenticationcommand = command.IsA<VerifyAuthenticationCommand>();
-            verifyAuthenticationcommand.Header.RequestId.HasValue.IsTrue();
+            var verifyAuthenticationCommand = command.IsA<VerifyAuthenticationCommand>();
+            verifyAuthenticationCommand.Header.RequestId.HasValue.IsTrue();
 
-            VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => VerifyAuthenticationCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new VerifyAuthenticationCompletion(verifyAuthenticationcommand.Header.RequestId.Value, new VerifyAuthenticationCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new VerifyAuthenticationCompletion(verifyAuthenticationCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

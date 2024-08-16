@@ -19,16 +19,16 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCompletion : Completion<ReadRawDataCompletion.PayloadData>
     {
-        public ReadRawDataCompletion(int RequestId, ReadRawDataCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ReadRawDataCompletion(int RequestId, ReadRawDataCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, CardDataNullableClass Track1 = null, CardDataNullableClass Track2 = null, CardDataNullableClass Track3 = null, List<CardDataClass> Chip = null, SecurityClass Security = null, CardDataNullableClass Watermark = null, MemoryChipClass MemoryChip = null, CardDataNullableClass Track1Front = null, List<byte> FrontImage = null, List<byte> BackImage = null, CardDataNullableClass Track1JIS = null, CardDataNullableClass Track3JIS = null, CardDataNullableClass Ddi = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, CardDataNullableClass Track1 = null, CardDataNullableClass Track2 = null, CardDataNullableClass Track3 = null, List<CardDataClass> Chip = null, SecurityClass Security = null, CardDataNullableClass Watermark = null, MemoryChipClass MemoryChip = null, CardDataNullableClass Track1Front = null, List<byte> FrontImage = null, List<byte> BackImage = null, CardDataNullableClass Track1JIS = null, CardDataNullableClass Track3JIS = null, CardDataNullableClass Ddi = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Track1 = Track1;

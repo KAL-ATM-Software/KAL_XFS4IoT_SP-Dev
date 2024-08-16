@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.TextTerminal
             IGetQueryFieldEvents events = new GetQueryFieldEvents(Connection, getQueryFieldCmd.Header.RequestId.Value);
 
             var result = await HandleGetQueryField(events, getQueryFieldCmd, cancel);
-            await Connection.SendMessageAsync(new GetQueryFieldCompletion(getQueryFieldCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetQueryFieldCompletion(getQueryFieldCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var getQueryFieldcommand = command.IsA<GetQueryFieldCommand>();
-            getQueryFieldcommand.Header.RequestId.HasValue.IsTrue();
+            var getQueryFieldCommand = command.IsA<GetQueryFieldCommand>();
+            getQueryFieldCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetQueryFieldCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GetQueryFieldCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetQueryFieldCompletion(getQueryFieldcommand.Header.RequestId.Value, new GetQueryFieldCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetQueryFieldCompletion(getQueryFieldCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

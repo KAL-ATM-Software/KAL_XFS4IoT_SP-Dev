@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -11,18 +10,18 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.TextTerminal
 {
     public partial class BeepHandler
     {
-        private async Task<BeepCompletion.PayloadData> HandleBeep(IBeepEvents events, BeepCommand beep, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleBeep(IBeepEvents events, BeepCommand beep, CancellationToken cancel)
         {
             if (beep.Payload.Beep is null)
             {
-                return new BeepCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                      $"No beep flag is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No beep flag is specified.");
             }
 
             BeepRequest.BeepTypeEnum type = BeepRequest.BeepTypeEnum.None;
@@ -58,8 +57,9 @@ namespace XFS4IoTFramework.TextTerminal
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.BeepAsync() -> {result.CompletionCode}");
 
-            return new BeepCompletion.PayloadData(result.CompletionCode,
-                                                  result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

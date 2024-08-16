@@ -18,11 +18,13 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class PrepareDispenseHandler
     {
-        private async Task<PrepareDispenseCompletion.PayloadData> HandlePrepareDispense(IPrepareDispenseEvents events, PrepareDispenseCommand prepareDispense, CancellationToken cancel)
+        private async Task<CommandResult<PrepareDispenseCompletion.PayloadData>> HandlePrepareDispense(IPrepareDispenseEvents events, PrepareDispenseCommand prepareDispense, CancellationToken cancel)
         {
             if (prepareDispense.Payload.Action is null)
             {
-                return new PrepareDispenseCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Index property is set to null where the retract area is specified to retract position.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "Index property is set to null where the retract area is specified to retract position.");
             }
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.PrepareDispenseAsync()");
@@ -32,8 +34,9 @@ namespace XFS4IoTFramework.CashDispenser
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.PrepareDispenseAsync() -> {result.CompletionCode}");
 
 
-            return new PrepareDispenseCompletion.PayloadData(result.CompletionCode, 
-                                                             result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

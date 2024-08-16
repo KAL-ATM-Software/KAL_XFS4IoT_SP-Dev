@@ -19,16 +19,16 @@ namespace XFS4IoT.CashDispenser.Completions
     [Completion(Name = "CashDispenser.GetMixTable")]
     public sealed class GetMixTableCompletion : Completion<GetMixTableCompletion.PayloadData>
     {
-        public GetMixTableCompletion(int RequestId, GetMixTableCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetMixTableCompletion(int RequestId, GetMixTableCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, int? MixNumber = null, string Name = null, List<MixRowClass> MixRows = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.MixNumber = MixNumber;

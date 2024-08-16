@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.Lights.Commands;
 using XFS4IoT.Lights.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Lights
@@ -21,7 +19,7 @@ namespace XFS4IoTFramework.Lights
     public partial class SetLightHandler
     {
 
-        private async Task<SetLightCompletion.PayloadData> HandleSetLight(ISetLightEvents events, SetLightCommand setLight, CancellationToken cancel)
+        private async Task<CommandResult<SetLightCompletion.PayloadData>> HandleSetLight(ISetLightEvents events, SetLightCommand setLight, CancellationToken cancel)
         {
             if ((setLight.Payload.ExtendedProperties is null ||
                  setLight.Payload.ExtendedProperties.Count == 0) &&
@@ -49,8 +47,9 @@ namespace XFS4IoTFramework.Lights
                 setLight.Payload.StatusInService is null &&
                 setLight.Payload.FasciaLight is null)
             {
-                return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"No light component specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No light component specified.");
             }
 
             Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsStatusClass.LightOperation> stdLights = new();
@@ -58,8 +57,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser}");
                 }
 
                 stdLights.Add(
@@ -108,8 +108,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser2}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser2}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.BillAcceptor2,
@@ -157,8 +158,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor}");
                 }
 
                 stdLights.Add(
@@ -207,8 +209,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor2}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor2}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.BillAcceptor2,
@@ -256,8 +259,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.CardReader,
@@ -305,8 +309,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader2))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader2}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader2}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.CardReader2,
@@ -354,8 +359,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Scanner))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Scanner}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Scanner}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.Scanner,
@@ -403,8 +409,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PassbookPrinter}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PassbookPrinter}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.PassbookPrinter,
@@ -452,8 +459,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PinPad))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PinPad}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PinPad}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.PinPad,
@@ -501,8 +509,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Contactless))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Contactless}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Contactless}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.Contactless,
@@ -550,8 +559,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinAcceptor}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinAcceptor}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.CoinAcceptor,
@@ -599,8 +609,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinDispenser))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinDispenser}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinDispenser}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.CoinDispenser,
@@ -648,8 +659,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter,
@@ -697,8 +709,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.DocumentPrinter}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.DocumentPrinter}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.DocumentPrinter,
@@ -746,8 +759,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository,
@@ -795,8 +809,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser,
@@ -844,8 +859,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator,
@@ -893,8 +909,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator,
@@ -942,8 +959,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator,
@@ -991,8 +1009,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator,
@@ -1040,8 +1059,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator,
@@ -1089,8 +1109,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.FasciaLight))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.FasciaLight}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.FasciaLight}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.FasciaLight,
@@ -1138,8 +1159,9 @@ namespace XFS4IoTFramework.Lights
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CheckUnit))
                 {
-                    return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CheckUnit}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CheckUnit}");
                 }
                 stdLights.Add(
                     LightsCapabilitiesClass.DeviceEnum.CheckUnit,
@@ -1193,8 +1215,9 @@ namespace XFS4IoTFramework.Lights
 
                     if (!Common.LightsCapabilities.CustomLights.ContainsKey(custom.Key))
                     {
-                        return new SetLightCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported custom light specified. {custom.Key}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Unsupported custom light specified. {custom.Key}");
                     }
 
                     customLights.Add(custom.Key,
@@ -1244,9 +1267,10 @@ namespace XFS4IoTFramework.Lights
                                                     cancel);
             Logger.Log(Constants.DeviceClass, $"LightsDev.SetLightAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new SetLightCompletion.PayloadData(result.CompletionCode,
-                                                      result.ErrorDescription,
-                                                      result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

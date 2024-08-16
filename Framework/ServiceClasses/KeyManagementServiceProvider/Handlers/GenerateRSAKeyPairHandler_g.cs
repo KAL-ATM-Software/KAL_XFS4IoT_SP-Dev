@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.KeyManagement
             IGenerateRSAKeyPairEvents events = new GenerateRSAKeyPairEvents(Connection, generateRSAKeyPairCmd.Header.RequestId.Value);
 
             var result = await HandleGenerateRSAKeyPair(events, generateRSAKeyPairCmd, cancel);
-            await Connection.SendMessageAsync(new GenerateRSAKeyPairCompletion(generateRSAKeyPairCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GenerateRSAKeyPairCompletion(generateRSAKeyPairCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var generateRSAKeyPaircommand = command.IsA<GenerateRSAKeyPairCommand>();
-            generateRSAKeyPaircommand.Header.RequestId.HasValue.IsTrue();
+            var generateRSAKeyPairCommand = command.IsA<GenerateRSAKeyPairCommand>();
+            generateRSAKeyPairCommand.Header.RequestId.HasValue.IsTrue();
 
-            GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GenerateRSAKeyPairCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GenerateRSAKeyPairCompletion(generateRSAKeyPaircommand.Header.RequestId.Value, new GenerateRSAKeyPairCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GenerateRSAKeyPairCompletion(generateRSAKeyPairCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

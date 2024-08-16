@@ -16,7 +16,7 @@ namespace XFS4IoTFramework.CardReader
 {
     public partial class ResetHandler
     {
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<ResetCompletion.PayloadData>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             ResetDeviceRequest.ToEnum to = ResetDeviceRequest.ToEnum.Default;
             if (reset.Payload?.To is not null)
@@ -35,8 +35,9 @@ namespace XFS4IoTFramework.CardReader
                 if (to != ResetDeviceRequest.ToEnum.Default &&
                     to != ResetDeviceRequest.ToEnum.CurrentPosition)
                 {
-                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {Common.CardReaderCapabilities.Type} To:{reset.Payload.To}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid location specified for card reader type. The DIP, swipe or permanent card can't control media to move.  {Common.CardReaderCapabilities.Type} To:{reset.Payload.To}");
                 }
             }
 
@@ -48,15 +49,17 @@ namespace XFS4IoTFramework.CardReader
                 {
                     if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.Motor)
                     {
-                        return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Card reader type {Common.CardReaderCapabilities.Type} is not supporting storage.");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Card reader type {Common.CardReaderCapabilities.Type} is not supporting storage.");
                     }
 
                     storageId = reset.Payload.StorageId;
                     if (!Storage.CardUnits.ContainsKey(storageId))
                     {
-                        return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Invalid StorageId supplied. {reset.Payload.StorageId}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Invalid StorageId supplied. {reset.Payload.StorageId}");
                     }
                 }
                 // if the storage id is null, device class can decide the location
@@ -69,7 +72,7 @@ namespace XFS4IoTFramework.CardReader
             
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 string storageIdMediaMoved = storageId;
                 if (string.IsNullOrEmpty(storageIdMediaMoved))
@@ -96,9 +99,11 @@ namespace XFS4IoTFramework.CardReader
                 }
             }
 
-            return new ResetCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription,
-                                                   result.ErrorCode);
+
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }
     }

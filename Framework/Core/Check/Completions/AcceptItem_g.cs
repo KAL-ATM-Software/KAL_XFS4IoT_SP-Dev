@@ -19,16 +19,16 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.AcceptItem")]
     public sealed class AcceptItemCompletion : Completion<AcceptItemCompletion.PayloadData>
     {
-        public AcceptItemCompletion(int RequestId, AcceptItemCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public AcceptItemCompletion(int RequestId, AcceptItemCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

@@ -19,16 +19,16 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.GetPresentStatus")]
     public sealed class GetPresentStatusCompletion : Completion<GetPresentStatusCompletion.PayloadData>
     {
-        public GetPresentStatusCompletion(int RequestId, GetPresentStatusCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetPresentStatusCompletion(int RequestId, GetPresentStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, CashManagement.OutputPositionEnum? Position = null, PresentStateEnum? PresentState = null, AdditionalBunchesEnum? AdditionalBunches = null, int? BunchesRemaining = null, CashManagement.StorageCashCountsClass ReturnedItems = null, CashManagement.StorageCashCountsClass TotalReturnedItems = null, CashManagement.StorageCashCountsClass RemainingItems = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(CashManagement.OutputPositionEnum? Position = null, PresentStateEnum? PresentState = null, AdditionalBunchesEnum? AdditionalBunches = null, int? BunchesRemaining = null, CashManagement.StorageCashCountsClass ReturnedItems = null, CashManagement.StorageCashCountsClass TotalReturnedItems = null, CashManagement.StorageCashCountsClass RemainingItems = null)
+                : base()
             {
                 this.Position = Position;
                 this.PresentState = PresentState;

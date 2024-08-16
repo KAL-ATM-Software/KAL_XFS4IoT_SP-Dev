@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Camera
             ITakePictureEvents events = new TakePictureEvents(Connection, takePictureCmd.Header.RequestId.Value);
 
             var result = await HandleTakePicture(events, takePictureCmd, cancel);
-            await Connection.SendMessageAsync(new TakePictureCompletion(takePictureCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new TakePictureCompletion(takePictureCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var takePicturecommand = command.IsA<TakePictureCommand>();
-            takePicturecommand.Header.RequestId.HasValue.IsTrue();
+            var takePictureCommand = command.IsA<TakePictureCommand>();
+            takePictureCommand.Header.RequestId.HasValue.IsTrue();
 
-            TakePictureCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => TakePictureCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => TakePictureCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => TakePictureCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => TakePictureCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => TakePictureCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => TakePictureCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => TakePictureCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => TakePictureCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => TakePictureCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new TakePictureCompletion(takePicturecommand.Header.RequestId.Value, new TakePictureCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new TakePictureCompletion(takePictureCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

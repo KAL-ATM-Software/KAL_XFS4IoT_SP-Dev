@@ -4,14 +4,12 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTServer;
 
@@ -19,39 +17,44 @@ namespace XFS4IoTFramework.PinPad
 {
     public partial class LocalVisaHandler
     {
-        private async Task<LocalVisaCompletion.PayloadData> HandleLocalVisa(ILocalVisaEvents events, LocalVisaCommand localVisa, CancellationToken cancel)
+        private async Task<CommandResult<LocalVisaCompletion.PayloadData>> HandleLocalVisa(ILocalVisaEvents events, LocalVisaCommand localVisa, CancellationToken cancel)
         {
             if (string.IsNullOrEmpty(localVisa.Payload.Pan))
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No customer data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No customer data specified.");
             }
             else
             {
                 if (localVisa.Payload.Pan.Length != 23)
                 {
-                    return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                               $"Invalid length of pan specified. {localVisa.Payload.Pan.Length}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Invalid length of pan specified. {localVisa.Payload.Pan.Length}");
                 }
 
                 foreach (char c in localVisa.Payload.Pan)
                 {
                     if (!Char.IsDigit(c))
                     {
-                        return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Offset data should be number. {localVisa.Payload.Pan}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Offset data should be number. {localVisa.Payload.Pan}");
                     }
                 }
             }
             if (string.IsNullOrEmpty(localVisa.Payload.Pvv))
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"No key name specified to verify PIN locally.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key name specified to verify PIN locally.");
             }
             else if (localVisa.Payload.Pvv.Length < 4)
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Pin Valification Value must be minimum 4 digits.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Pin Valification Value must be minimum 4 digits.");
             }
             else
             {
@@ -59,8 +62,9 @@ namespace XFS4IoTFramework.PinPad
                 {
                     if (!Char.IsDigit(c))
                     {
-                        return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"PIN valification value should be number. {localVisa.Payload.Pvv}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"PIN valification value should be number. {localVisa.Payload.Pvv}");
                     }
                 }
             }
@@ -68,9 +72,10 @@ namespace XFS4IoTFramework.PinPad
             KeyDetail key = KeyManagement.GetKeyDetail(localVisa.Payload.Key);
             if (key is null)
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          $"Specified key is not loaded.",
-                                                          LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key is not loaded.");
             }
 
             if (localVisa.Payload.KeyEncKey is null ||
@@ -79,9 +84,10 @@ namespace XFS4IoTFramework.PinPad
                 // Loaded key is to veirfy PIN using imported key
                 if (key.KeyUsage != "V2")
                 {
-                    return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Specified key usage is not having expected key usage to verify PIN.{key.KeyUsage}",
-                                                              LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key usage is not having expected key usage to verify PIN.{key.KeyUsage}");
                 }
             }
             else
@@ -90,16 +96,18 @@ namespace XFS4IoTFramework.PinPad
                 if (key.KeyUsage != "D0" &&
                     key.KeyUsage != "D2")
                 {
-                    return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified key encryption key usage is not expected to decrypt KeyEncKey enctrypted key.{key.KeyUsage}",
-                                                               LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(LocalVisaCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key encryption key usage is not expected to decrypt KeyEncKey enctrypted key.{key.KeyUsage}");
                 } 
             }
 
             if (string.IsNullOrEmpty(localVisa.Payload.Pvv))
             {
-                return new LocalVisaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"No PIN Validation Value specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No PIN Validation Value specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.VerifyPINLocalVISA()");
@@ -112,19 +120,28 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.VerifyPINLocalVISA() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new LocalVisaCompletion.PayloadData(result.CompletionCode,
-                                                       result.ErrorDescription,
-                                                       result.ErrorCode switch
-                                                       {
-                                                          VerifyPINLocalResult.ErrorCodeEnum.AccessDenied => LocalVisaCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                          VerifyPINLocalResult.ErrorCodeEnum.FormatNotSupported => LocalVisaCompletion.PayloadData.ErrorCodeEnum.FormatNotSupported,
-                                                          VerifyPINLocalResult.ErrorCodeEnum.InvalidKeyLength => LocalVisaCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength,
-                                                          VerifyPINLocalResult.ErrorCodeEnum.KeyNotFound => LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
-                                                          VerifyPINLocalResult.ErrorCodeEnum.KeyNoValue => LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNoValue,
-                                                          VerifyPINLocalResult.ErrorCodeEnum.NoPin => LocalVisaCompletion.PayloadData.ErrorCodeEnum.NoPin,
-                                                          _ => LocalVisaCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
-                                                       },
-                                                       result.Verified);
+            LocalVisaCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
+            {
+                payload = new(
+                     result.ErrorCode switch
+                     {
+                         VerifyPINLocalResult.ErrorCodeEnum.AccessDenied => LocalVisaCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
+                         VerifyPINLocalResult.ErrorCodeEnum.FormatNotSupported => LocalVisaCompletion.PayloadData.ErrorCodeEnum.FormatNotSupported,
+                         VerifyPINLocalResult.ErrorCodeEnum.InvalidKeyLength => LocalVisaCompletion.PayloadData.ErrorCodeEnum.InvalidKeyLength,
+                         VerifyPINLocalResult.ErrorCodeEnum.KeyNotFound => LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNotFound,
+                         VerifyPINLocalResult.ErrorCodeEnum.KeyNoValue => LocalVisaCompletion.PayloadData.ErrorCodeEnum.KeyNoValue,
+                         VerifyPINLocalResult.ErrorCodeEnum.NoPin => LocalVisaCompletion.PayloadData.ErrorCodeEnum.NoPin,
+                         _ => null,
+                     },
+                     result.Verified);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

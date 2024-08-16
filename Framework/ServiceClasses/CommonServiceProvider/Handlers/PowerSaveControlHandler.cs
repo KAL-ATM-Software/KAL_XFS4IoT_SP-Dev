@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,20 +18,22 @@ namespace XFS4IoTFramework.Common
     public partial class PowerSaveControlHandler
     {
 
-        private async Task<PowerSaveControlCompletion.PayloadData> HandlePowerSaveControl(IPowerSaveControlEvents events, PowerSaveControlCommand powerSaveControl, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandlePowerSaveControl(IPowerSaveControlEvents events, PowerSaveControlCommand powerSaveControl, CancellationToken cancel)
         {
             if (powerSaveControl.Payload.MaxPowerSaveRecoveryTime is null)
             {
-                return new PowerSaveControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"No MaxPowerSaveRecoveryTime specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No MaxPowerSaveRecoveryTime specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "CommonDev.PowerSaveControl()");
             var result = await Device.PowerSaveControl((int)powerSaveControl.Payload.MaxPowerSaveRecoveryTime, cancel);
             Logger.Log(Constants.DeviceClass, $"CommonDev.PowerSaveControl() -> {result.CompletionCode}");
 
-            return new PowerSaveControlCompletion.PayloadData(result.CompletionCode,
-                                                              result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
     }
 }

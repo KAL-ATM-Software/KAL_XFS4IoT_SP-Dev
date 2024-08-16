@@ -17,21 +17,11 @@ namespace XFS4IoT.TextTerminal.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "TextTerminal.Beep")]
-    public sealed class BeepCompletion : Completion<BeepCompletion.PayloadData>
+    public sealed class BeepCompletion : Completion<MessagePayload>
     {
-        public BeepCompletion(int RequestId, BeepCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public BeepCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

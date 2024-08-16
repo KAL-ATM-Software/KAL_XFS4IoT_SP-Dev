@@ -19,16 +19,16 @@ namespace XFS4IoT.Auxiliaries.Completions
     [Completion(Name = "Auxiliaries.GetAutoStartUpTime")]
     public sealed class GetAutoStartUpTimeCompletion : Completion<GetAutoStartUpTimeCompletion.PayloadData>
     {
-        public GetAutoStartUpTimeCompletion(int RequestId, GetAutoStartUpTimeCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetAutoStartUpTimeCompletion(int RequestId, GetAutoStartUpTimeCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ModeEnum? Mode = null, SystemTimeClass StartTime = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ModeEnum? Mode = null, SystemTimeClass StartTime = null)
+                : base()
             {
                 this.Mode = Mode;
                 this.StartTime = StartTime;

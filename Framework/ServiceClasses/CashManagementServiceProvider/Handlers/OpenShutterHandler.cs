@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,7 +19,7 @@ namespace XFS4IoTFramework.CashManagement
 {
     public partial class OpenShutterHandler
     {
-        private async Task<OpenShutterCompletion.PayloadData> HandleOpenShutter(IOpenShutterEvents events, OpenShutterCommand openShutter, CancellationToken cancel)
+        private async Task<CommandResult<OpenShutterCompletion.PayloadData>> HandleOpenShutter(IOpenShutterEvents events, OpenShutterCommand openShutter, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.PositionEnum position = CashManagementCapabilitiesClass.PositionEnum.NotSupported;
             if (openShutter.Payload.Position is not null)
@@ -58,9 +57,10 @@ namespace XFS4IoTFramework.CashManagement
             if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
                 !Common.CashManagementCapabilities.Positions.HasFlag(position))
             {
-                return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"Specified unsupported position {position}",
-                                                             OpenShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(OpenShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified unsupported position {position}");
             }
 
             if (Common.CashDispenserCapabilities is not null &&
@@ -87,8 +87,9 @@ namespace XFS4IoTFramework.CashManagement
 
                 if (Common.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Open)
                 {
-                    return new OpenShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                 $"The shutter is already opened.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.Success,
+                        $"The shutter is already opened.");
                 }
             }
 
@@ -110,9 +111,10 @@ namespace XFS4IoTFramework.CashManagement
                     _ => OpenShutterCompletion.PayloadData.ErrorCodeEnum.ShutterNotOpen,
                 };
             }
-            return new OpenShutterCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription,
-                                                         errorCode);
+            return new(
+                errorCode is not null ? new(errorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

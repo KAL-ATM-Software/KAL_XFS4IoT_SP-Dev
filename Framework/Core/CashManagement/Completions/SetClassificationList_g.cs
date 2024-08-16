@@ -17,21 +17,11 @@ namespace XFS4IoT.CashManagement.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "CashManagement.SetClassificationList")]
-    public sealed class SetClassificationListCompletion : Completion<SetClassificationListCompletion.PayloadData>
+    public sealed class SetClassificationListCompletion : Completion<MessagePayload>
     {
-        public SetClassificationListCompletion(int RequestId, SetClassificationListCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetClassificationListCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

@@ -3,11 +3,7 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
- * This file was created automatically as part of the XFS4IoT Camera interface.
- * TakePictureHandler.cs uses automatically generated parts.
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,14 +18,21 @@ namespace XFS4IoTFramework.Camera
     public partial class TakePictureHandler
     {
 
-        private async Task<TakePictureCompletion.PayloadData> HandleTakePicture(ITakePictureEvents events, TakePictureCommand takePicture, CancellationToken cancel)
+        private async Task<CommandResult<TakePictureCompletion.PayloadData>> HandleTakePicture(ITakePictureEvents events, TakePictureCommand takePicture, CancellationToken cancel)
         {
 
             if (takePicture.Payload is null)
-                return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No Payload supplied for TakePicture command.");
-
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No Payload supplied for TakePicture command.");
+            }
             if (takePicture.Payload.Camera is null)
-                return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No Camera supplied for TakePicture command.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No Camera supplied for TakePicture command.");
+            }
 
             CameraCapabilitiesClass.CameraEnum Camera = takePicture.Payload.Camera switch
             {
@@ -44,7 +47,11 @@ namespace XFS4IoTFramework.Camera
             if (takePicture.Payload.CamData is not null)
             {
                 if (!Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.ManualAdd))
-                    return new TakePictureCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "CamData specified when device does not support ManualAdd CamData.");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData, 
+                        "CamData specified when device does not support ManualAdd CamData.");
+                }
 
                 CamData = takePicture.Payload.CamData;
 
@@ -62,11 +69,18 @@ namespace XFS4IoTFramework.Camera
             var result = await Device.TakePictureAsync(new TakePictureRequest(Camera, null, CamData), cancel);
             Logger.Log(Constants.DeviceClass, $"CameraDev.TakePictureAsync() -> {result.CompletionCode}");
 
-
-            return new TakePictureCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription,
-                                                         result.ErrorCode,
-                                                         result.PictureData);
+            TakePictureCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.PictureData?.Count > 0)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    PictureFile: result.PictureData);
+            }
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
     }

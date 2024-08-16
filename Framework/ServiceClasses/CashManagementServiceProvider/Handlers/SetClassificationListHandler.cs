@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +20,16 @@ namespace XFS4IoTFramework.CashManagement
 {
     public partial class SetClassificationListHandler
     {
-        private Task<SetClassificationListCompletion.PayloadData> HandleSetClassificationList(ISetClassificationListEvents events, SetClassificationListCommand setClassificationList, CancellationToken cancel)
+        private Task<CommandResult<MessagePayloadBase>> HandleSetClassificationList(ISetClassificationListEvents events, SetClassificationListCommand setClassificationList, CancellationToken cancel)
         {
             if (setClassificationList.Payload.ClassificationElements is null ||
                 setClassificationList.Payload.ClassificationElements.Count == 0)
             {
-                Task.FromResult(new SetClassificationListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                                                $"No classification list supplied."));
+                Task.FromResult(
+                    new CommandResult<MessagePayloadBase>(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No classification list supplied.")
+                    );
             }
 
             // Clear list first to update new list
@@ -41,14 +43,20 @@ namespace XFS4IoTFramework.CashManagement
                 {
                     if (!Regex.IsMatch(classificationItem.Currency, "^[A-Z]{3}$"))
                     {
-                        Task.FromResult(new SetClassificationListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                                        $"Invalid currency specified. {classificationItem.Currency}"));
+                        Task.FromResult(
+                            new CommandResult<MessagePayloadBase>(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Invalid currency specified. {classificationItem.Currency}")
+                            );
                     }
                 }
                 if (classificationItem.Level is null)
                 {
-                    Task.FromResult(new SetClassificationListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, 
-                                                                                    $"No item level is specified."));
+                    Task.FromResult(
+                        new CommandResult<MessagePayloadBase>(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"No item level is specified.")
+                        );
                 }
 
                 CashManagement.ItemClassificationList.ItemClassifications.Add(
@@ -69,7 +77,10 @@ namespace XFS4IoTFramework.CashManagement
 
             CashManagement.StoreItemClassificationList();
 
-            return Task.FromResult(new SetClassificationListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty));
+            return Task.FromResult(
+                new CommandResult<MessagePayloadBase>(
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

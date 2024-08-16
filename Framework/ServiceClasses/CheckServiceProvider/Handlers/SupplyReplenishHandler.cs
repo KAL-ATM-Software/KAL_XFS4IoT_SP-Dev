@@ -17,17 +17,21 @@ namespace XFS4IoTFramework.Check
 {
     public partial class SupplyReplenishHandler
     {
-        private async Task<SupplyReplenishCompletion.PayloadData> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleSupplyReplenish(ISupplyReplenishEvents events, SupplyReplenishCommand supplyReplenish, CancellationToken cancel)
         {
             if (supplyReplenish.Payload is null)
             {
-                return new SupplyReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No payload specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    $"No payload specified.");
             }
 
             if (supplyReplenish.Payload.Ink is null &&
                 supplyReplenish.Payload.Toner is null)
             {
-                return new SupplyReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No ink or toner specified for a replenishment.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    $"No ink or toner specified for a replenishment.");
             }
 
             SupplyReplenishRequest.SupplyEnum supplies = 0;
@@ -44,7 +48,7 @@ namespace XFS4IoTFramework.Check
             var result = await Device.SupplyReplenishAsync(new(supplies), cancel);
             Logger.Log(Constants.DeviceClass, $"CheckDev.SupplyReplenishedAsync() -> {result.CompletionCode}");
 
-            return new SupplyReplenishCompletion.PayloadData(
+            return new(
                 CompletionCode: result.CompletionCode,
                 ErrorDescription: result.ErrorDescription);
         }

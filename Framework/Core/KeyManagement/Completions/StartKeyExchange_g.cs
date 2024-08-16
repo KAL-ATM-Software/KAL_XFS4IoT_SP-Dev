@@ -19,16 +19,16 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.StartKeyExchange")]
     public sealed class StartKeyExchangeCompletion : Completion<StartKeyExchangeCompletion.PayloadData>
     {
-        public StartKeyExchangeCompletion(int RequestId, StartKeyExchangeCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public StartKeyExchangeCompletion(int RequestId, StartKeyExchangeCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> RandomItem = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<byte> RandomItem = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.RandomItem = RandomItem;

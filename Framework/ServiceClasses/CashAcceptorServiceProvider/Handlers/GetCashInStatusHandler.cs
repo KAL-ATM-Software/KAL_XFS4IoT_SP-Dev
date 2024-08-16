@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,23 +19,26 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class GetCashInStatusHandler
     {
-        private Task<GetCashInStatusCompletion.PayloadData> HandleGetCashInStatus(IGetCashInStatusEvents events, GetCashInStatusCommand getCashInStatus, CancellationToken cancel)
+        private Task<CommandResult<GetCashInStatusCompletion.PayloadData>> HandleGetCashInStatus(IGetCashInStatusEvents events, GetCashInStatusCommand getCashInStatus, CancellationToken cancel)
         {
             CashAcceptor.CashInStatus.IsNotNull($"{nameof(CashAcceptor.CashInStatus)} is not set as expected.");
 
-            return Task.FromResult(new GetCashInStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                             string.Empty,
-                                                                             CashAcceptor.CashInStatus.Status switch 
-                                                                             {
-                                                                                 CashInStatusClass.StatusEnum.Active => GetCashInStatusCompletion.PayloadData.StatusEnum.Active,
-                                                                                 CashInStatusClass.StatusEnum.Ok => GetCashInStatusCompletion.PayloadData.StatusEnum.Ok,
-                                                                                 CashInStatusClass.StatusEnum.Reset => GetCashInStatusCompletion.PayloadData.StatusEnum.Reset,
-                                                                                 CashInStatusClass.StatusEnum.Retract => GetCashInStatusCompletion.PayloadData.StatusEnum.Retract,
-                                                                                 CashInStatusClass.StatusEnum.Rollback => GetCashInStatusCompletion.PayloadData.StatusEnum.Rollback,
-                                                                                 _ => GetCashInStatusCompletion.PayloadData.StatusEnum.Unknown,
-                                                                             },
-                                                                             CashAcceptor.CashInStatus.NumOfRefusedItems,
-                                                                             CashAcceptor.CashInStatus.CashCounts?.CopyTo()));
+            return Task.FromResult(
+                new CommandResult<GetCashInStatusCompletion.PayloadData>(
+                    new(
+                        CashAcceptor.CashInStatus.Status switch
+                        {
+                            CashInStatusClass.StatusEnum.Active => GetCashInStatusCompletion.PayloadData.StatusEnum.Active,
+                            CashInStatusClass.StatusEnum.Ok => GetCashInStatusCompletion.PayloadData.StatusEnum.Ok,
+                            CashInStatusClass.StatusEnum.Reset => GetCashInStatusCompletion.PayloadData.StatusEnum.Reset,
+                            CashInStatusClass.StatusEnum.Retract => GetCashInStatusCompletion.PayloadData.StatusEnum.Retract,
+                            CashInStatusClass.StatusEnum.Rollback => GetCashInStatusCompletion.PayloadData.StatusEnum.Rollback,
+                            _ => GetCashInStatusCompletion.PayloadData.StatusEnum.Unknown,
+                        },
+                        CashAcceptor.CashInStatus.NumOfRefusedItems,
+                        CashAcceptor.CashInStatus.CashCounts?.CopyTo()),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

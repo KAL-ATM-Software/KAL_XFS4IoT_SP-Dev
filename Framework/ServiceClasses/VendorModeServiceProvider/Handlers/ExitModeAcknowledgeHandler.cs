@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -12,18 +11,19 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.VendorMode.Commands;
 using XFS4IoT.VendorMode.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.VendorMode
 {
     public partial class ExitModeAcknowledgeHandler
     {
-        private async Task<ExitModeAcknowledgeCompletion.PayloadData> HandleExitModeAcknowledge(IExitModeAcknowledgeEvents events, ExitModeAcknowledgeCommand exitModeAcknowledge, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleExitModeAcknowledge(IExitModeAcknowledgeEvents events, ExitModeAcknowledgeCommand exitModeAcknowledge, CancellationToken cancel)
         {
             if (Common.VendorModeStatus.ServiceStatus != VendorModeStatusClass.ServiceStatusEnum.ExitPending)
             {
-                return new ExitModeAcknowledgeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.SequenceError, $"ExitModeAcknowledge command should be called after ExitModeRequest command. {Common.VendorModeStatus.ServiceStatus}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.SequenceError, 
+                    $"ExitModeAcknowledge command should be called after ExitModeRequest command. {Common.VendorModeStatus.ServiceStatus}");
             }
 
             // Check all registered clients are acknowledged. if all registered clients are acknkowledged, send ModeExited event.
@@ -46,10 +46,12 @@ namespace XFS4IoTFramework.VendorMode
 
                     Logger.Log(Constants.DeviceClass, $"VendorModeDev.ExitVendorMode() -> {result.CompletionCode}");
 
-                    if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                    if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
                     {
                         Common.VendorModeStatus.ServiceStatus = VendorModeStatusClass.ServiceStatusEnum.Active;
-                        return new ExitModeAcknowledgeCompletion.PayloadData(result.CompletionCode, result.ErrorDescription);
+                        return new(
+                            result.CompletionCode, 
+                            result.ErrorDescription);
                     }
                 }
                 catch (NotImplementedException)
@@ -63,14 +65,14 @@ namespace XFS4IoTFramework.VendorMode
                 }
             }
 
-            return new ExitModeAcknowledgeCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+            return new(MessageHeader.CompletionCodeEnum.Success);
         }
 
         public async Task CommandPostProcessing(object exitAckResult)
         {
-            ExitModeAcknowledgeCompletion.PayloadData result = exitAckResult as ExitModeAcknowledgeCompletion.PayloadData;
+            CommandResult<MessagePayloadBase> result = exitAckResult as CommandResult<MessagePayloadBase>;
 
-            if (result.IsNotNull().CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            if (result.IsNotNull().CompletionCode == MessageHeader.CompletionCodeEnum.Success &&
                 Common.VendorModeStatus.ServiceStatus == VendorModeStatusClass.ServiceStatusEnum.ExitPending &&
                 VendorMode.PendingAcknowledge.Count == 0)
             {

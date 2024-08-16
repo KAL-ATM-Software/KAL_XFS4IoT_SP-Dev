@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashAcceptor
             ICreateSignatureEvents events = new CreateSignatureEvents(Connection, createSignatureCmd.Header.RequestId.Value);
 
             var result = await HandleCreateSignature(events, createSignatureCmd, cancel);
-            await Connection.SendMessageAsync(new CreateSignatureCompletion(createSignatureCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CreateSignatureCompletion(createSignatureCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var createSignaturecommand = command.IsA<CreateSignatureCommand>();
-            createSignaturecommand.Header.RequestId.HasValue.IsTrue();
+            var createSignatureCommand = command.IsA<CreateSignatureCommand>();
+            createSignatureCommand.Header.RequestId.HasValue.IsTrue();
 
-            CreateSignatureCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => CreateSignatureCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new CreateSignatureCompletion(createSignaturecommand.Header.RequestId.Value, new CreateSignatureCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CreateSignatureCompletion(createSignatureCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

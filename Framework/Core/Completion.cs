@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System.Runtime.Serialization;
+using static XFS4IoT.MessageHeader;
 
 namespace XFS4IoT.Completions
 {
@@ -16,8 +17,10 @@ namespace XFS4IoT.Completions
         /// </summary>
         /// <param name="RequestId">request id</param>
         /// <param name="Payload">payload contents</param>
-        public Completion(int RequestId, T Payload) :
-            base(RequestId, MessageHeader.TypeEnum.Completion, Payload, Timeout: null)
+        /// <param name="CompletionCode">completion code</param>
+        /// <param name="ErrorDescription">error description</param>
+        public Completion(int RequestId, T Payload, CompletionCodeEnum CompletionCode, string ErrorDescription) :
+            base(RequestId, MessageHeader.TypeEnum.Completion, Payload, CompletionCode, ErrorDescription)
         { }
     }
 }

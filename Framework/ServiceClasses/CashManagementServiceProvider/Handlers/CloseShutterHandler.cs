@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -15,13 +14,12 @@ using XFS4IoT.CashManagement;
 using XFS4IoT.CashManagement.Commands;
 using XFS4IoT.CashManagement.Completions;
 using XFS4IoTFramework.Common;
-using XFS4IoT.CashManagement.Events;
 
 namespace XFS4IoTFramework.CashManagement
 {
     public partial class CloseShutterHandler
     {
-        private async Task<CloseShutterCompletion.PayloadData> HandleCloseShutter(ICloseShutterEvents events, CloseShutterCommand closeShutter, CancellationToken cancel)
+        private async Task<CommandResult<CloseShutterCompletion.PayloadData>> HandleCloseShutter(ICloseShutterEvents events, CloseShutterCommand closeShutter, CancellationToken cancel)
         {
             CashManagementCapabilitiesClass.PositionEnum position = CashManagementCapabilitiesClass.PositionEnum.NotSupported;
             if (closeShutter.Payload.Position is not null)
@@ -57,9 +55,10 @@ namespace XFS4IoTFramework.CashManagement
             if (position == CashManagementCapabilitiesClass.PositionEnum.NotSupported ||
                 !Common.CashManagementCapabilities.Positions.HasFlag(position))
             {
-                return new CloseShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Specified unsupported position {position}",
-                                                               CloseShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                return new(
+                    new(CloseShutterCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified unsupported position {position}");
             }
 
             if (Common.CashDispenserCapabilities is not null &&
@@ -86,8 +85,9 @@ namespace XFS4IoTFramework.CashManagement
 
                 if (Common.CashDispenserStatus.Positions[outPos].Shutter == CashManagementStatusClass.ShutterEnum.Closed)
                 {
-                    return new CloseShutterCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                  $"The shutter is already closed.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.Success,
+                        $"The shutter is already closed.");
                 }
             }
 
@@ -109,9 +109,10 @@ namespace XFS4IoTFramework.CashManagement
                     _ => CloseShutterCompletion.PayloadData.ErrorCodeEnum.ShutterNotClosed,
                 };
             }
-            return new CloseShutterCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          errorCode);
+            return new(
+                errorCode is not null ? new(errorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

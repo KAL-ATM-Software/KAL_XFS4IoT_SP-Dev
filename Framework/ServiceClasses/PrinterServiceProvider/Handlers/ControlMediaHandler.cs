@@ -4,13 +4,11 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoTServer;
-using XFS4IoT.Completions;
 using XFS4IoT.Printer.Commands;
 using XFS4IoT.Printer.Completions;
 using XFS4IoTFramework.Common;
@@ -19,13 +17,14 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class ControlMediaHandler
     {
-        private async Task<ControlMediaCompletion.PayloadData> HandleControlMedia(IControlMediaEvents events, ControlMediaCommand controlMedia, CancellationToken cancel)
+        private async Task<CommandResult<ControlMediaCompletion.PayloadData>> HandleControlMedia(IControlMediaEvents events, ControlMediaCommand controlMedia, CancellationToken cancel)
         {
             
             if (controlMedia.Payload.MediaControl is null)
             {
-                return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"No media control is set. the device doesn't take a default action.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No media control is set. the device doesn't take a default action.");
             }
 
             PrinterCapabilitiesClass.ControlEnum controls = PrinterCapabilitiesClass.ControlEnum.NotSupported;
@@ -36,8 +35,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Alarm))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Alarm}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Alarm}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Alarm;
             }
@@ -46,8 +46,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Backward))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Backward}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Backward}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Backward;
             }
@@ -56,8 +57,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.ClearBuffer))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.ClearBuffer}");
+                    return new
+                        (MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.ClearBuffer}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.ClearBuffer;
@@ -67,8 +69,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Cut))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Cut}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Cut}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Cut;
@@ -78,8 +81,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Eject}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Eject}");
                 }
 
                 if ((controlMedia.Payload.MediaControl.EjectToTransport is not null &&
@@ -91,8 +95,9 @@ namespace XFS4IoTFramework.Printer
                     (controlMedia.Payload.MediaControl.Expel is not null &&
                     (bool)controlMedia.Payload.MediaControl.Expel))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Eject control can't combined with other actions, EjectToTransport, Retract, Park or Expel. {controlMedia.Payload.MediaControl.Eject}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Eject control can't combined with other actions, EjectToTransport, Retract, Park or Expel. {controlMedia.Payload.MediaControl.Eject}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Eject;
@@ -102,8 +107,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.EjectToTransport}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.EjectToTransport}");
                 }
 
                 if ((controlMedia.Payload.MediaControl.Eject is not null &&
@@ -115,8 +121,9 @@ namespace XFS4IoTFramework.Printer
                     (controlMedia.Payload.MediaControl.Expel is not null &&
                     (bool)controlMedia.Payload.MediaControl.Expel))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"EjectToTransport control can't combined with other actions, Eject, Retract, Park or Expel. {controlMedia.Payload.MediaControl.EjectToTransport}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"EjectToTransport control can't combined with other actions, Eject, Retract, Park or Expel. {controlMedia.Payload.MediaControl.EjectToTransport}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.EjectToTransport;
@@ -126,8 +133,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Flush))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Flush}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Flush}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Flush;
@@ -137,8 +145,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Forward))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Forward}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Forward}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Forward;
@@ -148,8 +157,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Park}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Park}");
                 }
 
                 if ((controlMedia.Payload.MediaControl.Eject is not null &&
@@ -161,8 +171,9 @@ namespace XFS4IoTFramework.Printer
                     (controlMedia.Payload.MediaControl.Expel is not null &&
                     (bool)controlMedia.Payload.MediaControl.Expel))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Park control can't combined with other actions, Eject, Retract, EjectToTransport or Expel. {controlMedia.Payload.MediaControl.Park}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Park control can't combined with other actions, Eject, Retract, EjectToTransport or Expel. {controlMedia.Payload.MediaControl.Park}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Park;
@@ -172,8 +183,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.PartialCut))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.PartialCut}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.PartialCut}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.PartialCut;
@@ -183,8 +195,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Perforate))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Perforate}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Perforate}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Perforate;
@@ -194,8 +207,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Retract}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Retract}");
                 }
 
                 if ((controlMedia.Payload.MediaControl.Eject is not null &&
@@ -207,8 +221,9 @@ namespace XFS4IoTFramework.Printer
                     (controlMedia.Payload.MediaControl.Expel is not null &&
                     (bool)controlMedia.Payload.MediaControl.Expel))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Retract control can't combined with other actions, Eject, Park, EjectToTransport or Expel. {controlMedia.Payload.MediaControl.Retract}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Retract control can't combined with other actions, Eject, Park, EjectToTransport or Expel. {controlMedia.Payload.MediaControl.Retract}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Retract;
             }
@@ -217,8 +232,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Rotate180))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Rotate180}");
+                    return new
+                        (MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Rotate180}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Rotate180;
@@ -228,8 +244,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Skip))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Skip}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Skip}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Skip;
@@ -239,8 +256,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Stack}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Stack}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Stack;
             }
@@ -249,8 +267,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stamp))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Stamp}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Stamp}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Stamp;
             
@@ -260,8 +279,8 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.TurnMedia))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.TurnMedia}");
+                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.TurnMedia}");
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.TurnMedia;
@@ -272,8 +291,8 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Expel}");
+                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Unsupported control media specified. {controlMedia.Payload.MediaControl.Expel}");
                 }
 
                 if ((controlMedia.Payload.MediaControl.EjectToTransport is not null &&
@@ -285,8 +304,9 @@ namespace XFS4IoTFramework.Printer
                     (controlMedia.Payload.MediaControl.Retract is not null &&
                     (bool)controlMedia.Payload.MediaControl.Retract))
                 {
-                    return new ControlMediaCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                  $"Expel control can't combined with other actions, EjectToTransport, Retract, Park or Retract. {controlMedia.Payload.MediaControl.Expel}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Expel control can't combined with other actions, EjectToTransport, Retract, Park or Retract. {controlMedia.Payload.MediaControl.Expel}");
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Expel;
             }
@@ -297,28 +317,30 @@ namespace XFS4IoTFramework.Printer
                                                         cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ControlMediaAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new ControlMediaCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          result.ErrorCode switch
-                                                          {
-                                                              ControlMediaResult.ErrorCodeEnum.BlackMark => ControlMediaCompletion.PayloadData.ErrorCodeEnum.BlackMark,
-                                                              ControlMediaResult.ErrorCodeEnum.FlushFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.FlushFail,
-                                                              ControlMediaResult.ErrorCodeEnum.InkOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.InkOut,
-                                                              ControlMediaResult.ErrorCodeEnum.MediaJammed => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaJammed,
-                                                              ControlMediaResult.ErrorCodeEnum.MediaRetained => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaRetained,
-                                                              ControlMediaResult.ErrorCodeEnum.MediaRetracted => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaRetracted,
-                                                              ControlMediaResult.ErrorCodeEnum.MediaTurnFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaTurnFail,
-                                                              ControlMediaResult.ErrorCodeEnum.NoMediaPresent => ControlMediaCompletion.PayloadData.ErrorCodeEnum.NoMediaPresent,
-                                                              ControlMediaResult.ErrorCodeEnum.PageTurnFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PageTurnFail,
-                                                              ControlMediaResult.ErrorCodeEnum.PaperJammed => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PaperJammed,
-                                                              ControlMediaResult.ErrorCodeEnum.PaperOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PaperOut,
-                                                              ControlMediaResult.ErrorCodeEnum.RetractBinFull => ControlMediaCompletion.PayloadData.ErrorCodeEnum.RetractBinFull,
-                                                              ControlMediaResult.ErrorCodeEnum.SequenceInvalid => ControlMediaCompletion.PayloadData.ErrorCodeEnum.SequenceInvalid,
-                                                              ControlMediaResult.ErrorCodeEnum.ShutterFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.ShutterFail,
-                                                              ControlMediaResult.ErrorCodeEnum.StackerFull => ControlMediaCompletion.PayloadData.ErrorCodeEnum.StackerFull,
-                                                              ControlMediaResult.ErrorCodeEnum.TonerOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.TonerOut,
-                                                              _ => null,
-                                                          });
+            return new(
+                result.ErrorCode is null ? null : new(
+                    result.ErrorCode switch
+                    {
+                        ControlMediaResult.ErrorCodeEnum.BlackMark => ControlMediaCompletion.PayloadData.ErrorCodeEnum.BlackMark,
+                        ControlMediaResult.ErrorCodeEnum.FlushFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.FlushFail,
+                        ControlMediaResult.ErrorCodeEnum.InkOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.InkOut,
+                        ControlMediaResult.ErrorCodeEnum.MediaJammed => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaJammed,
+                        ControlMediaResult.ErrorCodeEnum.MediaRetained => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaRetained,
+                        ControlMediaResult.ErrorCodeEnum.MediaRetracted => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaRetracted,
+                        ControlMediaResult.ErrorCodeEnum.MediaTurnFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.MediaTurnFail,
+                        ControlMediaResult.ErrorCodeEnum.NoMediaPresent => ControlMediaCompletion.PayloadData.ErrorCodeEnum.NoMediaPresent,
+                        ControlMediaResult.ErrorCodeEnum.PageTurnFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PageTurnFail,
+                        ControlMediaResult.ErrorCodeEnum.PaperJammed => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PaperJammed,
+                        ControlMediaResult.ErrorCodeEnum.PaperOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.PaperOut,
+                        ControlMediaResult.ErrorCodeEnum.RetractBinFull => ControlMediaCompletion.PayloadData.ErrorCodeEnum.RetractBinFull,
+                        ControlMediaResult.ErrorCodeEnum.SequenceInvalid => ControlMediaCompletion.PayloadData.ErrorCodeEnum.SequenceInvalid,
+                        ControlMediaResult.ErrorCodeEnum.ShutterFail => ControlMediaCompletion.PayloadData.ErrorCodeEnum.ShutterFail,
+                        ControlMediaResult.ErrorCodeEnum.StackerFull => ControlMediaCompletion.PayloadData.ErrorCodeEnum.StackerFull,
+                        ControlMediaResult.ErrorCodeEnum.TonerOut => ControlMediaCompletion.PayloadData.ErrorCodeEnum.TonerOut,
+                        _ => null,
+                    }),
+                result.CompletionCode,
+                result.ErrorDescription);
 
         }
     }

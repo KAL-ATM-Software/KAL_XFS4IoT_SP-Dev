@@ -19,16 +19,16 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.OpenShutter")]
     public sealed class OpenShutterCompletion : Completion<OpenShutterCompletion.PayloadData>
     {
-        public OpenShutterCompletion(int RequestId, OpenShutterCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public OpenShutterCompletion(int RequestId, OpenShutterCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

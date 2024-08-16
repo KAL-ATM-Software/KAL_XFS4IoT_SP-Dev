@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,16 +19,20 @@ namespace XFS4IoTFramework.Crypto
 {
     public partial class DigestHandler
     {
-        private async Task<DigestCompletion.PayloadData> HandleDigest(IDigestEvents events, DigestCommand digest, CancellationToken cancel)
+        private async Task<CommandResult<DigestCompletion.PayloadData>> HandleDigest(IDigestEvents events, DigestCommand digest, CancellationToken cancel)
         {
             if (digest.Payload.HashAlgorithm is null)
             {
-                return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No hash algorithm specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    $"No hash algorithm specified.");
             }
             if (digest.Payload.Data is null ||
                 digest.Payload.Data.Count == 0)
             {
-                return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"No data specified to generate hash.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    $"No data specified to generate hash.");
             }
 
             if ((digest.Payload.HashAlgorithm == DigestCommand.PayloadData.HashAlgorithmEnum.Sha1 &&
@@ -38,7 +40,9 @@ namespace XFS4IoTFramework.Crypto
                 (digest.Payload.HashAlgorithm == DigestCommand.PayloadData.HashAlgorithmEnum.Sha256 &&
                 !Common.CryptoCapabilities.EMVHashAlgorithms.HasFlag(CryptoCapabilitiesClass.EMVHashAlgorithmEnum.SHA256_Digest)))
             {
-                return new DigestCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, $"Specified EMV has algorith is not supported. {digest.Payload.HashAlgorithm}. See capabilities");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    $"Specified EMV has algorith is not supported. {digest.Payload.HashAlgorithm}. See capabilities");
             }
 
             Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateDigest()");
@@ -53,10 +57,19 @@ namespace XFS4IoTFramework.Crypto
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateDigest() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new DigestCompletion.PayloadData(result.CompletionCode,
-                                                    result.ErrorDescription,
-                                                    result.ErrorCode,
-                                                    result.Digest);
+            DigestCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Digest?.Count > 0)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Digest: result.Digest);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

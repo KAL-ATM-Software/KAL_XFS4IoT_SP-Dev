@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -17,7 +16,7 @@ namespace XFS4IoTFramework.Keyboard
 {
     public partial class KeypressBeepHandler
     {
-        private async Task<KeypressBeepCompletion.PayloadData> HandleKeypressBeep(IKeypressBeepEvents events, KeypressBeepCommand keypressBeep, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleKeypressBeep(IKeypressBeepEvents events, KeypressBeepCommand keypressBeep, CancellationToken cancel)
         {
             KeyboardBeepEnum beep = KeyboardBeepEnum.Off;
             if (keypressBeep.Payload.Mode?.Active is not null &&
@@ -37,8 +36,9 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.SetKeypressBeep() -> {result.CompletionCode}");
 
-            return new KeypressBeepCompletion.PayloadData(result.CompletionCode,
-                                                          result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -14,55 +13,61 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.PinPad
 {
     public partial class PresentIDCHandler
     {
-        private async Task<PresentIDCCompletion.PayloadData> HandlePresentIDC(IPresentIDCEvents events, PresentIDCCommand presentIDC, CancellationToken cancel)
+        private async Task<CommandResult<PresentIDCCompletion.PayloadData>> HandlePresentIDC(IPresentIDCEvents events, PresentIDCCommand presentIDC, CancellationToken cancel)
         {
             if (presentIDC.Payload.PresentAlgorithm is null)
             {
-                return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No presentAlgorith specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No presentAlgorith specified.");
             }
 
             if (string.IsNullOrEmpty(presentIDC.Payload.ChipProtocol))
             {
-                return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No chipProtocol specified to talk to the card chip.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No chipProtocol specified to talk to the card chip.");
             }
 
             if (presentIDC.Payload.ChipData is null ||
                 presentIDC.Payload.ChipData.Count == 0)
             {
-                return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No chipData specified to send a card chip.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No chipData specified to send a card chip.");
             }
 
             if (presentIDC.Payload.PresentAlgorithm is null)
             {
-                return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No PresentAlgorith specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No PresentAlgorith specified.");
             }
 
             if (presentIDC.Payload.PresentAlgorithm == PresentIDCCommand.PayloadData.PresentAlgorithmEnum.PresentClear)
             {
                 if (presentIDC.Payload.AlgorithmData is null)
                 {
-                    return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No algorithmData specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No algorithmData specified.");
                 }
                 if (presentIDC.Payload.AlgorithmData.PinOffset is null)
                 {
-                    return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No PinOffset specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No PinOffset specified.");
                 }
                 if (presentIDC.Payload.AlgorithmData.PinPointer is null)
                 {
-                    return new PresentIDCCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                $"No PinPointer specified.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"No PinPointer specified.");
                 }
             }
             
@@ -75,11 +80,21 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.PresentIDC() -> {result.CompletionCode}");
 
-            return new PresentIDCCompletion.PayloadData(result.CompletionCode,
-                                                        result.ErrorDescription,
-                                                        result.ErrorCode,
-                                                        result.ChipProtocol,
-                                                        result.ChipData);
+            PresentIDCCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.ChipData?.Count > 0 ||
+                !string.IsNullOrEmpty(result.ChipProtocol))
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.ChipProtocol,
+                    result.ChipData);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

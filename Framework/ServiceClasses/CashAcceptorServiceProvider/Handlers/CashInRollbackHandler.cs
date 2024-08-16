@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -24,20 +23,22 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class CashInRollbackHandler
     {
-        private async Task<CashInRollbackCompletion.PayloadData> HandleCashInRollback(ICashInRollbackEvents events, CashInRollbackCommand cashInRollback, CancellationToken cancel)
+        private async Task<CommandResult<CashInRollbackCompletion.PayloadData>> HandleCashInRollback(ICashInRollbackEvents events, CashInRollbackCommand cashInRollback, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new CashInRollbackCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The exchange state is already in active.",
-                                                                CashInRollbackCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(CashInRollbackCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status != CashInStatusClass.StatusEnum.Active)
             {
-                return new CashInRollbackCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                $"The cash-in state is not in active. {CashAcceptor.CashInStatus.Status}",
-                                                                CashInRollbackCompletion.PayloadData.ErrorCodeEnum.NoCashInActive);
+                return new(
+                    new(CashInRollbackCompletion.PayloadData.ErrorCodeEnum.NoCashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is not in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             // Clear TotalReturnedItems for the present status
@@ -128,10 +129,19 @@ namespace XFS4IoTFramework.CashAcceptor
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new CashInRollbackCompletion.PayloadData(result.CompletionCode,
-                                                            result.ErrorDescription,
-                                                            result.ErrorCode,
-                                                            itemMovementResult);
+            CashInRollbackCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                itemMovementResult is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Storage: itemMovementResult);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

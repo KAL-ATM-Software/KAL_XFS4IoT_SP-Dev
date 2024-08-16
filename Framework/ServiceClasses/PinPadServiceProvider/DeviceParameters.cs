@@ -4,18 +4,12 @@
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Threading;
-using XFS4IoTServer;
 using XFS4IoT.Completions;
-using XFS4IoT.PinPad.Commands;
+using XFS4IoTServer;
 using XFS4IoT.PinPad.Completions;
-using XFS4IoTFramework.Common;
 using XFS4IoT;
 
 namespace XFS4IoTFramework.PinPad
@@ -115,7 +109,7 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public VerifyPINLocalResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public VerifyPINLocalResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                     string ErrorDescription = null,
                                     ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -124,6 +118,28 @@ namespace XFS4IoTFramework.PinPad
             this.Verified = false;
         }
 
+        public VerifyPINLocalResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                      bool Verified)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Verified = Verified;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public VerifyPINLocalResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                    string ErrorDescription = null,
+                                    ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Verified = false;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public VerifyPINLocalResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                       bool Verified)
                 : base(CompletionCode, null)
@@ -328,7 +344,7 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public PINBlockResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public PINBlockResult(MessageHeader.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               GetPinBlockCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -337,6 +353,28 @@ namespace XFS4IoTFramework.PinPad
             this.PINBlock = null;
         }
 
+        public PINBlockResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                              List<byte> PINBlock)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.PINBlock = PINBlock;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public PINBlockResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              GetPinBlockCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.PINBlock = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PINBlockResult(MessagePayload.CompletionCodeEnum CompletionCode,
                               List<byte> PINBlock)
                 : base(CompletionCode, null)
@@ -415,7 +453,7 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public PresentIDCResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public PresentIDCResult(MessageHeader.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               PresentIDCCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -425,6 +463,31 @@ namespace XFS4IoTFramework.PinPad
             this.ChipData = null;
         }
 
+        public PresentIDCResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                string ChipProtocol,
+                                List<byte> ChipData)
+                : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.ChipProtocol = ChipProtocol;
+            this.ChipData = ChipData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public PresentIDCResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              PresentIDCCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.ChipProtocol = string.Empty;
+            this.ChipData = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public PresentIDCResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                 string ChipProtocol,
                                 List<byte> ChipData)

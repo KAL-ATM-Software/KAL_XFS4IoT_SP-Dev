@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,20 +21,22 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class DeviceLockControlHandler
     {
-        private async Task<DeviceLockControlCompletion.PayloadData> HandleDeviceLockControl(IDeviceLockControlEvents events, DeviceLockControlCommand deviceLockControl, CancellationToken cancel)
+        private async Task<CommandResult<DeviceLockControlCompletion.PayloadData>> HandleDeviceLockControl(IDeviceLockControlEvents events, DeviceLockControlCommand deviceLockControl, CancellationToken cancel)
         {
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"The exchange state is already in active.",
-                                                                   DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                                   DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(DeviceLockControlCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             if ((deviceLockControl.Payload.DeviceAction is null &&
@@ -43,15 +44,16 @@ namespace XFS4IoTFramework.CashAcceptor
                 (deviceLockControl.Payload.DeviceAction == DeviceLockControlCommand.PayloadData.DeviceActionEnum.NoLockAction &&
                  deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.NoLockAction))
             {
-                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+                return new(MessageHeader.CompletionCodeEnum.Success);
             }
 
             if (deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual &&
                 (deviceLockControl.Payload.UnitLockControl is null ||
                  deviceLockControl.Payload.UnitLockControl.Count == 0))
             {
-                return new DeviceLockControlCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified cash unit action is {deviceLockControl.Payload.CashUnitAction}, but no cash unit specific action being specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified cash unit action is {deviceLockControl.Payload.CashUnitAction}, but no cash unit specific action being specified.");
             }
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.DeviceLockControl()");
@@ -79,9 +81,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.DeviceLockControl() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new DeviceLockControlCompletion.PayloadData(result.CompletionCode,
-                                                               result.ErrorDescription,
-                                                               result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

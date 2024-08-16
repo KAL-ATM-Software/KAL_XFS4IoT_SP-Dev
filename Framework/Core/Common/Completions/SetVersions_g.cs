@@ -17,21 +17,11 @@ namespace XFS4IoT.Common.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Common.SetVersions")]
-    public sealed class SetVersionsCompletion : Completion<SetVersionsCompletion.PayloadData>
+    public sealed class SetVersionsCompletion : Completion<MessagePayload>
     {
-        public SetVersionsCompletion(int RequestId, SetVersionsCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetVersionsCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

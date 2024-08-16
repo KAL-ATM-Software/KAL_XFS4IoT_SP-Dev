@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.KeyManagement
             IExportRSAIssuerSignedItemEvents events = new ExportRSAIssuerSignedItemEvents(Connection, exportRSAIssuerSignedItemCmd.Header.RequestId.Value);
 
             var result = await HandleExportRSAIssuerSignedItem(events, exportRSAIssuerSignedItemCmd, cancel);
-            await Connection.SendMessageAsync(new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var exportRSAIssuerSignedItemcommand = command.IsA<ExportRSAIssuerSignedItemCommand>();
-            exportRSAIssuerSignedItemcommand.Header.RequestId.HasValue.IsTrue();
+            var exportRSAIssuerSignedItemCommand = command.IsA<ExportRSAIssuerSignedItemCommand>();
+            exportRSAIssuerSignedItemCommand.Header.RequestId.HasValue.IsTrue();
 
-            ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ExportRSAIssuerSignedItemCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemcommand.Header.RequestId.Value, new ExportRSAIssuerSignedItemCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ExportRSAIssuerSignedItemCompletion(exportRSAIssuerSignedItemCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

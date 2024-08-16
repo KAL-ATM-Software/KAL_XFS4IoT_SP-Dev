@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Biometric
             ISetMatchEvents events = new SetMatchEvents(Connection, setMatchCmd.Header.RequestId.Value);
 
             var result = await HandleSetMatch(events, setMatchCmd, cancel);
-            await Connection.SendMessageAsync(new SetMatchCompletion(setMatchCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetMatchCompletion(setMatchCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setMatchcommand = command.IsA<SetMatchCommand>();
-            setMatchcommand.Header.RequestId.HasValue.IsTrue();
+            var setMatchCommand = command.IsA<SetMatchCommand>();
+            setMatchCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetMatchCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetMatchCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetMatchCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetMatchCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetMatchCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetMatchCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetMatchCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetMatchCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetMatchCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetMatchCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetMatchCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetMatchCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetMatchCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetMatchCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetMatchCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetMatchCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetMatchCompletion(setMatchcommand.Header.RequestId.Value, new SetMatchCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetMatchCompletion(setMatchCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

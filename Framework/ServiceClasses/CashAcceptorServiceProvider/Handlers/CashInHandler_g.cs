@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashAcceptor
             ICashInEvents events = new CashInEvents(Connection, cashInCmd.Header.RequestId.Value);
 
             var result = await HandleCashIn(events, cashInCmd, cancel);
-            await Connection.SendMessageAsync(new CashInCompletion(cashInCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CashInCompletion(cashInCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var cashIncommand = command.IsA<CashInCommand>();
-            cashIncommand.Header.RequestId.HasValue.IsTrue();
+            var cashInCommand = command.IsA<CashInCommand>();
+            cashInCommand.Header.RequestId.HasValue.IsTrue();
 
-            CashInCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => CashInCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => CashInCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => CashInCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => CashInCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => CashInCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => CashInCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => CashInCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => CashInCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => CashInCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => CashInCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => CashInCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => CashInCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new CashInCompletion(cashIncommand.Header.RequestId.Value, new CashInCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CashInCompletion(cashInCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

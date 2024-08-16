@@ -19,16 +19,16 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.Match")]
     public sealed class MatchCompletion : Completion<MatchCompletion.PayloadData>
     {
-        public MatchCompletion(int RequestId, MatchCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public MatchCompletion(int RequestId, MatchCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, CandidatesClass> Candidates = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, Dictionary<string, CandidatesClass> Candidates = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Candidates = Candidates;

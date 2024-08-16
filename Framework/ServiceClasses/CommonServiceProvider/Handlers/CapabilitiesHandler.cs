@@ -23,11 +23,15 @@ namespace XFS4IoTFramework.Common
     public partial class CapabilitiesHandler
     {
 
-        private Task<CapabilitiesCompletion.PayloadData> HandleCapabilities(ICapabilitiesEvents events, CapabilitiesCommand capabilities, CancellationToken cancel)
+        private Task<CommandResult<CapabilitiesCompletion.PayloadData>> HandleCapabilities(ICapabilitiesEvents events, CapabilitiesCommand capabilities, CancellationToken cancel)
         {
             if (Common.CommonCapabilities is null)
             {
-                return Task.FromResult(new CapabilitiesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError, $"No common capabilities is reported by the device class."));
+                return Task.FromResult(
+                    new CommandResult<CapabilitiesCompletion.PayloadData>(
+                        MessageHeader.CompletionCodeEnum.InternalError, 
+                        $"No common capabilities is reported by the device class.")
+                    );
             }
 
             List<InterfaceClass.NameEnum> supportedInterfaces = [];
@@ -1300,7 +1304,7 @@ namespace XFS4IoTFramework.Common
                             CashManagementCapabilitiesClass.PositionEnum.InBottom => XFS4IoT.CashManagement.PositionEnum.InBottom,
                             CashManagementCapabilitiesClass.PositionEnum.InFront => XFS4IoT.CashManagement.PositionEnum.InFront,
                             CashManagementCapabilitiesClass.PositionEnum.InRear => XFS4IoT.CashManagement.PositionEnum.InRear,
-                            _ => throw new InvalidDataException($"Unexpected postion for the cash acceptor device class reported. {position.Key}")
+                            _ => throw new InvalidDataException($"Unexpected position for the cash acceptor device class reported. {position.Key}")
                         },
                         Usage: position.Value.Usage == CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.NotSupported ?
                                null :
@@ -1586,30 +1590,30 @@ namespace XFS4IoTFramework.Common
             }
 
             return Task.FromResult(
-                new CapabilitiesCompletion.PayloadData(
-                    MessagePayload.CompletionCodeEnum.Success,
-                    string.Empty,
-                    Interfaces: interfaces,
-                    Common: commonCapabilities,
-                    CardReader: cardReader,
-                    CashDispenser: cashDispenser,
-                    CashManagement: cashManagement,
-                    PinPad: pinPad,
-                    Crypto: crypto,
-                    KeyManagement: keyManagement,
-                    Keyboard: keyboard,
-                    TextTerminal: textTerminal,
-                    Lights: lights,
-                    Printer: printer,
-				    Auxiliaries: auxiliaries,
-                    VendorApplication: vendorApplication,
-                    BarcodeReader: barcodeReader,
-                    Biometric: biometric,
-                    CashAcceptor: cashAcceptor,
-                    Camera: camera,
-                    Check: checkScanner,
-                    MixedMedia: mixedMedia)
-            );
+                new CommandResult<CapabilitiesCompletion.PayloadData>(
+                    new CapabilitiesCompletion.PayloadData(
+                        Interfaces: interfaces,
+                        Common: commonCapabilities,
+                        CardReader: cardReader,
+                        CashDispenser: cashDispenser,
+                        CashManagement: cashManagement,
+                        PinPad: pinPad,
+                        Crypto: crypto,
+                        KeyManagement: keyManagement,
+                        Keyboard: keyboard,
+                        TextTerminal: textTerminal,
+                        Lights: lights,
+                        Printer: printer,
+				        Auxiliaries: auxiliaries,
+                        VendorApplication: vendorApplication,
+                        BarcodeReader: barcodeReader,
+                        Biometric: biometric,
+                        CashAcceptor: cashAcceptor,
+                        Camera: camera,
+                        Check: checkScanner,
+                        MixedMedia: mixedMedia),
+                MessageHeader.CompletionCodeEnum.Success
+            ));
         }
 
         private InterfaceClass GetDeviceInterface(InterfaceClass.NameEnum InterfaceName)

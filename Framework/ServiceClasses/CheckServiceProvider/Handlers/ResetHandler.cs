@@ -21,7 +21,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class ResetHandler
     {
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<ResetCompletion.PayloadData>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             ResetDeviceRequest.MediaControlEnum mediaControl = ResetDeviceRequest.MediaControlEnum.Default;
             string storageId = string.Empty;
@@ -30,8 +30,8 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Regex.IsMatch(reset.Payload.MediaControl, "^eject$|^transport$|^rebuncher$|^unit[0-9A-Za-z]+$"))
                 {
-                    return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified media control is invalid. {reset.Payload.MediaControl}");
                 }
                 switch (reset.Payload.MediaControl)
@@ -56,39 +56,39 @@ namespace XFS4IoTFramework.Check
             {
                 if (!Storage.CheckUnits.ContainsKey(storageId))
                 {
-                    return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                        $"Specified storage unit doesn't exist. {storageId}",
-                        ResetCompletion.PayloadData.ErrorCodeEnum.InvalidBin);
+                    return new(
+                        new(ResetCompletion.PayloadData.ErrorCodeEnum.InvalidBin),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified storage unit doesn't exist. {storageId}");
                 }
             }
 
             if (mediaControl == ResetDeviceRequest.MediaControlEnum.Eject &&
                 !Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Eject))
             {
-                return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {mediaControl}");
             }
             if (mediaControl == ResetDeviceRequest.MediaControlEnum.Unit &&
                 !Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Storage))
             {
-                return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {mediaControl}");
             }
             if (mediaControl == ResetDeviceRequest.MediaControlEnum.Transport &&
                 !Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.Transport))
             {
-                return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {mediaControl}");
             }
             if (mediaControl == ResetDeviceRequest.MediaControlEnum.ReBuncher &&
                 !Common.CheckScannerCapabilities.ResetControls.HasFlag(CheckScannerCapabilitiesClass.ResetControlEnum.ReBuncher))
             {
-                return new ResetCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported media control. Check ResetControls capability reported. {mediaControl}");
             }
 
@@ -103,7 +103,7 @@ namespace XFS4IoTFramework.Check
 
             if (Check.LastTransactionStatus.MediaInTransactionState == TransactionStatus.MediaInTransactionStateEnum.Active)
             {
-                if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+                if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
                 {
                     Check.LastTransactionStatus.MediaInTransactionState = TransactionStatus.MediaInTransactionStateEnum.Reset;
                 }
@@ -129,10 +129,10 @@ namespace XFS4IoTFramework.Check
                 await Storage.UpdateCheckStorageCount(countDelta);
             }
 
-            return new ResetCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

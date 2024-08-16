@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace XFS4IoTFramework.Keyboard
 {
     public partial class PinEntryHandler
     {
-        private async Task<PinEntryCompletion.PayloadData> HandlePinEntry(IPinEntryEvents events, PinEntryCommand pinEntry, CancellationToken cancel)
+        private async Task<CommandResult<PinEntryCompletion.PayloadData>> HandlePinEntry(IPinEntryEvents events, PinEntryCommand pinEntry, CancellationToken cancel)
         {
             if (pinEntry.Payload.MaxLen is null)
                 Logger.Warning(Constants.Framework, $"No MaxLen specified. use default 0.");
@@ -32,8 +31,9 @@ namespace XFS4IoTFramework.Keyboard
 
             if (!Keyboard.SupportedFunctionKeys.ContainsKey(EntryModeEnum.Pin))
             {
-                return new PinEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                            $"No Pin entry layout supported.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No Pin entry layout supported.");
             }
 
             List<ActiveKeyClass> keys = new();
@@ -41,8 +41,10 @@ namespace XFS4IoTFramework.Keyboard
             {
                 if (!Keyboard.SupportedFunctionKeys[EntryModeEnum.Pin].Contains(key.Key))
                 {
-                    return new PinEntryCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Invalid key specified. {key.Key}", PinEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported);
+                    return new(
+                        new(PinEntryCompletion.PayloadData.ErrorCodeEnum.KeyNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Invalid key specified. {key.Key}");
                 }
                 keys.Add(new ActiveKeyClass(key.Key, key.Value.Terminate is not null && (bool)key.Value.Terminate));
             }
@@ -59,24 +61,33 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.PinEntry() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new PinEntryCompletion.PayloadData(result.CompletionCode,
-                                                      result.ErrorDescription,
-                                                      result.ErrorCode,
-                                                      result.Digits,
-                                                      result.Completion switch
-                                                      {
-                                                          EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
-                                                          EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
-                                                          EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
-                                                          EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
-                                                          EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
-                                                          EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
-                                                          EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
-                                                          EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
-                                                          EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
-                                                          EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
-                                                          _ => null,
-                                                      });
+            PinEntryCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.Completion is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.Digits,
+                    result.Completion switch
+                    {
+                        EntryCompletionEnum.Auto => XFS4IoT.Keyboard.EntryCompletionEnum.Auto,
+                        EntryCompletionEnum.Enter => XFS4IoT.Keyboard.EntryCompletionEnum.Enter,
+                        EntryCompletionEnum.Cancel => XFS4IoT.Keyboard.EntryCompletionEnum.Cancel,
+                        EntryCompletionEnum.Continue => XFS4IoT.Keyboard.EntryCompletionEnum.Continue,
+                        EntryCompletionEnum.Clear => XFS4IoT.Keyboard.EntryCompletionEnum.Clear,
+                        EntryCompletionEnum.Backspace => XFS4IoT.Keyboard.EntryCompletionEnum.Backspace,
+                        EntryCompletionEnum.FDK => XFS4IoT.Keyboard.EntryCompletionEnum.Fdk,
+                        EntryCompletionEnum.Help => XFS4IoT.Keyboard.EntryCompletionEnum.Help,
+                        EntryCompletionEnum.FK => XFS4IoT.Keyboard.EntryCompletionEnum.Fk,
+                        EntryCompletionEnum.ContinueFDK => XFS4IoT.Keyboard.EntryCompletionEnum.ContFdk,
+                        _ => null,
+                    });
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

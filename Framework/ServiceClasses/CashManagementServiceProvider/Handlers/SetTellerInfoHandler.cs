@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace XFS4IoTFramework.CashManagement
 {
     public partial class SetTellerInfoHandler
     {
-        private async Task<SetTellerInfoCompletion.PayloadData> HandleSetTellerInfo(ISetTellerInfoEvents events, SetTellerInfoCommand setTellerInfo, CancellationToken cancel)
+        private async Task<CommandResult<SetTellerInfoCompletion.PayloadData>> HandleSetTellerInfo(ISetTellerInfoEvents events, SetTellerInfoCommand setTellerInfo, CancellationToken cancel)
         {
             TellerDetail detail = null;
             if (setTellerInfo.Payload.TellerDetails is not null)
@@ -28,9 +27,10 @@ namespace XFS4IoTFramework.CashManagement
                 if (setTellerInfo.Payload.TellerDetails.TellerID is null ||
                     setTellerInfo.Payload.TellerDetails.TellerID < 0)
                 {
-                    return new SetTellerInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"Invalid teller ID specified. {setTellerInfo.Payload.TellerDetails.TellerID}",
-                                                                   SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.InvalidTellerId);
+                    return new(
+                        new(SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.InvalidTellerId),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Invalid teller ID specified. {setTellerInfo.Payload.TellerDetails.TellerID}");
                 }
 
                 if (setTellerInfo.Payload.TellerDetails.InputPosition is not null)
@@ -50,9 +50,10 @@ namespace XFS4IoTFramework.CashManagement
                         (setTellerInfo.Payload.TellerDetails.InputPosition == InputPositionEnum.InTop &&
                          !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.InTop)))
                     {
-                        return new SetTellerInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"Specified input position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}",
-                                                                       SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                        return new(
+                            new(SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Specified input position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}");
                     }
                 }
 
@@ -73,9 +74,10 @@ namespace XFS4IoTFramework.CashManagement
                         (setTellerInfo.Payload.TellerDetails.OutputPosition == OutputPositionEnum.OutTop &&
                          !Common.CashManagementCapabilities.Positions.HasFlag(CashManagementCapabilitiesClass.PositionEnum.OutTop)))
                     {
-                        return new SetTellerInfoCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                       $"Specified output position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}",
-                                                                       SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                        return new(
+                            new(SetTellerInfoCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Specified output position is not supported in the capabilities. {setTellerInfo.Payload.TellerDetails.InputPosition}");
                     }
                 }
 
@@ -94,32 +96,33 @@ namespace XFS4IoTFramework.CashManagement
                     }
                 }
 
-                detail = new TellerDetail((int)setTellerInfo.Payload.TellerDetails.TellerID,
-                                          setTellerInfo.Payload.TellerDetails.InputPosition is null ? CashManagementCapabilitiesClass.PositionEnum.InDefault :
-                                          setTellerInfo.Payload.TellerDetails.InputPosition switch
-                                          { 
-                                              InputPositionEnum.InBottom => CashManagementCapabilitiesClass.PositionEnum.InBottom,
-                                              InputPositionEnum.InCenter => CashManagementCapabilitiesClass.PositionEnum.InCenter,
-                                              InputPositionEnum.InFront => CashManagementCapabilitiesClass.PositionEnum.InFront,
-                                              InputPositionEnum.InLeft => CashManagementCapabilitiesClass.PositionEnum.InLeft,
-                                              InputPositionEnum.InRear => CashManagementCapabilitiesClass.PositionEnum.InRear,
-                                              InputPositionEnum.InRight => CashManagementCapabilitiesClass.PositionEnum.InRight,
-                                              InputPositionEnum.InTop => CashManagementCapabilitiesClass.PositionEnum.InTop,
-                                              _ => CashManagementCapabilitiesClass.PositionEnum.InDefault,
-                                          },
-                                          setTellerInfo.Payload.TellerDetails.OutputPosition is null ? CashManagementCapabilitiesClass.PositionEnum.OutDefault :
-                                          setTellerInfo.Payload.TellerDetails.OutputPosition switch
-                                          {
-                                              OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
-                                              OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
-                                              OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
-                                              OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
-                                              OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
-                                              OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
-                                              OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
-                                              _ => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
-                                          },
-                                          totals);
+                detail = new TellerDetail(
+                    (int)setTellerInfo.Payload.TellerDetails.TellerID,
+                    setTellerInfo.Payload.TellerDetails.InputPosition is null ? CashManagementCapabilitiesClass.PositionEnum.InDefault :
+                    setTellerInfo.Payload.TellerDetails.InputPosition switch
+                    { 
+                        InputPositionEnum.InBottom => CashManagementCapabilitiesClass.PositionEnum.InBottom,
+                        InputPositionEnum.InCenter => CashManagementCapabilitiesClass.PositionEnum.InCenter,
+                        InputPositionEnum.InFront => CashManagementCapabilitiesClass.PositionEnum.InFront,
+                        InputPositionEnum.InLeft => CashManagementCapabilitiesClass.PositionEnum.InLeft,
+                        InputPositionEnum.InRear => CashManagementCapabilitiesClass.PositionEnum.InRear,
+                        InputPositionEnum.InRight => CashManagementCapabilitiesClass.PositionEnum.InRight,
+                        InputPositionEnum.InTop => CashManagementCapabilitiesClass.PositionEnum.InTop,
+                        _ => CashManagementCapabilitiesClass.PositionEnum.InDefault,
+                    },
+                    setTellerInfo.Payload.TellerDetails.OutputPosition is null ? CashManagementCapabilitiesClass.PositionEnum.OutDefault :
+                    setTellerInfo.Payload.TellerDetails.OutputPosition switch
+                    {
+                        OutputPositionEnum.OutBottom => CashManagementCapabilitiesClass.PositionEnum.OutBottom,
+                        OutputPositionEnum.OutCenter => CashManagementCapabilitiesClass.PositionEnum.OutCenter,
+                        OutputPositionEnum.OutFront => CashManagementCapabilitiesClass.PositionEnum.OutFront,
+                        OutputPositionEnum.OutLeft => CashManagementCapabilitiesClass.PositionEnum.OutLeft,
+                        OutputPositionEnum.OutRear => CashManagementCapabilitiesClass.PositionEnum.OutRear,
+                        OutputPositionEnum.OutRight => CashManagementCapabilitiesClass.PositionEnum.OutRight,
+                        OutputPositionEnum.OutTop => CashManagementCapabilitiesClass.PositionEnum.OutTop,
+                        _ => CashManagementCapabilitiesClass.PositionEnum.OutDefault,
+                    },
+                    totals);
             }
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.SetTellerInfoAsync()");
@@ -135,9 +138,10 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.SetTellerInfoAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new SetTellerInfoCompletion.PayloadData(result.CompletionCode,
-                                                           result.ErrorDescription,
-                                                           result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

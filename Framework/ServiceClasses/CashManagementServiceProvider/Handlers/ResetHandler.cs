@@ -15,15 +15,13 @@ using XFS4IoT.CashManagement.Completions;
 using XFS4IoT.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
-using System.Reflection;
 using System.Collections.Generic;
 
 namespace XFS4IoTFramework.CashManagement
 {
     public partial class ResetHandler
     {
-
-        private async Task<ResetCompletion.PayloadData> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
+        private async Task<CommandResult<ResetCompletion.PayloadData>> HandleReset(IResetEvents events, ResetCommand reset, CancellationToken cancel)
         {
             ItemDestination destination = new();
 
@@ -37,16 +35,18 @@ namespace XFS4IoTFramework.CashManagement
                 if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
                     string.IsNullOrEmpty(reset.Payload.Position.Unit))
                 {
-                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Specified location to {reset.Payload.Position.Target}, but target unit {reset.Payload.Position.Unit} property is an empty string.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified location to {reset.Payload.Position.Target}, but target unit {reset.Payload.Position.Unit} property is an empty string.");
                 }
 
                 if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
                     !string.IsNullOrEmpty(reset.Payload.Position.Unit) &&
                     !Storage.CashUnits.ContainsKey(reset.Payload.Position.Unit))
                 {
-                    return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                           $"Specified CashUnit location is unknown. {reset.Payload.Position.Unit}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified CashUnit location is unknown. {reset.Payload.Position.Unit}");
                 }
 
                 if (reset.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit)
@@ -73,9 +73,10 @@ namespace XFS4IoTFramework.CashManagement
 
                         if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                         {
-                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"Specified unsupported retract area. {retractArea}",
-                                                                   ResetCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition);
+                            return new(
+                                new(ResetCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified unsupported retract area. {retractArea}");
                         }
 
                         if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
@@ -103,9 +104,10 @@ namespace XFS4IoTFramework.CashManagement
                                                         select unit).Count();
                             if ((int)index > totalRetractUnits)
                             {
-                                return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                        $"Unexpected index property value is set where the retract area is specified to retract position. " +
-                                                                        $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
+                                    $"Unexpected index property value is set where the retract area is specified to retract position. " +
+                                    $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
                             }
 
                             destination = new ItemDestination(ItemTargetEnum.Retract, index);
@@ -127,8 +129,9 @@ namespace XFS4IoTFramework.CashManagement
                     {
                         if (Common.CashManagementCapabilities.Positions == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
                         {
-                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {reset.Payload.Position.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {reset.Payload.Position.Target}");
                         }
 
                         CashManagementCapabilitiesClass.PositionEnum position = reset.Payload.Position.Target switch
@@ -146,8 +149,9 @@ namespace XFS4IoTFramework.CashManagement
 
                         if (!Common.CashManagementCapabilities.Positions.HasFlag(position))
                         {
-                            return new ResetCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {reset.Payload.Position.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {reset.Payload.Position.Target}");
                         }
 
                         destination = new ItemDestination(
@@ -260,10 +264,18 @@ namespace XFS4IoTFramework.CashManagement
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new ResetCompletion.PayloadData(CompletionCode: result.CompletionCode,
-                                                   ErrorDescription: result.ErrorDescription,
-                                                   ErrorCode: result.ErrorCode,
-                                                   Storage: itemMovementResult);
+            ResetCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                itemMovementResult is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Storage: itemMovementResult);
+            }
+            return new(
+                payload,
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashManagement
             ISetClassificationListEvents events = new SetClassificationListEvents(Connection, setClassificationListCmd.Header.RequestId.Value);
 
             var result = await HandleSetClassificationList(events, setClassificationListCmd, cancel);
-            await Connection.SendMessageAsync(new SetClassificationListCompletion(setClassificationListCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new SetClassificationListCompletion(setClassificationListCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setClassificationListcommand = command.IsA<SetClassificationListCommand>();
-            setClassificationListcommand.Header.RequestId.HasValue.IsTrue();
+            var setClassificationListCommand = command.IsA<SetClassificationListCommand>();
+            setClassificationListCommand.Header.RequestId.HasValue.IsTrue();
 
-            SetClassificationListCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => SetClassificationListCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetClassificationListCompletion(setClassificationListcommand.Header.RequestId.Value, new SetClassificationListCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new SetClassificationListCompletion(setClassificationListCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

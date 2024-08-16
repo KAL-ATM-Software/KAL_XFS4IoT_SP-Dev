@@ -193,6 +193,8 @@ namespace XFS4IoTServer
                     );
         }
 
+        [Obsolete("This event is obsolete, The shutter status changed event will be covered by the Common.StatusChangedEvent. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status)
         {
             // Common.StatusChanged event reports shutter status changed event.

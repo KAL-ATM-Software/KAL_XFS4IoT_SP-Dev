@@ -19,16 +19,16 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCompletion : Completion<SecureKeyEntryCompletion.PayloadData>
     {
-        public SecureKeyEntryCompletion(int RequestId, SecureKeyEntryCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SecureKeyEntryCompletion(int RequestId, SecureKeyEntryCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null, List<byte> Kcv = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, int? Digits = null, EntryCompletionEnum? Completion = null, List<byte> Kcv = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Digits = Digits;

@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -20,11 +18,14 @@ namespace XFS4IoTFramework.Biometric
 {
     public partial class ReadHandler
     {
-
-        private async Task<ReadCompletion.PayloadData> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
+        private async Task<CommandResult<ReadCompletion.PayloadData>> HandleRead(IReadEvents events, ReadCommand read, CancellationToken cancel)
         {
             if (read?.Payload is null)
-                return new(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData, "No payload supplied for Read command.");
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No payload supplied for Read command.");
+            }
 
             BiometricCapabilitiesClass.ScanModesEnum scanMode = read.Payload.Mode switch
             {
@@ -41,8 +42,11 @@ namespace XFS4IoTFramework.Biometric
                 foreach (var item in read.Payload.DataTypes)
                 {
                     if (item is null || item.Format is null)
-                        return new ReadCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              "Invalid DataType supplied.");
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            "Invalid DataType supplied.");
+                    }
 
                     dataTypes.Add(new BiometricDataType(
                         item.Format switch
@@ -84,9 +88,9 @@ namespace XFS4IoTFramework.Biometric
 
 
             List<XFS4IoT.Biometric.BioDataClass> biometricData = null;
-            if (result.Data != null && result.Data.Count > 0)
+            if (result.Data?.Count > 0)
             {
-                biometricData = new();
+                biometricData = [];
                 foreach (var item in result.Data)
                 {
                     item.Data.IsNotNull("Device returned null Data from Read operation.");
@@ -124,10 +128,19 @@ namespace XFS4IoTFramework.Biometric
                 }
             }
 
-            return new ReadCompletion.PayloadData(result.CompletionCode,
-                                                  result.ErrorDescription,
-                                                  result.ErrorCode,
-                                                  biometricData);
+            ReadCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                biometricData is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    biometricData);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

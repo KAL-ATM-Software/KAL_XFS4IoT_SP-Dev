@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,14 +17,15 @@ namespace XFS4IoTFramework.Common
     public partial class ClearCommandNonceHandler
     {
 
-        private async Task<ClearCommandNonceCompletion.PayloadData> HandleClearCommandNonce(IClearCommandNonceEvents events, ClearCommandNonceCommand clearCommandNonce, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleClearCommandNonce(IClearCommandNonceEvents events, ClearCommandNonceCommand clearCommandNonce, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CommonDev.ClearCommandNonce()");
             var result = await Device.ClearCommandNonce();
             Logger.Log(Constants.DeviceClass, $"CommonDev.ClearCommandNonce() -> {result.CompletionCode}");
 
-            return new ClearCommandNonceCompletion.PayloadData(result.CompletionCode,
-                                                               result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
 
     }

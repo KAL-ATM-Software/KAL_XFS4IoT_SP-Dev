@@ -16,13 +16,12 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Storage;
 using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XFS4IoTFramework.CashManagement
 {
     public partial class CalibrateCashUnitHandler
     {
-        private async Task<CalibrateCashUnitCompletion.PayloadData> HandleCalibrateCashUnit(ICalibrateCashUnitEvents events, CalibrateCashUnitCommand calibrateCashUnit, CancellationToken cancel)
+        private async Task<CommandResult<CalibrateCashUnitCompletion.PayloadData>> HandleCalibrateCashUnit(ICalibrateCashUnitEvents events, CalibrateCashUnitCommand calibrateCashUnit, CancellationToken cancel)
         {
             ItemDestination destination = new();
 
@@ -36,16 +35,18 @@ namespace XFS4IoTFramework.CashManagement
                 if (calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
                     string.IsNullOrEmpty(calibrateCashUnit.Payload.Position.Unit))
                 {
-                    return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       $"Specified location to {calibrateCashUnit.Payload.Position.Target}, but target unit {calibrateCashUnit.Payload.Position.Unit} property is an empty string.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified location to {calibrateCashUnit.Payload.Position.Target}, but target unit {calibrateCashUnit.Payload.Position.Unit} property is an empty string.");
                 }
 
                 if (calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit &&
                     !string.IsNullOrEmpty(calibrateCashUnit.Payload.Position.Unit) &&
                     !Storage.CashUnits.ContainsKey(calibrateCashUnit.Payload.Position.Unit))
                 {
-                    return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       $"Specified CashUnit location is unknown. {calibrateCashUnit.Payload.Position.Unit}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified CashUnit location is unknown. {calibrateCashUnit.Payload.Position.Unit}");
                 }
 
                 if (calibrateCashUnit.Payload.Position.Target == ItemTargetEnumEnum.SingleUnit)
@@ -73,9 +74,10 @@ namespace XFS4IoTFramework.CashManagement
 
                         if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                         {
-                            return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                   $"Specified unsupported retract area. {retractArea}",
-                                                                   CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+                            return new(
+                                new(CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified unsupported retract area. {retractArea}");
                         }
 
                         if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
@@ -103,8 +105,8 @@ namespace XFS4IoTFramework.CashManagement
                                                      select unit).Count();
                             if ((int)index > totalRetractUnits)
                             {
-                                return new CalibrateCashUnitCompletion.PayloadData(
-                                    MessagePayload.CompletionCodeEnum.InvalidData,
+                                return new(
+                                    MessageHeader.CompletionCodeEnum.InvalidData,
                                     $"Unexpected index property value is set where the retract area is specified to retract position. " +
                                     $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
                             }
@@ -128,8 +130,9 @@ namespace XFS4IoTFramework.CashManagement
                     {
                         if (Common.CashManagementCapabilities.Positions == CashManagementCapabilitiesClass.PositionEnum.NotSupported)
                         {
-                            return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                               $"Specified unsupported output position. {calibrateCashUnit.Payload.Position.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {calibrateCashUnit.Payload.Position.Target}");
                         }
 
                         CashManagementCapabilitiesClass.PositionEnum position = calibrateCashUnit.Payload.Position.Target switch
@@ -147,8 +150,9 @@ namespace XFS4IoTFramework.CashManagement
 
                         if (!Common.CashManagementCapabilities.Positions.HasFlag(position))
                         {
-                            return new CalibrateCashUnitCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   $"Specified unsupported output position. {calibrateCashUnit.Payload.Position.Target}");
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Specified unsupported output position. {calibrateCashUnit.Payload.Position.Target}");
                         }
 
                         destination = new ItemDestination(
@@ -183,11 +187,12 @@ namespace XFS4IoTFramework.CashManagement
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
             {
-                return new CalibrateCashUnitCompletion.PayloadData(result.CompletionCode,
-                                                                   result.ErrorDescription,
-                                                                   result.ErrorCode);
+                return new(
+                    new(result.ErrorCode),
+                    result.CompletionCode,
+                    result.ErrorDescription);
             }
 
             CalibrateCashUnitCompletion.PayloadData.ResultClass movementResult = null;
@@ -232,10 +237,19 @@ namespace XFS4IoTFramework.CashManagement
                     );
             }
 
-            return new CalibrateCashUnitCompletion.PayloadData(CompletionCode: result.CompletionCode,
-                                                               ErrorDescription: result.ErrorDescription,
-                                                               ErrorCode: result.ErrorCode,
-                                                               Result: movementResult);
+            CalibrateCashUnitCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                movementResult is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Result: movementResult);
+            }
+
+            return new(
+                payload,
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

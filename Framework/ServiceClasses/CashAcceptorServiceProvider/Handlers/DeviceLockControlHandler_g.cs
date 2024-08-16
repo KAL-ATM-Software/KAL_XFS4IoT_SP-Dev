@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashAcceptor
             IDeviceLockControlEvents events = new DeviceLockControlEvents(Connection, deviceLockControlCmd.Header.RequestId.Value);
 
             var result = await HandleDeviceLockControl(events, deviceLockControlCmd, cancel);
-            await Connection.SendMessageAsync(new DeviceLockControlCompletion(deviceLockControlCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new DeviceLockControlCompletion(deviceLockControlCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var deviceLockControlcommand = command.IsA<DeviceLockControlCommand>();
-            deviceLockControlcommand.Header.RequestId.HasValue.IsTrue();
+            var deviceLockControlCommand = command.IsA<DeviceLockControlCommand>();
+            deviceLockControlCommand.Header.RequestId.HasValue.IsTrue();
 
-            DeviceLockControlCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => DeviceLockControlCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new DeviceLockControlCompletion(deviceLockControlcommand.Header.RequestId.Value, new DeviceLockControlCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new DeviceLockControlCompletion(deviceLockControlCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

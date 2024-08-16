@@ -19,16 +19,16 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.SetResolution")]
     public sealed class SetResolutionCompletion : Completion<SetResolutionCompletion.PayloadData>
     {
-        public SetResolutionCompletion(int RequestId, SetResolutionCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetResolutionCompletion(int RequestId, SetResolutionCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

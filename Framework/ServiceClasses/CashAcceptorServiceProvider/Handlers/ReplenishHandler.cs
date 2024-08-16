@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,44 +22,49 @@ namespace XFS4IoTFramework.CashAcceptor
 {
     public partial class ReplenishHandler
     {
-        private async Task<ReplenishCompletion.PayloadData> HandleReplenish(IReplenishEvents events, ReplenishCommand replenish, CancellationToken cancel)
+        private async Task<CommandResult<ReplenishCompletion.PayloadData>> HandleReplenish(IReplenishEvents events, ReplenishCommand replenish, CancellationToken cancel)
         {
             if (CashAcceptor.ReplenishTargets is null ||
                 CashAcceptor.ReplenishTargets.Count == 0)
             {
-                return new ReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                           $"The device doesn't support replenish command.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"The device doesn't support replenish command.");
             }
 
             if (Common.CommonStatus.Exchange == CommonStatusClass.ExchangeEnum.Active)
             {
-                return new ReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"The exchange state is already in active.",
-                                                           ReplenishCompletion.PayloadData.ErrorCodeEnum.ExchangeActive);
+                return new(
+                    new(ReplenishCompletion.PayloadData.ErrorCodeEnum.ExchangeActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The exchange state is already in active.");
             }
 
             if (CashAcceptor.CashInStatus.Status == CashInStatusClass.StatusEnum.Active)
             {
-                return new ReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}",
-                                                           ReplenishCompletion.PayloadData.ErrorCodeEnum.CashInActive);
+                return new(
+                    new(ReplenishCompletion.PayloadData.ErrorCodeEnum.CashInActive),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The cash-in state is in active. {CashAcceptor.CashInStatus.Status}");
             }
 
             if (string.IsNullOrEmpty(replenish.Payload.Source) ||
                 !Storage.CashUnits.ContainsKey(replenish.Payload.Source))
             {
-                return new ReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                           $"The specified source of storage unit is not valid. {replenish.Payload.Source}",
-                                                           ReplenishCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
+                return new(
+                    new(ReplenishCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"The specified source of storage unit is not valid. {replenish.Payload.Source}");
             }
 
             foreach (var target in replenish.Payload.ReplenishTargets)
             {
                 if (!CashAcceptor.ReplenishTargets.Contains(target.Target))
                 {
-                    return new ReplenishCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                               $"Specified target is not supported by the device. {target.Target}",
-                                                               ReplenishCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit);
+                    return new(
+                        new(ReplenishCompletion.PayloadData.ErrorCodeEnum.InvalidCashUnit),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified target is not supported by the device. {target.Target}");
 
                 }
             }
@@ -76,15 +80,14 @@ namespace XFS4IoTFramework.CashAcceptor
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            ReplenishCompletion.PayloadData payload = new(result.CompletionCode,
-                                                          result.ErrorDescription,
-                                                          result.ErrorCode);
+            ReplenishCompletion.PayloadData payload = result.ErrorCode is not null ? new(result.ErrorCode) : null;
+
             if (result.OperationResult is not null)
             {
                 List<ReplenishCompletion.PayloadData.ReplenishTargetResultsClass> targetResults = null;
                 if (result.OperationResult.TargetResults?.Count > 0)
                 {
-                    targetResults = new();
+                    targetResults = [];
                     foreach (var targetResult in result.OperationResult.TargetResults)
                     {
                         targetResults.Add(new ReplenishCompletion.PayloadData.ReplenishTargetResultsClass(targetResult.Key,
@@ -93,15 +96,21 @@ namespace XFS4IoTFramework.CashAcceptor
                     }
                 }
 
-                payload = new(result.CompletionCode,
-                              result.ErrorDescription,
-                              result.ErrorCode,
-                              result.OperationResult.NumberOfItemsRemoved,
-                              result.OperationResult.TotalNumberOfItemsRejected,
-                              targetResults);
+                if (targetResults is not null ||
+                    result.OperationResult is not null)
+                {
+                    payload = new(
+                        result.ErrorCode,
+                        result.OperationResult.NumberOfItemsRemoved,
+                        result.OperationResult.TotalNumberOfItemsRejected,
+                        targetResults);
+                }
             }
 
-            return payload;
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

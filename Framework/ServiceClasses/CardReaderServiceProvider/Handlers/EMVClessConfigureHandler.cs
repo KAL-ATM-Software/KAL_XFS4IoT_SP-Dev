@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,17 +11,19 @@ using XFS4IoT.Completions;
 using XFS4IoT.CardReader.Commands;
 using XFS4IoT.CardReader.Completions;
 using XFS4IoTFramework.Common;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.CardReader
 {
     public partial class EMVClessConfigureHandler
     { 
-        private async Task<EMVClessConfigureCompletion.PayloadData> HandleEMVClessConfigure(IEMVClessConfigureEvents events, EMVClessConfigureCommand eMVClessConfigure, CancellationToken cancel)
+        private async Task<CommandResult<EMVClessConfigureCompletion.PayloadData>> HandleEMVClessConfigure(IEMVClessConfigureEvents events, EMVClessConfigureCommand eMVClessConfigure, CancellationToken cancel)
         {
             if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
             {
-                return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                   $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
             }
 
             // Data check
@@ -30,8 +31,9 @@ namespace XFS4IoTFramework.CardReader
                 eMVClessConfigure.Payload.TerminalData is null &&
                 eMVClessConfigure.Payload.KeyData is not { Count: > 0 })
             {
-                return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                   "No terminal configuration data supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "No terminal configuration data supplied.");
             }
 
             List<AIDInfo> AIDs = new(); 
@@ -39,18 +41,21 @@ namespace XFS4IoTFramework.CardReader
             {
                 if (AID.Aid is not { Count: > 0 })
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No AID is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No AID is supplied.");
                 }
                 if (AID.PartialSelection is null)
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No PartialSelection is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No PartialSelection is supplied.");
                 }
                 if (AID.TransactionType is null)
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No TransactionType is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No TransactionType is supplied.");
                 }
                 AIDs.Add(new AIDInfo(AID.Aid, 
                                      (bool)AID.PartialSelection, 
@@ -64,43 +69,50 @@ namespace XFS4IoTFramework.CardReader
             {
                 if (PKs.Rid is not { Count: > 0})
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No RID is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No RID is supplied.");
                 }
                 if (PKs.CaPublicKey is null)
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No CA Public Key is supplied.");
                 }
 
                 if (PKs.CaPublicKey.Index is null)
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No index of the CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No index of the CA Public Key is supplied.");
                 }
 
                 if (PKs.CaPublicKey.AlgorithmIndicator is null)
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No algorithm indicator of the CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No algorithm indicator of the CA Public Key is supplied.");
                 }
 
                 if (PKs.CaPublicKey.Exponent is not { Count: > 0 })
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No exponents of the CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No exponents of the CA Public Key is supplied.");
                 }
 
                 if (PKs.CaPublicKey.Modulus is not { Count: > 0 })
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No modules of the CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No modules of the CA Public Key is supplied.");
                 }
 
                 if (PKs.CaPublicKey.Checksum is not { Count: > 0 })
                 {
-                    return new EMVClessConfigureCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                       "No checksum of the CA Public Key is supplied.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "No checksum of the CA Public Key is supplied.");
                 }
 
                 PublicKeys.Add(new PublicKeyInfo(PKs.Rid,
@@ -119,9 +131,10 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessConfigureAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new EMVClessConfigureCompletion.PayloadData(result.CompletionCode,
-                                                               result.ErrorDescription,
-                                                               result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

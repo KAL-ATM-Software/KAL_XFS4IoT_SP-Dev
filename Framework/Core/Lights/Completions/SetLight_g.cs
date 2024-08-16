@@ -19,16 +19,16 @@ namespace XFS4IoT.Lights.Completions
     [Completion(Name = "Lights.SetLight")]
     public sealed class SetLightCompletion : Completion<SetLightCompletion.PayloadData>
     {
-        public SetLightCompletion(int RequestId, SetLightCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SetLightCompletion(int RequestId, SetLightCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
             }

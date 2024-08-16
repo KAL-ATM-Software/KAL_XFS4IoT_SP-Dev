@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashAcceptor
             IConfigureNoteTypesEvents events = new ConfigureNoteTypesEvents(Connection, configureNoteTypesCmd.Header.RequestId.Value);
 
             var result = await HandleConfigureNoteTypes(events, configureNoteTypesCmd, cancel);
-            await Connection.SendMessageAsync(new ConfigureNoteTypesCompletion(configureNoteTypesCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ConfigureNoteTypesCompletion(configureNoteTypesCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var configureNoteTypescommand = command.IsA<ConfigureNoteTypesCommand>();
-            configureNoteTypescommand.Header.RequestId.HasValue.IsTrue();
+            var configureNoteTypesCommand = command.IsA<ConfigureNoteTypesCommand>();
+            configureNoteTypesCommand.Header.RequestId.HasValue.IsTrue();
 
-            ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ConfigureNoteTypesCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ConfigureNoteTypesCompletion(configureNoteTypescommand.Header.RequestId.Value, new ConfigureNoteTypesCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ConfigureNoteTypesCompletion(configureNoteTypesCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

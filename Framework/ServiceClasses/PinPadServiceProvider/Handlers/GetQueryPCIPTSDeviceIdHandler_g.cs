@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.PinPad
             IGetQueryPCIPTSDeviceIdEvents events = new GetQueryPCIPTSDeviceIdEvents(Connection, getQueryPCIPTSDeviceIdCmd.Header.RequestId.Value);
 
             var result = await HandleGetQueryPCIPTSDeviceId(events, getQueryPCIPTSDeviceIdCmd, cancel);
-            await Connection.SendMessageAsync(new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var getQueryPCIPTSDeviceIdcommand = command.IsA<GetQueryPCIPTSDeviceIdCommand>();
-            getQueryPCIPTSDeviceIdcommand.Header.RequestId.HasValue.IsTrue();
+            var getQueryPCIPTSDeviceIdCommand = command.IsA<GetQueryPCIPTSDeviceIdCommand>();
+            getQueryPCIPTSDeviceIdCommand.Header.RequestId.HasValue.IsTrue();
 
-            GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => GetQueryPCIPTSDeviceIdCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdcommand.Header.RequestId.Value, new GetQueryPCIPTSDeviceIdCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new GetQueryPCIPTSDeviceIdCompletion(getQueryPCIPTSDeviceIdCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

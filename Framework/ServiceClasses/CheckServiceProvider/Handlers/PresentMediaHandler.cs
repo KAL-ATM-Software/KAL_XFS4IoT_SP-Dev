@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.Check
 {
     public partial class PresentMediaHandler
     {
-        private async Task<PresentMediaCompletion.PayloadData> HandlePresentMedia(IPresentMediaEvents events, PresentMediaCommand presentMedia, CancellationToken cancel)
+        private async Task<CommandResult<PresentMediaCompletion.PayloadData>> HandlePresentMedia(IPresentMediaEvents events, PresentMediaCommand presentMedia, CancellationToken cancel)
         {
             PresentMediaRequest.PositionEnum position = PresentMediaRequest.PositionEnum.All;
 
@@ -27,22 +27,22 @@ namespace XFS4IoTFramework.Check
                 if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Input &&
                     !Common.CheckScannerCapabilities.Positions.ContainsKey(CheckScannerCapabilitiesClass.PositionEnum.Input))
                 {
-                    return new PresentMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported source. Check Positions capability reported. {presentMedia.Payload?.Source.Position}");
                 }
                 if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Refused &&
                     !Common.CheckScannerCapabilities.Positions.ContainsKey(CheckScannerCapabilitiesClass.PositionEnum.Refused))
                 {
-                    return new PresentMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported source. Check Positions capability reported. {presentMedia.Payload?.Source.Position}");
                 }
                 if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Rebuncher &&
                     Common.CheckScannerStatus.ReBuncher != CheckScannerStatusClass.ReBuncherEnum.NotSupported)
                 {
-                    return new PresentMediaCompletion.PayloadData(
-                        MessagePayload.CompletionCodeEnum.InvalidData,
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported source. Check ReBuncher status reported. {presentMedia.Payload?.Source.Position}");
                 }
             }
@@ -56,10 +56,10 @@ namespace XFS4IoTFramework.Check
 
             Logger.Log(Constants.DeviceClass, $"CheckDev.PresentMediaAsync() -> {result.CompletionCode}");
 
-            return new PresentMediaCompletion.PayloadData(
+            return new(
+                result.ErrorCode is not null ? new(ErrorCode: result.ErrorCode) : null,
                 CompletionCode: result.CompletionCode,
-                ErrorDescription: result.ErrorDescription,
-                ErrorCode: result.ErrorCode);
+                ErrorDescription: result.ErrorDescription);
         }
     }
 }

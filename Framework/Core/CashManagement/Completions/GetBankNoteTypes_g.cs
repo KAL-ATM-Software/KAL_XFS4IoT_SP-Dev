@@ -19,16 +19,16 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.GetBankNoteTypes")]
     public sealed class GetBankNoteTypesCompletion : Completion<GetBankNoteTypesCompletion.PayloadData>
     {
-        public GetBankNoteTypesCompletion(int RequestId, GetBankNoteTypesCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetBankNoteTypesCompletion(int RequestId, GetBankNoteTypesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, Dictionary<string, BankNoteClass> Items = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(Dictionary<string, BankNoteClass> Items = null)
+                : base()
             {
                 this.Items = Items;
             }

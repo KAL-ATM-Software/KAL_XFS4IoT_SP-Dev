@@ -3,7 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,12 +18,13 @@ namespace XFS4IoTFramework.CardReader
 {
     public partial class EMVClessIssuerUpdateHandler
     {
-        private async Task<EMVClessIssuerUpdateCompletion.PayloadData> HandleEMVClessIssuerUpdate(IEMVClessIssuerUpdateEvents events, EMVClessIssuerUpdateCommand eMVClessIssuerUpdate, CancellationToken cancel)
+        private async Task<CommandResult<EMVClessIssuerUpdateCompletion.PayloadData>> HandleEMVClessIssuerUpdate(IEMVClessIssuerUpdateEvents events, EMVClessIssuerUpdateCommand eMVClessIssuerUpdate, CancellationToken cancel)
         {
             if (Common.CardReaderCapabilities.Type != CardReaderCapabilitiesClass.DeviceTypeEnum.IntelligentContactless)
             {
-                return new EMVClessIssuerUpdateCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                      $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
+                return new(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"This device is not an intelligent contactless CardReader. {Common.CardReaderCapabilities.Type}");
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessIssuerUpdateAsync()");
@@ -33,7 +33,7 @@ namespace XFS4IoTFramework.CardReader
                                                                       cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessIssuerUpdateAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success &&
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success &&
                 result.TransactionResult is not null)
             {
                 // Build transaction output data
@@ -122,16 +122,19 @@ namespace XFS4IoTFramework.CardReader
                             CardRemovalTimeout: result.TransactionResult.ClessOutcome.CardRemovalTimeout,
                             DiscretionaryData: result.TransactionResult.ClessOutcome.DiscretionaryData));
 
-                return new EMVClessIssuerUpdateCompletion.PayloadData(result.CompletionCode, 
-                                                                      result.ErrorDescription,
-                                                                      result.ErrorCode,
-                                                                      chip);
+                return new(
+                    new(
+                        ErrorCode: result.ErrorCode,
+                        Chip: chip),
+                    result.CompletionCode,
+                    result.ErrorDescription);
             }
             else
             {
-                return new EMVClessIssuerUpdateCompletion.PayloadData(result.CompletionCode,
-                                                                      result.ErrorDescription,
-                                                                      result.ErrorCode);
+                return new(
+                    result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                    result.CompletionCode,
+                    result.ErrorDescription);
             }
         }
     }

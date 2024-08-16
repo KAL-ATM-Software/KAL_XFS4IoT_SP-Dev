@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -12,16 +11,18 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.TextTerminal
 {
     public partial class LoadFormHandler
     {
-        private Task<LoadFormCompletion.PayloadData> HandleLoadForm(ILoadFormEvents events, LoadFormCommand loadForm, CancellationToken cancel)
+        private Task<CommandResult<LoadFormCompletion.PayloadData>> HandleLoadForm(ILoadFormEvents events, LoadFormCommand loadForm, CancellationToken cancel)
         {
-            return Task.FromResult(new LoadFormCompletion.PayloadData(MessagePayload.CompletionCodeEnum.UnsupportedCommand,
-                                                                      $"The XFS form is not supported."));
+            return Task.FromResult(
+                new CommandResult<LoadFormCompletion.PayloadData>(
+                    MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                    $"The XFS form is not supported.")
+                );
         }
     }
 }

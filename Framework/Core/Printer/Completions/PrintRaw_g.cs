@@ -19,16 +19,16 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.PrintRaw")]
     public sealed class PrintRawCompletion : Completion<PrintRawCompletion.PayloadData>
     {
-        public PrintRawCompletion(int RequestId, PrintRawCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public PrintRawCompletion(int RequestId, PrintRawCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, List<byte> Data = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, List<byte> Data = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Data = Data;

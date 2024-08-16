@@ -186,12 +186,12 @@ namespace XFS4IoTCoreTest.Command
         [Completion(Name = "Common.TestResponse1")]
         public class TestResponse1 : Completion<XFS4IoT.Completions.MessagePayload>
         {
-            public TestResponse1() : base(123456, new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "good")) { }
+            public TestResponse1() : base(123456, null, MessageHeader.CompletionCodeEnum.Success, "good") { }
         }
         [Completion(Name = "Common.TestResponse2")]
         public class TestResponse2 : Completion<XFS4IoT.Completions.MessagePayload>
         {
-            public TestResponse2() : base(123456, new XFS4IoT.Completions.MessagePayload(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.Success, "error")) { }
+            public TestResponse2() : base(123456, null, MessageHeader.CompletionCodeEnum.Success, "error") { }
         }
 
         [TestMethod]

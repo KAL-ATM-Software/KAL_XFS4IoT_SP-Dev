@@ -19,16 +19,16 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.GetStorageInfo")]
     public sealed class GetStorageInfoCompletion : Completion<GetStorageInfoCompletion.PayloadData>
     {
-        public GetStorageInfoCompletion(int RequestId, GetStorageInfoCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public GetStorageInfoCompletion(int RequestId, GetStorageInfoCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, DataTypeClass> Templates = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, Dictionary<string, DataTypeClass> Templates = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Templates = Templates;

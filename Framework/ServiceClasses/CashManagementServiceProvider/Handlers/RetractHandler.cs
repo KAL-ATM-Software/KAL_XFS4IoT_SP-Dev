@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,13 +22,14 @@ namespace XFS4IoTFramework.CashManagement
 {
     public partial class RetractHandler
     {
-        private async Task<RetractCompletion.PayloadData> HandleRetract(IRetractEvents events, RetractCommand retract, CancellationToken cancel)
+        private async Task<CommandResult<RetractCompletion.PayloadData>> HandleRetract(IRetractEvents events, RetractCommand retract, CancellationToken cancel)
         {
             if (retract.Payload.Location.RetractArea is not null &&
                 retract.Payload.Location.OutputPosition is not null)
             {
-                return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                         $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Specified both RetractArea and OutputPosition properties, the Service Provider doesn't know where the items to be moved.");
             }
 
             RetractPosition retractPosition = null;
@@ -50,9 +50,10 @@ namespace XFS4IoTFramework.CashManagement
                 if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
                     !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                 {
-                    return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"Specified unsupported retract area. {retractArea}",
-                                                             RetractCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition);
+                    return new(
+                        new(RetractCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified unsupported retract area. {retractArea}");
                 }
 
                 if (retractArea == CashManagementCapabilitiesClass.RetractAreaEnum.Retract)
@@ -80,9 +81,10 @@ namespace XFS4IoTFramework.CashManagement
                                              select unit).Count();
                     if ((int)index > totalRetractUnits)
                     {
-                        return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"Unexpected index property value is set where the retract area is specified to retract position. " +
-                                                                 $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Unexpected index property value is set where the retract area is specified to retract position. " +
+                            $"The value of index one is the first retract position and increments by one for each subsequent position. {index}");
                     }
 
                     retractPosition = new RetractPosition(new Retract(retractArea, index));
@@ -110,8 +112,9 @@ namespace XFS4IoTFramework.CashManagement
 
                 if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
                 {
-                    return new RetractCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Specified unsupported output position. {position}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Specified unsupported output position. {position}");
                 }
 
                 retractPosition = new RetractPosition(position);
@@ -210,10 +213,19 @@ namespace XFS4IoTFramework.CashManagement
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new RetractCompletion.PayloadData(CompletionCode: result.CompletionCode,
-                                                     ErrorDescription: result.ErrorDescription,
-                                                     ErrorCode: result.ErrorCode,
-                                                     Storage: itemMovementResult);
+            RetractCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                itemMovementResult is not null)
+            {
+                payload = new(
+                    ErrorCode: result.ErrorCode,
+                    Storage: itemMovementResult);
+            }
+
+            return new(
+                payload,
+                CompletionCode: result.CompletionCode,
+                ErrorDescription: result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

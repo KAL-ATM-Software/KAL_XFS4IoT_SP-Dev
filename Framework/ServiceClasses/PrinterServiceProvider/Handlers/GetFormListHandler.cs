@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,13 +19,14 @@ namespace XFS4IoTFramework.Printer
     [CommandHandlerAsync]
     public partial class GetFormListHandler
     {
-        private Task<GetFormListCompletion.PayloadData> HandleGetFormList(IGetFormListEvents events, GetFormListCommand getFormList, CancellationToken cancel)
+        private Task<CommandResult<GetFormListCompletion.PayloadData>> HandleGetFormList(IGetFormListEvents events, GetFormListCommand getFormList, CancellationToken cancel)
         {
             Dictionary<string, Form> forms = Printer.GetForms();
-            return Task.FromResult(new GetFormListCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                         null,
-                                                                         forms.Count == 0 ? null :
-                                                                         new List<string>(forms.Keys)));
+            return Task.FromResult(
+                new CommandResult<GetFormListCompletion.PayloadData>(
+                    forms.Count == 0 ? null : new(new List<string>(forms.Keys)),
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

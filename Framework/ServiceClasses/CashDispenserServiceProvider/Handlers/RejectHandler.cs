@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class RejectHandler
     {
-        private async Task<RejectCompletion.PayloadData> HandleReject(IRejectEvents events, RejectCommand reject, CancellationToken cancel)
+        private async Task<CommandResult<RejectCompletion.PayloadData>> HandleReject(IRejectEvents events, RejectCommand reject, CancellationToken cancel)
         {
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.RejectAsync()");
 
@@ -36,8 +35,9 @@ namespace XFS4IoTFramework.CashDispenser
 
             if (!foundDestination)
             {
-                return new RejectCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                        $"No reject units supported for this device.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No reject units supported for this device.");
             }
 
             var result = await Device.RejectAsync(new RejectCommandEvents(Storage, events), cancel);
@@ -46,9 +46,10 @@ namespace XFS4IoTFramework.CashDispenser
 
             await Storage.UpdateCashAccounting(result.MovementResult);
 
-            return new RejectCompletion.PayloadData(result.CompletionCode, 
-                                                    result.ErrorDescription, 
-                                                    result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IStorageService Storage { get => Provider.IsA<IStorageService>(); }

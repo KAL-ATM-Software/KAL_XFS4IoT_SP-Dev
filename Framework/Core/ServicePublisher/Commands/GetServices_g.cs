@@ -23,5 +23,6 @@ namespace XFS4IoT.ServicePublisher.Commands
         public GetServicesCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }
+
     }
 }

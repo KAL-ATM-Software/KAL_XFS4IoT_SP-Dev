@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CardReader
             IChipIOEvents events = new ChipIOEvents(Connection, chipIOCmd.Header.RequestId.Value);
 
             var result = await HandleChipIO(events, chipIOCmd, cancel);
-            await Connection.SendMessageAsync(new ChipIOCompletion(chipIOCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ChipIOCompletion(chipIOCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var chipIOcommand = command.IsA<ChipIOCommand>();
-            chipIOcommand.Header.RequestId.HasValue.IsTrue();
+            var chipIOCommand = command.IsA<ChipIOCommand>();
+            chipIOCommand.Header.RequestId.HasValue.IsTrue();
 
-            ChipIOCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ChipIOCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ChipIOCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ChipIOCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ChipIOCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ChipIOCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ChipIOCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ChipIOCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ChipIOCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ChipIOCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ChipIOCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ChipIOCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ChipIOCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ChipIOCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ChipIOCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ChipIOCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ChipIOCompletion(chipIOcommand.Header.RequestId.Value, new ChipIOCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ChipIOCompletion(chipIOCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

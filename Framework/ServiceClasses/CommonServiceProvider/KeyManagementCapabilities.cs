@@ -147,7 +147,7 @@ namespace XFS4IoTFramework.Common
             CertHost_TR34, //The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             CA_TR34, // The Certificate Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             HL_TR34, // A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
-            CA, // Obsolete since 2023-2
+            CA, // Obsolete since 2023-2, this value will be removed in the package 3.0.
         }
 
         [Flags]

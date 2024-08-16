@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CardReader
             IQueryIFMIdentifierEvents events = new QueryIFMIdentifierEvents(Connection, queryIFMIdentifierCmd.Header.RequestId.Value);
 
             var result = await HandleQueryIFMIdentifier(events, queryIFMIdentifierCmd, cancel);
-            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new QueryIFMIdentifierCompletion(queryIFMIdentifierCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var queryIFMIdentifiercommand = command.IsA<QueryIFMIdentifierCommand>();
-            queryIFMIdentifiercommand.Header.RequestId.HasValue.IsTrue();
+            var queryIFMIdentifierCommand = command.IsA<QueryIFMIdentifierCommand>();
+            queryIFMIdentifierCommand.Header.RequestId.HasValue.IsTrue();
 
-            QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => QueryIFMIdentifierCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifiercommand.Header.RequestId.Value, new QueryIFMIdentifierCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new QueryIFMIdentifierCompletion(queryIFMIdentifierCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

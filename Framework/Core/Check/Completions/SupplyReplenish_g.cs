@@ -17,21 +17,11 @@ namespace XFS4IoT.Check.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Check.SupplyReplenish")]
-    public sealed class SupplyReplenishCompletion : Completion<SupplyReplenishCompletion.PayloadData>
+    public sealed class SupplyReplenishCompletion : Completion<MessagePayload>
     {
-        public SupplyReplenishCompletion(int RequestId, SupplyReplenishCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public SupplyReplenishCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

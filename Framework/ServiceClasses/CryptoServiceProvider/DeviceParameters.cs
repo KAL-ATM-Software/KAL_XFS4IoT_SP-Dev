@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  * 
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -28,7 +27,7 @@ namespace XFS4IoTFramework.Crypto
 
     public sealed class GenerateRandomNumberResult : DeviceResult
     {
-        public GenerateRandomNumberResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GenerateRandomNumberResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                           string ErrorDescription,
                                           GenerateRandomCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -37,6 +36,28 @@ namespace XFS4IoTFramework.Crypto
             this.RandomNumber = null;
         }
 
+        public GenerateRandomNumberResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                          List<byte> RandomNumber)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.RandomNumber = RandomNumber;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GenerateRandomNumberResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                          string ErrorDescription,
+                                          GenerateRandomCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.RandomNumber = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GenerateRandomNumberResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                           List<byte> RandomNumber)
             : base(CompletionCode, null)
@@ -44,6 +65,7 @@ namespace XFS4IoTFramework.Crypto
             this.ErrorCode = null;
             this.RandomNumber = RandomNumber;
         }
+
         public GenerateRandomCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         public List<byte> RandomNumber { get; init; }
@@ -148,7 +170,7 @@ namespace XFS4IoTFramework.Crypto
 
     public sealed class CryptoDataResult : DeviceResult
     {
-        public CryptoDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public CryptoDataResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                 string ErrorDescription = null,
                                 CryptoDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -157,6 +179,28 @@ namespace XFS4IoTFramework.Crypto
             this.CryptoData = null;
         }
 
+        public CryptoDataResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                List<byte> CryptoData)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.CryptoData = CryptoData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public CryptoDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                string ErrorDescription = null,
+                                CryptoDataCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.CryptoData = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public CryptoDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                 List<byte> CryptoData)
             : base(CompletionCode, null)
@@ -229,7 +273,7 @@ namespace XFS4IoTFramework.Crypto
 
     public sealed class GenerateAuthenticationDataResult : DeviceResult
     {
-        public GenerateAuthenticationDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GenerateAuthenticationDataResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                           string ErrorDescription,
                                           GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -238,6 +282,28 @@ namespace XFS4IoTFramework.Crypto
             this.AuthenticationData = null;
         }
 
+        public GenerateAuthenticationDataResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                                List<byte> AuthenticationData)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.AuthenticationData = AuthenticationData;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GenerateAuthenticationDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                          string ErrorDescription,
+                                          GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.AuthenticationData = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GenerateAuthenticationDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                                 List<byte> AuthenticationData)
             : base(CompletionCode, null)
@@ -245,6 +311,7 @@ namespace XFS4IoTFramework.Crypto
             this.ErrorCode = null;
             this.AuthenticationData = AuthenticationData;
         }
+
         public GenerateAuthenticationCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         public List<byte> AuthenticationData { get; init; }
@@ -321,6 +388,17 @@ namespace XFS4IoTFramework.Crypto
 
     public sealed class VerifyAuthenticationDataResult : DeviceResult
     {
+        public VerifyAuthenticationDataResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                              string ErrorDescription = null,
+                                              VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public VerifyAuthenticationDataResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                               string ErrorDescription = null,
                                               VerifyAuthenticationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
@@ -348,7 +426,7 @@ namespace XFS4IoTFramework.Crypto
 
     public sealed class GenerateDigestResult : DeviceResult
     {
-        public GenerateDigestResult(MessagePayload.CompletionCodeEnum CompletionCode,
+        public GenerateDigestResult(MessageHeader.CompletionCodeEnum CompletionCode,
                                           string ErrorDescription,
                                           DigestCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
@@ -357,6 +435,28 @@ namespace XFS4IoTFramework.Crypto
             this.Digest = null;
         }
 
+        public GenerateDigestResult(MessageHeader.CompletionCodeEnum CompletionCode,
+                                    List<byte> Digest)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.Digest = Digest;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public GenerateDigestResult(MessagePayload.CompletionCodeEnum CompletionCode,
+                                          string ErrorDescription,
+                                          DigestCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            this.Digest = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public GenerateDigestResult(MessagePayload.CompletionCodeEnum CompletionCode,
                                     List<byte> Digest)
             : base(CompletionCode, null)
@@ -364,6 +464,7 @@ namespace XFS4IoTFramework.Crypto
             this.ErrorCode = null;
             this.Digest = Digest;
         }
+
         public DigestCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         public List<byte> Digest { get; init; }

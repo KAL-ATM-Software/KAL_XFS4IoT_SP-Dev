@@ -20,12 +20,14 @@ namespace XFS4IoTFramework.Keyboard
     [CommandHandlerAsync]
     public partial class GetLayoutHandler
     {
-        private Task<GetLayoutCompletion.PayloadData> HandleGetLayout(IGetLayoutEvents events, GetLayoutCommand getLayout, CancellationToken cancel)
+        private Task<CommandResult<GetLayoutCompletion.PayloadData>> HandleGetLayout(IGetLayoutEvents events, GetLayoutCommand getLayout, CancellationToken cancel)
         {
             if (Keyboard.KeyboardLayouts is null)
             {
                 // nothing to report, not keys for the keyboard
-                Task.FromResult(new GetLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty));
+                Task.FromResult(
+                    new CommandResult<GetLayoutCompletion.PayloadData>(MessageHeader.CompletionCodeEnum.Success)
+                    );
             }
          
             EntryModeEnum? inquiry = null;
@@ -40,9 +42,12 @@ namespace XFS4IoTFramework.Keyboard
 
                 if (!Keyboard.KeyboardLayouts.ContainsKey((EntryModeEnum)inquiry))
                 {
-                    Task.FromResult(new GetLayoutCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode, 
-                                                                        $"Specified mode is not supported by the device. {getLayout.Payload.EntryMode}",
-                                                                        GetLayoutCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported));
+                    Task.FromResult(
+                        new CommandResult<GetLayoutCompletion.PayloadData>(
+                            new(GetLayoutCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode, 
+                            $"Specified mode is not supported by the device. {getLayout.Payload.EntryMode}")
+                        );
                 }
             }
 
@@ -93,15 +98,24 @@ namespace XFS4IoTFramework.Keyboard
                 if (inquiry is not null)
                     break;
             }
-            
-            return Task.FromResult(new GetLayoutCompletion.PayloadData(CompletionCode: MessagePayload.CompletionCodeEnum.Success,
-                                                                       ErrorDescription: null, 
-                                                                       Layout: data is null && pin is null && secure is null ?
-                                                                       null :
-                                                                       new LayoutNullableClass(
-                                                                           Data: data, 
-                                                                           Pin: pin, 
-                                                                           Secure: secure)));
+
+            GetLayoutCompletion.PayloadData payload = null;
+            if (data is not null ||
+                pin is not null ||
+                secure is not null)
+            {
+                payload = new(
+                        Layout: new LayoutNullableClass(
+                            Data: data,
+                            Pin: pin,
+                            Secure: secure));
+            }
+
+            return Task.FromResult(
+                new CommandResult<GetLayoutCompletion.PayloadData>(
+                    payload,
+                    CompletionCode: MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

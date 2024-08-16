@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -12,19 +11,19 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.PinPad.Commands;
 using XFS4IoT.PinPad.Completions;
-using XFS4IoT.Completions;
 using XFS4IoTFramework.KeyManagement;
 
 namespace XFS4IoTFramework.PinPad
 {
     public partial class GetPinBlockHandler
     {
-        private async Task<GetPinBlockCompletion.PayloadData> HandleGetPinBlock(IGetPinBlockEvents events, GetPinBlockCommand getPinBlock, CancellationToken cancel)
+        private async Task<CommandResult<GetPinBlockCompletion.PayloadData>> HandleGetPinBlock(IGetPinBlockEvents events, GetPinBlockCommand getPinBlock, CancellationToken cancel)
         {
             if (getPinBlock.Payload.Format is null)
             {
-                return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"PIN block format is not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"PIN block format is not specified.");
             }
 
             PINBlockRequest.PINFormatEnum format = getPinBlock.Payload.Format switch
@@ -52,24 +51,27 @@ namespace XFS4IoTFramework.PinPad
             {
                 if (string.IsNullOrEmpty(getPinBlock.Payload.CustomerData))
                 {
-                    return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"Customer data required for this pin format. {getPinBlock.Payload.Format}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Customer data required for this pin format. {getPinBlock.Payload.Format}");
                 }
             }
 
             KeyDetail key = KeyManagement.GetKeyDetail(getPinBlock.Payload.Key);
             if (key is null)
             {
-                return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"Specified key is not loaded.",
-                                                             GetPinBlockCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                return new(
+                    new(GetPinBlockCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key is not loaded.");
             }
 
             if (key.KeyUsage != "P0")
             {
-                return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                             $"Specified key usage is not expected.{key.KeyUsage}",
-                                                             GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Specified key usage is not expected.{key.KeyUsage}");
             }
 
             if (!string.IsNullOrEmpty(getPinBlock.Payload.SecondEncKey))
@@ -77,53 +79,60 @@ namespace XFS4IoTFramework.PinPad
                 KeyDetail pinblockEncKey = KeyManagement.GetKeyDetail(getPinBlock.Payload.SecondEncKey);
                 if (pinblockEncKey is null)
                 {
-                    return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                 $"Specified key encryption key is not loaded.",
-                                                                 GetPinBlockCompletion.PayloadData.ErrorCodeEnum.KeyNotFound);
+                    return new(
+                        new(GetPinBlockCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key encryption key is not loaded.");
                 }
 
                 if (pinblockEncKey.KeyUsage != "D0" &&
                     pinblockEncKey.KeyUsage != "D1")
                 {
-                    return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                 $"Specified key encryption key usage is not expected.{pinblockEncKey.KeyUsage}",
-                                                                 GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key encryption key usage is not expected.{pinblockEncKey.KeyUsage}");
                 }
 
                 if (pinblockEncKey.ModeOfUse != "E")
                 {
-                    return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                 $"Specified key encryption key usage is not expected.{pinblockEncKey.ModeOfUse}",
-                                                                 GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                    return new(
+                        new(GetPinBlockCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified key encryption key usage is not expected.{pinblockEncKey.ModeOfUse}");
                 }
             }
             
             if (getPinBlock.Payload.Padding is null)
             {
-                return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"No padding data specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No padding data specified.");
             }
 
             if (getPinBlock.Payload.Padding > 0xf)
             {
-                return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                             $"Padding data range is up to 0xf");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"Padding data range is up to 0xf");
             }
 
             if (!string.IsNullOrEmpty(getPinBlock.Payload.XorData))
             {
                 if ((getPinBlock.Payload.XorData.Length % 2) != 0)
                 {
-                    return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                 $"XorData must be even number.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"XorData must be even number.");
                 }
 
                 foreach (char c in getPinBlock.Payload.XorData)
                 {
                     if (!Uri.IsHexDigit(c))
                     {
-                        return new GetPinBlockCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                     $"XorData data should be in hexstring. {getPinBlock.Payload.XorData}");
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"XorData data should be in hexstring. {getPinBlock.Payload.XorData}");
                     }
                 }
             }
@@ -152,10 +161,19 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.GetPinBlock() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            return new GetPinBlockCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription,
-                                                         result.ErrorCode,
-                                                         result.PINBlock);
+            GetPinBlockCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                result.PINBlock?.Count > 0)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    result.PINBlock);
+            }
+
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
         private IKeyManagementService KeyManagement { get => Provider.IsA<IKeyManagementService>(); }

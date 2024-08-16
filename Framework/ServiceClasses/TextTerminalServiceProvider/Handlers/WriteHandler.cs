@@ -2,9 +2,8 @@
  * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
+ * 
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -12,8 +11,6 @@ using XFS4IoT;
 using XFS4IoTServer;
 using XFS4IoT.TextTerminal.Commands;
 using XFS4IoT.TextTerminal.Completions;
-using XFS4IoT.Completions;
-using System.Collections.Generic;
 using System.Text;
 
 namespace XFS4IoTFramework.TextTerminal
@@ -21,32 +18,44 @@ namespace XFS4IoTFramework.TextTerminal
     public partial class WriteHandler
     {
 
-        private async Task<WriteCompletion.PayloadData> HandleWrite(IWriteEvents events, WriteCommand write, CancellationToken cancel)
+        private async Task<CommandResult<WriteCompletion.PayloadData>> HandleWrite(IWriteEvents events, WriteCommand write, CancellationToken cancel)
         {
             if (write.Payload.Mode is null)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write Mode is not supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write Mode is not supplied.");
             }
 
             else if (write.Payload.PosX is null)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write PosX is not supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write PosX is not supplied.");
             }
             else if (write.Payload.PosY is null)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write PosY is not supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write PosY is not supplied.");
             }
             else if (write.Payload.PosX < 0 || write.Payload.PosY < 0)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write PosX,PosY cannot be negative.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write PosX,PosY cannot be negative.");
             }
             else if (write.Payload.TextAttr is null)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write TextAttr is not supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write TextAttr is not supplied.");
             }
             else if (string.IsNullOrEmpty(write.Payload.Text))
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Write Text is not supplied.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Write Text is not supplied.");
             }
 
 
@@ -66,11 +75,15 @@ namespace XFS4IoTFramework.TextTerminal
             // Check x,y are valid
             if (PosX < 0 || PosX >= Device.CurrentWidth)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "PositionX is outside the current resolution width.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "PositionX is outside the current resolution width.");
             }
             else if (PosY < 0 || PosY >= Device.CurrentHeight)
             {
-                return new WriteCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "PositionY is outside the current resolution width.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "PositionY is outside the current resolution width.");
             }
 
             // Evaluate the text attributes.
@@ -86,10 +99,10 @@ namespace XFS4IoTFramework.TextTerminal
             string text = write.Payload.Text;
             StringBuilder buffer = new(Device.CurrentWidth);
 
-            DeviceResult result = new(MessagePayload.CompletionCodeEnum.Success);
+            DeviceResult result = new(MessageHeader.CompletionCodeEnum.Success);
             bool flush;
 
-            for(int i = 0; i < text.Length && result.CompletionCode == MessagePayload.CompletionCodeEnum.Success; i++)
+            for(int i = 0; i < text.Length && result.CompletionCode == MessageHeader.CompletionCodeEnum.Success; i++)
             {
                 if (text[i] == '\n' || text[i] == '\r') // Check for new line within text. \n or \r
                 {
@@ -119,7 +132,7 @@ namespace XFS4IoTFramework.TextTerminal
 
                             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ScrollAsync() -> {result.CompletionCode}");
 
-                            if (result.CompletionCode != MessagePayload.CompletionCodeEnum.Success)
+                            if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
                             {
                                 break; // Scroll failed.
                             }
@@ -148,7 +161,9 @@ namespace XFS4IoTFramework.TextTerminal
                 }
             }
 
-            return new WriteCompletion.PayloadData(result.CompletionCode, result.ErrorDescription);
+            return new(
+                result.CompletionCode, 
+                result.ErrorDescription);
         }
 
     }

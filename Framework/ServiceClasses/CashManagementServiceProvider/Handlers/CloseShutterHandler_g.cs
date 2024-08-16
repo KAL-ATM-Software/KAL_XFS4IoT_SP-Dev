@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.CashManagement
             ICloseShutterEvents events = new CloseShutterEvents(Connection, closeShutterCmd.Header.RequestId.Value);
 
             var result = await HandleCloseShutter(events, closeShutterCmd, cancel);
-            await Connection.SendMessageAsync(new CloseShutterCompletion(closeShutterCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new CloseShutterCompletion(closeShutterCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var closeShuttercommand = command.IsA<CloseShutterCommand>();
-            closeShuttercommand.Header.RequestId.HasValue.IsTrue();
+            var closeShutterCommand = command.IsA<CloseShutterCommand>();
+            closeShutterCommand.Header.RequestId.HasValue.IsTrue();
 
-            CloseShutterCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => CloseShutterCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => CloseShutterCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => CloseShutterCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new CloseShutterCompletion(closeShuttercommand.Header.RequestId.Value, new CloseShutterCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new CloseShutterCompletion(closeShutterCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

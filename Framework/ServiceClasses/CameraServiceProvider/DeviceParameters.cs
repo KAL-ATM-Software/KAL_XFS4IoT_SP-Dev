@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
 
 \***********************************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using XFS4IoTServer;
@@ -12,6 +11,7 @@ using XFS4IoT.Completions;
 using XFS4IoT.Lights.Completions;
 using XFS4IoTFramework.Common;
 using XFS4IoT.Camera.Completions;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.Camera
 {
@@ -27,7 +27,7 @@ namespace XFS4IoTFramework.Camera
     public sealed class TakePictureResponse : DeviceResult
     {
 
-        public TakePictureResponse(MessagePayload.CompletionCodeEnum CompletionCode,
+        public TakePictureResponse(MessageHeader.CompletionCodeEnum CompletionCode,
                               List<byte> PictureData = null)
             : base(CompletionCode, null)
         {
@@ -35,6 +35,28 @@ namespace XFS4IoTFramework.Camera
             this.ErrorCode = null;
         }
 
+        public TakePictureResponse(MessageHeader.CompletionCodeEnum CompletionCode,
+                              string ErrorDescription = null,
+                              TakePictureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.PictureData = PictureData;
+            this.ErrorCode = ErrorCode;
+        }
+
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
+        public TakePictureResponse(MessagePayload.CompletionCodeEnum CompletionCode,
+                              List<byte> PictureData = null)
+            : base(CompletionCode, null)
+        {
+            this.PictureData = PictureData;
+            this.ErrorCode = null;
+        }
+        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
+            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public TakePictureResponse(MessagePayload.CompletionCodeEnum CompletionCode,
                               string ErrorDescription = null,
                               TakePictureCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)

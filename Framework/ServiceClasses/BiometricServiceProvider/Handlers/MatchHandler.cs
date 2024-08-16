@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -21,32 +19,36 @@ namespace XFS4IoTFramework.Biometric
     public partial class MatchHandler
     {
 
-        private async Task<MatchCompletion.PayloadData> HandleMatch(IMatchEvents events, MatchCommand match, CancellationToken cancel)
+        private async Task<CommandResult<MatchCompletion.PayloadData>> HandleMatch(IMatchEvents events, MatchCommand match, CancellationToken cancel)
         {
             if (match is null)
             {
-                return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                       "No payload specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "No payload specified.");
             }
 
             if (match.Payload?.CompareMode is null)
             {
-                return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                       "CompareMode was not specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    "CompareMode was not specified.");
             }
 
             if (match.Payload?.Threshold is null)
             {
-                return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                       "Threshold was not specified.",
-                                                       MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+                return new(
+                    new(MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    "Threshold was not specified.");
             }
 
             if (match.Payload.Threshold.Value < 0 || match.Payload.Threshold.Value > 100)
             {
-                return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                       "Threshold must be within range 0-100.",
-                                                       MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold);
+                return new(
+                    new(MatchCompletion.PayloadData.ErrorCodeEnum.InvalidThreshold),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    "Threshold must be within range 0-100.");
             }
 
             BiometricCapabilitiesClass.CompareModesEnum compareMode;
@@ -54,46 +56,67 @@ namespace XFS4IoTFramework.Biometric
             if (match.Payload.CompareMode is MatchCommand.PayloadData.CompareModeEnum.Identity)
             {
                 if (!Common.BiometricCapabilities.CompareModes.HasFlag(BiometricCapabilitiesClass.CompareModesEnum.Identity))
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              "CompareMode.Identity is not supported by this device.",
-                                                              MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
-
+                {
+                    return new(
+                        new(MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        "CompareMode.Identity is not supported by this device.");
+                }
                 else if (match.Payload.Maximum is null)
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              "Maximum must be set when CompareMode is Identity.",
-                                                              MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
+                {
+                    return new(
+                        new(MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        "Maximum must be set when CompareMode is Identity.");
+                }
 
                 if (!string.IsNullOrWhiteSpace(match.Payload.Identifier))
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              "Identifier should be ommitted when CompareMode is Identity.");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "Identifier should be ommitted when CompareMode is Identity.");
+                }
 
                 compareMode = BiometricCapabilitiesClass.CompareModesEnum.Identity;
             }
             else
             {
                 if (!Common.BiometricCapabilities.CompareModes.HasFlag(BiometricCapabilitiesClass.CompareModesEnum.Verify))
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          "CompareMode.Verify is not supported by this device.",
-                                                          MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported);
+                    return new(
+                        new(MatchCompletion.PayloadData.ErrorCodeEnum.ModeNotSupported),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        "CompareMode.Verify is not supported by this device.");
 
                 var deviceStorageInfo = Device.StorageInfo;
 
                 if (deviceStorageInfo == null || deviceStorageInfo.Count == 0)
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                          $"No data previously imported using Import command.",
-                                                          MatchCompletion.PayloadData.ErrorCodeEnum.NoImportedData);
+                {
+                    return new(
+                        new(MatchCompletion.PayloadData.ErrorCodeEnum.NoImportedData),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"No data previously imported using Import command.");
+                }
 
                 if (string.IsNullOrWhiteSpace(match.Payload.Identifier))
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          "Identifier must be specified when CompareMode is Verify.");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "Identifier must be specified when CompareMode is Verify.");
+                }
 
                 if (!deviceStorageInfo.ContainsKey(match.Payload.Identifier))
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                          $"Identifier supplied is not stored by the device. {match.Payload.Identifier}");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        $"Identifier supplied is not stored by the device. {match.Payload.Identifier}");
+                }
 
                 if (match.Payload.Maximum is not null)
-                    return new MatchCompletion.PayloadData(XFS4IoT.Completions.MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              "Maximum should be ommitted when CompareMode is Verify.");
+                {
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InvalidData,
+                        "Maximum should be ommitted when CompareMode is Verify.");
+                }
 
                 compareMode = BiometricCapabilitiesClass.CompareModesEnum.Verify;
             }
@@ -107,9 +130,9 @@ namespace XFS4IoTFramework.Biometric
 
 
             Dictionary<string, XFS4IoT.Biometric.Completions.MatchCompletion.PayloadData.CandidatesClass> candidates = null;
-            if(result.Candidates is not null && result.Candidates.Count > 0)
+            if (result.Candidates?.Count > 0)
             {
-                candidates = new Dictionary<string, MatchCompletion.PayloadData.CandidatesClass>();
+                candidates = [];
                 foreach(var candidate in result.Candidates)
                 {
                     candidate.Key.IsNotNullOrWhitespace("Match candidate returned by device used invalid id.");
@@ -120,10 +143,18 @@ namespace XFS4IoTFramework.Biometric
                 }
             }
 
-            return new MatchCompletion.PayloadData(result.CompletionCode,
-                                                   result.ErrorDescription,
-                                                   result.ErrorCode,
-                                                   candidates);
+            MatchCompletion.PayloadData payload = null;
+            if (result.ErrorCode is not null ||
+                candidates is not null)
+            {
+                payload = new(
+                    result.ErrorCode,
+                    candidates);
+            }
+            return new(
+                payload,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
 
     }

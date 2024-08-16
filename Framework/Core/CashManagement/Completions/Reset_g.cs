@@ -19,16 +19,16 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {
-        public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, Dictionary<string, StorageCashInClass> Storage = null, StorageCashCountsClass Transport = null, StorageCashCountsClass Stacker = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, Dictionary<string, StorageCashInClass> Storage = null, StorageCashCountsClass Transport = null, StorageCashCountsClass Stacker = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Storage = Storage;

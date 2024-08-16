@@ -16,19 +16,18 @@ using XFS4IoT.KeyManagement.Completions;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using XFS4IoT.Completions;
 
 namespace XFS4IoTFramework.KeyManagement
 {
     public partial class ImportKeyTokenHandler
     {
-        private async Task<ImportKeyTokenCompletion.PayloadData> HandleImportKeyToken(IImportKeyTokenEvents events, ImportKeyTokenCommand importKeyToken, CancellationToken cancel)
+        private async Task<CommandResult<ImportKeyTokenCompletion.PayloadData>> HandleImportKeyToken(IImportKeyTokenEvents events, ImportKeyTokenCommand importKeyToken, CancellationToken cancel)
         {
             if (importKeyToken.Payload.KeyToken is null ||
                 importKeyToken.Payload.KeyToken.Count == 0)
             {
-                return new ImportKeyTokenCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No key token specified.");
             }
 
@@ -37,30 +36,30 @@ namespace XFS4IoTFramework.KeyManagement
                 (importKeyToken.Payload.LoadOption == ImportKeyTokenCommand.PayloadData.LoadOptionEnum.NoRandom ||
                  importKeyToken.Payload.LoadOption == ImportKeyTokenCommand.PayloadData.LoadOptionEnum.Random))
             {
-                return new ImportKeyTokenCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No key name specified when the load option is specified {importKeyToken.Payload.LoadOption}.");
             }
 
             if (string.IsNullOrEmpty(importKeyToken.Payload.KeyUsage))
             {
-                return new ImportKeyTokenCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"No key usage specified.");
             }
             if (!Regex.IsMatch(importKeyToken.Payload.KeyUsage, KeyDetail.regxKeyUsage))
             {
-                return new ImportKeyTokenCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.InvalidData,
+                return new(
+                    CompletionCode: MessageHeader.CompletionCodeEnum.InvalidData,
                     ErrorDescription: $"Invalid key usage specified. {importKeyToken.Payload.KeyUsage}");
             }
             // Check key attributes supported
             if (!Common.KeyManagementCapabilities.KeyAttributes.ContainsKey(importKeyToken.Payload.KeyUsage))
             {
-                return new ImportKeyTokenCompletion.PayloadData(
-                    CompletionCode: MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                    ErrorDescription: $"Specified key attribute is not supported. {importKeyToken.Payload.KeyUsage}",
-                    ErrorCode: ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(ErrorCode: ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    ErrorDescription: $"Specified key attribute is not supported. {importKeyToken.Payload.KeyUsage}");
             }
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ImportKeyToken()");
@@ -81,33 +80,40 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportKeyToken() -> {importKeyTokenResult.CompletionCode}, {importKeyTokenResult.ErrorCode}");
 
+            ImportKeyTokenCompletion.PayloadData payload = null;
+            if (importKeyTokenResult.ErrorCode is not null ||
+                importKeyTokenResult.KCV?.Count > 0 ||
+                importKeyTokenResult.AuthenticationData?.Count > 0)
+            {
+                payload = new(
+                    ErrorCode: importKeyTokenResult.ErrorCode,
+                    KeyLength: importKeyTokenResult.KeyLength,
+                    KeyAcceptAlgorithm: importKeyTokenResult.AuthenticationAlgorithm == ImportKeyTokenResult.AuthenticationAlgorithmEnum.None ?
+                    null :
+                    importKeyTokenResult.AuthenticationAlgorithm switch
+                    {
+                        ImportKeyTokenResult.AuthenticationAlgorithmEnum.SHA1 => ImportKeyTokenCompletion.PayloadData.KeyAcceptAlgorithmEnum.Sha1,
+                        ImportKeyTokenResult.AuthenticationAlgorithmEnum.SHA256 => ImportKeyTokenCompletion.PayloadData.KeyAcceptAlgorithmEnum.Sha256,
+                        _ => throw new InternalErrorException($"Unexpected authentication algorithm is specified. {importKeyTokenResult.AuthenticationAlgorithm}"),
+                    },
+                    KeyAcceptData: importKeyTokenResult.AuthenticationAlgorithm == ImportKeyTokenResult.AuthenticationAlgorithmEnum.None ?
+                    null : importKeyTokenResult.AuthenticationData,
+                    KeyCheckMode: importKeyTokenResult.KCVMode == ImportKeyTokenResult.KeyCheckValueEnum.None ?
+                    null :
+                    importKeyTokenResult.KCVMode switch
+                    {
+                        ImportKeyTokenResult.KeyCheckValueEnum.Self => ImportKeyTokenCompletion.PayloadData.KeyCheckModeEnum.KcvSelf,
+                        ImportKeyTokenResult.KeyCheckValueEnum.Zero => ImportKeyTokenCompletion.PayloadData.KeyCheckModeEnum.KcvZero,
+                        _ => throw new InternalErrorException($"Unexpected KCV mode is specified. {importKeyTokenResult.KCVMode}"),
+                    },
+                    KeyCheckValue: importKeyTokenResult.KCVMode == ImportKeyTokenResult.KeyCheckValueEnum.None ?
+                    null : importKeyTokenResult.KCV);
+            }
 
-            return new ImportKeyTokenCompletion.PayloadData(
+            return new(
+                payload,
                 CompletionCode: importKeyTokenResult.CompletionCode,
-                ErrorDescription: importKeyTokenResult.ErrorDescription,
-                ErrorCode: importKeyTokenResult.ErrorCode,
-                KeyLength: importKeyTokenResult.KeyLength,
-                KeyAcceptAlgorithm: importKeyTokenResult.AuthenticationAlgorithm == ImportKeyTokenResult.AuthenticationAlgorithmEnum.None ?
-                null :
-                importKeyTokenResult.AuthenticationAlgorithm switch
-                {
-                    ImportKeyTokenResult.AuthenticationAlgorithmEnum.SHA1 => ImportKeyTokenCompletion.PayloadData.KeyAcceptAlgorithmEnum.Sha1,
-                    ImportKeyTokenResult.AuthenticationAlgorithmEnum.SHA256 => ImportKeyTokenCompletion.PayloadData.KeyAcceptAlgorithmEnum.Sha256,
-                    _ => throw new InternalErrorException($"Unexpected authentication algorithm is specified. {importKeyTokenResult.AuthenticationAlgorithm}"),
-                },
-                KeyAcceptData: importKeyTokenResult.AuthenticationAlgorithm == ImportKeyTokenResult.AuthenticationAlgorithmEnum.None ?
-                null : importKeyTokenResult.AuthenticationData,
-                KeyCheckMode: importKeyTokenResult.KCVMode == ImportKeyTokenResult.KeyCheckValueEnum.None ?
-                null :
-                importKeyTokenResult.KCVMode switch
-                {
-                    ImportKeyTokenResult.KeyCheckValueEnum.Self => ImportKeyTokenCompletion.PayloadData.KeyCheckModeEnum.KcvSelf,
-                    ImportKeyTokenResult.KeyCheckValueEnum.Zero => ImportKeyTokenCompletion.PayloadData.KeyCheckModeEnum.KcvZero,
-                    _ => throw new InternalErrorException($"Unexpected KCV mode is specified. {importKeyTokenResult.KCVMode}"),
-                },
-                KeyCheckValue: importKeyTokenResult.KCVMode == ImportKeyTokenResult.KeyCheckValueEnum.None ?
-                null : importKeyTokenResult.KCV
-                );
+                ErrorDescription: importKeyTokenResult.ErrorDescription);
         }
     }
 }

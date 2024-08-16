@@ -17,21 +17,11 @@ namespace XFS4IoT.Biometric.Completions
     [DataContract]
     [XFS4Version(Version = "2.0")]
     [Completion(Name = "Biometric.Clear")]
-    public sealed class ClearCompletion : Completion<ClearCompletion.PayloadData>
+    public sealed class ClearCompletion : Completion<MessagePayload>
     {
-        public ClearCompletion(int RequestId, ClearCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public ClearCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 
-        [DataContract]
-        public sealed class PayloadData : MessagePayload
-        {
-
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription)
-                : base(CompletionCode, ErrorDescription)
-            {
-            }
-
-        }
     }
 }

@@ -4,6 +4,7 @@
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
+using System;
 using System.Runtime.Serialization;
 
 namespace XFS4IoT.Completions
@@ -15,8 +16,17 @@ namespace XFS4IoT.Completions
     public class MessagePayload : MessagePayloadBase
     {
         /// <summary>
-        /// success if the commmand was successful otherwise error
+        /// Constructor of the common payload for response
         /// </summary>
+        public MessagePayload()
+        { }
+
+        /// <summary>
+        /// success if the command was successful otherwise error
+        /// </summary>
+        [Obsolete("This property is obsolete, use MessageHeader.CompletionCodeEnum. " +
+            "This enumlation will not be supported from package version 3.0. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public enum CompletionCodeEnum
         {
             Success,
@@ -42,30 +52,6 @@ namespace XFS4IoT.Completions
             InvalidTokenFormat,
             InvalidTokenKeyNoValue,
             NotEnoughSpace
-        }
-
-        /// <summary>
-        /// The original message name, for example "CardReader.Status"
-        /// </summary>
-        [DataMember(IsRequired = true, Name = "completionCode")]
-        public CompletionCodeEnum CompletionCode { get; private set; } = default;
-
-        /// <summary>
-        ///  If not success, then this is optional vendor dependent information to provide additional information
-        /// </summary>
-        [DataMember(Name = "errorDescription")]
-        public string ErrorDescription { get; private set; } = string.Empty;
-
-
-        /// <summary>
-        /// Constructor of the common payload for response
-        /// </summary>
-        /// <param name="CompletionCode"></param>
-        /// <param name="ErrorDescription"></param>
-        public MessagePayload(CompletionCodeEnum CompletionCode, string ErrorDescription)
-        {
-            this.CompletionCode = CompletionCode;
-            this.ErrorDescription = ErrorDescription;
         }
     }
 }

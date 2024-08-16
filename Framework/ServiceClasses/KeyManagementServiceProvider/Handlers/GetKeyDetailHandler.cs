@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace XFS4IoTFramework.KeyManagement
     [CommandHandlerAsync]
     public partial class GetKeyDetailHandler
     {
-        private Task<GetKeyDetailCompletion.PayloadData> HandleGetKeyDetail(IGetKeyDetailEvents events, GetKeyDetailCommand getKeyDetail, CancellationToken cancel)
+        private Task<CommandResult<GetKeyDetailCompletion.PayloadData>> HandleGetKeyDetail(IGetKeyDetailEvents events, GetKeyDetailCommand getKeyDetail, CancellationToken cancel)
         {
             List<KeyDetail> keyDetails = KeyManagement.GetKeyTable();
 
@@ -32,9 +31,12 @@ namespace XFS4IoTFramework.KeyManagement
                 KeyDetail keyDetail = KeyManagement.GetKeyDetail(getKeyDetail.Payload.KeyName);
                 if (keyDetail is null)
                 {
-                    return Task.FromResult(new GetKeyDetailCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                                                  $"Specified key is not stored. {getKeyDetail.Payload.KeyName}",
-                                                                                  GetKeyDetailCompletion.PayloadData.ErrorCodeEnum.KeyNotFound));
+                    return Task.FromResult(
+                        new CommandResult<GetKeyDetailCompletion.PayloadData>(
+                            new(GetKeyDetailCompletion.PayloadData.ErrorCodeEnum.KeyNotFound),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Specified key is not stored. {getKeyDetail.Payload.KeyName}")
+                        );
                 }
 
                 keyDetails.Clear();
@@ -67,10 +69,11 @@ namespace XFS4IoTFramework.KeyManagement
                                                                                                 keyblockInfo));
             }
 
-            return Task.FromResult(new GetKeyDetailCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                          null,
-                                                                          null,
-                                                                          keyInfo.Count == 0 ? null : keyInfo));
+            return Task.FromResult(
+                new CommandResult<GetKeyDetailCompletion.PayloadData>(
+                    keyInfo.Count != 0 ? new(KeyDetails: keyInfo) : null,
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

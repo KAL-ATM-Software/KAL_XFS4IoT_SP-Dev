@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -21,16 +20,17 @@ namespace XFS4IoTFramework.KeyManagement
 {
     public partial class GenerateRSAKeyPairHandler
     {
-        private async Task<GenerateRSAKeyPairCompletion.PayloadData> HandleGenerateRSAKeyPair(IGenerateRSAKeyPairEvents events, GenerateRSAKeyPairCommand generateRSAKeyPair, CancellationToken cancel)
+        private async Task<CommandResult<GenerateRSAKeyPairCompletion.PayloadData>> HandleGenerateRSAKeyPair(IGenerateRSAKeyPairEvents events, GenerateRSAKeyPairCommand generateRSAKeyPair, CancellationToken cancel)
         {
             if (generateRSAKeyPair.Payload.Key is null)
             {
-                return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"No key name specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No key name specified.");
             }
 
             // Check key attributes supported
-            List<string> keyUsages = new() { "S0", "S1", "S2" };
+            List<string> keyUsages = ["S0", "S1", "S2"];
             for (int i = 0; i < 100; i++)
                 keyUsages.Add(i.ToString("00"));
             bool asymmetricKeySupported = false;
@@ -38,14 +38,14 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 if (Common.KeyManagementCapabilities.KeyAttributes.ContainsKey(keyUsage))
                 {
-                    List<string> algorithms = new() { "R" };
+                    List<string> algorithms = [ "R" ];
                     for (int i = 0; i < 10; i++)
                         algorithms.Add(i.ToString("0"));
                     foreach (string algorithm in algorithms)
                     {
                         if (Common.KeyManagementCapabilities.KeyAttributes[keyUsage].ContainsKey(algorithm))
                         {
-                            List<string> modes = new() { "S", "T" };
+                            List<string> modes = ["S", "T"];
                             for (int i = 0; i < 10; i++)
                                 modes.Add(i.ToString("0"));
                             foreach (string mode in modes)
@@ -65,9 +65,10 @@ namespace XFS4IoTFramework.KeyManagement
 
             if (!asymmetricKeySupported)
             {
-                return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                                    $"No asymmetric key, algorithm or mode supported.",
-                                                                    GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum.UseViolation);
+                return new(
+                    new(GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum.UseViolation),
+                    MessageHeader.CompletionCodeEnum.InvalidData,
+                    $"No asymmetric key, algorithm or mode supported.");
             }
 
             int keySlot = KeyManagement.FindKeySlot(generateRSAKeyPair.Payload.Key);
@@ -93,31 +94,35 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.GenerateRSAKeyPair() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 if (result.LoadedKeyDetail == null)
                 {
-                    return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                                        $"No key detailed information provided by the device class.");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"No key detailed information provided by the device class.");
                 }
 
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.KeyUsage) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.KeyUsage, "^S[0-2]$|^[0-9][0-9]$"))
                 {
-                    return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid key usage specified by the device class. {result.LoadedKeyDetail?.KeyUsage}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid key usage specified by the device class. {result.LoadedKeyDetail?.KeyUsage}");
                 }
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.Algorithm) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.Algorithm, "^[R0-9]$"))
                 {
-                    return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid algorithm specified by the device class. {result.LoadedKeyDetail?.Algorithm}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid algorithm specified by the device class. {result.LoadedKeyDetail?.Algorithm}");
                 }
                 if (string.IsNullOrEmpty(result.LoadedKeyDetail.ModeOfUse) ||
                     !Regex.IsMatch(result.LoadedKeyDetail.ModeOfUse, "^[ST0-9]]$"))
                 {
-                    return new GenerateRSAKeyPairCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InternalError,
-                                                               $"Invalid mode specified by the device class. {result.LoadedKeyDetail?.ModeOfUse}");
+                    return new(
+                        MessageHeader.CompletionCodeEnum.InternalError,
+                        $"Invalid mode specified by the device class. {result.LoadedKeyDetail?.ModeOfUse}");
                 }
 
                 // Successfully loaded and add key information managing internally
@@ -139,9 +144,10 @@ namespace XFS4IoTFramework.KeyManagement
                                      result.LoadedKeyDetail.Version);
             }
 
-            return new GenerateRSAKeyPairCompletion.PayloadData(result.CompletionCode,
-                                                                result.ErrorDescription,
-                                                                result.ErrorCode);
+            return new(
+                result.ErrorCode is not null ? new(result.ErrorCode) : null,
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

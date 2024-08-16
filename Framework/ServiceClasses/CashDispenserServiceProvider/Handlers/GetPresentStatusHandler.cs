@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
@@ -19,7 +18,7 @@ namespace XFS4IoTFramework.CashDispenser;
 
 public partial class GetPresentStatusHandler
 {
-    private async Task<GetPresentStatusCompletion.PayloadData> HandleGetPresentStatus(IGetPresentStatusEvents events, GetPresentStatusCommand getPresentStatus, CancellationToken cancel)
+    private async Task<CommandResult<GetPresentStatusCompletion.PayloadData>> HandleGetPresentStatus(IGetPresentStatusEvents events, GetPresentStatusCommand getPresentStatus, CancellationToken cancel)
     {
         CashManagementCapabilitiesClass.OutputPositionEnum position = CashManagementCapabilitiesClass.OutputPositionEnum.Default;
         if (getPresentStatus.Payload.Position is not null)
@@ -45,33 +44,33 @@ public partial class GetPresentStatusHandler
 
         if (position == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported)
         {
-            return new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData,
-                                                              $"Specified invalid position {position}");
+            return new(
+                MessageHeader.CompletionCodeEnum.InvalidData,
+                $"Specified invalid position {position}");
         }
 
         if (!Common.CashDispenserCapabilities.OutputPositions.HasFlag(position))
         {
-            return new GetPresentStatusCompletion.PayloadData(MessagePayload.CompletionCodeEnum.CommandErrorCode,
-                                                              $"Specified unsupported position {position}",
-                                                              GetPresentStatusCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition);
+            return new(
+                new(GetPresentStatusCompletion.PayloadData.ErrorCodeEnum.UnsupportedPosition),
+                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                $"Specified unsupported position {position}");
         }
 
         CashDispenser.LastCashDispenserPresentStatus.ContainsKey(position).IsTrue($"Unexpected position is specified. {position}");
 
-        return new GetPresentStatusCompletion.PayloadData(
-            CompletionCode:     MessagePayload.CompletionCodeEnum.Success,
-            ErrorDescription:   null,
-            ErrorCode:          null,
-            Denomination:       new DenominationClass(
-                CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.CurrencyAmounts,
-                CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.Values),
-            PresentState:       CashDispenser.LastCashDispenserPresentStatus[position].Status switch
+        return new(
+            new(
+                Denomination: new DenominationClass(
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.CurrencyAmounts,
+                    CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination?.Values),
+                PresentState: CashDispenser.LastCashDispenserPresentStatus[position].Status switch
                 {
                     CashDispenserPresentStatus.PresentStatusEnum.NotPresented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.NotPresented,
                     CashDispenserPresentStatus.PresentStatusEnum.Presented => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Presented,
                     _ => GetPresentStatusCompletion.PayloadData.PresentStateEnum.Unknown
                 },
-            Token:              responseToken
-            );
+                Token: responseToken),
+            CompletionCode: MessageHeader.CompletionCodeEnum.Success);
     }
 }

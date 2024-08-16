@@ -19,16 +19,16 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.CalibrateCashUnit")]
     public sealed class CalibrateCashUnitCompletion : Completion<CalibrateCashUnitCompletion.PayloadData>
     {
-        public CalibrateCashUnitCompletion(int RequestId, CalibrateCashUnitCompletion.PayloadData Payload)
-            : base(RequestId, Payload)
+        public CalibrateCashUnitCompletion(int RequestId, CalibrateCashUnitCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+            : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
 
         [DataContract]
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CompletionCodeEnum CompletionCode, string ErrorDescription, ErrorCodeEnum? ErrorCode = null, ResultClass Result = null)
-                : base(CompletionCode, ErrorDescription)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, ResultClass Result = null)
+                : base()
             {
                 this.ErrorCode = ErrorCode;
                 this.Result = Result;

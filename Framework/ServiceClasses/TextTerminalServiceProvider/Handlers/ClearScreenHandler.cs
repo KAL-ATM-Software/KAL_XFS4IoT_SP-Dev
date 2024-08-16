@@ -3,8 +3,6 @@
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
-
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -19,7 +17,7 @@ namespace XFS4IoTFramework.TextTerminal
     public partial class ClearScreenHandler
     {
 
-        private async Task<ClearScreenCompletion.PayloadData> HandleClearScreen(IClearScreenEvents events, ClearScreenCommand clearScreen, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleClearScreen(IClearScreenEvents events, ClearScreenCommand clearScreen, CancellationToken cancel)
         {
             ClearScreenRequest request;
 
@@ -36,22 +34,30 @@ namespace XFS4IoTFramework.TextTerminal
             // Check if PositionX is null
             else if (clearScreen.Payload.Screen.PositionX is null)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "No PositionX is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No PositionX is specified.");
             }
             // Check if PositionY is null
             else if (clearScreen.Payload.Screen.PositionY is null)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "No PositionY is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No PositionY is specified.");
             }
             // Check if Width is null
             else if (clearScreen.Payload.Screen.Width is null)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "No Width is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No Width is specified.");
             }
             // Check if Height is null
             else if (clearScreen.Payload.Screen.Height is null)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "No Height is specified.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "No Height is specified.");
             }
             //Ensure values are positive
             else if (clearScreen.Payload.Screen.PositionX < 0 || 
@@ -59,13 +65,15 @@ namespace XFS4IoTFramework.TextTerminal
                      clearScreen.Payload.Screen.Width < 0 || 
                      clearScreen.Payload.Screen.Height < 0)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "PositionX,PositionY,Width,Height cannot be negative.");
+                return new(MessageHeader.CompletionCodeEnum.InvalidData, "PositionX,PositionY,Width,Height cannot be negative.");
             }
             // Check rectangle is within the current resolution
             else if (clearScreen.Payload.Screen.PositionX + clearScreen.Payload.Screen.Width > Device.CurrentWidth ||
                      clearScreen.Payload.Screen.PositionY + clearScreen.Payload.Screen.Height > Device.CurrentHeight)
             {
-                return new ClearScreenCompletion.PayloadData(MessagePayload.CompletionCodeEnum.InvalidData, "Invalid rectangle specified for the current resolution in ClearScreen.");
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidData, 
+                    "Invalid rectangle specified for the current resolution in ClearScreen.");
             }
             // Else we have a valid rectangle to use
             else
@@ -79,8 +87,9 @@ namespace XFS4IoTFramework.TextTerminal
 
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.ClearScreenAsync() -> {result.CompletionCode}");
 
-            return new ClearScreenCompletion.PayloadData(result.CompletionCode,
-                                                         result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
 
         }
 

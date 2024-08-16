@@ -4,7 +4,6 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,9 +18,9 @@ namespace XFS4IoTFramework.CashDispenser
 {
     public partial class GetMixTypesHandler
     {
-        private Task<GetMixTypesCompletion.PayloadData> HandleGetMixTypes(IGetMixTypesEvents events, GetMixTypesCommand getMixTypes, CancellationToken cancel)
+        private Task<CommandResult<GetMixTypesCompletion.PayloadData>> HandleGetMixTypes(IGetMixTypesEvents events, GetMixTypesCommand getMixTypes, CancellationToken cancel)
         {
-            Dictionary<string, MixClass> mixes = new();
+            Dictionary<string, MixClass> mixes = null;
 
             Dictionary<string, Mix> mixAlgorithms = CashDispenser.GetMixAlgorithms();
             foreach (var mixAlgorithm in mixAlgorithms)
@@ -48,14 +47,20 @@ namespace XFS4IoTFramework.CashDispenser
                     }
                 }
 
-                mixes.Add(mixAlgorithm.Key, new MixClass(type,
-                                                         algorithm,
-                                                         mixAlgorithm.Value.Name));
+                (mixes ??= []).Add(
+                    mixAlgorithm.Key, 
+                    new MixClass(
+                        type,
+                        algorithm,
+                        mixAlgorithm.Value.Name)
+                    );
             }
 
-            return Task.FromResult(new GetMixTypesCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success,
-                                                                         null,
-                                                                         mixes));
+            return Task.FromResult(
+                new CommandResult<GetMixTypesCompletion.PayloadData>(
+                    mixes is not null ? new(Mixes: mixes) : null,
+                    MessageHeader.CompletionCodeEnum.Success)
+                );
         }
     }
 }

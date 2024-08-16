@@ -4,20 +4,19 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
-using XFS4IoT.Completions;
 using XFS4IoT.VendorApplication.Commands;
 using XFS4IoT.VendorApplication.Completions;
+using XFS4IoT;
 
 namespace XFS4IoTFramework.VendorApplication
 {
     public partial class SetActiveInterfaceHandler
     {
 
-        private async Task<SetActiveInterfaceCompletion.PayloadData> HandleSetActiveInterface(ISetActiveInterfaceEvents events, SetActiveInterfaceCommand setActiveInterface, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleSetActiveInterface(ISetActiveInterfaceEvents events, SetActiveInterfaceCommand setActiveInterface, CancellationToken cancel)
         {
             // Supported active interfaces in capabilites are missing in the specification
 
@@ -35,7 +34,7 @@ namespace XFS4IoTFramework.VendorApplication
             if (current.ActiveInterface == requestedInterface)
             {
                 // No need to change active interface
-                return new SetActiveInterfaceCompletion.PayloadData(MessagePayload.CompletionCodeEnum.Success, string.Empty);
+                return new(MessageHeader.CompletionCodeEnum.Success);
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.SetActiveInterface()");
@@ -43,13 +42,14 @@ namespace XFS4IoTFramework.VendorApplication
                                                          cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.SetActiveInterface() -> {result.CompletionCode}");
 
-            if (result.CompletionCode == MessagePayload.CompletionCodeEnum.Success)
+            if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 await VendorApplication.InterfaceChangedEvent(requestedInterface);
             }
 
-            return new SetActiveInterfaceCompletion.PayloadData(result.CompletionCode,
-                                                                result.ErrorDescription);
+            return new(
+                result.CompletionCode,
+                result.ErrorDescription);
         }
     }
 }

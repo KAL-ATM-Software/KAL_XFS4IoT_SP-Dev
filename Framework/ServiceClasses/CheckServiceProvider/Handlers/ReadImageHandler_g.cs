@@ -46,36 +46,36 @@ namespace XFS4IoTFramework.Check
             IReadImageEvents events = new ReadImageEvents(Connection, readImageCmd.Header.RequestId.Value);
 
             var result = await HandleReadImage(events, readImageCmd, cancel);
-            await Connection.SendMessageAsync(new ReadImageCompletion(readImageCmd.Header.RequestId.Value, result));
+            await Connection.SendMessageAsync(new ReadImageCompletion(readImageCmd.Header.RequestId.Value, result.Payload, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var readImagecommand = command.IsA<ReadImageCommand>();
-            readImagecommand.Header.RequestId.HasValue.IsTrue();
+            var readImageCommand = command.IsA<ReadImageCommand>();
+            readImageCommand.Header.RequestId.HasValue.IsTrue();
 
-            ReadImageCompletion.PayloadData.CompletionCodeEnum errorCode = commandException switch
+            MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
-                InvalidDataException => ReadImageCompletion.PayloadData.CompletionCodeEnum.InvalidData,
-                InternalErrorException => ReadImageCompletion.PayloadData.CompletionCodeEnum.InternalError,
-                UnsupportedDataException => ReadImageCompletion.PayloadData.CompletionCodeEnum.UnsupportedData,
-                SequenceErrorException => ReadImageCompletion.PayloadData.CompletionCodeEnum.SequenceError,
-                AuthorisationRequiredException => ReadImageCompletion.PayloadData.CompletionCodeEnum.AuthorisationRequired,
-                HardwareErrorException => ReadImageCompletion.PayloadData.CompletionCodeEnum.HardwareError,
-                UserErrorException => ReadImageCompletion.PayloadData.CompletionCodeEnum.UserError,
-                FraudAttemptException => ReadImageCompletion.PayloadData.CompletionCodeEnum.FraudAttempt,
-                DeviceNotReadyException => ReadImageCompletion.PayloadData.CompletionCodeEnum.DeviceNotReady,
-                InvalidCommandException => ReadImageCompletion.PayloadData.CompletionCodeEnum.InvalidCommand,
-                NotEnoughSpaceException => ReadImageCompletion.PayloadData.CompletionCodeEnum.NotEnoughSpace,
-                NotImplementedException or NotSupportedException => ReadImageCompletion.PayloadData.CompletionCodeEnum.UnsupportedCommand,
-                TimeoutCanceledException t when t.IsCancelRequested => ReadImageCompletion.PayloadData.CompletionCodeEnum.Canceled,
-                TimeoutCanceledException => ReadImageCompletion.PayloadData.CompletionCodeEnum.TimeOut,
-                _ => ReadImageCompletion.PayloadData.CompletionCodeEnum.InternalError
+                InvalidDataException => MessageHeader.CompletionCodeEnum.InvalidData,
+                InternalErrorException => MessageHeader.CompletionCodeEnum.InternalError,
+                UnsupportedDataException => MessageHeader.CompletionCodeEnum.UnsupportedData,
+                SequenceErrorException => MessageHeader.CompletionCodeEnum.SequenceError,
+                AuthorisationRequiredException => MessageHeader.CompletionCodeEnum.AuthorisationRequired,
+                HardwareErrorException => MessageHeader.CompletionCodeEnum.HardwareError,
+                UserErrorException => MessageHeader.CompletionCodeEnum.UserError,
+                FraudAttemptException => MessageHeader.CompletionCodeEnum.FraudAttempt,
+                DeviceNotReadyException => MessageHeader.CompletionCodeEnum.DeviceNotReady,
+                InvalidCommandException => MessageHeader.CompletionCodeEnum.InvalidCommand,
+                NotEnoughSpaceException => MessageHeader.CompletionCodeEnum.NotEnoughSpace,
+                NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
+                TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
+                TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ReadImageCompletion(readImagecommand.Header.RequestId.Value, new ReadImageCompletion.PayloadData(errorCode, commandException.Message));
+            var response = new ReadImageCompletion(readImageCommand.Header.RequestId.Value, null, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

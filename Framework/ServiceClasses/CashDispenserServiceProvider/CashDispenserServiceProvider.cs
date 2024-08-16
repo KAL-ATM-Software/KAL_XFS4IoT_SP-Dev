@@ -60,10 +60,8 @@ namespace XFS4IoTServer
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
-        /// <summary>
-        /// Common.StatusChanged event reports shutter status changed event.
-        /// Obsolete event interfacec after 2023-2.
-        /// </summary>
+        [Obsolete("This event is obsolete, The shutter status changed event will be covered by the Common.StatusChangedEvent. " +
+            "Please migrate changes in the device class before applying 3.0 package.", false)]
         public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
 
         #endregion
