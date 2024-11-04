@@ -346,11 +346,34 @@ namespace XFS4IoTFramework.Printer
         /// Return properties required for the GetQueryForm command
         /// </summary>
         /// <returns></returns>
-        public CommandResult<GetQueryFormCompletion.PayloadData> QueryForm()
+        public CommandResult<GetQueryFormCompletion.PayloadData> QueryForm(IPrinterDevice Device)
         {
+            var result = ValidateForm(Device);
+            if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
+            {
+                return new(
+                    new(ErrorCode: GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Form {Name} is not supported by the device.");
+            }
+
             List<string> fields = [];
             fields.AddRange(from field in Fields
                             select field.Key);
+
+            // Check all fields
+            foreach (var fieldName in fields)
+            {
+                var fieldResult = ValidateField(fieldName, Device);
+                if (fieldResult.Result != ValidationResultClass.ValidateResultEnum.Valid)
+                {
+                    return new(
+                        new(GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Specified field {fieldName} is invalid. {result.Reason}");
+                }
+            }
+
             return new(
                 new(
                     FormName: Name,
@@ -389,16 +412,13 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// Return payload structure for QueryField command
         /// </summary>
-        public GetQueryFieldCompletion.PayloadData.FieldsClass QueryField(string Name)
+        public GetQueryFieldCompletion.PayloadData.FieldsClass QueryField(string FieldName)
         {
-            if (!Fields.ContainsKey(Name))
-            {
-                Logger.Warning(Constants.Framework, $"Specified field doesn't exist. {Name}");
-                return null;
-            }
+            Fields.ContainsKey(FieldName).IsTrue($"Specified field doesn't exist. {FieldName}");
+
             return new GetQueryFieldCompletion.PayloadData.FieldsClass(
-                Fields[Name].Repeat, 
-                Fields[Name].Type switch
+                Fields[FieldName].Repeat, 
+                Fields[FieldName].Type switch
                 { 
                     FieldTypeEnum.BARCODE => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Barcode,
                     FieldTypeEnum.GRAPHIC => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Graphic,
@@ -408,19 +428,19 @@ namespace XFS4IoTFramework.Printer
                     FieldTypeEnum.PAGEMARK => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Pagemark,
                     _ => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Text,
                 },
-                Fields[Name].Class switch
+                Fields[FieldName].Class switch
                 { 
                     FormField.ClassEnum.OPTIONAL => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Optional,
                     FormField.ClassEnum.REQUIRED => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Required,
                     _ => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Optional,
                 },
-                Fields[Name].Access switch
+                Fields[FieldName].Access switch
                 {
                     FieldAccessEnum.READ => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Read,
                     FieldAccessEnum.WRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Write,
                     _ => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.ReadWrite,
                 },
-                Fields[Name].Overflow switch
+                Fields[FieldName].Overflow switch
                 {
                     FormField.OverflowEnum.BESTFIT => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.BestFit,
                     FormField.OverflowEnum.OVERWRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Overwrite,
@@ -428,8 +448,200 @@ namespace XFS4IoTFramework.Printer
                     FormField.OverflowEnum.TRUNCATE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Truncate,
                     _ => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.WordWrap,
                 },
-                Fields[Name].InitialValue,
-                Fields[Name].Format);
+                Fields[FieldName].InitialValue,
+                Fields[FieldName].Format);
+        }
+
+        /// <summary>
+        /// Validate form against the printer device supports
+        /// </summary>
+        public ValidationResultClass ValidateForm(IPrinterDevice Device)
+        {
+            FormRules rules = Device.FormRules;
+
+            if (!rules.ValidOrientation.HasFlag(Orientation))
+            { 
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"Orientation is not valid for the device. {Orientation}");
+            }
+
+            if (rules.RowColumnOnly &&
+                Base != Form.BaseEnum.ROWCOLUMN)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"UNIT is not valid for this printer - only ROWCOLUMN supported. {Base}, {Name}");
+            }
+
+            return new(ValidationResultClass.ValidateResultEnum.Valid);
+        }
+
+        /// <summary>
+        /// Validate field against the printer device supports
+        /// </summary>
+        public ValidationResultClass ValidateField(string FieldName, IPrinterDevice Device)
+        {
+            FormRules rules = Device.FormRules;
+
+            if (!Fields.ContainsKey(FieldName))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Missing,
+                           $"Specified field doesn't exist. {FieldName}");
+            }
+
+            // Check the field is entirely inside the form
+            // Do this using printer units not dots: otherwise rounding may cause
+            // us to reject valid forms.
+            int max_x, max_y;
+
+            if (Fields[FieldName].Repeat == 0)
+            {
+                max_x = Fields[FieldName].X + Fields[FieldName].Width;
+                max_y = Fields[FieldName].Y + Fields[FieldName].Height;
+            }
+            else
+            {
+                max_x = Fields[FieldName].X + (Fields[FieldName].Repeat - 1) * Fields[FieldName].XOffset +
+                        Fields[FieldName].Width;
+                max_y = Fields[FieldName].Y + (Fields[FieldName].Repeat - 1) * Fields[FieldName].YOffset +
+                        Fields[FieldName].Height;
+            }
+
+            if (max_x > Fields[FieldName].Width || max_y > Fields[FieldName].Height)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"Extent of field is larger than form.");
+            }
+
+            // Check SIDE
+            if (!rules.ValidSide.HasFlag(Fields[FieldName].Side))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"SIDE is not valid.");
+            }
+
+            // Check TYPE
+            if (!rules.ValidType.HasFlag(Fields[FieldName].Type))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"TYPE is not valid.");
+            }
+
+            // Check SCALING for GRAPHIC fields
+            if (Fields[FieldName].Type == FieldTypeEnum.GRAPHIC)
+            {
+                if (!rules.ValidScaling.HasFlag(Fields[FieldName].Scaling))
+                {
+                    return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                               $"SCALING is not valid.");
+                }
+
+                if (!string.IsNullOrEmpty(Fields[FieldName].Format))
+                {
+                    if (Fields[FieldName].Format != "JPG" &&
+                        Fields[FieldName].Format != "BMP")
+                    {
+                        return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                                   $"FORMAT is not valid for graphic field. {Fields[FieldName].Format}");
+                    }
+                }
+                else
+                {
+                    Logger.Log(Constants.Framework, $"No FORMAT field defined, the device class could sniff image format and decide how to deal with it.");
+                }
+            }
+
+            // Check BARCODE for BARCODE fields
+            if (Fields[FieldName].Type == FieldTypeEnum.BARCODE)
+            {
+                if (!rules.ValidBarcode.HasFlag(Fields[FieldName].Barcode))
+                {
+                    return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                               $"BARCODE is not valid.");
+                }
+            }
+
+            // Check ACCESS
+            if (!rules.ValidAccess.HasFlag(Fields[FieldName].Access))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"SIDE is not valid.");
+            }
+
+            // Check OVERWRITE
+            if (Fields[FieldName].Overflow == FormField.OverflowEnum.OVERWRITE)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"OVERFLOW is not supported.");
+            }
+
+            // Check STYLE
+            if (!rules.ValidStyle.HasFlag(Fields[FieldName].Style))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"STYLE is not valid.");
+            }
+
+            // Check COLOR
+            if (!rules.ValidColor.HasFlag(Fields[FieldName].Color))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"COLOR is not valid.");
+            }
+
+            // Check FONT
+
+            if (Fields[FieldName].Type == FieldTypeEnum.TEXT)
+            {
+                if (rules.ValidFonts != "ALL")
+                {
+                    if (!rules.ValidFonts.Contains(Fields[FieldName].Font, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                                   $"FONT is not valid.");
+                    }
+                }
+            }
+
+            // Check point size
+            if (Fields[FieldName].PointSize != -1 &&
+                (Fields[FieldName].PointSize > rules.MaxPointSize ||
+                 Fields[FieldName].PointSize < rules.MinPointSize))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"POINTSIZE is not valid.");
+            }
+
+            // Check CPI
+            if (Fields[FieldName].CPI != -1 &&
+                (Fields[FieldName].CPI > rules.MaxCPI ||
+                 Fields[FieldName].CPI < rules.MinCPI))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"CPI is not valid.");
+            }
+
+            // Check LPI
+            if (Fields[FieldName].LPI != -1 &&
+                (Fields[FieldName].LPI > rules.MaxLPI ||
+                 Fields[FieldName].LPI < rules.MinLPI))
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"LPI is not valid.");
+            }
+
+            if (Fields[FieldName].Class == FormField.ClassEnum.REQUIRED &&
+                !string.IsNullOrEmpty(Fields[FieldName].InitialValue))
+            {
+                Logger.Warning(Constants.Framework, $"INITIALVALUE for REQUIRED field ignored. {Fields[FieldName].Name}");
+            }
+
+            if (Fields[FieldName].Class == FormField.ClassEnum.STATIC &&
+                string.IsNullOrEmpty(Fields[FieldName].InitialValue))
+            {
+                Logger.Warning(Constants.Framework, $"INITIALVALUE for STATIC field. {Fields[FieldName].Name}");
+            }
+
+            return new(ValidationResultClass.ValidateResultEnum.Valid);
         }
 
         /// <summary>

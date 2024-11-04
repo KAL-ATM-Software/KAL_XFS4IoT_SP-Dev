@@ -45,12 +45,34 @@ namespace XFS4IoTFramework.Printer
                         );
                 }
 
+                var result = form.ValidateField(getQueryField.Payload.FieldName, Device);
+                if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
+                {
+                    return Task.FromResult(
+                        new CommandResult<GetQueryFieldCompletion.PayloadData>(
+                            new(result.Result == ValidationResultClass.ValidateResultEnum.Invalid ? GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldInvalid : GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
+                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            $"Specified field {getQueryField.Payload.FieldName} is invalid. {result.Reason}")
+                        );
+                }
+
                 fields.Add(getQueryField.Payload.FieldName, form.QueryField(getQueryField.Payload.FieldName));
             }
             else
             {
                 foreach (var field in forms[getQueryField.Payload.FormName].Fields)
                 {
+                    var result = form.ValidateField(field.Key, Device);
+                    if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
+                    {
+                        return Task.FromResult(
+                            new CommandResult<GetQueryFieldCompletion.PayloadData>(
+                                new(result.Result == ValidationResultClass.ValidateResultEnum.Invalid ? GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldInvalid : GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Specified field {field.Key} is invalid. {result.Reason}")
+                            );
+                    }
+
                     fields.Add(field.Key, form.QueryField(field.Key));
                 }
             }

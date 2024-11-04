@@ -35,37 +35,28 @@ namespace XFS4IoTFramework.Printer
             }
 
             // Check form device supported
-            Form form = forms[printForm.Payload.FormName]; 
-            FormRules rules = Device.FormRules;
-            if (rules.RowColumnOnly && 
-                form.Base != Form.BaseEnum.ROWCOLUMN)
+            Form form = forms[printForm.Payload.FormName];
             {
-                return new(
-                    new(PrintFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
-                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                    $"UNIT is not valid for this printer - only ROWCOLUMN supported. {form.Base}, {printForm.Payload.FormName}");
-            }
-
-            Contracts.IsTrue(rules.MaxSkew >= rules.MinSkew, $"Unexpected form. the MinSkew is greater than MaxSkew. {printForm.Payload.FormName}");
-
-            if (!rules.ValidOrientation.HasFlag(form.Orientation))
-            {
-                return new(
-                    new(PrintFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
-                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                    $"Invalid orientation. {form.Orientation}, {printForm.Payload.FormName}");
+                var result = form.ValidateForm(Device);
+                if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
+                {
+                    return new(
+                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        result.Reason);
+                }
             }
 
             // Check all fields
             foreach (var field in form.Fields)
             {
-                var result = CheckFieldValid(field.Value, form);
-                if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
+                var result = form.ValidateField(field.Key, Device);
+                if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
                 {
                     return new(
-                        result.ErrorCode is not null ? new(result.ErrorCode) : null,
-                        result.CompletionCode,
-                        $"{result.ErrorDescription} Field:{field.Key}");
+                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"{result.Reason} Field:{field.Key}");
                 }
             }
 
@@ -82,13 +73,13 @@ namespace XFS4IoTFramework.Printer
             // Check media
             Media media = medias[printForm.Payload.MediaName];
             {
-                var result = CheckMediaValid(media);
-                if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
+                var result = media.ValidateMedia(Device);
+                if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
                 {
                     return new(
-                        result.ErrorCode is not null ? new(result.ErrorCode) : null,
-                        result.CompletionCode,
-                        $"Requested media is invalid. {result.ErrorDescription} {printForm.Payload.MediaName}");
+                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid),
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Requested media is invalid. {result.Reason} {printForm.Payload.MediaName}");
                 }
             }
 
@@ -900,260 +891,6 @@ namespace XFS4IoTFramework.Printer
             }
 
             return new(MessageHeader.CompletionCodeEnum.Success);
-        }
-
-        /// <summary>
-        /// Check the passed Form/Field is valid for this device.
-        /// </summary>
-        private PrintFormResult CheckFieldValid(FormField field, Form form)
-        {
-            FormRules rules = Device.FormRules;
-           
-            // Check the field is entirely inside the form
-            // Do this using printer units not dots: otherwise rounding may cause
-            // us to reject valid forms.
-            int max_x, max_y;
-
-            if (field.Repeat == 0)
-            {
-                max_x = field.X + field.Width;
-                max_y = field.Y + field.Height;
-            }
-            else
-            {
-                max_x = field.X + (field.Repeat - 1) * field.XOffset +
-                        field.Width;
-                max_y = field.Y + (field.Repeat - 1) * field.YOffset +
-                        field.Height;
-            }
-
-            if (max_x > form.Width || max_y > form.Height)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"Extent of field is larger than form.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check SIDE
-            if (!rules.ValidSide.HasFlag(field.Side))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"SIDE is not valid.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check TYPE
-            if (!rules.ValidType.HasFlag(field.Type))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"TYPE is not valid.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check SCALING for GRAPHIC fields
-            if (field.Type == FieldTypeEnum.GRAPHIC)
-            {
-                if (!rules.ValidScaling.HasFlag(field.Scaling))
-                {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"SCALING is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-
-                if (!string.IsNullOrEmpty(field.Format))
-                {
-                    if (field.Format != "JPG" &&
-                        field.Format != "BMP")
-                    {
-                        return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                                   $"FORMAT is not valid for graphic field. {field.Format}",
-                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                    }
-                }
-                else
-                {
-                    Logger.Log(Constants.Framework, $"No FORMAT field defined, the device class could sniff image format and decide how to deal with it.");
-                }
-            }
-
-            // Check BARCODE for BARCODE fields
-            if (field.Type == FieldTypeEnum.BARCODE)
-            {
-                if (!rules.ValidBarcode.HasFlag(field.Barcode))
-                {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"BARCODE is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                }
-            }
-
-            // Check ACCESS
-            if (!rules.ValidAccess.HasFlag(field.Access))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"SIDE is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check OVERWRITE
-            if (field.Overflow == FormField.OverflowEnum.OVERWRITE)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"OVERFLOW is not supported.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check STYLE
-            if (!rules.ValidStyle.HasFlag(field.Style))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"STYLE is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check COLOR
-            if (!rules.ValidColor.HasFlag(field.Color))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"COLOR is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check FONT
-
-            if (field.Type == FieldTypeEnum.TEXT)
-            {
-                if (rules.ValidFonts != "ALL")
-                {
-                    if (!rules.ValidFonts.Contains(field.Font, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                                   $"FONT is not valid.",
-                                                   PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-                    }
-                }
-            }
-
-            // Check point size
-            if (field.PointSize != -1 &&
-                (field.PointSize > rules.MaxPointSize ||
-                 field.PointSize < rules.MinPointSize))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"POINTSIZE is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check CPI
-            if (field.CPI != -1 &&
-                (field.CPI > rules.MaxCPI ||
-                 field.CPI < rules.MinCPI))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"CPI is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            // Check LPI
-            if (field.LPI != -1 &&
-                (field.LPI > rules.MaxLPI ||
-                 field.LPI < rules.MinLPI))
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"LPI is not valid.",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
-            }
-
-            if (field.Class == FormField.ClassEnum.REQUIRED &&
-                !string.IsNullOrEmpty(field.InitialValue))
-            {
-                Logger.Warning(Constants.Framework, $"INITIALVALUE for REQUIRED field ignored. {field.Name}");
-            }
-
-            if (field.Class == FormField.ClassEnum.STATIC && 
-                string.IsNullOrEmpty(field.InitialValue))
-            {
-                Logger.Warning(Constants.Framework, $"INITIALVALUE for STATIC field. {field.Name}");
-            }
-
-            return new PrintFormResult(MessageHeader.CompletionCodeEnum.Success);
-        }
-
-        /// <summary>
-        /// Check the passed media is valid for this device.
-        /// </summary>
-        private PrintFormResult CheckMediaValid(Media media)
-        {
-            List<MediaSpec> mediaSpecs = Device.MediaSpecs;
-
-            int i = 0;
-            for (; i < mediaSpecs.Count; i++)
-            {
-                if (mediaSpecs[i].Width >= media.DotWidth &&
-                    (mediaSpecs[i].Height == 0 ||
-                     mediaSpecs[i].Height >= media.DotHeight))
-                {
-                    break;
-                }
-            }
-
-            // Check width
-            if (i == mediaSpecs.Count)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"Size of media is greater than any media supported by the device.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.Fold != Media.FoldEnum.NONE)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"FOLD not supported for this printer type.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.Staggering != 0)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"STAGGERING not supported for this printer type.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.Pages != 0)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"PAGE not supported for this printer type.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.Lines != 0)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"LINES not supported for this printer type.",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.PrintAreaX < 0 ||
-                media.PrintAreaX + media.PrintAreaWidth > media.Width ||
-                media.PrintAreaY < 0 ||
-                media.PrintAreaY + media.PrintAreaHeight > media.Height)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"PRINTAREA not within extent of media. PrintAreaX:{media.PrintAreaX}, PrintAreaY:{media.PrintAreaY}",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            if (media.RestrictedAreaX < 0 ||
-                media.RestrictedAreaX + media.RestrictedAreaWidth > media.Width ||
-                media.RestrictedAreaY < 0 ||
-                media.RestrictedAreaY + media.RestrictedAreaHeight > media.Height)
-            {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"RESTRICTED area not within extent of media. RestrictedAreaX:{media.RestrictedAreaX}, RestrictedAreaY:{media.RestrictedAreaY}",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid);
-            }
-
-            return new PrintFormResult(MessageHeader.CompletionCodeEnum.Success);
         }
 
         /// <summary>

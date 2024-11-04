@@ -157,8 +157,17 @@ namespace XFS4IoTFramework.Printer
         /// Return properties required for the GetQueryForm command
         /// </summary>
         /// <returns></returns>
-        public CommandResult<GetQueryMediaCompletion.PayloadData> QueryMedia()
+        public CommandResult<GetQueryMediaCompletion.PayloadData> QueryMedia(IPrinterDevice Device)
         {
+            var result = ValidateMedia(Device);
+            if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
+            {
+                return new(
+                    new(ErrorCode: GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaInvalid),
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Media {Name} is not supported by the device.");
+            }
+
             GetQueryMediaCompletion.PayloadData.PaperSourcesClass paperSource = null;
 
             if (Sources != SourceEnum.ANY)
@@ -215,6 +224,76 @@ namespace XFS4IoTFramework.Printer
                     PaperSources: paperSource),
                     MessageHeader.CompletionCodeEnum.Success
                 );
+        }
+
+        /// <summary>
+        /// Validate media against the printer device supports
+        /// </summary>
+        public ValidationResultClass ValidateMedia(IPrinterDevice Device)
+        {
+            List<MediaSpec> mediaSpecs = Device.MediaSpecs;
+
+            int i = 0;
+            for (; i < mediaSpecs.Count; i++)
+            {
+                if (mediaSpecs[i].Width >= DotWidth &&
+                    (mediaSpecs[i].Height == 0 ||
+                     mediaSpecs[i].Height >= DotHeight))
+                {
+                    break;
+                }
+            }
+
+            // Check width
+            if (i == mediaSpecs.Count)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"Size of media is greater than any media supported by the device.");
+            }
+
+            if (Fold != Media.FoldEnum.NONE)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"FOLD not supported for this printer type.");
+            }
+
+            if (Staggering != 0)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"STAGGERING not supported for this printer type.");
+            }
+
+            if (Pages != 0)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"PAGE not supported for this printer type.");
+            }
+
+            if (Lines != 0)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"LINES not supported for this printer type.");
+            }
+
+            if (PrintAreaX < 0 ||
+                PrintAreaX + PrintAreaWidth > Width ||
+                PrintAreaY < 0 ||
+                PrintAreaY + PrintAreaHeight > Height)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"PRINTAREA not within extent of media. PrintAreaX:{PrintAreaX}, PrintAreaY:{PrintAreaY}");
+            }
+
+            if (RestrictedAreaX < 0 ||
+                RestrictedAreaX + RestrictedAreaWidth > Width ||
+                RestrictedAreaY < 0 ||
+                RestrictedAreaY + RestrictedAreaHeight > Height)
+            {
+                return new(ValidationResultClass.ValidateResultEnum.Invalid,
+                           $"RESTRICTED area not within extent of media. RestrictedAreaX:{RestrictedAreaX}, RestrictedAreaY:{RestrictedAreaY}");
+            }
+
+            return new(ValidationResultClass.ValidateResultEnum.Valid);
         }
 
         /// <summary>

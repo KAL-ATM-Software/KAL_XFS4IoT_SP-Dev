@@ -847,5 +847,28 @@ namespace XFS4IoTFramework.Printer
         /// </summary>
         public List<byte> Data { get; init; }
     }
+
+    /// <summary>
+    /// This class is used to validate form, field or media
+    /// </summary>
+    public sealed class ValidationResultClass(ValidationResultClass.ValidateResultEnum Result,
+                                              string Reason = null)
+    {
+        /// <summary>
+        /// Result of validation for the media
+        /// </summary>
+        public enum ValidateResultEnum
+        {
+            Valid,   // Valid form, field or media
+            Invalid, // Invalid form, field or media
+            Missing, // Form, field or media does not exist
+        }
+        public ValidateResultEnum Result { get; init; } = Result;
+
+        /// <summary>
+        /// Reason of validation failure
+        /// </summary>
+        public string Reason { get; init; } = Reason;
+    }
 }
 

@@ -30,7 +30,7 @@ namespace XFS4IoTFramework.Printer
                         $"Specified form doesn't exist. {getQueryMedia.Payload.MediaName}")
                     );
             }
-            return Task.FromResult((medias[getQueryMedia.Payload.MediaName]).QueryMedia());
+            return Task.FromResult((medias[getQueryMedia.Payload.MediaName]).QueryMedia(Device));
         }
     }
 }
