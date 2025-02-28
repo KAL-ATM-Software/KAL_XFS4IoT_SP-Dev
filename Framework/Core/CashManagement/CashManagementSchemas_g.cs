@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -75,8 +75,9 @@ namespace XFS4IoT.CashManagement
         /// Items can still be dispensed from at least one of the storage units.
         /// * ```stop``` - Due to a storage unit failure dispensing is impossible. No items can be dispensed because
         /// all of the storage units are empty, missing, inoperative or in a manipulated condition. This state may also occur
-        /// when a reject/retract storage unit is full or no reject/retract storage unit is present, or when an application
-        /// lock is set on every storage unit which can be locked.
+        /// when a reject/retract storage unit is full or no reject/retract storage unit is present, or when
+        /// [appLockOut](#storage.getstorage.completion.properties.storage.unit1.cash.configuration.applockout) is set
+        /// to true on every storage unit which can be locked.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be determined.
         /// </summary>
         [DataMember(Name = "dispenser")]
@@ -100,8 +101,9 @@ namespace XFS4IoT.CashManagement
         /// Items can still be accepted into at least one of the storage units.
         /// * ```stop``` - Due to a storage unit failure accepting is impossible. No items can be accepted because
         /// all of the storage units are in a full, inoperative or manipulated condition. This state may also occur when
-        /// a retract storage unit is full or no retract storage unit is present, or when an application lock is
-        /// set on every storage unit, or when items are to be automatically retained within
+        /// a retract storage unit is full or no retract storage unit is present, or when
+        /// [appLockIn](#storage.getstorage.completion.properties.storage.unit1.cash.configuration.applockin) is
+        /// set to true on every storage unit which can be locked, or when items are to be automatically retained within
         /// storage units (see [retainAction](#common.capabilities.completion.description.cashacceptor.retainaction)),
         /// but all of the designated storage units for storing them are full or inoperative.
         /// * ```unknown``` - Due to a hardware error or other condition, the state of the storage units cannot be
@@ -288,7 +290,7 @@ namespace XFS4IoT.CashManagement
         public string Currency { get; init; }
 
         /// <summary>
-        /// Absolute value of a cash item or items. May be a floating point value to allow for coins and notes which have
+        /// Absolute value of a cash item or items. May be a floating-point value to allow for coins and notes which have
         /// a value which is not a whole multiple of the currency unit.
         /// 
         /// If applied to a storage unit, this applies to all contents, may be 0 if mixed and may only be modified in
@@ -332,8 +334,8 @@ namespace XFS4IoT.CashManagement
         public CashItemClass CashItem { get; init; }
 
         /// <summary>
-        /// If true the banknote reader will accept this note type during a cash-in operations.
-        /// If false the banknote reader will refuse this note type unless it must be retained by note classification
+        /// If true, the banknote reader will accept this note type during a cash-in operations.
+        /// If false, the banknote reader will refuse this note type unless it must be retained by note classification
         /// rules.
         /// </summary>
         [DataMember(Name = "enabled")]
@@ -370,7 +372,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of items (other than coins) of the specified currency accepted.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>1405.00</example>
         /// </summary>
         [DataMember(Name = "itemsReceived")]
@@ -378,7 +380,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of items (other than coins) of the specified currency dispensed.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>1405.00</example>
         /// </summary>
         [DataMember(Name = "itemsDispensed")]
@@ -386,7 +388,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of coin currency accepted.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>0.05</example>
         /// </summary>
         [DataMember(Name = "coinsReceived")]
@@ -394,7 +396,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of coin currency dispensed.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>0.05</example>
         /// </summary>
         [DataMember(Name = "coinsDispensed")]
@@ -402,7 +404,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of cash box currency accepted.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>1407.15</example>
         /// </summary>
         [DataMember(Name = "cashBoxReceived")]
@@ -410,7 +412,7 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// The total absolute value of cash box currency dispensed.
-        /// The amount is expressed as a floating point value.
+        /// The amount is expressed as a floating-point value.
         /// <example>1407.15</example>
         /// </summary>
         [DataMember(Name = "cashBoxDispensed")]
@@ -510,11 +512,12 @@ namespace XFS4IoT.CashManagement
         public OrientationEnum? Orientation { get; init; }
 
         /// <summary>
-        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is null.
-        /// <example>MAA5ADgANwA2ADUANAAz ...</example>
+        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested, then this
+        /// is null.
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "signature")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Signature { get; init; }
 
         [DataMember(Name = "level")]
@@ -532,10 +535,10 @@ namespace XFS4IoT.CashManagement
         /// <summary>
         /// Base64 encoded binary image data. If the Service does not support this function or the image has not
         /// been requested then this is null.
-        /// <example>MAA5ADgANwA2ADUANAAz ...</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "image")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Image { get; init; }
 
         [DataMember(Name = "onClassificationList")]
@@ -549,9 +552,9 @@ namespace XFS4IoT.CashManagement
         /// * ```stacker``` - The item is in the intermediate stacker.
         /// * ```output``` - The item is at the output position. The items have not been in customer access.
         /// * ```transport``` - The item is in an intermediate location in the device.
-        /// * ```deviceUnknown``` - The item is in the device but its location is unknown.
-        /// * ```&lt;storage unit identifier&gt;``` - The item is in a storage unit with matching
-        /// [identifier](#storage.getstorage.completion.properties.storage.unit1).
+        /// * ```deviceUnknown``` - The item is in the device, but its location is unknown.
+        /// * ```[storage unit identifier]``` - The item is in a storage unit with matching
+        ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
         /// <example>unit1</example>
         /// </summary>
         [DataMember(Name = "itemLocation")]
@@ -589,7 +592,7 @@ namespace XFS4IoT.CashManagement
         public string Currency { get; init; }
 
         /// <summary>
-        /// Absolute value of a cash item or items. May be a floating point value to allow for coins and notes which have
+        /// Absolute value of a cash item or items. May be a floating-point value to allow for coins and notes which have
         /// a value which is not a whole multiple of the currency unit.
         /// 
         /// If applied to a storage unit, this applies to all contents, may be 0 if mixed and may only be modified in
@@ -633,13 +636,14 @@ namespace XFS4IoT.CashManagement
         public RetractAreaEnum? RetractArea { get; init; }
 
         /// <summary>
-        /// If *retractArea* is set to *retract* this property defines the position inside the retract storage units into
-        /// which the cash is to be retracted. *index* starts with a value of 1 for the first retract position
-        /// and increments by one for each subsequent position. If there are several retract storage units
-        /// (of type *retractCassette* in [Storage.GetStorage](#storage.getstorage)), *index* would be incremented from the
-        /// first position of the first retract storage unit to the last position of the last retract storage unit.
-        /// The maximum value of *index* is the sum of *maximum* of each retract storage unit. If *retractArea* is not
-        /// set to *retract* the value of this property is ignored and may be null.
+        /// If *target* is set to *retract* this property defines a position inside the retract storage units. *index*
+        /// starts with a value of 1 for the first retract position and increments by one for each subsequent position. If
+        /// there are several retract storage units (of type *cashInRetract* or *cashOutRetract* as appropriate to the
+        /// operation and as reported by *types* in
+        /// [Storage.GetStorage](#storage.getstorage.completion.description.storage.unit1.cash.configuration)), *index*
+        /// would be incremented from the first position of the first retract storage unit to the last position of the last
+        /// retract storage unit. The maximum value of *index* is the sum of *maximum* of each retract storage unit. If
+        /// *retractArea* is not set to *retract* the value of this property is ignored and may be null in command data.
         /// </summary>
         [DataMember(Name = "index")]
         [DataTypes(Minimum = 1)]
@@ -758,7 +762,7 @@ namespace XFS4IoT.CashManagement
         public int? RetractOperations { get; init; }
 
         /// <summary>
-        /// The items deposited in the storage unit during a Cash In transaction. Can be null, if all values are 0.
+        /// The items deposited in the storage unit during a cash-in transaction. Can be null, if all values are 0.
         /// </summary>
         [DataMember(Name = "deposited")]
         public StorageCashCountsClass Deposited { get; init; }
@@ -766,20 +770,21 @@ namespace XFS4IoT.CashManagement
         /// <summary>
         /// The items retracted into the storage unit after being accessible to a customer. This may be inaccurate
         /// or not counted if items are not counted or re-validated after presentation, the number of retract
-        /// operations is also reported separately in *retractOperations*. Can be null, if all values are 0.
+        /// operations is also reported separately in *retractOperations*. Can be null if all values are 0.
         /// </summary>
         [DataMember(Name = "retracted")]
         public StorageCashCountsClass Retracted { get; init; }
 
         /// <summary>
         /// The items deposited in this storage unit originating from another storage unit but rejected due to being
-        /// invalid. This count may be inaccurate due to the nature of rejected items. Can be null, if all values are 0.
+        /// invalid. This count may be inaccurate due to the nature of rejected items. Can be null if all values are 0.
         /// </summary>
         [DataMember(Name = "rejected")]
         public StorageCashCountsClass Rejected { get; init; }
 
         /// <summary>
-        /// The items deposited in this storage unit originating from another storage unit but not rejected. Can be null, if all values are 0.
+        /// The items deposited in this storage unit originating from another storage unit but not rejected. Can be null
+        /// if all values are 0.
         /// </summary>
         [DataMember(Name = "distributed")]
         public StorageCashCountsClass Distributed { get; init; }
@@ -789,7 +794,7 @@ namespace XFS4IoT.CashManagement
         /// case for this property is tracking items after a jam during
         /// [CashAcceptor.CashInEnd](#cashacceptor.cashinend). This is not reset if
         /// [initial](#storage.getstorage.completion.properties.storage.unit1.cash.status.initial) is set for this unit
-        /// by [Storage.GetStorage](#storage.getstorage). Can be null, if all values are 0.
+        /// by [Storage.GetStorage](#storage.getstorage). Can be null if all values are 0.
         /// </summary>
         [DataMember(Name = "transport")]
         public StorageCashCountsClass Transport { get; init; }
@@ -811,7 +816,7 @@ namespace XFS4IoT.CashManagement
         }
 
         /// <summary>
-        /// The unit can accept cash items. If *cashOut* is also true then the unit can recycle. May be null in command
+        /// The unit can accept cash items. If *cashOut* is also true, then the unit can recycle. May be null in command
         /// data or events if not changed or being changed.
         /// <example>true</example>
         /// </summary>
@@ -819,7 +824,7 @@ namespace XFS4IoT.CashManagement
         public bool? CashIn { get; init; }
 
         /// <summary>
-        /// The unit can dispense cash items. If *cashIn* is also true then the unit can recycle. May be null in command
+        /// The unit can dispense cash items. If *cashIn* is also true, then the unit can recycle. May be null in command
         /// data or events if not changed or being changed.
         /// </summary>
         [DataMember(Name = "cashOut")]
@@ -833,14 +838,14 @@ namespace XFS4IoT.CashManagement
         public bool? Replenishment { get; init; }
 
         /// <summary>
-        /// Retract unit. Items can be retracted into this unit during Cash In operations. May be null in command data
+        /// Retract unit. Items can be retracted into this unit during cash-in operations. May be null in command data
         /// or events if not changed or being changed.
         /// </summary>
         [DataMember(Name = "cashInRetract")]
         public bool? CashInRetract { get; init; }
 
         /// <summary>
-        /// Retract unit. Items can be retracted into this unit during Cash Out operations. May be null in command data
+        /// Retract unit. Items can be retracted into this unit during cash-out operations. May be null in command data
         /// or events if not changed or being changed.
         /// </summary>
         [DataMember(Name = "cashOutRetract")]
@@ -952,7 +957,7 @@ namespace XFS4IoT.CashManagement
         /// <summary>
         /// If items can be retracted into this storage unit, this is the number of areas within the storage unit which
         /// allow physical separation of different bunches. If there is no physical separation of retracted bunches
-        /// within this storage unit, this value is 1. May be null if items can not be retracted into this storage unit
+        /// within this storage unit, this value is 1. May be null if items cannot be retracted into this storage unit
         /// or in events if not changed or being changed.
         /// </summary>
         [DataMember(Name = "retractAreas")]
@@ -963,7 +968,7 @@ namespace XFS4IoT.CashManagement
         /// If true, indicates that retract capacity is based on counts.
         /// If false, indicates that retract capacity is based on the number of commands which resulted in items
         /// being retracted into the storage unit.
-        /// May be null if items can not be retracted into this storage unit or in events if not changed or being changed.
+        /// May be null if items cannot be retracted into this storage unit or in events if not changed or being changed.
         /// </summary>
         [DataMember(Name = "retractThresholds")]
         public bool? RetractThresholds { get; init; }
@@ -1015,7 +1020,7 @@ namespace XFS4IoT.CashManagement
         public string Currency { get; init; }
 
         /// <summary>
-        /// Absolute value of a cash item or items. May be a floating point value to allow for coins and notes which have
+        /// Absolute value of a cash item or items. May be a floating-point value to allow for coins and notes which have
         /// a value which is not a whole multiple of the currency unit.
         /// 
         /// If applied to a storage unit, this applies to all contents, may be 0 if mixed and may only be modified in
@@ -1058,14 +1063,14 @@ namespace XFS4IoT.CashManagement
         public int? LowThreshold { get; init; }
 
         /// <summary>
-        /// If true, items cannot be accepted into the storage unit in Cash In operations.
+        /// If true, items cannot be accepted into the storage unit in cash-in operations.
         /// May be null in command data or events if not being modified.
         /// </summary>
         [DataMember(Name = "appLockIn")]
         public bool? AppLockIn { get; init; }
 
         /// <summary>
-        /// If true, items cannot be dispensed from the storage unit in Cash Out operations.
+        /// If true, items cannot be dispensed from the storage unit in cash-out operations.
         /// May be null in command data or events if not being modified.
         /// </summary>
         [DataMember(Name = "appLockOut")]
@@ -1231,7 +1236,7 @@ namespace XFS4IoT.CashManagement
         /// * If it is not known where the items moved, for example because they have been removed manually after jam
         /// clearance, then *unknown* is modified.
         /// 
-        /// May be null if items have not or can not be moved from the storage unit by cash commands.
+        /// May be null if items have not or cannot be moved from the storage unit by cash commands.
         /// </summary>
         [DataMember(Name = "out")]
         public StorageCashOutClass Out { get; init; }
@@ -1251,7 +1256,7 @@ namespace XFS4IoT.CashManagement
         /// * If it is not known where the items moved, for example because they have been removed manually after jam
         /// clearance, then *unknown* is modified.
         /// 
-        /// May be null if items have not or can not be moved into the storage unit by cash commands.
+        /// May be null if items have not or cannot be moved into the storage unit by cash commands.
         /// </summary>
         [DataMember(Name = "in")]
         public StorageCashInClass In { get; init; }
@@ -1265,18 +1270,18 @@ namespace XFS4IoT.CashManagement
         }
 
         /// <summary>
-        /// Describes the accuracy of the counts reported by *out* and *in*. If null in 
-        /// [Storage.GetStorage](#storage.getstorage), the hardware is not capable of determining the accuracy, 
+        /// Describes the accuracy of the counts reported by *out* and *in*. If null in
+        /// [Storage.GetStorage](#storage.getstorage), the hardware is not capable of determining the accuracy,
         /// otherwise the following values are possible:
         /// 
-        /// * ```accurate``` - The *count* is expected to be accurate. The notes were previously counted 
-        /// and there have since been no events that might have introduced inaccuracy. 
-        /// * ```accurateSet``` - The *count* is expected to be accurate. The counts were previously set and there have 
-        /// since been no events that might have introduced inaccuracy.
+        /// * ```accurate``` - The *count* is expected to be accurate. The notes were previously counted
+        ///   and there have since been no events that might have introduced inaccuracy.
+        /// * ```accurateSet``` - The *count* is expected to be accurate. The counts were previously set and there have
+        ///   since been no events that might have introduced inaccuracy.
         /// * ```inaccurate``` - The *count* is likely to be inaccurate. A jam, picking fault, or some other event may
-        /// have resulted in a counting inaccuracy.
+        ///   have resulted in a counting inaccuracy.
         /// * ```unknown``` - The accuracy of *count* cannot be determined. This may be due to storage unit insertion or
-        /// some other hardware event.
+        ///   some other hardware event.
         /// </summary>
         [DataMember(Name = "accuracy")]
         public AccuracyEnum? Accuracy { get; init; }
@@ -1300,12 +1305,12 @@ namespace XFS4IoT.CashManagement
         /// Following values are possible:
         /// 
         /// * ```dispenseInoperative``` - Dispense operations are possible and deposit operations are not possible on
-        /// this recycling storage unit.
+        ///   this recycling storage unit.
         /// * ```depositInoperative``` - Deposit operations are possible and dispense operations are not possible on
-        /// this recycling storage unit.
+        ///   this recycling storage unit.
         /// 
         /// If null in [Storage.GetStorage](#storage.getstorage), *status* and *replenishmentStatus* apply to both cash
-        /// out and cash in operations.
+        /// out and cash-in operations.
         /// <example>dispenseInoperative</example>
         /// </summary>
         [DataMember(Name = "operationStatus")]
@@ -1357,9 +1362,9 @@ namespace XFS4IoT.CashManagement
 
 
     [DataContract]
-    public sealed class ItemTargetClass
+    public sealed class ItemTargetDataClass
     {
-        public ItemTargetClass(ItemTargetEnumEnum? Target = null, string Unit = null, int? Index = null)
+        public ItemTargetDataClass(ItemTargetEnumEnum? Target = null, string Unit = null, int? Index = null)
         {
             this.Target = Target;
             this.Unit = Unit;
@@ -1367,15 +1372,15 @@ namespace XFS4IoT.CashManagement
         }
 
         /// <summary>
-        /// This property specifies the target where items are to be moved to. Following values are possible:
+        /// This property specifies the target. Following values are possible:
         /// 
-        /// * ```singleUnit``` - Move the items to a single storage unit defined by *unit*.
-        /// * ```retract``` - Move the items to a retract storage unit.
-        /// * ```transport``` - Move the items to the transport.
-        /// * ```stacker``` - Move the items to the intermediate stacker area.
-        /// * ```reject``` - Move the items to a reject storage unit.
-        /// * ```itemCassette``` - Move the items to the storage units which would be used during a Cash In transaction including recycling storage units.
-        /// * ```cashIn``` - Move the items to the storage units which would be used during a Cash In transaction but not including recycling storage units.
+        /// * ```singleUnit``` - A single storage unit defined by *unit*.
+        /// * ```retract``` - A retract storage unit defined by *index*.
+        /// * ```transport``` - The transport.
+        /// * ```stacker``` - Intermediate stacker area.
+        /// * ```reject``` - Reject storage unit.
+        /// * ```itemCassette``` - Storage units which would be used during a cash-in transaction including recycling storage units.
+        /// * ```cashIn``` - Storage units which would be used during a cash-in transaction but not including recycling storage units.
         /// * ```outDefault``` - Default output position.
         /// * ```outLeft``` - Left output position.
         /// * ```outRight``` - Right output position.
@@ -1390,8 +1395,8 @@ namespace XFS4IoT.CashManagement
 
         /// <summary>
         /// If *target* is set to *singleUnit*, this property specifies the object name (as stated by the
-        /// [Storage.GetStorage](#storage.getstorage) command) of the single unit to
-        /// be used for the storage of any items found.
+        /// [Storage.GetStorage](#storage.getstorage) command) of a single storage unit. Ignored and may be null
+        /// for all other cases.
         /// <example>unit4</example>
         /// </summary>
         [DataMember(Name = "unit")]
@@ -1399,13 +1404,14 @@ namespace XFS4IoT.CashManagement
         public string Unit { get; init; }
 
         /// <summary>
-        /// If *target* is set to *retract* this property defines the position inside the retract storage units into
-        /// which the cash is to be retracted. *index* starts with a value of 1 for the first retract position
-        /// and increments by one for each subsequent position. If there are several retract storage units
-        /// (of type *retractCassette* in [Storage.GetStorage](#storage.getstorage)), *index* would be incremented from the
-        /// first position of the first retract storage unit to the last position of the last retract storage unit.
-        /// The maximum value of *index* is the sum of *maximum* of each retract storage unit. If *retractArea* is not
-        /// set to *retract* the value of this property is ignored.
+        /// If *target* is set to *retract* this property defines a position inside the retract storage units. *index*
+        /// starts with a value of 1 for the first retract position and increments by one for each subsequent position. If
+        /// there are several retract storage units (of type *cashInRetract* or *cashOutRetract* as appropriate to the
+        /// operation and as reported by *types* in
+        /// [Storage.GetStorage](#storage.getstorage.completion.description.storage.unit1.cash.configuration)), *index*
+        /// would be incremented from the first position of the first retract storage unit to the last position of the last
+        /// retract storage unit. The maximum value of *index* is the sum of *maximum* of each retract storage unit. If
+        /// *retractArea* is not set to *retract* the value of this property is ignored and may be null in command data.
         /// </summary>
         [DataMember(Name = "index")]
         [DataTypes(Minimum = 1)]
@@ -1464,7 +1470,7 @@ namespace XFS4IoT.CashManagement
         /// <summary>
         /// Specifies how many more bunches will be required to present the request. Following values are possible:
         /// 
-        ///   * ```&lt;number&gt;``` - The number of additional bunches to be presented.
+        ///   * ```[number]``` - The number of additional bunches to be presented.
         ///   * ```unknown``` - More than one additional bunch is required but the precise number is unknown.
         /// <example>1</example>
         /// </summary>
@@ -1498,11 +1504,12 @@ namespace XFS4IoT.CashManagement
         public OrientationEnum? Orientation { get; init; }
 
         /// <summary>
-        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested then this is null.
-        /// <example>MAA5ADgANwA2ADUANAAz ...</example>
+        /// Base64 encoded vendor specific signature data. If no signature is available or has not been requested, then this
+        /// is null.
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "signature")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Signature { get; init; }
 
     }

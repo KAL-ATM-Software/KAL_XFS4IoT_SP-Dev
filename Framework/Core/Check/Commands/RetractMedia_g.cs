@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,8 +41,8 @@ namespace XFS4IoT.Check.Commands
             /// 
             /// * ```stacker``` - The device stacker.
             /// * ```transport``` - The device transport.
-            /// * ```rebuncher``` - The device rebuncher.
-            /// * ```&lt;storage unit identifier&gt;``` - A storage unit as specified by
+            /// * ```rebuncher``` - The device re-buncher.
+            /// * ```[storage unit identifier]``` - A storage unit as specified by
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>rebuncher</example>
             /// </summary>

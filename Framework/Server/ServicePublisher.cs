@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -37,10 +37,10 @@ namespace XFS4IoTServer
         public ServicePublisher(ILogger Logger, 
                                 IServiceConfiguration ServiceConfiguration,
                                 IJsonSchemaValidator JsonSchemaValidator = null)
-            : base(new[] { XFSConstants.ServiceClass.Publisher }, Logger)
+            : base([XFSConstants.ServiceClass.Publisher ], Logger)
         {
             Logger.IsNotNull($"Invalid parameter received in the {nameof(ServicePublisher)} constructor. {nameof(Logger)}");
-            
+
             if (ServiceConfiguration is null)
             {
                 Logger.Log(Constants.Framework, $"No configuration object is set and use default value. {Configurations.ServerAddressUri}");
@@ -138,19 +138,28 @@ namespace XFS4IoTServer
 
         public async override Task RunAsync(CancellationSource cancellationSource)
         {
-            if (JsonSchemaValidator is not null)
+            try
             {
-                await JsonSchemaValidator.LoadSchemaAsync();
+                if (JsonSchemaValidator is not null)
+                {
+                    await JsonSchemaValidator.LoadSchemaAsync();
+                }
+                EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
+
+                var thisTask = Task.WhenAll(EndPoint.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource));
+                var otherTasks = from service in _Services
+                                 select service.RunAsync(cancellationSource);
+
+                var allTasks = Enumerable.Append(otherTasks, thisTask);
+
+                await Task.WhenAll(allTasks);
             }
-            EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
-
-            var thisTask = Task.WhenAll( EndPoint.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource) );
-            var otherTasks = from service in _Services
-                             select service.RunAsync(cancellationSource);
-
-            var allTasks = Enumerable.Append(otherTasks, thisTask);
-
-            await Task.WhenAll(allTasks);
+            catch (Exception ex)
+            {
+                Logger.Warning(Constants.Component, $"Caught an exception thrown in {nameof(ServicePublisher)}: {ex.Message}");
+                // It's a critical error that it cannot recover from and terminate this process.
+                Environment.FailFast($"Caught an exception thrown in {nameof(ServicePublisher)}.", ex);
+            }
         }
 
         public void Dispose() => EndPoint.Dispose();

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = GetQueryMedia
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Printer.GetQueryMedia")]
     public sealed class GetQueryMediaCommand : Command<GetQueryMediaCommand.PayloadData>
     {
@@ -28,18 +28,18 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(string MediaName = null)
+            public PayloadData(string Name = null)
                 : base()
             {
-                this.MediaName = MediaName;
+                this.Name = Name;
             }
 
             /// <summary>
-            /// The media name for which to retrieve details.
+            /// The media definition name for which to retrieve details.
             /// <example>example media</example>
             /// </summary>
-            [DataMember(Name = "mediaName")]
-            public string MediaName { get; init; }
+            [DataMember(Name = "name")]
+            public string Name { get; init; }
 
         }
     }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -44,10 +44,10 @@ namespace XFS4IoT.CashDispenser.Completions
             /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```cashUnitError``` - A storage unit caused a problem. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```noItems``` - There were no items to reject.
             /// * ```exchangeActive``` - The device is in an exchange state (see
-            /// [Storage.StartExchange](#storage.startexchange)).
+            ///   [Storage.StartExchange](#storage.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

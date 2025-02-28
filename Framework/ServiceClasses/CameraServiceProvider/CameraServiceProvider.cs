@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.Biometric.Events;
 using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
 
@@ -27,11 +28,16 @@ namespace XFS4IoTServer
     /// </remarks>
     public class CameraServiceProvider : ServiceProvider, ICameraService, ICommonService
     {
-        public CameraServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public CameraServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Camera },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Camera],
                  device,
                  logger)
         {
@@ -48,9 +54,32 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Camera Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
+        #endregion
+
+        #region Camera events
+
+        public enum MediaThresholdEnum
+        {
+            Healthy, //The recording media is a good state.
+            High,    // The recording media is almost full.
+            Full     //The recording media is full.
+        }
+        /// <summary>
+        /// This event is used to specify that the state of the recording media reached a threshold.
+        /// </summary>
+        public Task MediaThresholdEvent(MediaThresholdEnum Threshold)
+            => Camera.MediaThresholdEvent(new(Threshold switch
+            {
+                MediaThresholdEnum.Full => XFS4IoT.Camera.Events.MediaThresholdEvent.PayloadData.MediaThresholdEnum.Full,
+                MediaThresholdEnum.High => XFS4IoT.Camera.Events.MediaThresholdEvent.PayloadData.MediaThresholdEnum.High,
+                MediaThresholdEnum.Healthy => XFS4IoT.Camera.Events.MediaThresholdEvent.PayloadData.MediaThresholdEnum.Ok,
+                _ => throw Contracts.Fail<NotImplementedException>($"Unexpected ClearMode within {nameof(DataClearedEvent)}")
+            }));
 
         #endregion
 

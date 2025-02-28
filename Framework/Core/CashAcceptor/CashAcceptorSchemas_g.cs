@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -311,7 +311,7 @@ namespace XFS4IoT.CashAcceptor
         [DataContract]
         public sealed class RetractAreasClass
         {
-            public RetractAreasClass(bool? Retract = null, bool? Reject = null, bool? Transport = null, bool? Stacker = null, bool? BillCassettes = null, bool? CashIn = null)
+            public RetractAreasClass(bool? Retract = null, bool? Reject = null, bool? Transport = null, bool? Stacker = null, bool? BillCassettes = null, bool? CashIn = null, bool? ItemCassette = null)
             {
                 this.Retract = Retract;
                 this.Reject = Reject;
@@ -319,6 +319,7 @@ namespace XFS4IoT.CashAcceptor
                 this.Stacker = Stacker;
                 this.BillCassettes = BillCassettes;
                 this.CashIn = CashIn;
+                this.ItemCassette = ItemCassette;
             }
 
             /// <summary>
@@ -347,6 +348,7 @@ namespace XFS4IoT.CashAcceptor
 
             /// <summary>
             /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
+            /// This property has been deprecated in favor of the property *itemCassette*.
             /// </summary>
             [DataMember(Name = "billCassettes")]
             public bool? BillCassettes { get; init; }
@@ -356,6 +358,12 @@ namespace XFS4IoT.CashAcceptor
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
+
+            /// <summary>
+            /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
+            /// </summary>
+            [DataMember(Name = "itemCassette")]
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -510,7 +518,7 @@ namespace XFS4IoT.CashAcceptor
         [DataContract]
         public sealed class RetractAreasClass
         {
-            public RetractAreasClass(bool? Retract = null, bool? Transport = null, bool? Stacker = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null)
+            public RetractAreasClass(bool? Retract = null, bool? Transport = null, bool? Stacker = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null, bool? ItemCassette = null)
             {
                 this.Retract = Retract;
                 this.Transport = Transport;
@@ -518,6 +526,7 @@ namespace XFS4IoT.CashAcceptor
                 this.Reject = Reject;
                 this.BillCassette = BillCassette;
                 this.CashIn = CashIn;
+                this.ItemCassette = ItemCassette;
             }
 
             /// <summary>
@@ -546,6 +555,7 @@ namespace XFS4IoT.CashAcceptor
 
             /// <summary>
             /// The items may be retracted to cash-in and recycle storage units.
+            /// This property has been deprecated in favor of the property *itemCassette*.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
@@ -555,6 +565,12 @@ namespace XFS4IoT.CashAcceptor
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
+
+            /// <summary>
+            /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
+            /// </summary>
+            [DataMember(Name = "itemCassette")]
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -568,13 +584,14 @@ namespace XFS4IoT.CashAcceptor
         [DataContract]
         public sealed class RetractTransportActionsClass
         {
-            public RetractTransportActionsClass(bool? Present = null, bool? Retract = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null)
+            public RetractTransportActionsClass(bool? Present = null, bool? Retract = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null, bool? ItemCassette = null)
             {
                 this.Present = Present;
                 this.Retract = Retract;
                 this.Reject = Reject;
                 this.BillCassette = BillCassette;
                 this.CashIn = CashIn;
+                this.ItemCassette = ItemCassette;
             }
 
             /// <summary>
@@ -597,6 +614,7 @@ namespace XFS4IoT.CashAcceptor
 
             /// <summary>
             /// The items may be moved to the cash-in and recycle storage units.
+            /// This property has been deprecated in favor of the property *itemCassette*.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
@@ -606,6 +624,12 @@ namespace XFS4IoT.CashAcceptor
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
+
+            /// <summary>
+            /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
+            /// </summary>
+            [DataMember(Name = "itemCassette")]
+            public bool? ItemCassette { get; init; }
 
         }
 
@@ -620,13 +644,14 @@ namespace XFS4IoT.CashAcceptor
         [DataContract]
         public sealed class RetractStackerActionsClass
         {
-            public RetractStackerActionsClass(bool? Present = null, bool? Retract = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null)
+            public RetractStackerActionsClass(bool? Present = null, bool? Retract = null, bool? Reject = null, bool? BillCassette = null, bool? CashIn = null, bool? ItemCassette = null)
             {
                 this.Present = Present;
                 this.Retract = Retract;
                 this.Reject = Reject;
                 this.BillCassette = BillCassette;
                 this.CashIn = CashIn;
+                this.ItemCassette = ItemCassette;
             }
 
             /// <summary>
@@ -649,6 +674,7 @@ namespace XFS4IoT.CashAcceptor
 
             /// <summary>
             /// The items may be moved to the cash-in and recycle storage units.
+            /// This property has been deprecated in favor of the property *itemCassette*.
             /// </summary>
             [DataMember(Name = "billCassette")]
             public bool? BillCassette { get; init; }
@@ -658,6 +684,12 @@ namespace XFS4IoT.CashAcceptor
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
+
+            /// <summary>
+            /// Items may be retracted to item cassettes, i.e. cash-in and recycle storage units.
+            /// </summary>
+            [DataMember(Name = "itemCassette")]
+            public bool? ItemCassette { get; init; }
 
         }
 

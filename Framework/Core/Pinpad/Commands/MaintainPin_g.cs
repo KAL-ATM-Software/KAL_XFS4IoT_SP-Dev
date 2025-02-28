@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,7 +35,7 @@ namespace XFS4IoT.PinPad.Commands
             }
 
             /// <summary>
-            /// Specifies if the PIN should be maintained after a PIN processing command. Once set, this setting
+            /// Specifies if the PIN should be maintained after a PIN-processing command. Once set, this setting
             /// applies until changed through another call to this command.
             /// </summary>
             [DataMember(Name = "maintainPIN")]

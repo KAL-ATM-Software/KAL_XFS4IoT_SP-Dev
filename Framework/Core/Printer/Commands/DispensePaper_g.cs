@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,7 +35,7 @@ namespace XFS4IoT.Printer.Commands
             }
 
             /// <summary>
-            /// Specifes the paper source to be used. For commands which print, this parameter is ignored if there is already
+            /// Specifies the paper source to be used. For commands which print, this parameter is ignored if there is already
             /// paper in the print position. It can be one of the following:
             /// 
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
             /// * ```any``` - Use any paper source, it is determined by the service.
-            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// * ```[paper source identifier]``` - The vendor specific paper source.
             /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]

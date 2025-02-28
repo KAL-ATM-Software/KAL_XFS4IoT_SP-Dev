@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,9 +16,9 @@ using XFS4IoTFramework.Common;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    public partial class SetAutoStartUpTimeHandler
+    public partial class SetAutoStartupTimeHandler
     {
-        private async Task<CommandResult<MessagePayloadBase>> HandleSetAutoStartUpTime(ISetAutoStartUpTimeEvents events, SetAutoStartUpTimeCommand setAutostartupTime, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleSetAutoStartupTime(ISetAutoStartupTimeEvents events, SetAutoStartupTimeCommand setAutostartupTime, CancellationToken cancel)
         {
             if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
             {
@@ -43,9 +43,9 @@ namespace XFS4IoTFramework.Auxiliaries
 
             if (!Device.AuxiliariesCapabilities.AutoStartupMode.HasFlag(setAutostartupTime.Payload.Mode switch
             {
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific => AuxiliariesCapabilitiesClass.AutoStartupModes.Specific,
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily => AuxiliariesCapabilitiesClass.AutoStartupModes.Daily,
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Weekly => AuxiliariesCapabilitiesClass.AutoStartupModes.Weekly,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific => AuxiliariesCapabilitiesClass.AutoStartupModes.Specific,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily => AuxiliariesCapabilitiesClass.AutoStartupModes.Daily,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Weekly => AuxiliariesCapabilitiesClass.AutoStartupModes.Weekly,
                 _ => throw new NotImplementedException("Invalid mode supplied in HandleSetAutostartupTime")
             }))
             {
@@ -56,7 +56,7 @@ namespace XFS4IoTFramework.Auxiliaries
 
             StartupTime startupTime;
 
-            if(setAutostartupTime.Payload.Mode is SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific)
+            if(setAutostartupTime.Payload.Mode is SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific)
             {
                 if (setAutostartupTime.Payload.StartTime.Year is null)
                 {
@@ -90,7 +90,7 @@ namespace XFS4IoTFramework.Auxiliaries
                 }
                 startupTime = new StartupTime(setAutostartupTime.Payload.StartTime.Year, setAutostartupTime.Payload.StartTime.Month, null, setAutostartupTime.Payload.StartTime.Day, setAutostartupTime.Payload.StartTime.Hour, setAutostartupTime.Payload.StartTime.Minute);
             }
-            else if(setAutostartupTime.Payload.Mode is SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily)
+            else if(setAutostartupTime.Payload.Mode is SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily)
             {
                 if (setAutostartupTime.Payload.StartTime.Hour is null)
                 {
@@ -144,9 +144,9 @@ namespace XFS4IoTFramework.Auxiliaries
 
             var result = await Device.SetAutostartupTime(new(startupTime, setAutostartupTime.Payload.Mode switch
             {
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Specific => AutoStartupTimeModeEnum.Specific,
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Daily => AutoStartupTimeModeEnum.Daily,
-                SetAutoStartUpTimeCommand.PayloadData.ModeEnum.Weekly => AutoStartupTimeModeEnum.Weekly,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Specific => AutoStartupTimeModeEnum.Specific,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Daily => AutoStartupTimeModeEnum.Daily,
+                SetAutoStartupTimeCommand.PayloadData.ModeEnum.Weekly => AutoStartupTimeModeEnum.Weekly,
                 _ => throw new NotImplementedException("Unexpected ModeEnum in SetAutoStartupTime. " + setAutostartupTime.Payload.Mode)
             }), cancel);
 

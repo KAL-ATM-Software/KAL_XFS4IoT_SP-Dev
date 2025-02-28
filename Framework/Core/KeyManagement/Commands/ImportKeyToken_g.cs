@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ImportKeyToken
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "KeyManagement.ImportKeyToken")]
     public sealed class ImportKeyTokenCommand : Command<ImportKeyTokenCommand.PayloadData>
     {
@@ -43,10 +43,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// content type with the SignerInfo encryptedDigest field containing the HOST’s signature. The inner content is
             /// an Enveloped-data content type. The device identifier is included as the issuerAndSerialNumber within the
             /// RecipientInfo.
-            /// <example>UGluYmxvY2sgZGF0YQ==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "keyToken")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> KeyToken { get; init; }
 
             /// <summary>
@@ -107,7 +107,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// <example>P0</example>
             /// </summary>
             [DataMember(Name = "keyUsage")]
-            [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-4]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+            [DataTypes(Pattern = @"^B[0-3]$|^C0$|^D[0-3]$|^E[0-7]$|^I0$|^K[0-4]$|^M[0-8]$|^P[0-1]$|^S[0-2]$|^V[0-5]$|^[0-9][0-9]$")]
             public string KeyUsage { get; init; }
 
             public enum LoadOptionEnum

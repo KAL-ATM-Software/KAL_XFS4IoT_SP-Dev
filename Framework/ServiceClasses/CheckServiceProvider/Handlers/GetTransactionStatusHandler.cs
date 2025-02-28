@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -33,6 +33,19 @@ namespace XFS4IoTFramework.Check
                     {
                         foreach (var image in media.Value.Images)
                         {
+                            List<byte> imageData = null;
+                            if (image.Value.ImageData is not null &&
+                                image.Value.ImageData.Count > 0)
+                            {
+                                // device stored scanned image, do we need to report them?
+                                if (getTransactionStatus.Payload?.IncludeImage is null /*default true*/ ||
+                                    (getTransactionStatus.Payload?.IncludeImage is not null &&
+                                     getTransactionStatus.Payload.IncludeImage == true))
+                                {
+                                    imageData = image.Value.ImageData;
+                                }
+                            }
+
                             (images ??= []).Add(new(
                                 ImageSource: image.Key switch
                                 { 
@@ -73,9 +86,7 @@ namespace XFS4IoTFramework.Check
                                     ImageDataInfo.ImageStatusEnum.SourceNotSupported => XFS4IoT.Check.ImageStatusEnum.SourceNotSupported,
                                     _ => throw new InternalErrorException($"Unexpected image status specified. {image.Value.ImageStatus}")
                                 },
-                                Image: (image.Value.ImageData is null || image.Value.ImageData.Count == 0) ?
-                                    null : image.Value.ImageData
-                                ));
+                                Image: imageData));
                         }
                     }
 
@@ -94,7 +105,6 @@ namespace XFS4IoTFramework.Check
                             MediaDataInfo.MagneticReadIndicatorEnum.Not_MICR_Format => XFS4IoT.Check.MagneticReadIndicatorEnum.NotMicrFormat,
                             MediaDataInfo.MagneticReadIndicatorEnum.Unknown => XFS4IoT.Check.MagneticReadIndicatorEnum.Unknown,
                             _ => throw new InternalErrorException($"Unexpected magnetic read indicator specified. {media.Value.MagneticReadIndicator}")
-
                         },
                         Image: images,
                         InsertOrientation: media.Value.MediaOrientation == MediaDataInfo.MediaOrientationEnum.None &&

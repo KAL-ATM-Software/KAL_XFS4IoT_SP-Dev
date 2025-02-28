@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -49,9 +49,9 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// 
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```shutterNotOpen``` - The shutter failed to open. In the case of explicit shutter control
-            /// the application may have failed to open the shutter before issuing the command.
+            ///   the application may have failed to open the shutter before issuing the command.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
             /// * ```positionNotEmpty``` - The input or output position is not empty.

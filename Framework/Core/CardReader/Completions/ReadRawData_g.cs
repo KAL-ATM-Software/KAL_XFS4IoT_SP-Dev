@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCompletion : Completion<ReadRawDataCompletion.PayloadData>
     {
@@ -146,7 +146,7 @@ namespace XFS4IoT.CardReader.Completions
                 ///   stripe was not successful.
                 /// * ```hardwareError``` - The security module could not be used because of a hardware error.
                 /// * ```notInitialized``` - The security module could not be used because it was not initialized
-                ///   (e.g. CIM key is not loaded).
+                ///   (e.g., CIM key is not loaded).
                 /// </summary>
                 [DataMember(Name = "data")]
                 public DataEnum? Data { get; init; }
@@ -154,7 +154,7 @@ namespace XFS4IoT.CardReader.Completions
             }
 
             /// <summary>
-            /// Contains the data returned by the security module (i.e. MM, CIM86). If the check could not be
+            /// Contains the data returned by the security module (i.e., MM, CIM86). If the check could not be
             /// executed, *status* and *data* indicate the cause of the security check failure; the *errorCode* will
             /// only be *securityFail* if no other data source is requested. The property is null if not requested.
             /// </summary>
@@ -170,7 +170,7 @@ namespace XFS4IoT.CardReader.Completions
             [DataContract]
             public sealed class MemoryChipClass
             {
-                public MemoryChipClass(CardDataStatusEnum? Status = null, ProtocolEnum? Protocol = null, string Data = null)
+                public MemoryChipClass(CardDataStatusEnum? Status = null, ProtocolEnum? Protocol = null, List<byte> Data = null)
                 {
                     this.Status = Status;
                     this.Protocol = Protocol;
@@ -212,7 +212,8 @@ namespace XFS4IoT.CardReader.Completions
                 /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                public string Data { get; init; }
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
+                public List<byte> Data { get; init; }
 
             }
 
@@ -233,20 +234,20 @@ namespace XFS4IoT.CardReader.Completions
             /// Base64 encoded representation of the BMP image file for the front of the card.
             /// 
             /// The property is null if not requested or not read.
-            /// <example>wCAAAQgwMDAwMDAwMA==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "frontImage")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> FrontImage { get; init; }
 
             /// <summary>
             /// Base64 encoded representation of the BMP image file for the back of the card.
             /// 
             /// The property is null if not requested or not read.
-            /// <example>wCAAAQgwMDAwMDAwMA==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "backImage")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> BackImage { get; init; }
 
             /// <summary>

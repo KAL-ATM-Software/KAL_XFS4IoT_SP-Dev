@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -13,14 +13,14 @@ namespace XFS4IoTServer
     public interface IPrinterService
     {
         /// <summary>
-        /// Load form or media definition 
+        /// Set form definition 
         /// </summary>
-        bool LoadDefinition(string definition, bool overwrite = false);
+        bool SetForm(string definition, Form from);
 
         /// <summary>
-        /// Load a single form or media definition 
+        /// Set media definition
         /// </summary>
-        bool LoadSingleDefinition(string definition, bool overwrite, out XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum? type, out string name, out string errorMsg);
+        bool SetMedia(string definition, Media media);
 
         /// <summary>
         /// Return a list of forms loaded

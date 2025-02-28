@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -77,9 +77,9 @@ namespace XFS4IoTFramework.Check
     }
 
     public class ImageInfo(
-            ImageInfo.ImageFormatEnum ImageFormat,
-            ImageInfo.ColorFormatEnum ColorFormat,
-            ImageInfo.ScanColorEnum ScanColor)
+        ImageInfo.ImageFormatEnum ImageFormat,
+        ImageInfo.ColorFormatEnum ColorFormat,
+        ImageInfo.ScanColorEnum ScanColor)
     {
         /// <summary>
         /// TIF - The image is in TIFF 6.0 format.
@@ -333,40 +333,22 @@ namespace XFS4IoTFramework.Check
     /// ResetResult
     /// Return result of reset operation
     /// </summary>
-    public sealed class ResetDeviceResult : DeviceResult
+    public sealed class ResetDeviceResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        Dictionary<string, CheckUnitCountClass> MovementResult = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 Dictionary<string, CheckUnitCountClass> MovementResult = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 Dictionary<string, CheckUnitCountClass> MovementResult = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
 
         /// <summary>
         /// Specifies the error code on reset operation
         /// </summary>
-        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Specifies the detailed note movement while in reset operation.
         /// </summary>
-        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; }
+        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; } = MovementResult;
     }
 
     /// <summary>
@@ -390,32 +372,16 @@ namespace XFS4IoTFramework.Check
     /// ExpelMediaResult
     /// Return result of expel media operation
     /// </summary>
-    public sealed class ExpelMediaResult : DeviceResult
+    public sealed class ExpelMediaResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        ExpelMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-
-        public ExpelMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                ExpelMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ExpelMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                ExpelMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on expel media operation
         /// </summary>
-        public ExpelMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ExpelMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
     /// <summary>
@@ -437,31 +403,16 @@ namespace XFS4IoTFramework.Check
         public PositionEnum Position { get; init; } = Position;
     }
 
-    public sealed class PresentMediaResult : DeviceResult
+    public sealed class PresentMediaResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public PresentMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PresentMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on presenting media operation
         /// </summary>
-        public PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public PresentMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
     /// <summary>
@@ -491,40 +442,22 @@ namespace XFS4IoTFramework.Check
     /// <summary>
     /// Result of the image scanning operation
     /// </summary>
-    public sealed class ReadImageResult : DeviceResult
+    public sealed class ReadImageResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        Dictionary<ImageSourceEnum, ImageDataInfo> ImageData = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public ReadImageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                               Dictionary<ImageSourceEnum, ImageDataInfo> ImageData = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.ImageData = ImageData;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ReadImageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                               Dictionary<ImageSourceEnum, ImageDataInfo> ImageData = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.ImageData = ImageData;
-        }
 
         /// <summary>
         /// Specifies the error code on scanning image data
         /// </summary>
-        public ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Store Image data read.
         /// </summary>
-        public Dictionary<ImageSourceEnum, ImageDataInfo> ImageData { get; init; }
+        public Dictionary<ImageSourceEnum, ImageDataInfo> ImageData { get; init; } = ImageData;
     }
 
     /// <summary>
@@ -567,40 +500,22 @@ namespace XFS4IoTFramework.Check
     /// ResetDeviceResult
     /// Return result of retract items
     /// </remarks>
-    public sealed class RetractMediaResult: DeviceResult
+    public sealed class RetractMediaResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        Dictionary<string, CheckUnitCountClass> MovementResult = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public RetractMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                  Dictionary<string, CheckUnitCountClass> MovementResult = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RetractMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                  Dictionary<string, CheckUnitCountClass> MovementResult = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Specifies the detailed note movement while in reset operation.
         /// </summary>
-        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; }
+        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; } = MovementResult;
     }
 
     /// <summary>
@@ -665,31 +580,16 @@ namespace XFS4IoTFramework.Check
     /// SetMediaParametersResult
     /// Return result of set actions
     /// </summary>
-    public sealed class SetMediaParametersResult : DeviceResult
+    public sealed class SetMediaParametersResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        SetMediaParametersCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public SetMediaParametersResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        SetMediaParametersCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetMediaParametersResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        SetMediaParametersCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public SetMediaParametersCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public SetMediaParametersCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
     /// <summary>
@@ -739,61 +639,38 @@ namespace XFS4IoTFramework.Check
     /// MediaInResult
     /// Return result of media-in operation
     /// </summary>
-    public sealed class MediaInResult : DeviceResult
+    public sealed class MediaInResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        MediaInCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        int MediaOnStacker = -1,
+        int LastMedia = -1,
+        int LastMediaOnStacker = -1) 
+        : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public MediaInResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             MediaInCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                             int MediaOnStacker = -1,
-                             int LastMedia = -1,
-                             int LastMediaOnStacker = -1) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaOnStacker = MediaOnStacker;
-            this.LastMedia = LastMedia;
-            this.LastMediaOnStacker = LastMediaOnStacker;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public MediaInResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             MediaInCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                             int MediaOnStacker = -1,
-                             int LastMedia = -1,
-                             int LastMediaOnStacker = -1) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaOnStacker = MediaOnStacker;
-            this.LastMedia = LastMedia;
-            this.LastMediaOnStacker = LastMediaOnStacker;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public MediaInCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public MediaInCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Contains the total number of media items on the stacker. could be -1 if it is
         /// unknown or the device does not have a stacker.
         /// </summary>
-        public int MediaOnStacker { get; init; }
+        public int MediaOnStacker { get; init; } = MediaOnStacker;
 
         /// <summary>
         /// Contains the number of media items processed by this instance of the operation. could be -1 if it is
         /// unknown or the device does not have a stacker.
         /// </summary>
-        public int LastMedia { get; init; }
+        public int LastMedia { get; init; } = LastMedia;
 
         /// <summary>
         /// Contains the number of media items on the stacker successfully accepted by this instance of the command
         /// execution. could be -1 if it is unknown or the device does not have a stacker.
         /// </summary>
-        public int LastMediaOnStacker { get; init; }
+        public int LastMediaOnStacker { get; init; } = LastMediaOnStacker;
     }
 
     /// <summary>
@@ -846,41 +723,23 @@ namespace XFS4IoTFramework.Check
     /// MediaInRollbackResult
     /// Return result of rollback operation
     /// </summary>
-    public sealed class MediaInRollbackResult : DeviceResult
+    public sealed class MediaInRollbackResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        MediaInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        MediaInEndCountClass MediaInEndCount = null) : DeviceResult(CompletionCode, ErrorDescription)
 
     {
-        public MediaInRollbackResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     MediaInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                     MediaInEndCountClass MediaInEndCount = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaInEndCount = MediaInEndCount;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public MediaInRollbackResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     MediaInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                     MediaInEndCountClass MediaInEndCount = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaInEndCount = MediaInEndCount;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public MediaInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public MediaInRollbackCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Result of counts at the end of operation.
         /// </summary>
-        public MediaInEndCountClass MediaInEndCount { get; init; }
+        public MediaInEndCountClass MediaInEndCount { get; init; } = MediaInEndCount;
     }
 
     /// <summary>
@@ -897,41 +756,23 @@ namespace XFS4IoTFramework.Check
     /// MediaInEndResult
     /// Return result of completing media-in operation
     /// </summary>
-    public sealed class MediaInEndResult : DeviceResult
+    public sealed class MediaInEndResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        MediaInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        MediaInEndCountClass MediaInEndCount = null) : DeviceResult(CompletionCode, ErrorDescription)
 
     {
-        public MediaInEndResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                MediaInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                MediaInEndCountClass MediaInEndCount = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaInEndCount = MediaInEndCount;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public MediaInEndResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                MediaInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                MediaInEndCountClass MediaInEndCount = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MediaInEndCount = MediaInEndCount;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public MediaInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public MediaInEndCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Result of counts at the end of operation.
         /// </summary>
-        public MediaInEndCountClass MediaInEndCount { get; init; }
+        public MediaInEndCountClass MediaInEndCount { get; init; } = MediaInEndCount;
     }
 
     /// <summary>
@@ -947,33 +788,16 @@ namespace XFS4IoTFramework.Check
     /// <summary>
     /// Return result of processing next item operation.
     /// </summary>
-    public sealed class GetNextItemResult : DeviceResult
+    public sealed class GetNextItemResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        GetNextItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public GetNextItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 GetNextItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetNextItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 GetNextItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public GetNextItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public GetNextItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
     /// <summary>
@@ -991,40 +815,22 @@ namespace XFS4IoTFramework.Check
     /// <summary>
     /// Return result of action to move items in predefined actions.
     /// </summary>
-    public sealed class ActionItemResult : DeviceResult
+    public sealed class ActionItemResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        ActionItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+        Dictionary<string, CheckUnitCountClass> MovementResult = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public ActionItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                ActionItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                Dictionary<string, CheckUnitCountClass> MovementResult = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ActionItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                ActionItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                Dictionary<string, CheckUnitCountClass> MovementResult = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public ActionItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ActionItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
 
         /// <summary>
         /// Specifies the detailed note movement while in reset operation.
         /// </summary>
-        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; }
+        public Dictionary<string, CheckUnitCountClass> MovementResult { get; init; } = MovementResult;
     }
 
     /// <summary>
@@ -1047,31 +853,16 @@ namespace XFS4IoTFramework.Check
     /// <summary>
     /// Return result of action to accept or refuse current media item.
     /// </summary>
-    public sealed class AcceptItemResult : DeviceResult
+    public sealed class AcceptItemResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        AcceptItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
 
     {
-        public AcceptItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                AcceptItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : 
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public AcceptItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ErrorDescription = null,
-                                AcceptItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) :
-            base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on reset device
         /// </summary>
-        public AcceptItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public AcceptItemCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -16,6 +16,8 @@ using XFS4IoT.Common.Commands;
 using XFS4IoT.Common.Completions;
 using XFS4IoT.Completions;
 using XFS4IoT.Printer.Events;
+using XFS4IoT.Lights;
+using static XFS4IoTFramework.Common.LightsCapabilitiesClass;
 
 namespace XFS4IoTFramework.Common
 {
@@ -29,7 +31,7 @@ namespace XFS4IoTFramework.Common
             {
                 return Task.FromResult(
                     new CommandResult<CapabilitiesCompletion.PayloadData>(
-                        MessageHeader.CompletionCodeEnum.InternalError, 
+                        MessageHeader.CompletionCodeEnum.InternalError,
                         $"No common capabilities is reported by the device class.")
                     );
             }
@@ -138,6 +140,26 @@ namespace XFS4IoTFramework.Common
             {
                 supportedInterfaces.Add(InterfaceClass.NameEnum.MixedMedia);
             }
+            // PowerManagement interface
+            if (Common.CommonCapabilities.PowerManagementInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.PowerManagement);
+            }
+            // IBNS media interface
+            if (Common.CommonCapabilities.IntelligentBanknoteNeutralizationInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.BanknoteNeutralization);
+            }
+            // German specific interface
+            if (Common.CommonCapabilities.GermanSpecificInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.German);
+            }
+            // Deposit interface
+            if (Common.CommonCapabilities.DepositInterface is not null)
+            {
+                supportedInterfaces.Add(InterfaceClass.NameEnum.Deposit);
+            }
 
             List<InterfaceClass> interfaces = [];
             interfaces.AddRange(from iface in supportedInterfaces
@@ -227,37 +249,37 @@ namespace XFS4IoTFramework.Common
                         _ => throw new InternalErrorException($"Unexpected card reader type specified {Common.CardReaderCapabilities.Type}"),
                     },
                     ReadTracks: Common.CardReaderCapabilities.ReadTracks == CardReaderCapabilitiesClass.ReadableDataTypesEnum.NotSupported ?
-                                null :
-                                new(Track1: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1),
-                                    Track2: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track2),
-                                    Track3: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3),
-                                    Watermark: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Watermark),
-                                    FrontTrack1: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1Front),
-                                    FrontImage: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.FrontImage),
-                                    BackImage: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.BackImage),
-                                    Track1JIS: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1JIS),
-                                    Track3JIS: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3JIS),
-                                    Ddi: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Ddi)
-                                    ),
+                    null : new(
+                        Track1: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1),
+                        Track2: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track2),
+                        Track3: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3),
+                        Watermark: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Watermark),
+                        FrontTrack1: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1Front),
+                        FrontImage: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.FrontImage),
+                        BackImage: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.BackImage),
+                        Track1JIS: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track1JIS),
+                        Track3JIS: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Track3JIS),
+                        Ddi: Common.CardReaderCapabilities.ReadTracks.HasFlag(CardReaderCapabilitiesClass.ReadableDataTypesEnum.Ddi)
+                        ),
                     WriteTracks: Common.CardReaderCapabilities.WriteTracks == CardReaderCapabilitiesClass.WritableDataTypesEnum.NotSupported ?
-                                 null :
-                                 new(Track1: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1),
-                                     Track2: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2),
-                                     Track3: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3),
-                                     FrontTrack1: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front),
-                                     Track1JIS: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS),
-                                     Track3JIS: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS)
-                                     ),
+                    null : new(
+                        Track1: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1),
+                        Track2: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track2),
+                        Track3: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3),
+                        FrontTrack1: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1Front),
+                        Track1JIS: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track1JIS),
+                        Track3JIS: Common.CardReaderCapabilities.WriteTracks.HasFlag(CardReaderCapabilitiesClass.WritableDataTypesEnum.Track3JIS)
+                        ),
                     ChipProtocols: Common.CardReaderCapabilities.ChipProtocols == CardReaderCapabilitiesClass.ChipProtocolsEnum.NotSupported ?
-                                   null :
-                                   new(ChipT0: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T0),
-                                       ChipT1: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T1),
-                                       ChipProtocolNotRequired: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.NotRequired),
-                                       ChipTypeAPart3: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart3),
-                                       ChipTypeAPart4: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart4),
-                                       ChipTypeB: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeB),
-                                       ChipTypeNFC: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeNFC)
-                                       ),
+                    null : new(
+                        ChipT0: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T0),
+                        ChipT1: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.T1),
+                        ChipProtocolNotRequired: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.NotRequired),
+                        ChipTypeAPart3: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart3),
+                        ChipTypeAPart4: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeAPart4),
+                        ChipTypeB: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeB),
+                        ChipTypeNFC: Common.CardReaderCapabilities.ChipProtocols.HasFlag(CardReaderCapabilitiesClass.ChipProtocolsEnum.TypeNFC)
+                        ),
                     SecurityType: Common.CardReaderCapabilities.SecurityType switch
                     {
                         CardReaderCapabilitiesClass.SecurityTypeEnum.Cim86 => XFS4IoT.CardReader.CapabilitiesClass.SecurityTypeEnum.Cim86,
@@ -283,23 +305,23 @@ namespace XFS4IoTFramework.Common
                     Common.CardReaderCapabilities.FluxSensorProgrammable,
                     Common.CardReaderCapabilities.ReadWriteAccessFollowingExit,
                     WriteMode: Common.CardReaderCapabilities.WriteMode == CardReaderCapabilitiesClass.WriteMethodsEnum.NotSupported ?
-                               null :
-                               new(Loco: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco),
-                                   Hico: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico),
-                                   Auto: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto)),
+                    null : new(
+                        Loco: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Loco),
+                        Hico: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Hico),
+                        Auto: Common.CardReaderCapabilities.WriteMode.HasFlag(CardReaderCapabilitiesClass.WriteMethodsEnum.Auto)),
                     ChipPower: Common.CardReaderCapabilities.ChipPower == CardReaderCapabilitiesClass.ChipPowerOptionsEnum.NotSupported ?
-                               null :
-                               new(Cold: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold),
-                                   Warm: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm),
-                                   Off: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off)),
+                    null : new(
+                        Cold: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Cold),
+                        Warm: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Warm),
+                        Off: Common.CardReaderCapabilities.ChipPower.HasFlag(CardReaderCapabilitiesClass.ChipPowerOptionsEnum.Off)),
                     MemoryChipProtocols: Common.CardReaderCapabilities.MemoryChipProtocols == CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.NotSupported ?
-                                         null :
-                                         new(Siemens4442: Common.CardReaderCapabilities.MemoryChipProtocols.HasFlag(CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.Siemens4442),
-                                             Gpm896: Common.CardReaderCapabilities.MemoryChipProtocols.HasFlag(CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.Gpm896)),
+                    null : new(
+                        Siemens4442: Common.CardReaderCapabilities.MemoryChipProtocols.HasFlag(CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.Siemens4442),
+                        Gpm896: Common.CardReaderCapabilities.MemoryChipProtocols.HasFlag(CardReaderCapabilitiesClass.MemoryChipProtocolsEnum.Gpm896)),
                     Positions: Common.CardReaderCapabilities.Positions == CardReaderCapabilitiesClass.PositionsEnum.NotSupported ?
-                               null :
-                               new(Exit: Common.CardReaderCapabilities.Positions.HasFlag(CardReaderCapabilitiesClass.PositionsEnum.Exit),
-                                   Transport: Common.CardReaderCapabilities.Positions.HasFlag(CardReaderCapabilitiesClass.PositionsEnum.Transport)),
+                    null : new(
+                        Exit: Common.CardReaderCapabilities.Positions.HasFlag(CardReaderCapabilitiesClass.PositionsEnum.Exit),
+                        Transport: Common.CardReaderCapabilities.Positions.HasFlag(CardReaderCapabilitiesClass.PositionsEnum.Transport)),
                     CardTakenSensor: Common.CardReaderCapabilities.CardTakenSensor
                     );
             }
@@ -319,49 +341,49 @@ namespace XFS4IoTFramework.Common
                     MaxDispenseItems: Common.CashDispenserCapabilities.MaxDispenseItems,
                     ShutterControl: Common.CashDispenserCapabilities.ShutterControl,
                     RetractAreas: Common.CashDispenserCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.Default ?
-                                  null :
-                                  new(Retract: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
-                                      Transport: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
-                                      Stacker: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Stacker),
-                                      Reject: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Reject),
-                                      ItemCassette: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette),
-                                      CashIn: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.CashIn)
-                                      ),
+                    null : new(
+                        Retract: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
+                        Transport: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
+                        Stacker: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Stacker),
+                        Reject: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Reject),
+                        ItemCassette: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette),
+                        CashIn: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.CashIn)
+                        ),
                     RetractTransportActions: Common.CashDispenserCapabilities.RetractTransportActions == CashManagementCapabilitiesClass.RetractTransportActionEnum.NotSupported ?
-                                             null :
-                                             new(Present: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Present),
-                                                 Retract: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract),
-                                                 Reject: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Reject),
-                                                 ItemCassette: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.BillCassette),
-                                                 CashIn: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.CashIn)
-                                                 ),
+                    null : new(
+                        Present: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Present),
+                        Retract: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract),
+                        Reject: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Reject),
+                        ItemCassette: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.BillCassette),
+                        CashIn: Common.CashDispenserCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.CashIn)
+                        ),
                 RetractStackerActions: Common.CashDispenserCapabilities.RetractStackerActions == CashManagementCapabilitiesClass.RetractStackerActionEnum.NotSupported ?
-                                       null :
-                                       new(Present: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Present),
-                                           Retract: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract),
-                                           Reject: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject),
-                                           ItemCassette: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.BillCassette),
-                                           CashIn: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.CashIn)
-                                           ),
+                    null : new(
+                        Present: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Present),
+                        Retract: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract),
+                        Reject: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject),
+                        ItemCassette: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.BillCassette),
+                        CashIn: Common.CashDispenserCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.CashIn)
+                        ),
                     IntermediateStacker: Common.CashDispenserCapabilities.IntermediateStacker,
                     ItemsTakenSensor: Common.CashDispenserCapabilities.ItemsTakenSensor,
                     Positions: Common.CashDispenserCapabilities.OutputPositions == CashManagementCapabilitiesClass.OutputPositionEnum.NotSupported ?
-                               null :
-                               new(Left: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Left),
-                                   Right: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Right),
-                                   Center: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Center),
-                                   Top: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Top),
-                                   Bottom: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Bottom),
-                                   Front: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Front),
-                                   Rear: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Rear)
-                                   ),
+                    null : new(
+                        Left: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Left),
+                        Right: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Right),
+                        Center: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Center),
+                        Top: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Top),
+                        Bottom: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Bottom),
+                        Front: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Front),
+                        Rear: Common.CashDispenserCapabilities.OutputPositions.HasFlag(CashManagementCapabilitiesClass.OutputPositionEnum.Rear)
+                        ),
                     MoveItems: Common.CashDispenserCapabilities.MoveItems == CashDispenserCapabilitiesClass.MoveItemEnum.NotSupported ?
-                               null :
-                               new(FromCashUnit: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.FromCashUnit),
-                                   ToCashUnit: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToCashUnit),
-                                   ToTransport: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToTransport),
-                                   ToStacker: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToStacker)
-                                   )
+                    null : new(
+                        FromCashUnit: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.FromCashUnit),
+                        ToCashUnit: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToCashUnit),
+                        ToTransport: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToTransport),
+                        ToStacker: Common.CashDispenserCapabilities.MoveItems.HasFlag(CashDispenserCapabilitiesClass.MoveItemEnum.ToStacker)
+                        )
                     );
             }
 
@@ -371,13 +393,15 @@ namespace XFS4IoTFramework.Common
                 cashManagement = new(
                     CashBox: Common.CashManagementCapabilities.CashBox,
                     ExchangeType: Common.CashManagementCapabilities.ExchangeTypes == CashManagementCapabilitiesClass.ExchangeTypesEnum.NotSupported ?
-                                  null :
-                                  new(ByHand: Common.CashManagementCapabilities.ExchangeTypes.HasFlag(CashManagementCapabilitiesClass.ExchangeTypesEnum.ByHand)),
-                    ItemInfoTypes: Common.CashManagementCapabilities.ItemInfoTypes == CashManagementCapabilitiesClass.ItemInfoTypesEnum.NotSupported ?
-                                   null :
-                                   new(SerialNumber: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.SerialNumber),
-                                       Signature: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.Signature),
-                                       Image: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.ImageFile)),
+                    null : new(
+                        ByHand: Common.CashManagementCapabilities.ExchangeTypes.HasFlag(CashManagementCapabilitiesClass.ExchangeTypesEnum.ByHand)
+                        ),
+                        ItemInfoTypes: Common.CashManagementCapabilities.ItemInfoTypes == CashManagementCapabilitiesClass.ItemInfoTypesEnum.NotSupported ?
+                    null : new(
+                        SerialNumber: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.SerialNumber),
+                        Signature: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.Signature),
+                        Image: Common.CashManagementCapabilities.ItemInfoTypes.HasFlag(CashManagementCapabilitiesClass.ItemInfoTypesEnum.ImageFile)
+                        ),
                     ClassificationList: Common.CashManagementCapabilities.ClassificationList);
             }
 
@@ -396,10 +420,9 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
                                 (dicModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(
-                                        new(
-                                            Ecb: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB),
+                                        new(Ecb: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.ECB),
                                             Cbc: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.CBC),
                                             Cfb: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.CFB),
                                             Ofb: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.CryptoAttributesClass.CryptoMethodEnum.OFB),
@@ -427,7 +450,7 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
                                 (dicModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(
                                         CryptoMethod: new(
                                             RsassaPkcs1V15: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5),
@@ -455,7 +478,7 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
                                 (dicModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(
                                         CryptoMethod: new(
                                             RsassaPkcs1V15: method?.CryptoMethods.HasFlag(CryptoCapabilitiesClass.VerifyAuthenticationAttributesClass.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5),
@@ -489,8 +512,7 @@ namespace XFS4IoTFramework.Common
                     loadCertOptions = null;
                     foreach (var certOption in Common.KeyManagementCapabilities.LoadCertificationOptions)
                     {
-                        if (certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.NotSupported ||
-                            certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA)
+                        if (certOption.Signer == KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.NotSupported)
                         {
                             continue;
                         }
@@ -524,7 +546,7 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, restrict) in modeOfUses)
                             {
                                 (dicModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(RestrictedKeyUsage: restrict?.Restricted)
                                     );
                             }
@@ -540,7 +562,7 @@ namespace XFS4IoTFramework.Common
                     foreach (var (algorithm, method) in Common.KeyManagementCapabilities.DecryptAttributes)
                     {
                         (decryptAttrib ??= []).Add(
-                            key: algorithm, 
+                            key: algorithm,
                             value: new(
                                 DecryptMethod: new(
                                     Ecb: method?.DecryptMethods.HasFlag(KeyManagementCapabilitiesClass.DecryptMethodClass.DecryptMethodEnum.ECB),
@@ -567,7 +589,7 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
                                 (dicModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(
                                         CryptoMethod: new(
                                             KcvNone: method?.CryptoMethod.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.KCVNone),
@@ -589,11 +611,9 @@ namespace XFS4IoTFramework.Common
 
                 keyManagement = new XFS4IoT.KeyManagement.CapabilitiesClass(
                     KeyNum: Common.KeyManagementCapabilities.MaxKeys,
-                    DerivationAlgorithms: new(ChipZka: false),
                     KeyCheckModes: new(
                         Self: Common.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Self),
                         Zero: Common.KeyManagementCapabilities.KeyCheckModes.HasFlag(KeyManagementCapabilitiesClass.KeyCheckModeEnum.Zero)),
-                    HsmVendor: Common.KeyManagementCapabilities.HSMVendor,
                     RsaAuthenticationScheme: new(
                         TwoPartySig: Common.KeyManagementCapabilities.RSAAuthenticationScheme.HasFlag(KeyManagementCapabilitiesClass.RSAAuthenticationSchemeEnum.SecondPartySignature),
                         ThreePartyCert: Common.KeyManagementCapabilities.RSAAuthenticationScheme.HasFlag(KeyManagementCapabilitiesClass.RSAAuthenticationSchemeEnum.ThirdPartyCertificate),
@@ -693,7 +713,7 @@ namespace XFS4IoTFramework.Common
                             foreach (var (modeOfUse, method) in modeOfUses)
                             {
                                 (pinModeOfUse ??= []).Add(
-                                    key: modeOfUse, 
+                                    key: modeOfUse,
                                     value: new(
                                         CryptoMethod: new(
                                             Ecb: method?.EncryptionAlgorithm.HasFlag(PinPadCapabilitiesClass.PinBlockEncryptionAlgorithm.EncryptionAlgorithmEnum.ECB),
@@ -772,29 +792,54 @@ namespace XFS4IoTFramework.Common
                         TextTerminalCapabilitiesClass.TypeEnum.Removable => XFS4IoT.TextTerminal.CapabilitiesClass.TypeEnum.Removable,
                         _ => null
                     },
-                    Resolutions: resolutions, 
+                    Resolutions: resolutions,
                     KeyLock: Common.TextTerminalCapabilities.KeyLock,
                     Cursor: Common.TextTerminalCapabilities.Cursor,
                     Forms: Common.TextTerminalCapabilities.Forms
                     );
             }
 
-            Dictionary<LightsCapabilitiesClass.DeviceEnum, XFS4IoT.Lights.LightCapabilitiesClass> stdLights = null;
-            Dictionary<string, XFS4IoT.Lights.LightCapabilitiesClass> customLights = null;
-            if (Common.LightsCapabilities?.Lights?.Count > 0)
+            XFS4IoT.Lights.CapabilitiesClass lights = null;
+            if (Common.LightsCapabilities?.Lights is not null ||
+                Common.LightsCapabilities?.CustomLights is not null)
             {
-                foreach (var light in Common.LightsCapabilities.Lights)
+                Dictionary<string, PositionCapsClass> cardReaderLight = null;
+                Dictionary<string, PositionCapsClass> pinPadLight = null;
+                Dictionary<string, PositionCapsClass> notesDispenserLight = null;
+                Dictionary<string, PositionCapsClass> coinDispenserLight = null;
+                Dictionary<string, PositionCapsClass> receiptPrinterLight = null;
+                Dictionary<string, PositionCapsClass> passbookPrinterLight = null;
+                Dictionary<string, PositionCapsClass> envelopeDepositoryLight = null;
+                Dictionary<string, PositionCapsClass> checkUnitLight = null;
+                Dictionary<string, PositionCapsClass> billAcceptorLight = null;
+                Dictionary<string, PositionCapsClass> envelopeDispenserLight = null;
+                Dictionary<string, PositionCapsClass> documentPrinterLight = null;
+                Dictionary<string, PositionCapsClass> coinAcceptorLight = null;
+                Dictionary<string, PositionCapsClass> scannerLight = null;
+                Dictionary<string, PositionCapsClass> contactlessLight = null;
+                Dictionary<string, PositionCapsClass> cardReader2Light = null;
+                Dictionary<string, PositionCapsClass> notesDispenser2Light = null;
+                Dictionary<string, PositionCapsClass> billAcceptor2Light = null;
+                Dictionary<string, PositionCapsClass> statusGoodLight = null;
+                Dictionary<string, PositionCapsClass> statusWarningLight = null;
+                Dictionary<string, PositionCapsClass> statusBadLight = null;
+                Dictionary<string, PositionCapsClass> statusSupervisorLight = null;
+                Dictionary<string, PositionCapsClass> statusInServiceLight = null;
+                Dictionary<string, PositionCapsClass> fasciaLight = null;
+
+                if (Common.LightsCapabilities?.Lights is not null &&
+                    Common.LightsCapabilities.Lights.Count > 0)
                 {
-                    (stdLights ??= []).Add(
-                        light.Key,
-                        new XFS4IoT.Lights.LightCapabilitiesClass(
+                    foreach (var light in Common.LightsCapabilities.Lights)
+                    {
+                        PositionCapsClass lightCapabilities = new(
                             FlashRate: new(
                                 Off: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
                                 Slow: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
                                 Medium: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
                                 Quick: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
                                 Continuous: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
-                            Color: new(
+                            Color: light.Value.Color == LightsCapabilitiesClass.ColorEnum.Default ? null : new(
                                 Red: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
                                 Green: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
                                 Yellow: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
@@ -802,91 +847,160 @@ namespace XFS4IoTFramework.Common
                                 Cyan: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
                                 Magenta: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
                                 White: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
-                            Direction: new(
+                            Direction: light.Value.Direction == LightsCapabilitiesClass.DirectionEnum.NotSupported ? null : new(
                                 Entry: light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
-                                Exit: light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit)),
-                            Position: new(
-                                Left: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Left),
-                                Right: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Right),
-                                Center: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Center),
-                                Top: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Top),
-                                Bottom: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Bottom),
-                                Front: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Front),
-                                Rear: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Rear))
-                            ));
+                                Exit: light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit))
+                            );
+
+                        string lightPositionName = light.Value.Position.ToString().ToCamelCase();
+
+                        Dictionary<string, PositionCapsClass> thisLight = new()
+                        {
+                            { lightPositionName, lightCapabilities }
+                        };
+
+                        switch (light.Key)
+                        {
+                            case LightsCapabilitiesClass.DeviceEnum.CardReader:
+                                cardReaderLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.PinPad:
+                                pinPadLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.NotesDispenser:
+                                notesDispenserLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.CoinDispenser:
+                                coinDispenserLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter:
+                                receiptPrinterLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.PassbookPrinter:
+                                passbookPrinterLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository:
+                                envelopeDepositoryLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.CheckUnit:
+                                checkUnitLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.BillAcceptor:
+                                billAcceptorLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser:
+                                envelopeDispenserLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.DocumentPrinter:
+                                documentPrinterLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.CoinAcceptor:
+                                coinAcceptorLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.Scanner:
+                                scannerLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.Contactless:
+                                contactlessLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.CardReader2:
+                                cardReader2Light = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.NotesDispenser2:
+                                notesDispenser2Light = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.BillAcceptor2:
+                                billAcceptor2Light = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator:
+                                statusGoodLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator:
+                                statusWarningLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator:
+                                statusBadLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator:
+                                statusSupervisorLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator:
+                                statusInServiceLight = thisLight;
+                                break;
+                            case LightsCapabilitiesClass.DeviceEnum.FasciaLight:
+                                fasciaLight = thisLight;
+                                break;
+                            default:
+                                throw new InternalErrorException($"Unsupported light device is specified by the device class. {light.Key}");
+                        }
+                    }
                 }
-            }
-            if (Common.LightsCapabilities?.CustomLights?.Count > 0)
-            {
-                foreach (var light in Common.LightsCapabilities.CustomLights)
+                if (Common.LightsCapabilities?.CustomLights is not null &&
+                    Common.LightsCapabilities.CustomLights.Count > 0)
                 {
-                    (customLights ??= []).Add(
-                        light.Key, 
-                        new XFS4IoT.Lights.LightCapabilitiesClass(
-                            FlashRate: new(
-                                Off: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
-                                Slow: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
-                                Medium: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
-                                Quick: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
-                                Continuous: light.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
-                            Color: new(
-                                Red:light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
-                                Green: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
-                                Yellow: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
-                                Blue: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Blue),
-                                Cyan: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
-                                Magenta: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
-                                White: light.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
-                            Direction: new(
-                                Entry: light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
-                                Exit: light.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit)),
-                            Position: new(
-                                Left: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Left),
-                                Right: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Right),
-                                Center: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Center),
-                                Top: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Top),
-                                Bottom: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Bottom),
-                                Front: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Front),
-                                Rear: light.Value.Position.HasFlag(LightsCapabilitiesClass.LightPostionEnum.Rear))
-                            ));
+                    foreach (var custom in Common.LightsCapabilities.CustomLights)
+                    {
+                        PositionCapsClass lightCapabilities = new(
+                        FlashRate: new(
+                            Off: custom.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Off),
+                            Slow: custom.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Slow),
+                            Medium: custom.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Medium),
+                            Quick: custom.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Quick),
+                            Continuous: custom.Value.FlashRate.HasFlag(LightsCapabilitiesClass.FlashRateEnum.Continuous)),
+                        Color: custom.Value.Color == LightsCapabilitiesClass.ColorEnum.Default ? null : new(
+                            Red: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Red),
+                            Green: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Green),
+                            Yellow: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Yellow),
+                            Blue: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Blue),
+                            Cyan: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Cyan),
+                            Magenta: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.Magenta),
+                            White: custom.Value.Color.HasFlag(LightsCapabilitiesClass.ColorEnum.White)),
+                        Direction: custom.Value.Direction == LightsCapabilitiesClass.DirectionEnum.NotSupported ? null : new(
+                            Entry: custom.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Entry),
+                            Exit: custom.Value.Direction.HasFlag(LightsCapabilitiesClass.DirectionEnum.Exit))
+                        );
+
+                        string lightPositionName = custom.Value.CustomPosition;
+                        if (string.IsNullOrEmpty(lightPositionName))
+                        {
+                            Logger.Warning(Constants.Framework, "Custom light position name is not specified for capabilities. Skip this light.");
+                            continue;
+                        }
+
+                        // converter is not generating extended properties for the custom lights
+                        // ADD CUSTOM LIGHTS HERE
+                    }
                 }
-            }
 
-            XFS4IoT.Lights.CapabilitiesClass lights = null;
-            if (stdLights?.Count > 0)
-            {
                 lights = new XFS4IoT.Lights.CapabilitiesClass(
-                    CardReader: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardReader] : null,
-                    PinPad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PinPad) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PinPad] : null,
-                    NotesDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser] : null,
-                    CoinDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinDispenser] : null,
-                    ReceiptPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter] : null,
-                    PassbookPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.PassbookPrinter] : null,
-                    EnvelopeDepository: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository] : null,
-                    CheckUnit: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CheckUnit) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CheckUnit] : null,
-                    BillAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor] : null,
-                    EnvelopeDispenser: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser) ? stdLights[LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser] : null,
-                    DocumentPrinter: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter) ? stdLights[LightsCapabilitiesClass.DeviceEnum.DocumentPrinter] : null,
-                    CoinAcceptor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CoinAcceptor] : null,
-                    Scanner: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Scanner) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Scanner] : null,
-                    Contactless: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.Contactless) ? stdLights[LightsCapabilitiesClass.DeviceEnum.Contactless] : null,
-                    CardReader2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.CardReader2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.CardReader2] : null,
-                    NotesDispenser2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.NotesDispenser2] : null,
-                    BillAcceptor2: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2) ? stdLights[LightsCapabilitiesClass.DeviceEnum.BillAcceptor2] : null,
-                    StatusGood: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator] : null,
-                    StatusWarning: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator] : null,
-                    StatusBad: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator] : null,
-                    StatusSupervisor: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator] : null,
-                    StatusInService: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator) ? stdLights[LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator] : null,
-                    FasciaLight: stdLights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.FasciaLight) ? stdLights[LightsCapabilitiesClass.DeviceEnum.FasciaLight] : null
-                    );
+                IndividualFlashRates: false,
+                Lights: new(
+                    CardReader: cardReaderLight,
+                    PinPad: pinPadLight,
+                    NotesDispenser: notesDispenserLight,
+                    CoinDispenser: coinDispenserLight,
+                    ReceiptPrinter: receiptPrinterLight,
+                    PassbookPrinter: passbookPrinterLight,
+                    EnvelopeDepository: envelopeDepositoryLight,
+                    CheckUnit: checkUnitLight,
+                    BillAcceptor: billAcceptorLight,
+                    EnvelopeDispenser: envelopeDispenserLight,
+                    DocumentPrinter: documentPrinterLight,
+                    CoinAcceptor: coinAcceptorLight,
+                    Scanner: scannerLight,
+                    Contactless: contactlessLight,
+                    CardReader2: cardReader2Light,
+                    NotesDispenser2: notesDispenser2Light,
+                    BillAcceptor2: billAcceptor2Light,
+                    StatusGood: statusGoodLight,
+                    StatusWarning: statusWarningLight,
+                    StatusBad: statusBadLight,
+                    StatusSupervisor: statusSupervisorLight,
+                    StatusInService: statusInServiceLight,
+                    FasciaLight: fasciaLight)
+                );
             }
-            if (customLights?.Count > 0)
-            {
-                lights ??= new();
-                lights.ExtendedProperties = customLights;
-            }
-
+        
             XFS4IoT.Printer.CapabilitiesClass printer = null;
             if (Common.PrinterCapabilities is not null)
             {
@@ -958,8 +1072,6 @@ namespace XFS4IoTFramework.Common
                     MultiPage: Common.PrinterCapabilities.MultiPage,
                     PaperSources: paperSources,
                     MediaTaken: Common.PrinterCapabilities.MediaTaken,
-                    RetractBins: Common.PrinterCapabilities.RetractBins,
-                    MaxRetract: Common.PrinterCapabilities.MaxRetract,
                     ImageType: new(
                         Tif: Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF),
                         Wmf: Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF),
@@ -1005,10 +1117,11 @@ namespace XFS4IoTFramework.Common
             {
                 auxiliaries = new(
                     OperatorSwitch: Common.AuxiliariesCapabilities.OperatorSwitch == AuxiliariesCapabilitiesClass.OperatorSwitchEnum.NotAvailable ?
-                                    null :
-                                    new(Run: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Run),
-                                        Maintenance: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Maintenance),
-                                        Supervisor: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Supervisor)),
+                    null : new(
+                        Run: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Run),
+                        Maintenance: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Maintenance),
+                        Supervisor: Common.AuxiliariesCapabilities.OperatorSwitch.HasFlag(AuxiliariesCapabilitiesClass.OperatorSwitchEnum.Supervisor)
+                        ),
                     TamperSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.TamperSensor),
                     InternalTamperSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.InternalTamperSensor),
                     SeismicSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.SeismicSensor),
@@ -1016,110 +1129,107 @@ namespace XFS4IoTFramework.Common
                     ProximitySensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ProximitySensor),
                     AmbientLightSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.AmbientLightSensor),
                     EnhancedAudioSensor: Common.AuxiliariesCapabilities.EnhancedAudioSensor == AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.NotAvailable ?
-                                         null :
-                                         new(Manual: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Manual),
-                                             Auto: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Auto),
-                                             SemiAuto: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.SemiAuto),
-                    Bidirectional: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Bidirectional)),
+                    null : new(
+                        Manual: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Manual),
+                        Auto: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Auto),
+                        SemiAuto: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.SemiAuto),
+                    Bidirectional: Common.AuxiliariesCapabilities.EnhancedAudioSensor.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioCapabilitiesEnum.Bidirectional)
+                    ),
                     BootSwitchSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.BootSwitchSensor),
                     ConsumerDisplaySensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ConsumerDisplaySensor),
                     OperatorCallButtonSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.OperatorCallButtonSensor),
                     HandsetSensor: Common.AuxiliariesCapabilities.HandsetSensor == AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.NotAvailable ?
-                                   null :
-                                   new(Manual: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Manual),
-                                       Auto: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Auto),
-                                       SemiAuto: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.SemiAuto),
-                                       Microphone: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Microphone)),
+                    null : new(
+                        Manual: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Manual),
+                        Auto: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Auto),
+                        SemiAuto: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.SemiAuto),
+                        Microphone: Common.AuxiliariesCapabilities.HandsetSensor.HasFlag(AuxiliariesCapabilitiesClass.HandsetSensorCapabilities.Microphone)
+                        ),
                     HeadsetMicrophoneSensor: Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor == AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.NotAvailable ?
-                                             null :
-                                             new(Manual: Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.Manual),
-                                                 Auto:Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.Auto),
-                                                 SemiAuto: Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.SemiAuto)),
+                    null : new(Manual: Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.Manual),
+                        Auto:Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.Auto),
+                        SemiAuto: Common.AuxiliariesCapabilities.HeadsetMicrophoneSensor.HasFlag(AuxiliariesCapabilitiesClass.HeadsetMicrophoneSensorCapabilities.SemiAuto)
+                        ),
                     FasciaMicrophoneSensor: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.FasciaMicrophoneSensor),
                     CabinetDoor: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Cabinet) is true ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Cabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     SafeDoor: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.Safe) is true ?
-                        new (
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new (Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.Safe].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     VandalShield: Common.AuxiliariesCapabilities.VandalShield != AuxiliariesCapabilitiesClass.VandalShieldCapabilities.NotAvailable ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Locked),
-                            Service: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Service),
-                            Keyboard: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Keyboard),
-                            Tampered: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Locked),
+                        Service: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Service),
+                        Keyboard: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Keyboard),
+                        Tampered: Common.AuxiliariesCapabilities.VandalShield.HasFlag(AuxiliariesCapabilitiesClass.VandalShieldCapabilities.Tampered))
+                    : null,
                     FrontCabinet: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.FrontCabinet) is true ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.FrontCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     RearCabinet: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RearCabinet) is true ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RearCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     LeftCabinet: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.LeftCabinet) is true ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.LeftCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     RightCabinet: Common.AuxiliariesCapabilities.SupportedDoorSensors?.ContainsKey(AuxiliariesCapabilitiesClass.DoorType.RightCabinet) is true ?
-                        new(
-                            Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
-                            Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
-                            Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
-                            Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
-                            Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
-                        : null,
+                    new(Closed: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Closed),
+                        Open: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Open),
+                        Locked: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Locked),
+                        Bolted: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Bolted),
+                        Tampered: Common.AuxiliariesCapabilities.SupportedDoorSensors[AuxiliariesCapabilitiesClass.DoorType.RightCabinet].HasFlag(AuxiliariesCapabilitiesClass.DoorCapabilities.Tampered))
+                    : null,
                     OpenCloseIndicator: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.OpenCloseIndicator),
                     Audio: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Audio),
                     Heating: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.Heating),
                     ConsumerDisplayBacklight: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.ConsumerDisplayBacklight),
                     SignageDisplay: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.SignageDisplay),
                     Volume: Common.AuxiliariesCapabilities.Volume > 0 ?
-                            Common.AuxiliariesCapabilities.Volume :
-                            null,
+                    Common.AuxiliariesCapabilities.Volume :
+                    null,
                     Ups: Common.AuxiliariesCapabilities.Ups == AuxiliariesCapabilitiesClass.UpsEnum.NotAvailable ?
-                         null :
-                         new(Low: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Low),
-                             Engaged: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Engaged),
-                             Powering: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Powering),
-                             Recovered: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Recovered)),
+                    null : new(
+                        Low: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Low),
+                        Engaged: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Engaged),
+                        Powering: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Powering),
+                        Recovered: Common.AuxiliariesCapabilities.Ups.HasFlag(AuxiliariesCapabilitiesClass.UpsEnum.Recovered)
+                        ),
                     AudibleAlarm: Common.AuxiliariesCapabilities.AuxiliariesSupported.HasFlag(AuxiliariesCapabilitiesClass.AuxiliariesSupportedEnum.AudibleAlarm),
                     EnhancedAudioControl: Common.AuxiliariesCapabilities.EnhancedAudioControl == AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.NotAvailable ?
-                                          null :
-                                          new(HeadsetDetection: Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.HeadsetDetection),
-                                              ModeControllable: Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable)),
+                    null : new(
+                        HeadsetDetection: Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.HeadsetDetection),
+                        ModeControllable: Common.AuxiliariesCapabilities.EnhancedAudioControl.HasFlag(AuxiliariesCapabilitiesClass.EnhancedAudioControlEnum.ModeControllable)
+                        ),
                     MicrophoneVolume: Common.AuxiliariesCapabilities.MicrophoneVolume > 0 ?
-                                      Common.AuxiliariesCapabilities.MicrophoneVolume :
-                                      null,
+                    Common.AuxiliariesCapabilities.MicrophoneVolume :
+                    null,
                     AutoStartupMode: Common.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable ?
-                                     null :
-                                     new(Specific: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Specific),
-                                         Daily: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Daily),
-                                         Weekly: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Weekly))
+                    null : new(
+                        Specific: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Specific),
+                        Daily: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Daily),
+                        Weekly: Common.AuxiliariesCapabilities.AutoStartupMode.HasFlag(AuxiliariesCapabilitiesClass.AutoStartupModes.Weekly))
                     );
             }
 
@@ -1142,65 +1252,65 @@ namespace XFS4IoTFramework.Common
                 barcodeReader = new(
                     CanFilterSymbologies: Common.BarcodeReaderCapabilities.CanFilterSymbologies,
                     Symbologies: Common.BarcodeReaderCapabilities.Symbologies == BarcodeReaderCapabilitiesClass.SymbologiesEnum.NotSupported ?
-                                 null :
-                                 new(Ean128: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN128),
-                                     Ean8: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8),
-                                     Ean8_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_2),
-                                     Ean8_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_5),
-                                     Ean13: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13),
-                                     Ean13_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_2),
-                                     Ean13_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_5),
-                                     Jan13: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JAN13),
-                                     UpcA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA),
-                                     UpcE0: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0),
-                                     UpcE0_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_2),
-                                     UpcE0_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_5),
-                                     UpcE1: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1),
-                                     UpcE1_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_2),
-                                     UpcE1_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_5),
-                                     UpcA_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_2),
-                                     UpcA_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_5),
-                                     Codabar: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODABAR),
-                                     Itf: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ITF),
-                                     Code11: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE11),
-                                     Code39: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE39),
-                                     Code49: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE49),
-                                     Code93: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE93),
-                                     Code128: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE128),
-                                     Msi: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MSI),
-                                     Plessey: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PLESSEY),
-                                     Std2Of5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5),
-                                     Std2Of5Iata: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5_IATA),
-                                     Pdf417: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PDF_417),
-                                     MicroPdf417: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MICROPDF_417),
-                                     DataMatrix: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.DataMatrix),
-                                     MaxiCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MAXICODE),
-                                     CodeOne: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODEONE),
-                                     ChannelCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CHANNELCODE),
-                                     TelepenOriginal: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_ORIGINAL),
-                                     TelepenAim: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_AIM),
-                                     Rss: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS),
-                                     RssExpanded: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_EXPANDED),
-                                     RssRestricted: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_RESTRICTED),
-                                     CompositeCodeA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeA),
-                                     CompositeCodeB: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeB),
-                                     CompositeCodeC: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeC),
-                                     PosiCodeA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeA),
-                                     PosiCodeB: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeB),
-                                     TriopticCode39: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TriopticCode39),
-                                     CodablockF: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CodablockF),
-                                     Code16K: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.Code16K),
-                                     QrCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.QRCode),
-                                     Aztec: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AztecCodes),
-                                     UkPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UKPost),
-                                     Planet: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPlanet),
-                                     Postnet: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPostnet),
-                                     CanadianPost:Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CanadianPost),
-                                     NetherlandsPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.NetherlandsPost),
-                                     AustralianPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AustralianPost),
-                                     JapanesePost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JapanesePost),
-                                     ChinesePost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ChinesePost),
-                                     KoreanPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.KoreanPost))
+                    null : new(
+                        Ean128: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN128),
+                        Ean8: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8),
+                        Ean8_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_2),
+                        Ean8_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN8_5),
+                        Ean13: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13),
+                        Ean13_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_2),
+                        Ean13_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.EAN13_5),
+                        Jan13: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JAN13),
+                        UpcA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA),
+                        UpcE0: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0),
+                        UpcE0_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_2),
+                        UpcE0_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE0_5),
+                        UpcE1: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1),
+                        UpcE1_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_2),
+                        UpcE1_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCE1_5),
+                        UpcA_2: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_2),
+                        UpcA_5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UPCA_5),
+                        Codabar: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODABAR),
+                        Itf: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ITF),
+                        Code11: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE11),
+                        Code39: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE39),
+                        Code49: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE49),
+                        Code93: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE93),
+                        Code128: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODE128),
+                        Msi: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MSI),
+                        Plessey: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PLESSEY),
+                        Std2Of5: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5),
+                        Std2Of5Iata: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.STD2OF5_IATA),
+                        Pdf417: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PDF_417),
+                        MicroPdf417: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MICROPDF_417),
+                        DataMatrix: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.DataMatrix),
+                        MaxiCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.MAXICODE),
+                        CodeOne: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CODEONE),
+                        ChannelCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CHANNELCODE),
+                        TelepenOriginal: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_ORIGINAL),
+                        TelepenAim: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TELEPEN_AIM),
+                        Rss: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS),
+                        RssExpanded: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_EXPANDED),
+                        RssRestricted: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.RSS_RESTRICTED),
+                        CompositeCodeA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeA),
+                        CompositeCodeB: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeB),
+                        CompositeCodeC: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CompositeCodeC),
+                        PosiCodeA: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeA),
+                        PosiCodeB: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.PosiCodeB),
+                        TriopticCode39: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.TriopticCode39),
+                        CodablockF: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CodablockF),
+                        Code16K: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.Code16K),
+                        QrCode: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.QRCode),
+                        Aztec: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AztecCodes),
+                        UkPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.UKPost),
+                        Planet: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPlanet),
+                        Postnet: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.USPostnet),
+                        CanadianPost:Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.CanadianPost),
+                        NetherlandsPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.NetherlandsPost),
+                        AustralianPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.AustralianPost),
+                        JapanesePost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.JapanesePost),
+                        ChinesePost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.ChinesePost),
+                        KoreanPost: Common.BarcodeReaderCapabilities.Symbologies.HasFlag(BarcodeReaderCapabilitiesClass.SymbologiesEnum.KoreanPost))
                     );
             }
 
@@ -1307,23 +1417,23 @@ namespace XFS4IoTFramework.Common
                             _ => throw new InvalidDataException($"Unexpected position for the cash acceptor device class reported. {position.Key}")
                         },
                         Usage: position.Value.Usage == CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.NotSupported ?
-                               null :
-                               new(In: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.In),
-                                   Refuse: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.Refuse),
-                                   Rollback: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.Rollback)
+                        null : new(
+                            In: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.In),
+                            Refuse: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.Refuse),
+                            Rollback: position.Value.Usage.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.UsageEnum.Rollback)
                         ),
                         ShutterControl: position.Value.ShutterControl,
                         ItemsTakenSensor: position.Value.ItemsTakenSensor,
                         ItemsInsertedSensor: position.Value.ItemsInsertedSensor,
                         RetractAreas: position.Value.RetractArea == CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.NotSupported ?
-                                      null :
-                                      new(Retract: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Retract),
-                                          Reject: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Reject),
-                                          Transport: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Transport),
-                                          Stacker: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Stacker),
-                                          BillCassettes: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.BillCassettes),
-                                          CashIn: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.CashIn)
-                            ),
+                        null : new(
+                            Retract: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Retract),
+                            Reject: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Reject),
+                            Transport: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Transport),
+                            Stacker: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.Stacker),
+                            BillCassettes: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.BillCassettes),
+                            CashIn: position.Value.RetractArea.HasFlag(CashAcceptorCapabilitiesClass.PositionClass.RetractAreaEnum.CashIn)
+                        ),
                         PresentControl: position.Value.PresentControl,
                         PreparePresent: position.Value.PreparePresent)
                         );
@@ -1345,46 +1455,46 @@ namespace XFS4IoTFramework.Common
                     ItemsInsertedSensor: Common.CashAcceptorCapabilities.ItemsTakenSensor,
                     Positions: positions,
                     RetractAreas: Common.CashAcceptorCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.Default ?
-                                  null :
-                                  new(Retract: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
-                                      Transport: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
-                                      Stacker: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Stacker),
-                                      Reject: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Reject),
-                                      BillCassette: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette),
-                                      CashIn: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.CashIn)
-                                      ),
+                    null : new(
+                        Retract: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
+                        Transport: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
+                        Stacker: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Stacker),
+                        Reject: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Reject),
+                        BillCassette: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette),
+                        CashIn: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.CashIn)
+                        ),
                     RetractTransportActions: Common.CashAcceptorCapabilities.RetractTransportActions == CashManagementCapabilitiesClass.RetractTransportActionEnum.NotSupported ?
-                                             null :
-                                             new(Present: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Present),
-                                                 Retract: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract),
-                                                 Reject: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Reject),
-                                                 BillCassette: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.BillCassette),
-                                                 CashIn: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.CashIn)
-                                                 ),
+                    null : new(
+                        Present: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Present),
+                        Retract: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Retract),
+                        Reject: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.Reject),
+                        BillCassette: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.BillCassette),
+                        CashIn: Common.CashAcceptorCapabilities.RetractTransportActions.HasFlag(CashManagementCapabilitiesClass.RetractTransportActionEnum.CashIn)
+                        ),
                     RetractStackerActions: Common.CashAcceptorCapabilities.RetractStackerActions == CashManagementCapabilitiesClass.RetractStackerActionEnum.NotSupported ?
-                                           null :
-                                           new(Present: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Present),
-                                               Retract: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract),
-                                               Reject: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject),
-                                               BillCassette: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.BillCassette),
-                                               CashIn: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.CashIn)
-                                               ),
+                    null : new(
+                        Present: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Present),
+                        Retract: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Retract),
+                        Reject: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.Reject),
+                        BillCassette: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.BillCassette),
+                        CashIn: Common.CashAcceptorCapabilities.RetractStackerActions.HasFlag(CashManagementCapabilitiesClass.RetractStackerActionEnum.CashIn)
+                        ),
                     CashInLimit: Common.CashAcceptorCapabilities.CashInLimit == CashAcceptorCapabilitiesClass.CashInLimitEnum.NotSupported ?
-                                 null :
-                                 new(ByTotalItems: Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByTotalItems),
-                                     ByAmount: Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByAmount)
-                                     ),
+                    null : new(
+                        ByTotalItems: Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByTotalItems),
+                        ByAmount: Common.CashAcceptorCapabilities.CashInLimit.HasFlag(CashAcceptorCapabilitiesClass.CashInLimitEnum.ByAmount)
+                        ),
                     CountActions: Common.CashAcceptorCapabilities.CountActions == CashAcceptorCapabilitiesClass.CountActionEnum.NotSupported ?
-                                  null :
-                                  new(Individual: Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.Individual),
-                                      All: Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.All)
-                                      ),
+                    null : new(
+                        Individual: Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.Individual),
+                        All: Common.CashAcceptorCapabilities.CountActions.HasFlag(CashAcceptorCapabilitiesClass.CountActionEnum.All)
+                        ),
                     RetainAction: Common.CashAcceptorCapabilities.RetainCounterfeitAction == CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.NotSupported ?
-                                  null :
-                                  new(Counterfeit: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Level2),
-                                      Suspect: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Level3),
-                                      Inked: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Inked)
-                                      )
+                    null : new(
+                        Counterfeit: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Level2),
+                        Suspect: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Level3),
+                        Inked: Common.CashAcceptorCapabilities.RetainCounterfeitAction.HasFlag(CashAcceptorCapabilitiesClass.RetainCounterfeitActionEnum.Inked)
+                        )
                 );
             }
 
@@ -1393,8 +1503,7 @@ namespace XFS4IoTFramework.Common
             {
                 camera = new(
                     Cameras: Common.CameraCapabilities.Cameras is null || Common.CameraCapabilities.Cameras.Count == 0 ?
-                    null :
-                    new(
+                    null : new(
                         Room: Common.CameraCapabilities.Cameras.Keys.Contains(CameraCapabilitiesClass.CameraEnum.Room) ?
                         Common.CameraCapabilities.Cameras[CameraCapabilitiesClass.CameraEnum.Room] :
                         null,
@@ -1409,11 +1518,10 @@ namespace XFS4IoTFramework.Common
                     null :
                     Common.CameraCapabilities.MaxPictures,
                     CamData: Common.CameraCapabilities.CamData == CameraCapabilitiesClass.CamDataMethodsEnum.None ?
-                    null :
-                        new(
-                            AutoAdd: Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.AutoAdd),
-                            ManAdd: Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.ManualAdd)
-                        ),
+                    null : new(
+                        AutoAdd: Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.AutoAdd),
+                        ManAdd: Common.CameraCapabilities.CamData.HasFlag(CameraCapabilitiesClass.CamDataMethodsEnum.ManualAdd)
+                    ),
                     MaxDataLength: Common.CameraCapabilities.MaxDataLength == -1 ?
                     null :
                     Common.CameraCapabilities.MaxDataLength);
@@ -1580,8 +1688,7 @@ namespace XFS4IoTFramework.Common
             {
                 mixedMedia = new XFS4IoT.MixedMedia.CapabilitiesClass(
                     Modes: Common.MixedMediaCapabilities.Modes == MixedMedia.ModeTypeEnum.None ?
-                        null :
-                        new(
+                        null : new(
                             CashAccept: Common.MixedMediaCapabilities.Modes.HasFlag(MixedMedia.ModeTypeEnum.Cash),
                             CheckAccept: Common.MixedMediaCapabilities.Modes.HasFlag(MixedMedia.ModeTypeEnum.Check)
                             ),
@@ -1589,6 +1696,82 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
+            XFS4IoT.PowerManagement.CapabilitiesClass powerManagement = null;
+            if (Common.PowerManagementCapabilities is not null)
+            {
+                powerManagement = new XFS4IoT.PowerManagement.CapabilitiesClass(
+                    PowerSaveControl: Common.PowerManagementCapabilities.PowerSaveControl,
+                    BatteryRechargeable: Common.PowerManagementCapabilities.BatteryRechargeable
+                    );
+            }
+
+            XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass ibns = null;
+            if (Common.IBNSCapabilities is not null)
+            {
+                Dictionary<string, XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.CustomInputsClass> customInputCapabilities = null;
+                if (Common.IBNSCapabilities.CustomInputStatus is not null &&
+                    Common.IBNSCapabilities.CustomInputStatus.Count > 0)
+                {
+                    customInputCapabilities = [];
+                    foreach (var inputState in Common.IBNSCapabilities.CustomInputStatus)
+                    {
+                        customInputCapabilities.Add(inputState.Key.ToString().ToCamelCase(), new(inputState.Value.ActiveInput));
+                    }
+                }
+                if (Common.IBNSCapabilities.VendorSpecificCustomInputStatus is not null &&
+                    Common.IBNSCapabilities.VendorSpecificCustomInputStatus.Count > 0)
+                {
+                    foreach (var inputState in Common.IBNSCapabilities.VendorSpecificCustomInputStatus)
+                    {
+                        (customInputCapabilities ??= []).Add(inputState.Key.ToCamelCase(), new(inputState.Value.ActiveInput));
+                    }
+                }
+                ibns = new XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass(
+                    Mode: Common.IBNSCapabilities.Mode switch
+                    {
+                        IBNSCapabilitiesClass.ModeEnum.ClientControlled => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.ClientControlled,
+                        IBNSCapabilitiesClass.ModeEnum.VendorSpecific => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.VendorSpecific,
+                        IBNSCapabilitiesClass.ModeEnum.Autonomous => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.Autonomous,
+                        _ => throw new InternalErrorException($"Unexpected IBNS mode specified. {Common.IBNSCapabilities.Mode}")
+                    },
+                    GasSensor: Common.IBNSCapabilities.GasSensor is true ? true : null,
+                    LightSensor: Common.IBNSCapabilities.LightSensor is true ? true : null,
+                    SeismicSensor: Common.IBNSCapabilities.SeismicSensor is true ? true : null,
+                    SafeIntrusionDetection: Common.IBNSCapabilities.SafeIntrusionDetection is true ? true : null,
+                    ExternalDryContactStatusBox: Common.IBNSCapabilities.ExternalDryContactStatusBox is true ? true : null,
+                    RealTimeClock: Common.IBNSCapabilities.RealTimeClock is true ? true : null,
+                    PhysicalStorageUnitsAccessControl: Common.IBNSCapabilities.PhysicalStorageUnitsAccessControl is true ? true : null,
+                    CustomInputs: customInputCapabilities);
+            }
+
+            XFS4IoT.GermanSpecific.CapabilitiesClass germanSpecific = null;
+            if (Common.GermanSpecificCapabilities is not null)
+            {
+                germanSpecific = new(Common.GermanSpecificCapabilities.HSMVendor);
+            }
+            
+            XFS4IoT.Deposit.CapabilitiesClass deposit = null;
+            if (Common.DepositCapabilities is not null)
+            {
+                deposit = new XFS4IoT.Deposit.CapabilitiesClass(
+                    Type: new(
+                        Envelope: Common.DepositCapabilities.DeviceTypes.HasFlag(DepositCapabilitiesClass.TypesEnum.Envelop),
+                        Bag: Common.DepositCapabilities.DeviceTypes.HasFlag(DepositCapabilitiesClass.TypesEnum.Bag)),
+                    DepTransport: Common.DepositCapabilities.DepostTransport,
+                    Printer: Common.DepositCapabilities.PrinterCapabilities is null ? 
+                    null : new(
+                        Toner: Common.DepositCapabilities.PrinterCapabilities.Toner,
+                        PrintOnRetract: Common.DepositCapabilities.PrinterCapabilities.PrintOnRetract,
+                        MaxNumChars: Common.DepositCapabilities.PrinterCapabilities.MaxNumberOfChars,
+                        UnicodeSupport: Common.DepositCapabilities.PrinterCapabilities.UnicodeSupport),
+                    Shutter: Common.DepositCapabilities.Shutter,
+                    RetractEnvelope: Common.DepositCapabilities.RetractPosition switch
+                    { 
+                        DepositCapabilitiesClass.RetractPositionEnum.Container => XFS4IoT.Deposit.CapabilitiesClass.RetractEnvelopeEnum.Container,
+                        DepositCapabilitiesClass.RetractPositionEnum.Dispenser => XFS4IoT.Deposit.CapabilitiesClass.RetractEnvelopeEnum.Dispenser,
+                        _ => throw new InternalErrorException($"Unexpected retract position specified. {Common.DepositCapabilities.RetractPosition}")
+                    });
+            }
             return Task.FromResult(
                 new CommandResult<CapabilitiesCompletion.PayloadData>(
                     new CapabilitiesCompletion.PayloadData(
@@ -1611,7 +1794,11 @@ namespace XFS4IoTFramework.Common
                         CashAcceptor: cashAcceptor,
                         Camera: camera,
                         Check: checkScanner,
-                        MixedMedia: mixedMedia),
+                        MixedMedia: mixedMedia,
+                        German: germanSpecific,
+                        BanknoteNeutralization: ibns,
+                        PowerManagement: powerManagement,
+                        Deposit: deposit),
                 MessageHeader.CompletionCodeEnum.Success
             ));
         }

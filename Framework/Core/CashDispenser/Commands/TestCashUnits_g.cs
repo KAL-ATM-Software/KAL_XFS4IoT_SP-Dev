@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -28,14 +28,23 @@ namespace XFS4IoT.CashDispenser.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(CashManagement.ItemTargetClass Target = null)
+            public PayloadData(CashManagement.ItemTargetDataClass Target = null)
                 : base()
             {
                 this.Target = Target;
             }
 
+            /// <summary>
+            /// Defines where items are to be moved to as one of the following:
+            /// 
+            /// * A single storage unit, further specified by *unit*.
+            /// * Internal areas of the device.
+            /// * An output position.
+            /// 
+            /// This may be null if the Service is to determine where items are to be moved.
+            /// </summary>
             [DataMember(Name = "target")]
-            public CashManagement.ItemTargetClass Target { get; init; }
+            public CashManagement.ItemTargetDataClass Target { get; init; }
 
         }
     }

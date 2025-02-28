@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -28,11 +28,15 @@ namespace XFS4IoTFramework.CashManagement
                 items = [];
                 foreach (var item in Common.CashManagementCapabilities.AllBanknoteItems)
                 {
-                    items.Add(item.Key, new BankNoteClass(new (item.Value.NoteId,
-                                                               item.Value.Currency,
-                                                               item.Value.Value,
-                                                               item.Value.Release),
-                                                               item.Value.Enabled));
+                    items.Add(
+                        item.Key, 
+                        new BankNoteClass(
+                            new(item.Value.NoteId,
+                                item.Value.Currency,
+                                item.Value.Value,
+                                item.Value.Release),
+                                item.Value.Enabled)
+                        );
                 }
             }
 

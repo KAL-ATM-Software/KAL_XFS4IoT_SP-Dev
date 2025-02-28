@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -49,16 +49,16 @@ namespace XFS4IoT.PinPad.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyNotFound``` - The specified key was not found.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been
-            /// loaded.
+            ///   loaded.
             /// * ```useViolation``` - The use specified by
-            /// [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) is not
-            /// supported.
-            /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
+            ///   [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) is not
+            ///   supported.
+            /// * ```noPin``` - The PIN has not been entered, was not long enough or has been cleared.
             /// * ```formatNotSupported``` - The specified format is not supported.
             /// * ```invalidKeyLength``` - The length of *keyEncKey* is not supported or the length of an encryption
-            /// key is not compatible with the encryption operation required.
+            ///   key is not compatible with the encryption operation required.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -50,11 +50,11 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// 
             /// * ```ok``` - The cash-in transaction is complete and has ended with [CashAcceptor.CashInEnd](#cashacceptor.cashinend).
             /// * ```rollback``` - The cash-in transaction ended with [CashAcceptor.CashInRollback](#cashacceptor.cashinrollback).
-            /// * ```active``` - There is a cash-in transaction active. See the [CashAcceptor.CashInStart](#cashacceptor.cashinstart) command description
-            /// for a definition of an active cash-in transaction.
+            /// * ```active``` - There is a cash-in transaction active. See the [CashAcceptor.CashInStart](#cashacceptor.cashinstart)
+            ///   command description for a definition of an active cash-in transaction.
             /// * ```retract``` - The cash-in transaction ended with [CashManagement.Retract](#cashmanagement.retract).
             /// * ```unknown``` - The state of the cash-in transaction is unknown. This status is also set if the *noteNumberList*
-            /// details are not known or are not reliable.
+            ///   details are not known or are not reliable.
             /// * ```reset``` - The cash-in transaction ended with [CashManagement.Reset](#cashmanagement.reset).
             /// </summary>
             [DataMember(Name = "status")]

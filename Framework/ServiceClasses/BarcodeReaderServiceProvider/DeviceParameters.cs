@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -22,24 +22,20 @@ namespace XFS4IoTFramework.BarcodeReader
     /// ReadRequest
     /// Information contains to perform operation for reading barcode data
     /// </summary>
-    public sealed class ReadRequest
+    public sealed class ReadRequest(
+        BarcodeReaderCapabilitiesClass.SymbologiesEnum SymbologiesToRead,
+        int Timeout)
     {
-        public ReadRequest(BarcodeReaderCapabilitiesClass.SymbologiesEnum SymbologiesToRead,
-                           int Timeout)
-        {
-            this.SymbologiesToRead = SymbologiesToRead;
-            this.Timeout = Timeout;
-        }
 
         /// <summary>
         /// If the value is zero, enable all symbologies, otherwise enable to read specified format
         /// </summary>
-        public BarcodeReaderCapabilitiesClass.SymbologiesEnum SymbologiesToRead { get; init; }
+        public BarcodeReaderCapabilitiesClass.SymbologiesEnum SymbologiesToRead { get; init; } = SymbologiesToRead;
 
         /// <summary>
         /// Timeout for waiting barcode to be read
         /// </summary>
-        public int Timeout { get; init; }
+        public int Timeout { get; init; } = Timeout;
     }
 
     /// <summary>
@@ -50,15 +46,17 @@ namespace XFS4IoTFramework.BarcodeReader
     {
         public sealed class ReadBarcodeData
         {
-            public ReadBarcodeData(SymbologyEnum SymbologyRead,
-                                   List<byte> Data)
+            public ReadBarcodeData(
+                SymbologyEnum SymbologyRead,
+                List<byte> Data)
             {
                 VendorSymbologyName = string.Empty;
                 this.SymbologyRead = SymbologyRead;
                 this.Data = Data;
             }
-            public ReadBarcodeData(string VendorSymbologyName,
-                                   List<byte> Data)
+            public ReadBarcodeData(
+                string VendorSymbologyName,
+                List<byte> Data)
             {
                 this.SymbologyRead = SymbologyEnum.NotRead;
                 this.VendorSymbologyName = VendorSymbologyName;
@@ -145,38 +143,18 @@ namespace XFS4IoTFramework.BarcodeReader
             SymbologyUnknown
         }
 
-        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                          string ErrorDescription = null,
-                          ErrorCodeEnum? ErrorCode = null)
+        public ReadResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
         }
 
-        public ReadResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                          List<ReadBarcodeData> ReadData)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.ReadData = ReadData;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                          string ErrorDescription = null,
-                          ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ReadResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                          List<ReadBarcodeData> ReadData)
+        public ReadResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<ReadBarcodeData> ReadData)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,14 +52,17 @@ namespace XFS4IoT.CashManagement.Completions
             /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```cashUnitError``` - There is a problem with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The output position specified is not supported.
             /// * ```invalidCashUnit``` - The storage unit number specified is not valid.
             /// * ```invalidRetractPosition``` - The *index* is not supported.
             /// * ```notRetractArea``` - The retract area specified in *retractArea* is not supported.
-            /// * ```positionNotEmpty``` - The retract area specified in *retractArea* is not empty so the moving of items was not possible.
+            /// * ```positionNotEmpty``` - The retract area specified in *retractArea* is not empty so the moving of
+            ///   items was not possible.
             /// * ```foreignItemsDetected``` - Foreign items have been detected in the input position.
-            /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by other error codes. The detail will be reported with the Dispenser.IncompleteRetractEvent.
+            /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by
+            ///   other error codes. The detail will be reported with a
+            ///   [CashManagement.IncompleteRetractEvent](#cashmanagement.incompleteretractevent).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

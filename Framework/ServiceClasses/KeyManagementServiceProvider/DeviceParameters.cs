@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -36,7 +36,10 @@ namespace XFS4IoTFramework.KeyManagement
         Issuer,
     }
 
-    public sealed class AuthenticationData
+    public sealed class AuthenticationData(
+        AuthenticationData.SigningMethodEnum SigningMethod,
+        string Key,
+        List<byte> Data)
     {
         public enum SigningMethodEnum
         {
@@ -55,16 +58,7 @@ namespace XFS4IoTFramework.KeyManagement
             Reserved3
         }
 
-        public AuthenticationData(SigningMethodEnum SigningMethod,
-                                  string Key,
-                                  List<byte> Data)
-        {
-            this.SigningMethod = SigningMethod;
-            this.Key = Key;
-            this.Data = Data;
-        }
-
-        public SigningMethodEnum SigningMethod { get; init; }
+        public SigningMethodEnum SigningMethod { get; init; } = SigningMethod;
 
         /// <summary>
         /// If the *signer* is cbcmac or mac are specified, then this _signatureKey_ property is the name of a key with the key usage of key attribute is M0 to M8.
@@ -73,7 +67,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// if this signatureKey propery is omitted or contains the name of the default Signature Issuer as defined in the document [Default keys and securitry item loaded during manufacture](#keymanagement.generalinformation.rklprocess.defaultkeyandsecurity).
         /// Otherwise, this property should be omitted.
         /// </summary>
-        public string Key { get; init; }
+        public string Key { get; init; } = Key;
 
         /// <summary>
         /// This property contains the signed version of the base64 encoded data that was provided by the KeyManagement device during the previous call to the StartExchange command.
@@ -85,18 +79,19 @@ namespace XFS4IoTFramework.KeyManagement
         /// If sigHost is specified for the *signer* property specified, then s is a PKCS #7 structure which includes the data that was returned by the StartAuthenticate command.
         /// If cmcmac or cmac are specified for the *signer* property specified, then _signatureKey_ must refer to a key loaded with the key usage of key attribute is M0 to M8.
         /// </summary>
-        public List<byte> Data { get; init; }
+        public List<byte> Data { get; init; } = Data;
     }
 
     public class KeyInformationBase
     {
-        public KeyInformationBase(string KeyVersionNumber = "00",
-                                  string Exportability = null,
-                                  List<byte> OptionalKeyBlockHeader = null,
-                                  int? Generation = null,
-                                  DateTime? ActivatingDate = null,
-                                  DateTime? ExpiryDate = null,
-                                  int? Version = null)
+        public KeyInformationBase(
+            string KeyVersionNumber = "00",
+            string Exportability = null,
+            List<byte> OptionalKeyBlockHeader = null,
+            int? Generation = null,
+            DateTime? ActivatingDate = null,
+            DateTime? ExpiryDate = null,
+            int? Version = null)
         {
             this.KeyVersionNumber = KeyVersionNumber;
 
@@ -153,9 +148,19 @@ namespace XFS4IoTFramework.KeyManagement
         public int? Version { get; init; }
     }
 
-    public class ImportKeyBaseRequest
+    public class ImportKeyBaseRequest(
+        string KeyName,
+        string KeyUsage,
+        string Algorithm,
+        string ModeOfUse,
+        string RestrictedKeyUsage = null,
+        ImportKeyBaseRequest.VerifyAttributeClass VerifyAttribute = null,
+        string VendorAttribute = null)
     {
-        public sealed class VerifyAttributeClass
+        public sealed class VerifyAttributeClass(
+            string KeyName,
+            VerifyAttributeClass.VerifyMethodEnum VerifyMethod,
+            VerifyAttributeClass.HashAlgorithmEnum? HashAlgorithm = null)
         {
             public enum VerifyMethodEnum
             {
@@ -173,19 +178,10 @@ namespace XFS4IoTFramework.KeyManagement
                 SHA256,
             }
 
-            public VerifyAttributeClass(string KeyName,
-                                        VerifyMethodEnum VerifyMethod,
-                                        HashAlgorithmEnum? HashAlgorithm = null)
-            {
-                this.KeyName = KeyName;
-                this.VerifyMethod = VerifyMethod;
-                this.HashAlgorithm = HashAlgorithm;
-            }
-
             /// <summary>
             /// Key name for verification to use
             /// </summary>
-            public string KeyName { get; init; }
+            public string KeyName { get; init; } = KeyName;
 
             /// <summary>
             /// Data to verify
@@ -195,110 +191,99 @@ namespace XFS4IoTFramework.KeyManagement
             /// <summary>
             /// Cryptographic method to use
             /// </summary>
-            public VerifyMethodEnum VerifyMethod { get; init; }
+            public VerifyMethodEnum VerifyMethod { get; init; } = VerifyMethod;
 
             /// <summary>
             /// Hash algorithm to use
             /// </summary>
-            public HashAlgorithmEnum? HashAlgorithm { get; init; }
-        }
-
-        public ImportKeyBaseRequest(string KeyName,
-                                    string KeyUsage,
-                                    string Algorithm,
-                                    string ModeOfUse,
-                                    string RestrictedKeyUsage = null,
-                                    VerifyAttributeClass VerifyAttribute = null,
-                                    string VendorAttribute = null)
-        {
-            this.KeyName = KeyName;
-            this.KeyUsage = KeyUsage;
-            this.Algorithm = Algorithm;
-            this.ModeOfUse = ModeOfUse;
-            this.RestrictedKeyUsage = RestrictedKeyUsage;
-            this.VerifyAttribute = VerifyAttribute;
-            this.VendorAttribute = VendorAttribute;
+            public HashAlgorithmEnum? HashAlgorithm { get; init; } = HashAlgorithm;
         }
 
         /// <summary>
         /// Specifies the key name to store
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Key usage associated with the key to be stored
         /// </summary>
-        public string KeyUsage { get; init; }
+        public string KeyUsage { get; init; } = KeyUsage;
 
         /// <summary>
         /// Algorithm associated with key usage
         /// </summary>
-        public string Algorithm { get; init; }
+        public string Algorithm { get; init; } = Algorithm;
 
         /// <summary>
         /// Mode of use associated with the Algorithm
         /// </summary>
-        public string ModeOfUse { get; init; }
+        public string ModeOfUse { get; init; } = ModeOfUse;
 
         /// <summary>
         /// Restricted key usage
         /// </summary>
-        public string RestrictedKeyUsage { get; init; }
+        public string RestrictedKeyUsage { get; init; } = RestrictedKeyUsage;
 
         /// <summary>
         /// Verify data if it's requested
         /// </summary>
-        public VerifyAttributeClass VerifyAttribute { get; init; }
+        public VerifyAttributeClass VerifyAttribute { get; init; } = VerifyAttribute;
 
         /// <summary>
         /// Vendor specific attributes
         /// </summary>
-        public string VendorAttribute { get; init; }
+        public string VendorAttribute { get; init; } = VendorAttribute;
     }
 
-    public sealed class ImportKeyPartRequest : ImportKeyBaseRequest
+    public sealed class ImportKeyPartRequest(
+        string KeyName,
+        int ComponentNumber,
+        string KeyUsage,
+        string Algorithm,
+        string ModeOfUse,
+        string RestrictedKeyUsage = null) : ImportKeyBaseRequest(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage: RestrictedKeyUsage)
     {
-        public ImportKeyPartRequest(string KeyName,
-                                    int ComponentNumber,
-                                    string KeyUsage,
-                                    string Algorithm,
-                                    string ModeOfUse,
-                                    string RestrictedKeyUsage = null)
-            : base(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage: RestrictedKeyUsage)
-        {
-            this.ComponentNumber = ComponentNumber;
-        }
 
         /// <summary>
         /// Number of component to store temporarily
         /// </summary>
-        public int ComponentNumber { get; init; }
+        public int ComponentNumber { get; init; } = ComponentNumber;
     }
 
-    public sealed class AssemblyKeyPartsRequest : ImportKeyBaseRequest
+    public sealed class AssemblyKeyPartsRequest(
+        string KeyName,
+        int KeySlot,
+        string KeyUsage,
+        string Algorithm,
+        string ModeOfUse,
+        string RestrictedKeyUsage = null,
+        ImportKeyBaseRequest.VerifyAttributeClass VerifyAttribute = null,
+        string VendorAttribute = null)
+        : ImportKeyBaseRequest(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage, VerifyAttribute, VendorAttribute)
     {
-        public AssemblyKeyPartsRequest(string KeyName,
-                                       int KeySlot,
-                                       string KeyUsage,
-                                       string Algorithm,
-                                       string ModeOfUse,
-                                       string RestrictedKeyUsage = null,
-                                       VerifyAttributeClass VerifyAttribute = null,
-                                       string VendorAttribute = null)
-            : base(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage, VerifyAttribute, VendorAttribute)
-        {
-            this.KeySlot = KeySlot;
-        }
 
         /// <summary>
         /// Key slot to use, if the device class needs to use specific number, update it in the result
         /// </summary>
-        public int KeySlot { get; init; }
+        public int KeySlot { get; init; } = KeySlot;
     }
 
-    public sealed class ImportKeyRequest : ImportKeyBaseRequest
+    public sealed class ImportKeyRequest(
+        string KeyName,
+        int KeySlot,
+        List<byte> KeyData,
+        string KeyUsage,
+        string Algorithm,
+        string ModeOfUse,
+        string RestrictedKeyUsage = null,
+        ImportKeyBaseRequest.VerifyAttributeClass VerifyAttribute = null,
+        ImportKeyRequest.DecryptAttributeClass DecryptAttribute = null,
+        string VendorAttribute = null) 
+        : ImportKeyBaseRequest(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage, VerifyAttribute, VendorAttribute)
     {
-        public sealed class DecryptAttributeClass
+        public sealed class DecryptAttributeClass(
+            string KeyName,
+            DecryptAttributeClass.DecryptMethodEnum DecryptoMethod)
         {
             public enum DecryptMethodEnum
             {
@@ -313,66 +298,43 @@ namespace XFS4IoTFramework.KeyManagement
                 TR31 // decrypt method is in the TR31 keyblock
             }
 
-            public DecryptAttributeClass(string KeyName,
-                                         DecryptMethodEnum DecryptoMethod)
-            {
-                this.KeyName = KeyName;
-                this.DecryptoMethod = DecryptoMethod;
-            }
-
             /// <summary>
             /// Key name for verification to use
             /// </summary>
-            public string KeyName { get; init; }
+            public string KeyName { get; init; } = KeyName;
 
             /// <summary>
             /// Cryptographic method to use
             /// </summary>
-            public DecryptMethodEnum DecryptoMethod { get; init; }
-        }
-
-        public ImportKeyRequest(string KeyName,
-                                int KeySlot,
-                                List<byte> KeyData,
-                                string KeyUsage,
-                                string Algorithm,
-                                string ModeOfUse,
-                                string RestrictedKeyUsage = null,
-                                VerifyAttributeClass VerifyAttribute = null,
-                                DecryptAttributeClass DecryptAttribute = null,
-                                string VendorAttribute = null)
-            : base(KeyName, KeyUsage, Algorithm, ModeOfUse, RestrictedKeyUsage, VerifyAttribute, VendorAttribute)
-        {
-            this.KeySlot = KeySlot;
-            this.KeyData = KeyData;
-            this.DecryptAttribute = DecryptAttribute;
+            public DecryptMethodEnum DecryptoMethod { get; init; } = DecryptoMethod;
         }
 
         /// <summary>
         /// Key slot to use, if the device class needs to use specific number, update it in the result
         /// </summary>
-        public int KeySlot { get; init; }
+        public int KeySlot { get; init; } = KeySlot;
 
         /// <summary>
         /// Key data to load
         /// </summary>
-        public List<byte> KeyData { get; init; }
+        public List<byte> KeyData { get; init; } = KeyData;
 
         /// <summary>
         /// Decrypt key before loading key specified
         /// </summary>
-        public DecryptAttributeClass DecryptAttribute { get; init; }
+        public DecryptAttributeClass DecryptAttribute { get; init; } = DecryptAttribute;
     }
 
     public sealed class ImportKeyResult : DeviceResult
     {
         public sealed class VerifyAttributeClass
         {
-            public VerifyAttributeClass(string KeyUsage,
-                                        string Algorithm,
-                                        string ModeOfUse,
-                                        ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum VerifyMethod,
-                                        ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum? HashAlgorithm = null)
+            public VerifyAttributeClass(
+                string KeyUsage,
+                string Algorithm,
+                string ModeOfUse,
+                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum VerifyMethod,
+                ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum? HashAlgorithm = null)
             {
                 this.KeyUsage = KeyUsage;
                 Regex.IsMatch(this.KeyUsage, KeyDetail.regxVerifyKeyUsage).IsTrue($"Invalid key usage specified. {this.KeyUsage}");
@@ -410,9 +372,10 @@ namespace XFS4IoTFramework.KeyManagement
             public ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum? HashAlgorithm { get; init; }
         }
 
-        public ImportKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               ImportKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ImportKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ImportKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -420,43 +383,13 @@ namespace XFS4IoTFramework.KeyManagement
             this.KeyLength = 0;
         }
 
-        public ImportKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               KeyInformationBase KeyInformation,
-                               List<byte> VerificationData,
-                               VerifyAttributeClass VerifyAttribute,
-                               int KeyLength,
-                               int? UpdatedKeySlot = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.KeyInformation = KeyInformation;
-            this.VerificationData = VerificationData;
-            this.VerifyAttribute = VerifyAttribute;
-            this.KeyLength = KeyLength;
-            this.UpdatedKeySlot = UpdatedKeySlot;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               ImportKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.VerificationData = null;
-            this.KeyLength = 0;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               KeyInformationBase KeyInformation,
-                               List<byte> VerificationData,
-                               VerifyAttributeClass VerifyAttribute,
-                               int KeyLength,
-                               int? UpdatedKeySlot = null)
+        public ImportKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            KeyInformationBase KeyInformation,
+            List<byte> VerificationData,
+            VerifyAttributeClass VerifyAttribute,
+            int KeyLength,
+            int? UpdatedKeySlot = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -496,55 +429,31 @@ namespace XFS4IoTFramework.KeyManagement
         public int KeyLength { get; init; }
     }
 
-    public sealed class InitializationRequest
+    public sealed class InitializationRequest(AuthenticationData Authentication = null)
     {
-        public InitializationRequest(AuthenticationData Authentication = null)
-        {
-            this.Authentication = Authentication;
-        }
 
         /// <summary>
         /// Authentication data required for initializing device
         /// </summary>
-        public AuthenticationData Authentication { get; init; }
+        public AuthenticationData Authentication { get; init; } = Authentication;
     }
 
     public sealed class InitializationResult : DeviceResult
     {
-        public InitializationResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    InitializationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public InitializationResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            InitializationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Identification = null;
         }
 
-        public InitializationResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    List<byte> Identification)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Identification = Identification;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public InitializationResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    InitializationCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Identification = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public InitializationResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    List<byte> Identification)
-                : base(CompletionCode, null)
+        public InitializationResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> Identification)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.Identification = Identification;
@@ -558,26 +467,25 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> Identification { get; init; }
     }
 
-    public sealed class DeleteKeyRequest
+    public sealed class DeleteKeyRequest(
+        string KeyName,
+        AuthenticationData Authentication = null)
     {
-        public DeleteKeyRequest(string KeyName,
-                                AuthenticationData Authentication = null)
-        {
-            this.KeyName = KeyName;
-        }
 
         /// <summary>
         /// Key name to delete, if the value is null or empty string, all key to be deleted
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Authentication data required to delete key
         /// </summary>
-        public AuthenticationData Authentication { get; set; }
+        public AuthenticationData Authentication { get; set; } = Authentication;
     }
 
-    public sealed class GenerateKCVRequest
+    public sealed class GenerateKCVRequest(
+        string KeyName,
+        GenerateKCVRequest.KeyCheckValueEnum KCVMode)
     {
         public enum KeyCheckValueEnum
         {
@@ -585,16 +493,10 @@ namespace XFS4IoTFramework.KeyManagement
             Zero,
         }
 
-        public GenerateKCVRequest(string KeyName,
-                                  KeyCheckValueEnum KCVMode)
-        {
-            this.KeyName = KeyName;
-        }
-
         /// <summary>
         /// Key name to generate KCV
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// KCV mode to generate
@@ -604,40 +506,20 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class GenerateKCVResult : DeviceResult
     {
-        public GenerateKCVResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    GenerateKCVCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public GenerateKCVResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            GenerateKCVCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.KCV = null;
         }
 
-        public GenerateKCVResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 List<byte> KCV)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.KCV = KCV;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GenerateKCVResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    GenerateKCVCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.KCV = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GenerateKCVResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 List<byte> KCV)
-                : base(CompletionCode, null)
+        public GenerateKCVResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> KCV)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.KCV = KCV;
@@ -651,164 +533,124 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> KCV { get; init; }
     }
 
-    public sealed class DeriveKeyRequest
+    [Obsolete("This method is no longer available in XFS4IoT 2024-2. This interface will be removed after version 4.")]
+    public sealed class DeriveKeyRequest(
+        string KeyName,
+        int KeySlot,
+        string KeyGeneratingKey,
+        int KeyGeneratingKeySlot,
+        int DerivationAlgorithm,
+        List<byte> IVData,
+        string IVKey,
+        int IVKeySlot,
+        byte Padding,
+        List<byte> Data)
     {
-
-        public DeriveKeyRequest(string KeyName,
-                                int KeySlot,
-                                string KeyGeneratingKey,
-                                int KeyGeneratingKeySlot,
-                                int DerivationAlgorithm,
-                                List<byte> IVData,
-                                string IVKey,
-                                int IVKeySlot,
-                                byte Padding,
-                                List<byte> Data)
-        {
-            this.KeyName = KeyName;
-            this.KeySlot = KeySlot;
-            this.KeyGeneratingKey = KeyGeneratingKey;
-            this.KeyGeneratingKeySlot = KeyGeneratingKeySlot;
-            this.DerivationAlgorithm = DerivationAlgorithm;
-            this.IVData = IVData;
-            this.IVKey = IVKey;
-            this.IVKeySlot = IVKeySlot;
-            this.Padding = Padding;
-            this.Data = Data;
-        }
 
         /// <summary>
         /// Key name to derive key
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// The key slot of the derived key
         /// </summary>
-        public int KeySlot { get; init; }
+        public int KeySlot { get; init; } = KeySlot;
 
         /// <summary>
         /// Specifies the name of the key generating key that is used for the derivation.
         /// </summary>
-        public string KeyGeneratingKey { get; init; }
+        public string KeyGeneratingKey { get; init; } = KeyGeneratingKey;
 
         /// <summary>
         /// The key slot of the key generating key
         /// </summary>
-        public int KeyGeneratingKeySlot { get; init; }
+        public int KeyGeneratingKeySlot { get; init; } = KeyGeneratingKeySlot;
 
         /// <summary>
         /// Specifies the algorithm that is used for derivation.
         /// </summary>
-        public int DerivationAlgorithm { get; init; }
+        public int DerivationAlgorithm { get; init; } = DerivationAlgorithm;
 
         /// <summary>
         /// Data of the initialization vector
         /// </summary>
-        public List<byte> IVData { get; init; }
+        public List<byte> IVData { get; init; } = IVData;
 
         /// <summary>
         /// The key name of the initialization vector
         /// </summary>
-        public string IVKey { get; init; }
+        public string IVKey { get; init; } = IVKey;
 
         /// <summary>
         /// The key slot of the initialization vector
         /// </summary>
-        public int IVKeySlot { get; init; }
+        public int IVKeySlot { get; init; } = IVKeySlot;
 
 
         /// <summary>
         /// Specifies the padding character for the encryption step within the derivation. The valid range is 0 to 255
         /// </summary>
-        public byte Padding { get; init; }
+        public byte Padding { get; init; } = Padding;
 
         /// <summary>
         /// Data to be used for key derivation.
         /// </summary>
-        public List<byte> Data { get; init; }
+        public List<byte> Data { get; init; } = Data;
     }
 
+    [Obsolete("This method is no longer available in XFS4IoT 2024-2. This interface will be removed after version 4.")]
     public sealed class DeriveKeyResult : DeviceResult
     {
-        public sealed class LoadedKeyInformation : KeyInformationBase
+        public sealed class LoadedKeyInformation(
+            string KeyUsage,
+            string Algorithm,
+            string ModeOfUse,
+            int KeyLength,
+            string KeyVersionNumber,
+            string Exportability,
+            List<byte> OptionalKeyBlockHeader,
+            int? Generation = null,
+            DateTime? ActivatingDate = null,
+            DateTime? ExpiryDate = null,
+            int? Version = null) 
+            : KeyInformationBase(KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version)
         {
-            public LoadedKeyInformation(string KeyUsage,
-                                        string Algorithm,
-                                        string ModeOfUse,
-                                        int KeyLength,
-                                        string KeyVersionNumber,
-                                        string Exportability,
-                                        List<byte> OptionalKeyBlockHeader,
-                                        int? Generation = null,
-                                        DateTime? ActivatingDate = null,
-                                        DateTime? ExpiryDate = null,
-                                        int? Version = null)
-                : base(KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version)
-            {
-                this.KeyUsage = KeyUsage;
-                this.Algorithm = Algorithm;
-                this.ModeOfUse = ModeOfUse;
-                this.KeyLength = KeyLength;
-            }
 
             /// <summary>
             /// Key usage to load
             /// </summary>
-            public string KeyUsage { get; init; }
+            public string KeyUsage { get; init; } = KeyUsage;
 
             /// <summary>
             /// Algorithm associated with key usage
             /// </summary>
-            public string Algorithm { get; init; }
+            public string Algorithm { get; init; } = Algorithm;
 
             /// <summary>
             /// Mode of use associated with the Algorithm
             /// </summary>
-            public string ModeOfUse { get; init; }
+            public string ModeOfUse { get; init; } = ModeOfUse;
 
             /// <summary>
             /// Specifies the length, in bits, of the key. 0 if the key length is unknown.
             /// </summary>
-            public int KeyLength { get; init; }
+            public int KeyLength { get; init; } = KeyLength;
         }
 
-        public DeriveKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public DeriveKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            DeriveKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.LoadedKeyDetail = null;
         }
-
-        public DeriveKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               LoadedKeyInformation LoadedKeyDetail,
-                               int? UpdatedKeySlot)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.LoadedKeyDetail = LoadedKeyDetail;
-            this.UpdatedKeySlot = UpdatedKeySlot;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DeriveKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               DeriveKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.LoadedKeyDetail = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DeriveKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               LoadedKeyInformation LoadedKeyDetail,
-                               int? UpdatedKeySlot)
+        public DeriveKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            LoadedKeyInformation LoadedKeyDetail,
+            int? UpdatedKeySlot)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -829,7 +671,10 @@ namespace XFS4IoTFramework.KeyManagement
         public LoadedKeyInformation LoadedKeyDetail { get; init; }
     }
 
-    public sealed class ExportEPPIdRequest
+    public sealed class ExportEPPIdRequest(
+        SignerEnum Signer,
+        ExportEPPIdRequest.RSASignatureAlgorithmEnum SignatureAlgorithm = ExportEPPIdRequest.RSASignatureAlgorithmEnum.Default,
+        string SignatureKeyName = null)
     {
         public enum RSASignatureAlgorithmEnum
         {
@@ -838,33 +683,29 @@ namespace XFS4IoTFramework.KeyManagement
             RSASSA_PKCS1_V1_5,     // SSA_PKCS_V1_5 Signatures supported
             RSASSA_PSS,            // SSA_PSS Signatures supported
         }
-        public ExportEPPIdRequest(SignerEnum Signer,
-                                  RSASignatureAlgorithmEnum SignatureAlgorithm = RSASignatureAlgorithmEnum.Default,
-                                  string SignatureKeyName = null)
-        {
-            this.Signer = Signer;
-            this.SignatureKeyName = SignatureKeyName;
-            this.SignatureAlgorithm = SignatureAlgorithm;
-        }
 
         /// <summary>
         /// Signer either EPP or offline Signature Issuer
         /// </summary>
-        public SignerEnum Signer { get; init; }
+        public SignerEnum Signer { get; init; } = Signer;
 
         /// <summary>
         /// Specifies the name of the private key to use to sign the exported item. 
         /// This property is null or empty string if the Signer is set to Issuer
         /// </summary>
-        public string SignatureKeyName { get; init; }
+        public string SignatureKeyName { get; init; } = SignatureKeyName;
 
         /// <summary>
         /// RSA signature algorithm to sign
         /// </summary>
-        public RSASignatureAlgorithmEnum SignatureAlgorithm { get; init; }
+        public RSASignatureAlgorithmEnum SignatureAlgorithm { get; init; } = SignatureAlgorithm;
     }
 
-    public sealed class ExportRSAPublicKeyRequest
+    public sealed class ExportRSAPublicKeyRequest(
+        SignerEnum Signer,
+        string KeyName,
+        ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum SignatureAlgorithm = ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.Default,
+        string SignatureKeyName = null)
     {
         public enum RSASignatureAlgorithmEnum
         {
@@ -873,39 +714,29 @@ namespace XFS4IoTFramework.KeyManagement
             RSASSA_PKCS1_V1_5,     // SSA_PKCS_V1_5 Signatures supported
             RSASSA_PSS,            // SSA_PSS Signatures supported
         }
-        public ExportRSAPublicKeyRequest(SignerEnum Signer,
-                                         string KeyName,
-                                         RSASignatureAlgorithmEnum SignatureAlgorithm = RSASignatureAlgorithmEnum.Default,
-                                         string SignatureKeyName = null)
-        {
-            this.Signer = Signer;
-            this.KeyName = KeyName;
-            this.SignatureKeyName = SignatureKeyName;
-            this.SignatureAlgorithm = SignatureAlgorithm;
-        }
 
         /// <summary>
         /// Signer either EPP or offline Signature Issuer
         /// </summary>
-        public SignerEnum Signer { get; init; }
+        public SignerEnum Signer { get; init; } = Signer;
 
         /// <summary>
         /// Specifies the name of the public key to be exported. 
         /// The private/public key pair was installed during manufacture (Default Keys and Security Item loaded during manufacture) for a definition of these default keys. 
         /// If this value is null or empty, then the default EPP public key that is used for symmetric key encryption is exported
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Specifies the name of the private key to use to sign the exported item. 
         /// This property is null or empty string if the Signer is set to Issuer
         /// </summary>
-        public string SignatureKeyName { get; init; }
+        public string SignatureKeyName { get; init; } = SignatureKeyName;
 
         /// <summary>
         /// RSA signature algorithm to sign
         /// </summary>
-        public RSASignatureAlgorithmEnum SignatureAlgorithm { get; init; }
+        public RSASignatureAlgorithmEnum SignatureAlgorithm { get; init; } = SignatureAlgorithm;
     }
 
     public sealed class RSASignedItemResult : DeviceResult
@@ -924,9 +755,10 @@ namespace XFS4IoTFramework.KeyManagement
             KeyNotFound
         }
 
-        public RSASignedItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   ErrorCodeEnum? ErrorCode = null)
+        public RSASignedItemResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -936,42 +768,12 @@ namespace XFS4IoTFramework.KeyManagement
             this.Signature = null;
         }
 
-        public RSASignedItemResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   List<byte> Data,
-                                   RSASignatureAlgorithmEnum SignatureAlgorithm,
-                                   List<byte> Signature = null,
-                                   List<byte> SelfSignature = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Data = Data;
-            this.SignatureAlgorithm = SignatureAlgorithm;
-            this.SelfSignature = SelfSignature;
-            this.Signature = Signature;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RSASignedItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Data = null;
-            this.SignatureAlgorithm = RSASignatureAlgorithmEnum.NoSignature;
-            this.SelfSignature = null;
-            this.Signature = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RSASignedItemResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   List<byte> Data,
-                                   RSASignatureAlgorithmEnum SignatureAlgorithm,
-                                   List<byte> Signature = null,
-                                   List<byte> SelfSignature = null)
+        public RSASignedItemResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> Data,
+            RSASignatureAlgorithmEnum SignatureAlgorithm,
+            List<byte> Signature = null,
+            List<byte> SelfSignature = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1007,7 +809,7 @@ namespace XFS4IoTFramework.KeyManagement
         public RSASignatureAlgorithmEnum SignatureAlgorithm { get; init; }
     }
 
-    public sealed class ExportCertificateRequest
+    public sealed class ExportCertificateRequest(ExportCertificateRequest.CertificateTypeEnum Type)
     {
         public enum CertificateTypeEnum
         {
@@ -1016,55 +818,30 @@ namespace XFS4IoTFramework.KeyManagement
             HostKey,
         }
 
-        public ExportCertificateRequest(CertificateTypeEnum Type)
-        {
-            this.Type = Type;
-        }
-
         /// <summary>
         /// Specifies which public key certificate is requested.
         /// If the Status command indicates Primary Certificates are accepted, then the Primary Public Encryption Key or the Primary Public Verification Key will be read out.
         /// If the Status command indicates Secondary Certificates are accepted, then the Secondary Public Encryption Key or the Secondary Public Verification Key will be read out.
         /// </summary>
-        public CertificateTypeEnum Type { get; init; }
+        public CertificateTypeEnum Type { get; init; } = Type;
     }
 
     public sealed class ExportCertificateResult : DeviceResult
     {
 
-        public ExportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       GetCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ExportCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            GetCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Certificate = null;
         }
 
-        public ExportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       List<byte> Certificate)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Certificate = Certificate;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ExportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       GetCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Certificate = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ExportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       List<byte> Certificate)
+        public ExportCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> Certificate)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1079,7 +856,12 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> Certificate { get; init; }
     }
 
-    public sealed class GenerateRSAKeyPairRequest
+    public sealed class GenerateRSAKeyPairRequest(
+        string KeyName,
+        int KeySlot,
+        GenerateRSAKeyPairRequest.ModeOfUseEnum PrivateKeyUsage,
+        int ModulusLength,
+        GenerateRSAKeyPairRequest.ExponentEnum Exponent)
     {
         public enum ExponentEnum
         {
@@ -1095,84 +877,64 @@ namespace XFS4IoTFramework.KeyManagement
             T,
         }
 
-
-        public GenerateRSAKeyPairRequest(string KeyName,
-                                         int KeySlot,
-                                         ModeOfUseEnum PrivateKeyUsage,
-                                         int ModulusLength,
-                                         ExponentEnum Exponent)
-        {
-            this.KeyName = KeyName;
-            this.KeySlot = KeySlot;
-            this.PrivateKeyUsage = PrivateKeyUsage;
-            this.ModulusLength = ModulusLength;
-            this.Exponent = Exponent;
-        }
-
         /// <summary>
         /// Specifies the name of the new key-pair to be generated. 
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Key slot number to use
         /// </summary>
-        public int KeySlot { get; init; }
+        public int KeySlot { get; init; } = KeySlot;
 
         /// <summary>
         /// Specifies mode of use
         /// S - Signature Only.
         /// T - Both Sign and Decrypt
         /// </summary>
-        public ModeOfUseEnum PrivateKeyUsage { get; init; }
+        public ModeOfUseEnum PrivateKeyUsage { get; init; } = PrivateKeyUsage;
 
         /// <summary>
         /// Specifies the number of bits for the modulus of the RSA key pair to be generated. 
         /// When zero is specified then the PIN device will be responsible for defining the length
         /// </summary>
-        public int ModulusLength { get; init; }
+        public int ModulusLength { get; init; } = ModulusLength;
 
         /// <summary>
         /// Specifies the value of the exponent of the RSA key pair to be generated
         /// </summary>
-        public ExponentEnum Exponent { get; init; }
+        public ExponentEnum Exponent { get; init; } = Exponent;
     }
 
     public sealed class GenerateRSAKeyPairResult : DeviceResult
     {
-        public sealed class LoadedKeyInformation : KeyInformationBase
+        public sealed class LoadedKeyInformation(
+            string KeyUsage,
+            string Algorithm,
+            string ModeOfUse,
+            int KeyLength,
+            string KeyVersionNumber = "00",
+            string Exportability = null,
+            List<byte> OptionalKeyBlockHeader = null,
+            int? Generation = null,
+            DateTime? ActivatingDate = null,
+            DateTime? ExpiryDate = null,
+            int? Version = null) 
+            : KeyInformationBase(KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version)
         {
-            public LoadedKeyInformation(string KeyUsage,
-                                        string Algorithm,
-                                        string ModeOfUse,
-                                        int KeyLength,
-                                        string KeyVersionNumber = "00",
-                                        string Exportability = null,
-                                        List<byte> OptionalKeyBlockHeader = null,
-                                        int? Generation = null,
-                                        DateTime? ActivatingDate = null,
-                                        DateTime? ExpiryDate = null,
-                                        int? Version = null) 
-                : base(KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version)
-            {
-                this.KeyUsage = KeyUsage;
-                this.Algorithm = Algorithm;
-                this.ModeOfUse = ModeOfUse;
-                this.KeyLength = KeyLength;
-            }
 
             /// <summary>
             /// Key usage for the generated asymmetric key
             /// It should be S0 to S2 or 00 - 99
             /// </summary>
-            public string KeyUsage { get; init; }
+            public string KeyUsage { get; init; } = KeyUsage;
 
             /// <summary>
             /// Algorithm
             /// It should be R
             /// or 0 - 9
             /// </summary>
-            public string Algorithm { get; init; }
+            public string Algorithm { get; init; } = Algorithm;
 
             /// <summary>
             /// Mode of use
@@ -1180,50 +942,28 @@ namespace XFS4IoTFramework.KeyManagement
             /// or 0 - 9
             /// </summary>
 
-            public string ModeOfUse { get; init; }
+            public string ModeOfUse { get; init; } = ModeOfUse;
 
             /// <summary>
             /// Specifies the length, in bits, of the key. 0 if the key length is unknown.
             /// </summary>
-            public int KeyLength { get; init; }
+            public int KeyLength { get; init; } = KeyLength;
         }
 
-        public GenerateRSAKeyPairResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public GenerateRSAKeyPairResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.UpdatedKeySlot = null;
         }
 
-        public GenerateRSAKeyPairResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        LoadedKeyInformation LoadedKeyDetail,
-                                        int? UpdatedKeySlot = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.LoadedKeyDetail = LoadedKeyDetail;
-            this.UpdatedKeySlot = UpdatedKeySlot;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GenerateRSAKeyPairResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        GenerateRSAKeyPairCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.UpdatedKeySlot = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GenerateRSAKeyPairResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        LoadedKeyInformation LoadedKeyDetail,
-                                        int? UpdatedKeySlot = null)
+        public GenerateRSAKeyPairResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            LoadedKeyInformation LoadedKeyDetail,
+            int? UpdatedKeySlot = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1244,7 +984,7 @@ namespace XFS4IoTFramework.KeyManagement
         public LoadedKeyInformation LoadedKeyDetail { get; init; }
     }
 
-    public sealed class ReplaceCertificateRequest
+    public sealed class ReplaceCertificateRequest(List<byte> Certificate)
     {
         public enum CertificateTypeEnum
         {
@@ -1253,53 +993,28 @@ namespace XFS4IoTFramework.KeyManagement
             HostKey,
         }
 
-        public ReplaceCertificateRequest(List<byte> Certificate)
-        {
-            this.Certificate = Certificate;
-        }
-
         /// <summary>
         /// Pointer to the PKCS # 7 message that will replace the current Certificate Authority. 
         /// The outer content uses the Signed-data content type, the inner content is a degenerate certificate only content containing the new CA certificate and Inner Signed Data type The certificate should be in a format represented in DER encoded ASN.1 notation.
         /// </summary>
-        public List<byte> Certificate { get; init; }
+        public List<byte> Certificate { get; init; } = Certificate;
     }
 
     public sealed class ReplaceCertificateResult : DeviceResult
     {
-        public ReplaceCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       ReplaceCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ReplaceCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ReplaceCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Digest = null;
         }
 
-        public ReplaceCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       List<byte> Digest)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Digest = Digest;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ReplaceCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       ReplaceCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Digest = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ReplaceCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       List<byte> Digest)
+        public ReplaceCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> Digest)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1315,7 +1030,10 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> Digest { get; init; }
     }
 
-    public sealed class ImportCertificateRequest
+    public sealed class ImportCertificateRequest(
+        ImportCertificateRequest.LoadOptionEnum LoadOption,
+        ImportCertificateRequest.SignerEnum Signer,
+        List<byte> Certificate)
     {
         public enum LoadOptionEnum
         {
@@ -1330,29 +1048,20 @@ namespace XFS4IoTFramework.KeyManagement
             HL
         }
 
-        public ImportCertificateRequest(LoadOptionEnum LoadOption,
-                                        SignerEnum Signer,
-                                        List<byte> Certificate)
-        {
-            this.LoadOption = LoadOption;
-            this.Signer = Signer;
-            this.Certificate = Certificate;
-        }
-
         /// <summary>
         /// Specifies the method to use to load the certificate
         /// </summary>
-        public LoadOptionEnum LoadOption { get; init; }
+        public LoadOptionEnum LoadOption { get; init; } = LoadOption;
 
         /// <summary>
         /// Specifies the signer of the certificate to be loaded
         /// </summary>
-        public SignerEnum Signer { get; init; }
+        public SignerEnum Signer { get; init; } = Signer;
 
         /// <summary>
         /// The certificate that is to be loaded represented in DER encoded ASN.1 notation in DER encoded ASN.1 notation.
         /// </summary>
-        public List<byte> Certificate { get; init; }
+        public List<byte> Certificate { get; init; } = Certificate;
     }
 
     public sealed class ImportCertificateResult : DeviceResult
@@ -1364,42 +1073,20 @@ namespace XFS4IoTFramework.KeyManagement
             SHA256,
         }
 
-        public ImportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       LoadCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ImportCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            LoadCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.RSAData = null;
         }
 
-        public ImportCertificateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       RSAKeyCheckModeEnum KeyCheckMode,
-                                       List<byte> RSAData)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.RSAKeyCheckMode = RSAKeyCheckMode;
-            this.RSAData = RSAData;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       LoadCertificateCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.RSAData = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportCertificateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       RSAKeyCheckModeEnum KeyCheckMode,
-                                       List<byte> RSAData)
+        public ImportCertificateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            RSAKeyCheckModeEnum KeyCheckMode,
+            List<byte> RSAData)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1432,39 +1119,19 @@ namespace XFS4IoTFramework.KeyManagement
             SHA256,
         }
 
-        public StartKeyExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public StartKeyExchangeResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.RandomItem = null;
         }
 
-        public StartKeyExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                      List<byte> RandomItem)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.RandomItem = RandomItem;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public StartKeyExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription = null,
-                                      StartKeyExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.RandomItem = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public StartKeyExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      List<byte> RandomItem)
+        public StartKeyExchangeResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> RandomItem)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -1489,17 +1156,13 @@ namespace XFS4IoTFramework.KeyManagement
             Initialization,
         }
 
-        public sealed class DeleteKeyInput
+        public sealed class DeleteKeyInput(string Key)
         {
-            public DeleteKeyInput(string Key)
-            {
-                this.Key = Key;
-            }
 
             /// <summary>
             /// Key name to delete
             /// </summary>
-            public string Key { get; init; }
+            public string Key { get; init; } = Key;
         }
 
         public sealed class InitializationInput
@@ -1508,16 +1171,18 @@ namespace XFS4IoTFramework.KeyManagement
             { }
         }
 
-        public StartAuthenticateRequest(CommandEnum Command,
-                                        DeleteKeyInput DeleteKeyCommandParam)
+        public StartAuthenticateRequest(
+            CommandEnum Command,
+            DeleteKeyInput DeleteKeyCommandParam)
         {
             Contracts.Assert(Command == CommandEnum.Deletekey, $"Command enum must be delete key. {Command}");
             this.Command = Command;
             this.DeleteKeyCommandParam = DeleteKeyCommandParam;
             this.InitializationCommandParam = null;
         }
-        public StartAuthenticateRequest(CommandEnum Command,
-                                        InitializationInput InitializationCommandParam)
+        public StartAuthenticateRequest(
+            CommandEnum Command,
+            InitializationInput InitializationCommandParam)
         {
             Contracts.Assert(Command == CommandEnum.Initialization, $"Command enum must be initialization. {Command}");
             this.Command = Command;
@@ -1540,39 +1205,19 @@ namespace XFS4IoTFramework.KeyManagement
 
     public sealed class StartAuthenticateResult : DeviceResult
     {
-        public StartAuthenticateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null)
-            : base(CompletionCode, null)
+        public StartAuthenticateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null)
+            : base(CompletionCode, ErrorDescription)
         {
             this.DataToSign = null;
             this.SigningMethod =  AuthenticationData.SigningMethodEnum.None;
         }
 
-        public StartAuthenticateResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       List<byte> DataToSign,
-                                       AuthenticationData.SigningMethodEnum SigningMethod)
-            : base(CompletionCode, null)
-        {
-            this.DataToSign = DataToSign;
-            this.SigningMethod = SigningMethod;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null)
-            : base(CompletionCode, null)
-        {
-            this.DataToSign = null;
-            this.SigningMethod = AuthenticationData.SigningMethodEnum.None;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public StartAuthenticateResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       List<byte> DataToSign,
-                                       AuthenticationData.SigningMethodEnum SigningMethod)
+        public StartAuthenticateResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> DataToSign,
+            AuthenticationData.SigningMethodEnum SigningMethod)
             : base(CompletionCode, null)
         {
             this.DataToSign = DataToSign;
@@ -1584,7 +1229,11 @@ namespace XFS4IoTFramework.KeyManagement
         public AuthenticationData.SigningMethodEnum SigningMethod { get; init; }
     }
 
-    public sealed class ImportKeyTokenRequest
+    public sealed class ImportKeyTokenRequest(
+        string KeyName,
+        string KeyUsage,
+        List<byte> KeyToken,
+        ImportKeyTokenRequest.LoadOptionEnum LoadOption)
     {
         public enum LoadOptionEnum
         {
@@ -1594,26 +1243,15 @@ namespace XFS4IoTFramework.KeyManagement
             Random_CRL
         }
 
-        public ImportKeyTokenRequest(string KeyName,
-                                     string KeyUsage,
-                                     List<byte> KeyToken,
-                                     LoadOptionEnum LoadOption)
-        {
-            this.KeyName = KeyName;
-            this.KeyUsage = KeyUsage;
-            this.KeyToken = KeyToken;
-            this.LoadOption = LoadOption;
-        }
-
         /// <summary>
         /// Name of the key to load
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// If NoRandom_CRL or Random_CRL, KeyUsage is an empty string as the key usage is embedded in the KeyToken.
         /// </summary>
-        public string KeyUsage { get; init; }
+        public string KeyUsage { get; init; } = KeyUsage;
 
         /// <summary>
         /// The binary encoded PKCS #7 represented in DER encoded ASN.1 notation. This allows the Host to
@@ -1621,7 +1259,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// content type with the SignerInfo encryptedDigest field containing the HOST’s signature.The inner content is
         /// an Enveloped-data content type.The device identifier is included as the issuerAndSerialNumber within the RecipientInfo.
         /// </summary>
-        public List<byte> KeyToken { get; init; }
+        public List<byte> KeyToken { get; init; } = KeyToken;
 
         /// <summary>
         ///* ```NoRandom``` Import a key without generating a using a random number.
@@ -1633,7 +1271,7 @@ namespace XFS4IoTFramework.KeyManagement
         ///                   is generated and used.This option is used for the Two - Pass Protocol described in X9 TR34-2019.
         ///                   If Random* or Random_CRL, the random number is included as an authenticated attribute within SignerInfo SignedAttributes.
         /// </summary>
-        public LoadOptionEnum LoadOption { get; init; }
+        public LoadOptionEnum LoadOption { get; init; } = LoadOption;
     }
 
     public sealed class ImportKeyTokenResult : DeviceResult
@@ -1652,12 +1290,13 @@ namespace XFS4IoTFramework.KeyManagement
             Zero,
         }
 
-        public ImportKeyTokenResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    int KeyLength,
-                                    AuthenticationAlgorithmEnum AuthenticationAlgorithm,
-                                    List<byte> AuthenticationData,
-                                    KeyCheckValueEnum KCVMode,
-                                    List<byte> KCV)
+        public ImportKeyTokenResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            int KeyLength,
+            AuthenticationAlgorithmEnum AuthenticationAlgorithm,
+            List<byte> AuthenticationData,
+            KeyCheckValueEnum KCVMode,
+            List<byte> KCV)
             : base(CompletionCode, null)
         {
             ErrorCode = null;
@@ -1668,43 +1307,10 @@ namespace XFS4IoTFramework.KeyManagement
             this.KCV = KCV;
         }
 
-        public ImportKeyTokenResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            AuthenticationAlgorithm = AuthenticationAlgorithmEnum.None;
-            AuthenticationData = null;
-            KCVMode = KeyCheckValueEnum.None;
-            KCV = null;
-            KeyLength = 0;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    int KeyLength,
-                                    AuthenticationAlgorithmEnum AuthenticationAlgorithm,
-                                    List<byte> AuthenticationData,
-                                    KeyCheckValueEnum KCVMode,
-                                    List<byte> KCV)
-            : base(CompletionCode, null)
-        {
-            ErrorCode = null;
-            this.KeyLength = KeyLength;
-            this.AuthenticationAlgorithm = AuthenticationAlgorithm;
-            this.AuthenticationData = AuthenticationData;
-            this.KCVMode = KCVMode;
-            this.KCV = KCV;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportKeyTokenResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ImportKeyTokenResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ImportKeyTokenCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -1750,7 +1356,12 @@ namespace XFS4IoTFramework.KeyManagement
         public List<byte> KCV { get; init; }
     }
 
-    public sealed class ImportEMVPublicKeyRequest
+    public sealed class ImportEMVPublicKeyRequest(
+        string KeyName,
+        string KeyUsage,
+        ImportEMVPublicKeyRequest.ImportSchemeEnum ImportScheme,
+        List<byte> ImportData,
+        string VerificationKeyName)
     {
         public enum ImportSchemeEnum
         {
@@ -1763,23 +1374,10 @@ namespace XFS4IoTFramework.KeyManagement
             PKCSV1_5_CA
         }
 
-        public ImportEMVPublicKeyRequest(string KeyName,
-                                         string KeyUsage,
-                                         ImportSchemeEnum ImportScheme,
-                                         List<byte> ImportData,
-                                         string VerificationKeyName)
-        {
-            this.KeyName = KeyName;
-            this.KeyUsage = KeyUsage;
-            this.ImportScheme = ImportScheme;
-            this.ImportData = ImportData;
-            this.VerificationKeyName = VerificationKeyName;
-        }
-
         /// <summary>
         /// Name of the key to load
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Specify the type of key usage for which the KeyName property can be used.
@@ -1793,7 +1391,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// * ```E7``` - EMV / Chip Asymmetric Key Pair for EMV/Smart Card based PIN/PIN Block Encryption.
         /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
         /// </summary>
-        public string KeyUsage { get; init; }
+        public string KeyUsage { get; init; } = KeyUsage;
 
         /// <summary>
         /// The binary encoded PKCS #7 represented in DER encoded ASN.1 notation. This allows the Host to
@@ -1817,7 +1415,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// * ```PKCSV1_5_CA``` A CA public key is imported and verified using a signature generated with a private
         ///                     key for which the public key is already loaded.
         /// </summary>
-        public ImportSchemeEnum ImportScheme { get; init; }
+        public ImportSchemeEnum ImportScheme { get; init; } = ImportScheme;
 
         /// <summary>
         /// Contains all the necessary data to complete the import using the scheme specified within ImportScheme.
@@ -1874,50 +1472,30 @@ namespace XFS4IoTFramework.KeyManagement
         /// 8-byte random number is not used for validation; it is used to ensure the signature is unique. The
         /// Signature consists of all the bytes in the ImportData buffer after table 23 and the 8-byte random number.
         /// </summary>
-        public List<byte> ImportData { get; init; }
+        public List<byte> ImportData { get; init; } = ImportData;
 
         /// <summary>
         /// The name of the previously loaded key used to verify the signature.
         /// This property is null or empty string if verification is not required.
         /// </summary>
-        public string VerificationKeyName { get; init; }
+        public string VerificationKeyName { get; init; } = VerificationKeyName;
     }
 
     public sealed class ImportEMVPublicKeyResult : DeviceResult
     {
-        public ImportEMVPublicKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ExpiryDate)
+        public ImportEMVPublicKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ExpiryDate)
             : base(CompletionCode, null)
         {
             ErrorCode = null;
             this.ExpiryDate = ExpiryDate;
         }
 
-        public ImportEMVPublicKeyResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-           : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            ExpiryDate = null;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ExpiryDate)
-            : base(CompletionCode, null)
-        {
-            ErrorCode = null;
-            this.ExpiryDate = ExpiryDate;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ImportEMVPublicKeyResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ImportEMVPublicKeyResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ImportEmvPublicKeyCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
            : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;

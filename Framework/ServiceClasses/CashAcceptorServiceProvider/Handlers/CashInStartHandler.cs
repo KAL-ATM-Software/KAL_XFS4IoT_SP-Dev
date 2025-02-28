@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -112,14 +112,16 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.CashInStart()");
 
-            var result = await Device.CashInStart(new CashInStartRequest(
-                                                        cashInStart.Payload.TellerID,
-                                                        cashInStart.Payload.UseRecycleUnits ?? false,
-                                                        outputPosition,
-                                                        inputPosition,
-                                                        cashInStart.Payload.TotalItemsLimit ?? 0,
-                                                        cashInStart.Payload.AmountLimit?.Where(a => (a.Value is not null && a.Value != 0) && (!string.IsNullOrEmpty(a.Currency) && Regex.IsMatch(a.Currency, "^[A-Z]{3}$"))).ToDictionary(a => a.Currency, a => (double)a.Value)
-                                                       ), cancel);
+            var result = await Device.CashInStart(
+                new CashInStartRequest(
+                    cashInStart.Payload.TellerID,
+                    cashInStart.Payload.UseRecycleUnits ?? false,
+                    outputPosition,
+                    inputPosition,
+                    cashInStart.Payload.TotalItemsLimit ?? 0,
+                    cashInStart.Payload.AmountLimit?.Where(a => (a.Value is not null && a.Value != 0) && (!string.IsNullOrEmpty(a.Currency) && Regex.IsMatch(a.Currency, "^[A-Z]{3}$"))).ToDictionary(a => a.Currency, a => (double)a.Value)
+                    ), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.CashInStart() -> {result.CompletionCode}, {result.ErrorCode}");
 

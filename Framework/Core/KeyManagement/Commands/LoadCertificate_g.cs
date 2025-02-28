@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = LoadCertificate
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "KeyManagement.LoadCertificate")]
     public sealed class LoadCertificateCommand : Command<LoadCertificateCommand.PayloadData>
     {
@@ -46,7 +46,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Specifies the method to use to load the certificate. The following values are possible:
             /// * ```newHost``` - Load a new Host certificate, where one has not already been loaded.
             /// * ```replaceHost``` - Replace (or rebind) the device to a new Host certificate, where the new Host
-            /// certificate is signed by *signer*.
+            ///   certificate is signed by *signer*.
             /// </summary>
             [DataMember(Name = "loadOption")]
             public LoadOptionEnum? LoadOption { get; init; }
@@ -61,7 +61,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// <summary>
             /// Specifies the signer of the certificate to be loaded. The following values are possible:
             /// * ```certHost``` - The certificate to be loaded is signed by the current Host. Cannot be combined with
-            /// *newHost*.
+            ///   *newHost*.
             /// * ```ca``` - The certificate to be loaded is signed by the Certificate Authority (CA).
             /// * ```hl``` - The certificate to be loaded is signed by the Higher Level (HL) Authority.
             /// </summary>
@@ -82,10 +82,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// 
             /// The optional CRL field may or may not be included in the PKCS#7 (See
             /// [[Ref. keymanagement-1](#ref-keymanagement-1)]) signed-data structure.
-            /// <example>Y2VydGlmaWNhdGUgaW4g ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "certificateData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> CertificateData { get; init; }
 
         }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,6 +53,7 @@ namespace XFS4IoT.Camera
 
             /// <summary>
             /// Specifies the state of the recording media of the camera that monitors the whole self-service area.
+            /// See media for valid values.
             /// </summary>
             [DataMember(Name = "room")]
             public MediaStateEnum? Room { get; init; }
@@ -60,6 +61,7 @@ namespace XFS4IoT.Camera
             /// <summary>
             /// Specifies the state of the recording media of the camera that monitors the person standing in front of 
             /// the self-service machine.
+            /// See media for valid values.
             /// </summary>
             [DataMember(Name = "person")]
             public MediaStateEnum? Person { get; init; }
@@ -67,6 +69,7 @@ namespace XFS4IoT.Camera
             /// <summary>
             /// Specifies the state of the recording media of the camera that monitors the exit slot(s) of the 
             /// self-service machine.
+            /// See media for valid values.
             /// </summary>
             [DataMember(Name = "exitSlot")]
             public MediaStateEnum? ExitSlot { get; init; }
@@ -107,20 +110,21 @@ namespace XFS4IoT.Camera
             }
 
             /// <summary>
-            /// Specifies the state of the camera that monitors the whole self-service area.
+            /// Specifies the state of the camera that monitors the whole self-service area. See cameras for valid values.
             /// </summary>
             [DataMember(Name = "room")]
             public CamerasStateEnum? Room { get; init; }
 
             /// <summary>
             /// Specifies the state of the camera that monitors the person standing in front of the 
-            /// self-service machine.
+            /// self-service machine. See cameras for valid values.
             /// </summary>
             [DataMember(Name = "person")]
             public CamerasStateEnum? Person { get; init; }
 
             /// <summary>
-            /// Specifies the state of the camera that monitors the exit slot(s) of the self-service machine.
+            /// Specifies the state of the camera that monitors the exit slot(s) of the self-service machine. See
+            /// cameras for valid values.
             /// </summary>
             [DataMember(Name = "exitSlot")]
             public CamerasStateEnum? ExitSlot { get; init; }

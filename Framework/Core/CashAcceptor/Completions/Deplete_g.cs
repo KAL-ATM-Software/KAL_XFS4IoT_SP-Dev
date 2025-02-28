@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,12 +48,12 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will
-            /// be sent with the details. If appropriate a [CashAcceptor.IncompleteDepleteEvent](#cashacceptor.incompletedepleteevent)
-            /// will also be sent.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will
+            ///   be sent with the details. If appropriate a [CashAcceptor.IncompleteDepleteEvent](#cashacceptor.incompletedepleteevent)
+            ///   will also be sent.
             /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation.
-            /// The [CashAcceptor.GetDepleteSource](#cashacceptor.getdepletesource) command can be used to determine which
-            /// source or target is valid.
+            ///   The [CashAcceptor.GetDepleteSource](#cashacceptor.getdepletesource) command can be used to determine which
+            ///   source or target is valid.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// </summary>
@@ -115,15 +115,15 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Breakdown of which notes moved where. In the case where one item type has several releases and these are moved,
+            /// Breakdown of which notes were moved where. In the case where one item type has several releases and these are moved,
             /// or where items are moved from a multi denomination storage unit to a multi denomination storage unit, each source
             /// can move several note types.
             /// 
             /// For example:
             /// * If one single source was specified with the input structure, and this source moved two different
-            /// note types, then this will have two elements.
+            ///   note types, then this will have two elements.
             /// * If two sources were specified and the first source moved two different note types and the second source
-            /// moved three different note types, then this will have five elements.
+            ///   moved three different note types, then this will have five elements.
             /// </summary>
             [DataMember(Name = "depleteSourceResults")]
             public List<DepleteSourceResultsClass> DepleteSourceResults { get; init; }

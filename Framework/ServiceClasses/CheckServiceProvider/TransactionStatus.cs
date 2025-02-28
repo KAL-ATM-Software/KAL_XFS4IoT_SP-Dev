@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -59,39 +59,41 @@ namespace XFS4IoTFramework.Check
                  Images: Images)
         { }
 
-        public MediaStatus(string CodelineData,
-                           MagneticReadIndicatorEnum MagneticReadIndicator,
-                           Dictionary<ImageSourceEnum, ImageDataInfo> Images,
-                           CodelineOrientationEnum CodelineOrientation,
-                           MediaOrientationEnum MediaOrientation,
-                           MediaSizeInfo MediaSize,
-                           MediaValidityEnum MediaValidity) :
-            base(MagneticReadIndicator,
-                 CodelineData,
-                 Images,
-                 CodelineOrientation,
-                 MediaOrientation,
-                 MediaSize,
-                 MediaValidity)
+        public MediaStatus(
+            string CodelineData,
+            MagneticReadIndicatorEnum MagneticReadIndicator,
+            Dictionary<ImageSourceEnum, ImageDataInfo> Images,
+            CodelineOrientationEnum CodelineOrientation,
+            MediaOrientationEnum MediaOrientation,
+            MediaSizeInfo MediaSize,
+            MediaValidityEnum MediaValidity) 
+            : base(MagneticReadIndicator,
+                   CodelineData,
+                   Images,
+                   CodelineOrientation,
+                   MediaOrientation,
+                   MediaSize,
+                   MediaValidity)
         { }
 
-        public MediaStatus(MediaLocationEnum MediaLocation,
-                           string UnitLocation,
-                           string CodelineData,
-                           MagneticReadIndicatorEnum MagneticReadIndicator,
-                           Dictionary<ImageSourceEnum, ImageDataInfo> Images,
-                           CodelineOrientationEnum CodelineOrientation,
-                           MediaOrientationEnum MediaOrientation,
-                           MediaSizeInfo MediaSize,
-                           MediaValidityEnum MediaValidity,
-                           CustomerAccessEnum CustomerAccess) :
-            base(MagneticReadIndicator,
-                 CodelineData,
-                 Images,
-                 CodelineOrientation,
-                 MediaOrientation,
-                 MediaSize,
-                 MediaValidity)
+        public MediaStatus(
+            MediaLocationEnum MediaLocation,
+            string UnitLocation,
+            string CodelineData,
+            MagneticReadIndicatorEnum MagneticReadIndicator,
+            Dictionary<ImageSourceEnum, ImageDataInfo> Images,
+            CodelineOrientationEnum CodelineOrientation,
+            MediaOrientationEnum MediaOrientation,
+            MediaSizeInfo MediaSize,
+            MediaValidityEnum MediaValidity,
+            CustomerAccessEnum CustomerAccess) 
+            : base(MagneticReadIndicator,
+                   CodelineData,
+                   Images,
+                   CodelineOrientation,
+                   MediaOrientation,
+                   MediaSize,
+                   MediaValidity)
         {
             this.MediaLocation = MediaLocation;
             this.UnitLocation = UnitLocation;

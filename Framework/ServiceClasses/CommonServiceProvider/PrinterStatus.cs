@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -23,7 +23,6 @@ namespace XFS4IoTFramework.Common
         PrinterStatusClass.TonerEnum Toner,
         PrinterStatusClass.InkEnum Ink,
         PrinterStatusClass.LampEnum Lamp,
-        List<PrinterStatusClass.RetractBinsClass> RetractBins,
         int MediaOnStacker,
         PrinterStatusClass.BlackMarkModeEnum BlackMarkMode,
         Dictionary<string, PrinterStatusClass.SupplyStatusClass> CustomPaper = null) : StatusBase
@@ -103,6 +102,7 @@ namespace XFS4IoTFramework.Common
             Inop
         }
 
+        [Obsolete("This class is obsolete and not used by the framework since package version 3.0. Use Storage Interface to report retract bin.")]
         public sealed class RetractBinsClass : StatusBase
         {
             public RetractBinsClass()
@@ -133,8 +133,8 @@ namespace XFS4IoTFramework.Common
             /// * ```High``` - The retract bin of the printer is nearly full.
             /// * ```Missing``` - The retract bin is missing.
             /// </summary>
-            public StateEnum State 
-            { 
+            public StateEnum State
+            {
                 get { return state; }
                 set
                 {
@@ -150,9 +150,9 @@ namespace XFS4IoTFramework.Common
             /// The number of media retracted to this bin. This value is persistent; it may be reset to zero by the
             /// Printer.ResetCount command.
             /// </summary>
-            public int Count 
-            { 
-                get { return count; } 
+            public int Count
+            {
+                get { return count; }
                 set
                 {
                     if (count != value)
@@ -331,11 +331,6 @@ namespace XFS4IoTFramework.Common
             }
         }
         private LampEnum lamp = Lamp;
-
-        /// <summary>
-        /// An array of bin state objects. If no retain bins are supported, the array will be empty.
-        /// </summary>
-        public List<RetractBinsClass> RetractBins { get; init; } = RetractBins;
 
         /// <summary>
         /// The number of media on stacker; applicable only to printers with stacking capability.

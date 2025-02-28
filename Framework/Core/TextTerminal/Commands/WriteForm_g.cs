@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -50,8 +50,8 @@ namespace XFS4IoT.TextTerminal.Commands
             public bool? ClearScreen { get; init; }
 
             /// <summary>
-            /// Details of the field(s) to write. The property is the field name and value is field value containing
-            /// all the printable characters (numeric and alphanumeric) to display on the text terminal unit key pad
+            /// Details of the field(s) to write. The property is the field name and the value is the field value containing
+            /// all the printable characters (numeric and alphanumeric) to display on the Text Terminal Unit keypad
             /// for this field. An example shows two fields to be written.
             /// </summary>
             [DataMember(Name = "fields")]

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -85,7 +85,7 @@ namespace XFS4IoT.Keyboard
             public bool? ActiveAvailable { get; init; }
 
             /// <summary>
-            /// Automatic beeping for active keys can be controlled turned on and off by the application.
+            /// Automatic beeping for active keys can be controlled (i.e. turned on and off) by the application.
             /// If this flag is not set then automatic beeping for active keys cannot be controlled by an application.
             /// </summary>
             [DataMember(Name = "activeSelectable")]
@@ -99,7 +99,7 @@ namespace XFS4IoT.Keyboard
             public bool? InactiveAvailable { get; init; }
 
             /// <summary>
-            /// Automatic beeping for inactive keys can be controlled turned on and off by the application.
+            /// Automatic beeping for inactive keys can be controlled (i.e. turned on and off) by the application.
             /// If this flag is not set then automatic beeping for inactive keys cannot be controlled by an application.
             /// </summary>
             [DataMember(Name = "inactiveSelectable")]
@@ -216,9 +216,100 @@ namespace XFS4IoT.Keyboard
 
 
     [DataContract]
+    public sealed class KeyClass
+    {
+        public KeyClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, string Key = null, string ShiftKey = null)
+        {
+            this.XPos = XPos;
+            this.YPos = YPos;
+            this.XSize = XSize;
+            this.YSize = YSize;
+            this.Key = Key;
+            this.ShiftKey = ShiftKey;
+        }
+
+        /// <summary>
+        /// Specifies the position of the left edge of the key relative to the left side of the frame.
+        /// </summary>
+        [DataMember(Name = "xPos")]
+        [DataTypes(Minimum = 0)]
+        public int? XPos { get; init; }
+
+        /// <summary>
+        /// Specifies the position of the top edge of the key relative to the top edge of the frame.
+        /// </summary>
+        [DataMember(Name = "yPos")]
+        [DataTypes(Minimum = 0)]
+        public int? YPos { get; init; }
+
+        /// <summary>
+        /// Specifies the Function Key (FK) width.
+        /// </summary>
+        [DataMember(Name = "xSize")]
+        [DataTypes(Minimum = 1)]
+        public int? XSize { get; init; }
+
+        /// <summary>
+        /// Specifies the Function Key (FK) height.
+        /// </summary>
+        [DataMember(Name = "ySize")]
+        [DataTypes(Minimum = 1)]
+        public int? YSize { get; init; }
+
+        /// <summary>
+        /// Specifies the Function Key associated with the area in non-shifted mode.
+        /// 
+        /// The following standard values are defined:
+        /// 
+        /// * ```zero``` - Numeric digit 0
+        /// * ```one``` - Numeric digit 1
+        /// * ```two``` - Numeric digit 2
+        /// * ```three``` - Numeric digit 3
+        /// * ```four``` - Numeric digit 4
+        /// * ```five``` - Numeric digit 5
+        /// * ```six``` - Numeric digit 6
+        /// * ```seven``` - Numeric digit 7
+        /// * ```eight``` - Numeric digit 8
+        /// * ```nine``` - Numeric digit 9
+        /// * ```[a-f]``` - Hex digit A to F for secure key entry
+        /// * ```enter``` - Enter
+        /// * ```cancel``` - Cancel
+        /// * ```clear``` - Clear
+        /// * ```backspace``` - Backspace
+        /// * ```help``` - Help
+        /// * ```decPoint``` - Decimal point
+        /// * ```shift``` - Shift key used during hex entry
+        /// * ```doubleZero``` - 00
+        /// * ```tripleZero``` - 000
+        /// * ```fdk[01-32]``` - 32 FDK keys
+        /// 
+        /// Additional non-standard values are also allowed:
+        /// 
+        /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
+        /// <example>shift</example>
+        /// </summary>
+        [DataMember(Name = "key")]
+        [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
+        public string Key { get; init; }
+
+        /// <summary>
+        /// Specifies the Function Key associated with the key in shifted mode. 
+        /// This property is null if not applicable.
+        /// 
+        /// See *key* for the valid property values.
+        /// <example>a</example>
+        /// </summary>
+        [DataMember(Name = "shiftKey")]
+        [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
+        public string ShiftKey { get; init; }
+
+    }
+
+
+    [DataContract]
     public sealed class LayoutFrameClass
     {
-        public LayoutFrameClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, FloatClass Float = null, List<KeysClass> Keys = null)
+        public LayoutFrameClass(int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null, FloatClass Float = null, List<KeyClass> Keys = null)
         {
             this.XPos = XPos;
             this.YPos = YPos;
@@ -313,100 +404,14 @@ namespace XFS4IoT.Keyboard
         [DataMember(Name = "float")]
         public FloatClass Float { get; init; }
 
-        [DataContract]
-        public sealed class KeysClass
-        {
-            public KeysClass(string Key = null, string ShiftKey = null, int? XPos = null, int? YPos = null, int? XSize = null, int? YSize = null)
-            {
-                this.Key = Key;
-                this.ShiftKey = ShiftKey;
-                this.XPos = XPos;
-                this.YPos = YPos;
-                this.XSize = XSize;
-                this.YSize = YSize;
-            }
-
-            /// <summary>
-            /// Specifies the Function Key associated with the physical area in non-shifted mode.
-            /// 
-            /// The following standard values are defined:
-            /// 
-            /// * ```zero``` - Numeric digit 0
-            /// * ```one``` - Numeric digit 1
-            /// * ```two``` - Numeric digit 2
-            /// * ```three``` - Numeric digit 3
-            /// * ```four``` - Numeric digit 4
-            /// * ```five``` - Numeric digit 5
-            /// * ```six``` - Numeric digit 6
-            /// * ```seven``` - Numeric digit 7
-            /// * ```eight``` - Numeric digit 8
-            /// * ```nine``` - Numeric digit 9
-            /// * ```[a-f]``` - Hex digit A to F for secure key entry
-            /// * ```enter``` - Enter
-            /// * ```cancel``` - Cancel
-            /// * ```clear``` - Clear
-            /// * ```backspace``` - Backspace
-            /// * ```help``` - Help
-            /// * ```decPoint``` - Decimal point
-            /// * ```shift``` - Shift key used during hex entry
-            /// * ```doubleZero``` - 00
-            /// * ```tripleZero``` - 000
-            /// * ```fdk[01-32]``` - 32 FDK keys
-            /// 
-            /// Additional non-standard values are also allowed:
-            /// 
-            /// * ```oem[a-zA-Z0-9]*``` - A non-standard value
-            /// <example>one</example>
-            /// </summary>
-            [DataMember(Name = "key")]
-            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
-            public string Key { get; init; }
-
-            /// <summary>
-            /// Specifies the Function Key associated with the physical key in shifted mode.
-            /// 
-            /// See *key* for the valid property values.
-            /// <example>a</example>
-            /// </summary>
-            [DataMember(Name = "shiftKey")]
-            [DataTypes(Pattern = @"^(zero|one|two|three|four|five|six|seven|eight|nine|[a-f]|enter|cancel|clear|backspace|help|decPoint|shift|doubleZero|tripleZero|fdk(0[1-9]|[12][0-9]|3[0-2])|oem[a-zA-Z0-9]*)$")]
-            public string ShiftKey { get; init; }
-
-            /// <summary>
-            /// Specifies the position of the left edge of the key relative to the left side of the frame.
-            /// </summary>
-            [DataMember(Name = "xPos")]
-            [DataTypes(Minimum = 0, Maximum = 999)]
-            public int? XPos { get; init; }
-
-            /// <summary>
-            /// Specifies the position of the top edge of the key relative to the top edge of the frame.
-            /// </summary>
-            [DataMember(Name = "yPos")]
-            [DataTypes(Minimum = 0, Maximum = 999)]
-            public int? YPos { get; init; }
-
-            /// <summary>
-            /// Specifies the Function Key (FK) width.
-            /// </summary>
-            [DataMember(Name = "xSize")]
-            [DataTypes(Minimum = 1, Maximum = 1000)]
-            public int? XSize { get; init; }
-
-            /// <summary>
-            /// Specifies the Function Key (FK) height.
-            /// </summary>
-            [DataMember(Name = "ySize")]
-            [DataTypes(Minimum = 1, Maximum = 1000)]
-            public int? YSize { get; init; }
-
-        }
-
         /// <summary>
-        /// Defining details of the keys in the keyboard.
+        /// Specifies the keys in the keyboard.
+        /// 
+        /// The [layout](#keyboard.generalinformation.layout) section defines valid position and size values for
+        /// physical and touch keys.
         /// </summary>
         [DataMember(Name = "keys")]
-        public List<KeysClass> Keys { get; init; }
+        public List<KeyClass> Keys { get; init; }
 
     }
 

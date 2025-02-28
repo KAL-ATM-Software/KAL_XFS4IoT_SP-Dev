@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -38,7 +38,7 @@ namespace XFS4IoT.Printer.Events
             }
 
             /// <summary>
-            /// Specifies the index (starting from 1) of the presented wad, where a Wad is a bunch of one or more pages
+            /// Specifies the index (starting from 1) of the presented wad, where a wad is a bunch of one or more pages
             /// presented as a bunch.
             /// </summary>
             [DataMember(Name = "wadIndex")]

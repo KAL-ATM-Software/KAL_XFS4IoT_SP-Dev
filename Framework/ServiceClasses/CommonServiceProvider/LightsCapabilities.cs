@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XFS4IoTFramework.Common
 {
@@ -19,7 +21,8 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class LightsCapabilitiesClass(
         Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsCapabilitiesClass.Light> Lights,
-        Dictionary<string, LightsCapabilitiesClass.Light> CustomLights = null)
+        Dictionary<string, LightsCapabilitiesClass.Light> CustomLights = null,
+        bool IndividualFlashRates = false)
     {
         public enum DeviceEnum
         {
@@ -95,26 +98,22 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Light capabilities
         /// </summary>
-        public sealed class Light
+        public sealed class Light(
+            LightsCapabilitiesClass.FlashRateEnum FlashRate,
+            LightsCapabilitiesClass.ColorEnum Color,
+            LightsCapabilitiesClass.DirectionEnum Direction,
+            LightsCapabilitiesClass.LightPostionEnum Position,
+            string customPosition = null)
         {
-            public Light(FlashRateEnum FlashRate,
-                         ColorEnum Color,
-                         DirectionEnum Direction,
-                         LightPostionEnum Position)
-            {
-                this.FlashRate = FlashRate;
-                this.Color = Color;
-                this.Direction = Direction;
-                this.Position = Position;
-            }
+            public FlashRateEnum FlashRate { get; init; } = FlashRate;
 
-            public FlashRateEnum FlashRate { get; init; }
+            public ColorEnum Color { get; init; } = Color;
 
-            public ColorEnum Color { get; init; }
+            public DirectionEnum Direction { get; init; } = Direction;
 
-            public DirectionEnum Direction { get; init; }
+            public LightPostionEnum Position { get; init; } = Position;
 
-            public LightPostionEnum Position { get; init; }
+            public string CustomPosition { get; init; } = customPosition;
         }
 
         /// <summary>
@@ -126,5 +125,12 @@ namespace XFS4IoTFramework.Common
         /// Vendor specific type of lights
         /// </summary>
         public Dictionary<string, Light> CustomLights { get; init; } = CustomLights;
+
+        /// <summary>
+        /// Indicates flash rates of the lights are individually controllable.
+        /// If true, excluding off, indicates the flash rate of each light may be different.
+        /// If false, excluding off, indicates all lights flash at the same rate.
+        /// </summary>
+        bool IndividualFlashRates { get; init; } = IndividualFlashRates;
     }
 }

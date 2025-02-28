@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -44,7 +44,7 @@ namespace XFS4IoT.Biometric.Completions
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```invalidIdentifier``` -\tThe command failed because data was imported but *identifier* was not found.
+            /// * ```invalidIdentifier``` - The command failed because data was imported but *identifier* was not found.
             /// * ```modeNotSupported``` - The type of match specified in *compareMode* is not supported.
             /// * ```noImportedData``` - The command failed because no data was imported previously using the
             ///                           [Biometric.ImportData](#biometric.import).

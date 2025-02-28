@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Printer.PrintForm")]
     public sealed class PrintFormCompletion : Completion<PrintFormCompletion.PayloadData>
     {
@@ -41,8 +41,6 @@ namespace XFS4IoT.Printer.Completions
                 FieldSpecFailure,
                 FieldError,
                 MediaNotFound,
-                MediaInvalid,
-                FormInvalid,
                 MediaSkewed,
                 RetractBinFull,
                 StackerFull,
@@ -77,8 +75,6 @@ namespace XFS4IoT.Printer.Completions
             /// * ```fieldError``` - An error occurred while processing a field, causing termination of the print
             ///   request. A [Printer.FieldErrorEvent](#printer.fielderrorevent) event is posted with the details.
             /// * ```mediaNotFound``` - The specified media definition cannot be found.
-            /// * ```mediaInvalid``` - The specified media definition is invalid.
-            /// * ```formInvalid``` - The specified form definition is invalid.
             /// * ```mediaSkewed``` - The media skew exceeded the limit in the form definition.
             /// * ```retractBinFull``` - The retract bin is full. No more media can be retracted. The current media is
             ///   still in the device.
@@ -87,7 +83,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaTurnFail``` - The device was not able to turn the inserted media.
             /// * ```shutterFail``` - Open or close of the shutter failed due to manipulation or hardware error.
             /// * ```mediaJammed``` - The media is jammed; operator intervention is required.
-            /// * ```charSetData``` - Character set(s) supported by the Service is inconsistent with use of
+            /// * ```charSetData``` - Character set(s) supported by the service is inconsistent with use of
             ///   *fields*.
             /// * ```paperJammed``` - The paper is jammed.
             /// * ```paperOut``` - The paper supply is empty.

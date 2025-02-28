@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -51,13 +51,13 @@ namespace XFS4IoT.Keyboard.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
             /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
-            ///                           Service Provider.
+            ///   Service Provider.
             /// * ```noActivekeys``` - There are no active function keys specified, or there is no defined layout
-            ///                         definition.
+            ///   definition.
             /// * ```noTerminatekeys``` - There are no terminate keys specified and *maxLen* is not set to zero and
-            ///                           *autoEnd* is false.
+            ///   *autoEnd* is false.
             /// * ```minimumLength``` - The minimum PIN length property is invalid or greater than the maximum PIN
-            ///                         length property when the maximum PIN length is not zero.
+            ///   length property when the maximum PIN length is not zero.
             /// * ```tooManyFrames``` - The device requires that only one frame is used for this command.
             /// * ```partialFrame``` - The single Touch Frame does not cover the entire monitor.
             /// * ```entryTimeout``` - The timeout for entering data has been reached. This is a timeout which may be

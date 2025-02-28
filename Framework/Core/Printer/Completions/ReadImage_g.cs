@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Printer.ReadImage")]
     public sealed class ReadImageCompletion : Completion<ReadImageCompletion.PayloadData>
     {
@@ -60,10 +60,12 @@ namespace XFS4IoT.Printer.Completions
             [DataContract]
             public sealed class ImagesClass
             {
-                public ImagesClass(FrontClass Front = null, BackClass Back = null)
+                public ImagesClass(FrontClass Front = null, BackClass Back = null, PassportDataGroup1Class PassportDataGroup1 = null, PassportDataGroup2Class PassportDataGroup2 = null)
                 {
                     this.Front = Front;
                     this.Back = Back;
+                    this.PassportDataGroup1 = PassportDataGroup1;
+                    this.PassportDataGroup2 = PassportDataGroup2;
                 }
 
                 [DataContract]
@@ -93,11 +95,11 @@ namespace XFS4IoT.Printer.Completions
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// This contains the Base64 encoded image.
-                    /// <example>SKHFFHGOWORIUNNNLSSL ...</example>
+                    /// This contains the Base64 encoded image. This may be null if no image is returned.
+                    /// <example>O2gAUACFyEARAJAC</example>
                     /// </summary>
                     [DataMember(Name = "data")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                     public List<byte> Data { get; init; }
 
                 }
@@ -135,11 +137,11 @@ namespace XFS4IoT.Printer.Completions
                     public StatusEnum? Status { get; init; }
 
                     /// <summary>
-                    /// This contains the Base64 encoded image.
-                    /// <example>SKHFFHGOWORIUNNNLSSL ...</example>
+                    /// This contains the Base64 encoded image. This may be null if no image is returned.
+                    /// <example>O2gAUACFyEARAJAC</example>
                     /// </summary>
                     [DataMember(Name = "data")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                     public List<byte> Data { get; init; }
 
                 }
@@ -149,6 +151,92 @@ namespace XFS4IoT.Printer.Completions
                 /// </summary>
                 [DataMember(Name = "back")]
                 public BackClass Back { get; init; }
+
+                [DataContract]
+                public sealed class PassportDataGroup1Class
+                {
+                    public PassportDataGroup1Class(StatusEnum? Status = null, List<byte> Data = null)
+                    {
+                        this.Status = Status;
+                        this.Data = Data;
+                    }
+
+                    public enum StatusEnum
+                    {
+                        Ok,
+                        Missing
+                    }
+
+                    /// <summary>
+                    /// Status of data source. This will be null if not supported, otherwise
+                    /// one of the following values:
+                    /// 
+                    /// * ```ok``` - The data is OK.
+                    /// * ```missing``` - The data source is missing.
+                    /// <example>missing</example>
+                    /// </summary>
+                    [DataMember(Name = "status")]
+                    public StatusEnum? Status { get; init; }
+
+                    /// <summary>
+                    /// This contains the Base64 encoded image. This may be null if no image is returned.
+                    /// <example>O2gAUACFyEARAJAC</example>
+                    /// </summary>
+                    [DataMember(Name = "data")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
+                    public List<byte> Data { get; init; }
+
+                }
+
+                /// <summary>
+                /// The Data Group 1 status and data from a passport. The data contains the associated fields as defined
+                /// in [[Ref. printer-1](#ref-printer-1)].
+                /// </summary>
+                [DataMember(Name = "passportDataGroup1")]
+                public PassportDataGroup1Class PassportDataGroup1 { get; init; }
+
+                [DataContract]
+                public sealed class PassportDataGroup2Class
+                {
+                    public PassportDataGroup2Class(StatusEnum? Status = null, List<byte> Data = null)
+                    {
+                        this.Status = Status;
+                        this.Data = Data;
+                    }
+
+                    public enum StatusEnum
+                    {
+                        Ok,
+                        Missing
+                    }
+
+                    /// <summary>
+                    /// Status of data source. This will be null if not supported, otherwise
+                    /// one of the following values:
+                    /// 
+                    /// * ```ok``` - The data is OK.
+                    /// * ```missing``` - The data source is missing.
+                    /// <example>missing</example>
+                    /// </summary>
+                    [DataMember(Name = "status")]
+                    public StatusEnum? Status { get; init; }
+
+                    /// <summary>
+                    /// This contains the Base64 encoded image. This may be null if no image is returned.
+                    /// <example>O2gAUACFyEARAJAC</example>
+                    /// </summary>
+                    [DataMember(Name = "data")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
+                    public List<byte> Data { get; init; }
+
+                }
+
+                /// <summary>
+                /// The Data Group 2 status and data from a passport. The data contains the associated fields as defined
+                /// in [[Ref. printer-1](#ref-printer-1)].
+                /// </summary>
+                [DataMember(Name = "passportDataGroup2")]
+                public PassportDataGroup2Class PassportDataGroup2 { get; init; }
 
             }
 

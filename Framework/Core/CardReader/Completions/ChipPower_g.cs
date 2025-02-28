@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "CardReader.ChipPower")]
     public sealed class ChipPowerCompletion : Completion<ChipPowerCompletion.PayloadData>
     {
@@ -62,7 +62,7 @@ namespace XFS4IoT.CardReader.Completions
             /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "chipData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> ChipData { get; init; }
 
         }

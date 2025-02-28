@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -26,11 +26,15 @@ namespace XFS4IoTServer
     /// </remarks>
     public class LightsServiceProvider : ServiceProvider, ICommonService, ILightsService
     {
-        public LightsServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
+        public LightsServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Lights },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Lights],
                  device,
                  logger)
         {

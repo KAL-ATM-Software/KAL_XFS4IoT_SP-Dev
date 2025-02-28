@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,8 +47,8 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```loadFailed``` - The load failed because the device is in a state that will not allow the
-            /// configuration data to be loaded at this time, for example on some devices there may be notes present
-            /// in the storage units when they should not be.
+            ///   configuration data to be loaded at this time, for example on some devices there may be notes present
+            ///   in the storage units when they should not be.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

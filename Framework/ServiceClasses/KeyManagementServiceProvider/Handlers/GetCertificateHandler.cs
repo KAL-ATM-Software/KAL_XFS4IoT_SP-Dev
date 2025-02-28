@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -27,12 +27,15 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ExportCertificate()");
 
-            var result = await Device.ExportCertificate(new ExportCertificateRequest(getCertificate.Payload.GetCertificate switch
-                                                                                     {
-                                                                                         GetCertificateCommand.PayloadData.GetCertificateEnum.Enckey => ExportCertificateRequest.CertificateTypeEnum.EncryptionKey,
-                                                                                         GetCertificateCommand.PayloadData.GetCertificateEnum.Verificationkey => ExportCertificateRequest.CertificateTypeEnum.VerificationKey,
-                                                                                         _ => ExportCertificateRequest.CertificateTypeEnum.HostKey,
-                                                                                     }), cancel);
+            var result = await Device.ExportCertificate(
+                new ExportCertificateRequest(
+                    getCertificate.Payload.GetCertificate switch
+                    {
+                        GetCertificateCommand.PayloadData.GetCertificateEnum.Enckey => ExportCertificateRequest.CertificateTypeEnum.EncryptionKey,
+                        GetCertificateCommand.PayloadData.GetCertificateEnum.Verificationkey => ExportCertificateRequest.CertificateTypeEnum.VerificationKey,
+                        _ => ExportCertificateRequest.CertificateTypeEnum.HostKey,
+                    }), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
 

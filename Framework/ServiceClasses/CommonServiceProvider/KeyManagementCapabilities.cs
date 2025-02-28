@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -147,7 +147,6 @@ namespace XFS4IoTFramework.Common
             CertHost_TR34, //The current Host RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             CA_TR34, // The Certificate Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
             HL_TR34, // A Higher-Level Authority RSA Private Key is used to sign the token, compliant with X9 TR34-2019
-            CA, // Obsolete since 2023-2, this value will be removed in the package 3.0.
         }
 
         [Flags]

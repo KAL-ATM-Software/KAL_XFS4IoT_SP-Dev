@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -62,11 +62,11 @@ namespace XFS4IoT.Biometric.Commands
 
             /// <summary>
             /// This optional property indicates the reason why the [Biometric.Read](#biometric.read) has been issued,
-            /// in order to allow for any necessary optimization.
+            /// to allow for any necessary optimization.
             /// Available values are detailed in the [scanModes](#common.capabilities.completion.properties.biometric.scanmodes).
             /// The following values are possible:
             /// 
-            /// * ```scan```\t- Scan data only, for example to enroll a user or collect data for matching in an external biometric system.
+            /// * ```scan``` - Scan data only, for example to enroll a user or collect data for matching in an external biometric system.
             /// * ```match``` - Scan data for a match operation using the [Biometric.Match](#biometric.match).
             /// </summary>
             [DataMember(Name = "mode")]

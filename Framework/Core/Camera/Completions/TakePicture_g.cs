@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Camera.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Camera.TakePicture")]
     public sealed class TakePictureCompletion : Completion<TakePictureCompletion.PayloadData>
     {
@@ -52,11 +52,11 @@ namespace XFS4IoT.Camera.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// The base64 encoded data representing the picture.
-            /// <example>Xhdjyedh736ydw7hdi</example>
+            /// The base64 encoded data representing the picture. This may be null if there is no picture.
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "pictureFile")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> PictureFile { get; init; }
 
         }

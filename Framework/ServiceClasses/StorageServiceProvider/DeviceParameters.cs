@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 
@@ -28,58 +28,28 @@ namespace XFS4IoTFramework.Storage
         NotConfigured
     }
 
-    public sealed class StartExchangeResult : DeviceResult
+    public sealed class StartExchangeResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public StartExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public StartExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public StartExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
-    public sealed class EndExchangeResult : DeviceResult
+    public sealed class EndExchangeResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        public EndExchangeResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public EndExchangeResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public EndExchangeCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
     public sealed record SetCardConfiguration
     {
-        public SetCardConfiguration(int? Threshold,
-                                    string CardId = null)
+        public SetCardConfiguration(
+            int? Threshold,
+            string CardId = null)
         {
             this.CardId = CardId;
             this.Threshold = Threshold;
@@ -90,72 +60,43 @@ namespace XFS4IoTFramework.Storage
         public int? Threshold { get; set; }
     }
 
-    public sealed class SetCardUnitStorage
+    public sealed class SetCardUnitStorage(
+        SetCardConfiguration Configuration,
+        int? InitialCount)
     {
-        public SetCardUnitStorage(SetCardConfiguration Configuration,
-                                  int? InitialCount)
-        {
-            this.Configuration = Configuration;
-            this.InitialCount = InitialCount;
-        }
 
         /// <summary>
         /// If this property is null, no need to change card unit configuration
         /// </summary>
-        public SetCardConfiguration Configuration { get; init; }
+        public SetCardConfiguration Configuration { get; init; } = Configuration;
 
         /// <summary>
         /// Set to InitialCount and Count, reset to RetainCount to zero
         /// If this property is not set, no need to update in the device class
         /// </summary>
-        public int? InitialCount { get; init; }
+        public int? InitialCount { get; init; } = InitialCount;
     }
 
-    public sealed class SetCardStorageRequest
+    public sealed class SetCardStorageRequest(Dictionary<string, SetCardUnitStorage> CardStorageToSet)
     {
-        public SetCardStorageRequest(Dictionary<string, SetCardUnitStorage> CardStorageToSet)
-        {
-            this.CardStorageToSet = CardStorageToSet;
-        }
-
-        public Dictionary<string, SetCardUnitStorage> CardStorageToSet { get; init; }
+        public Dictionary<string, SetCardUnitStorage> CardStorageToSet { get; init; } = CardStorageToSet;
     }
 
     public sealed class SetCardStorageResult : DeviceResult
     {
-        public SetCardStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public SetCardStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             NewCardStorage = null;
         }
 
-        public SetCardStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    Dictionary<string, SetCardUnitStorage> NewCardStorage)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.NewCardStorage = NewCardStorage;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCardStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            NewCardStorage = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCardStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    Dictionary<string, SetCardUnitStorage> NewCardStorage)
+        public SetCardStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, SetCardUnitStorage> NewCardStorage)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -172,17 +113,18 @@ namespace XFS4IoTFramework.Storage
     /// </summary>
     public sealed record SetCashConfiguration
     {
-        public SetCashConfiguration(CashCapabilitiesClass.TypesEnum? Types,
-                                    CashCapabilitiesClass.ItemsEnum? Items,
-                                    string Currency,
-                                    double? Value,
-                                    int? HighThreshold,
-                                    int? LowThreshold,
-                                    bool? AppLockIn,
-                                    bool? AppLockOut,
-                                    List<string> BanknoteItems,
-                                    string Name,
-                                    int? MaxRetracts)
+        public SetCashConfiguration(
+            CashCapabilitiesClass.TypesEnum? Types,
+            CashCapabilitiesClass.ItemsEnum? Items,
+            string Currency,
+            double? Value,
+            int? HighThreshold,
+            int? LowThreshold,
+            bool? AppLockIn,
+            bool? AppLockOut,
+            List<string> BanknoteItems,
+            string Name,
+            int? MaxRetracts)
         {
             this.Types = Types;
             this.Items = Items;
@@ -282,39 +224,19 @@ namespace XFS4IoTFramework.Storage
 
     public sealed class SetCashStorageResult : DeviceResult
     {
-        public SetCashStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public SetCashStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             NewCashStorage = null;
         }
 
-        public SetCashStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    Dictionary<string, SetCashUnitStorage> NewCashStorage)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.NewCashStorage = NewCashStorage;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCashStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            NewCashStorage = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCashStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    Dictionary<string, SetCashUnitStorage> NewCashStorage)
+        public SetCashStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, SetCashUnitStorage> NewCashStorage)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -331,10 +253,11 @@ namespace XFS4IoTFramework.Storage
     /// </summary>
     public sealed record SetCheckConfiguration
     {
-        public SetCheckConfiguration(CheckCapabilitiesClass.TypesEnum? Types,
-                                     string Id,
-                                     int? HighThreshold,
-                                     int? RetractHighThreshold)
+        public SetCheckConfiguration(
+            CheckCapabilitiesClass.TypesEnum? Types,
+            string Id,
+            int? HighThreshold,
+            int? RetractHighThreshold)
         {
             this.Types = Types;
             this.Id = Id;
@@ -401,46 +324,26 @@ namespace XFS4IoTFramework.Storage
         public int? RetractOperations { get; init; } = RetractOperations;
     }
 
-    public sealed class SetCheckStorageRequest(Dictionary<string, SetCheckUnitStorage> CashStorageToSet)
+    public sealed class SetCheckStorageRequest(Dictionary<string, SetCheckUnitStorage> CheckStorageToSet)
     {
-        public Dictionary<string, SetCheckUnitStorage> CheckStorageToSet { get; init; } = CashStorageToSet;
+        public Dictionary<string, SetCheckUnitStorage> CheckStorageToSet { get; init; } = CheckStorageToSet;
     }
 
     public sealed class SetCheckStorageResult : DeviceResult
     {
-        public SetCheckStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public SetCheckStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             NewCheckStorage = null;
         }
 
-        public SetCheckStorageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                     Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.NewCheckStorage = NewCheckStorage;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            NewCheckStorage = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetCheckStorageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
+        public SetCheckStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, SetCheckUnitStorage> NewCheckStorage)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -450,5 +353,61 @@ namespace XFS4IoTFramework.Storage
         public SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         public Dictionary<string, SetCheckUnitStorage> NewCheckStorage { get; init; }
+    }
+
+    /// <summary>
+    /// Configuration of the printer unit
+    /// </summary>
+    public sealed record SetPrinterConfiguration
+    {
+        public SetPrinterConfiguration()
+        { }
+    }
+
+    public sealed class SetPrinterUnitStorage(
+        SetPrinterConfiguration Configuration = null,
+        int? InitialCount = null)
+    {
+
+        /// <summary>
+        /// Printer configuration is not supported in the specification -3.
+        /// </summary>
+        public SetPrinterConfiguration Configuration { get; init; } = Configuration;
+
+        /// <summary>
+        /// If specified, the printer related count (retract paper, passbook) as set at the last replenishment.
+        /// </summary>
+        public int? InitialCount { get; init; } = InitialCount;
+    }
+
+    public sealed class SetPrinterStorageRequest(Dictionary<string, SetPrinterUnitStorage> PrinterStorageToSet)
+    {
+        public Dictionary<string, SetPrinterUnitStorage> PrinterStorageToSet { get; init; } = PrinterStorageToSet;
+    }
+
+    public sealed class SetPrinterStorageResult : DeviceResult
+    {
+        public SetPrinterStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewPrinterStorage = null;
+        }
+
+        public SetPrinterStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, SetPrinterUnitStorage> NewPrinterStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewPrinterStorage = NewPrinterStorage;
+        }
+
+        public SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        public Dictionary<string, SetPrinterUnitStorage> NewPrinterStorage { get; init; }
     }
 }

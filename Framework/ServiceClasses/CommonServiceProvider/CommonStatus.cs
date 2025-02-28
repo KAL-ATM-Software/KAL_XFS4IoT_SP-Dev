@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -17,7 +17,7 @@ namespace XFS4IoTFramework.Common
     public sealed class CommonStatusClass(
         CommonStatusClass.DeviceEnum Device,
         CommonStatusClass.PositionStatusEnum DevicePosition,
-        int PowerSaveRecoveryTime,
+        int PowerSaveRecoveryTime, // Obsolete property
         CommonStatusClass.AntiFraudModuleEnum AntiFraudModule,
         CommonStatusClass.ExchangeEnum Exchange,
         CommonStatusClass.EndToEndSecurityEnum EndToEndSecurity) : StatusBase
@@ -137,6 +137,7 @@ namespace XFS4IoTFramework.Common
         /// the current power saving mode. This value is zero if either the power saving mode has not been activated or
         /// no power save control is supported.
         /// </summary>
+        [Obsolete("This method is no longer used by the common interface. Migrate power saving control to PowerManagement interface. this interface will be removed after version 4.")]
         public int PowerSaveRecoveryTime 
         {
             get { return powerSaveRecoveryTime; }

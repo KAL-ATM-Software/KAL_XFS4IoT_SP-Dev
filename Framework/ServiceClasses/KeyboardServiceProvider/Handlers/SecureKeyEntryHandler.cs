@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -63,27 +63,28 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.SecureKeyEntry()");
 
-            var result = await Device.SecureKeyEntry(new KeyboardCommandEvents(events), 
-                                                     new(secureKeyEntry.Payload.KeyLen switch
-                                                         { 
-                                                             SecureKeyEntryCommand.PayloadData.KeyLenEnum.Number16 => 16,
-                                                             SecureKeyEntryCommand.PayloadData.KeyLenEnum.Number32 => 32,
-                                                             _ => 48,
-                                                         },
-                                                         secureKeyEntry.Payload.AutoEnd is not null && (bool)secureKeyEntry.Payload.AutoEnd,
-                                                         keys,
-                                                         secureKeyEntry.Payload.VerificationType switch
-                                                         {
-                                                             SecureKeyEntryCommand.PayloadData.VerificationTypeEnum.Self => SecureKeyEntryRequest.VerificationTypeEnum.Self,
-                                                             _ => SecureKeyEntryRequest.VerificationTypeEnum.Zero
-                                                         },
-                                                         secureKeyEntry.Payload.CryptoMethod is null ? SecureKeyEntryRequest.CryptoMethodEnum.Default : secureKeyEntry.Payload.CryptoMethod switch
-                                                         {
-                                                             SecureKeyEntryCommand.PayloadData.CryptoMethodEnum.Aes => SecureKeyEntryRequest.CryptoMethodEnum.AES,
-                                                             SecureKeyEntryCommand.PayloadData.CryptoMethodEnum.Des => SecureKeyEntryRequest.CryptoMethodEnum.DES,
-                                                             _ => SecureKeyEntryRequest.CryptoMethodEnum.TripleDES
-                                                         }), 
-                                                         cancel);
+            var result = await Device.SecureKeyEntry(
+                new KeyboardCommandEvents(events), 
+                new(secureKeyEntry.Payload.KeyLen switch
+                    { 
+                        SecureKeyEntryCommand.PayloadData.KeyLenEnum.Number16 => 16,
+                        SecureKeyEntryCommand.PayloadData.KeyLenEnum.Number32 => 32,
+                        _ => 48,
+                    },
+                    secureKeyEntry.Payload.AutoEnd is not null && (bool)secureKeyEntry.Payload.AutoEnd,
+                    keys,
+                    secureKeyEntry.Payload.VerificationType switch
+                    {
+                        SecureKeyEntryCommand.PayloadData.VerificationTypeEnum.Self => SecureKeyEntryRequest.VerificationTypeEnum.Self,
+                        _ => SecureKeyEntryRequest.VerificationTypeEnum.Zero
+                    },
+                    secureKeyEntry.Payload.CryptoMethod is null ? SecureKeyEntryRequest.CryptoMethodEnum.Default : secureKeyEntry.Payload.CryptoMethod switch
+                    {
+                        SecureKeyEntryCommand.PayloadData.CryptoMethodEnum.Aes => SecureKeyEntryRequest.CryptoMethodEnum.AES,
+                        SecureKeyEntryCommand.PayloadData.CryptoMethodEnum.Des => SecureKeyEntryRequest.CryptoMethodEnum.DES,
+                        _ => SecureKeyEntryRequest.CryptoMethodEnum.TripleDES
+                    }), 
+                    cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.SecureKeyEntry() -> {result.CompletionCode}, {result.ErrorCode}");
 

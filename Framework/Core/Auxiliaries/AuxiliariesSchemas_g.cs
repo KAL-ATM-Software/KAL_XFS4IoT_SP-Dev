@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -117,6 +117,16 @@ namespace XFS4IoT.Auxiliaries
     }
 
 
+    public enum CabinetDoorStateEnum
+    {
+        Closed,
+        Open,
+        Locked,
+        Bolted,
+        Tampered
+    }
+
+
     public enum SafeDoorStateEnum
     {
         Closed,
@@ -199,7 +209,8 @@ namespace XFS4IoT.Auxiliaries
         public enum RateEnum
         {
             On,
-            Off
+            Off,
+            Continuous
         }
 
         /// <summary>
@@ -334,7 +345,7 @@ namespace XFS4IoT.Auxiliaries
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, InternalTamperSensorStateEnum? InternalTamperSensor = null, SeismicSensorStateEnum? SeismicSensor = null, HeatSensorStateEnum? HeatSensor = null, ProximitySensorStateEnum? ProximitySensor = null, AmbientLightSensorStateEnum? AmbientLightSensor = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensor = null, BootSwitchSensorStateEnum? BootSwitchSensor = null, ConsumerDisplaySensorStateEnum? ConsumerDisplaySensor = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor = null, HandsetSensorStateEnum? HandsetSensor = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor = null, SafeDoorStateEnum? SafeDoor = null, VandalShieldStateEnum? VandalShield = null, CabinetFrontDoorStateEnum? CabinetFrontDoor = null, CabinetRearDoorStateEnum? CabinetRearDoor = null, CabinetLeftDoorStateEnum? CabinetLeftDoor = null, CabinetRightDoorStateEnum? CabinetRightDoor = null, OpenClosedIndicatorStateEnum? OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateEnum? Heating = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight = null, SignageDisplayStateEnum? SignageDisplay = null, int? Volume = null, UPSStateClass UPS = null, AudibleAlarmStateEnum? AudibleAlarm = null, EnhancedAudioControlStateEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl = null, int? MicrophoneVolume = null)
+        public StatusClass(OperatorSwitchStateEnum? OperatorSwitch = null, TamperSensorStateEnum? TamperSensor = null, InternalTamperSensorStateEnum? InternalTamperSensor = null, SeismicSensorStateEnum? SeismicSensor = null, HeatSensorStateEnum? HeatSensor = null, ProximitySensorStateEnum? ProximitySensor = null, AmbientLightSensorStateEnum? AmbientLightSensor = null, EnhancedAudioSensorStateEnum? EnhancedAudioSensor = null, BootSwitchSensorStateEnum? BootSwitchSensor = null, ConsumerDisplaySensorStateEnum? ConsumerDisplaySensor = null, OperatorCallButtonSensorStateEnum? OperatorCallButtonSensor = null, HandsetSensorStateEnum? HandsetSensor = null, HeadsetMicrophoneSensorStateEnum? HeadsetMicrophoneSensor = null, FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor = null, CabinetDoorStateEnum? CabinetDoor = null, SafeDoorStateEnum? SafeDoor = null, VandalShieldStateEnum? VandalShield = null, CabinetFrontDoorStateEnum? CabinetFrontDoor = null, CabinetRearDoorStateEnum? CabinetRearDoor = null, CabinetLeftDoorStateEnum? CabinetLeftDoor = null, CabinetRightDoorStateEnum? CabinetRightDoor = null, OpenClosedIndicatorStateEnum? OpenClosedIndicator = null, AudioStateClass Audio = null, HeatingStateEnum? Heating = null, ConsumerDisplayBacklightStateEnum? ConsumerDisplayBacklight = null, SignageDisplayStateEnum? SignageDisplay = null, int? Volume = null, UPSStateClass UPS = null, AudibleAlarmStateEnum? AudibleAlarm = null, EnhancedAudioControlStateEnum? EnhancedAudioControl = null, EnhancedMicrophoneControlStateEnum? EnhancedMicrophoneControl = null, int? MicrophoneVolume = null)
         {
             this.OperatorSwitch = OperatorSwitch;
             this.TamperSensor = TamperSensor;
@@ -350,6 +361,7 @@ namespace XFS4IoT.Auxiliaries
             this.HandsetSensor = HandsetSensor;
             this.HeadsetMicrophoneSensor = HeadsetMicrophoneSensor;
             this.FasciaMicrophoneSensor = FasciaMicrophoneSensor;
+            this.CabinetDoor = CabinetDoor;
             this.SafeDoor = SafeDoor;
             this.VandalShield = VandalShield;
             this.CabinetFrontDoor = CabinetFrontDoor;
@@ -410,6 +422,9 @@ namespace XFS4IoT.Auxiliaries
 
         [DataMember(Name = "fasciaMicrophoneSensor")]
         public FasciaMicrophoneSensorStateEnum? FasciaMicrophoneSensor { get; init; }
+
+        [DataMember(Name = "cabinetDoor")]
+        public CabinetDoorStateEnum? CabinetDoor { get; init; }
 
         [DataMember(Name = "safeDoor")]
         public SafeDoorStateEnum? SafeDoor { get; init; }
@@ -679,7 +694,7 @@ namespace XFS4IoT.Auxiliaries
         }
 
         /// <summary>
-        /// Specifies which modes the Audio Jack supports. if present. Null if not applicable.
+        /// Specifies which modes the Audio Jack supports, if present. Null if not applicable.
         /// </summary>
         [DataMember(Name = "enhancedAudioSensor")]
         public EnhancedAudioSensorClass EnhancedAudioSensor { get; init; }
@@ -920,7 +935,7 @@ namespace XFS4IoT.Auxiliaries
         public bool? SignageDisplay { get; init; }
 
         /// <summary>
-        /// Specifies the Volume Control increment/decrement value recommended by the vendor.
+        /// Specifies the Volume Control increment/decrement value recommended by the vendor. Null if not applicable.
         /// </summary>
         [DataMember(Name = "volume")]
         [DataTypes(Minimum = 1, Maximum = 1000)]
@@ -985,7 +1000,7 @@ namespace XFS4IoT.Auxiliaries
             }
 
             /// <summary>
-            /// The Enhanced Audio Controller is supports Privacy Device activation/deactivation. The device is able
+            /// The Enhanced Audio Controller supports Privacy Device activation/deactivation. The device is able
             /// to report events to indicate Privacy Device activation/deactivation.
             /// </summary>
             [DataMember(Name = "headsetDetection")]

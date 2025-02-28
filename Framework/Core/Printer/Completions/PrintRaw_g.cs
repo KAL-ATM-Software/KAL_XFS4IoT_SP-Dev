@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Printer.PrintRaw")]
     public sealed class PrintRawCompletion : Completion<PrintRawCompletion.PayloadData>
     {
@@ -64,11 +64,12 @@ namespace XFS4IoT.Printer.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Base64 encoded device dependent data received from the device.
-            /// <example>UmF3RGF0YQ==</example>
+            /// Base64 encoded device dependent data received from the device. This may be null if no data is requested or
+            /// returned.
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "data")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Data { get; init; }
 
         }

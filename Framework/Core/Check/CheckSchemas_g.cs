@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -1095,7 +1095,7 @@ namespace XFS4IoT.Check
         }
 
         /// <summary>
-        /// The unit can accept items during Media In transactions. May be null in command data and events
+        /// The unit can accept items during media in transactions. May be null in command data and events
         /// if not changing.
         /// <example>true</example>
         /// </summary>
@@ -1447,11 +1447,11 @@ namespace XFS4IoT.Check
         public ImageStatusEnum? ImageStatus { get; init; }
 
         /// <summary>
-        /// Base64 encoded image. May be null if no image was obtained.
-        /// <example>wCAAAQgwMDAwMDAwMA==</example>
+        /// Base64 encoded image. May be null if no image was obtained or the command [includeImage](#check.gettransactionstatus.command.properties.includeimage) property is set to false.
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "image")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Image { get; init; }
 
     }
@@ -1571,7 +1571,7 @@ namespace XFS4IoT.Check
         /// transaction as the media moves within the device. The following values are possible:
         /// 
         /// * ```device``` - The media item is inside the device in some position other than a storage unit.
-        /// * ```&lt;storage unit identifier&gt;``` - The media item is in a storage unit as specified by
+        /// * ```[storage unit identifier]``` - The media item is in a storage unit as specified by
         ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
         /// * ```customer``` - The media item has been returned to the customer.
         /// * ```unknown``` - The media item location is unknown.
@@ -1586,6 +1586,7 @@ namespace XFS4IoT.Check
         /// <example>⑈22222⑈⑆123456⑆</example>
         /// </summary>
         [DataMember(Name = "codelineData")]
+        [DataTypes(Sensitive = true)]
         public string CodelineData { get; init; }
 
         [DataMember(Name = "magneticReadIndicator")]
@@ -1704,7 +1705,7 @@ namespace XFS4IoT.Check
         /// execution. May be null if it is unknown or the device does not have a stacker.
         /// 
         /// The number of refused media items can be determined by *lastMedia* - *lastMediaOnStacker*. This is only
-        /// possible if these values contain known values, and would not be possible if a bunch of items were refused
+        /// possible if these values contain known values and would not be possible if a bunch of items were refused
         /// as a single entity.
         /// <example>3</example>
         /// </summary>
@@ -1788,7 +1789,7 @@ namespace XFS4IoT.Check
     {
         Input,
         Refused,
-        Rebuncher
+        Output
     }
 
 
@@ -1819,6 +1820,7 @@ namespace XFS4IoT.Check
         /// <example>⑈22222⑈⑆123456⑆</example>
         /// </summary>
         [DataMember(Name = "codelineData")]
+        [DataTypes(Sensitive = true)]
         public string CodelineData { get; init; }
 
         [DataMember(Name = "magneticReadIndicator")]
@@ -1844,6 +1846,14 @@ namespace XFS4IoT.Check
         [DataMember(Name = "mediaValidity")]
         public MediaValidityEnum? MediaValidity { get; init; }
 
+    }
+
+
+    public enum PresentMediaPositionEnum
+    {
+        Input,
+        Refused,
+        Rebuncher
     }
 
 

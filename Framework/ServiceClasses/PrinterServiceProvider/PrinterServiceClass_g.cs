@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -30,17 +30,8 @@ namespace XFS4IoTServer
         public async Task MediaDetectedEvent(XFS4IoT.Printer.Events.MediaDetectedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaDetectedEvent(Payload));
 
-        public async Task RetractBinStatusEvent(XFS4IoT.Printer.Events.RetractBinStatusEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinStatusEvent(Payload));
-
-        public async Task DefinitionLoadedEvent(XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.DefinitionLoadedEvent(Payload));
-
         public async Task MediaAutoRetractedEvent(XFS4IoT.Printer.Events.MediaAutoRetractedEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.MediaAutoRetractedEvent(Payload));
-
-        public async Task RetractBinThresholdEvent(XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData Payload)
-            => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.RetractBinThresholdEvent(Payload));
 
         public async Task PaperThresholdEvent(XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData Payload)
             => await ServiceProvider.BroadcastEvent(new XFS4IoT.Printer.Events.PaperThresholdEvent(Payload));

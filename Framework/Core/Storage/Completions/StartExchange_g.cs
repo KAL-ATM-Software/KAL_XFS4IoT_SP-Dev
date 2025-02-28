@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -44,8 +44,8 @@ namespace XFS4IoT.Storage.Completions
             /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```storageUnitError``` - An error occurred with a storage unit while performing the exchange
-            /// operation. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the
-            /// details.
+            ///   operation. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the
+            ///   details.
             /// * ```exchangeActive``` - The device is already in an exchange state.
             /// * ```transactionActive``` - A transaction is active.
             /// </summary>

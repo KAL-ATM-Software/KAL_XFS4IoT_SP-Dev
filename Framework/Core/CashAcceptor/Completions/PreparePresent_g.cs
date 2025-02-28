@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -45,11 +45,11 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```unsupportedPosition``` - The position specified is not supported or is not a valid position for
-            /// this command.
+            ///   this command.
             /// * ```positionNotEmpty``` - The input or output position is not empty.
             /// * ```noItems``` - There were no items to present at the specified position.
             /// * ```cashUnitError``` - A storage unit caused a problem. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

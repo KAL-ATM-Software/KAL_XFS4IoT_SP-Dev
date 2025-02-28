@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -30,8 +30,9 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.ReplaceCertificate()");
 
-            var result = await Device.ReplaceCertificate(new ReplaceCertificateRequest(replaceCertificate.Payload.ReplaceCertificate), 
-                                                         cancel);
+            var result = await Device.ReplaceCertificate(
+                new ReplaceCertificateRequest(replaceCertificate.Payload.ReplaceCertificate),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ReplaceCertificate() -> {result.CompletionCode}, {result.ErrorCode}");
 

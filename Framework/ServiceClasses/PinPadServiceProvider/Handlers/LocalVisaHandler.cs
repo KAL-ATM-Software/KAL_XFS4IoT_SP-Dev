@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -112,11 +112,13 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.VerifyPINLocalVISA()");
 
-            var result = await Device.VerifyPINLocalVISA(new VerifyPINLocalVISARequest(localVisa.Payload.Pan,
-                                                                                       localVisa.Payload.Pvv,
-                                                                                       localVisa.Payload.Key,
-                                                                                       localVisa.Payload.KeyEncKey),
-                                                         cancel);
+            var result = await Device.VerifyPINLocalVISA(
+                new VerifyPINLocalVISARequest(
+                    localVisa.Payload.Pan,
+                    localVisa.Payload.Pvv,
+                    localVisa.Payload.Key,
+                    localVisa.Payload.KeyEncKey),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.VerifyPINLocalVISA() -> {result.CompletionCode}, {result.ErrorCode}");
 

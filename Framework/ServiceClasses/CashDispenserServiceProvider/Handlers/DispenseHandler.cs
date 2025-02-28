@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -378,12 +378,14 @@ namespace XFS4IoTFramework.CashDispenser
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.DispenseAsync()");
 
-            var result = await Device.DispenseAsync(new DispenseCommandEvents(Storage, events), 
-                                                    new DispenseRequest(denomToDispense.Values,
-                                                                        present,
-                                                                        position,
-                                                                        dispense.Payload.Token), 
-                                                    cancel);
+            var result = await Device.DispenseAsync(
+                new DispenseCommandEvents(Storage, events),
+                new DispenseRequest(
+                    denomToDispense.Values,
+                    present,
+                    position,
+                    dispense.Payload.Token), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.DispenseAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -441,15 +443,15 @@ namespace XFS4IoTFramework.CashDispenser
                 payload = new(
                     ErrorCode: result.ErrorCode,
                     Denomination: denomToDispense.Values is null ?
-                                  null :
-                                  new(Currencies: denomToDispense.CurrencyAmounts,
-                                      Values: denomToDispense.Values,
-                                      CashBox: dispense.Payload.Denomination.Denomination.Service is not null ?
-                                        dispense.Payload.Denomination.Denomination.Service.CashBox :
-                                        dispense.Payload.Denomination.Denomination.App.CashBox),
-                                      Bunches: result.Bunches >= 1 ?
-                                        result.Bunches.ToString() :
-                                        "unknown");
+                    null :
+                    new(Currencies: denomToDispense.CurrencyAmounts,
+                        Values: denomToDispense.Values,
+                        CashBox: dispense.Payload.Denomination.Denomination.Service is not null ?
+                        dispense.Payload.Denomination.Denomination.Service.CashBox :
+                        dispense.Payload.Denomination.Denomination.App.CashBox),
+                        Bunches: result.Bunches >= 1 ?
+                        result.Bunches.ToString() :
+                        "unknown");
             }
 
             return new(

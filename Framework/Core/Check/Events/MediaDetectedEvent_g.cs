@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -39,7 +39,7 @@ namespace XFS4IoT.Check.Events
             /// <summary>
             /// Specifies the media position after the operation, as one of the following values:
             /// 
-            /// * ```&lt;storage unit identifier&gt;``` - The media item was retracted to a storage unit as specified by
+            /// * ```[storage unit identifier]``` - The media item was retracted to a storage unit as specified by
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// * ```device``` - The media is in the device.
             /// * ```position``` - The media is at one or more of the input, output and refused positions.

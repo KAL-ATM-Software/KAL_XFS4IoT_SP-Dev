@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,9 @@ using XFS4IoTFramework.Storage;
 using XFS4IoTFramework.Common;
 using XFS4IoT.Storage.Events;
 using XFS4IoT.Storage;
+using XFS4IoT.CashManagement;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace XFS4IoTServer
 {
@@ -55,24 +57,53 @@ namespace XFS4IoTServer
                 Logger.Warning(Constants.Framework, "Failed to load persistent data for check units. It could be a first run, service is not Check or no persistent exists on the file system.");
                 CheckUnits = [];
             }
+            PrinterUnits = PersistentData.Load<Dictionary<string, PrinterUnitStorage>>(ServiceProvider.Name + typeof(PrinterUnitStorage).FullName);
+            if (PrinterUnits is null)
+            {
+                Logger.Warning(Constants.Framework, "Failed to load persistent data for printer units. It could be a first run, service is not Printer or no persistent exists on the file system.");
+                PrinterUnits = [];
+            }
+            IBNSUnits = PersistentData.Load<Dictionary<string, IBNSUnitStorage>>(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName);
+            if (IBNSUnits is null)
+            {
+                Logger.Warning(Constants.Framework, "Failed to load persistent data for IBNS units. It could be a first run, service is not IBNS or no persistent exists on the file system.");
+                IBNSUnits = [];
+            }
+            DepositUnits = PersistentData.Load<Dictionary<string, DepositUnitStorage>>(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName);
+            if (DepositUnits is null)
+            {
+                Logger.Warning(Constants.Framework, "Failed to load persistent data for Deposit units. It could be a first run, service is not Deposit or no persistent exists on the file system.");
+                DepositUnits = [];
+            }
 
             // Get unit information from the device class
             if (StorageType.HasFlag(StorageTypeEnum.Card))
             {
                 ConstructCardStorage();
             }
-            else
+            if (StorageType.HasFlag(StorageTypeEnum.Printer))
             {
-                // Support cash and check compound units
-                if (StorageType.HasFlag(StorageTypeEnum.Cash))
-                {
-                    ConstructCashUnits();
-                }
-                if (StorageType.HasFlag(StorageTypeEnum.Check))
-                {
-                    ConstructCheckUnits();
-                }
+                ConstructPrinterStorage();
             }
+            if (StorageType.HasFlag(StorageTypeEnum.Cash))
+            {
+                ConstructCashUnits();
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Check))
+            {
+                ConstructCheckUnits();
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.IBNS))
+            {
+                ConstructIBNSUnits();
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Deposit))
+            {
+                ConstructDepositUnits();
+            }
+
+            // Register events
+            RegisterStorageChangedEvents();
         }
 
         /// <summary>
@@ -90,13 +121,62 @@ namespace XFS4IoTServer
             Logger.Log(Constants.DeviceClass, $"StorageDev.GetCardStorageConfiguration()-> {newConfiguration}");
 
             // first to update capabilites and configuration part of storage information
-            if (newConfiguration &&
-                newCardUnits?.Count > 0)
+            if (newConfiguration)
             {
-                CardUnits.Clear();
-                foreach (var unit in newCardUnits)
+                if (newCardUnits is null ||
+                    newCardUnits?.Count == 0)
                 {
-                    CardUnits.Add(unit.Key, new CardUnitStorage(unit.Value));
+                    Logger.Warning(Constants.Framework, $"The function GetCardStorageConfiguration returned true. however, there is not output data supplied.");
+                    newConfiguration = false;
+                }
+                else
+                {
+                    CardUnits.Clear();
+                    foreach (var unit in newCardUnits)
+                    {
+                        CardUnits.Add(unit.Key, new CardUnitStorage(unit.Value));
+                    }
+                }
+            }
+
+            if (!newConfiguration)
+            {
+                bool identical = newCardUnits?.Count == newCardUnits.Count;
+                if (newCardUnits is not null)
+                {
+                    foreach (var unit in newCardUnits)
+                    {
+                        identical = CardUnits.ContainsKey(unit.Key);
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing card unit information doesn't contain key specified by the device class. {unit.Key}. Construct new card unit infomation.");
+                            break;
+                        }
+
+                        identical = CardUnits[unit.Key].Unit.Configuration == unit.Value.Configuration &&
+                                    CardUnits[unit.Key].Unit.Capabilities == unit.Value.Capabilities &&
+                                    CardUnits[unit.Key].Capacity == unit.Value.Capacity &&
+                                    CardUnits[unit.Key].PositionName == unit.Value.PositionName &&
+                                    CardUnits[unit.Key].SerialNumber == unit.Value.SerialNumber;
+
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing card unit information doesn't have an identical storage structure information specified by the device class. {unit.Key}. Construct new card unit infomation.");
+                            break;
+                        }
+                    }
+                }
+
+                if (!identical)
+                {
+                    CardUnits.Clear();
+                    if (newCardUnits is not null)
+                    {
+                        foreach (var unit in newCardUnits)
+                        {
+                            CardUnits.Add(unit.Key, new CardUnitStorage(unit.Value));
+                        }
+                    }
                 }
             }
 
@@ -126,8 +206,6 @@ namespace XFS4IoTServer
             foreach (var unit in CardUnits)
             {
                 // update status logically first and overwrite status if the device class requires.
-                unit.Value.Unit.Status.ReplenishmentStatus = CardStatusClass.ReplenishmentStatusEnum.Healthy;
-
                 if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
                 {
                     unit.Value.Unit.Status.ReplenishmentStatus = CardStatusClass.ReplenishmentStatusEnum.Full;
@@ -148,6 +226,14 @@ namespace XFS4IoTServer
                     {
                         unit.Value.Unit.Status.ReplenishmentStatus = CardStatusClass.ReplenishmentStatusEnum.Low;
                     }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CardStatusClass.ReplenishmentStatusEnum.Healthy;
+                    }
+                }
+                else
+                {
+                    unit.Value.Unit.Status.ReplenishmentStatus = CardStatusClass.ReplenishmentStatusEnum.Healthy;
                 }
             }
 
@@ -202,17 +288,12 @@ namespace XFS4IoTServer
         }
 
         /// <summary>
-        /// Update storage count from the framework after media movement command is processed
+        /// Update storage count from the framework after media movement command is processed.
+        /// i.e. Reset, Move commands.
         /// </summary>
-        public async Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage)
+        public async Task UpdateCardStorageCount(string storageId, int countDelta)
         {
             CardUnits.ContainsKey(storageId).IsTrue($"Unexpected storageId is passed in before updating card unit counters. {storageId}");
-
-            string preserved = JsonSerializer.Serialize(CardUnits[storageId]);
-            if (string.IsNullOrEmpty(preservedStorage))
-            {
-                preserved = preservedStorage;
-            }
 
             // Update counts first by framework
             if (CardUnits[storageId].Unit.Capabilities.Type == CardCapabilitiesClass.TypeEnum.Retain ||
@@ -364,60 +445,6 @@ namespace XFS4IoTServer
             {
                 Logger.Warning(Constants.Framework, $"Failed to save card unit counts.");
             }
-
-            // Send changed event
-            if (preserved != JsonSerializer.Serialize(CardUnits[storageId]))
-            {
-                StorageUnitClass payload = new(
-                    PositionName: CardUnits[storageId].PositionName,
-                    Capacity: CardUnits[storageId].Capacity,
-                    Status: CardUnits[storageId].Status switch
-                    {
-                        CardUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                        CardUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                        CardUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                        CardUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                        _ => StatusEnum.NotConfigured,
-                    },
-                    SerialNumber: CardUnits[storageId].SerialNumber,
-                    Cash: null,
-                    Card: new(
-                            Capabilities: new(
-                                Type: CardUnits[storageId].Unit.Capabilities.Type switch
-                                {
-                                    CardCapabilitiesClass.TypeEnum.Dispense => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Dispense,
-                                    CardCapabilitiesClass.TypeEnum.Retain => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Retain,
-                                    _ => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Park,
-                                },
-                                HardwareSensors: CardUnits[storageId].Unit.Capabilities.HardwareSensors),
-                            Configuration: new(
-                                CardID: CardUnits[storageId].Unit.Configuration.CardId,
-                                Threshold: CardUnits[storageId].Unit.Configuration.Threshold),
-                            Status: new(
-                                InitialCount: CardUnits[storageId].Unit.Status.InitialCount,
-                                Count: CardUnits[storageId].Unit.Status.Count,
-                                RetainCount: CardUnits[storageId].Unit.Status.RetainCount,
-                                ReplenishmentStatus: CardUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                {
-                                    CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
-                                    CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
-                                    CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
-                                    CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
-                                    _ => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
-                                }
-                                )
-                            )
-                    );
-
-                // Device class must fire threshold event if the count is managed.
-                StorageChangedEvent.PayloadData evPayload = new();
-                Dictionary<string, StorageUnitClass> storageUnits = new()
-                { 
-                    { storageId, payload } 
-                };
-                evPayload.ExtendedProperties = storageUnits;
-                await StorageChangedEvent(evPayload);
-            }
         }
         #endregion
 
@@ -531,7 +558,7 @@ namespace XFS4IoTServer
 
                 Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitInitialCounts()");
 
-                bool updateInitialCounts = Device.GetCashUnitInitialCounts(out Dictionary<string, StorageCashCountClass> initialCounts);
+                bool updateInitialCounts = Device.GetCashUnitInitialCounts(out Dictionary<string, XFS4IoTFramework.Storage.StorageCashCountClass> initialCounts);
 
                 Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashUnitInitialCounts()-> {updateInitialCounts}");
 
@@ -664,16 +691,8 @@ namespace XFS4IoTServer
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta, Dictionary<string, string> preservedStorage)
+        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta)
         {
-            Dictionary<string, string> preserved = [];
-            foreach (var unit in CashUnits)
-            {
-                preserved.Add(unit.Key, JsonSerializer.Serialize(unit.Value));
-            }
-            if (preservedStorage is not null)
-                preserved = preservedStorage;
-
             if (countDelta is not null)
             {
                 // First to update item movement reported by the device class, then update entire counts if the device class maintains cash unit counts.
@@ -761,8 +780,6 @@ namespace XFS4IoTServer
             foreach (var unit in CashUnits)
             {
                 // update status logically first and overwrite status if the device class requires.
-                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-
                 if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
                 {
                     unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Full;
@@ -797,6 +814,10 @@ namespace XFS4IoTServer
                                     sendThresholdEvent.Add(unit.Key);
                                 unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
                             }
+                            else
+                            {
+                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                            }
                         }
                         else
                         {
@@ -807,8 +828,20 @@ namespace XFS4IoTServer
                                     sendThresholdEvent.Add(unit.Key);
                                 unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
                             }
+                            else
+                            {
+                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                            }
                         }
                     }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                    }
+                }
+                else
+                {
+                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
                 }
             }
 
@@ -905,131 +938,6 @@ namespace XFS4IoTServer
                 await StorageThresholdEvent(evPayload);
             }
 
-            // Send changed event
-            Dictionary<string, StorageUnitClass> statusChangedUnits = [];
-            foreach (var unit in CashUnits)
-            {
-                if (JsonSerializer.Serialize(unit.Value) ==
-                    preserved[unit.Key])
-                {
-                    continue;
-                }
-
-                StorageUnitClass payload = new(
-                    Id: unit.Value.Id,
-                    PositionName: unit.Value.PositionName,
-                    Capacity: unit.Value.Capacity,
-                    Status: unit.Value.Status switch
-                    {
-                        CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                        CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                        CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                        CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                        _ => StatusEnum.NotConfigured,
-                    },
-                    SerialNumber: unit.Value.SerialNumber,
-                    Cash: new(
-                        Capabilities: new(
-                            Types: new(
-                                CashIn: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                CashOut: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                Replenishment: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                CashInRetract: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                CashOutRetract: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                Reject: unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
-                                ),
-                            Items: new(
-                                Fit: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                Unfit: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                Unrecognized: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                Counterfeit: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
-                                Suspect: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                Inked: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                Coupon: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                Document: unit.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
-                                ),
-                            HardwareSensors: unit.Value.Unit.Capabilities.HardwareSensors,
-                            RetractAreas: unit.Value.Unit.Capabilities.RetractAreas,
-                            RetractThresholds: unit.Value.Unit.Capabilities.RetractThresholds,
-                            CashItems: unit.Value.Unit.Capabilities.BanknoteItems),
-                        Configuration: new(
-                            Types: new(
-                                CashIn: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                CashOut: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                Replenishment: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                CashInRetract: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                CashOutRetract: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                Reject: unit.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
-                                ),
-                            Items: new(
-                                Fit: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                Unfit: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                Unrecognized: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                Counterfeit: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
-                                Suspect: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                Inked: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                Coupon: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                Document: unit.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
-                                ),
-                            Currency: unit.Value.Unit.Configuration.Currency,
-                            Value: unit.Value.Unit.Configuration.Value,
-                            HighThreshold: unit.Value.Unit.Configuration.HighThreshold,
-                            LowThreshold: unit.Value.Unit.Configuration.LowThreshold,
-                            AppLockIn: unit.Value.Unit.Configuration.AppLockIn,
-                            AppLockOut: unit.Value.Unit.Configuration.AppLockOut,
-                            CashItems: unit.Value.Unit.Configuration.BanknoteItems),
-                        Status: new(
-                            Index: unit.Value.Unit.Status.Index,
-                            Initial: unit.Value.Unit.Status.InitialCounts?.CopyTo(),
-                            Out: new(
-                                Presented: unit.Value.Unit.Status.StorageCashOutCount?.Presented.CopyTo(),
-                                Rejected: unit.Value.Unit.Status.StorageCashOutCount?.Rejected.CopyTo(),
-                                Distributed: unit.Value.Unit.Status.StorageCashOutCount?.Distributed.CopyTo(),
-                                Unknown: unit.Value.Unit.Status.StorageCashOutCount?.Unknown.CopyTo(),
-                                Stacked: unit.Value.Unit.Status.StorageCashOutCount?.Stacked.CopyTo(),
-                                Diverted: unit.Value.Unit.Status.StorageCashOutCount?.Diverted.CopyTo(),
-                                Transport: unit.Value.Unit.Status.StorageCashOutCount?.Transport.CopyTo()),
-                            In: new(
-                                RetractOperations: unit.Value.Unit.Status.StorageCashInCount?.RetractOperations,
-                                Deposited: unit.Value.Unit.Status.StorageCashInCount?.Deposited.CopyTo(),
-                                Retracted: unit.Value.Unit.Status.StorageCashInCount?.Retracted.CopyTo(),
-                                Rejected: unit.Value.Unit.Status.StorageCashInCount?.Rejected.CopyTo(),
-                                Distributed: unit.Value.Unit.Status.StorageCashInCount?.Distributed.CopyTo(),
-                                Transport: unit.Value.Unit.Status.StorageCashInCount?.Transport.CopyTo()),
-                            Accuracy: unit.Value.Unit.Status.Accuracy switch 
-                            {
-                                CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
-                                CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
-                                CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
-                                _ => null,
-                            },
-                            ReplenishmentStatus: unit.Value.Unit.Status.ReplenishmentStatus switch
-                            {
-                                CashStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Empty,
-                                CashStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Full,
-                                CashStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Ok,
-                                CashStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CashManagement.ReplenishmentStatusEnum.High,
-                                CashStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Low,
-                                _ => throw new InternalErrorException($"Unexpected cash unit status specified. Unit:{unit.Key} Status:{unit.Value.Unit.Status.ReplenishmentStatus}"),
-                            }
-                            )
-                        ),
-                    Card: null);
-
-                statusChangedUnits.Add(unit.Key, payload);
-            }
-
-            // Device class must fire status event if the count is managed by the device class.
-            if (statusChangedUnits.Count > 0)
-            {
-                StorageChangedEvent.PayloadData evPayload = new()
-                {
-                    ExtendedProperties = statusChangedUnits
-                };
-                await StorageChangedEvent(evPayload);
-            }
-
             if (!PersistentData.Store(ServiceProvider.Name + typeof(CashUnitStorage).FullName, CashUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data.");
@@ -1042,7 +950,7 @@ namespace XFS4IoTServer
         /// <param name="storageId">Storage ID to update cash counts</param>
         /// <param name="storageCashCount">Storage count to update</param>
         /// <param name="storageDeltaCount">Delta count to set the storage</param>
-        private void UpdateDeltaStorageCashCount(string storageId, StorageCashCountClass storageCashCount, StorageCashCountClass storageDeltaCount)
+        private void UpdateDeltaStorageCashCount(string storageId, XFS4IoTFramework.Storage.StorageCashCountClass storageCashCount, XFS4IoTFramework.Storage.StorageCashCountClass storageDeltaCount)
         {
             if (storageDeltaCount is null)
                 return;
@@ -1084,7 +992,6 @@ namespace XFS4IoTServer
 
             return;
         }
-
         #endregion
 
         #region Check
@@ -1142,7 +1049,7 @@ namespace XFS4IoTServer
 
                         if (!identical)
                         {
-                            Logger.Warning(Constants.Framework, $"Existing check unit information doesn't have an identical cash unit structure information specified by the device class. {unit.Key}. Construct new cash unit infomation.");
+                            Logger.Warning(Constants.Framework, $"Existing check unit information doesn't have an identical storage structure information specified by the device class. {unit.Key}. Construct new check unit infomation.");
                             break;
                         }
                     }
@@ -1181,7 +1088,9 @@ namespace XFS4IoTServer
                             Logger.Warning(Constants.Framework, $"Specified storage ID is not found. {unit.Key}");
                             continue;
                         }
-                        CheckUnits[unit.Key].Unit.Status.CheckInCounts = new(unit.Value);
+                        CheckUnits[unit.Key].Unit.Status.CheckInCounts.Count = unit.Value.Count;
+                        CheckUnits[unit.Key].Unit.Status.CheckInCounts.MediaInCount = unit.Value.MediaInCount;
+                        CheckUnits[unit.Key].Unit.Status.CheckInCounts.RetractOperations = unit.Value.RetractOperations;
                     }
                 }
 
@@ -1201,7 +1110,9 @@ namespace XFS4IoTServer
                             Logger.Warning(Constants.Framework, $"Specified storage ID is not found. {unit.Key}");
                             continue;
                         }
-                        CheckUnits[unit.Key].Unit.Status.InitialCounts = new(unit.Value);
+                        CheckUnits[unit.Key].Unit.Status.InitialCounts.Count = unit.Value.Count;
+                        CheckUnits[unit.Key].Unit.Status.InitialCounts.MediaInCount = unit.Value.MediaInCount;
+                        CheckUnits[unit.Key].Unit.Status.InitialCounts.RetractOperations = unit.Value.RetractOperations;
                     }
                 }
 
@@ -1209,8 +1120,6 @@ namespace XFS4IoTServer
                 foreach (var unit in CheckUnits)
                 {
                     // update status logically first and overwrite status if the device class requires.
-                    unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
-
                     if (unit.Value.Unit.Status.CheckInCounts.Count >= unit.Value.Capacity)
                     {
                         unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Full;
@@ -1229,6 +1138,14 @@ namespace XFS4IoTServer
                         {
                             unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.High;
                         }
+                        else
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
+                        }
+                    }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
                     }
                 }
 
@@ -1283,16 +1200,8 @@ namespace XFS4IoTServer
         /// UpdateCheckStorageCount
         /// Update check unit status and counts managed by the device specific class.
         /// </summary>
-        public async Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta, Dictionary<string, string> preservedStorage)
+        public async Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta)
         {
-            Dictionary<string, string> preserved = [];
-            foreach (var unit in CheckUnits)
-            {
-                preserved.Add(unit.Key, JsonSerializer.Serialize(unit.Value));
-            }
-            if (preservedStorage is not null)
-                preserved = preservedStorage;
-
             if (countDelta is not null)
             {
                 // First to update item movement reported by the device class, then update entire counts if the device class maintains check unit counts.
@@ -1361,8 +1270,6 @@ namespace XFS4IoTServer
             foreach (var unit in CheckUnits)
             {
                 // update status logically first and overwrite status if the device class requires.
-                unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
-
                 if (unit.Value.Unit.Status.CheckInCounts.Count >= unit.Value.Capacity)
                 {
                     unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Full;
@@ -1380,10 +1287,14 @@ namespace XFS4IoTServer
                     else if (unit.Value.Unit.Status.CheckInCounts.Count > unit.Value.Unit.Configuration.HighThreshold)
                     {
                         if (!sendThresholdEvent.ContainsKey(unit.Key))
-                            sendThresholdEvent.Add(unit.Key, false);
                         {
-                            unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.High;
+                            sendThresholdEvent.Add(unit.Key, false);
                         }
+                        unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.High;
+                    }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
                     }
                 }
                 else if (unit.Value.Unit.Configuration.RetractHighThreshold != 0)
@@ -1394,7 +1305,16 @@ namespace XFS4IoTServer
                         {
                             sendThresholdEvent.Add(unit.Key, true);
                         }
+                        unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.High;
                     }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
+                    }
+                }
+                else
+                {
+                    unit.Value.Unit.Status.ReplenishmentStatus = CheckStatusClass.ReplenishmentStatusEnum.Healthy;
                 }
             }
 
@@ -1463,87 +1383,375 @@ namespace XFS4IoTServer
                 await StorageThresholdEvent(evPayload);
             }
 
-            // Send changed event
-            Dictionary<string, StorageUnitClass> statusChangedUnits = [];
-            foreach (var unit in CheckUnits)
-            {
-                if (JsonSerializer.Serialize(unit.Value) ==
-                    preserved[unit.Key])
-                {
-                    continue;
-                }
-
-                StorageUnitClass payload = new(
-                    PositionName: unit.Value.PositionName,
-                    Capacity: unit.Value.Capacity,
-                    Status: unit.Value.Status switch
-                    {
-                        CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                        CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                        CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                        CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                        _ => StatusEnum.NotConfigured,
-                    },
-                    SerialNumber: unit.Value.SerialNumber,
-                    Check: new(
-                        Capabilities: new(
-                            Types: new(
-                                MediaIn: unit.Value.Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
-                                Retract: unit.Value.Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
-                                ),
-                            Sensors: new(
-                                Empty: unit.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Empty),
-                                High: unit.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.High),
-                                Full: unit.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Full)
-                                )
-                            ),
-                        Configuration: new(
-                            Types: new(
-                                MediaIn: unit.Value.Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
-                                Retract: unit.Value.Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
-                                ),
-                            BinID: unit.Value.Unit.Configuration.Id,
-                            HighThreshold: unit.Value.Unit.Configuration.HighThreshold,
-                            RetractHighThreshold: unit.Value.Unit.Configuration.RetractHighThreshold),
-                        Status: new(
-                            Index: unit.Value.Unit.Status.Index,
-                            Initial: new(
-                                MediaInCount: unit.Value.Unit.Status.InitialCounts.MediaInCount,
-                                Count: unit.Value.Unit.Status.InitialCounts.Count,
-                                RetractOperations: unit.Value.Unit.Status.InitialCounts.RetractOperations),
-                            In: new(
-                                MediaInCount: unit.Value.Unit.Status.CheckInCounts.MediaInCount,
-                                Count: unit.Value.Unit.Status.CheckInCounts.Count,
-                                RetractOperations: unit.Value.Unit.Status.CheckInCounts.RetractOperations),
-                            ReplenishmentStatus: unit.Value.Unit.Status.ReplenishmentStatus switch
-                            {
-                                CheckStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.Check.ReplenishmentStatusEnum.Empty,
-                                CheckStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Check.ReplenishmentStatusEnum.Full,
-                                CheckStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.Check.ReplenishmentStatusEnum.Ok,
-                                CheckStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Check.ReplenishmentStatusEnum.High,
-                                _ => throw new InternalErrorException($"Unexpected check status specified. Unit:{unit.Key} Stauts:{unit.Value.Unit.Status.ReplenishmentStatus}"),
-                            }
-                            )
-                        )
-                    );
-
-                statusChangedUnits.Add(unit.Key, payload);
-            }
-
-            // Device class must fire status event if the count is managed by the device class.
-            if (statusChangedUnits.Count > 0)
-            {
-                StorageChangedEvent.PayloadData evPayload = new()
-                {
-                    ExtendedProperties = statusChangedUnits
-                };
-                await StorageChangedEvent(evPayload);
-            }
-
             if (!PersistentData.Store(ServiceProvider.Name + typeof(CheckUnitStorage).FullName, CheckUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data.");
             }
+        }
+        #endregion
+
+        #region Printer
+        /// <summary>
+        /// ConstructPrinterStorage
+        /// The method retreive printer unit structures from the device class. 
+        /// The device class must provide printer unit structure information
+        /// </summary>
+        private void ConstructPrinterStorage()
+        {
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetPrinterStorageConfiguration()");
+
+            bool newConfiguration = Device.GetPrinterStorageConfiguration(out Dictionary<string, PrinterUnitStorageConfiguration> newPrinterUnits);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterStorageConfiguration()-> {newConfiguration}");
+
+            if (newConfiguration)
+            {
+                if (newPrinterUnits is null ||
+                    newPrinterUnits?.Count == 0)
+                {
+                    Logger.Warning(Constants.Framework, $"The function GetPrinterStorageConfiguration returned true. however, there is not output data supplied.");
+                    newConfiguration = false;
+                }
+                else
+                {
+                    PrinterUnits.Clear();
+                    int index = 0;
+                    foreach (var unit in newPrinterUnits)
+                    {
+                        PrinterUnits.Add(unit.Key, new PrinterUnitStorage(index++, unit.Value));
+                    }
+                }
+            }
+
+            if (!newConfiguration)
+            {
+                bool identical = newPrinterUnits?.Count == PrinterUnits.Count;
+                if (newPrinterUnits is not null)
+                {
+                    foreach (var unit in newPrinterUnits)
+                    {
+                        identical = PrinterUnits.ContainsKey(unit.Key);
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing printer unit information doesn't contain key specified by the device class. {unit.Key}. Construct new printer unit infomation.");
+                            break;
+                        }
+
+                        identical = PrinterUnits[unit.Key].Unit.Configuration == unit.Value.Configuration &&
+                                    PrinterUnits[unit.Key].Unit.Capabilities == unit.Value.Capabilities &&
+                                    PrinterUnits[unit.Key].Capacity == unit.Value.Capacity &&
+                                    PrinterUnits[unit.Key].PositionName == unit.Value.PositionName &&
+                                    PrinterUnits[unit.Key].SerialNumber == unit.Value.SerialNumber;
+
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing printer unit information doesn't have an identical storage structure information specified by the device class. {unit.Key}. Construct new printer unit infomation.");
+                            break;
+                        }
+                    }
+                }
+
+                if (!identical)
+                {
+                    PrinterUnits.Clear();
+                    if (newPrinterUnits is not null)
+                    {
+                        int index = 0;
+                        foreach (var unit in newPrinterUnits)
+                        {
+                            PrinterUnits.Add(unit.Key, new PrinterUnitStorage(index++, unit.Value));
+                        }
+                    }
+                }
+            }
+
+            // Update count from device
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetPrinterUnitCounts()");
+
+            bool updateCounts = Device.GetPrinterUnitCounts(out Dictionary<string, PrinterUnitCount> unitCounts);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitCounts()-> {updateCounts}");
+
+            if (updateCounts &&
+                unitCounts is not null)
+            {
+                foreach (var status in unitCounts)
+                {
+                    if (!CardUnits.ContainsKey(status.Key))
+                    {
+                        Logger.Warning(Constants.Framework, $"Specified printer unit ID is not found on GetPrinterUnitCounts. {status.Key}");
+                        continue;
+                    }
+                    PrinterUnits[status.Key].Unit.Status.InitialCount = status.Value.InitialCount;
+                    PrinterUnits[status.Key].Unit.Status.InCount = status.Value.InCount;
+                }
+            }
+
+            foreach (var unit in PrinterUnits)
+            {
+                // update status logically first and overwrite status if the device class requires.
+                unit.Value.Unit.Status.ReplenishmentStatus = XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Healthy;
+
+                if (unit.Value.Unit.Status.InCount >= unit.Value.Capacity)
+                {
+                    unit.Value.Unit.Status.ReplenishmentStatus = XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Full;
+                }
+            }
+
+            // Update hardware storage status
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterStorageStatus()");
+
+            bool updateStatus = Device.GetPrinterStorageStatus(out Dictionary<string, PrinterUnitStorage.StatusEnum> storageStatus);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterStorageStatus()-> {updateStatus}");
+
+            if (updateStatus &&
+                storageStatus is not null)
+            {
+                foreach (var unit in storageStatus)
+                {
+                    if (!PrinterUnits.ContainsKey(unit.Key))
+                    {
+                        Logger.Warning(Constants.Framework, $"Specified printer unit ID is not found on GetPrinterStorageStatus. {unit.Key}");
+                        continue;
+                    }
+                    PrinterUnits[unit.Key].Status = unit.Value;
+                }
+            }
+
+            // Update hardware printer unit status
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitStatus()");
+
+            updateStatus = Device.GetPrinterUnitStatus(out Dictionary<string, XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum> unitStatus);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitStatus()-> {updateStatus}");
+
+            if (updateStatus &&
+                unitStatus is not null)
+            {
+                foreach (var unit in unitStatus)
+                {
+                    if (!PrinterUnits.ContainsKey(unit.Key))
+                    {
+                        Logger.Warning(Constants.Framework, $"Specified printer unit ID is not found on GetPrinterUnitStatus. {unit.Key}");
+                        continue;
+                    }
+                    PrinterUnits[unit.Key].Unit.Status.ReplenishmentStatus = unit.Value;
+                }
+            }
+
+            // Save printer units info persistently
+            bool success = PersistentData.Store(ServiceProvider.Name + typeof(PrinterUnitStorage).FullName, PrinterUnits);
+            if (!success)
+            {
+                Logger.Warning(Constants.Framework, $"Failed to save printer unit counts.");
+            }
+        }
+
+        /// <summary>
+        /// UpdatePrinterStorageCount
+        /// Update storage count from the framework after media movement command is processed for printer interface.
+        /// i.e. ControlMedia, Retract, Reset.
+        /// </summary>
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta)
+        {
+            PrinterUnits.ContainsKey(storageId).IsTrue($"Unexpected storageId is passed in before updating printer unit counters. {storageId}");
+
+            // Update counts first by framework
+            PrinterUnits[storageId].Unit.Status.InCount += countDelta;
+
+            if (PrinterUnits[storageId].Unit.Status.InCount < 0)
+            {
+                PrinterUnits[storageId].Unit.Status.InCount = 0;
+            }
+
+            // Update counts from device
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetPrinterUnitCounts()");
+
+            bool updateCounts = Device.GetPrinterUnitCounts(out Dictionary<string, PrinterUnitCount> unitCounts);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitCounts()-> {updateCounts}");
+
+            int beforeCountUpdate = PrinterUnits[storageId].Unit.Status.InCount;
+
+            if (updateCounts &&
+                unitCounts is not null)
+            {
+                if (!unitCounts.ContainsKey(storageId))
+                {
+                    Logger.Warning(Constants.Framework, $"The device class returned count to update storage, but no information supplied for storage id {storageId}");
+                }
+                else
+                {
+                    // overwrite counts
+                    PrinterUnits[storageId].Unit.Status.InCount = unitCounts[storageId].InCount;
+                }
+            }
+
+            // Update hardware storage status
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterStorageStatus()");
+
+            bool updateStatus = Device.GetPrinterStorageStatus(out Dictionary<string, UnitStorageBase.StatusEnum> storageStatus);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterStorageStatus()-> {updateStatus}");
+
+            if (updateStatus &&
+                storageStatus is not null)
+            {
+                if (!storageStatus.ContainsKey(storageId))
+                {
+                    Logger.Warning(Constants.Framework, $"The device class returned to update storage status. however, there is no storage status supplied for storage id {storageId}");
+                }
+                else
+                {
+                    PrinterUnits[storageId].Status = storageStatus[storageId];
+                }
+            }
+
+            // Update hardware printer unit status
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitStatus()");
+
+            updateStatus = Device.GetPrinterUnitStatus(out Dictionary<string, XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum> unitStatus);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetPrinterUnitStatus()-> {updateStatus}");
+
+            // Update status from device
+            if (updateStatus)
+            {
+                if (unitStatus is null)
+                {
+                    Logger.Warning(Constants.Framework, $"The device class returned to update printer unit status. however, there is no status supplied.");
+                    updateStatus = false;
+                }
+                else
+                {
+                    if (!unitStatus.ContainsKey(storageId))
+                    {
+                        Logger.Warning(Constants.Framework, $"The device class returned to update printer unit status. however, there is no status supplied for storage id {storageId}");
+                        updateStatus = false;
+                    }
+                    else
+                    {
+                        PrinterUnits[storageId].Unit.Status.ReplenishmentStatus = unitStatus[storageId];
+                    }
+                }
+            }
+
+            if (!updateStatus)
+            {
+                if (PrinterUnits[storageId].Unit.Status.InCount >= CardUnits[storageId].Capacity)
+                {
+                    PrinterUnits[storageId].Unit.Status.ReplenishmentStatus = XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Full;
+                }
+                else
+                {
+                    PrinterUnits[storageId].Unit.Status.ReplenishmentStatus = XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Healthy;
+                }
+            }
+
+            // Save card units info persistently
+            bool success = PersistentData.Store(ServiceProvider.Name + typeof(PrinterUnitStorage).FullName, PrinterUnits);
+            if (!success)
+            {
+                Logger.Warning(Constants.Framework, $"Failed to save printer unit counts.");
+            }
+
+            return Task.CompletedTask;
+        }
+        #endregion
+
+        #region IBNS
+        /// <summary>
+        /// ConstructIBNSUnits
+        /// The method retreive IBNS unit structures from the device class. 
+        /// The device class must provide IBNS unit structure information.
+        /// </summary>
+        private void ConstructIBNSUnits()
+        {
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetIBNSStorageConfiguration()");
+
+            bool newConfiguration = Device.GetIBNSStorageInfo(out Dictionary<string, IBNSStorageInfo> newIBNSUnits);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetIBNSStorageConfiguration()-> {newConfiguration}");
+
+            if (newConfiguration)
+            {
+                if (newIBNSUnits is null ||
+                    newIBNSUnits?.Count == 0)
+                {
+                    Logger.Warning(Constants.Framework, $"The function GetIBNSStorageConfiguration returned true. however, there is not output data supplied.");
+                    newConfiguration = false;
+                }
+                else
+                {
+                    IBNSUnits.Clear();
+                    foreach (var unit in newIBNSUnits)
+                    {
+                        IBNSUnits.Add(unit.Key, new IBNSUnitStorage(unit.Value.StorageConfiguration, unit.Value.StorageStatus));
+                    }
+                }
+            }
+
+            if (!newConfiguration)
+            {
+                bool identical = newIBNSUnits?.Count == IBNSUnits.Count;
+                if (newIBNSUnits is not null)
+                {
+                    foreach (var unit in newIBNSUnits)
+                    {
+                        identical = IBNSUnits.ContainsKey(unit.Key);
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing IBNS unit information doesn't contain key specified by the device class. {unit.Key}. Construct new IBNS unit infomation.");
+                            break;
+                        }
+
+                        identical = IBNSUnits[unit.Key].Capacity == unit.Value.StorageConfiguration.Capacity &&
+                                    IBNSUnits[unit.Key].PositionName == unit.Value.StorageConfiguration.PositionName &&
+                                    IBNSUnits[unit.Key].SerialNumber == unit.Value.StorageConfiguration.SerialNumber;
+
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing IBNS unit information doesn't have an identical storage structure information specified by the device class. {unit.Key}. Construct new IBNS unit infomation.");
+                            break;
+                        }
+                    }
+                }
+
+                if (!identical)
+                {
+                    IBNSUnits.Clear();
+                    if (newIBNSUnits is not null)
+                    {
+                        foreach (var unit in newIBNSUnits)
+                        {
+                            IBNSUnits.Add(unit.Key, new IBNSUnitStorage(unit.Value.StorageConfiguration, unit.Value.StorageStatus));
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Deposit
+        /// <summary>
+        /// ConstructDepositUnits
+        /// The method retreive Deposit unit structures from the device class. 
+        /// The device class must provide Deposit unit structure information.
+        /// </summary>
+        private void ConstructDepositUnits()
+        {
+            // Not supported yet
+        }
+
+        /// <summary>
+        /// UpdatePrinterStorageCount
+        /// Update storage count from the framework after media movement command is processed for deposit interface.
+        /// </summary>
+        public Task UpdateDepositStorageCount(string storageId, int countDelta)
+        {
+            // Not supported yet
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -1566,6 +1774,16 @@ namespace XFS4IoTServer
                 !PersistentData.Store(ServiceProvider.Name + typeof(CheckUnitStorage).FullName, CheckUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data for check units.");
+            }
+            if (PrinterUnits is not null &&
+                !PersistentData.Store(ServiceProvider.Name + typeof(PrinterUnitStorage).FullName, PrinterUnits))
+            {
+                Logger.Warning(Constants.Framework, "Failed to save persistent data for printer units.");
+            }
+            if (IBNSUnits is not null &&
+                !PersistentData.Store(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName, IBNSUnits))
+            {
+                Logger.Warning(Constants.Framework, "Failed to save persistent data for IBNS units.");
             }
         }
 
@@ -1595,260 +1813,537 @@ namespace XFS4IoTServer
         public Dictionary<string, CheckUnitStorage> CheckUnits { get; init; }
 
         /// <summary>
+        /// Printer storage structure information of this device
+        /// </summary>
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get; init; }
+
+        /// <summary>
+        /// IBNS storage structure information of this device
+        /// </summary>
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get; init; }
+
+        /// <summary>
+        /// Depository storage structure information of this device
+        /// </summary>
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get; init; }
+
+        /// <summary>
         /// Return XFS4IoT storage structured object.
         /// </summary>
         public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds)
         {
-            Dictionary<string, XFS4IoT.Storage.StorageUnitClass> storageUnits = null;
+            Dictionary<string, UnitStorageBase> allStorage = [];
+            Dictionary<string, StorageCashClass> cashStorage = [];
+            Dictionary<string, XFS4IoT.CardReader.StorageClass> cardStorage = [];
+            Dictionary<string, XFS4IoT.Check.StorageClass> checkStorage = [];
+            Dictionary<string, XFS4IoT.Deposit.StorageClass> depositStorage = [];
+            Dictionary<string, XFS4IoT.Printer.StorageClass> printerStorage = [];
+            Dictionary<string, XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass> ibnsStorage = [];
 
-            foreach (var storageId in UnitIds)
+            if (StorageType.HasFlag(StorageTypeEnum.Card))
             {
-                if (StorageType == StorageTypeEnum.Card)
+                foreach (var storage in CardUnits)
                 {
-                    if (!CardUnits.ContainsKey(storageId))
-                        continue;
+                    if (!allStorage.ContainsKey(storage.Key))
+                    {
+                        allStorage.Add(storage.Key, storage.Value);
+                    }
 
-                    StorageUnitClass thisStorage = new(
-                        PositionName: CardUnits[storageId].PositionName,
-                        Capacity: CardUnits[storageId].Capacity,
-                        Status: CardUnits[storageId].Status switch
-                        {
-                            CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                            CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                            CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                            CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                            _ => StatusEnum.NotConfigured,
-                        },
-                        SerialNumber: CardUnits[storageId].SerialNumber,
-                        Card: new(
+                    cardStorage.Add(
+                        storage.Key,
+                        new(
                             Capabilities: new(
-                                Type: CardUnits[storageId].Unit.Capabilities.Type switch
+                                Type: storage.Value.Unit.Capabilities.Type switch
                                 {
                                     CardCapabilitiesClass.TypeEnum.Dispense => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Dispense,
                                     CardCapabilitiesClass.TypeEnum.Retain => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Retain,
                                     _ => XFS4IoT.CardReader.StorageCapabilitiesClass.TypeEnum.Park,
                                 },
-                                HardwareSensors: CardUnits[storageId].Unit.Capabilities.HardwareSensors),
-                            Configuration: new(
-                                CardID: CardUnits[storageId].Unit.Configuration.CardId,
-                                Threshold: CardUnits[storageId].Unit.Configuration.Threshold),
-                            Status: new(
-                                InitialCount: CardUnits[storageId].Unit.Status.InitialCount,
-                                Count: CardUnits[storageId].Unit.Status.Count,
-                                RetainCount: CardUnits[storageId].Unit.Status.RetainCount,
-                                ReplenishmentStatus: CardUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                {
-                                    CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
-                                    CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
-                                    CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
-                                    CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
-                                    _ => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
-                                })
-                            )
+                                HardwareSensors: storage.Value.Unit.Capabilities.HardwareSensors),
+                             Configuration: new(
+                                 CardID: storage.Value.Unit.Configuration.CardId,
+                                 Threshold: storage.Value.Unit.Configuration.Threshold),
+                             Status: new(
+                                 InitialCount: storage.Value.Unit.Status.InitialCount,
+                                 Count: storage.Value.Unit.Status.Count,
+                                 RetainCount: storage.Value.Unit.Status.RetainCount,
+                                 ReplenishmentStatus: storage.Value.Unit.Status.ReplenishmentStatus switch
+                                 {
+                                     CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
+                                     CardStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Full,
+                                     CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
+                                     CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
+                                     CardStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
+                                     _ => throw new InternalErrorException($"Unexpected card bin status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.ReplenishmentStatus}"),
+                                 })
+                             )
                         );
-
-                    (storageUnits ??= []).Add(storageId, thisStorage);
-                    // Card unit is not supporting combined storage with other types.
-                    continue;
                 }
-
-                if (StorageType.HasFlag(StorageTypeEnum.Cash) ||
-                    StorageType.HasFlag(StorageTypeEnum.Check))
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Cash))
+            {
+                foreach (var storage in CashUnits)
                 {
-                    // The device could be mixed media cash and check
-
-                    if (StorageType.HasFlag(StorageTypeEnum.Cash) &&
-                        CashUnits.ContainsKey(storageId))
+                    if (!allStorage.ContainsKey(storage.Key))
                     {
-                        XFS4IoT.Storage.StorageUnitClass thisStorage = new(
-                            Id: CashUnits[storageId].Id,
-                            PositionName: CashUnits[storageId].PositionName,
-                            Capacity: CashUnits[storageId].Capacity,
-                            Status: CashUnits[storageId].Status switch
-                            {
-                                CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                                CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                                CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                                CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                                _ => StatusEnum.NotConfigured,
-                            },
-                            SerialNumber: CashUnits[storageId].SerialNumber,
-                            Cash: new(
-                                Capabilities: new(
-                                    Types: new(
-                                        CashIn: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                        CashOut: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                        Replenishment: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                        CashInRetract: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                        CashOutRetract: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                        Reject: CashUnits[storageId].Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
-                                        ),
-                                    Items: new(
-                                        Fit: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                        Unfit: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                        Unrecognized: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                        Counterfeit: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
-                                        Suspect: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                        Inked: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                        Coupon: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                        Document: CashUnits[storageId].Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
-                                        ),
-                                    HardwareSensors: CashUnits[storageId].Unit.Capabilities.HardwareSensors,
-                                    RetractAreas: CashUnits[storageId].Unit.Capabilities.RetractAreas,
-                                    RetractThresholds: CashUnits[storageId].Unit.Capabilities.RetractThresholds,
-                                    CashItems: CashUnits[storageId].Unit.Configuration.BanknoteItems
-                                    ),
-                                Configuration: new(
-                                    Types: new(
-                                        CashIn: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
-                                        CashOut: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
-                                        Replenishment: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
-                                        CashInRetract: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
-                                        CashOutRetract: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
-                                        Reject: CashUnits[storageId].Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
-                                        ),
-                                    Items: new(
-                                        Fit: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
-                                        Unfit: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
-                                        Unrecognized: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
-                                        Counterfeit: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
-                                        Suspect: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
-                                        Inked: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
-                                        Coupon: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
-                                        Document: CashUnits[storageId].Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
-                                        ),
-                                    Currency: CashUnits[storageId].Unit.Configuration.Currency,
-                                    Value: CashUnits[storageId].Unit.Configuration.Value,
-                                    HighThreshold: CashUnits[storageId].Unit.Configuration.HighThreshold,
-                                    LowThreshold: CashUnits[storageId].Unit.Configuration.LowThreshold,
-                                    AppLockIn: CashUnits[storageId].Unit.Configuration.AppLockIn,
-                                    AppLockOut: CashUnits[storageId].Unit.Configuration.AppLockOut,
-                                    CashItems: CashUnits[storageId].Unit.Configuration.BanknoteItems
-                                    ),
-                                    Status: new(
-                                        Index: CashUnits[storageId].Unit.Status.Index,
-                                        Initial: CashUnits[storageId].Unit.Status.InitialCounts?.CopyTo(),
-                                        Out: new(
-                                            Presented: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Presented?.CopyTo(),
-                                            Rejected: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Rejected?.CopyTo(),
-                                            Distributed: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Distributed?.CopyTo(),
-                                            Unknown: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Unknown?.CopyTo(),
-                                            Stacked: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Stacked?.CopyTo(),
-                                            Diverted: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Diverted?.CopyTo(),
-                                            Transport: CashUnits[storageId].Unit.Status.StorageCashOutCount?.Transport?.CopyTo()
-                                            ),
-                                        In: new(
-                                            RetractOperations: CashUnits[storageId].Unit.Status.StorageCashInCount?.RetractOperations,
-                                            Deposited: CashUnits[storageId].Unit.Status.StorageCashInCount?.Deposited?.CopyTo(),
-                                            Retracted: CashUnits[storageId].Unit.Status.StorageCashInCount?.Retracted?.CopyTo(),
-                                            Rejected: CashUnits[storageId].Unit.Status.StorageCashInCount?.Rejected?.CopyTo(),
-                                            Distributed: CashUnits[storageId].Unit.Status.StorageCashInCount?.Distributed?.CopyTo(),
-                                            Transport: CashUnits[storageId].Unit.Status.StorageCashInCount?.Transport?.CopyTo()
-                                            ),
-                                        Accuracy: CashUnits[storageId].Unit.Status.Accuracy switch
-                                        {
-                                            CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
-                                            CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
-                                            CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
-                                            CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
-                                            _ => null,
-                                        },
-                                        ReplenishmentStatus: CashUnits[storageId].Unit.Status.ReplenishmentStatus switch
-                                        {
-                                            CashStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Empty,
-                                            CashStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Full,
-                                            CashStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Ok,
-                                            CashStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CashManagement.ReplenishmentStatusEnum.High,
-                                            CashStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Low,
-                                            _ => throw new InternalErrorException($"Unexpected cash unit status specified. Unit:{storageId} Status:{CashUnits[storageId].Unit.Status.ReplenishmentStatus}"),
-                                        }
-                                        )
-                                    )
-                                );
-
-                        (storageUnits ??= []).Add(storageId, thisStorage);
+                        allStorage.Add(storage.Key, storage.Value);
                     }
-                    if (StorageType.HasFlag(StorageTypeEnum.Check))
-                    {
-                        if (!CheckUnits.ContainsKey(storageId))
-                            continue;
 
-                        XFS4IoT.CashManagement.StorageCashClass cashStorage = null;
-
-                        if (storageUnits is not null &&
-                            storageUnits.ContainsKey(storageId))
-                        {
-                            // Check and Cash combined unit
-                            cashStorage = storageUnits[storageId].Cash;
-                            storageUnits.Remove(storageId);
-                        }
-                        StorageUnitClass thisStorage = new(
-                            PositionName: CheckUnits[storageId].PositionName,
-                            Capacity: CheckUnits[storageId].Capacity,
-                            Status: CheckUnits[storageId].Status switch
-                            {
-                                CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
-                                CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
-                                CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
-                                CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
-                                _ => StatusEnum.NotConfigured,
-                            },
-                            SerialNumber: CheckUnits[storageId].SerialNumber,
-                            Cash: cashStorage,
-                            Check: new(
-                                Capabilities: new(
-                                    Types: new(
-                                        MediaIn: CheckUnits[storageId].Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
-                                        Retract: CheckUnits[storageId].Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
-                                        ),
-                                    Sensors: new(
-                                        Empty: CheckUnits[storageId].Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Empty),
-                                        High: CheckUnits[storageId].Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.High),
-                                        Full: CheckUnits[storageId].Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Full)
-                                        )
+                    cashStorage.Add(
+                        storage.Key,
+                        new(
+                            Capabilities: new(
+                                Types: new(
+                                    CashIn: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
+                                    CashOut: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
+                                    Replenishment: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
+                                    CashInRetract: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
+                                    CashOutRetract: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
+                                    Reject: storage.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
                                     ),
-                                Configuration: new(
-                                    Types: new(
-                                        MediaIn: CheckUnits[storageId].Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
-                                        Retract: CheckUnits[storageId].Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
-                                        ),
-                                    BinID: CheckUnits[storageId].Unit.Configuration.Id,
-                                    HighThreshold: CheckUnits[storageId].Unit.Configuration.HighThreshold > 0 ?
-                                    CheckUnits[storageId].Unit.Configuration.HighThreshold :
-                                    null,
-                                    RetractHighThreshold: CheckUnits[storageId].Unit.Configuration.RetractHighThreshold > 0 ?
-                                    CheckUnits[storageId].Unit.Configuration.RetractHighThreshold :
-                                    null),
+                                Items: new(
+                                    Fit: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
+                                    Unfit: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
+                                    Unrecognized: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
+                                    Counterfeit: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
+                                    Suspect: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
+                                    Inked: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
+                                    Coupon: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
+                                    Document: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
+                                    ),
+                                HardwareSensors: storage.Value.Unit.Capabilities.HardwareSensors,
+                                RetractAreas: storage.Value.Unit.Capabilities.RetractAreas,
+                                RetractThresholds: storage.Value.Unit.Capabilities.RetractThresholds,
+                                CashItems: storage.Value.Unit.Configuration.BanknoteItems
+                                ),
+                            Configuration: new(
+                                Types: new(
+                                    CashIn: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn),
+                                    CashOut: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut),
+                                    Replenishment: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Replenishment),
+                                    CashInRetract: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract),
+                                    CashOutRetract: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract),
+                                    Reject: storage.Value.Unit.Configuration.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)
+                                    ),
+                                Items: new(
+                                    Fit: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Fit),
+                                    Unfit: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unfit),
+                                    Unrecognized: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Unrecognized),
+                                    Counterfeit: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Counterfeit),
+                                    Suspect: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Suspect),
+                                    Inked: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Inked),
+                                    Coupon: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Coupon),
+                                    Document: storage.Value.Unit.Configuration.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
+                                    ),
+                                Currency: storage.Value.Unit.Configuration.Currency,
+                                Value: storage.Value.Unit.Configuration.Value,
+                                HighThreshold: storage.Value.Unit.Configuration.HighThreshold,
+                                LowThreshold: storage.Value.Unit.Configuration.LowThreshold,
+                                AppLockIn: storage.Value.Unit.Configuration.AppLockIn,
+                                AppLockOut: storage.Value.Unit.Configuration.AppLockOut,
+                                CashItems: storage.Value.Unit.Configuration.BanknoteItems
+                                ),
                                 Status: new(
-                                    Index: CheckUnits[storageId].Unit.Status.Index,
-                                    Initial: new(
-                                        MediaInCount: CheckUnits[storageId].Unit.Status.InitialCounts.MediaInCount,
-                                        Count: CheckUnits[storageId].Unit.Status.InitialCounts.Count,
-                                        RetractOperations: CheckUnits[storageId].Unit.Status.InitialCounts.RetractOperations
+                                    Index: storage.Value.Unit.Status.Index,
+                                    Initial: storage.Value.Unit.Status.InitialCounts?.CopyTo(),
+                                    Out: new(
+                                        Presented: storage.Value.Unit.Status.StorageCashOutCount?.Presented?.CopyTo(),
+                                        Rejected: storage.Value.Unit.Status.StorageCashOutCount?.Rejected?.CopyTo(),
+                                        Distributed: storage.Value.Unit.Status.StorageCashOutCount?.Distributed?.CopyTo(),
+                                        Unknown: storage.Value.Unit.Status.StorageCashOutCount?.Unknown?.CopyTo(),
+                                        Stacked: storage.Value.Unit.Status.StorageCashOutCount?.Stacked?.CopyTo(),
+                                        Diverted: storage.Value.Unit.Status.StorageCashOutCount?.Diverted?.CopyTo(),
+                                        Transport: storage.Value.Unit.Status.StorageCashOutCount?.Transport?.CopyTo()
                                         ),
                                     In: new(
-                                        MediaInCount: CheckUnits[storageId].Unit.Status.CheckInCounts.MediaInCount,
-                                        Count: CheckUnits[storageId].Unit.Status.CheckInCounts.Count,
-                                        RetractOperations: CheckUnits[storageId].Unit.Status.CheckInCounts.RetractOperations
+                                        RetractOperations: storage.Value.Unit.Status.StorageCashInCount?.RetractOperations,
+                                        Deposited: storage.Value.Unit.Status.StorageCashInCount?.Deposited?.CopyTo(),
+                                        Retracted: storage.Value.Unit.Status.StorageCashInCount?.Retracted?.CopyTo(),
+                                        Rejected: storage.Value.Unit.Status.StorageCashInCount?.Rejected?.CopyTo(),
+                                        Distributed: storage.Value.Unit.Status.StorageCashInCount?.Distributed?.CopyTo(),
+                                        Transport: storage.Value.Unit.Status.StorageCashInCount?.Transport?.CopyTo()
                                         ),
-                                    ReplenishmentStatus: CheckUnits[storageId].Unit.Status.ReplenishmentStatus switch
+                                    Accuracy: storage.Value.Unit.Status.Accuracy switch
                                     {
-                                        CheckStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.Check.ReplenishmentStatusEnum.Empty,
-                                        CheckStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Check.ReplenishmentStatusEnum.Full,
-                                        CheckStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.Check.ReplenishmentStatusEnum.Ok,
-                                        CheckStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Check.ReplenishmentStatusEnum.High,
-                                        _ => throw new InternalErrorException($"Unexpected check status specified. Unit:{storageId} Stauts:{CheckUnits[storageId].Unit.Status.ReplenishmentStatus}"),
+                                        CashStatusClass.AccuracyEnum.Accurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Accurate,
+                                        CashStatusClass.AccuracyEnum.AccurateSet => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.AccurateSet,
+                                        CashStatusClass.AccuracyEnum.Inaccurate => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Inaccurate,
+                                        CashStatusClass.AccuracyEnum.Unknown => XFS4IoT.CashManagement.StorageCashStatusClass.AccuracyEnum.Unknown,
+                                        _ => null,
+                                    },
+                                    ReplenishmentStatus: storage.Value.Unit.Status.ReplenishmentStatus switch
+                                    {
+                                        CashStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Empty,
+                                        CashStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Full,
+                                        CashStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Ok,
+                                        CashStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CashManagement.ReplenishmentStatusEnum.High,
+                                        CashStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CashManagement.ReplenishmentStatusEnum.Low,
+                                        _ => throw new InternalErrorException($"Unexpected cash unit status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.ReplenishmentStatus}"),
                                     }
                                     )
                                 )
                             );
-
-                        (storageUnits ??= []).Add(storageId, thisStorage);
+                }
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Check))
+            {
+                foreach (var storage in CheckUnits)
+                {
+                    if (!allStorage.ContainsKey(storage.Key))
+                    {
+                        allStorage.Add(storage.Key, storage.Value);
                     }
+
+                    checkStorage.Add(
+                        storage.Key,
+                        new(
+                            Capabilities: new(
+                                Types: new(
+                                    MediaIn: storage.Value.Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
+                                    Retract: storage.Value.Unit.Capabilities.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
+                                    ),
+                                Sensors: new(
+                                    Empty: storage.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Empty),
+                                    High: storage.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.High),
+                                    Full: storage.Value.Unit.Capabilities.Sensors.HasFlag(CheckCapabilitiesClass.SensorEnum.Full)
+                                    )
+                                ),
+                            Configuration: new(
+                                Types: new(
+                                    MediaIn: storage.Value.Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.MediaIn),
+                                    Retract: storage.Value.Unit.Configuration.Types.HasFlag(CheckCapabilitiesClass.TypesEnum.Retract)
+                                    ),
+                                BinID: storage.Value.Unit.Configuration.Id,
+                                HighThreshold: storage.Value.Unit.Configuration.HighThreshold <= 0 ?
+                                null :
+                                storage.Value.Unit.Configuration.HighThreshold,
+                                RetractHighThreshold: storage.Value.Unit.Configuration.RetractHighThreshold <= 0 ?
+                                null :
+                                storage.Value.Unit.Configuration.RetractHighThreshold),
+                            Status: new(
+                                Index: storage.Value.Unit.Status.Index,
+                                Initial: new(
+                                    MediaInCount: storage.Value.Unit.Status.InitialCounts.MediaInCount,
+                                    Count: storage.Value.Unit.Status.InitialCounts.Count,
+                                    RetractOperations: storage.Value.Unit.Status.InitialCounts.RetractOperations
+                                    ),
+                                In: new(
+                                    MediaInCount: storage.Value.Unit.Status.CheckInCounts.MediaInCount,
+                                    Count: storage.Value.Unit.Status.CheckInCounts.Count,
+                                    RetractOperations: storage.Value.Unit.Status.CheckInCounts.RetractOperations
+                                    ),
+                                ReplenishmentStatus: storage.Value.Unit.Status.ReplenishmentStatus switch
+                                {
+                                    CheckStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.Check.ReplenishmentStatusEnum.Empty,
+                                    CheckStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Check.ReplenishmentStatusEnum.Full,
+                                    CheckStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.Check.ReplenishmentStatusEnum.Ok,
+                                    CheckStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Check.ReplenishmentStatusEnum.High,
+                                    _ => throw new InternalErrorException($"Unexpected check status specified. Unit:{storage.Key} Stauts:{storage.Value.Unit.Status.ReplenishmentStatus}"),
+                                }
+                                )
+                            )
+                        );
+                }
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Printer))
+            {
+                foreach (var storage in PrinterUnits)
+                {
+                    if (!allStorage.ContainsKey(storage.Key))
+                    {
+                        allStorage.Add(storage.Key, storage.Value);
+                    }
+
+                    printerStorage.Add(
+                        storage.Key,
+                        new(
+                            Capabilities: new(
+                                MaxRetracts: storage.Value.Unit.Capabilities.MaxRetracts),
+                            Status: new(
+                                Index: storage.Value.Unit.Status.Index,
+                                Initial: storage.Value.Unit.Status.InitialCount,
+                                In: storage.Value.Unit.Status.InCount,
+                                ReplenishmentStatus: storage.Value.Unit.Status.ReplenishmentStatus switch
+                                {
+                                    XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Printer.ReplenishmentStatusEnum.Full,
+                                    XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.Printer.ReplenishmentStatusEnum.Ok,
+                                    XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Printer.ReplenishmentStatusEnum.High,
+                                    XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Unknown => XFS4IoT.Printer.ReplenishmentStatusEnum.Unknown,
+                                    _ => throw new InternalErrorException($"Unexpected printer status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.ReplenishmentStatus}"),
+                                })
+                            )
+                        );
+                }
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.IBNS))
+            {
+                foreach (var storage in IBNSUnits)
+                {
+                    if (!allStorage.ContainsKey(storage.Key))
+                    {
+                        allStorage.Add(storage.Key, storage.Value);
+                    }
+
+                    ibnsStorage.Add(
+                        storage.Key,
+                        new(
+                            Identifier: storage.Value.Unit.Status.Identifier,
+                            Protection: storage.Value.Unit.Status.Protection switch
+                            {
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.NeutralizationTriggered => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.NeutralizationTriggered,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Fault,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Disarmed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Disarmed,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Armed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Armed,
+                                _ => throw new InternalErrorException($"Unexpected IBNS protection status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.Protection}"),
+                            },
+                            Warning: storage.Value.Unit.Status.Warning switch
+                            {
+                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.CassetteRunsAutonomously => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.CassetteRunsAutonomously,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.Alarm => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.Alarm,
+                                _ => null,
+                            },
+                            PowerSupply: storage.Value.Unit.Status.PowerInfo is null ? null :
+                            new XFS4IoT.PowerManagement.PowerInfoClass(
+                                PowerInStatus: storage.Value.Unit.Status.PowerInfo.PowerInStatus switch
+                                {
+                                    PowerInfoClass.PoweringStatusEnum.Powering => XFS4IoT.PowerManagement.PowerInfoClass.PowerInStatusEnum.Powering,
+                                    PowerInfoClass.PoweringStatusEnum.NotPower => XFS4IoT.PowerManagement.PowerInfoClass.PowerInStatusEnum.NoPower,
+                                    _ => throw new InternalErrorException($"Unexpected IBNS power in status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.PowerInfo.PowerInStatus}"),
+                                },
+                                PowerOutStatus: storage.Value.Unit.Status.PowerInfo.PowerOutStatus switch
+                                {
+                                    PowerInfoClass.PoweringStatusEnum.Powering => XFS4IoT.PowerManagement.PowerInfoClass.PowerOutStatusEnum.Powering,
+                                    PowerInfoClass.PoweringStatusEnum.NotPower => XFS4IoT.PowerManagement.PowerInfoClass.PowerOutStatusEnum.NoPower,
+                                    _ => throw new InternalErrorException($"Unexpected IBNS power out status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.PowerInfo.PowerOutStatus}"),
+                                },
+                                BatteryStatus: storage.Value.Unit.Status.PowerInfo.BatteryStatus switch
+                                {
+                                    PowerInfoClass.BatteryStatusEnum.Full => XFS4IoT.PowerManagement.BatteryStatusEnum.Full,
+                                    PowerInfoClass.BatteryStatusEnum.Low => XFS4IoT.PowerManagement.BatteryStatusEnum.Low,
+                                    PowerInfoClass.BatteryStatusEnum.Failure => XFS4IoT.PowerManagement.BatteryStatusEnum.Failure,
+                                    PowerInfoClass.BatteryStatusEnum.Operational => XFS4IoT.PowerManagement.BatteryStatusEnum.Operational,
+                                    PowerInfoClass.BatteryStatusEnum.Critical => XFS4IoT.PowerManagement.BatteryStatusEnum.Critical,
+                                    _ => null,
+                                },
+                                BatteryChargingStatus: storage.Value.Unit.Status.PowerInfo.BatteryChargingStatus switch
+                                {
+                                    PowerInfoClass.BatteryChargingStatusEnum.Charging => XFS4IoT.PowerManagement.BatteryChargingStatusEnum.Charging,
+                                    PowerInfoClass.BatteryChargingStatusEnum.NotCharging => XFS4IoT.PowerManagement.BatteryChargingStatusEnum.NotCharging,
+                                    PowerInfoClass.BatteryChargingStatusEnum.Discharging => XFS4IoT.PowerManagement.BatteryChargingStatusEnum.Discharging,
+                                    _ => null,
+                                }),
+                            Tilt: storage.Value.Unit.Status.TiltState switch
+                            {
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Fault,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Tilted,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.NotTilted,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Disabled,
+                                _ => null,
+                            },
+                            Temperature: storage.Value.Unit.Status.TemperatureState switch
+                            {
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Fault,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooCold,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Ok,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooHot,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Disabled,
+                                _ => null,
+                            },
+                            Lid: storage.Value.Unit.Status.LidStatus switch
+                            {
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Fault,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Opened => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Opened,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Closed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Closed,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Disabled,
+                                _ => null,
+                            },
+                            NeutralizationTrigger: storage.Value.Unit.Status.NeutralizationTrigger switch
+                            {
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Initializing => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Initializing,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Ready => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Ready,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Disabled,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Fault,
+                                _ => null,
+                            },
+                            StorageUnitIdentifier: storage.Value.Unit.Status.StorageUnitIdentifier
+                            )
+                        );
+                }
+            }
+            if (StorageType.HasFlag(StorageTypeEnum.Deposit))
+            {
+                foreach (var storage in DepositUnits)
+                {
+                    if (!allStorage.ContainsKey(storage.Key))
+                    {
+                        allStorage.Add(storage.Key, storage.Value);
+                    }
+
+                    depositStorage.Add(
+                        storage.Key,
+                        new(
+                            Capabilities: new(
+                                EnvSupply: storage.Value.Unit.Capabilities.EnvelpeSupply switch
+                                {
+                                    XFS4IoTFramework.Storage.DepositCapabilitiesClass.EnvelopeSupplyEnum.Motorized => XFS4IoT.Deposit.StorageCapabilitiesClass.EnvSupplyEnum.Motorized,
+                                    XFS4IoTFramework.Storage.DepositCapabilitiesClass.EnvelopeSupplyEnum.Manual => XFS4IoT.Deposit.StorageCapabilitiesClass.EnvSupplyEnum.Manual,
+                                _ => null
+                                }),
+                            Status: new(
+                                DepContainer: storage.Value.Unit.Status.DepositoryContainerStatus switch
+                                {
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.Healthy => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.Ok,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.Missing => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.Missing,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.Inoperative => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.Inoperative,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.Unknown => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.Unknown,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.High => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.High,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.DepositoryContainerStatusEnum.Full => XFS4IoT.Deposit.StorageStatusClass.DepContainerEnum.Full,
+                                    _ => null
+                                },
+                                EnvSupply: storage.Value.Unit.Status.EnvelopSupplyStatus switch
+                                {
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Healthy => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Ok,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Missing => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Missing,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Inoperative => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Inoperative,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Unknown => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Unknown,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Low => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Low,
+                                    XFS4IoTFramework.Storage.DepositStatusClass.EnvelopSupplyStatusEnum.Empty => XFS4IoT.Deposit.StorageStatusClass.EnvSupplyEnum.Empty,
+                                    _ => null,
+                                },
+                                NumOfDeposits: storage.Value.Unit.Status.NumberOfDeposits
+                                )
+                            )
+                        );
                 }
             }
 
-            return storageUnits;
+            // Build output response
+            Dictionary<string, StorageUnitClass> storageResponse = [];
+            foreach (var storage in allStorage)
+            {
+                if (!UnitIds.Contains(storage.Key))
+                {
+                    continue;
+                }
+
+                StorageCashClass thisCashStorage = null;
+                XFS4IoT.CardReader.StorageClass thisCardStorage = null;
+                XFS4IoT.Check.StorageClass thisCheckStorage = null;
+                XFS4IoT.Deposit.StorageClass thisDepositStorage = null;
+                XFS4IoT.Printer.StorageClass thisPrinterStorage = null;
+                XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass thisIBNSStorage = null;
+
+                if (cashStorage.ContainsKey(storage.Key))
+                {
+                    thisCashStorage = cashStorage[storage.Key];
+                }
+                if (cardStorage.ContainsKey(storage.Key))
+                {
+                    thisCardStorage = cardStorage[storage.Key];
+                }
+                if (checkStorage.ContainsKey(storage.Key))
+                {
+                    thisCheckStorage = checkStorage[storage.Key];
+                }
+                if (depositStorage.ContainsKey(storage.Key))
+                {
+                    thisDepositStorage = depositStorage[storage.Key];
+                }
+                if (printerStorage.ContainsKey(storage.Key))
+                {
+                    thisPrinterStorage = printerStorage[storage.Key];
+                }
+                if (ibnsStorage.ContainsKey(storage.Key))
+                {
+                    thisIBNSStorage = ibnsStorage[storage.Key];
+                }
+
+                StorageUnitClass thisStorage = new(
+                    PositionName: storage.Value.PositionName,
+                    Capacity: storage.Value.Capacity,
+                    Status: storage.Value.Status switch
+                    {
+                        CashUnitStorage.StatusEnum.Good => StatusEnum.Ok,
+                        CashUnitStorage.StatusEnum.Inoperative => StatusEnum.Inoperative,
+                        CashUnitStorage.StatusEnum.Manipulated => StatusEnum.Manipulated,
+                        CashUnitStorage.StatusEnum.Missing => StatusEnum.Missing,
+                        _ => StatusEnum.NotConfigured,
+                    },
+                    SerialNumber: storage.Value.SerialNumber,
+                    Card: thisCardStorage,
+                    Cash: thisCashStorage,
+                    Check: thisCheckStorage,
+                    Deposit: thisDepositStorage,
+                    BanknoteNeutralization: thisIBNSStorage,
+                    Printer: thisPrinterStorage
+                    );
+
+                storageResponse.Add(storage.Key, thisStorage);
+            }
+
+            return storageResponse;
         }
+
+        /// <summary>
+        /// Register status changed event to all units supported
+        /// </summary>
+        private void RegisterStorageChangedEvents()
+        {
+            foreach (var unit in CardUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+            }
+            foreach (var unit in CashUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+            }
+            foreach (var unit in CheckUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.CheckInCounts.StorageId = unit.Key;
+                unit.Value.Unit.Status.CheckInCounts.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.InitialCounts.StorageId = unit.Key;
+                unit.Value.Unit.Status.InitialCounts.PropertyChanged += StorageChangedEventFowarder;
+            }
+            foreach (var unit in PrinterUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+            }
+            foreach (var unit in IBNSUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+            }
+            foreach (var unit in DepositUnits)
+            {
+                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+            }
+        }
+        #region Events
+
+        public async Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo)
+        {
+            await StorageChangedEventHander(sender, propertyInfo);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Storage or Count changed event handler
+        /// </summary>
+        /// <param name="sender">object where the property is changed</param>
+        /// <param name="propertyInfo">including name of property is being changed</param>
+        private async void StorageChangedEventFowarder(object sender, PropertyChangedEventArgs propertyInfo) => await StorageChangedEvent(sender, propertyInfo);
     }
 }

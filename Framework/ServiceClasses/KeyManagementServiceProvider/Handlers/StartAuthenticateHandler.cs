@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,20 +53,20 @@ namespace XFS4IoTFramework.KeyManagement
                 payload = new(
                     DataToSign: result.DataToSign,
                     Signers: result.SigningMethod == AuthenticationData.SigningMethodEnum.None ?
-                        null :
-                        new(CertHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost),
-                            SigHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.SigHost),
-                            Ca: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA),
-                            Hl: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL),
-                            Cbcmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CBCMAC),
-                            Cmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CMAC),
-                            CertHostTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost_TR34),
-                            CaTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA_TR34),
-                            HlTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL_TR34),
-                            Reserved1: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved1),
-                            Reserved2: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved2),
-                            Reserved3: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved3)
-                            ));
+                    null :
+                    new(CertHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost),
+                        SigHost: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.SigHost),
+                        Ca: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA),
+                        Hl: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL),
+                        Cbcmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CBCMAC),
+                        Cmac: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CMAC),
+                        CertHostTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CertHost_TR34),
+                        CaTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.CA_TR34),
+                        HlTr34: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.HL_TR34),
+                        Reserved1: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved1),
+                        Reserved2: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved2),
+                        Reserved3: result.SigningMethod.HasFlag(AuthenticationData.SigningMethodEnum.Reserved3)
+                        ));
             }
 
             return new(

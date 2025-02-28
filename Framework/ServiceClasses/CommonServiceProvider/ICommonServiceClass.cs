@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -112,6 +112,26 @@ namespace XFS4IoTFramework.Common
         MixedMediaCapabilitiesClass MixedMediaCapabilities { get => null; set { } }
 
         /// <summary>
+        /// Stores Power management capabilities
+        /// </summary>
+        PowerManagementCapabilitiesClass PowerManagementCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores IBNS capabilities
+        /// </summary>
+        IBNSCapabilitiesClass IBNSCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores German DK capabilities
+        /// </summary>
+        GermanSpecificCapabilitiesClass GermanSpecificCapabilities { get => null; set { } }
+
+        /// <summary>
+        /// Stores Deposit capabilities
+        /// </summary>
+        DepositCapabilitiesClass DepositCapabilities { get => null; set { } }
+
+        /// <summary>
         /// Stores Commons status
         /// </summary>
         CommonStatusClass CommonStatus { get; set; }
@@ -200,6 +220,22 @@ namespace XFS4IoTFramework.Common
         /// Stores Mixed media status
         /// </summary>
         MixedMediaStatusClass MixedMediaStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores Power management status
+        /// </summary>
+        PowerManagementStatusClass PowerManagementStatus { get => null; set { } }
+
+        /// <summary>
+        /// Stores IBNS status
+        /// </summary>
+        IBNSStatusClass IBNSStatus { get => null; set { } }
+
+
+        /// <summary>
+        /// Stores Deposit status
+        /// </summary>
+        DepositStatusClass DepostStatus { get => null; set { } }
 
         /// <summary>
         /// Sending status changed event.

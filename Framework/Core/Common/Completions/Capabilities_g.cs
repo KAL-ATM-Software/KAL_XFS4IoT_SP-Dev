@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Common.Capabilities")]
     public sealed class CapabilitiesCompletion : Completion<CapabilitiesCompletion.PayloadData>
     {
@@ -27,7 +27,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, Check.CapabilitiesClass Check = null, MixedMedia.CapabilitiesClass MixedMedia = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, Lights.CapabilitiesClass Lights = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, VendorApplication.CapabilitiesClass VendorApplication = null)
+            public PayloadData(List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, Check.CapabilitiesClass Check = null, MixedMedia.CapabilitiesClass MixedMedia = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, GermanSpecific.CapabilitiesClass German = null, Lights.CapabilitiesClass Lights = null, IntelligentBanknoteNeutralization.CapabilitiesClass BanknoteNeutralization = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, Deposit.CapabilitiesClass Deposit = null, VendorApplication.CapabilitiesClass VendorApplication = null, PowerManagement.CapabilitiesClass PowerManagement = null)
                 : base()
             {
                 this.Interfaces = Interfaces;
@@ -47,9 +47,13 @@ namespace XFS4IoT.Common.Completions
                 this.BarcodeReader = BarcodeReader;
                 this.Biometric = Biometric;
                 this.Camera = Camera;
+                this.German = German;
                 this.Lights = Lights;
+                this.BanknoteNeutralization = BanknoteNeutralization;
                 this.Auxiliaries = Auxiliaries;
+                this.Deposit = Deposit;
                 this.VendorApplication = VendorApplication;
+                this.PowerManagement = PowerManagement;
             }
 
             /// <summary>
@@ -106,14 +110,26 @@ namespace XFS4IoT.Common.Completions
             [DataMember(Name = "camera")]
             public Camera.CapabilitiesClass Camera { get; init; }
 
+            [DataMember(Name = "german")]
+            public GermanSpecific.CapabilitiesClass German { get; init; }
+
             [DataMember(Name = "lights")]
             public Lights.CapabilitiesClass Lights { get; init; }
+
+            [DataMember(Name = "banknoteNeutralization")]
+            public IntelligentBanknoteNeutralization.CapabilitiesClass BanknoteNeutralization { get; init; }
 
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.CapabilitiesClass Auxiliaries { get; init; }
 
+            [DataMember(Name = "deposit")]
+            public Deposit.CapabilitiesClass Deposit { get; init; }
+
             [DataMember(Name = "vendorApplication")]
             public VendorApplication.CapabilitiesClass VendorApplication { get; init; }
+
+            [DataMember(Name = "powerManagement")]
+            public PowerManagement.CapabilitiesClass PowerManagement { get; init; }
 
         }
     }

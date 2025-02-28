@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,8 +16,8 @@ namespace XFS4IoTFramework.Check
         public enum PositionEnum
         {
             Input,
-            Refused,
-            ReBuncher
+            Output,
+            Refused
         }
 
         public MediaPresentedCommandEvent(IResetEvents events)
@@ -76,7 +76,7 @@ namespace XFS4IoTFramework.Check
                 { 
                     PositionEnum.Input => XFS4IoT.Check.PositionEnum.Input,
                     PositionEnum.Refused => XFS4IoT.Check.PositionEnum.Refused,
-                    PositionEnum.ReBuncher => XFS4IoT.Check.PositionEnum.Rebuncher,
+                    PositionEnum.Output => XFS4IoT.Check.PositionEnum.Output,
                     _ => throw new InternalErrorException($"Unsupported position is specified. {Position}")
                 },
                 BunchIndex: BunchIndex,

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -37,13 +37,13 @@ namespace XFS4IoT.Check.Commands
             [DataContract]
             public sealed class SourceClass
             {
-                public SourceClass(PositionEnum? Position = null)
+                public SourceClass(PresentMediaPositionEnum? Position = null)
                 {
                     this.Position = Position;
                 }
 
                 [DataMember(Name = "position")]
-                public PositionEnum? Position { get; init; }
+                public PresentMediaPositionEnum? Position { get; init; }
 
             }
 

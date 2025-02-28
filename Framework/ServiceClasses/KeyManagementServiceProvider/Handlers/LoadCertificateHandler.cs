@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,7 +53,7 @@ namespace XFS4IoTFramework.KeyManagement
                     (loadCertificate.Payload.Signer == LoadCertificateCommand.PayloadData.SignerEnum.CertHost &&
                      loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CertHost)) ||
                      (loadCertificate.Payload.Signer == LoadCertificateCommand.PayloadData.SignerEnum.Ca &&
-                     loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA)) ||
+                     loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.CA_TR34)) ||
                      (loadCertificate.Payload.Signer == LoadCertificateCommand.PayloadData.SignerEnum.Hl &&
                      loadOption.Signer.HasFlag(KeyManagementCapabilitiesClass.LoadCertificateSignerEnum.HL)))
                 {

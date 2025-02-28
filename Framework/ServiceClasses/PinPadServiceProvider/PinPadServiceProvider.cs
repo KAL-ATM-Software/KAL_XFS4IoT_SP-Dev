@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -31,11 +31,16 @@ namespace XFS4IoTServer
     /// </remarks>
     public class PinPadServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService
     {
-        public PinPadServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public PinPadServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Crypto, XFSConstants.ServiceClass.Keyboard, XFSConstants.ServiceClass.KeyManagement, XFSConstants.ServiceClass.PinPad },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Crypto, XFSConstants.ServiceClass.Keyboard, XFSConstants.ServiceClass.KeyManagement, XFSConstants.ServiceClass.PinPad],
                  device,
                  logger)
         {
@@ -67,9 +72,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the PinPad Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
         #endregion
 
         #region Common Service
@@ -135,37 +141,39 @@ namespace XFS4IoTServer
         /// <summary>
         /// Add new key into the collection and return key slot
         /// </summary>
-        public void AddKey(string KeyName,
-                           int KeySlot,
-                           string KeyUsage,
-                           string Algorithm,
-                           string ModeOfUse,
-                           int KeyLength,
-                           KeyDetail.KeyStatusEnum KeyStatus,
-                           bool Preloaded,
-                           string RestrictedKeyUsage = null,
-                           string KeyVersionNumber = null,
-                           string Exportability = null,
-                           List<byte> OptionalKeyBlockHeader = null,
-                           int? Generation = null,
-                           DateTime? ActivatingDate = null,
-                           DateTime? ExpiryDate = null,
-                           int? Version = null) => KeyManagementService.AddKey(KeyName,
-                                                                               KeySlot,
-                                                                               KeyUsage,
-                                                                               Algorithm,
-                                                                               ModeOfUse,
-                                                                               KeyLength,
-                                                                               KeyStatus,
-                                                                               Preloaded,
-                                                                               RestrictedKeyUsage,
-                                                                               KeyVersionNumber,
-                                                                               Exportability,
-                                                                               OptionalKeyBlockHeader,
-                                                                               Generation,
-                                                                               ActivatingDate,
-                                                                               ExpiryDate,
-                                                                               Version);
+        public void AddKey(
+            string KeyName,
+            int KeySlot,
+            string KeyUsage,
+            string Algorithm,
+            string ModeOfUse,
+            int KeyLength,
+            KeyDetail.KeyStatusEnum KeyStatus,
+            bool Preloaded,
+            string RestrictedKeyUsage = null,
+            string KeyVersionNumber = null,
+            string Exportability = null,
+            List<byte> OptionalKeyBlockHeader = null,
+            int? Generation = null,
+            DateTime? ActivatingDate = null,
+            DateTime? ExpiryDate = null,
+            int? Version = null) => KeyManagementService.AddKey(
+                KeyName,
+                KeySlot,
+                KeyUsage,
+                Algorithm,
+                ModeOfUse,
+                KeyLength,
+                KeyStatus,
+                Preloaded,
+                RestrictedKeyUsage,
+                KeyVersionNumber,
+                Exportability,
+                OptionalKeyBlockHeader,
+                Generation,
+                ActivatingDate,
+                ExpiryDate,
+                Version);
 
         /// <summary>
         /// Delete specified key from the collection and return key slot

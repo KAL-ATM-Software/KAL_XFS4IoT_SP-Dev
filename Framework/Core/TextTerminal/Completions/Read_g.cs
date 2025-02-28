@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,10 +52,11 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Specifies a string containing all the printable characters (numeric and alphanumeric)
-            /// read from the text terminal unit key pad. This property is null if no characters are read.
+            /// read from the Text Terminal Unit keypad. This property is null if no characters are read.
             /// <example>12345</example>
             /// </summary>
             [DataMember(Name = "input")]
+            [DataTypes(Sensitive = true)]
             public string Input { get; init; }
 
         }

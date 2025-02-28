@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -38,8 +38,12 @@ namespace XFS4IoTFramework.Common
         CommonCapabilitiesClass.CameraInterfaceClass CameraInterface = null,
         CommonCapabilitiesClass.CheckScannerInterfaceClass CheckScannerInterface = null,
         CommonCapabilitiesClass.MixedMediaInterfaceClass MixedMediaInterface = null,
+        CommonCapabilitiesClass.IntelligentBanknoteNeutralizationClass IntelligentBanknoteNeutralizationInterface = null,
+        CommonCapabilitiesClass.DepositInterfaceClass DepositInterface = null,
+        CommonCapabilitiesClass.PowerManagementInterfaceClass PowerManagementInterface = null,
+        CommonCapabilitiesClass.GermanSpecificInterfaceClass GermanSpecificInterface = null,
         List<CommonCapabilitiesClass.DeviceInformationClass> DeviceInformation = null,
-        bool? PowerSaveControl = null,
+        bool? PowerSaveControl = null, // Obsolete property
         bool? AntiFraudModule = null,
         CommonCapabilitiesClass.EndToEndSecurityClass EndToEndSecurity = null)
     {
@@ -58,7 +62,7 @@ namespace XFS4IoTFramework.Common
                 ClearCommandNonce,
                 GetCommandNonce,
                 GetTransactionState,
-                PowerSaveControl,
+                PowerSaveControl, // Obsolete property
                 SetTransactionState,
                 SetVersions,
                 Cancel,
@@ -329,6 +333,7 @@ namespace XFS4IoTFramework.Common
                 StorageChangedEvent,
                 StorageErrorEvent,
                 StorageThresholdEvent,
+                CountsChangedEvent,
             }
 
             public List<CommandEnum> Commands { get; init; } = Commands;
@@ -382,7 +387,6 @@ namespace XFS4IoTFramework.Common
                 GetQueryField,
                 GetQueryForm,
                 GetQueryMedia,
-                LoadDefinition,
                 MediaExtents,
                 PrintForm,
                 PrintNative,
@@ -394,6 +398,9 @@ namespace XFS4IoTFramework.Common
                 RetractMedia,
                 SetBlackMarkMode,
                 SupplyReplenish,
+                SetForm,
+                SetMedia,
+                ClearBuffer,
             }
 
             public enum EventEnum
@@ -630,6 +637,106 @@ namespace XFS4IoTFramework.Common
             public List<EventEnum> Events { get; init; } = Events;
         }
 
+        public sealed class DepositInterfaceClass(
+            List<DepositInterfaceClass.CommandEnum> Commands = null,
+            List<DepositInterfaceClass.EventEnum> Events = null)
+        {
+            public enum CommandEnum
+            {
+                Dispense,
+                Entry,
+                Reset,
+                Retract,
+                SupplyReplenish,
+            }
+
+            public enum EventEnum
+            {
+                DepositErrorEvent,
+                EnvDepositedEvent,
+                EnvInsertedEvent,
+                EnvTakenEvent,
+                InsertDepositEvent,
+                MediaDetectedEvent,
+            }
+
+            public List<CommandEnum> Commands { get; init; } = Commands;
+            public List<EventEnum> Events { get; init; } = Events;
+        }
+
+        public sealed class PowerManagementInterfaceClass(
+            List<PowerManagementInterfaceClass.CommandEnum> Commands = null,
+            List<PowerManagementInterfaceClass.EventEnum> Events = null)
+        {
+            public enum CommandEnum
+            {
+                PowerSaveControlCommand,
+            }
+
+            public enum EventEnum
+            { }
+
+            public List<CommandEnum> Commands { get; init; } = Commands;
+            public List<EventEnum> Events { get; init; } = Events;
+        }
+
+        public sealed class GermanSpecificInterfaceClass(
+            List<GermanSpecificInterfaceClass.CommandEnum> Commands = null,
+            List<GermanSpecificInterfaceClass.EventEnum> Events = null)
+        {
+            public enum CommandEnum
+            {
+                GetHSMTData,
+                HSMInit,
+                SecureMsgReceive,
+                SecureMsgSend,
+                SetHSMTData,
+            }
+
+            public enum EventEnum
+            {
+                HSMTDataChangedEvent,
+                OPTRequiredEvent,
+            }
+
+            public List<CommandEnum> Commands { get; init; } = Commands;
+            public List<EventEnum> Events { get; init; } = Events;
+        }
+
+        public sealed class IntelligentBanknoteNeutralizationClass(
+            List<IntelligentBanknoteNeutralizationClass.CommandEnum> Commands = null,
+            List<IntelligentBanknoteNeutralizationClass.EventEnum> Events = null)
+        {
+            public enum CommandEnum
+            {
+                SetProtection,
+                TriggerNeutralization,
+            }
+
+            public enum EventEnum
+            { }
+
+            public List<CommandEnum> Commands { get; init; } = Commands;
+            public List<EventEnum> Events { get; init; } = Events;
+        }
+
+        public sealed class DepositClass(
+            List<DepositClass.CommandEnum> Commands = null,
+            List<DepositClass.EventEnum> Events = null)
+        {
+            public enum CommandEnum
+            {
+                SetProtection,
+                TriggerNeutralization,
+            }
+
+            public enum EventEnum
+            { }
+
+            public List<CommandEnum> Commands { get; init; } = Commands;
+            public List<EventEnum> Events { get; init; } = Events;
+        }
+
         /// <summary>
         /// Device interfaces supported by this XFS4IoT service.
         /// </summary>
@@ -654,6 +761,10 @@ namespace XFS4IoTFramework.Common
         public CameraInterfaceClass CameraInterface { get; init; } = CameraInterface;
         public CheckScannerInterfaceClass CheckScannerInterface { get; init; } = CheckScannerInterface;
         public MixedMediaInterfaceClass MixedMediaInterface { get; init; } = MixedMediaInterface;
+        public IntelligentBanknoteNeutralizationClass IntelligentBanknoteNeutralizationInterface { get; init; } = IntelligentBanknoteNeutralizationInterface;
+        public DepositInterfaceClass DepositInterface { get; init; } = DepositInterface;
+        public PowerManagementInterfaceClass PowerManagementInterface { get; init; } = PowerManagementInterface;
+        public GermanSpecificInterfaceClass GermanSpecificInterface { get; init; } = GermanSpecificInterface;
 
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array
@@ -664,6 +775,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies whether power saving control is available.
         /// </summary>
+        [Obsolete("This method is no longer used by the common interface. Migrate power saving control to PowerManagement interface. this interface will be removed after version 4.")]
         public bool? PowerSaveControl { get; init; } = PowerSaveControl;
 
         /// <summary>

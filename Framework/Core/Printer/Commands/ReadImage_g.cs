@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = ReadImage
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Printer.ReadImage")]
     public sealed class ReadImageCommand : Command<ReadImageCommand.PayloadData>
     {
@@ -28,97 +28,152 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(FrontImageTypeEnum? FrontImageType = null, BackImageTypeEnum? BackImageType = null, FrontImageColorFormatEnum? FrontImageColorFormat = null, BackImageColorFormatEnum? BackImageColorFormat = null)
+            public PayloadData(FrontImageClass FrontImage = null, BackImageClass BackImage = null, bool? PassportDataGroup1 = null, bool? PassportDataGroup2 = null)
                 : base()
             {
-                this.FrontImageType = FrontImageType;
-                this.BackImageType = BackImageType;
-                this.FrontImageColorFormat = FrontImageColorFormat;
-                this.BackImageColorFormat = BackImageColorFormat;
+                this.FrontImage = FrontImage;
+                this.BackImage = BackImage;
+                this.PassportDataGroup1 = PassportDataGroup1;
+                this.PassportDataGroup2 = PassportDataGroup2;
             }
 
-            public enum FrontImageTypeEnum
+            [DataContract]
+            public sealed class FrontImageClass
             {
-                Tif,
-                Wmf,
-                Bmp,
-                Jpg,
-                None
+                public FrontImageClass(ImageTypeEnum? ImageType = null, ColorFormatEnum? ColorFormat = null)
+                {
+                    this.ImageType = ImageType;
+                    this.ColorFormat = ColorFormat;
+                }
+
+                public enum ImageTypeEnum
+                {
+                    Tif,
+                    Wmf,
+                    Bmp,
+                    Jpg,
+                    Png,
+                    Gif,
+                    Svg
+                }
+
+                /// <summary>
+                /// Specifies the format of the image as one of the following:
+                /// 
+                /// * ```tif``` - TIF 6.0 format.
+                /// * ```wmf``` - WMF (Windows Metafile) format.
+                /// * ```bmp``` - BMP format.
+                /// * ```jpg``` - JPG format.
+                /// * ```png``` - Portable Network Graphics format.
+                /// * ```gif``` - Graphics Interchange Format format.
+                /// * ```svg``` - Scalable Vector Graphics format.
+                /// <example>png</example>
+                /// </summary>
+                [DataMember(Name = "imageType")]
+                public ImageTypeEnum? ImageType { get; init; }
+
+                public enum ColorFormatEnum
+                {
+                    Binary,
+                    Grayscale,
+                    Fullcolor
+                }
+
+                /// <summary>
+                /// Specifies the color format of the image as one of the following:
+                /// 
+                /// * ```binary``` - Binary (image contains two colors, usually the colors black and white).
+                /// * ```grayscale``` - Gray scale (image contains multiple gray colors).
+                /// * ```fullcolor``` - Full color (image contains colors like red, green, blue etc.).
+                /// <example>fullcolor</example>
+                /// </summary>
+                [DataMember(Name = "colorFormat")]
+                public ColorFormatEnum? ColorFormat { get; init; }
+
             }
 
             /// <summary>
-            /// Specifies the format of the front image returned by this command as one of the following. This can
-            /// be null if no front image is requested.
-            /// 
-            /// * ```tif``` - The returned image is in TIF 6.0 format.
-            /// * ```wmf``` - The returned image is in WMF (Windows Metafile) format.
-            /// * ```bmp``` - The returned image is in BMP format.
-            /// * ```jpg``` - The returned image is in JPG format.
+            /// Specifies the format of the front image returned by this command. This can be null if no front image is
+            /// requested.
             /// </summary>
-            [DataMember(Name = "frontImageType")]
-            public FrontImageTypeEnum? FrontImageType { get; init; }
+            [DataMember(Name = "frontImage")]
+            public FrontImageClass FrontImage { get; init; }
 
-            public enum BackImageTypeEnum
+            [DataContract]
+            public sealed class BackImageClass
             {
-                Tif,
-                Wmf,
-                Bmp,
-                Jpg
+                public BackImageClass(ImageTypeEnum? ImageType = null, ColorFormatEnum? ColorFormat = null)
+                {
+                    this.ImageType = ImageType;
+                    this.ColorFormat = ColorFormat;
+                }
+
+                public enum ImageTypeEnum
+                {
+                    Tif,
+                    Wmf,
+                    Bmp,
+                    Jpg,
+                    Png,
+                    Gif,
+                    Svg
+                }
+
+                /// <summary>
+                /// Specifies the format of the image as one of the following:
+                /// 
+                /// * ```tif``` - TIF 6.0 format.
+                /// * ```wmf``` - WMF (Windows Metafile) format.
+                /// * ```bmp``` - BMP format.
+                /// * ```jpg``` - JPG format.
+                /// * ```png``` - Portable Network Graphics format.
+                /// * ```gif``` - Graphics Interchange Format format.
+                /// * ```svg``` - Scalable Vector Graphics format.
+                /// <example>png</example>
+                /// </summary>
+                [DataMember(Name = "imageType")]
+                public ImageTypeEnum? ImageType { get; init; }
+
+                public enum ColorFormatEnum
+                {
+                    Binary,
+                    Grayscale,
+                    Fullcolor
+                }
+
+                /// <summary>
+                /// Specifies the color format of the image as one of the following:
+                /// 
+                /// * ```binary``` - Binary (image contains two colors, usually the colors black and white).
+                /// * ```grayscale``` - Gray scale (image contains multiple gray colors).
+                /// * ```fullcolor``` - Full color (image contains colors like red, green, blue etc.).
+                /// <example>fullcolor</example>
+                /// </summary>
+                [DataMember(Name = "colorFormat")]
+                public ColorFormatEnum? ColorFormat { get; init; }
+
             }
 
             /// <summary>
-            /// Specifies the format of the back image returned by this command as one of the following. This can
-            /// be null if no back image is requested.
-            /// 
-            /// * ```tif``` - The returned image is in TIF 6.0 format.
-            /// * ```wmf``` - The returned image is in WMF (Windows Metafile) format.
-            /// * ```bmp``` - The returned image is in BMP format.
-            /// * ```jpg``` - The returned image is in JPG format.
+            /// Specifies the format of the back image returned by this command. This can be null if no back image is
+            /// requested.
             /// </summary>
-            [DataMember(Name = "backImageType")]
-            public BackImageTypeEnum? BackImageType { get; init; }
-
-            public enum FrontImageColorFormatEnum
-            {
-                Binary,
-                Grayscale,
-                Fullcolor
-            }
+            [DataMember(Name = "backImage")]
+            public BackImageClass BackImage { get; init; }
 
             /// <summary>
-            /// Specifies the color format of the requested front image as one of the following. This can
-            /// be null if no front image is requested.
-            /// 
-            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors, usually
-            ///   the colors black and white).
-            /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
-            ///   colors).
-            /// * ```fullcolor``` - The scanned image has to be returned in full color (image contains colors like
-            ///   red, green, blue, etc.).
+            /// Specifies whether Data Group 1 from a passport should be returned using RFID
+            /// (see [[Ref. printer-1](#ref-printer-1)]).
             /// </summary>
-            [DataMember(Name = "frontImageColorFormat")]
-            public FrontImageColorFormatEnum? FrontImageColorFormat { get; init; }
-
-            public enum BackImageColorFormatEnum
-            {
-                Binary,
-                Grayscale,
-                Fullcolor
-            }
+            [DataMember(Name = "passportDataGroup1")]
+            public bool? PassportDataGroup1 { get; init; }
 
             /// <summary>
-            /// Specifies the color format of the requested back image as one of the following. This can
-            /// be null if no back image is requested.
-            /// 
-            /// * ```binary``` - The scanned image has to be returned in binary (image contains two colors, usually
-            ///   the colors black and white).
-            /// * ```grayscale``` - The scanned image has to be returned in gray scale (image contains multiple gray
-            ///   colors).
-            /// * ```fullcolor``` - The scanned image has to be returned in full color (image contains colors like
-            ///   red, green, blue etc.).
+            /// Specifies whether Data Group 2 from a passport should be returned using RFID
+            /// (see [[Ref. printer-1](#ref-printer-1)]).
             /// </summary>
-            [DataMember(Name = "backImageColorFormat")]
-            public BackImageColorFormatEnum? BackImageColorFormat { get; init; }
+            [DataMember(Name = "passportDataGroup2")]
+            public bool? PassportDataGroup2 { get; init; }
 
         }
     }

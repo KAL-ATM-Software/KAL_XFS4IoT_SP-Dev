@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -21,34 +21,34 @@ namespace XFS4IoTFramework.Printer
         private async Task<CommandResult<ReadImageCompletion.PayloadData>> HandleReadImage(IReadImageEvents events, ReadImageCommand readImage, CancellationToken cancel)
         {
 
-            if (readImage.Payload.FrontImageType is null &&
-                readImage.Payload.FrontImageColorFormat is null &&
-                readImage.Payload.BackImageType is null &&
-                readImage.Payload.BackImageColorFormat is null)
+            if (readImage.Payload.FrontImage?.ImageType is null &&
+                readImage.Payload.FrontImage?.ColorFormat is null &&
+                readImage.Payload.BackImage?.ImageType is null &&
+                readImage.Payload.BackImage?.ColorFormat is null)
             {
                 return new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No image type and color format specified.");
             }
 
-            if ((readImage.Payload.FrontImageType is null &&
-                 readImage.Payload.FrontImageColorFormat is not null) ||
-                (readImage.Payload.FrontImageType is not null &&
-                 readImage.Payload.FrontImageColorFormat is null) ||
-                (readImage.Payload.BackImageType is null &&
-                 readImage.Payload.BackImageColorFormat is not null) ||
-                (readImage.Payload.BackImageType is not null &&
-                 readImage.Payload.BackImageColorFormat is null))
+            if ((readImage.Payload.FrontImage?.ImageType is null &&
+                 readImage.Payload.FrontImage?.ColorFormat is not null) ||
+                (readImage.Payload.FrontImage?.ImageType is not null &&
+                 readImage.Payload.FrontImage?.ColorFormat is null) ||
+                (readImage.Payload.BackImage?.ImageType is null &&
+                 readImage.Payload.BackImage?.ColorFormat is not null) ||
+                (readImage.Payload.BackImage?.ImageType is not null &&
+                 readImage.Payload.BackImage?.ColorFormat is null))
             {
                 return new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
                     $"No image type or color format specified.");
             }
 
-            if (!((readImage.Payload.FrontImageType is not null &&
-                   readImage.Payload.FrontImageColorFormat is not null) ||
-                  (readImage.Payload.BackImageType is not null &&
-                   readImage.Payload.BackImageColorFormat is not null)))
+            if (!((readImage.Payload.FrontImage?.ImageType is not null &&
+                   readImage.Payload.FrontImage?.ColorFormat is not null) ||
+                  (readImage.Payload.BackImage?.ImageType is not null &&
+                   readImage.Payload.BackImage?.ColorFormat is not null)))
             {
                 return new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
@@ -57,7 +57,7 @@ namespace XFS4IoTFramework.Printer
 
             Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, AcceptAndReadImageRequest.ReadData> DataToRead = [];
 
-            if (readImage.Payload.FrontImageType is not null)
+            if (readImage.Payload.FrontImage?.ImageType is not null)
             {
                 if (!Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageFront))
                 {
@@ -66,25 +66,25 @@ namespace XFS4IoTFramework.Printer
                         $"No front image source supported by the device.");
                 }
 
-                if (readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Bmp &&
+                if (readImage.Payload.FrontImage.ImageType == ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Bmp &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
-                    readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Jpg &&
+                    readImage.Payload.FrontImage.ImageType == ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Jpg &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
-                    readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Tif &&
+                    readImage.Payload.FrontImage.ImageType == ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Tif &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
-                    readImage.Payload.FrontImageType == ReadImageCommand.PayloadData.FrontImageTypeEnum.Wmf &&
+                    readImage.Payload.FrontImage.ImageType == ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Wmf &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
                 {
                     return new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Specified front image type supported by the device. {readImage.Payload.FrontImageType}");
+                        $"Specified front image type supported by the device. {readImage.Payload.FrontImage.ImageType}");
                 }
 
-                if ((readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Binary &&
+                if ((readImage.Payload.FrontImage.ColorFormat == ReadImageCommand.PayloadData.FrontImageClass.ColorFormatEnum.Binary &&
                     !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Binary)) ||
-                    (readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Fullcolor &&
+                    (readImage.Payload.FrontImage.ColorFormat == ReadImageCommand.PayloadData.FrontImageClass.ColorFormatEnum.Fullcolor &&
                     !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.Full)) ||
-                    (readImage.Payload.FrontImageColorFormat == ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Grayscale &&
+                    (readImage.Payload.FrontImage.ColorFormat == ReadImageCommand.PayloadData.FrontImageClass.ColorFormatEnum.Grayscale &&
                     !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.FrontImageColorFormatEnum.GrayScale)))
                 {
                     return new(
@@ -92,23 +92,27 @@ namespace XFS4IoTFramework.Printer
                         $"Unsupported color image format specified.");
                 }
 
-                DataToRead.Add(AcceptAndReadImageRequest.SourceTypeEnum.Front, new AcceptAndReadImageRequest.ReadData(AcceptAndReadImageRequest.SourceTypeEnum.Front,
-                                                                                                                      readImage.Payload.FrontImageType switch
-                                                                                                                      {
-                                                                                                                          ReadImageCommand.PayloadData.FrontImageTypeEnum.Tif => AcceptAndReadImageRequest.ReadData.DataFormatEnum.TIF,
-                                                                                                                          ReadImageCommand.PayloadData.FrontImageTypeEnum.Wmf => AcceptAndReadImageRequest.ReadData.DataFormatEnum.WMF,
-                                                                                                                          ReadImageCommand.PayloadData.FrontImageTypeEnum.Bmp => AcceptAndReadImageRequest.ReadData.DataFormatEnum.BMP,
-                                                                                                                          _ => AcceptAndReadImageRequest.ReadData.DataFormatEnum.JPG,
-                                                                                                                      },
-                                                                                                                      readImage.Payload.FrontImageColorFormat is null ? AcceptAndReadImageRequest.ReadData.ColorFormatEnum.None :
-                                                                                                                      readImage.Payload.FrontImageColorFormat switch
-                                                                                                                      {
-                                                                                                                          ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Binary => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Binary,
-                                                                                                                          ReadImageCommand.PayloadData.FrontImageColorFormatEnum.Grayscale => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Grayscale,
-                                                                                                                          _ => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Fullcolor,
-                                                                                                                      }));
+                DataToRead.Add(
+                    AcceptAndReadImageRequest.SourceTypeEnum.Front, 
+                    new AcceptAndReadImageRequest.ReadData(
+                        AcceptAndReadImageRequest.SourceTypeEnum.Front,
+                        readImage.Payload.FrontImage.ImageType switch
+                        {
+                            ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Tif => AcceptAndReadImageRequest.ReadData.DataFormatEnum.TIF,
+                            ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Wmf => AcceptAndReadImageRequest.ReadData.DataFormatEnum.WMF,
+                            ReadImageCommand.PayloadData.FrontImageClass.ImageTypeEnum.Bmp => AcceptAndReadImageRequest.ReadData.DataFormatEnum.BMP,
+                            _ => AcceptAndReadImageRequest.ReadData.DataFormatEnum.JPG,
+                        },
+                        readImage.Payload.FrontImage.ColorFormat is null ? AcceptAndReadImageRequest.ReadData.ColorFormatEnum.None :
+                        readImage.Payload.FrontImage.ColorFormat switch
+                        {
+                            ReadImageCommand.PayloadData.FrontImageClass.ColorFormatEnum.Binary => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Binary,
+                            ReadImageCommand.PayloadData.FrontImageClass.ColorFormatEnum.Grayscale => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Grayscale,
+                            _ => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Fullcolor,
+                        }));
             }
-            if (readImage.Payload.BackImageType is not null)
+
+            if (readImage.Payload.BackImage?.ImageType is not null)
             {
                 if (!Common.PrinterCapabilities.ImageSourceTypes.HasFlag(PrinterCapabilitiesClass.ImageSourceTypeEnum.ImageBack))
                 {
@@ -117,27 +121,27 @@ namespace XFS4IoTFramework.Printer
                         $"No back image source supported by the device.");
                 }
 
-                if (readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Bmp &&
+                if (readImage.Payload.BackImage.ImageType == ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Bmp &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.BMP) ||
-                    readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Jpg &&
+                    readImage.Payload.BackImage.ImageType == ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Jpg &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.JPG) ||
-                    readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Tif &&
+                    readImage.Payload.BackImage.ImageType == ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Tif &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.TIF) ||
-                    readImage.Payload.BackImageType == ReadImageCommand.PayloadData.BackImageTypeEnum.Wmf &&
+                    readImage.Payload.BackImage.ImageType == ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Wmf &&
                     !Common.PrinterCapabilities.ImageTypes.HasFlag(PrinterCapabilitiesClass.ImageTypeEnum.WMF))
                 {
                     return new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Specified back image type supported by the device. {readImage.Payload.FrontImageType}");
+                        $"Specified back image type supported by the device. {readImage.Payload.BackImage.ImageType}");
                 }
 
-                if (readImage.Payload.FrontImageColorFormat is not null)
+                if (readImage.Payload.BackImage?.ColorFormat is not null)
                 {
-                    if ((readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Binary &&
+                    if ((readImage.Payload.BackImage.ColorFormat == ReadImageCommand.PayloadData.BackImageClass.ColorFormatEnum.Binary &&
                         !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Binary)) ||
-                        (readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Fullcolor &&
+                        (readImage.Payload.BackImage.ColorFormat == ReadImageCommand.PayloadData.BackImageClass.ColorFormatEnum.Fullcolor &&
                         !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.Full)) ||
-                        (readImage.Payload.BackImageColorFormat == ReadImageCommand.PayloadData.BackImageColorFormatEnum.Grayscale &&
+                        (readImage.Payload.BackImage.ColorFormat == ReadImageCommand.PayloadData.BackImageClass.ColorFormatEnum.Grayscale &&
                         !Common.PrinterCapabilities.FrontImageColorFormats.HasFlag(PrinterCapabilitiesClass.BackImageColorFormatEnum.GrayScale)))
                     {
                         return new(
@@ -146,27 +150,31 @@ namespace XFS4IoTFramework.Printer
                     }
                 }
 
-                DataToRead.Add(AcceptAndReadImageRequest.SourceTypeEnum.Back, new AcceptAndReadImageRequest.ReadData(AcceptAndReadImageRequest.SourceTypeEnum.Back,
-                                                                                                                     readImage.Payload.BackImageType switch
-                                                                                                                     {
-                                                                                                                         ReadImageCommand.PayloadData.BackImageTypeEnum.Tif => AcceptAndReadImageRequest.ReadData.DataFormatEnum.TIF,
-                                                                                                                         ReadImageCommand.PayloadData.BackImageTypeEnum.Wmf => AcceptAndReadImageRequest.ReadData.DataFormatEnum.WMF,
-                                                                                                                         ReadImageCommand.PayloadData.BackImageTypeEnum.Bmp => AcceptAndReadImageRequest.ReadData.DataFormatEnum.BMP,
-                                                                                                                         _ => AcceptAndReadImageRequest.ReadData.DataFormatEnum.JPG,
-                                                                                                                     },
-                                                                                                                     readImage.Payload.BackImageColorFormat is null ? AcceptAndReadImageRequest.ReadData.ColorFormatEnum.None :
-                                                                                                                     readImage.Payload.BackImageColorFormat switch
-                                                                                                                     {
-                                                                                                                         ReadImageCommand.PayloadData.BackImageColorFormatEnum.Binary => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Binary,
-                                                                                                                         ReadImageCommand.PayloadData.BackImageColorFormatEnum.Grayscale => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Grayscale,
-                                                                                                                         _ => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Fullcolor,
-                                                                                                                     }));
+                DataToRead.Add(
+                    AcceptAndReadImageRequest.SourceTypeEnum.Back, 
+                    new AcceptAndReadImageRequest.ReadData(
+                        AcceptAndReadImageRequest.SourceTypeEnum.Back,
+                        readImage.Payload.BackImage.ImageType switch
+                        {
+                            ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Tif => AcceptAndReadImageRequest.ReadData.DataFormatEnum.TIF,
+                            ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Wmf => AcceptAndReadImageRequest.ReadData.DataFormatEnum.WMF,
+                            ReadImageCommand.PayloadData.BackImageClass.ImageTypeEnum.Bmp => AcceptAndReadImageRequest.ReadData.DataFormatEnum.BMP,
+                            _ => AcceptAndReadImageRequest.ReadData.DataFormatEnum.JPG,
+                        },
+                        readImage.Payload.BackImage.ColorFormat is null ? AcceptAndReadImageRequest.ReadData.ColorFormatEnum.None :
+                        readImage.Payload.BackImage.ColorFormat switch
+                        {
+                            ReadImageCommand.PayloadData.BackImageClass.ColorFormatEnum.Binary => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Binary,
+                            ReadImageCommand.PayloadData.BackImageClass.ColorFormatEnum.Grayscale => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Grayscale,
+                            _ => AcceptAndReadImageRequest.ReadData.ColorFormatEnum.Fullcolor,
+                        }));
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.AcceptAndReadImageAsync()");
-            var result = await Device.AcceptAndReadImageAsync(new ReadImageCommandEvents(events),
-                                                              new AcceptAndReadImageRequest(DataToRead),
-                                                              cancel);
+            var result = await Device.AcceptAndReadImageAsync(
+                new ReadImageCommandEvents(events),
+                new AcceptAndReadImageRequest(DataToRead),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.AcceptAndReadImageAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             ReadImageCompletion.PayloadData.ImagesClass dataRead = null;

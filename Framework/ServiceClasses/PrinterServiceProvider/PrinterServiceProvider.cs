@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,6 +15,7 @@ using XFS4IoT.Common.Events;
 using XFS4IoT.Printer.Events;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
+using XFS4IoTFramework.Storage;
 using System.ComponentModel;
 
 namespace XFS4IoTServer
@@ -27,22 +28,29 @@ namespace XFS4IoTServer
     /// It's possible to create other service provider types by combining multiple service classes in the 
     /// same way. 
     /// </remarks>
-    public class PrinterServiceProvider : ServiceProvider, IPrinterService, ICommonService
+    public class PrinterServiceProvider : ServiceProvider, IPrinterService, ICommonService, IStorageService
     {
-        public PrinterServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData) 
+        public PrinterServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData) 
             : 
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Printer },
+                 [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Printer, XFSConstants.ServiceClass.Storage ],
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             PrinterService = new PrinterServiceClass(this, logger, persistentData);
+            StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Printer);
         }
 
         private readonly PrinterServiceClass PrinterService;
         private readonly CommonServiceClass CommonService;
+        private readonly StorageServiceClass StorageService;
 
         #region Printer unsolicited events
         public Task MediaTakenEvent() => PrinterService.MediaTakenEvent();
@@ -92,15 +100,6 @@ namespace XFS4IoTServer
                 _ => XFS4IoT.Printer.Events.InkThresholdEvent.PayloadData.StateEnum.Out,
             }));
 
-        public Task RetractBinThresholdEvent(int BinNumber, RetractThresholdStatusEnum Status) => PrinterService.RetractBinThresholdEvent(
-            new RetractBinThresholdEvent.PayloadData(BinNumber, 
-                                                     Status switch
-                                                     {
-                                                         RetractThresholdStatusEnum.Full => XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData.StateEnum.Full,
-                                                         RetractThresholdStatusEnum.High => XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData.StateEnum.High,
-                                                         _ => XFS4IoT.Printer.Events.RetractBinThresholdEvent.PayloadData.StateEnum.Ok,
-                                                     }));
-
         public Task MediaAutoRetractedEvent(int BinNumber, AutoRetractResultEnum AutoRetractResult)
         {
             (AutoRetractResult == AutoRetractResultEnum.Retracted && BinNumber >= 0 && BinNumber <= 9).IsTrue($"Invalid retract bin number specified in MediaAutoRetractedEvent. Must be 0 to 9.");
@@ -113,15 +112,6 @@ namespace XFS4IoTServer
             };
             return PrinterService.MediaAutoRetractedEvent(new MediaAutoRetractedEvent.PayloadData(position));
         }
-
-        public Task RetractBinStatusEvent(int BinNumber, PhysicalBinStatusEnum State) => PrinterService.RetractBinStatusEvent(
-            new RetractBinStatusEvent.PayloadData(BinNumber, 
-                                                  State switch
-                                                  {
-                                                      PhysicalBinStatusEnum.Inserted => XFS4IoT.Printer.Events.RetractBinStatusEvent.PayloadData.StateEnum.Inserted,
-                                                      _ => XFS4IoT.Printer.Events.RetractBinStatusEvent.PayloadData.StateEnum.Removed,
-                                                  })
-            );
 
         public Task PaperThresholdEvent(CommonThresholdStatusEnum Status, PaperSourceEnum? PaperSource, string CustomSource = null)
         {
@@ -140,16 +130,97 @@ namespace XFS4IoTServer
                 paperSource = CustomSource;
             }
 
-            return PrinterService.PaperThresholdEvent(new PaperThresholdEvent.PayloadData(paperSource,
-                                                                                          Status switch
-                                                                                          {
-                                                                                              CommonThresholdStatusEnum.Full => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Full,
-                                                                                              CommonThresholdStatusEnum.Low => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Low,
-                                                                                              _ => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Out,
-                                                                                          }));
+            return PrinterService.PaperThresholdEvent(
+                new PaperThresholdEvent.PayloadData(
+                    paperSource,
+                    Status switch
+                    {
+                        CommonThresholdStatusEnum.Full => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Full,
+                        CommonThresholdStatusEnum.Low => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Low,
+                        _ => XFS4IoT.Printer.Events.PaperThresholdEvent.PayloadData.ThresholdEnum.Out,
+                    }));
         }
         #endregion
 
+        #region Storage Service
+
+        /// <summary>
+        /// Update storage count from the framework after media movement command is processed
+        /// </summary>
+        public Task UpdateCardStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"Printer service class doesn't support card storage.");
+
+        /// <summary>
+        /// UpdateCashAccounting
+        /// Update cash unit status and counts managed by the device specific class.
+        /// </summary>
+        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null) => throw new NotSupportedException($"Printer service class doesn't support cash storage.");
+
+        /// <summary>
+        /// Update managed check storage information in the framework.
+        /// </summary>
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null) => throw new NotSupportedException($"Printer service class doesn't support check storage.");
+
+        /// <summary>
+        /// Update managed printer storage information in the framework.
+        /// </summary>
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta) => StorageService.UpdatePrinterStorageCount(storageId, countDelta);
+
+        /// <summary>
+        /// Update managed deposit storage information in the framework.
+        /// </summary>
+        public Task UpdateDepositStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"Printer service class doesn't support deposit storage.");
+
+        public void StorePersistent() => StorageService.StorePersistent();
+
+        /// <summary>
+        /// Return which type of storage SP is using
+        /// </summary>
+        public StorageTypeEnum StorageType { get => StorageService.StorageType; init { } }
+
+        /// <summary>
+        /// Card storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CardUnitStorage> CardUnits { get => StorageService.CardUnits; init { } }
+
+        /// <summary>
+        /// Cash storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
+
+        /// <summary>
+        /// Check storage structure information of this device
+        /// </summary>
+        public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Printer storage structure information of this device
+        /// </summary>
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get => StorageService.PrinterUnits; init { } }
+
+        /// <summary>
+        /// IBNS storage structure information of this device
+        /// </summary>
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get => StorageService.IBNSUnits; init { } }
+
+        /// <summary>
+        /// Deposit storage structure information of this device
+        /// </summary>
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get => StorageService.DepositUnits; init { } }
+
+        /// <summary>
+        /// Return XFS4IoT storage structured object.
+        /// </summary>
+        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
+
+        #endregion
+
+        #region Storage Unsolicsited events 
+        /// <summary>
+        /// Sending status changed event.
+        /// </summary>
+        public Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => StorageService.StorageChangedEvent(sender, propertyInfo);
+
+        #endregion
 
         #region Common unsolicited events
 
@@ -157,9 +228,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Crypto Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -177,26 +249,26 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores Printer interface capabilites internally
         /// </summary>
-        public PrinterCapabilitiesClass PrinterCapabilities { get => CommonService.PrinterCapabilities; set => CommonService.PrinterCapabilities = value; }
+        public XFS4IoTFramework.Common.PrinterCapabilitiesClass PrinterCapabilities { get => CommonService.PrinterCapabilities; set => CommonService.PrinterCapabilities = value; }
 
         /// <summary>
         /// Stores Printer interface status internally
         /// </summary>
-        public PrinterStatusClass PrinterStatus { get => CommonService.PrinterStatus; set => CommonService.PrinterStatus = value; }
+        public XFS4IoTFramework.Common.PrinterStatusClass PrinterStatus { get => CommonService.PrinterStatus; set => CommonService.PrinterStatus = value; }
 
 
         #endregion
 
         /// <summary>
-        /// Load form or media definition 
+        /// Set form definition 
         /// </summary>
-        public bool LoadDefinition(string definition, bool overwrite) => PrinterService.LoadDefinition(definition, overwrite);
+        public bool SetForm(string definition, Form form) => PrinterService.SetForm(definition, form);
 
         /// <summary>
-        /// Load a single form or media definition 
+        /// Set media definition
         /// </summary>
-        public bool LoadSingleDefinition(string definition, bool overwrite, out XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum? type, out string name, out string errorMsg)
-            => PrinterService.LoadSingleDefinition(definition, overwrite, out type, out name, out errorMsg);
+        public bool SetMedia(string definition, Media media) => PrinterService.SetMedia(definition, media);
+
 
         /// <summary>
         /// Return forms loaded

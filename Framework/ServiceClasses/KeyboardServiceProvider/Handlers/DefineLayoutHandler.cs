@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -115,20 +115,26 @@ namespace XFS4IoTFramework.Keyboard
                                 $"No function key with shift and non-shift mode is specified. {entryMode.Key}");
                         }
 
-                        functionKeys.Add(new FrameClass.FunctionKeyClass((int)key.XPos,
-                                                                         (int)key.YPos,
-                                                                         (int)key.XSize,
-                                                                         (int)key.YSize,
-                                                                         key.Key,
-                                                                         key.ShiftKey));
+                        functionKeys.Add(
+                            new FrameClass.FunctionKeyClass(
+                                (int)key.XPos,
+                                (int)key.YPos,
+                                (int)key.XSize,
+                                (int)key.YSize,
+                                key.Key,
+                                key.ShiftKey)
+                            );
                     }
 
-                    frames.Add(new FrameClass((int)frame.XPos, 
-                                              (int)frame.YPos, 
-                                              (int)frame.XSize, 
-                                              (int)frame.YSize, 
-                                              floatAction, 
-                                              functionKeys));
+                    frames.Add(
+                        new FrameClass(
+                            (int)frame.XPos, 
+                            (int)frame.YPos, 
+                            (int)frame.XSize, 
+                            (int)frame.YSize, 
+                            floatAction, 
+                            functionKeys)
+                        );
                 }
 
                 request.Add(entryMode.Key, frames);

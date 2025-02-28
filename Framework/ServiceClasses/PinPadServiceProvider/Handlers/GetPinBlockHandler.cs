@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -139,25 +139,27 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPinBlock()");
 
-            var result = await Device.GetPinBlock(new PinPadCommandEvents(events),
-                                                  new PINBlockRequest(getPinBlock.Payload.CustomerData,
-                                                                      getPinBlock.Payload.XorData,
-                                                                      (byte)getPinBlock.Payload.Padding,
-                                                                      format,
-                                                                      getPinBlock.Payload.Key,
-                                                                      getPinBlock.Payload.SecondEncKey,
-                                                                      getPinBlock.Payload.CryptoMethod switch
-                                                                      { 
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Cbc => PINBlockRequest.EncryptionAlgorithmEnum.CBC,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Cfb => PINBlockRequest.EncryptionAlgorithmEnum.CFB,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ctr => PINBlockRequest.EncryptionAlgorithmEnum.CTR,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ecb => PINBlockRequest.EncryptionAlgorithmEnum.ECB,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ofb => PINBlockRequest.EncryptionAlgorithmEnum.OFB,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.Xts => PINBlockRequest.EncryptionAlgorithmEnum.XTS,
-                                                                          GetPinBlockCommand.PayloadData.CryptoMethodEnum.RsaesOaep => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_OAEP,
-                                                                          _ => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_PKCS1_V1_5,
-                                                                      }),
-                                                        cancel);
+            var result = await Device.GetPinBlock(
+                new PinPadCommandEvents(events),
+                new PINBlockRequest(
+                    getPinBlock.Payload.CustomerData,
+                    getPinBlock.Payload.XorData,
+                    (byte)getPinBlock.Payload.Padding,
+                    format,
+                    getPinBlock.Payload.Key,
+                    getPinBlock.Payload.SecondEncKey,
+                    getPinBlock.Payload.CryptoMethod switch
+                    { 
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Cbc => PINBlockRequest.EncryptionAlgorithmEnum.CBC,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Cfb => PINBlockRequest.EncryptionAlgorithmEnum.CFB,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ctr => PINBlockRequest.EncryptionAlgorithmEnum.CTR,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ecb => PINBlockRequest.EncryptionAlgorithmEnum.ECB,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Ofb => PINBlockRequest.EncryptionAlgorithmEnum.OFB,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.Xts => PINBlockRequest.EncryptionAlgorithmEnum.XTS,
+                        GetPinBlockCommand.PayloadData.CryptoMethodEnum.RsaesOaep => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_OAEP,
+                        _ => PINBlockRequest.EncryptionAlgorithmEnum.RSAES_PKCS1_V1_5,
+                    }),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.GetPinBlock() -> {result.CompletionCode}, {result.ErrorCode}");
 

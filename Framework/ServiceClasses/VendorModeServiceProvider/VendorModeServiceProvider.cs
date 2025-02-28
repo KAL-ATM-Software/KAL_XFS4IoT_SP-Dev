@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -27,11 +27,15 @@ namespace XFS4IoTServer
     /// </summary>
     public class VendorModeServiceProvider : ServiceProvider, IVendorModeService, ICommonService
     {
-        public VendorModeServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
+        public VendorModeServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.VendorMode },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.VendorMode],
                  device,
                  logger)
         {
@@ -49,9 +53,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the VendorMode Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 

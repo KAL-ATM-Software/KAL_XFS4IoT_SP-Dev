@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,12 +48,12 @@ namespace XFS4IoT.PinPad.Commands
             /// <example>0812746533758375</example>
             /// </summary>
             [DataMember(Name = "validationData")]
-            [DataTypes(Pattern = @"^[0-9]{16}$")]
+            [DataTypes(Sensitive = true, Pattern = @"^[0-9]{16}$")]
             public string ValidationData { get; init; }
 
             /// <summary>
             /// ASCII string defining the offset data for the PIN block as an ASCII string.
-            /// if this property is null then no offset is used.
+            /// If this property is null then no offset is used.
             /// The character must be in the ranges '0' to '9', 'a' to 'f' and 'A' to 'F'.
             /// <example>0000000000000000</example>
             /// </summary>
@@ -63,7 +63,7 @@ namespace XFS4IoT.PinPad.Commands
 
             /// <summary>
             /// Specifies the padding character for the validation data.
-            /// If the validation data is less than 16 characters long then it will be padded with this character.
+            /// If the validation data is less than 16-characters long then it will be padded with this character.
             /// If padding is in the range 00 to 0F in 16 character string, padding is applied after the validation
             /// data has been compressed. If the character is in the range 30 to 39 ('0' to '9'), 41 to 46 ('a' to
             /// 'f'), or 61 to 66 ('A' to 'F'), padding is applied before the validation data is compressed.
@@ -114,7 +114,7 @@ namespace XFS4IoT.PinPad.Commands
             public string KeyEncKey { get; init; }
 
             /// <summary>
-            /// ASCII decimalization table (16 character string containing characters '0' to '9'). This table is used
+            /// ASCII decimalization table (16-character string containing characters '0' to '9'). This table is used
             /// to convert the hexadecimal digits (0x0 to 0xF) of the encrypted validation data to decimal digits (0x0
             /// to 0x9).
             /// <example>3183042102277795</example>

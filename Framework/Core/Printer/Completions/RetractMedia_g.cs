@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCompletion : Completion<RetractMediaCompletion.PayloadData>
     {
@@ -58,11 +58,12 @@ namespace XFS4IoT.Printer.Completions
             /// 
             /// * ```transport``` - Media was retracted to the transport.
             /// * ```nomedia``` - No media was retracted.
-            /// * ```unit&lt;retract bin number&gt;``` - Media was retracted to the retract bin specified.
+            /// * ```[storage unit identifier]``` - A storage unit as specified by
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "result")]
-            [DataTypes(Pattern = @"^transport$|^nomedia$|^unit[0-9]+$")]
+            [DataTypes(Pattern = @"^transport$|^nomedia$|^unit[0-9A-Za-z]+$")]
             public string Result { get; init; }
 
         }

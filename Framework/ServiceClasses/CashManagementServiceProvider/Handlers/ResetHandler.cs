@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -155,17 +155,17 @@ namespace XFS4IoTFramework.CashManagement
                         }
 
                         destination = new ItemDestination(
-                               reset.Payload.Position.Target switch
-                               {
-                                   ItemTargetEnumEnum.OutBottom => ItemTargetEnum.OutBottom,
-                                   ItemTargetEnumEnum.OutCenter => ItemTargetEnum.OutCenter,
-                                   ItemTargetEnumEnum.OutDefault => ItemTargetEnum.OutDefault,
-                                   ItemTargetEnumEnum.OutFront => ItemTargetEnum.OutFront,
-                                   ItemTargetEnumEnum.OutLeft => ItemTargetEnum.OutLeft,
-                                   ItemTargetEnumEnum.OutRear => ItemTargetEnum.OutRear,
-                                   ItemTargetEnumEnum.OutRight => ItemTargetEnum.OutRight,
-                                   _ => ItemTargetEnum.OutTop,
-                               });
+                            reset.Payload.Position.Target switch
+                            {
+                                ItemTargetEnumEnum.OutBottom => ItemTargetEnum.OutBottom,
+                                ItemTargetEnumEnum.OutCenter => ItemTargetEnum.OutCenter,
+                                ItemTargetEnumEnum.OutDefault => ItemTargetEnum.OutDefault,
+                                ItemTargetEnumEnum.OutFront => ItemTargetEnum.OutFront,
+                                ItemTargetEnumEnum.OutLeft => ItemTargetEnum.OutLeft,
+                                ItemTargetEnumEnum.OutRear => ItemTargetEnum.OutRear,
+                                ItemTargetEnumEnum.OutRight => ItemTargetEnum.OutRight,
+                                _ => ItemTargetEnum.OutTop,
+                            });
                     }
                 }
             }
@@ -178,9 +178,10 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.ResetDeviceAsync()");
 
-            var result = await Device.ResetDeviceAsync(new ResetCommandEvents(Storage, events),
-                                                       new ResetDeviceRequest(destination),
-                                                       cancel);
+            var result = await Device.ResetDeviceAsync(
+                new ResetCommandEvents(Storage, events),
+                new ResetDeviceRequest(destination),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

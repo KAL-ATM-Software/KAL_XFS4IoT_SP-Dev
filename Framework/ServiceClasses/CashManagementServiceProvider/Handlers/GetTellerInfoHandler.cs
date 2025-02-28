@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -24,9 +24,11 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.GetTellerInfoAsync()");
 
-            var result = await Device.GetTellerInfoAsync(new GetTellerInfoRequest(getTellerInfo.Payload.TellerID is null ? -1 : (int)getTellerInfo.Payload.TellerID,
-                                                                                  getTellerInfo.Payload.Currency), 
-                                                          cancel);
+            var result = await Device.GetTellerInfoAsync(
+                new GetTellerInfoRequest(
+                    getTellerInfo.Payload.TellerID is null ? -1 : (int)getTellerInfo.Payload.TellerID,
+                    getTellerInfo.Payload.Currency), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.GetTellerInfoAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

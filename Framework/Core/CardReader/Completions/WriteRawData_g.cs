@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,7 +52,7 @@ namespace XFS4IoT.CardReader.Completions
             ///   intervention is required.
             /// * ```noMedia``` - The card was removed before completion of the write action (the event
             ///   [CardReader.MediaInsertedEvent](#cardreader.mediainsertedevent) has been generated). For motor
-            ///   driven devices, the write is disabled; i.e. another command has to be issued to enable the reader
+            ///   driven devices, the write is disabled, i.e., another command has to be issued to enable the reader
             ///   for card entry.
             /// * ```invalidMedia``` - No track found; card may have been inserted or pulled through the wrong way.
             /// * ```writeMethod``` - The [writeMethod](#cardreader.writerawdata.command.properties.track1.writemethod)

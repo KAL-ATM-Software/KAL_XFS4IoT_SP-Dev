@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -65,19 +65,21 @@ namespace XFS4IoTFramework.CashAcceptor
                         $"Unsupported note type supplied for references. {reference.NoteType}");
                 }
 
-                referenceSignatures.Add(new SignatureInfo(reference.NoteType,
-                                                          reference.Orientation switch 
-                                                          {
-                                                              XFS4IoT.CashManagement.OrientationEnum.BackBottom => OrientationEnum.BackBottom,
-                                                              XFS4IoT.CashManagement.OrientationEnum.BackTop => OrientationEnum.BackTop,
-                                                              XFS4IoT.CashManagement.OrientationEnum.FrontBottom => OrientationEnum.FrontBottom,
-                                                              XFS4IoT.CashManagement.OrientationEnum.FrontTop => OrientationEnum.FrontTop,
-                                                              _ => OrientationEnum.Unknown,
-                                                          },
-                                                          reference.Signature));
+                referenceSignatures.Add(
+                    new SignatureInfo(
+                        reference.NoteType,
+                        reference.Orientation switch 
+                        {
+                            XFS4IoT.CashManagement.OrientationEnum.BackBottom => OrientationEnum.BackBottom,
+                            XFS4IoT.CashManagement.OrientationEnum.BackTop => OrientationEnum.BackTop,
+                            XFS4IoT.CashManagement.OrientationEnum.FrontBottom => OrientationEnum.FrontBottom,
+                            XFS4IoT.CashManagement.OrientationEnum.FrontTop => OrientationEnum.FrontTop,
+                            _ => OrientationEnum.Unknown,
+                        },
+                        reference.Signature));
             }
 
-            Dictionary<int, SignatureInfo> signaturesToCompare = new();
+            Dictionary<int, SignatureInfo> signaturesToCompare = [];
             int index = 0;
             foreach (var signature in compareSignature.Payload.ReferenceSignatures)
             {
@@ -88,16 +90,20 @@ namespace XFS4IoTFramework.CashAcceptor
                         $"Unsupported note type supplied for signature to compare. {signature.NoteType}");
                 }
 
-                signaturesToCompare.Add(index++, new SignatureInfo(signature.NoteType,
-                                                                   signature.Orientation switch
-                                                                   {
-                                                                       XFS4IoT.CashManagement.OrientationEnum.BackBottom => OrientationEnum.BackBottom,
-                                                                       XFS4IoT.CashManagement.OrientationEnum.BackTop => OrientationEnum.BackTop,
-                                                                       XFS4IoT.CashManagement.OrientationEnum.FrontBottom => OrientationEnum.FrontBottom,
-                                                                       XFS4IoT.CashManagement.OrientationEnum.FrontTop => OrientationEnum.FrontTop,
-                                                                       _ => OrientationEnum.Unknown,
-                                                                   },
-                                                                   signature.Signature));
+                signaturesToCompare.Add(
+                    index++, 
+                    new SignatureInfo(
+                        signature.NoteType,
+                        signature.Orientation switch
+                        {
+                            XFS4IoT.CashManagement.OrientationEnum.BackBottom => OrientationEnum.BackBottom,
+                            XFS4IoT.CashManagement.OrientationEnum.BackTop => OrientationEnum.BackTop,
+                            XFS4IoT.CashManagement.OrientationEnum.FrontBottom => OrientationEnum.FrontBottom,
+                            XFS4IoT.CashManagement.OrientationEnum.FrontTop => OrientationEnum.FrontTop,
+                            _ => OrientationEnum.Unknown,
+                        },
+                        signature.Signature)
+                    );
 
             }
 
@@ -130,9 +136,12 @@ namespace XFS4IoTFramework.CashAcceptor
                             $"The device class reported unexpected confidence level. should be in the range of 0 to 100 inclusive. {confLevel.Value.ConfidenceLevel}");
                     }
 
-                    sigReuslt.Add(new CompareSignatureCompletion.PayloadData.SignaturesIndexClass(confLevel.Key,
-                                                                                                  confLevel.Value.ConfidenceLevel,
-                                                                                                  confLevel.Value.ComparisonData));
+                    sigReuslt.Add(
+                        new CompareSignatureCompletion.PayloadData.SignaturesIndexClass(
+                            confLevel.Key,
+                            confLevel.Value.ConfidenceLevel,
+                            confLevel.Value.ComparisonData)
+                        );
                 }
             }
 

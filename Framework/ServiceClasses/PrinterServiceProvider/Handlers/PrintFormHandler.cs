@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -23,6 +23,32 @@ namespace XFS4IoTFramework.Printer
         {
             PrintFormEvents = events;
 
+            Dictionary<string, string> payloadFields = [];
+            foreach (var field in printForm.Payload.Fields)
+            {
+                if (field.Value is null || 
+                    field.Value.Count == 0)
+                {
+                    // Invalid field value, just skip it
+                    Logger.Warning(Constants.Framework, $"No field value specified. {field.Key}");
+                    continue;
+                }
+                (field.Value.Count >= 1).IsTrue($"Unexpected field value received. {field.Value.Count}");
+                if (field.Value.Count > 1)
+                {
+                    // it's an index field
+                    int numElem = 0;
+                    foreach (var elem in field.Value)
+                    {
+                        payloadFields.Add($"{field.Key}[{numElem++}]", elem);
+                    }
+                }
+                else
+                {
+                    payloadFields.Add(field.Key, field.Value[0]);
+                }
+            }
+
             Dictionary<string, Form> forms = Printer.GetForms();
             // Locate the Form and Media and check they are valid for this device
             // First check specified form loaded or not
@@ -41,7 +67,7 @@ namespace XFS4IoTFramework.Printer
                 if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
                 {
                     return new(
-                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
                         result.Reason);
                 }
@@ -77,7 +103,7 @@ namespace XFS4IoTFramework.Printer
                 if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
                 {
                     return new(
-                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaInvalid),
+                        new(PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
                         $"Requested media is invalid. {result.Reason} {printForm.Payload.MediaName}");
                 }
@@ -145,12 +171,14 @@ namespace XFS4IoTFramework.Printer
             try
             {
                 Logger.Log(Constants.DeviceClass, $"PrinterDev.DirectFormPrintAsync()");
-                var result = await Device.DirectFormPrintAsync(new DirectFormPrintRequest(printForm.Payload.FormName,
-                                                                                          printForm.Payload.MediaName,
-                                                                                          printForm.Payload.Fields,
-                                                                                          paperSource,
-                                                                                          customSource),
-                                                               cancel);
+                var result = await Device.DirectFormPrintAsync(
+                    new DirectFormPrintRequest(
+                        printForm.Payload.FormName,
+                        printForm.Payload.MediaName,
+                        payloadFields,
+                        paperSource,
+                        customSource),
+                    cancel);
                 Logger.Log(Constants.DeviceClass, $"PrinterDev.DirectFormPrintAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
                 if (result.CompletionCode != MessageHeader.CompletionCodeEnum.UnsupportedCommand)
@@ -183,9 +211,9 @@ namespace XFS4IoTFramework.Printer
             { throw; }
 
             // This step assign field and field check
-            List<FieldAssignment> fieldAssignments = new();
+            List<FieldAssignment> fieldAssignments = [];
             int elementNumber;
-            foreach (var fieldName in printForm.Payload.Fields)
+            foreach (var fieldName in payloadFields)
             {
                 elementNumber = -1;
                 string fname = fieldName.Key;
@@ -418,9 +446,12 @@ namespace XFS4IoTFramework.Printer
                 {
                     Printer.PrintJob.SortTasks();
                     Logger.Log(Constants.DeviceClass, "PrinterDev.ExecutePrintTasksAsync()");
-                    result = await Device.ExecutePrintTasksAsync(new PrintTaskRequest(Printer.PrintJob,
-                                                                                      paperSource,
-                                                                                      customSource), cancel);
+                    result = await Device.ExecutePrintTasksAsync(
+                        new PrintTaskRequest(
+                            Printer.PrintJob,
+                            paperSource,
+                            customSource), 
+                        cancel);
                     Logger.Log(Constants.DeviceClass, $"PrinterDev.ExecutePrintTasksAsync() -> {result.CompletionCode}, {result.ErrorCode}");
                 }
 
@@ -526,9 +557,12 @@ namespace XFS4IoTFramework.Printer
                 {
                     Printer.PrintJob.SortTasks();
                     Logger.Log(Constants.DeviceClass, $"PrinterDev.ExecutePrintTasksAsync({Printer.PrintJob.PrintLength})");
-                    result = await Device.ExecutePrintTasksAsync(new PrintTaskRequest(Printer.PrintJob,
-                                                                                      paperSource,
-                                                                                      customSource), cancel);
+                    result = await Device.ExecutePrintTasksAsync(
+                        new PrintTaskRequest(
+                            Printer.PrintJob,
+                            paperSource,
+                            customSource), 
+                        cancel);
                     Logger.Log(Constants.DeviceClass, $"PrinterDev.ExecutePrintTasksAsync() -> {result.CompletionCode}, {result.ErrorCode}");
                 }
 
@@ -586,28 +620,92 @@ namespace XFS4IoTFramework.Printer
                 }
                 controls |= PrinterCapabilitiesClass.ControlEnum.Alarm;
             }
-            if (payload.MediaControl.Backward is not null &&
-                (bool)payload.MediaControl.Backward)
+            if (payload.MediaControl?.TurnPage is not null)
             {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Backward))
+                if (payload.MediaControl?.TurnPage == XFS4IoT.Printer.MediaControlNullableClass.TurnPageEnum.Backward)
                 {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Backward}");
+                    if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Backward))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Unsupported control media specified, check capabilities. {payload.MediaControl.TurnPage}");
+                    }
+                    controls |= PrinterCapabilitiesClass.ControlEnum.Backward;
                 }
-                controls |= PrinterCapabilitiesClass.ControlEnum.Backward;
+                else
+                {
+                    if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Forward))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"Unsupported control media specified, check capabilities. {payload.MediaControl.TurnPage}");
+                    }
+                    controls |= PrinterCapabilitiesClass.ControlEnum.Forward;
+                }
             }
-            if (payload.MediaControl.ClearBuffer is not null &&
-                (bool)payload.MediaControl.ClearBuffer)
+            if (payload.MediaControl.Move is not null)
             {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.ClearBuffer))
+                switch (payload.MediaControl.Move)
                 {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.ClearBuffer}");
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.Retract:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.Retract;
+                        break;
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.Eject:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.Eject;
+                        break;
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.EjectToTransport:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.EjectToTransport;
+                        break;
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.Park:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.Park;
+                        break;
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.Stack:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.Stack;
+                        break;
+                    case XFS4IoT.Printer.MediaControlNullableClass.MoveEnum.Expel:
+                        if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel))
+                        {
+                            return new(
+                                MessageHeader.CompletionCodeEnum.InvalidData,
+                                $"Unsupported control media specified, check capabilities. {payload.MediaControl.Move}");
+                        }
+                        controls |= PrinterCapabilitiesClass.ControlEnum.Expel;
+                        break;
+                    default:
+                        throw new InvalidDataException(
+                            $"Unsupported control media type option specified. {payload.MediaControl.Move}"
+                            );
                 }
-
-                controls |= PrinterCapabilitiesClass.ControlEnum.ClearBuffer;
             }
             if (payload.MediaControl.Cut is not null &&
                 (bool)payload.MediaControl.Cut)
@@ -621,58 +719,6 @@ namespace XFS4IoTFramework.Printer
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Cut;
             }
-            if (payload.MediaControl.Eject is not null &&
-                (bool)payload.MediaControl.Eject)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Eject))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Eject}");
-                }
-
-                if ((payload.MediaControl.EjectToTransport is not null &&
-                    (bool)payload.MediaControl.EjectToTransport) ||
-                    (payload.MediaControl.Retract is not null &&
-                    (bool)payload.MediaControl.Retract) ||
-                    (payload.MediaControl.Park is not null &&
-                    (bool)payload.MediaControl.Park) ||
-                    (payload.MediaControl.Expel is not null &&
-                    (bool)payload.MediaControl.Expel))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Eject control can't combined with other actions, EjectToTransport, Retract, Park or Expel. {payload.MediaControl.Eject}");
-                }
-
-                controls |= PrinterCapabilitiesClass.ControlEnum.Eject;
-            }
-            if (payload.MediaControl.EjectToTransport is not null &&
-                (bool)payload.MediaControl.EjectToTransport)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.EjectToTransport))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.EjectToTransport}");
-                }
-
-                if ((payload.MediaControl.Eject is not null &&
-                    (bool)payload.MediaControl.Eject) ||
-                    (payload.MediaControl.Retract is not null &&
-                    (bool)payload.MediaControl.Retract) ||
-                    (payload.MediaControl.Park is not null &&
-                    (bool)payload.MediaControl.Park) ||
-                    (payload.MediaControl.Expel is not null &&
-                    (bool)payload.MediaControl.Expel))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"EjectToTransport control can't combined with other actions, Eject, Retract, Park or Expel. {payload.MediaControl.EjectToTransport}");
-                }
-
-                controls |= PrinterCapabilitiesClass.ControlEnum.EjectToTransport;
-            }
             if (payload.MediaControl.Flush is not null &&
                 (bool)payload.MediaControl.Flush)
             {
@@ -684,44 +730,6 @@ namespace XFS4IoTFramework.Printer
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Flush;
-            }
-            if (payload.MediaControl.Forward is not null &&
-                (bool)payload.MediaControl.Forward)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Forward))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Forward}");
-                }
-
-                controls |= PrinterCapabilitiesClass.ControlEnum.Forward;
-            }
-            if (payload.MediaControl.Park is not null &&
-                (bool)payload.MediaControl.Park)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Park))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Park}");
-                }
-
-                if ((payload.MediaControl.Eject is not null &&
-                    (bool)payload.MediaControl.Eject) ||
-                    (payload.MediaControl.Retract is not null &&
-                    (bool)payload.MediaControl.Retract) ||
-                    (payload.MediaControl.EjectToTransport is not null &&
-                    (bool)payload.MediaControl.EjectToTransport) ||
-                    (payload.MediaControl.Expel is not null &&
-                    (bool)payload.MediaControl.Expel))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Park control can't combined with other actions, Eject, Retract, EjectToTransport or Expel. {payload.MediaControl.Park}");
-                }
-
-                controls |= PrinterCapabilitiesClass.ControlEnum.Park;
             }
             if (payload.MediaControl.PartialCut is not null &&
                 (bool)payload.MediaControl.PartialCut)
@@ -747,30 +755,6 @@ namespace XFS4IoTFramework.Printer
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Perforate;
             }
-            if (payload.MediaControl.Retract is not null &&
-                (bool)payload.MediaControl.Retract)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Retract}");
-                }
-
-                if ((payload.MediaControl.Eject is not null &&
-                    (bool)payload.MediaControl.Eject) ||
-                    (payload.MediaControl.Park is not null &&
-                    (bool)payload.MediaControl.Park) ||
-                    (payload.MediaControl.EjectToTransport is not null &&
-                    (bool)payload.MediaControl.EjectToTransport) ||
-                    (payload.MediaControl.Expel is not null &&
-                    (bool)payload.MediaControl.Expel))
-                {
-                    return new(MessageHeader.CompletionCodeEnum.InvalidData,
-                                                               $"Retract control can't combined with other actions, Eject, Park, EjectToTransport or Expel. {payload.MediaControl.Retract}");
-                }
-                controls |= PrinterCapabilitiesClass.ControlEnum.Retract;
-            }
             if (payload.MediaControl.Rotate180 is not null &&
                 (bool)payload.MediaControl.Rotate180)
             {
@@ -794,17 +778,6 @@ namespace XFS4IoTFramework.Printer
                 }
 
                 controls |= PrinterCapabilitiesClass.ControlEnum.Skip;
-            }
-            if (payload.MediaControl.Stack is not null &&
-                (bool)payload.MediaControl.Stack)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Stack))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Stack}");
-                }
-                controls |= PrinterCapabilitiesClass.ControlEnum.Stack;
             }
             if (payload.MediaControl.Stamp is not null &&
                 (bool)payload.MediaControl.Stamp)
@@ -831,36 +804,11 @@ namespace XFS4IoTFramework.Printer
                 controls |= PrinterCapabilitiesClass.ControlEnum.TurnMedia;
             }
 
-            if (payload.MediaControl.Expel is not null &&
-                (bool)payload.MediaControl.Expel)
-            {
-                if (!Common.PrinterCapabilities.Controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Expel))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Unsupported control media specified. {payload.MediaControl.Expel}");
-                }
-
-                if ((payload.MediaControl.EjectToTransport is not null &&
-                    (bool)payload.MediaControl.EjectToTransport) ||
-                    (payload.MediaControl.Retract is not null &&
-                    (bool)payload.MediaControl.Retract) ||
-                    (payload.MediaControl.Park is not null &&
-                    (bool)payload.MediaControl.Park) ||
-                    (payload.MediaControl.Retract is not null &&
-                    (bool)payload.MediaControl.Retract))
-                {
-                    return new(
-                        MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Expel control can't combined with other actions, EjectToTransport, Retract, Park or Retract. {payload.MediaControl.Expel}");
-                }
-                controls |= PrinterCapabilitiesClass.ControlEnum.Expel;
-            }
-
             Logger.Log(Constants.DeviceClass, "PrinterDev.ControlMediaAsync()");
-            var result = await Device.ControlMediaAsync(new ControlMediaEvent(events),
-                                                        new ControlMediaRequest(controls),
-                                                        cancel);
+            var result = await Device.ControlMediaAsync(
+                new ControlMediaEvent(events),
+                new ControlMediaRequest(controls),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ControlMediaAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
@@ -898,7 +846,11 @@ namespace XFS4IoTFramework.Printer
         /// This depends on the offsets and alignment given in the command and those in the form.
         /// Calculated offsets are returned in output parameters.
         /// </summary>
-        private PrintFormResult CalculateFormOffsets(PrintFormCommand.PayloadData command, Form form, Media media, out int FormLeftOffset, out int FormTopOffset)
+        private PrintFormResult CalculateFormOffsets(
+            PrintFormCommand.PayloadData command, 
+            Form form, Media media, 
+            out int FormLeftOffset, 
+            out int FormTopOffset)
         {
             FormLeftOffset = 0;
             FormTopOffset = 0;
@@ -1019,35 +971,39 @@ namespace XFS4IoTFramework.Printer
                 int top_ok = FormTopOffset - media.DotPrintAreaY;
                 int right_ok = media.DotPrintAreaX + media.DotPrintAreaWidth - FormLeftOffset - form.DotWidth;
                 int bottom_ok = (media.DotHeight == 0) ?
-                                            1 :
-                                            media.DotPrintAreaY + media.DotPrintAreaHeight - FormTopOffset - form.DotHeight;
+                    1 :
+                    media.DotPrintAreaY + media.DotPrintAreaHeight - FormTopOffset - form.DotHeight;
 
                 if (left_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Left edge of form overflows print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Left edge of form overflows print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (right_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Right edge of form overflows print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Right edge of form overflows print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (top_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Top edge of form overflows print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Top edge of form overflows print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (bottom_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Bottom edge of form overflows print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Bottom edge of form overflows print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
             }
             else
@@ -1063,30 +1019,34 @@ namespace XFS4IoTFramework.Printer
 
                 if (left_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Left edge of form overflows top of print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Left edge of form overflows top of print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (right_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Right edge of form overflows bottom of print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Right edge of form overflows bottom of print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (top_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Top edge of form overflows right of print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Top edge of form overflows right of print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
 
                 if (bottom_ok < 0)
                 {
-                    return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                               $"Bottom edge of form overflows left of print area. {media.Name}",
-                                               PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
+                    return new PrintFormResult(
+                        MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                        $"Bottom edge of form overflows left of print area. {media.Name}",
+                        PrintFormCompletion.PayloadData.ErrorCodeEnum.MediaOverflow);
                 }
             }
 
@@ -1102,7 +1062,11 @@ namespace XFS4IoTFramework.Printer
         /// - the element index of the assignment.
         ///   If the assignment is for one element of an index field, the INDEX offsets must be accounted for.
         /// </summary>
-        private PrintFormResult CalculateAssignmentPrintLocations(Form form, List<FieldAssignment> fieldAssignments, int FormLeftOffset, int FormTopOffset)
+        private PrintFormResult CalculateAssignmentPrintLocations(
+            Form form, 
+            List<FieldAssignment> fieldAssignments, 
+            int FormLeftOffset, 
+            int FormTopOffset)
         {
             foreach (var fieldAssignment in fieldAssignments)
             {
@@ -1146,16 +1110,23 @@ namespace XFS4IoTFramework.Printer
         /// Calculate the X and Y position immediately following a specified field.
         /// If the specified field FOLLOWS some other field, make a recursive call to find the location of that field first.
         /// </summary>
-        private PrintFormResult CalculateFollowsPosition(Form form, List<FieldAssignment> fieldAssignments, string followedField, int Depth, out int FieldX, out int FieldY)
+        private PrintFormResult CalculateFollowsPosition(
+            Form form, 
+            List<FieldAssignment> fieldAssignments, 
+            string followedField, 
+            int Depth, 
+            out int FieldX, 
+            out int FieldY)
         {
             FieldX = 0;
             FieldY = 0;
             // Check recursion depth to detect circular references.
             if (Depth > form.Fields.Count)
             {
-                return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                           $"Circular FOLLOWS references detected in form. {form.Name}",
-                                           PrintFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid);
+                return new PrintFormResult(
+                    MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                    $"Circular FOLLOWS references detected in form. {form.Name}",
+                    PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
             }
 
             // Find the FollowedField to get its position
@@ -1201,9 +1172,10 @@ namespace XFS4IoTFramework.Printer
             }
 
             // Followed field not found
-            return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                       $"Field in FOLLOWS reference not found. {followedField}",
-                                       PrintFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid);
+            return new PrintFormResult(
+                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                $"Field in FOLLOWS reference not found. {followedField}",
+                PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
         }
 
         /// <summary>
@@ -1254,7 +1226,7 @@ namespace XFS4IoTFramework.Printer
             // If OVERFLOW is TRUNCATE, then we can chop the text anywhere
             // for all othervalues, we must try to wrap it first
             bool Chop = (fieldAssignment.Field.Overflow == FormField.OverflowEnum.TRUNCATE);
-            List<TextTask> tasks = new();
+            List<TextTask> tasks = [];
 
             result = BreakTextIntoLines(Chop, fieldAssignment, form, MaxLines, out bool Overflow, out int RequiredLines, tasks);
             if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
@@ -1280,9 +1252,10 @@ namespace XFS4IoTFramework.Printer
                         {
                             Logger.Warning(Constants.Framework, $"Value too big for field. Value: {fieldAssignment.Value} Field: {fieldAssignment.Field.Name}");
                             PrintFormEvents.FieldErrorEvent(new FieldErrorEvent.PayloadData(form.Name, fieldAssignment.Field.Name, FieldErrorEvent.PayloadData.FailureEnum.Overflow));
-                            return new PrintFormResult(MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                                       $"Value too big for field. Value: {fieldAssignment.Value} Field: {fieldAssignment.Field.Name}",
-                                                       PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
+                            return new PrintFormResult(
+                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                $"Value too big for field. Value: {fieldAssignment.Value} Field: {fieldAssignment.Field.Name}",
+                                PrintFormCompletion.PayloadData.ErrorCodeEnum.FieldError);
                         }
                         break;
 
@@ -1477,7 +1450,10 @@ namespace XFS4IoTFramework.Printer
         /// word and the word tasks are distributed so that they appear
         /// evenly spaced across the whole field width.
         /// </summary>
-        private PrintFormResult JustifyTextTask(TextTask task, FieldAssignment fieldAssignment, List<TextTask> tasks)
+        private PrintFormResult JustifyTextTask(
+            TextTask task, 
+            FieldAssignment fieldAssignment, 
+            List<TextTask> tasks)
         {
             // Split task text into separate words
             // and calculate total space taken up by words and
@@ -1594,13 +1570,14 @@ namespace XFS4IoTFramework.Printer
         /// <param name="overflow">Output, whether an overflow occurred</param>
         /// <param name="requiredLines">Output for required lines</param>
         /// <param name="tasks">Tasks to be processed</param>
-        private PrintFormResult BreakTextIntoLines(bool chop, 
-                                                   FieldAssignment fieldAssignment,
-                                                   Form form,
-                                                   int maxLines, 
-                                                   out bool overflow, 
-                                                   out int requiredLines, 
-                                                   List<TextTask> tasks)
+        private PrintFormResult BreakTextIntoLines(
+            bool chop, 
+            FieldAssignment fieldAssignment,
+            Form form,
+            int maxLines, 
+            out bool overflow, 
+            out int requiredLines, 
+            List<TextTask> tasks)
         {
             // Initialise no overflow
             overflow = false;
@@ -1624,18 +1601,19 @@ namespace XFS4IoTFramework.Printer
             {
                 if (maxLines > 0)
                 {
-                    TextTask task = new(fieldAssignment.X,
-                                        fieldAssignment.Y,
-                                        Text,
-                                        fieldAssignment.Field.Style,
-                                        fieldAssignment.Field.Font,
-                                        fieldAssignment.Field.PointSize,
-                                        fieldAssignment.Field.CPI,
-                                        fieldAssignment.Field.LPI,
-                                        fieldAssignment.Field.Side,
-                                        fieldAssignment.Field.Color,
-                                        fieldAssignment.Field.Format,
-                                        form.Base == Form.BaseEnum.ROWCOLUMN);
+                    TextTask task = new(
+                        fieldAssignment.X,
+                        fieldAssignment.Y,
+                        Text,
+                        fieldAssignment.Field.Style,
+                        fieldAssignment.Field.Font,
+                        fieldAssignment.Field.PointSize,
+                        fieldAssignment.Field.CPI,
+                        fieldAssignment.Field.LPI,
+                        fieldAssignment.Field.Side,
+                        fieldAssignment.Field.Color,
+                        fieldAssignment.Field.Format,
+                        form.Base == Form.BaseEnum.ROWCOLUMN);
 
                     // Set up x,y for task - these will be correct 
                     // for LEFT and TOP justification, also row/column
@@ -1658,18 +1636,19 @@ namespace XFS4IoTFramework.Printer
             {
                 // Set up current task text - this is a guessed task because
                 // the text may not fit in the field box.
-                TextTask task = new(fieldAssignment.X,
-                                    Y,
-                                    Text,
-                                    fieldAssignment.Field.Style,
-                                    fieldAssignment.Field.Font,
-                                    fieldAssignment.Field.PointSize,
-                                    fieldAssignment.Field.CPI,
-                                    fieldAssignment.Field.LPI,
-                                    fieldAssignment.Field.Side,
-                                    fieldAssignment.Field.Color,
-                                    fieldAssignment.Field.Format,
-                                    form.Base == Form.BaseEnum.ROWCOLUMN);
+                TextTask task = new(
+                    fieldAssignment.X,
+                    Y,
+                    Text,
+                    fieldAssignment.Field.Style,
+                    fieldAssignment.Field.Font,
+                    fieldAssignment.Field.PointSize,
+                    fieldAssignment.Field.CPI,
+                    fieldAssignment.Field.LPI,
+                    fieldAssignment.Field.Side,
+                    fieldAssignment.Field.Color,
+                    fieldAssignment.Field.Format,
+                    form.Base == Form.BaseEnum.ROWCOLUMN);
 
                 // Now check if the text fits, and break of the longest substring that does fit.
                 var result = FindLongestSubstring(task, chop, fieldAssignment, out int width, out int height);
@@ -1765,11 +1744,12 @@ namespace XFS4IoTFramework.Printer
         /// <param name="width">returned width of printed text</param>
         /// <param name="height">returned height of printed text</param>
         /// <returns></returns>
-        private PrintFormResult FindLongestSubstring(TextTask task,
-                                                     bool chop,
-                                                     FieldAssignment fieldAssignment,
-                                                     out int width,
-                                                     out int height)
+        private PrintFormResult FindLongestSubstring(
+            TextTask task,
+            bool chop,
+            FieldAssignment fieldAssignment,
+            out int width,
+            out int height)
         {
             // If there's a new line in the string, truncate at newline
             int newline = task.Text.IndexOf('\n'); // LF
@@ -1881,20 +1861,26 @@ namespace XFS4IoTFramework.Printer
         /// Returns as output parameters, the field width and height needed to
         /// print text as a single line.
         /// </summary>
-        private PrintFormResult GetSingleLineDimensions(FieldAssignment fieldAssignment, Form form, out int width, out int height)
+        private PrintFormResult GetSingleLineDimensions(
+            FieldAssignment fieldAssignment, 
+            Form form, 
+            out int width,
+            out int height)
         {
             // Set task for all text
-            TextTask task = new(0, 0,
-                                fieldAssignment.Value,
-                                fieldAssignment.Field.Style,
-                                fieldAssignment.Field.Font,
-                                fieldAssignment.Field.PointSize,
-                                fieldAssignment.Field.CPI,
-                                fieldAssignment.Field.LPI,
-                                fieldAssignment.Field.Side,
-                                fieldAssignment.Field.Color,
-                                fieldAssignment.Field.Format,
-                                (form.Base == Form.BaseEnum.ROWCOLUMN));
+            TextTask task = new(
+                0, 
+                0,
+                fieldAssignment.Value,
+                fieldAssignment.Field.Style,
+                fieldAssignment.Field.Font,
+                fieldAssignment.Field.PointSize,
+                fieldAssignment.Field.CPI,
+                fieldAssignment.Field.LPI,
+                fieldAssignment.Field.Side,
+                fieldAssignment.Field.Color,
+                fieldAssignment.Field.Format,
+                (form.Base == Form.BaseEnum.ROWCOLUMN));
 
 
             // Get dimensions
@@ -1931,13 +1917,13 @@ namespace XFS4IoTFramework.Printer
               BarcodeFontName
              */
             BarcodeTask task = new(
-                            fieldAssignment.X,
-                            fieldAssignment.Y,
-                            fieldAssignment.Value,
-                            fieldAssignment.Field.Barcode,
-                            fieldAssignment.Field.Font,
-                            fieldAssignment.Width,
-                            fieldAssignment.Height);
+                fieldAssignment.X,
+                fieldAssignment.Y,
+                fieldAssignment.Value,
+                fieldAssignment.Field.Barcode,
+                fieldAssignment.Field.Font,
+                fieldAssignment.Width,
+                fieldAssignment.Height);
            
             // Add the task to the task manager.
             Printer.PrintJob.Tasks.Add(task);
@@ -1950,13 +1936,14 @@ namespace XFS4IoTFramework.Printer
         /// </summary>
         private PrintFormResult ConvertGraphicFieldAssignment(FieldAssignment fieldAssignment)
         {
-            GraphicTask task = new (fieldAssignment.X,
-                                    fieldAssignment.Y,
-                                    fieldAssignment.Width,
-                                    fieldAssignment.Height,
-                                    fieldAssignment.Field.Format == "BMP" ? GraphicTask.ImageFormatEnum.BMP : GraphicTask.ImageFormatEnum.JPG,
-                                    fieldAssignment.Field.Scaling,
-                                    Convert.FromBase64String(fieldAssignment.Value).ToList());
+            GraphicTask task = new (
+                fieldAssignment.X,
+                fieldAssignment.Y,
+                fieldAssignment.Width,
+                fieldAssignment.Height,
+                fieldAssignment.Field.Format == "BMP" ? GraphicTask.ImageFormatEnum.BMP : GraphicTask.ImageFormatEnum.JPG,
+                fieldAssignment.Field.Scaling,
+                Convert.FromBase64String(fieldAssignment.Value).ToList());
 
             // Add the task to the task manager.
             Printer.PrintJob.Tasks.Add(task);

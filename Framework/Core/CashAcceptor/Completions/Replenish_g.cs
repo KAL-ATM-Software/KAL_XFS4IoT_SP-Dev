@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,10 +48,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details. If appropriate
-            /// a [CashAcceptor.IncompleteReplenishEvent](#cashacceptor.incompletereplenishevent) will also be sent.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details. If appropriate
+            ///   a [CashAcceptor.IncompleteReplenishEvent](#cashacceptor.incompletereplenishevent) will also be sent.
             /// * ```invalidCashUnit``` - The source or target storage unit specified is invalid for this operation.
-            /// The [CashAcceptor.GetReplenishTarget](#cashacceptor.getreplenishtarget) command can be used to determine which source or target is valid.
+            ///   The [CashAcceptor.GetReplenishTarget](#cashacceptor.getreplenishtarget) command can be used to determine which source or target is valid.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// </summary>

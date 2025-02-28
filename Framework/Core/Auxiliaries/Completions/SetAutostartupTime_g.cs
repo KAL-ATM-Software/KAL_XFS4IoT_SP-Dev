@@ -1,10 +1,10 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutoStartUpTime_g.cs uses automatically generated parts.
+ * SetAutoStartupTime_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -16,10 +16,10 @@ namespace XFS4IoT.Auxiliaries.Completions
 {
     [DataContract]
     [XFS4Version(Version = "2.0")]
-    [Completion(Name = "Auxiliaries.SetAutoStartUpTime")]
-    public sealed class SetAutoStartUpTimeCompletion : Completion<MessagePayload>
+    [Completion(Name = "Auxiliaries.SetAutoStartupTime")]
+    public sealed class SetAutoStartupTimeCompletion : Completion<MessagePayload>
     {
-        public SetAutoStartUpTimeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
+        public SetAutoStartupTimeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }
 

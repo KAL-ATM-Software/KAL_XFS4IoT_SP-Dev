@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -55,9 +55,9 @@ namespace XFS4IoT.TextTerminal.Completions
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
-            /// Details of the field(s) requested. Each property's name is the field name and value is field value containing
+            /// Details of the field(s) requested. Each property's name is the field name and the value is the field value containing
             /// all the printable characters (numeric and alphanumeric)
-            /// read from the text terminal unit key pad for this field. An example shows two fields read.
+            /// read from the Text Terminal Unit keypad for this field. An example shows two fields read.
             /// This property is null if no fields were read.
             /// </summary>
             [DataMember(Name = "fields")]

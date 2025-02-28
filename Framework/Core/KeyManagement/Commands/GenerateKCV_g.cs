@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,11 +52,11 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Specifies the mode that is used to create the key check value. The following values are possible:
             /// 
             /// * ```self``` - The key check value (KCV) is created by an encryption of the key with itself. For the
-            /// description refer to the *self* literal described in the
-            /// [keyCheckModes](#common.capabilities.completion.properties.keymanagement.keycheckmodes).
+            ///   description refer to the *self* literal described in the
+            ///   [keyCheckModes](#common.capabilities.completion.properties.keymanagement.keycheckmodes).
             /// * ```zero``` - The key check value (KCV) is created by encrypting a zero value with the key. Unless
-            /// otherwise specified, ECB encryption is used The encryption algorithm used (i.e. DES, 3DES, AES) is
-            /// determined by the type of key used to generate the KCV.
+            ///   otherwise specified, ECB encryption is used The encryption algorithm used (i.e. DES, 3DES, AES) is
+            ///   determined by the type of key used to generate the KCV.
             /// </summary>
             [DataMember(Name = "keyCheckMode")]
             public KeyCheckModeEnum? KeyCheckMode { get; init; }

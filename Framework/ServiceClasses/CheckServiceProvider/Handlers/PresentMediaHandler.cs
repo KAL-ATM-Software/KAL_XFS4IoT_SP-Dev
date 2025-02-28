@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -24,21 +24,21 @@ namespace XFS4IoTFramework.Check
 
             if (presentMedia.Payload?.Source is not null)
             {
-                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Input &&
+                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PresentMediaPositionEnum.Input &&
                     !Common.CheckScannerCapabilities.Positions.ContainsKey(CheckScannerCapabilitiesClass.PositionEnum.Input))
                 {
                     return new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported source. Check Positions capability reported. {presentMedia.Payload?.Source.Position}");
                 }
-                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Refused &&
+                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PresentMediaPositionEnum.Refused &&
                     !Common.CheckScannerCapabilities.Positions.ContainsKey(CheckScannerCapabilitiesClass.PositionEnum.Refused))
                 {
                     return new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Specified unsupported source. Check Positions capability reported. {presentMedia.Payload?.Source.Position}");
                 }
-                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PositionEnum.Rebuncher &&
+                if (presentMedia.Payload?.Source.Position == XFS4IoT.Check.PresentMediaPositionEnum.Rebuncher &&
                     Common.CheckScannerStatus.ReBuncher != CheckScannerStatusClass.ReBuncherEnum.NotSupported)
                 {
                     return new(

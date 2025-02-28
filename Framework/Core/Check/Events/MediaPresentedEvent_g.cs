@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Check.Events
 {
 
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Event(Name = "Check.MediaPresentedEvent")]
     public sealed class MediaPresentedEvent : Event<MediaPresentedEvent.PayloadData>
     {
@@ -54,7 +54,7 @@ namespace XFS4IoT.Check.Events
             /// bunches that will be returned as a result of a single command that presents media. The following values
             /// are possible:
             /// 
-            ///   * ```&lt;number&gt;``` - The number of bunches to be presented.
+            ///   * ```[number]``` - The number of bunches to be presented.
             ///   * ```unknown``` - More than one bunch is required but the precise number is unknown.
             /// <example>1</example>
             /// </summary>

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -38,7 +38,7 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// Specifies the name of the new key-pair to be generated. Details of the generated key-pair can be
+            /// Specifies the name of the new key pair to be generated. Details of the generated key pair can be
             /// obtained through the [KeyManagement.GetKeyDetail](#keymanagement.getkeydetail) command.
             /// <example>Key02</example>
             /// </summary>
@@ -59,7 +59,7 @@ namespace XFS4IoT.KeyManagement.Commands
             /// 
             /// * ```rsaPrivate``` - Key is used as a private key for RSA decryption.
             /// * ```rsaPrivateSign``` - Key is used as a private key for RSA Signature generation. Only data generated
-            /// within the device can be signed.
+            ///   within the device can be signed.
             /// </summary>
             [DataMember(Name = "use")]
             public UseEnum? Use { get; init; }
@@ -85,9 +85,9 @@ namespace XFS4IoT.KeyManagement.Commands
             /// The following values are possible:
             /// 
             /// * ```device``` - The device will decide the exponent.
-            /// * ```exponent1``` - Exponent of 2&lt;sup&gt;1&lt;/sup&gt;+1 (3).
-            /// * ```exponent4``` - Exponent of 2&lt;sup&gt;4&lt;/sup&gt;+1 (17).
-            /// * ```exponent16``` - Exponent of 2&lt;sup&gt;16&lt;/sup&gt;+1 (65537).
+            /// * ```exponent1``` - Exponent of 2[sup]1[/sup]+1 (3).
+            /// * ```exponent4``` - Exponent of 2[sup]4[/sup]+1 (17).
+            /// * ```exponent16``` - Exponent of 2[sup]16[/sup]+1 (65537).
             /// </summary>
             [DataMember(Name = "exponentValue")]
             public ExponentValueEnum? ExponentValue { get; init; }

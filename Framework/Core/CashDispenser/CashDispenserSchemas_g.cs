@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -256,13 +256,13 @@ namespace XFS4IoT.CashDispenser
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be retracted to storage units which would be used during a Cash In transaction including recycling storage units.
+            /// The items may be retracted to storage units which would be used during a cash-in transaction including recycling storage units.
             /// </summary>
             [DataMember(Name = "itemCassette")]
             public bool? ItemCassette { get; init; }
 
             /// <summary>
-            /// The items may be retracted to storage units which would be used during a Cash In transaction not including recycling storage units.
+            /// The items may be retracted to storage units which would be used during a cash-in transaction not including recycling storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -307,13 +307,13 @@ namespace XFS4IoT.CashDispenser
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be moved to storage units which would be used during a Cash In transaction including recycling storage units.
+            /// The items may be moved to storage units which would be used during a cash-in transaction including recycling storage units.
             /// </summary>
             [DataMember(Name = "itemCassette")]
             public bool? ItemCassette { get; init; }
 
             /// <summary>
-            /// The items may be moved to storage units which would be used during a Cash In transaction not including recycling storage units.
+            /// The items may be moved to storage units which would be used during a cash-in transaction not including recycling storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -359,13 +359,13 @@ namespace XFS4IoT.CashDispenser
             public bool? Reject { get; init; }
 
             /// <summary>
-            /// The items may be moved to storage units which would be used during a Cash In transaction including recycling storage units.
+            /// The items may be moved to storage units which would be used during a cash-in transaction including recycling storage units.
             /// </summary>
             [DataMember(Name = "itemCassette")]
             public bool? ItemCassette { get; init; }
 
             /// <summary>
-            /// The items may be moved to storage units which would be used during a Cash In transaction not including recycling storage units.
+            /// The items may be moved to storage units which would be used during a cash-in transaction not including recycling storage units.
             /// </summary>
             [DataMember(Name = "cashIn")]
             public bool? CashIn { get; init; }
@@ -536,7 +536,7 @@ namespace XFS4IoT.CashDispenser
         /// * ```individual``` - the mix is not calculated by the Service, completely specified by the application.
         /// * ```algorithm``` - the mix is calculated using one of the algorithms specified by *algorithm*.
         /// * ```table``` - the mix is calculated using a mix table - see
-        /// [CashDispenser.GetMixTable](#cashdispenser.getmixtable).
+        ///   [CashDispenser.GetMixTable](#cashdispenser.getmixtable).
         /// <example>algorithm</example>
         /// </summary>
         [DataMember(Name = "type")]
@@ -548,11 +548,11 @@ namespace XFS4IoT.CashDispenser
         /// 
         /// * ```minimumBills``` - Select a mix requiring the minimum possible number of items.
         /// * ```equalEmptying``` - The denomination is selected based upon criteria which ensure that over the course
-        /// of its operation the storage units will empty as far as possible at the same rate and will therefore go
-        /// low and then empty at approximately the same time.
+        ///   of its operation the storage units will empty as far as possible at the same rate and will therefore go
+        ///   low and then empty at approximately the same time.
         /// * ```maxCashUnits``` - The denomination is selected based upon criteria which ensures the maximum
-        /// number of storage units are used.
-        /// * ```&lt;vendor-defined mix&gt;``` - A vendor defined mix algorithm.
+        ///   number of storage units are used.
+        /// * ```[vendor-defined mix]``` - A vendor defined mix algorithm.
         /// <example>minimumBills</example>
         /// </summary>
         [DataMember(Name = "algorithm")]
@@ -670,7 +670,7 @@ namespace XFS4IoT.CashDispenser
         public Dictionary<string, double> Currencies { get; init; }
 
         /// <summary>
-        /// This list specifies the number of items to take or which have been taken from the storage units. If specified in
+        /// This list specifies the number of items to take, or which have been taken from the storage units. If specified in
         /// a request, the output denomination must include these items.
         /// 
         /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)
@@ -703,7 +703,7 @@ namespace XFS4IoT.CashDispenser
         public Dictionary<string, double> Currencies { get; init; }
 
         /// <summary>
-        /// This list specifies the number of items to take or which have been taken from the storage units. If specified in
+        /// This list specifies the number of items to take, or which have been taken from the storage units. If specified in
         /// a request, the output denomination must include these items.
         /// 
         /// The property name is storage unit object name as stated by the [Storage.GetStorage](#storage.getstorage)

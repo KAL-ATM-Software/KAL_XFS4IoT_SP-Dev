@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -45,7 +45,7 @@ namespace XFS4IoT.KeyManagement.Events
             /// Specifies change of the certificate state inside of the KeyManagement.
             /// The following values are possible:
             /// * ```secondary``` - The certificate state of the encryptor is now Secondary and Primary Certificates will
-            /// no longer be accepted.
+            ///   no longer be accepted.
             /// </summary>
             [DataMember(Name = "certificateChange")]
             public CertificateChangeEnum? CertificateChange { get; init; }

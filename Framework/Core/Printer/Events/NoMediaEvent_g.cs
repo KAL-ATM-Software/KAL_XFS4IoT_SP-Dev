@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -38,7 +38,7 @@ namespace XFS4IoT.Printer.Events
 
             /// <summary>
             /// The user prompt from the form definition. This will be an empty string if either a form does not define a value
-            /// for the user prompt or the event is being generated as the result of a command that does not use forms.
+            /// for the user prompt, or the event is being generated as the result of a command that does not use forms.
             /// 
             /// The application may use this in any manner it sees fit, for example it might display the string to the
             /// operator, along with a message that the media should be inserted.

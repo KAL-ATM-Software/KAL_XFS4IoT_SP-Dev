@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,7 +46,7 @@ namespace XFS4IoT.CashManagement.Completions
             /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```cashUnitError``` - A storage unit caused an error. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```unsupportedPosition``` - The position specified is not valid.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```invalidCashUnit``` - The storage unit number specified is not valid.
@@ -57,7 +57,7 @@ namespace XFS4IoT.CashManagement.Completions
             [DataContract]
             public sealed class ResultClass
             {
-                public ResultClass(string Unit = null, int? NumOfBills = null, ItemTargetClass Position = null)
+                public ResultClass(string Unit = null, int? NumOfBills = null, ItemTargetDataClass Position = null)
                 {
                     this.Unit = Unit;
                     this.NumOfBills = NumOfBills;
@@ -85,8 +85,17 @@ namespace XFS4IoT.CashManagement.Completions
                 [DataTypes(Minimum = 0)]
                 public int? NumOfBills { get; init; }
 
+                /// <summary>
+                /// Defines where items have been moved to as one of the following:
+                /// 
+                /// * A single storage unit, further specified by *unit*.
+                /// * Internal areas of the device.
+                /// * An output position.
+                /// 
+                /// This may be null if no items were moved.
+                /// </summary>
                 [DataMember(Name = "position")]
-                public ItemTargetClass Position { get; init; }
+                public ItemTargetDataClass Position { get; init; }
 
             }
 

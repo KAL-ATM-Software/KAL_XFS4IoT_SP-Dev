@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,13 +48,14 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```noItems``` - There were no items to cash-in.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
             /// * ```positionNotEmpty``` - The input or output position is not empty.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order
-            /// to perform this command. (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
+            ///   to perform this command (see [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)
+            ///   property).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

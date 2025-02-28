@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -96,7 +96,7 @@ namespace XFS4IoT.CardReader
         /// * ```poweredOff``` - The chip is present, but powered off (i.e. not contacted).
         /// * ```noDevice``` - A card is currently present in the device, but has no chip.
         /// * ```hardwareError``` - The chip is present, but inoperable due to a hardware error that prevents it from
-        ///   being used (e.g. MUTE, if there is an unresponsive card in the reader).
+        ///   being used (e.g., MUTE, if there is an unresponsive card in the reader).
         /// * ```noCard``` - There is no card in the device.
         /// </summary>
         [DataMember(Name = "chipPower")]
@@ -678,10 +678,10 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Base64 encoded representation of the data. This property is null if not read.
-        /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "data")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Data { get; init; }
 
     }
@@ -701,10 +701,10 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Base64 encoded representation of the data. This property is null if not read.
-        /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "data")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Data { get; init; }
 
     }
@@ -877,7 +877,8 @@ namespace XFS4IoT.CardReader
         /// 
         /// * ```contact``` - *txOutcome* is *tryAnotherInterface* and the contact chip interface should be used to complete a transaction.
         /// * ```magneticStripe``` - *txOutcome* is *tryAnotherInterface* and the magnetic stripe interface should be used to complete a transaction.
-        /// * ```null``` - *txOutcome* is not *tryAnotherInterface*
+        /// 
+        /// This will be null if *txOutcome* is not *tryAnotherInterface*.
         /// <example>magneticStripe</example>
         /// </summary>
         [DataMember(Name = "alternateInterface")]
@@ -930,10 +931,10 @@ namespace XFS4IoT.CardReader
         /// Base64 encoded representation of the payment system's specific discretionary data read from the chip, in
         /// a BER-TLV format, after a contactless transaction has been completed. If discretionary data is not
         /// present, this will be null.
-        /// <example>Qnl0ZSBBcnJheSBEYXRh</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "discretionaryData")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> DiscretionaryData { get; init; }
 
     }
@@ -980,7 +981,7 @@ namespace XFS4IoT.CardReader
         ///   interface may be suitable for this transaction (for example contact).
         /// * ```endApplication``` - Transaction cannot be completed on the contactless card due to an irrecoverable
         ///   error.
-        /// * ```confirmationRequired``` - Transaction was not completed as a result of a requirement to allow entry of
+        /// * ```confirmationRequired``` - Transaction was not completed because of a requirement to allow entry of
         ///   confirmation code on a mobile device. Transaction should be completed by issuing the
         ///   [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) after a card removal and a
         ///   re-tap of the card.
@@ -1020,10 +1021,10 @@ namespace XFS4IoT.CardReader
         /// [track2](#cardreader.emvclessperformtransaction.completion.properties.track2) or
         /// [track3](#cardreader.emvclessperformtransaction.completion.properties.track3) this contains the data read
         /// from the chip, i.e the value returned by the card reader device and no cryptogram tag (9F26).
-        /// <example>fSfILqum6niI6jURWzeo ...</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "dataRead")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> DataRead { get; init; }
 
         [DataMember(Name = "clessOutcome")]
@@ -1073,10 +1074,10 @@ namespace XFS4IoT.CardReader
         /// The Base64 encoded representation of the data read from the chip after a contactless transaction has been
         /// completed successfully. The BER-TLV formatted data contains cryptogram tag (9F26) after a contactless chip
         /// transaction has been completed successfully.
-        /// <example>fSfILqum6niI6jURWzeo ...</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "dataRead")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> DataRead { get; init; }
 
         [DataMember(Name = "clessOutcome")]
@@ -1144,11 +1145,11 @@ namespace XFS4IoT.CardReader
         public string CardID { get; init; }
 
         /// <summary>
-        /// If the threshold value is non zero, hardware sensors in the storage unit do not trigger
+        /// If the threshold value is non-zero, hardware sensors in the storage unit do not trigger
         /// [Storage.StorageThresholdEvent](#storage.storagethresholdevent) events.
         /// This property may be null in events if it did not change.
         /// 
-        /// If non zero, when *count* reaches the threshold value:
+        /// If non-zero, when *count* reaches the threshold value:
         /// 
         /// * For [retain](#storage.getstorage.completion.properties.storage.unit1.card.capabilities.type) type storage
         ///   units, a [high](#storage.getstorage.completion.properties.storage.unit1.card.status.replenishmentstatus)
@@ -1240,9 +1241,9 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The state of the cards in the storage unit if it can be determined. Note that overall
-        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be taken
-        /// into account when deciding whether the storage unit is usable and whether replenishment status is
-        /// applicable. In particular, if the overall status is *missing* this will be null. 
+        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be 
+        /// considered when deciding whether the storage unit is usable and whether replenishment status is
+        /// applicable. If the overall status is *missing* this will be null.
         /// The property may also be null in events if it did not change.
         /// 
         /// The following values are possible:
@@ -1250,9 +1251,9 @@ namespace XFS4IoT.CardReader
         /// * ```ok``` - The storage unit is in a good state.
         /// * ```full``` - The storage unit is full.
         /// * ```high``` - The storage unit is almost full (either sensor based or above the
-        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
+        ///   [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
         /// * ```low``` - The storage unit is almost empty (either sensor based or below the
-        /// [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
+        ///   [threshold](#storage.getstorage.completion.properties.storage.unit1.card.configuration.threshold)).
         /// * ```empty``` - The storage unit is empty.
         /// </summary>
         [DataMember(Name = "replenishmentStatus")]

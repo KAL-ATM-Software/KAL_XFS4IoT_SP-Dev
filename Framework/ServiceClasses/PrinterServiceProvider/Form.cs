@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 using System.Threading;
 using XFS4IoT;
 using XFS4IoT.Printer.Completions;
+using Microsoft.VisualBasic.FileIO;
+using System.Drawing;
+using System.Reflection.PortableExecutable;
+using System.Security.Policy;
 
 namespace XFS4IoTFramework.Printer
 {
@@ -188,8 +192,8 @@ namespace XFS4IoTFramework.Printer
                     int Height,
                     int XOffset,
                     int YOffset,
-                    int VersionMajor,
-                    int VersionMinor,
+                    int? VersionMajor,
+                    int? VersionMinor,
                     string Date,
                     string Author,
                     string Copyright,
@@ -220,7 +224,7 @@ namespace XFS4IoTFramework.Printer
             this.Skew = Skew;
             this.Alignment = Alignment;
             this.Orientation = Orientation;
-            this.Fields = new();
+            this.Fields = [];
 
             // Get the appropriate conversion factor (Enum/Denom) according to the base units
             switch (Base)
@@ -307,39 +311,42 @@ namespace XFS4IoTFramework.Printer
                              FieldScalingEnum Scaling,
                              FieldBarcodeEnum Barcode)
         {
-            Fields.Add(Name, new(Name,
-                                 X,
-                                 Y,
-                                 Width,
-                                 Height,
-                                 XConvertToDots(X),
-                                 YConvertToDots(Y),
-                                 XConvertToDots(Width),
-                                 YConvertToDots(Height),
-                                 Follows,
-                                 Repeat,
-                                 XOffset,
-                                 YOffset,
-                                 XConvertToDots(XOffset),
-                                 YConvertToDots(YOffset),
-                                 Font,
-                                 PointSize,
-                                 CPI,
-                                 LPI,
-                                 Format,
-                                 InitialValue,
-                                 Side,
-                                 Type,
-                                 Class,
-                                 Access,
-                                 Overflow,
-                                 Style,
-                                 Case,
-                                 Horizontal,
-                                 Vertical,
-                                 Color,
-                                 Scaling,
-                                 Barcode));
+            Fields.Add(
+                Name, 
+                new(
+                    Name,
+                    X,
+                    Y,
+                    Width,
+                    Height,
+                    XConvertToDots(X),
+                    YConvertToDots(Y),
+                    XConvertToDots(Width),
+                    YConvertToDots(Height),
+                    Follows,
+                    Repeat,
+                    XOffset,
+                    YOffset,
+                    XConvertToDots(XOffset),
+                    YConvertToDots(YOffset),
+                    Font,
+                    PointSize,
+                    CPI,
+                    LPI,
+                    Format,
+                    InitialValue,
+                    Side,
+                    Type,
+                    Class,
+                    Access,
+                    Overflow,
+                    Style,
+                    Case,
+                    Horizontal,
+                    Vertical,
+                    Color,
+                    Scaling,
+                    Barcode));
         }
 
         /// <summary>
@@ -352,61 +359,281 @@ namespace XFS4IoTFramework.Printer
             if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
             {
                 return new(
-                    new(ErrorCode: GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                    new(ErrorCode: GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
                     MessageHeader.CompletionCodeEnum.CommandErrorCode,
                     $"Form {Name} is not supported by the device.");
             }
 
-            List<string> fields = [];
-            fields.AddRange(from field in Fields
-                            select field.Key);
+            Dictionary<string, GetQueryFormCompletion.PayloadData.FormClass.FieldsClass> fields = [];
+            foreach (var field in Fields)
+            {
+                GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass style = null;
+                if (field.Value.Style != FieldStyleEnum.NORMAL)
+                {
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.UnderlineEnum? underline = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.UNDER))
+                    {
+                        underline = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.UnderlineEnum.Single;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.DOUBLEUNDER))
+                    {
+                        underline = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.UnderlineEnum.Double;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.WidthEnum? width = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.DOUBLE))
+                    {
+                        width = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.WidthEnum.Double;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.TRIPLE))
+                    {
+                        width = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.WidthEnum.Triple;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.QUADRUPLE))
+                    {
+                        width = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.WidthEnum.Quadruple;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.StrikeEnum? strike = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.DOUBLESTRIKE))
+                    {
+                        strike = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.StrikeEnum.Double;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.STRIKETHROUGH))
+                    {
+                        strike = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.StrikeEnum.Single;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.RotateEnum? rotate = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.ROTATE90))
+                    {
+                        rotate = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.RotateEnum.Ninety;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.ROTATE270))
+                    {
+                        rotate = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.RotateEnum.TwoSeventy;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.UPSIDEDOWN))
+                    {
+                        rotate = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.RotateEnum.UpsideDown;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.CharacterSpacingEnum? characterSpacing = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.CONDENSED))
+                    {
+                        characterSpacing = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.CharacterSpacingEnum.Condensed;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.PROPORTIONAL))
+                    {
+                        characterSpacing = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.CharacterSpacingEnum.Proportional;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.LineSpacingEnum? lineSpacing = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.DOUBLEHIGH))
+                    {
+                        lineSpacing = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.LineSpacingEnum.Double;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.TRIPLEHIGH))
+                    {
+                        lineSpacing = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.LineSpacingEnum.Triple;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.QUADRUPLEHIGH))
+                    {
+                        lineSpacing = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.LineSpacingEnum.Quadruple;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.ScriptEnum? script = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.SUPERSCRIPT))
+                    {
+                        script = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.ScriptEnum.Superscript;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.SUBSCRIPT))
+                    {
+                        script = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.ScriptEnum.Subscript;
+                    }
+
+                    GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.QualityEnum? quality = null;
+                    if (field.Value.Style.HasFlag(FieldStyleEnum.LETTERQUALITY))
+                    {
+                        quality = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.QualityEnum.Letter;
+                    }
+                    else if (field.Value.Style.HasFlag(FieldStyleEnum.NEARLETTERQUALITY))
+                    {
+                        quality = GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.StyleClass.QualityEnum.NearLetter;
+                    }
+
+                    style = new(
+                    Bold: field.Value.Style.HasFlag(FieldStyleEnum.BOLD) ? true : null,
+                    Italic: field.Value.Style.HasFlag(FieldStyleEnum.ITALIC) ? true : null,
+                    Underline: underline,
+                    Width: width,
+                    Strike: strike,
+                    Rotate: rotate,
+                    CharacterSpacing: characterSpacing,
+                    LineSpacing: lineSpacing,
+                    Script: script,
+                    Overscore: field.Value.Style.HasFlag(FieldStyleEnum.OVERSCORE) ? true : null,
+                    Quality: quality,
+                    Opaque: field.Value.Style.HasFlag(FieldStyleEnum.OPAQUE) ? true : null);
+                }
+
+                fields.Add(
+                    field.Key,
+                    new GetQueryFormCompletion.PayloadData.FormClass.FieldsClass(
+                        Position: new(
+                            X: field.Value.X,
+                            Y: field.Value.Y),
+                        Follows: string.IsNullOrEmpty(field.Value.Follows) ? null : field.Value.Follows,
+                        Side: field.Value.Side switch
+                        {
+                            FieldSideEnum.FRONT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.SideEnum.Front,
+                            FieldSideEnum.BACK => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.SideEnum.Back,
+                            _ => null,
+                        },
+                        Size: new(
+                            Width: field.Value.Width,
+                            Height: field.Value.Height),
+                        Index: field.Value.Repeat > 0 ? new(
+                            RepeatCount: field.Value.Repeat,
+                            X: field.Value.XOffset,
+                            Y: field.Value.YOffset) : null,
+                        FieldType: field.Value.Type switch
+                        {
+                            FieldTypeEnum.BARCODE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Barcode,
+                            FieldTypeEnum.GRAPHIC => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Graphic,
+                            FieldTypeEnum.MICR => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Micr,
+                            FieldTypeEnum.MSF => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Msf,
+                            FieldTypeEnum.OCR => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Ocr,
+                            FieldTypeEnum.PAGEMARK => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Pagemark,
+                            FieldTypeEnum.TEXT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FieldTypeEnum.Text,
+                            _ => null,
+                        },
+                        Scaling: field.Value.Scaling switch
+                        {
+                            FieldScalingEnum.ASIS => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ScalingEnum.AsIs,
+                            FieldScalingEnum.BESTFIT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ScalingEnum.BestFit,
+                            FieldScalingEnum.MAINTAINASPECT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ScalingEnum.MaintainAspect,
+                            _ => null,
+                        },
+                        Barcode: field.Value.Barcode switch
+                        {
+                            FieldBarcodeEnum.ABOVE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.BarcodeEnum.Above,
+                            FieldBarcodeEnum.BELOW => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.BarcodeEnum.Below,
+                            FieldBarcodeEnum.BOTH => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.BarcodeEnum.Both,
+                            _ => null,
+                        },
+                        Coercivity: null,
+                        Class: field.Value.Class switch
+                        {
+                            FormField.ClassEnum.OPTIONAL => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ClassEnum.Optional,
+                            FormField.ClassEnum.REQUIRED => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ClassEnum.Required,
+                            FormField.ClassEnum.STATIC => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.ClassEnum.Static,
+                            _ => null,
+                        },
+                        Access: field.Value.Access switch
+                        {
+                            FieldAccessEnum.READ => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.AccessEnum.Read,
+                            FieldAccessEnum.WRITE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.AccessEnum.Write,
+                            FieldAccessEnum.READWRITE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.AccessEnum.ReadWrite,
+                            _ => null,
+                        },
+                        Overflow: field.Value.Overflow switch
+                        {
+                            FormField.OverflowEnum.BESTFIT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.OverflowEnum.BestFit,
+                            FormField.OverflowEnum.OVERWRITE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.OverflowEnum.Overwrite,
+                            FormField.OverflowEnum.TERMINATE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.OverflowEnum.Terminate,
+                            FormField.OverflowEnum.TRUNCATE => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.OverflowEnum.Truncate,
+                            _ => null,
+                        },
+                        Style: style,
+                        Case: field.Value.Case switch
+                        {
+                            FormField.CaseEnum.LOWER => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.CaseEnum.Lower,
+                            FormField.CaseEnum.UPPER => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.CaseEnum.Upper,
+                            _ => null,
+                        },
+                        Horizontal: field.Value.Horizontal switch
+                        {
+                            FormField.HorizontalEnum.CENTER => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.HorizontalEnum.Center,
+                            FormField.HorizontalEnum.JUSTIFY => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.HorizontalEnum.Justify,
+                            FormField.HorizontalEnum.LEFT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.HorizontalEnum.Left,
+                            FormField.HorizontalEnum.RIGHT => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.HorizontalEnum.Right,
+                            _ => null,
+                        },
+                        Vertical: field.Value.Vertical switch
+                        {
+                            FormField.VerticalEnum.BOTTOM => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.VerticalEnum.Bottom,
+                            FormField.VerticalEnum.CENTER => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.VerticalEnum.Center,
+                            FormField.VerticalEnum.TOP => GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.VerticalEnum.Top,
+                            _ => null,
+                        }, 
+                        Color: field.Value.Color > 0 ? field.Value.Color.ToString().ToLower() : null,
+                        Font: string.IsNullOrEmpty(field.Value.Font) ? null : new GetQueryFormCompletion.PayloadData.FormClass.FieldsClass.FontClass(
+                            Name: field.Value.Font,
+                            PointSize: field.Value.PointSize > 0 ? field.Value.PointSize : null,
+                            Cpi: field.Value.CPI > 0 ? field.Value.CPI : null,
+                            Lpi: field.Value.LPI > 0 ? field.Value.LPI : null),
+                        Format: string.IsNullOrEmpty(field.Value.Format) ? null : field.Value.Format,
+                        InitialValue: string.IsNullOrEmpty(field.Value.InitialValue) ? null : field.Value.InitialValue)
+                    );
+            }
 
             // Check all fields
-            foreach (var fieldName in fields)
+            foreach (var field in fields)
             {
-                var fieldResult = ValidateField(fieldName, Device);
+                var fieldResult = ValidateField(field.Key, Device);
                 if (fieldResult.Result != ValidationResultClass.ValidateResultEnum.Valid)
                 {
                     return new(
-                        new(GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
+                        new(GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Specified field {fieldName} is invalid. {result.Reason}");
+                        $"Specified field {field.Key} is invalid. {result.Reason}");
                 }
             }
 
-            return new(
-                new(
-                    FormName: Name,
-                    Base: Base switch
-                    {
-                        BaseEnum.INCH => GetQueryFormCompletion.PayloadData.BaseEnum.Inch,
-                        BaseEnum.MM => GetQueryFormCompletion.PayloadData.BaseEnum.Mm,
-                        _ => GetQueryFormCompletion.PayloadData.BaseEnum.RowColumn,
-                    },
-                    UnitX: UnitX,
-                    UnitY: UnitY,
-                    Width: Width,
-                    Height: Height,
-                    Alignment: Alignment switch
-                    {
-                        AlignmentEnum.BOTTOMLEFT => GetQueryFormCompletion.PayloadData.AlignmentEnum.BottomLeft,
-                        AlignmentEnum.BOTTOMRIGHT => GetQueryFormCompletion.PayloadData.AlignmentEnum.BottomRight,
-                        AlignmentEnum.TOPLEFT => GetQueryFormCompletion.PayloadData.AlignmentEnum.TopLeft,
-                        _ => GetQueryFormCompletion.PayloadData.AlignmentEnum.TopRight,
-                    },
+            GetQueryFormCompletion.PayloadData payload = new(
+                Form: new(
+                    Unit: new(
+                        Base: Base switch
+                        {
+                            BaseEnum.INCH => XFS4IoT.Printer.UnitClass.BaseEnum.Inch,
+                            BaseEnum.MM => XFS4IoT.Printer.UnitClass.BaseEnum.Mm,
+                            _ => XFS4IoT.Printer.UnitClass.BaseEnum.RowColumn,
+                        },
+                        X: UnitX,
+                        Y: UnitY),
+                    Size: new(
+                        Width: Width,
+                        Height: Height),
+                    Alignment: new(
+                        Relative: Alignment switch
+                        {
+                            AlignmentEnum.BOTTOMLEFT => GetQueryFormCompletion.PayloadData.FormClass.AlignmentClass.RelativeEnum.BottomLeft,
+                            AlignmentEnum.BOTTOMRIGHT => GetQueryFormCompletion.PayloadData.FormClass.AlignmentClass.RelativeEnum.BottomRight,
+                            AlignmentEnum.TOPLEFT => GetQueryFormCompletion.PayloadData.FormClass.AlignmentClass.RelativeEnum.TopLeft,
+                            _ => GetQueryFormCompletion.PayloadData.FormClass.AlignmentClass.RelativeEnum.TopRight,
+                        },
+                        X: XOffset,
+                        Y: YOffset),
                     Orientation: Orientation switch
                     {
-                        FormOrientationEnum.LANDSCAPE => GetQueryFormCompletion.PayloadData.OrientationEnum.Landscape,
-                        _ => GetQueryFormCompletion.PayloadData.OrientationEnum.Portrait,
+                        FormOrientationEnum.LANDSCAPE => GetQueryFormCompletion.PayloadData.FormClass.OrientationEnum.Landscape,
+                        _ => GetQueryFormCompletion.PayloadData.FormClass.OrientationEnum.Portrait,
                     },
-                    OffsetX: XOffset,
-                    OffsetY: YOffset,
-                    VersionMajor: VersionMajor,
-                    VersionMinor: VersionMinor,
-                    UserPrompt: Prompt,
-                    Fields: fields),
-                    MessageHeader.CompletionCodeEnum.Success
+                    Skew: Skew >= 0 ? Skew : null,
+                    Version: (VersionMinor is null && VersionMajor is null && string.IsNullOrEmpty(Date) && string.IsNullOrEmpty(Author)) ? null 
+                        : new(
+                            Version: VersionMajor is null || VersionMinor is null ? null : $"{VersionMajor}.{VersionMinor}",
+                            Date: string.IsNullOrEmpty(Date) ? null : Date,
+                            Author: string.IsNullOrEmpty(Author) ? null : Author),
+                    Copyright: string.IsNullOrEmpty(Copyright) ? null : Copyright,
+                    Title: string.IsNullOrEmpty(Title) ? null : Title,
+                    Comment: string.IsNullOrEmpty(Comment) ? null : Comment,
+                    UserPrompt: string.IsNullOrEmpty(Prompt) ? null : Prompt,
+                    Fields: fields)
                 );
+
+            return new CommandResult<GetQueryFormCompletion.PayloadData>(payload, MessageHeader.CompletionCodeEnum.Success);
         }
 
         /// <summary>
@@ -416,40 +643,213 @@ namespace XFS4IoTFramework.Printer
         {
             Fields.ContainsKey(FieldName).IsTrue($"Specified field doesn't exist. {FieldName}");
 
+            GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass style = null;
+            if (Fields[FieldName].Style > 0)
+            {
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.UnderlineEnum? underline = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.UNDER))
+                {
+                    underline = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.UnderlineEnum.Single;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.DOUBLEUNDER))
+                {
+                    underline = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.UnderlineEnum.Double;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.WidthEnum? width = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.DOUBLE))
+                {
+                    width = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.WidthEnum.Double;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.TRIPLE))
+                {
+                    width = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.WidthEnum.Triple;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.QUADRUPLE))
+                {
+                    width = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.WidthEnum.Quadruple;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.StrikeEnum? strike = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.DOUBLESTRIKE))
+                {
+                    strike = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.StrikeEnum.Double;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.STRIKETHROUGH))
+                {
+                    strike = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.StrikeEnum.Single;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.RotateEnum? rotate = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.ROTATE90))
+                {
+                    rotate = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.RotateEnum.Ninety;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.ROTATE270))
+                {
+                    rotate = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.RotateEnum.TwoSeventy;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.UPSIDEDOWN))
+                {
+                    rotate = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.RotateEnum.UpsideDown;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.CharacterSpacingEnum? characterSpacing = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.CONDENSED))
+                {
+                    characterSpacing = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.CharacterSpacingEnum.Condensed;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.PROPORTIONAL))
+                {
+                    characterSpacing = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.CharacterSpacingEnum.Proportional;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.LineSpacingEnum? lineSpacing = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.DOUBLEHIGH))
+                {
+                    lineSpacing = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.LineSpacingEnum.Double;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.TRIPLEHIGH))
+                {
+                    lineSpacing = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.LineSpacingEnum.Triple;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.QUADRUPLEHIGH))
+                {
+                    lineSpacing = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.LineSpacingEnum.Quadruple;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.ScriptEnum? script = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.SUPERSCRIPT))
+                {
+                    script = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.ScriptEnum.Superscript;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.SUBSCRIPT))
+                {
+                    script = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.ScriptEnum.Subscript;
+                }
+
+                GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.QualityEnum? quality = null;
+                if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.LETTERQUALITY))
+                {
+                    quality = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.QualityEnum.Letter;
+                }
+                else if (Fields[FieldName].Style.HasFlag(FieldStyleEnum.NEARLETTERQUALITY))
+                {
+                    quality = GetQueryFieldCompletion.PayloadData.FieldsClass.StyleClass.QualityEnum.NearLetter;
+                }
+
+                style = new(
+                Bold: Fields[FieldName].Style.HasFlag(FieldStyleEnum.BOLD) ? true : null,
+                Italic: Fields[FieldName].Style.HasFlag(FieldStyleEnum.ITALIC) ? true : null,
+                Underline: underline,
+                Width: width,
+                Strike: strike,
+                Rotate: rotate,
+                CharacterSpacing: characterSpacing,
+                LineSpacing: lineSpacing,
+                Script: script,
+                Overscore: Fields[FieldName].Style.HasFlag(FieldStyleEnum.OVERSCORE) ? true : null,
+                Quality: quality,
+                Opaque: Fields[FieldName].Style.HasFlag(FieldStyleEnum.OPAQUE) ? true : null);
+            }
+
             return new GetQueryFieldCompletion.PayloadData.FieldsClass(
-                Fields[FieldName].Repeat, 
-                Fields[FieldName].Type switch
-                { 
-                    FieldTypeEnum.BARCODE => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Barcode,
-                    FieldTypeEnum.GRAPHIC => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Graphic,
-                    FieldTypeEnum.MICR => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Micr,
-                    FieldTypeEnum.MSF => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Msf,
-                    FieldTypeEnum.OCR => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Ocr,
-                    FieldTypeEnum.PAGEMARK => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Pagemark,
-                    _ => GetQueryFieldCompletion.PayloadData.FieldsClass.TypeEnum.Text,
-                },
-                Fields[FieldName].Class switch
-                { 
-                    FormField.ClassEnum.OPTIONAL => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Optional,
-                    FormField.ClassEnum.REQUIRED => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Required,
-                    _ => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Optional,
-                },
-                Fields[FieldName].Access switch
-                {
-                    FieldAccessEnum.READ => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Read,
-                    FieldAccessEnum.WRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Write,
-                    _ => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.ReadWrite,
-                },
-                Fields[FieldName].Overflow switch
-                {
-                    FormField.OverflowEnum.BESTFIT => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.BestFit,
-                    FormField.OverflowEnum.OVERWRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Overwrite,
-                    FormField.OverflowEnum.TERMINATE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Terminate,
-                    FormField.OverflowEnum.TRUNCATE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Truncate,
-                    _ => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.WordWrap,
-                },
-                Fields[FieldName].InitialValue,
-                Fields[FieldName].Format);
+                    Position: new(
+                        X: Fields[FieldName].X,
+                        Y: Fields[FieldName].Y),
+                    Follows: string.IsNullOrEmpty(Fields[FieldName].Follows) ? null : Fields[FieldName].Follows,
+                    Side: Fields[FieldName].Side switch
+                    {
+                        FieldSideEnum.FRONT => GetQueryFieldCompletion.PayloadData.FieldsClass.SideEnum.Front,
+                        FieldSideEnum.BACK => GetQueryFieldCompletion.PayloadData.FieldsClass.SideEnum.Back,
+                        _ => null,
+                    },
+                    Size: new(
+                        Width: Fields[FieldName].Width,
+                        Height: Fields[FieldName].Height),
+                    Index: Fields[FieldName].Repeat > 0 ? new(
+                        RepeatCount: Fields[FieldName].Repeat,
+                        X: Fields[FieldName].XOffset,
+                        Y: Fields[FieldName].YOffset) : null,
+                    FieldType: Fields[FieldName].Type switch
+                    {
+                        FieldTypeEnum.BARCODE => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Barcode,
+                        FieldTypeEnum.GRAPHIC => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Graphic,
+                        FieldTypeEnum.MICR => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Micr,
+                        FieldTypeEnum.MSF => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Msf,
+                        FieldTypeEnum.OCR => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Ocr,
+                        FieldTypeEnum.PAGEMARK => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Pagemark,
+                        FieldTypeEnum.TEXT => GetQueryFieldCompletion.PayloadData.FieldsClass.FieldTypeEnum.Text,
+                        _ => null,
+                    },
+                    Scaling: Fields[FieldName].Scaling switch
+                    {
+                        FieldScalingEnum.ASIS => GetQueryFieldCompletion.PayloadData.FieldsClass.ScalingEnum.AsIs,
+                        FieldScalingEnum.BESTFIT => GetQueryFieldCompletion.PayloadData.FieldsClass.ScalingEnum.BestFit,
+                        FieldScalingEnum.MAINTAINASPECT => GetQueryFieldCompletion.PayloadData.FieldsClass.ScalingEnum.MaintainAspect,
+                        _ => null,
+                    },
+                    Barcode: Fields[FieldName].Barcode switch
+                    {
+                        FieldBarcodeEnum.ABOVE => GetQueryFieldCompletion.PayloadData.FieldsClass.BarcodeEnum.Above,
+                        FieldBarcodeEnum.BELOW => GetQueryFieldCompletion.PayloadData.FieldsClass.BarcodeEnum.Below,
+                        FieldBarcodeEnum.BOTH => GetQueryFieldCompletion.PayloadData.FieldsClass.BarcodeEnum.Both,
+                        _ => null,
+                    },
+                    Coercivity: null,
+                    Class: Fields[FieldName].Class switch
+                    {
+                        FormField.ClassEnum.OPTIONAL => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Optional,
+                        FormField.ClassEnum.REQUIRED => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Required,
+                        FormField.ClassEnum.STATIC => GetQueryFieldCompletion.PayloadData.FieldsClass.ClassEnum.Static,
+                        _ => null,
+                    },
+                    Access: Fields[FieldName].Access switch
+                    {
+                        FieldAccessEnum.READ => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Read,
+                        FieldAccessEnum.WRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.Write,
+                        FieldAccessEnum.READWRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.AccessEnum.ReadWrite,
+                        _ => null,
+                    },
+                    Overflow: Fields[FieldName].Overflow switch
+                    {
+                        FormField.OverflowEnum.BESTFIT => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.BestFit,
+                        FormField.OverflowEnum.OVERWRITE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Overwrite,
+                        FormField.OverflowEnum.TERMINATE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Terminate,
+                        FormField.OverflowEnum.TRUNCATE => GetQueryFieldCompletion.PayloadData.FieldsClass.OverflowEnum.Truncate,
+                        _ => null,
+                    },
+                    Style: style,
+                    Case: Fields[FieldName].Case switch
+                    {
+                        FormField.CaseEnum.LOWER => GetQueryFieldCompletion.PayloadData.FieldsClass.CaseEnum.Lower,
+                        FormField.CaseEnum.UPPER => GetQueryFieldCompletion.PayloadData.FieldsClass.CaseEnum.Upper,
+                        _ => null,
+                    },
+                    Horizontal: Fields[FieldName].Horizontal switch
+                    {
+                        FormField.HorizontalEnum.CENTER => GetQueryFieldCompletion.PayloadData.FieldsClass.HorizontalEnum.Center,
+                        FormField.HorizontalEnum.JUSTIFY => GetQueryFieldCompletion.PayloadData.FieldsClass.HorizontalEnum.Justify,
+                        FormField.HorizontalEnum.LEFT => GetQueryFieldCompletion.PayloadData.FieldsClass.HorizontalEnum.Left,
+                        FormField.HorizontalEnum.RIGHT => GetQueryFieldCompletion.PayloadData.FieldsClass.HorizontalEnum.Right,
+                        _ => null,
+                    },
+                    Vertical: Fields[FieldName].Vertical switch
+                    {
+                        FormField.VerticalEnum.BOTTOM => GetQueryFieldCompletion.PayloadData.FieldsClass.VerticalEnum.Bottom,
+                        FormField.VerticalEnum.CENTER => GetQueryFieldCompletion.PayloadData.FieldsClass.VerticalEnum.Center,
+                        FormField.VerticalEnum.TOP => GetQueryFieldCompletion.PayloadData.FieldsClass.VerticalEnum.Top,
+                        _ => null,
+                    },
+                    Color: Fields[FieldName].Color > 0 ? Fields[FieldName].Color.ToString().ToLower() : null,
+                    Font: string.IsNullOrEmpty(Fields[FieldName].Font) ? null : new GetQueryFieldCompletion.PayloadData.FieldsClass.FontClass(
+                        Name: Fields[FieldName].Font,
+                        PointSize: Fields[FieldName].PointSize > 0 ? Fields[FieldName].PointSize : null,
+                        Cpi: Fields[FieldName].CPI > 0 ? Fields[FieldName].CPI : null,
+                        Lpi: Fields[FieldName].LPI > 0 ? Fields[FieldName].LPI : null),
+                    Format: string.IsNullOrEmpty(Fields[FieldName].Format) ? null : Fields[FieldName].Format,
+                    InitialValue: string.IsNullOrEmpty(Fields[FieldName].InitialValue) ? null : Fields[FieldName].InitialValue
+                );
         }
 
         /// <summary>
@@ -506,7 +906,7 @@ namespace XFS4IoTFramework.Printer
                         Fields[FieldName].Height;
             }
 
-            if (max_x > Fields[FieldName].Width || max_y > Fields[FieldName].Height)
+            if (max_x > Width || max_y > Height)
             {
                 return new(ValidationResultClass.ValidateResultEnum.Invalid,
                            $"Extent of field is larger than form.");
@@ -678,8 +1078,8 @@ namespace XFS4IoTFramework.Printer
         public int DotXOffset { get; init; }
         public int DotYOffset { get; init; }
 
-        public int VersionMajor { get; init; }
-        public int VersionMinor { get; init; }
+        public int? VersionMajor { get; init; }
+        public int? VersionMinor { get; init; }
         public string Date { get; init; }
         public string Author { get; init; }
 

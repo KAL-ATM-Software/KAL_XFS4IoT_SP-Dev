@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -42,7 +42,7 @@ namespace XFS4IoT.CardReader.Events
             /// 
             /// * ```exit``` - The card was moved to the exit position.
             /// * ```transport``` - The card was moved to the transport position.
-            /// * ```&lt;storage unit identifier&gt;``` - The card was moved to the storage unit with matching
+            /// * ```[storage unit identifier]``` - The card was moved to the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *retain*.
             /// <example>unit1</example>
@@ -57,7 +57,7 @@ namespace XFS4IoT.CardReader.Events
             /// * ```unknown``` - The position of the card cannot be determined.
             /// * ```exit``` - The card was in the exit position.
             /// * ```transport``` - The card was in the transport position.
-            /// * ```&lt;storage unit identifier&gt;``` - The card was in a storage unit with matching
+            /// * ```[storage unit identifier]``` - The card was in a storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   *park*.
             /// <example>transport</example>

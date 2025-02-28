@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "KeyManagement.ExportRSAIssuerSignedItem")]
     public sealed class ExportRSAIssuerSignedItemCompletion : Completion<ExportRSAIssuerSignedItemCompletion.PayloadData>
     {
@@ -56,10 +56,10 @@ namespace XFS4IoT.KeyManagement.Completions
             /// If a public key was requested then value contains the PKCS#1 formatted RSA public key represented in
             /// DER encoded ASN.1 format. If the security item was requested then value contains the device's Security
             /// Item, which may be vendor specific.
-            /// <example>aXRlbSBkYXRhIHJlcXVl ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "value")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Value { get; init; }
 
             /// <summary>
@@ -77,10 +77,10 @@ namespace XFS4IoT.KeyManagement.Completions
             /// The RSA signature of the data item exported.
             /// 
             /// This should be null when the key signature is not supported.
-            /// <example>U2lnbmF0dXJlIGRhdGE=</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "signature")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Signature { get; init; }
 
         }

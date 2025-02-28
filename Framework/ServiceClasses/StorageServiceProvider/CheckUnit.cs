@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -133,7 +133,7 @@ namespace XFS4IoTFramework.Storage
     /// Status of the cash unit
     /// </summary>
     [Serializable()]
-    public sealed record CheckStatusClass
+    public sealed record CheckStatusClass : StorageChangedBaseRecord
     {
         public enum ReplenishmentStatusEnum
         {
@@ -146,23 +146,36 @@ namespace XFS4IoTFramework.Storage
         public CheckStatusClass()
         {
             Index = 0;
-            ReplenishmentStatus = ReplenishmentStatusEnum.Healthy;
-            InitialCounts = new();
-            CheckInCounts = new();
+            replenishmentStatus = ReplenishmentStatusEnum.Healthy;
+            InitialCounts = new()
+            {
+                ParentPropertyName = nameof(InitialCounts)
+            };
+            CheckInCounts = new()
+            {
+                ParentPropertyName = nameof(CheckInCounts)
+            };
         }
         public CheckStatusClass(int Index)
         {
             this.Index = Index;
-            ReplenishmentStatus = ReplenishmentStatusEnum.Healthy;
-            initialCounts = new();
-            checkInCounts = new();
+            replenishmentStatus = ReplenishmentStatusEnum.Healthy;
+            InitialCounts = new()
+            {
+                ParentPropertyName = nameof(InitialCounts)
+            };
+            CheckInCounts = new()
+            {
+                ParentPropertyName = nameof(CheckInCounts)
+            };
         }
-        public CheckStatusClass(CheckStatusClass Status)
+        public CheckStatusClass(CheckStatusClass Status) :
+            base(Status)
         {
             Index = Status.Index;
-            ReplenishmentStatus = Status.ReplenishmentStatus;
-            initialCounts = Status.InitialCounts;
-            checkInCounts = Status.CheckInCounts;
+            replenishmentStatus = Status.ReplenishmentStatus;
+            InitialCounts = Status.InitialCounts;
+            CheckInCounts = Status.CheckInCounts;
         }
 
         /// <summary>
@@ -176,56 +189,58 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The check related items which are in the storage unit at the last replenishment.
         /// </summary>
-        public StorageCheckCountClass InitialCounts 
-        {
-            get { return initialCounts; }
-            set { initialCounts = value with { }; }
-        }
-        private StorageCheckCountClass initialCounts = new();
-
+        public StorageCheckCountClass InitialCounts { get; init; }
         /// <summary>
         /// The check items added to the unit since the last replenishment.
         /// </summary>
-        public StorageCheckCountClass CheckInCounts 
-        { 
-            get { return checkInCounts; }
-            set { checkInCounts = value with { }; } 
-        }
-        private StorageCheckCountClass checkInCounts { get; set; }
+        public StorageCheckCountClass CheckInCounts { get; init; }
 
         /// <summary>
         /// The state of the media in the unit if it can be determined.
         /// </summary>
-        public ReplenishmentStatusEnum ReplenishmentStatus { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.StorageChanged)]
+        public ReplenishmentStatusEnum ReplenishmentStatus
+        {
+            get { return replenishmentStatus; }
+            set
+            {
+                if (replenishmentStatus != value)
+                {
+                    replenishmentStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ReplenishmentStatusEnum replenishmentStatus;
     }
 
     /// <summary>
     /// Representing storage counts for check items
     /// </summary>
     [Serializable()]
-    public sealed record StorageCheckCountClass
+    public sealed record StorageCheckCountClass : StorageChangedBaseRecord
     {
         public StorageCheckCountClass()
         {
-            MediaInCount = 0;
-            Count = 0;
-            RetractOperations = 0;
+            mediaInCount = 0;
+            count = 0;
+            retractOperations = 0;
         }
         public StorageCheckCountClass(int MediaInCount,
                                       int Count,
                                       int RetractOperations)
         {
-            this.MediaInCount = MediaInCount;
-            this.Count = Count;
-            this.RetractOperations = RetractOperations;
+            mediaInCount = MediaInCount;
+            count = Count;
+            retractOperations = RetractOperations;
         }
-
-        public StorageCheckCountClass(StorageCheckCountClass StorageCashCount)
+        public StorageCheckCountClass(StorageCheckCountClass StorageCheckCount) :
+            base(StorageCheckCount)
         {
-            StorageCashCount.IsNotNull("Copy constructure used with null reference. " + nameof(StorageCheckCountClass));
-            MediaInCount = StorageCashCount.MediaInCount;
-            Count = StorageCashCount.Count;
-            RetractOperations = StorageCashCount.RetractOperations;
+            StorageCheckCount.IsNotNull("Copy constructure used with null reference. " + nameof(StorageCheckCountClass));
+            mediaInCount = StorageCheckCount.MediaInCount;
+            count = StorageCheckCount.Count;
+            retractOperations = StorageCheckCount.RetractOperations;
         }
 
         /// <summary>
@@ -233,19 +248,58 @@ namespace XFS4IoTFramework.Storage
         /// If the number of items is not counted this is not reported and RetractOperations
         /// is incremented as items are added to the unit.
         /// </summary>
-        public int MediaInCount { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
+        public int MediaInCount
+        {
+            get { return mediaInCount; }
+            set
+            {
+                if (mediaInCount != value)
+                {
+                    mediaInCount = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int mediaInCount;
 
         /// <summary>
         /// Total number of items added to the storage unit due to any operations. 
         /// If the number of items is not counted this is not reported and RetractOperations is 
         /// incremented as items are added to the unit.
         /// </summary>
-        public int Count { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
+        public int Count
+        {
+            get { return count; }
+            set
+            {
+                if (count != value)
+                {
+                    count = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int count;
 
         /// <summary>
         /// Total number of operations which resulted in items being retracted to the storage unit.
         /// </summary>
-        public int RetractOperations { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.StorageChanged)]
+        public int RetractOperations
+        {
+            get { return mediaInCount; }
+            set
+            {
+                if (retractOperations != value)
+                {
+                    retractOperations = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int retractOperations;
     }
 
     /// <summary>
@@ -311,8 +365,9 @@ namespace XFS4IoTFramework.Storage
     /// </summary>
     public sealed record CheckUnitCountClass
     {
-        public CheckUnitCountClass(int Count,
-                                   bool MediaRetracted = false)
+        public CheckUnitCountClass(
+            int Count,
+            bool MediaRetracted = false)
         {
             this.Count = Count;
             this.MediaRetracted = MediaRetracted;

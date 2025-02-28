@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,8 +35,8 @@ namespace XFS4IoT.Check.Commands
             }
 
             /// <summary>
-            /// Specifies if the item should be accepted or refused. If true then the item is accepted and moved to the
-            /// stacker. If false then the item is moved to the re-buncher/refuse position.
+            /// Specifies if the item should be accepted or refused. If true, then the item is accepted and moved to the
+            /// stacker. If false, then the item is moved to the re-buncher/refuse position.
             /// <example>true</example>
             /// </summary>
             [DataMember(Name = "accept")]

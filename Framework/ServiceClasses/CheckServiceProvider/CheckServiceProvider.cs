@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -31,7 +31,12 @@ namespace XFS4IoTServer
     /// </remarks>
     public class CheckScannerServiceProvider : ServiceProvider, ICheckService, ICommonService, ILightsService, IStorageService
     {
-        public CheckScannerServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public CheckScannerServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             : base(endpointDetails,
                    ServiceName,
                    [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Check, XFSConstants.ServiceClass.Storage],
@@ -54,7 +59,7 @@ namespace XFS4IoTServer
             {
                 MediaPresentedPositionEnum.Input => XFS4IoT.Check.PositionEnum.Input,
                 MediaPresentedPositionEnum.Refused => XFS4IoT.Check.PositionEnum.Refused,
-                MediaPresentedPositionEnum.ReBuncher => XFS4IoT.Check.PositionEnum.Rebuncher,
+                MediaPresentedPositionEnum.ReBuncher => XFS4IoT.Check.PositionEnum.Refused,
                 _ => throw new InternalErrorException($"Unexpected event parameter specified for {nameof(CheckScanner.MediaTakenEvent)}, {Postion}"),
             }));
         }
@@ -80,7 +85,15 @@ namespace XFS4IoTServer
 
         #endregion
 
-        #region Storage unsolic events
+        #region Storage Unsolicsited events 
+        /// <summary>
+        /// Sending status changed event.
+        /// </summary>
+        public Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => StorageService.StorageChangedEvent(sender, propertyInfo);
+
+        /// <summary>
+        /// Sending threshold events.
+        /// </summary>
         public Task StorageThresholdEvent(List<string> CheckUnitIds)
         {
             StorageThresholdEvent.PayloadData paylod = new()
@@ -90,14 +103,6 @@ namespace XFS4IoTServer
             return StorageService.StorageThresholdEvent(paylod);
         }
 
-        public Task StorageChangedEvent(List<string> CheckUnitIds)
-        {
-            StorageChangedEvent.PayloadData paylod = new()
-            {
-                ExtendedProperties = GetStorages(CheckUnitIds)
-            };
-            return StorageService.StorageChangedEvent(paylod);
-        }
         #endregion
 
         #region Common unsolicited events
@@ -106,9 +111,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the CardReader Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -117,18 +123,28 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update storage count from the framework after media movement command is processed
         /// </summary>
-        public Task UpdateCardStorageCount(string storageId, int count, string preservedStorage) => throw new NotSupportedException($"Check Scanner service provider doesn't support card storage.");
+        public Task UpdateCardStorageCount(string storageId, int count) => throw new NotSupportedException($"Check Scanner service provider doesn't support card storage.");
 
         /// <summary>
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta, Dictionary<string, string> preservedStorage) => throw new NotSupportedException($"Check Scanner service provider doesn't support cash storage.");
+        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta) => throw new NotSupportedException($"Check Scanner service provider doesn't support cash storage.");
 
         /// <summary>
         /// Update managed check storage information in the framework.
         /// </summary>
-        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => StorageService.UpdateCheckStorageCount(countDelta, preservedStorage);
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null) => StorageService.UpdateCheckStorageCount(countDelta);
+
+        /// <summary>
+        /// Update managed printer storage information in the framework.
+        /// </summary>
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"Check service class doesn't support printer storage.");
+
+        /// <summary>
+        /// Update managed deposit storage information in the framework.
+        /// </summary>
+        public Task UpdateDepositStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"Check service class doesn't support deposit storage.");
 
         /// <summary>
         /// Return which type of storage SP is using
@@ -154,6 +170,21 @@ namespace XFS4IoTServer
         /// Check storage structure information of this device
         /// </summary>
         public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Printer storage structure information of this device
+        /// </summary>
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get => StorageService.PrinterUnits; init { } }
+
+        /// <summary>
+        /// IBNS storage structure information of this device
+        /// </summary>
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get => StorageService.IBNSUnits; init { } }
+
+        /// <summary>
+        /// Deposit storage structure information of this device
+        /// </summary>
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get => StorageService.DepositUnits; init { } }
 
         /// <summary>
         /// Return XFS4IoT storage structured object.

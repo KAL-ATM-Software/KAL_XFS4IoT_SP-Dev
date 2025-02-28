@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -28,11 +28,16 @@ namespace XFS4IoTServer
     /// </remarks>
     public class BiometricServiceProvider : ServiceProvider, IBiometricService, ICommonService, IKeyManagementService
     {
-        public BiometricServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public BiometricServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
-                 new[] { XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Biometric, XFSConstants.ServiceClass.KeyManagement },
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Biometric, XFSConstants.ServiceClass.KeyManagement],
                  device,
                  logger)
         {
@@ -51,9 +56,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the Biometric Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -96,7 +102,7 @@ namespace XFS4IoTServer
             => Biometric.SubjectRemovedEvent();
 
         public Task DataClearedEvent(BiometricCapabilitiesClass.ClearModesEnum ClearMode)
-            => Biometric.DataClearedEvent(new XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData(ClearMode switch
+            => Biometric.DataClearedEvent(new(ClearMode switch
             {
                 BiometricCapabilitiesClass.ClearModesEnum.None => null,
                 BiometricCapabilitiesClass.ClearModesEnum.ScannedData => XFS4IoT.Biometric.Events.DataClearedEvent.PayloadData.ClearDataEnum.ScannedData,
@@ -127,8 +133,40 @@ namespace XFS4IoTServer
         public KeyDetail GetKeyDetail(string KeyName)
             => KeyManagementService.GetKeyDetail(KeyName);
 
-        public void AddKey(string KeyName, int KeySlot, string KeyUsage, string Algorithm, string ModeOfUse, int KeyLength, KeyDetail.KeyStatusEnum KeyStatus, bool Preloaded = false, string RestrictedKeyUsage = null, string KeyVersionNumber = null, string Exportability = null, List<byte> OptionalKeyBlockHeader = null, int? Generation = null, DateTime? ActivatingDate = null, DateTime? ExpiryDate = null, int? Version = null)
-            => KeyManagementService.AddKey(KeyName, KeySlot, KeyUsage, Algorithm, ModeOfUse, KeyLength, KeyStatus, Preloaded, RestrictedKeyUsage, KeyVersionNumber, Exportability, OptionalKeyBlockHeader, Generation, ActivatingDate, ExpiryDate, Version);
+        public void AddKey(
+            string KeyName, 
+            int KeySlot, 
+            string KeyUsage, 
+            string Algorithm, 
+            string ModeOfUse, 
+            int KeyLength, 
+            KeyDetail.KeyStatusEnum KeyStatus, 
+            bool Preloaded = false, 
+            string RestrictedKeyUsage = null, 
+            string KeyVersionNumber = null, 
+            string Exportability = null, 
+            List<byte> OptionalKeyBlockHeader = null, 
+            int? Generation = null, 
+            DateTime? ActivatingDate = null, 
+            DateTime? ExpiryDate = null, 
+            int? Version = null)
+            => KeyManagementService.AddKey(
+                KeyName, 
+                KeySlot, 
+                KeyUsage, 
+                Algorithm, 
+                ModeOfUse, 
+                KeyLength, 
+                KeyStatus, 
+                Preloaded, 
+                RestrictedKeyUsage,
+                KeyVersionNumber, 
+                Exportability, 
+                OptionalKeyBlockHeader, 
+                Generation, 
+                ActivatingDate, 
+                ExpiryDate, 
+                Version);
 
         public void DeleteKey(string KeyName)
             => KeyManagementService.DeleteKey(KeyName);

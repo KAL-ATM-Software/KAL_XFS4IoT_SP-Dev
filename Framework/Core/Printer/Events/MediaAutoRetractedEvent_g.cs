@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Event(Name = "Printer.MediaAutoRetractedEvent")]
     public sealed class MediaAutoRetractedEvent : UnsolicitedEvent<MediaAutoRetractedEvent.PayloadData>
     {
@@ -41,11 +41,12 @@ namespace XFS4IoT.Printer.Events
             /// 
             /// * ```transport``` - Media was retracted to the transport.
             /// * ```jammed``` - The media is jammed.
-            /// * ```unit&lt;retract bin number&gt;``` - Media was retracted to the retract bin specified.
+            /// * ```[storage unit identifier]``` - A storage unit as specified by
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "result")]
-            [DataTypes(Pattern = @"^transport$|^jammed$|^unit[0-9]+$")]
+            [DataTypes(Pattern = @"^transport$|^jammed$|^unit[0-9A-Za-z]+$")]
             public string Result { get; init; }
 
         }

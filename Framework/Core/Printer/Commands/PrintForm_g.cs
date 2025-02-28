@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = PrintForm
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Printer.PrintForm")]
     public sealed class PrintFormCommand : Command<PrintFormCommand.PayloadData>
     {
@@ -28,7 +28,7 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlClass MediaControl = null, Dictionary<string, string> Fields = null, string PaperSource = null)
+            public PayloadData(string FormName = null, string MediaName = null, AlignmentEnum? Alignment = null, int? OffsetX = null, int? OffsetY = null, ResolutionEnum? Resolution = null, MediaControlNullableClass MediaControl = null, Dictionary<string, List<string>> Fields = null, string PaperSource = null)
                 : base()
             {
                 this.FormName = FormName;
@@ -50,7 +50,7 @@ namespace XFS4IoT.Printer.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// The media name. If no media definition applies, this should be null.
+            /// The media definition name. If no media definition applies, this should be null.
             /// <example>Media1</example>
             /// </summary>
             [DataMember(Name = "mediaName")]
@@ -81,7 +81,7 @@ namespace XFS4IoT.Printer.Commands
             /// Specifies the horizontal offset of the form, relative to the horizontal alignment specified in
             /// [alignment](#printer.printform.command.properties.alignment), in horizontal resolution units (from
             /// form definition); always a positive number (i.e. if aligned to the right side of the media, means
-            /// offset the form to the left). If not specified, the *xoffset* value from the
+            /// offset the form to the left). If not specified, the *x* value from the
             /// form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetX")]
@@ -92,7 +92,7 @@ namespace XFS4IoT.Printer.Commands
             /// Specifies the vertical offset of the form, relative to the vertical alignment specified in
             /// *alignment*, in vertical resolution units (from form definition); always a positive number (i.e. if
             /// aligned to the bottom of the media, means offset the form upward). If not specified,
-            /// the *yoffset* value from the form definition should be used.
+            /// the *y* value from the form definition should be used.
             /// </summary>
             [DataMember(Name = "offsetY")]
             [DataTypes(Minimum = 0)]
@@ -117,172 +117,30 @@ namespace XFS4IoT.Printer.Commands
             [DataMember(Name = "resolution")]
             public ResolutionEnum? Resolution { get; init; }
 
-            [DataContract]
-            public sealed class MediaControlClass
-            {
-                public MediaControlClass(bool? Eject = null, bool? Perforate = null, bool? Cut = null, bool? Skip = null, bool? Flush = null, bool? Retract = null, bool? Stack = null, bool? PartialCut = null, bool? Alarm = null, bool? Forward = null, bool? Backward = null, bool? TurnMedia = null, bool? Stamp = null, bool? Park = null, bool? Expel = null, bool? EjectToTransport = null, bool? Rotate180 = null, bool? ClearBuffer = null)
-                {
-                    this.Eject = Eject;
-                    this.Perforate = Perforate;
-                    this.Cut = Cut;
-                    this.Skip = Skip;
-                    this.Flush = Flush;
-                    this.Retract = Retract;
-                    this.Stack = Stack;
-                    this.PartialCut = PartialCut;
-                    this.Alarm = Alarm;
-                    this.Forward = Forward;
-                    this.Backward = Backward;
-                    this.TurnMedia = TurnMedia;
-                    this.Stamp = Stamp;
-                    this.Park = Park;
-                    this.Expel = Expel;
-                    this.EjectToTransport = EjectToTransport;
-                    this.Rotate180 = Rotate180;
-                    this.ClearBuffer = ClearBuffer;
-                }
-
-                /// <summary>
-                /// Flush any data to the printer that has not yet been printed from previous
-                /// [Printer.PrintForm](#printer.printform) or [Printer.PrintNative](#printer.printnative) commands, then
-                /// eject the media.
-                /// </summary>
-                [DataMember(Name = "eject")]
-                public bool? Eject { get; init; }
-
-                /// <summary>
-                /// Flush data as per eject, then perforate the media.
-                /// </summary>
-                [DataMember(Name = "perforate")]
-                public bool? Perforate { get; init; }
-
-                /// <summary>
-                /// Flush data as per eject, then cut the media. For printers which have the ability to stack multiple cut
-                /// sheets and deliver them as a single bundle to the customer, cut causes the media to be stacked and eject
-                /// causes the bundle to be moved to the exit slot.
-                /// </summary>
-                [DataMember(Name = "cut")]
-                public bool? Cut { get; init; }
-
-                /// <summary>
-                /// Flush data as per eject, then skip the media to mark.
-                /// </summary>
-                [DataMember(Name = "skip")]
-                public bool? Skip { get; init; }
-
-                /// <summary>
-                /// Flush any data to the printer that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
-                /// [Printer.PrintNative](#printer.printnative) commands. This will synchronize the application with the device to ensure that all
-                /// data has been physically printed.
-                /// </summary>
-                [DataMember(Name = "flush")]
-                public bool? Flush { get; init; }
-
-                /// <summary>
-                /// Flush data as per flush, then retract the media to retract bin number one. For devices with more than one
-                /// bin the command [Printer.RetractMedia](#printer.retractmedia) should be used if the media should be
-                /// retracted to another bin than bin number one.
-                /// </summary>
-                [DataMember(Name = "retract")]
-                public bool? Retract { get; init; }
-
-                /// <summary>
-                /// Flush data as per flush, then move the media item on the internal stacker.
-                /// </summary>
-                [DataMember(Name = "stack")]
-                public bool? Stack { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then partially cut the media.
-                /// </summary>
-                [DataMember(Name = "partialCut")]
-                public bool? PartialCut { get; init; }
-
-                /// <summary>
-                /// Cause the printer to ring a bell, beep, or otherwise sound an audible alarm.
-                /// </summary>
-                [DataMember(Name = "alarm")]
-                public bool? Alarm { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then turn one page forward.
-                /// </summary>
-                [DataMember(Name = "forward")]
-                public bool? Forward { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then turn one page backward.
-                /// </summary>
-                [DataMember(Name = "backward")]
-                public bool? Backward { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then turn inserted media.
-                /// </summary>
-                [DataMember(Name = "turnMedia")]
-                public bool? TurnMedia { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then stamp on inserted media.
-                /// </summary>
-                [DataMember(Name = "stamp")]
-                public bool? Stamp { get; init; }
-
-                /// <summary>
-                /// Park the media in the parking station.
-                /// </summary>
-                [DataMember(Name = "park")]
-                public bool? Park { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then throw the media out of the exit slot.
-                /// </summary>
-                [DataMember(Name = "expel")]
-                public bool? Expel { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then move the media to a position on the transport just behind the exit slot.
-                /// </summary>
-                [DataMember(Name = "ejectToTransport")]
-                public bool? EjectToTransport { get; init; }
-
-                /// <summary>
-                /// Flush the data as per flush, then rotate media 180 degrees in the printing plane.
-                /// </summary>
-                [DataMember(Name = "rotate180")]
-                public bool? Rotate180 { get; init; }
-
-                /// <summary>
-                /// Clear any data that has not yet been physically printed from previous [Printer.PrintForm](#printer.printform) or
-                /// [Printer.PrintNative](#printer.printnative) commands.
-                /// </summary>
-                [DataMember(Name = "clearBuffer")]
-                public bool? ClearBuffer { get; init; }
-
-            }
-
             /// <summary>
             /// Specifies the manner in which the media should be handled after the printing is done.
-            /// If no options are set, it means do none of these actions, as when printing
-            /// multiple forms on a single page. When no options are set and the device does not support the flush
+            /// If null, it means do none of these actions, as when printing
+            /// multiple forms on a single page. When no options are set and the device does not support the
+            /// [flush](#common.capabilities.completion.description.printer.control.flush)
             /// capability, the data will be printed immediately. If the device supports flush, the data may be
             /// buffered and the [Printer.ControlMedia](#printer.controlmedia) command should be used to synchronize
-            /// the application with the device to ensure that all data has been physically printed. The
-            /// [clearBuffer](#printer.controlmedia.command.properties.mediacontrol.clearbuffer) option is not
-            /// applicable to this command. If set, the command will fail with error *invalidData*.
-            /// This property is null if no actions required.
+            /// the application with the device to ensure that all data has been physically printed.
+            /// 
+            /// In the descriptions, *flush data* means flush any data to the printer that has not yet been printed from
+            /// previous [Printer.PrintForm](#printer.printform) or [Printer.PrintNative](#printer.printnative) commands.
             /// </summary>
             [DataMember(Name = "mediaControl")]
-            public MediaControlClass MediaControl { get; init; }
+            public MediaControlNullableClass MediaControl { get; init; }
 
             /// <summary>
             /// An object containing one or more fields.
             /// </summary>
             [DataMember(Name = "fields")]
-            public Dictionary<string, string> Fields { get; init; }
+            [System.Text.Json.Serialization.JsonConverter(typeof(StringOrArrayConverter))]
+            public Dictionary<string, List<string>> Fields { get; init; }
 
             /// <summary>
-            /// Specifes the paper source to be used. For commands which print, this parameter is ignored if there is already
+            /// Specifies the paper source to be used. For commands which print, this parameter is ignored if there is already
             /// paper in the print position. It can be one of the following:
             /// 
             /// * ```upper``` - Use the only paper source or the upper paper source, if there is more than one paper
@@ -293,7 +151,7 @@ namespace XFS4IoT.Printer.Commands
             /// * ```aux2``` - Use the second auxiliary paper source.
             /// * ```park``` - Use the parking station paper source.
             /// * ```any``` - Use any paper source, it is determined by the service.
-            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// * ```[paper source identifier]``` - The vendor specific paper source.
             /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]

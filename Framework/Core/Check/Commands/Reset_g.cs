@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,10 +41,10 @@ namespace XFS4IoT.Check.Commands
             /// 
             /// * ```eject``` - Eject the media, i.e. return the media to the customer. Note that more than one position may
             ///   be used to return media.
-            /// * ```&lt;storage unit identifier&gt;``` - The media item is in a storage unit as specified by
+            /// * ```[storage unit identifier]``` - The media item is in a storage unit as specified by
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// * ```transport``` - Retract the media to the transport.
-            /// * ```rebuncher``` - Retract the media to the rebuncher.
+            /// * ```rebuncher``` - Retract the media to the re-buncher.
             /// <example>transport</example>
             /// </summary>
             [DataMember(Name = "mediaControl")]

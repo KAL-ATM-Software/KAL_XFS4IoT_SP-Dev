@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -50,7 +50,8 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```cashInActive``` - The device is already in the cash-in state due to a previous *CashAcceptor.CashInStart* command.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed
-            /// in order to perform this command. (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
+            ///   in order to perform this command (see
+            ///   [Common.Status](#common.status.completion.properties.auxiliaries.safedoor) property).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = Reset
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Printer.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
@@ -39,13 +39,12 @@ namespace XFS4IoT.Printer.Commands
             /// 
             /// * ```eject``` - Eject the media.
             /// * ```expel``` - Throw the media out of the exit slot.
-            /// * ```unit&lt;retract bin number&gt;``` - Retract the media to retract bin number specified. This number has
-            /// to be between 1 and the [number of bins](#common.capabilities.completion.properties.printer.retractbins)
-            /// supported by this device.
+            /// * ```[storage unit identifier]``` - A storage unit as specified by
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "mediaControl")]
-            [DataTypes(Pattern = @"^eject$|^expel$|^unit[0-9]+$")]
+            [DataTypes(Pattern = @"^eject$|^expel$|^unit[0-9A-Za-z]+$")]
             public string MediaControl { get; init; }
 
         }

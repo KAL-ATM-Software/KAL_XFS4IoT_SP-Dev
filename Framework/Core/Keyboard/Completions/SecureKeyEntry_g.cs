@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Keyboard.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCompletion : Completion<SecureKeyEntryCompletion.PayloadData>
     {
@@ -53,13 +53,13 @@ namespace XFS4IoT.Keyboard.Completions
 
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            ///                         specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any
+            ///   vendor-specific reason.
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
             /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
-            ///                           Service Provider.
+            ///   Service Provider.
             /// * ```noActiveKeys``` - There are no active function keys specified, or there is no defined layout
-            ///                         definition.
+            ///   definition.
             /// * ```noTerminatekeys``` - There are no terminate keys specified and *autoEnd* is false.
             /// * ```invalidKeyLength``` - The keyLen key length is not supported.
             /// * ```modeNotSupported``` - The KCV mode is not supported.
@@ -67,7 +67,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// * ```partialFrame``` - The single Touch Frame does not cover the entire monitor.
             /// * ```missingKeys``` - The single frame does not contain a full set of hexadecimal key definitions.
             /// * ```entryTimeout``` - The timeout for entering data has been reached. This is a timeout which may be
-            ///                         due to hardware limitations or legislative requirements (for example PCI).
+            ///   due to hardware limitations or legislative requirements (for example PCI).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -88,10 +88,10 @@ namespace XFS4IoT.Keyboard.Completions
             /// Base64.
             /// This value is null if device does not have this capability, or the key entry was not fully
             /// entered, e.g. the entry was terminated by Enter before the required number of digits was entered.
-            /// <example>S2V5IENoZWNrIFZhbHVl</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "kcv")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Kcv { get; init; }
 
         }

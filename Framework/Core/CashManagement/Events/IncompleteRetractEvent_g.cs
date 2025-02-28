@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -56,12 +56,12 @@ namespace XFS4IoT.CashManagement.Events
             /// The reason for not having retracted items. Following values are possible:
             /// 
             /// * ```retractFailure``` - The retract has partially failed for a reason not covered by the other reasons
-            /// listed in this event, for example failing to pick an item to be retracted.
+            ///   listed in this event, for example failing to pick an item to be retracted.
             /// * ```retractAreaFull``` - The storage area specified in the command payload has become full during the
-            /// retract operation.
+            ///   retract operation.
             /// * ```foreignItemsDetected``` - Foreign items have been detected.
             /// * ```invalidBunch``` - An invalid bunch of items has been detected, e.g. it is too large or could not be
-            /// processed.
+            ///   processed.
             /// </summary>
             [DataMember(Name = "reason")]
             public ReasonEnum? Reason { get; init; }

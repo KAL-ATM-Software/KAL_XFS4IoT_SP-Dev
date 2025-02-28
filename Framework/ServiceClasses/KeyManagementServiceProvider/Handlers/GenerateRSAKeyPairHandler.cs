@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -75,22 +75,24 @@ namespace XFS4IoTFramework.KeyManagement
 
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.GenerateRSAKeyPair()");
 
-            var result = await Device.GenerateRSAKeyPair(new GenerateRSAKeyPairRequest(generateRSAKeyPair.Payload.Key,
-                                                                                       keySlot,
-                                                                                       generateRSAKeyPair.Payload.Use switch
-                                                                                       {
-                                                                                           GenerateRSAKeyPairCommand.PayloadData.UseEnum.RsaPrivate => GenerateRSAKeyPairRequest.ModeOfUseEnum.T,
-                                                                                           _ => GenerateRSAKeyPairRequest.ModeOfUseEnum.S
-                                                                                       },
-                                                                                       generateRSAKeyPair.Payload.ModulusLength is null ? 0 : (int)generateRSAKeyPair.Payload.ModulusLength,
-                                                                                       generateRSAKeyPair.Payload.ExponentValue is null ? GenerateRSAKeyPairRequest.ExponentEnum.Default : generateRSAKeyPair.Payload.ExponentValue switch
-                                                                                       {
-                                                                                           GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent1 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent1,
-                                                                                           GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent4 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent4,
-                                                                                           GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent16 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent16,
-                                                                                           _ => GenerateRSAKeyPairRequest.ExponentEnum.Default,
-                                                                                       }),
-                                                         cancel);
+            var result = await Device.GenerateRSAKeyPair(
+                new GenerateRSAKeyPairRequest(
+                    generateRSAKeyPair.Payload.Key,
+                    keySlot,
+                    generateRSAKeyPair.Payload.Use switch
+                    {
+                        GenerateRSAKeyPairCommand.PayloadData.UseEnum.RsaPrivate => GenerateRSAKeyPairRequest.ModeOfUseEnum.T,
+                        _ => GenerateRSAKeyPairRequest.ModeOfUseEnum.S
+                    },
+                    generateRSAKeyPair.Payload.ModulusLength is null ? 0 : (int)generateRSAKeyPair.Payload.ModulusLength,
+                    generateRSAKeyPair.Payload.ExponentValue is null ? GenerateRSAKeyPairRequest.ExponentEnum.Default : generateRSAKeyPair.Payload.ExponentValue switch
+                    {
+                        GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent1 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent1,
+                        GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent4 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent4,
+                        GenerateRSAKeyPairCommand.PayloadData.ExponentValueEnum.Exponent16 => GenerateRSAKeyPairRequest.ExponentEnum.Exponent16,
+                        _ => GenerateRSAKeyPairRequest.ExponentEnum.Default,
+                    }),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.GenerateRSAKeyPair() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -126,22 +128,23 @@ namespace XFS4IoTFramework.KeyManagement
                 }
 
                 // Successfully loaded and add key information managing internally
-                KeyManagement.AddKey(generateRSAKeyPair.Payload.Key,
-                                     result.UpdatedKeySlot is null ? keySlot : (int)result.UpdatedKeySlot,
-                                     result.LoadedKeyDetail.KeyUsage,
-                                     result.LoadedKeyDetail.Algorithm,
-                                     result.LoadedKeyDetail.ModeOfUse,
-                                     result.LoadedKeyDetail.KeyLength,
-                                     KeyDetail.KeyStatusEnum.Loaded,
-                                     false,
-                                     null,
-                                     result.LoadedKeyDetail.KeyVersionNumber,
-                                     result.LoadedKeyDetail.Exportability,
-                                     result.LoadedKeyDetail.OptionalKeyBlockHeader,
-                                     result.LoadedKeyDetail.Generation,
-                                     result.LoadedKeyDetail.ActivatingDate,
-                                     result.LoadedKeyDetail.ExpiryDate,
-                                     result.LoadedKeyDetail.Version);
+                KeyManagement.AddKey(
+                    generateRSAKeyPair.Payload.Key,
+                    result.UpdatedKeySlot is null ? keySlot : (int)result.UpdatedKeySlot,
+                    result.LoadedKeyDetail.KeyUsage,
+                    result.LoadedKeyDetail.Algorithm,
+                    result.LoadedKeyDetail.ModeOfUse,
+                    result.LoadedKeyDetail.KeyLength,
+                    KeyDetail.KeyStatusEnum.Loaded,
+                    false,
+                    null,
+                    result.LoadedKeyDetail.KeyVersionNumber,
+                    result.LoadedKeyDetail.Exportability,
+                    result.LoadedKeyDetail.OptionalKeyBlockHeader,
+                    result.LoadedKeyDetail.Generation,
+                    result.LoadedKeyDetail.ActivatingDate,
+                    result.LoadedKeyDetail.ExpiryDate,
+                    result.LoadedKeyDetail.Version);
             }
 
             return new(

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -20,7 +20,9 @@ namespace XFS4IoTFramework.VendorApplication
         Operator  //The operator interface.
     }
 
-    public sealed class StartLocalApplicationRequest
+    public sealed class StartLocalApplicationRequest(
+        string ApplicationName,
+        StartLocalApplicationRequest.AccessLevelEnum? AccessLevel)
     {
         public enum AccessLevelEnum
         {
@@ -29,26 +31,14 @@ namespace XFS4IoTFramework.VendorApplication
             Full,         //The application is active for the full access level.
         }
 
-        public StartLocalApplicationRequest(string ApplicationName,
-                                            AccessLevelEnum? AccessLevel)
-        {
-            this.ApplicationName = ApplicationName;
-            this.AccessLevel = AccessLevel;
-        }
+        public string ApplicationName { get; init; } = ApplicationName;
 
-        public string ApplicationName { get; init; }
-
-        public AccessLevelEnum? AccessLevel { get; init; }
+        public AccessLevelEnum? AccessLevel { get; init; } = AccessLevel;
     }
 
-    public sealed class SetActiveInterfaceRequest
+    public sealed class SetActiveInterfaceRequest(ActiveInterfaceEnum ActiveInterface)
     {
-        public SetActiveInterfaceRequest(ActiveInterfaceEnum ActiveInterface)
-        {
-            this.ActiveInterface = ActiveInterface;
-        }
-
-        public ActiveInterfaceEnum ActiveInterface { get; init; }
+        public ActiveInterfaceEnum ActiveInterface { get; init; } = ActiveInterface;
     }
 
     public sealed class GetActiveInterfaceResult : DeviceResult
@@ -57,8 +47,9 @@ namespace XFS4IoTFramework.VendorApplication
         /// GetActiveInterfaceResult
         /// Return result of active interface
         /// </summary>
-        public GetActiveInterfaceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription)
+        public GetActiveInterfaceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
         {
             this.ActiveInterface = null;
@@ -68,27 +59,9 @@ namespace XFS4IoTFramework.VendorApplication
         /// GetActiveInterfaceResult
         /// Return result of active interface
         /// </summary>
-        public GetActiveInterfaceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        ActiveInterfaceEnum ActiveInterface)
-            : base(CompletionCode, null)
-        {
-            this.ActiveInterface = ActiveInterface;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetActiveInterfaceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ActiveInterface = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetActiveInterfaceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        ActiveInterfaceEnum ActiveInterface)
+        public GetActiveInterfaceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            ActiveInterfaceEnum ActiveInterface)
             : base(CompletionCode, null)
         {
             this.ActiveInterface = ActiveInterface;

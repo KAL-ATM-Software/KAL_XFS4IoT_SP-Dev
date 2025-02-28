@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = SetKey
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "CardReader.SetKey")]
     public sealed class SetKeyCommand : Command<SetKeyCommand.PayloadData>
     {
@@ -37,10 +37,10 @@ namespace XFS4IoT.CardReader.Commands
             /// <summary>
             /// Contains the Base64 encoded payment containing the CIM86 DES key. This key is supplied by the vendor
             /// of the CIM86 module.
-            /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "keyValue")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> KeyValue { get; init; }
 
         }

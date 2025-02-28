@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -39,8 +39,8 @@ namespace XFS4IoT.CashDispenser.Commands
             /// Specifies the unit to empty. If this property is null, all units are emptied.
             /// Following values are possible:
             /// 
-            ///   * ```&lt;storage unit identifier&gt;``` - The storage unit to be emptied as
-            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
+            ///   * ```[storage unit identifier]``` - The storage unit to be emptied as
+            ///     [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>
             [DataMember(Name = "unit")]

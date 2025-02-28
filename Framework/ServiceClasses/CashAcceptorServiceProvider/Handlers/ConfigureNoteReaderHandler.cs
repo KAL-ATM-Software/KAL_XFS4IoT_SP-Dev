@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -39,7 +39,10 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.ConfigureNoteReader()");
 
-            var result = await Device.ConfigureNoteReader(new ConfigureNoteReaderRequest(configureNoteReader.Payload.LoadAlways is not null && (bool)configureNoteReader.Payload.LoadAlways), cancel);
+            var result = await Device.ConfigureNoteReader(
+                new ConfigureNoteReaderRequest(
+                    configureNoteReader.Payload.LoadAlways is not null && (bool)configureNoteReader.Payload.LoadAlways), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.ConfigureNoteReader() -> {result.CompletionCode}, {result.ErrorCode}");
 

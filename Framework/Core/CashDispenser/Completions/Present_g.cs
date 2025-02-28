@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,13 +53,13 @@ namespace XFS4IoT.CashDispenser.Completions
             /// * ```shutterOpen``` - The shutter is open when it should be closed. No items presented.
             /// * ```noItems``` - There are no items on the stacker.
             /// * ```exchangeActive``` - The device is in an exchange state (see
-            /// [Storage.StartExchange](#storage.startexchange)).
+            ///   [Storage.StartExchange](#storage.startexchange)).
             /// * ```presentErrorNoItems``` - There was an error during the present operation - no items were
-            /// presented.
+            ///   presented.
             /// * ```presentErrorItems``` - There was an error during the present operation - at least some of the
-            /// items were presented.
+            ///   items were presented.
             /// * ```presentErrorUnknown``` - There was an error during the present operation - the position of the
-            /// items is unknown. Intervention may be required to reconcile the cash amount totals.
+            ///   items is unknown. Intervention may be required to reconcile the cash amount totals.
             /// * ```unsupportedPosition``` - The position specified is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]

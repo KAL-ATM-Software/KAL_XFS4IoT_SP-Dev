@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,7 +35,7 @@ namespace XFS4IoT.Common.Commands
             }
 
             /// <summary>
-            /// Specifies the maximum number of seconds in which the device must be able to return to its normal operating state when exiting power save mode. The device will be set to the highest possible power save mode within this constraint. If set to 0 then the device will exit the power saving mode.
+            /// Specifies the maximum number of seconds in which the device must be able to return to its normal operating state when exiting power save mode. The device will be set to the highest possible power save mode within this constraint. If set to 0 then the device will exit the power-saving mode.
             /// <example>5</example>
             /// </summary>
             [DataMember(Name = "maxPowerSaveRecoveryTime")]

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -100,23 +100,30 @@ namespace XFS4IoTFramework.Keyboard
                 List<LayoutFrameClass> resultFrames = new();
                 foreach (var frame in entryType.Value)
                 {
-                    List<LayoutFrameClass.KeysClass> functionKeys = new();
+                    List<KeyClass> functionKeys = new();
                     foreach (var functionKey in frame.FunctionKeys)
                     {
-                        functionKeys.Add(new LayoutFrameClass.KeysClass(XPos: functionKey.XPos,
-                                                                        YPos: functionKey.YPos,
-                                                                        XSize: functionKey.XSize,
-                                                                        YSize:functionKey.YSize,
-                                                                        Key: functionKey.Key,
-                                                                        ShiftKey: functionKey.ShiftKey));
+                        functionKeys.Add(
+                            new KeyClass(
+                                XPos: functionKey.XPos,
+                                YPos: functionKey.YPos,
+                                XSize: functionKey.XSize,
+                                YSize:functionKey.YSize,
+                                Key: functionKey.Key,
+                                ShiftKey: functionKey.ShiftKey));
                     }
 
-                    resultFrames.Add(new(frame.XPos,
-                                         frame.YPos,
-                                         frame.XSize,
-                                         frame.YSize,
-                                         frame.FloatAction != FrameClass.FloatEnum.NotSupported ? new LayoutFrameClass.FloatClass(frame.FloatAction.HasFlag(FrameClass.FloatEnum.X), frame.FloatAction.HasFlag(FrameClass.FloatEnum.Y)) : null,
-                                         functionKeys));
+                    resultFrames.Add(
+                        new(frame.XPos,
+                            frame.YPos,
+                            frame.XSize,
+                            frame.YSize,
+                            frame.FloatAction != FrameClass.FloatEnum.NotSupported ? 
+                            new LayoutFrameClass.FloatClass(
+                                frame.FloatAction.HasFlag(FrameClass.FloatEnum.X), 
+                                frame.FloatAction.HasFlag(FrameClass.FloatEnum.Y)) : 
+                            null,
+                            functionKeys));
                 }
 
                 if (entryType.Key == EntryModeEnum.Data)

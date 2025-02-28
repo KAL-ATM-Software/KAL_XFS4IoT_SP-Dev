@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,43 +15,14 @@ namespace XFS4IoT.Lights
 {
 
     [DataContract]
-    public sealed class LightStateClass
+    public sealed class PositionStatusClass
     {
-        public LightStateClass(PositionEnum? Position = null, FlashRateEnum? FlashRate = null, ColorEnum? Color = null, DirectionEnum? Direction = null)
+        public PositionStatusClass(FlashRateEnum? FlashRate = null, ColorEnum? Color = null, DirectionEnum? Direction = null)
         {
-            this.Position = Position;
             this.FlashRate = FlashRate;
             this.Color = Color;
             this.Direction = Direction;
         }
-
-        public enum PositionEnum
-        {
-            Left,
-            Right,
-            Center,
-            Top,
-            Bottom,
-            Front,
-            Rear,
-            Default
-        }
-
-        /// <summary>
-        /// The light position. Can be used for devices which have multiple input and output positions. This may be one
-        /// of the following values:
-        /// 
-        /// * ```left``` - The left position.
-        /// * ```right``` - The right position.
-        /// * ```center``` - The center position.
-        /// * ```top``` - The top position.
-        /// * ```bottom``` - The bottom position.
-        /// * ```front``` - The front position.
-        /// * ```rear``` - The rear position.
-        /// * ```default``` - The default position.
-        /// </summary>
-        [DataMember(Name = "position")]
-        public PositionEnum? Position { get; init; }
 
         public enum FlashRateEnum
         {
@@ -63,12 +34,12 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// The light flash rate. This may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if
+        /// The light flash rate. This may be null in a [Common.StatusChangedEvent](#common.statuschangedevent) if
         /// unchanged, otherwise one of the following values:
         /// 
         /// * ```off``` - The light is turned off.
         /// * ```slow``` - The light is flashing slowly.
-        /// * ```medium``` - The light is flashing medium frequency.
+        /// * ```medium``` - The light is flashing at medium frequency.
         /// * ```quick``` - The light is flashing quickly.
         /// * ```continuous``` - The light is continuous (steady).
         /// </summary>
@@ -87,7 +58,8 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// The light color. This may be null in [Common.StatusChangedEvent](#common.statuschangedevent) if
+        /// The light color. This property can be null if not supported, only supports a single color
+        /// or in a [Common.StatusChangedEvent](#common.statuschangedevent) if
         /// unchanged, otherwise one of the following values:
         /// 
         /// * ```red``` - The light is red.
@@ -108,7 +80,8 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// The light direction, The value can be null if not required. One of the following values:
+        /// The light direction. This property can be null if not supported or in a [Common.StatusChangedEvent](#common.statuschangedevent) if
+        /// unchanged, otherwise one of the following values:
         /// 
         /// * ```entry``` -  The light is indicating entry.
         /// * ```exit``` -  The light is indicating exit.
@@ -122,7 +95,7 @@ namespace XFS4IoT.Lights
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(LightStateClass CardReader = null, LightStateClass PinPad = null, LightStateClass NotesDispenser = null, LightStateClass CoinDispenser = null, LightStateClass ReceiptPrinter = null, LightStateClass PassbookPrinter = null, LightStateClass EnvelopeDepository = null, LightStateClass CheckUnit = null, LightStateClass BillAcceptor = null, LightStateClass EnvelopeDispenser = null, LightStateClass DocumentPrinter = null, LightStateClass CoinAcceptor = null, LightStateClass Scanner = null, LightStateClass Contactless = null, LightStateClass CardReader2 = null, LightStateClass NotesDispenser2 = null, LightStateClass BillAcceptor2 = null, LightStateClass StatusGood = null, LightStateClass StatusWarning = null, LightStateClass StatusBad = null, LightStateClass StatusSupervisor = null, LightStateClass StatusInService = null, LightStateClass FasciaLight = null)
+        public StatusClass(Dictionary<string, PositionStatusClass> CardReader = null, Dictionary<string, PositionStatusClass> PinPad = null, Dictionary<string, PositionStatusClass> NotesDispenser = null, Dictionary<string, PositionStatusClass> CoinDispenser = null, Dictionary<string, PositionStatusClass> ReceiptPrinter = null, Dictionary<string, PositionStatusClass> PassbookPrinter = null, Dictionary<string, PositionStatusClass> EnvelopeDepository = null, Dictionary<string, PositionStatusClass> CheckUnit = null, Dictionary<string, PositionStatusClass> BillAcceptor = null, Dictionary<string, PositionStatusClass> EnvelopeDispenser = null, Dictionary<string, PositionStatusClass> DocumentPrinter = null, Dictionary<string, PositionStatusClass> CoinAcceptor = null, Dictionary<string, PositionStatusClass> Scanner = null, Dictionary<string, PositionStatusClass> Contactless = null, Dictionary<string, PositionStatusClass> CardReader2 = null, Dictionary<string, PositionStatusClass> NotesDispenser2 = null, Dictionary<string, PositionStatusClass> BillAcceptor2 = null, Dictionary<string, PositionStatusClass> StatusGood = null, Dictionary<string, PositionStatusClass> StatusWarning = null, Dictionary<string, PositionStatusClass> StatusBad = null, Dictionary<string, PositionStatusClass> StatusSupervisor = null, Dictionary<string, PositionStatusClass> StatusInService = null, Dictionary<string, PositionStatusClass> FasciaLight = null)
         {
             this.CardReader = CardReader;
             this.PinPad = PinPad;
@@ -153,162 +126,151 @@ namespace XFS4IoT.Lights
         /// Card Reader Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "cardReader")]
-        public LightStateClass CardReader { get; init; }
+        public Dictionary<string, PositionStatusClass> CardReader { get; init; }
 
         /// <summary>
         /// Pin Pad Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "pinPad")]
-        public LightStateClass PinPad { get; init; }
+        public Dictionary<string, PositionStatusClass> PinPad { get; init; }
 
         /// <summary>
         /// Notes Dispenser Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "notesDispenser")]
-        public LightStateClass NotesDispenser { get; init; }
+        public Dictionary<string, PositionStatusClass> NotesDispenser { get; init; }
 
         /// <summary>
         /// Coin Dispenser Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "coinDispenser")]
-        public LightStateClass CoinDispenser { get; init; }
+        public Dictionary<string, PositionStatusClass> CoinDispenser { get; init; }
 
         /// <summary>
         /// Receipt Printer Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "receiptPrinter")]
-        public LightStateClass ReceiptPrinter { get; init; }
+        public Dictionary<string, PositionStatusClass> ReceiptPrinter { get; init; }
 
         /// <summary>
         /// Passbook Printer Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "passbookPrinter")]
-        public LightStateClass PassbookPrinter { get; init; }
+        public Dictionary<string, PositionStatusClass> PassbookPrinter { get; init; }
 
         /// <summary>
         /// Envelope Depository Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "envelopeDepository")]
-        public LightStateClass EnvelopeDepository { get; init; }
+        public Dictionary<string, PositionStatusClass> EnvelopeDepository { get; init; }
 
         /// <summary>
         /// Check Unit Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "checkUnit")]
-        public LightStateClass CheckUnit { get; init; }
+        public Dictionary<string, PositionStatusClass> CheckUnit { get; init; }
 
         /// <summary>
         /// Bill Acceptor Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "billAcceptor")]
-        public LightStateClass BillAcceptor { get; init; }
+        public Dictionary<string, PositionStatusClass> BillAcceptor { get; init; }
 
         /// <summary>
         /// Envelope Dispenser Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "envelopeDispenser")]
-        public LightStateClass EnvelopeDispenser { get; init; }
+        public Dictionary<string, PositionStatusClass> EnvelopeDispenser { get; init; }
 
         /// <summary>
         /// Document Printer Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "documentPrinter")]
-        public LightStateClass DocumentPrinter { get; init; }
+        public Dictionary<string, PositionStatusClass> DocumentPrinter { get; init; }
 
         /// <summary>
         /// Coin Acceptor Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "coinAcceptor")]
-        public LightStateClass CoinAcceptor { get; init; }
+        public Dictionary<string, PositionStatusClass> CoinAcceptor { get; init; }
 
         /// <summary>
         /// Scanner Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "scanner")]
-        public LightStateClass Scanner { get; init; }
+        public Dictionary<string, PositionStatusClass> Scanner { get; init; }
 
         /// <summary>
         /// Contactless Reader Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "contactless")]
-        public LightStateClass Contactless { get; init; }
+        public Dictionary<string, PositionStatusClass> Contactless { get; init; }
 
         /// <summary>
         /// Card Reader 2 Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "cardReader2")]
-        public LightStateClass CardReader2 { get; init; }
+        public Dictionary<string, PositionStatusClass> CardReader2 { get; init; }
 
         /// <summary>
         /// Notes Dispenser 2 Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "notesDispenser2")]
-        public LightStateClass NotesDispenser2 { get; init; }
+        public Dictionary<string, PositionStatusClass> NotesDispenser2 { get; init; }
 
         /// <summary>
         /// Bill Acceptor 2 Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "billAcceptor2")]
-        public LightStateClass BillAcceptor2 { get; init; }
+        public Dictionary<string, PositionStatusClass> BillAcceptor2 { get; init; }
 
         /// <summary>
         /// Status Indicator light - Good. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "statusGood")]
-        public LightStateClass StatusGood { get; init; }
+        public Dictionary<string, PositionStatusClass> StatusGood { get; init; }
 
         /// <summary>
         /// Status Indicator light - Warning. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "statusWarning")]
-        public LightStateClass StatusWarning { get; init; }
+        public Dictionary<string, PositionStatusClass> StatusWarning { get; init; }
 
         /// <summary>
         /// Status Indicator light - Bad. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "statusBad")]
-        public LightStateClass StatusBad { get; init; }
+        public Dictionary<string, PositionStatusClass> StatusBad { get; init; }
 
         /// <summary>
         /// Status Indicator light - Supervisor. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "statusSupervisor")]
-        public LightStateClass StatusSupervisor { get; init; }
+        public Dictionary<string, PositionStatusClass> StatusSupervisor { get; init; }
 
         /// <summary>
         /// Status Indicator light - In Service. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "statusInService")]
-        public LightStateClass StatusInService { get; init; }
+        public Dictionary<string, PositionStatusClass> StatusInService { get; init; }
 
         /// <summary>
         /// Fascia Light. This property is null if not applicable.
         /// </summary>
         [DataMember(Name = "fasciaLight")]
-        public LightStateClass FasciaLight { get; init; }
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
-
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Dictionary<string, LightStateClass> ExtendedProperties
-        {
-            get => MessageBase.ParseExtendedProperties<LightStateClass>(ExtensionData);
-            set => ExtensionData = MessageBase.CreateExtensionData<LightStateClass>(value);
-        }
+        public Dictionary<string, PositionStatusClass> FasciaLight { get; init; }
 
     }
 
 
     [DataContract]
-    public sealed class LightCapabilitiesClass
+    public sealed class PositionCapsClass
     {
-        public LightCapabilitiesClass(FlashRateClass FlashRate = null, ColorClass Color = null, DirectionClass Direction = null, PositionClass Position = null)
+        public PositionCapsClass(FlashRateClass FlashRate = null, ColorClass Color = null, DirectionClass Direction = null)
         {
             this.FlashRate = FlashRate;
             this.Color = Color;
             this.Direction = Direction;
-            this.Position = Position;
         }
 
         [DataContract]
@@ -336,7 +298,7 @@ namespace XFS4IoT.Lights
             public bool? Slow { get; init; }
 
             /// <summary>
-            /// The light can flash medium frequency.
+            /// The light can flash at medium frequency.
             /// </summary>
             [DataMember(Name = "medium")]
             public bool? Medium { get; init; }
@@ -348,7 +310,7 @@ namespace XFS4IoT.Lights
             public bool? Quick { get; init; }
 
             /// <summary>
-            /// The light can flash continuous (steady).
+            /// The light can be turned on.
             /// </summary>
             [DataMember(Name = "continuous")]
             public bool? Continuous { get; init; }
@@ -420,7 +382,8 @@ namespace XFS4IoT.Lights
         }
 
         /// <summary>
-        /// Indicates the light color.
+        /// Indicates the light color. This property can be null if the guidance light indicator 
+        /// only supports one color. 
         /// </summary>
         [DataMember(Name = "color")]
         public ColorClass Color { get; init; }
@@ -454,250 +417,201 @@ namespace XFS4IoT.Lights
         [DataMember(Name = "direction")]
         public DirectionClass Direction { get; init; }
 
-        [DataContract]
-        public sealed class PositionClass
-        {
-            public PositionClass(bool? Left = null, bool? Right = null, bool? Center = null, bool? Top = null, bool? Bottom = null, bool? Front = null, bool? Rear = null)
-            {
-                this.Left = Left;
-                this.Right = Right;
-                this.Center = Center;
-                this.Top = Top;
-                this.Bottom = Bottom;
-                this.Front = Front;
-                this.Rear = Rear;
-            }
-
-            /// <summary>
-            /// The left position.
-            /// </summary>
-            [DataMember(Name = "left")]
-            public bool? Left { get; init; }
-
-            /// <summary>
-            /// The right position.
-            /// </summary>
-            [DataMember(Name = "right")]
-            public bool? Right { get; init; }
-
-            /// <summary>
-            /// The center position.
-            /// </summary>
-            [DataMember(Name = "center")]
-            public bool? Center { get; init; }
-
-            /// <summary>
-            /// The top position.
-            /// </summary>
-            [DataMember(Name = "top")]
-            public bool? Top { get; init; }
-
-            /// <summary>
-            /// The bottom position.
-            /// </summary>
-            [DataMember(Name = "bottom")]
-            public bool? Bottom { get; init; }
-
-            /// <summary>
-            /// The front position.
-            /// </summary>
-            [DataMember(Name = "front")]
-            public bool? Front { get; init; }
-
-            /// <summary>
-            /// The rear position.
-            /// </summary>
-            [DataMember(Name = "rear")]
-            public bool? Rear { get; init; }
-
-        }
-
-        /// <summary>
-        /// Indicates the light position. This property is null if not applicable.
-        /// </summary>
-        [DataMember(Name = "position")]
-        public PositionClass Position { get; init; }
-
     }
 
 
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(LightCapabilitiesClass CardReader = null, LightCapabilitiesClass PinPad = null, LightCapabilitiesClass NotesDispenser = null, LightCapabilitiesClass CoinDispenser = null, LightCapabilitiesClass ReceiptPrinter = null, LightCapabilitiesClass PassbookPrinter = null, LightCapabilitiesClass EnvelopeDepository = null, LightCapabilitiesClass CheckUnit = null, LightCapabilitiesClass BillAcceptor = null, LightCapabilitiesClass EnvelopeDispenser = null, LightCapabilitiesClass DocumentPrinter = null, LightCapabilitiesClass CoinAcceptor = null, LightCapabilitiesClass Scanner = null, LightCapabilitiesClass Contactless = null, LightCapabilitiesClass CardReader2 = null, LightCapabilitiesClass NotesDispenser2 = null, LightCapabilitiesClass BillAcceptor2 = null, LightCapabilitiesClass StatusGood = null, LightCapabilitiesClass StatusWarning = null, LightCapabilitiesClass StatusBad = null, LightCapabilitiesClass StatusSupervisor = null, LightCapabilitiesClass StatusInService = null, LightCapabilitiesClass FasciaLight = null)
+        public CapabilitiesClass(bool? IndividualFlashRates = null, LightsClass Lights = null)
         {
-            this.CardReader = CardReader;
-            this.PinPad = PinPad;
-            this.NotesDispenser = NotesDispenser;
-            this.CoinDispenser = CoinDispenser;
-            this.ReceiptPrinter = ReceiptPrinter;
-            this.PassbookPrinter = PassbookPrinter;
-            this.EnvelopeDepository = EnvelopeDepository;
-            this.CheckUnit = CheckUnit;
-            this.BillAcceptor = BillAcceptor;
-            this.EnvelopeDispenser = EnvelopeDispenser;
-            this.DocumentPrinter = DocumentPrinter;
-            this.CoinAcceptor = CoinAcceptor;
-            this.Scanner = Scanner;
-            this.Contactless = Contactless;
-            this.CardReader2 = CardReader2;
-            this.NotesDispenser2 = NotesDispenser2;
-            this.BillAcceptor2 = BillAcceptor2;
-            this.StatusGood = StatusGood;
-            this.StatusWarning = StatusWarning;
-            this.StatusBad = StatusBad;
-            this.StatusSupervisor = StatusSupervisor;
-            this.StatusInService = StatusInService;
-            this.FasciaLight = FasciaLight;
+            this.IndividualFlashRates = IndividualFlashRates;
+            this.Lights = Lights;
         }
 
         /// <summary>
-        /// Card Unit Light.
+        /// Indicates flash rates of the lights are individually controllable.
+        /// If true, excluding off, indicates the flash rate of each light may be different. 
+        /// If false, excluding off, indicates all lights flash at the same rate.
         /// </summary>
-        [DataMember(Name = "cardReader")]
-        public LightCapabilitiesClass CardReader { get; init; }
+        [DataMember(Name = "individualFlashRates")]
+        public bool? IndividualFlashRates { get; init; }
 
-        /// <summary>
-        /// Pin Pad Light.
-        /// </summary>
-        [DataMember(Name = "pinPad")]
-        public LightCapabilitiesClass PinPad { get; init; }
-
-        /// <summary>
-        /// Notes Dispenser Light.
-        /// </summary>
-        [DataMember(Name = "notesDispenser")]
-        public LightCapabilitiesClass NotesDispenser { get; init; }
-
-        /// <summary>
-        /// Coin Dispenser Light.
-        /// </summary>
-        [DataMember(Name = "coinDispenser")]
-        public LightCapabilitiesClass CoinDispenser { get; init; }
-
-        /// <summary>
-        /// Receipt Printer Light.
-        /// </summary>
-        [DataMember(Name = "receiptPrinter")]
-        public LightCapabilitiesClass ReceiptPrinter { get; init; }
-
-        /// <summary>
-        /// Passbook Printer Light.
-        /// </summary>
-        [DataMember(Name = "passbookPrinter")]
-        public LightCapabilitiesClass PassbookPrinter { get; init; }
-
-        /// <summary>
-        /// Envelope Depository Light.
-        /// </summary>
-        [DataMember(Name = "envelopeDepository")]
-        public LightCapabilitiesClass EnvelopeDepository { get; init; }
-
-        /// <summary>
-        /// Check Unit Light.
-        /// </summary>
-        [DataMember(Name = "checkUnit")]
-        public LightCapabilitiesClass CheckUnit { get; init; }
-
-        /// <summary>
-        /// Bill Acceptor Light.
-        /// </summary>
-        [DataMember(Name = "billAcceptor")]
-        public LightCapabilitiesClass BillAcceptor { get; init; }
-
-        /// <summary>
-        /// Envelope Dispenser Light.
-        /// </summary>
-        [DataMember(Name = "envelopeDispenser")]
-        public LightCapabilitiesClass EnvelopeDispenser { get; init; }
-
-        /// <summary>
-        /// Document Printer Light.
-        /// </summary>
-        [DataMember(Name = "documentPrinter")]
-        public LightCapabilitiesClass DocumentPrinter { get; init; }
-
-        /// <summary>
-        /// Coin Acceptor Light.
-        /// </summary>
-        [DataMember(Name = "coinAcceptor")]
-        public LightCapabilitiesClass CoinAcceptor { get; init; }
-
-        /// <summary>
-        /// Scanner Light.
-        /// </summary>
-        [DataMember(Name = "scanner")]
-        public LightCapabilitiesClass Scanner { get; init; }
-
-        /// <summary>
-        /// Contactless Reader Light.
-        /// </summary>
-        [DataMember(Name = "contactless")]
-        public LightCapabilitiesClass Contactless { get; init; }
-
-        /// <summary>
-        /// Card Reader 2 Light.
-        /// </summary>
-        [DataMember(Name = "cardReader2")]
-        public LightCapabilitiesClass CardReader2 { get; init; }
-
-        /// <summary>
-        /// Notes Dispenser 2 Light.
-        /// </summary>
-        [DataMember(Name = "notesDispenser2")]
-        public LightCapabilitiesClass NotesDispenser2 { get; init; }
-
-        /// <summary>
-        /// Bill Acceptor 2 Light.
-        /// </summary>
-        [DataMember(Name = "billAcceptor2")]
-        public LightCapabilitiesClass BillAcceptor2 { get; init; }
-
-        /// <summary>
-        /// Status indicator light - Good.
-        /// </summary>
-        [DataMember(Name = "statusGood")]
-        public LightCapabilitiesClass StatusGood { get; init; }
-
-        /// <summary>
-        /// Status indicator light - Warning.
-        /// </summary>
-        [DataMember(Name = "statusWarning")]
-        public LightCapabilitiesClass StatusWarning { get; init; }
-
-        /// <summary>
-        /// Status indicator light - Bad.
-        /// </summary>
-        [DataMember(Name = "statusBad")]
-        public LightCapabilitiesClass StatusBad { get; init; }
-
-        /// <summary>
-        /// Status indicator light - Supervisor.
-        /// </summary>
-        [DataMember(Name = "statusSupervisor")]
-        public LightCapabilitiesClass StatusSupervisor { get; init; }
-
-        /// <summary>
-        /// Status indicator light - In Service.
-        /// </summary>
-        [DataMember(Name = "statusInService")]
-        public LightCapabilitiesClass StatusInService { get; init; }
-
-        /// <summary>
-        /// Fascia light.
-        /// </summary>
-        [DataMember(Name = "fasciaLight")]
-        public LightCapabilitiesClass FasciaLight { get; init; }
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public Dictionary<string, System.Text.Json.JsonElement> ExtensionData { get; set; } = new();
-
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Dictionary<string, LightCapabilitiesClass> ExtendedProperties
+        [DataContract]
+        public sealed class LightsClass
         {
-            get => MessageBase.ParseExtendedProperties<LightCapabilitiesClass>(ExtensionData);
-            set => ExtensionData = MessageBase.CreateExtensionData<LightCapabilitiesClass>(value);
+            public LightsClass(Dictionary<string, PositionCapsClass> CardReader = null, Dictionary<string, PositionCapsClass> PinPad = null, Dictionary<string, PositionCapsClass> NotesDispenser = null, Dictionary<string, PositionCapsClass> CoinDispenser = null, Dictionary<string, PositionCapsClass> ReceiptPrinter = null, Dictionary<string, PositionCapsClass> PassbookPrinter = null, Dictionary<string, PositionCapsClass> EnvelopeDepository = null, Dictionary<string, PositionCapsClass> CheckUnit = null, Dictionary<string, PositionCapsClass> BillAcceptor = null, Dictionary<string, PositionCapsClass> EnvelopeDispenser = null, Dictionary<string, PositionCapsClass> DocumentPrinter = null, Dictionary<string, PositionCapsClass> CoinAcceptor = null, Dictionary<string, PositionCapsClass> Scanner = null, Dictionary<string, PositionCapsClass> Contactless = null, Dictionary<string, PositionCapsClass> CardReader2 = null, Dictionary<string, PositionCapsClass> NotesDispenser2 = null, Dictionary<string, PositionCapsClass> BillAcceptor2 = null, Dictionary<string, PositionCapsClass> StatusGood = null, Dictionary<string, PositionCapsClass> StatusWarning = null, Dictionary<string, PositionCapsClass> StatusBad = null, Dictionary<string, PositionCapsClass> StatusSupervisor = null, Dictionary<string, PositionCapsClass> StatusInService = null, Dictionary<string, PositionCapsClass> FasciaLight = null)
+            {
+                this.CardReader = CardReader;
+                this.PinPad = PinPad;
+                this.NotesDispenser = NotesDispenser;
+                this.CoinDispenser = CoinDispenser;
+                this.ReceiptPrinter = ReceiptPrinter;
+                this.PassbookPrinter = PassbookPrinter;
+                this.EnvelopeDepository = EnvelopeDepository;
+                this.CheckUnit = CheckUnit;
+                this.BillAcceptor = BillAcceptor;
+                this.EnvelopeDispenser = EnvelopeDispenser;
+                this.DocumentPrinter = DocumentPrinter;
+                this.CoinAcceptor = CoinAcceptor;
+                this.Scanner = Scanner;
+                this.Contactless = Contactless;
+                this.CardReader2 = CardReader2;
+                this.NotesDispenser2 = NotesDispenser2;
+                this.BillAcceptor2 = BillAcceptor2;
+                this.StatusGood = StatusGood;
+                this.StatusWarning = StatusWarning;
+                this.StatusBad = StatusBad;
+                this.StatusSupervisor = StatusSupervisor;
+                this.StatusInService = StatusInService;
+                this.FasciaLight = FasciaLight;
+            }
+
+            /// <summary>
+            /// Card Reader Light.
+            /// </summary>
+            [DataMember(Name = "cardReader")]
+            public Dictionary<string, PositionCapsClass> CardReader { get; init; }
+
+            /// <summary>
+            /// Pin Pad Light.
+            /// </summary>
+            [DataMember(Name = "pinPad")]
+            public Dictionary<string, PositionCapsClass> PinPad { get; init; }
+
+            /// <summary>
+            /// Notes Dispenser Light.
+            /// </summary>
+            [DataMember(Name = "notesDispenser")]
+            public Dictionary<string, PositionCapsClass> NotesDispenser { get; init; }
+
+            /// <summary>
+            /// Coin Dispenser Light.
+            /// </summary>
+            [DataMember(Name = "coinDispenser")]
+            public Dictionary<string, PositionCapsClass> CoinDispenser { get; init; }
+
+            /// <summary>
+            /// Receipt Printer Light.
+            /// </summary>
+            [DataMember(Name = "receiptPrinter")]
+            public Dictionary<string, PositionCapsClass> ReceiptPrinter { get; init; }
+
+            /// <summary>
+            /// Passbook Printer Light.
+            /// </summary>
+            [DataMember(Name = "passbookPrinter")]
+            public Dictionary<string, PositionCapsClass> PassbookPrinter { get; init; }
+
+            /// <summary>
+            /// Envelope Depository Light.
+            /// </summary>
+            [DataMember(Name = "envelopeDepository")]
+            public Dictionary<string, PositionCapsClass> EnvelopeDepository { get; init; }
+
+            /// <summary>
+            /// Check Unit Light.
+            /// </summary>
+            [DataMember(Name = "checkUnit")]
+            public Dictionary<string, PositionCapsClass> CheckUnit { get; init; }
+
+            /// <summary>
+            /// Bill Acceptor Light.
+            /// </summary>
+            [DataMember(Name = "billAcceptor")]
+            public Dictionary<string, PositionCapsClass> BillAcceptor { get; init; }
+
+            /// <summary>
+            /// Envelope Dispenser Light.
+            /// </summary>
+            [DataMember(Name = "envelopeDispenser")]
+            public Dictionary<string, PositionCapsClass> EnvelopeDispenser { get; init; }
+
+            /// <summary>
+            /// Document Printer Light.
+            /// </summary>
+            [DataMember(Name = "documentPrinter")]
+            public Dictionary<string, PositionCapsClass> DocumentPrinter { get; init; }
+
+            /// <summary>
+            /// Coin Acceptor Light.
+            /// </summary>
+            [DataMember(Name = "coinAcceptor")]
+            public Dictionary<string, PositionCapsClass> CoinAcceptor { get; init; }
+
+            /// <summary>
+            /// Scanner Light.
+            /// </summary>
+            [DataMember(Name = "scanner")]
+            public Dictionary<string, PositionCapsClass> Scanner { get; init; }
+
+            /// <summary>
+            /// Contactless Reader Light.
+            /// </summary>
+            [DataMember(Name = "contactless")]
+            public Dictionary<string, PositionCapsClass> Contactless { get; init; }
+
+            /// <summary>
+            /// Card Reader 2 Light.
+            /// </summary>
+            [DataMember(Name = "cardReader2")]
+            public Dictionary<string, PositionCapsClass> CardReader2 { get; init; }
+
+            /// <summary>
+            /// Notes Dispenser 2 Light.
+            /// </summary>
+            [DataMember(Name = "notesDispenser2")]
+            public Dictionary<string, PositionCapsClass> NotesDispenser2 { get; init; }
+
+            /// <summary>
+            /// Bill Acceptor 2 Light.
+            /// </summary>
+            [DataMember(Name = "billAcceptor2")]
+            public Dictionary<string, PositionCapsClass> BillAcceptor2 { get; init; }
+
+            /// <summary>
+            /// Status indicator light - Good.
+            /// </summary>
+            [DataMember(Name = "statusGood")]
+            public Dictionary<string, PositionCapsClass> StatusGood { get; init; }
+
+            /// <summary>
+            /// Status indicator light - Warning.
+            /// </summary>
+            [DataMember(Name = "statusWarning")]
+            public Dictionary<string, PositionCapsClass> StatusWarning { get; init; }
+
+            /// <summary>
+            /// Status indicator light - Bad.
+            /// </summary>
+            [DataMember(Name = "statusBad")]
+            public Dictionary<string, PositionCapsClass> StatusBad { get; init; }
+
+            /// <summary>
+            /// Status indicator light - Supervisor.
+            /// </summary>
+            [DataMember(Name = "statusSupervisor")]
+            public Dictionary<string, PositionCapsClass> StatusSupervisor { get; init; }
+
+            /// <summary>
+            /// Status indicator light - In Service.
+            /// </summary>
+            [DataMember(Name = "statusInService")]
+            public Dictionary<string, PositionCapsClass> StatusInService { get; init; }
+
+            /// <summary>
+            /// Fascia light.
+            /// </summary>
+            [DataMember(Name = "fasciaLight")]
+            public Dictionary<string, PositionCapsClass> FasciaLight { get; init; }
+
         }
+
+        /// <summary>
+        /// Indicates the lights supported.
+        /// </summary>
+        [DataMember(Name = "lights")]
+        public LightsClass Lights { get; init; }
 
     }
 

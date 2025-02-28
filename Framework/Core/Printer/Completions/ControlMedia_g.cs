@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -71,7 +71,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```paperOut``` - The paper supply is empty.
             /// * ```inkOut``` - No stamping possible, stamping ink supply empty.
             /// * ```tonerOut``` - Toner or ink supply is empty or printing contrast with ribbon is not sufficient.
-            /// * ```sequenceInvalid``` - Programming error. Invalid command sequence (e.g. *park* and the parking
+            /// * ```sequenceInvalid``` - Programming error. Invalid command sequence (e.g., *park* and the parking
             ///   station is busy).
             /// * ```mediaRetained``` - Media has been retracted in attempts to eject it. The device is clear and can
             ///   be used.

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -60,19 +60,21 @@ namespace XFS4IoTFramework.CashManagement
                 }
 
                 CashManagement.ItemClassificationList.ItemClassifications.Add(
-                    new ItemClassificationClass(classificationItem.SerialNumber,
-                                                classificationItem.Currency,
-                                                classificationItem.Value ?? 0,
-                                                classificationItem.Level switch 
-                                                { 
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Counterfeit => NoteLevelEnum.Counterfeit,
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Fit => NoteLevelEnum.Fit,
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Inked => NoteLevelEnum.Inked,
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Suspect => NoteLevelEnum.Suspect,
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Unfit => NoteLevelEnum.Unfit,
-                                                    XFS4IoT.CashManagement.NoteLevelEnum.Unrecognized => NoteLevelEnum.Unrecognized,
-                                                    _ => NoteLevelEnum.All,
-                                                }));
+                    new ItemClassificationClass(
+                        classificationItem.SerialNumber,
+                        classificationItem.Currency,
+                        classificationItem.Value ?? 0,
+                        classificationItem.Level switch 
+                        { 
+                            XFS4IoT.CashManagement.NoteLevelEnum.Counterfeit => NoteLevelEnum.Counterfeit,
+                            XFS4IoT.CashManagement.NoteLevelEnum.Fit => NoteLevelEnum.Fit,
+                            XFS4IoT.CashManagement.NoteLevelEnum.Inked => NoteLevelEnum.Inked,
+                            XFS4IoT.CashManagement.NoteLevelEnum.Suspect => NoteLevelEnum.Suspect,
+                            XFS4IoT.CashManagement.NoteLevelEnum.Unfit => NoteLevelEnum.Unfit,
+                            XFS4IoT.CashManagement.NoteLevelEnum.Unrecognized => NoteLevelEnum.Unrecognized,
+                            _ => NoteLevelEnum.All,
+                        })
+                    );
             }
 
             CashManagement.StoreItemClassificationList();

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -58,26 +58,28 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.DeviceLockControl()");
 
-            var result = await Device.DeviceLockControl(new DeviceLockRequest(deviceLockControl.Payload.DeviceAction switch
-                                                                              {
-                                                                                  DeviceLockControlCommand.PayloadData.DeviceActionEnum.Lock => DeviceLockRequest.DeviceActionEnum.Lock,
-                                                                                  DeviceLockControlCommand.PayloadData.DeviceActionEnum.Unlock => DeviceLockRequest.DeviceActionEnum.Unlock,
-                                                                                  _ => DeviceLockRequest.DeviceActionEnum.NoLockAction,
-                                                                              },
-                                                                              deviceLockControl.Payload.CashUnitAction switch
-                                                                              {
-                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockAll => DeviceLockRequest.CashUnitActionEnum.LockAll,
-                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual => DeviceLockRequest.CashUnitActionEnum.LockIndividual,
-                                                                                  DeviceLockControlCommand.PayloadData.CashUnitActionEnum.UnlockAll => DeviceLockRequest.CashUnitActionEnum.UnlockAll,
-                                                                                  _ => DeviceLockRequest.CashUnitActionEnum.NoLockAction,
-                                                                              },
-                                                                              deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual ? 
-                                                                                  deviceLockControl.Payload.UnitLockControl.ToDictionary(c => c.StorageUnit, c => c.UnitAction switch
-                                                                                  {
-                                                                                      DeviceLockControlCommand.PayloadData.UnitLockControlClass.UnitActionEnum.Lock => DeviceLockRequest.UnitActionEnum.Lock,
-                                                                                      _ => DeviceLockRequest.UnitActionEnum.Unlock
-                                                                                  }) : null),
-                                                        cancel);
+            var result = await Device.DeviceLockControl(
+                new DeviceLockRequest(
+                    deviceLockControl.Payload.DeviceAction switch
+                    {
+                        DeviceLockControlCommand.PayloadData.DeviceActionEnum.Lock => DeviceLockRequest.DeviceActionEnum.Lock,
+                        DeviceLockControlCommand.PayloadData.DeviceActionEnum.Unlock => DeviceLockRequest.DeviceActionEnum.Unlock,
+                        _ => DeviceLockRequest.DeviceActionEnum.NoLockAction,
+                    },
+                    deviceLockControl.Payload.CashUnitAction switch
+                    {
+                        DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockAll => DeviceLockRequest.CashUnitActionEnum.LockAll,
+                        DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual => DeviceLockRequest.CashUnitActionEnum.LockIndividual,
+                        DeviceLockControlCommand.PayloadData.CashUnitActionEnum.UnlockAll => DeviceLockRequest.CashUnitActionEnum.UnlockAll,
+                        _ => DeviceLockRequest.CashUnitActionEnum.NoLockAction,
+                    },
+                    deviceLockControl.Payload.CashUnitAction == DeviceLockControlCommand.PayloadData.CashUnitActionEnum.LockIndividual ? 
+                    deviceLockControl.Payload.UnitLockControl.ToDictionary(c => c.StorageUnit, c => c.UnitAction switch
+                    {
+                        DeviceLockControlCommand.PayloadData.UnitLockControlClass.UnitActionEnum.Lock => DeviceLockRequest.UnitActionEnum.Lock,
+                        _ => DeviceLockRequest.UnitActionEnum.Unlock
+                    }) : null),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.DeviceLockControl() -> {result.CompletionCode}, {result.ErrorCode}");
 

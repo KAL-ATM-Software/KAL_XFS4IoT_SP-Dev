@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,7 +41,7 @@ namespace XFS4IoT.TextTerminal.Commands
             /// 
             /// Devices having a shift key interpret this parameter differently from those that do not have a shift key.
             /// For devices having a shift key, specifying only the upper case of a particular letter enables both
-            /// upper and lower case of that key, but the device converts lower case letters to upper case in the output parameter.
+            /// the upper and lower case of that key, but the device converts lower case letters to upper case in the output parameter.
             /// To enable both upper and lower case keys, and have both upper and lower case letters returned,
             /// specify both the upper and lower case of the letter (e.g. ["one", "two", "A", "a", "B", "b"]).
             /// 

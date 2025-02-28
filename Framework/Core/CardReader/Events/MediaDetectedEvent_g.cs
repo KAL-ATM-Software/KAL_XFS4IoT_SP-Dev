@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,7 +41,7 @@ namespace XFS4IoT.CardReader.Events
             /// 
             /// * ```exit``` - A card is at the exit position.
             /// * ```transport``` - A card is in the transport position.
-            /// * ```&lt;storage unit identifier&gt;``` - A card is in the
+            /// * ```[storage unit identifier]``` - A card is in the
             ///   [identified](#storage.getstorage.completion.properties.storage.unit1) *retain* or *park* storage unit.
             /// * ```jammed``` - A card is jammed in the device.
             /// <example>unit1</example>

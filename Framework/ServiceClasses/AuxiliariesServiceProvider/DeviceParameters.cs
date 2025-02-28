@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -26,46 +26,30 @@ namespace XFS4IoTFramework.Auxiliaries
         Weekly
     }
 
-    public class StartupTime
+    public class StartupTime(int? Year, int? Month, DayOfWeek? DayOfWeek, int? Day, int? Hour, int? Minute)
     {
-        public StartupTime(int? Year, int? Month, DayOfWeek? DayOfWeek, int? Day, int? Hour, int? Minute)
-        {
-            this.Year = Year;
-            this.Month = Month;
-            this.DayOfWeek = DayOfWeek;
-            this.Day = Day;
-            this.Hour = Hour;
-            this.Minute = Minute;
-        }
-
-        public int? Year { get; init; }
-        public int? Month { get; init; }
-        public DayOfWeek? DayOfWeek { get; init; }
-        public int? Day { get; init; }
-        public int? Hour { get; init; }
-        public int? Minute { get; init; }
+        public int? Year { get; init; } = Year;
+        public int? Month { get; init; } = Month;
+        public DayOfWeek? DayOfWeek { get; init; } = DayOfWeek;
+        public int? Day { get; init; } = Day;
+        public int? Hour { get; init; } = Hour;
+        public int? Minute { get; init; } = Minute;
     }
 
     /// <summary>
     /// SetAutostartupTimeRequest
     /// Provide startup time information
     /// </summary>
-    public sealed class SetAutostartupTimeRequest
+    /// <remarks>
+    /// SetAutostartupTimeRequest
+    /// Sets the auto startup configuration
+    /// </remarks>
+    /// <param name="StartupTime">Auto startup time</param>
+    /// <param name="Mode">Auto startup mode</param>
+    public sealed class SetAutostartupTimeRequest(StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
     {
-        /// <summary>
-        /// SetAutostartupTimeRequest
-        /// Sets the auto startup configuration
-        /// </summary>
-        /// <param name="StartupTime">Auto startup time</param>
-        /// <param name="Mode">Auto startup mode</param>
-        public SetAutostartupTimeRequest(StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
-        {
-            this.StartupTime = StartupTime;
-            this.Mode = Mode;
-        }
-
-        public StartupTime StartupTime { get; init; }
-        public AutoStartupTimeModeEnum Mode { get; init; }
+        public StartupTime StartupTime { get; init; } = StartupTime;
+        public AutoStartupTimeModeEnum Mode { get; init; } = Mode;
     }
 
     /// <summary>
@@ -82,32 +66,18 @@ namespace XFS4IoTFramework.Auxiliaries
         /// <param name="CompletionCode">Completion code</param>
         /// <param name="StartupTime">Auto startup time</param>
         /// <param name="Mode">Auto startup mode</param>
-        public GetAutostartupTimeResult(MessageHeader.CompletionCodeEnum CompletionCode, StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
+        public GetAutostartupTimeResult(
+            MessageHeader.CompletionCodeEnum CompletionCode, 
+            StartupTime StartupTime, 
+            AutoStartupTimeModeEnum Mode)
             : base(CompletionCode, null)
         {
             this.StartupTime = StartupTime;
             this.Mode = Mode;
         }
-        public GetAutostartupTimeResult(MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.StartupTime = null;
-            this.Mode = null;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetAutostartupTimeResult(MessagePayload.CompletionCodeEnum CompletionCode, StartupTime StartupTime, AutoStartupTimeModeEnum Mode)
-            : base(CompletionCode, null)
-        {
-            this.StartupTime = StartupTime;
-            this.Mode = Mode;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetAutostartupTimeResult(MessagePayload.CompletionCodeEnum CompletionCode, string ErrorDescription)
+        public GetAutostartupTimeResult(
+            MessageHeader.CompletionCodeEnum CompletionCode, 
+            string ErrorDescription)
             : base(CompletionCode, ErrorDescription)
         {
             this.StartupTime = null;

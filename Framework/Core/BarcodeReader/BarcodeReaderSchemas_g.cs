@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -54,7 +54,7 @@ namespace XFS4IoT.BarcodeReader
         }
 
         /// <summary>
-        /// Specifies whether the device is capable of discriminating between the presented barcode symbologies such
+        /// Specifies whether the device can discriminate between the presented barcode symbologies such
         /// that only the desired symbologies are recognized/reported
         /// </summary>
         [DataMember(Name = "canFilterSymbologies")]
@@ -138,13 +138,13 @@ namespace XFS4IoT.BarcodeReader
             public bool? Ean8 { get; init; }
 
             /// <summary>
-            /// EAN-8 with 2 digit add-on
+            /// EAN-8 with 2-digit add-on
             /// </summary>
             [DataMember(Name = "ean8_2")]
             public bool? Ean8_2 { get; init; }
 
             /// <summary>
-            /// EAN-8 with 5 digit add-on
+            /// EAN-8 with 5-digit add-on
             /// </summary>
             [DataMember(Name = "ean8_5")]
             public bool? Ean8_5 { get; init; }
@@ -156,13 +156,13 @@ namespace XFS4IoT.BarcodeReader
             public bool? Ean13 { get; init; }
 
             /// <summary>
-            /// EAN-13 with 2 digit add-on
+            /// EAN-13 with 2-digit add-on
             /// </summary>
             [DataMember(Name = "ean13_2")]
             public bool? Ean13_2 { get; init; }
 
             /// <summary>
-            /// EAN-13 with 5 digit add-on
+            /// EAN-13 with 5-digit add-on
             /// </summary>
             [DataMember(Name = "ean13_5")]
             public bool? Ean13_5 { get; init; }
@@ -186,13 +186,13 @@ namespace XFS4IoT.BarcodeReader
             public bool? UpcE0 { get; init; }
 
             /// <summary>
-            /// UPC-E with 2 digit add-on
+            /// UPC-E with 2-digit add-on
             /// </summary>
             [DataMember(Name = "upcE0_2")]
             public bool? UpcE0_2 { get; init; }
 
             /// <summary>
-            /// UPC-E with 5 digit add-on
+            /// UPC-E with 5-digit add-on
             /// </summary>
             [DataMember(Name = "upcE0_5")]
             public bool? UpcE0_5 { get; init; }
@@ -204,25 +204,25 @@ namespace XFS4IoT.BarcodeReader
             public bool? UpcE1 { get; init; }
 
             /// <summary>
-            /// UPC-E with leading 1and 2 digit add-on
+            /// UPC-E with leading 1and 2-digit add-on
             /// </summary>
             [DataMember(Name = "upcE1_2")]
             public bool? UpcE1_2 { get; init; }
 
             /// <summary>
-            /// UPC-E with leading 1and 5 digit add-on
+            /// UPC-E with leading 1and 5-digit add-on
             /// </summary>
             [DataMember(Name = "upcE1_5")]
             public bool? UpcE1_5 { get; init; }
 
             /// <summary>
-            /// UPC-A with2 digit add-on
+            /// UPC-A with 2-digit add-on
             /// </summary>
             [DataMember(Name = "upcA_2")]
             public bool? UpcA_2 { get; init; }
 
             /// <summary>
-            /// UPC-A with 5 digit add-on
+            /// UPC-A with 5-digit add-on
             /// </summary>
             [DataMember(Name = "upcA_5")]
             public bool? UpcA_5 { get; init; }
@@ -477,7 +477,7 @@ namespace XFS4IoT.BarcodeReader
 
         /// <summary>
         /// Specifies the barcode symbologies readable by the scanner. This will be null if the supported barcode
-        /// symbologies can not be determined.
+        /// symbologies cannot be determined.
         /// </summary>
         [DataMember(Name = "symbologies")]
         public SymbologiesClass Symbologies { get; init; }

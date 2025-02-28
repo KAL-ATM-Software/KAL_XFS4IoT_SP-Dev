@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -212,10 +212,11 @@ namespace XFS4IoTFramework.Check
 
             var result = await Device.MediaInAsync(
                 events: new MediaInCommandEvents(Check, events),
-                request: new(CodelineFormat: codelineFormat,
-                             ImagesToRead: imageInfo,
-                             MaxMediaOnStacker: maxMediaOnStacker,
-                             ApplicationRefuse: mediaIn.Payload.ApplicationRefuse is not null && (bool)mediaIn.Payload.ApplicationRefuse),
+                request: new(
+                    CodelineFormat: codelineFormat,
+                    ImagesToRead: imageInfo,
+                    MaxMediaOnStacker: maxMediaOnStacker,
+                    ApplicationRefuse: mediaIn.Payload.ApplicationRefuse is not null && (bool)mediaIn.Payload.ApplicationRefuse),
                 cancellation: cancel);
 
             Logger.Log(Constants.DeviceClass, $"CheckDev.MediaInAsync() -> {result.CompletionCode}");
@@ -266,14 +267,14 @@ namespace XFS4IoTFramework.Check
             {
                 mediaInResult = new(
                     MediaOnStacker: result.MediaOnStacker < 0 ?
-                        null :
-                        result.MediaOnStacker,
+                    null :
+                    result.MediaOnStacker,
                     LastMedia: result.LastMedia < 0 ?
-                        null :
-                        result.LastMedia,
+                    null :
+                    result.LastMedia,
                     LastMediaOnStacker: result.LastMediaOnStacker < 0 ?
-                        null :
-                        result.LastMediaOnStacker,
+                    null :
+                    result.LastMediaOnStacker,
                     MediaFeeder: Device.CheckScannerStatus.MediaFeeder switch
                     {
                         XFS4IoTFramework.Common.CheckScannerStatusClass.MediaFeederEnum.Empty => MediaFeederEnum.Empty,

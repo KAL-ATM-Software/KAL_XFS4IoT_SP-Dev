@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,7 +47,7 @@ namespace XFS4IoT.Keyboard.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyInvalid``` - At least one of the specified function keys or FDKs is invalid.
             /// * ```keyNotSupported``` - At least one of the specified function keys or FDKs is not supported by the
-            ///                           Service Provider.
+            ///   Service Provider.
             /// * ```noActivekeys``` - There are no active keys specified, or there is no defined layout definition.
             /// </summary>
             [DataMember(Name = "errorCode")]

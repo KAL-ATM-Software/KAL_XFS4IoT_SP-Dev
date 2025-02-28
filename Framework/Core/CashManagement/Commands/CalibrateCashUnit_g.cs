@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -28,7 +28,7 @@ namespace XFS4IoT.CashManagement.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(string Unit = null, int? NumOfBills = null, ItemTargetClass Position = null)
+            public PayloadData(string Unit = null, int? NumOfBills = null, ItemTargetDataClass Position = null)
                 : base()
             {
                 this.Unit = Unit;
@@ -54,8 +54,17 @@ namespace XFS4IoT.CashManagement.Commands
             [DataTypes(Minimum = 1)]
             public int? NumOfBills { get; init; }
 
+            /// <summary>
+            /// Defines where items are to be moved to as one of the following:
+            /// 
+            /// * A single storage unit, further specified by *unit*.
+            /// * Internal areas of the device.
+            /// * An output position.
+            /// 
+            /// This may be null if the Service is to determine where items are to be moved.
+            /// </summary>
             [DataMember(Name = "position")]
-            public ItemTargetClass Position { get; init; }
+            public ItemTargetDataClass Position { get; init; }
 
         }
     }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -75,7 +75,7 @@ namespace XFS4IoT.KeyManagement.Commands
             }
 
             /// <summary>
-            /// The command and associated command specific input properties which for which data to sign is requested.
+            /// The command and associated command specific input properties for which data to sign is requested.
             /// This must be one of:
             /// 
             /// * ```deleteKey``` - The [KeyManagement.DeleteKey](#keymanagement.deletekey) command.

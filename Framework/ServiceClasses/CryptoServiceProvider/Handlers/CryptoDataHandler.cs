@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -215,14 +215,16 @@ namespace XFS4IoTFramework.Crypto
                     // it then send it as a clear IV
                     Logger.Log(Constants.DeviceClass, "CryptoDev.Crypto()");
 
-                    var decryptResult = await Device.Crypto(new CryptoCommandEvents(events), 
-                                                            new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
-                                                                                  CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                                  cryptoData.Payload.Iv.Key,
-                                                                                  KeyManagement.GetKeyDetail(cryptoData.Payload.Iv.Key).KeySlot,
-                                                                                  cryptoData.Payload.Iv.Value,
-                                                                                  0),
-                                                            cancel);
+                    var decryptResult = await Device.Crypto(
+                        new CryptoCommandEvents(events), 
+                        new CryptoDataRequest(
+                            CryptoDataRequest.CryptoModeEnum.Decrypt,
+                            CryptoDataRequest.CryptoAlgorithmEnum.ECB,
+                            cryptoData.Payload.Iv.Key,
+                            KeyManagement.GetKeyDetail(cryptoData.Payload.Iv.Key).KeySlot,
+                            cryptoData.Payload.Iv.Value,
+                            0),
+                        cancel);
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
@@ -256,27 +258,29 @@ namespace XFS4IoTFramework.Crypto
                 modeOfUse = (cryptoData.Payload.ModeOfUse == "E") ? CryptoDataRequest.CryptoModeEnum.Encrypt : CryptoDataRequest.CryptoModeEnum.Decrypt;
             }
 
-            var result = await Device.Crypto(new CryptoCommandEvents(events),
-                                             new CryptoDataRequest(modeOfUse,
-                                                                   cryptoData.Payload.CryptoMethod switch
-                                                                   {
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Cbc => CryptoDataRequest.CryptoAlgorithmEnum.CBC,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Cfb => CryptoDataRequest.CryptoAlgorithmEnum.CFB,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Ctr => CryptoDataRequest.CryptoAlgorithmEnum.CTR,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Ecb => CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Ofb => CryptoDataRequest.CryptoAlgorithmEnum.OFB,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.Xts => CryptoDataRequest.CryptoAlgorithmEnum.XTS,
-                                                                       CryptoDataCommand.PayloadData.CryptoMethodEnum.RsaesOaep => CryptoDataRequest.CryptoAlgorithmEnum.RSAES_OAEP,
-                                                                       _ => CryptoDataRequest.CryptoAlgorithmEnum.RSAES_OAEP,
-                                                                   },
-                                                                   keyDetail.KeyName,
-                                                                   keyDetail.KeySlot,
-                                                                   cryptoData.Payload.Data,
-                                                                   padding,
-                                                                   ivKeyName,
-                                                                   ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
-                                                                   ivData),
-                                             cancel);
+            var result = await Device.Crypto(
+                new CryptoCommandEvents(events),
+                new CryptoDataRequest(
+                    modeOfUse,
+                    cryptoData.Payload.CryptoMethod switch
+                    {
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Cbc => CryptoDataRequest.CryptoAlgorithmEnum.CBC,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Cfb => CryptoDataRequest.CryptoAlgorithmEnum.CFB,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Ctr => CryptoDataRequest.CryptoAlgorithmEnum.CTR,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Ecb => CryptoDataRequest.CryptoAlgorithmEnum.ECB,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Ofb => CryptoDataRequest.CryptoAlgorithmEnum.OFB,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.Xts => CryptoDataRequest.CryptoAlgorithmEnum.XTS,
+                        CryptoDataCommand.PayloadData.CryptoMethodEnum.RsaesOaep => CryptoDataRequest.CryptoAlgorithmEnum.RSAES_OAEP,
+                        _ => CryptoDataRequest.CryptoAlgorithmEnum.RSAES_OAEP,
+                    },
+                    keyDetail.KeyName,
+                    keyDetail.KeySlot,
+                    cryptoData.Payload.Data,
+                    padding,
+                    ivKeyName,
+                    ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
+                    ivData),
+                cancel);
 
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {result.CompletionCode}, {result.ErrorCode}");

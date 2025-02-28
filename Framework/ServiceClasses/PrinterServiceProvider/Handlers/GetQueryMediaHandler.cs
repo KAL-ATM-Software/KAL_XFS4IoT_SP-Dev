@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -21,16 +21,16 @@ namespace XFS4IoTFramework.Printer
         private Task<CommandResult<GetQueryMediaCompletion.PayloadData>> HandleGetQueryMedia(IGetQueryMediaEvents events, GetQueryMediaCommand getQueryMedia, CancellationToken cancel)
         {
             Dictionary<string, Media> medias = Printer.GetMedias();
-            if (!medias.ContainsKey(getQueryMedia.Payload.MediaName))
+            if (!medias.ContainsKey(getQueryMedia.Payload.Name))
             {
                 return Task.FromResult(
                     new CommandResult<GetQueryMediaCompletion.PayloadData>(
                         new(GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Specified form doesn't exist. {getQueryMedia.Payload.MediaName}")
+                        $"Specified form doesn't exist. {getQueryMedia.Payload.Name}")
                     );
             }
-            return Task.FromResult((medias[getQueryMedia.Payload.MediaName]).QueryMedia(Device));
+            return Task.FromResult((medias[getQueryMedia.Payload.Name]).QueryMedia(Device));
         }
     }
 }

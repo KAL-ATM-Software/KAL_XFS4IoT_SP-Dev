@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.PinPad.Commands
 {
     //Original name = LocalVisa
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "PinPad.LocalVisa")]
     public sealed class LocalVisaCommand : Command<LocalVisaCommand.PayloadData>
     {
@@ -44,7 +44,7 @@ namespace XFS4IoT.PinPad.Commands
             /// <example>01234567890123456789123</example>
             /// </summary>
             [DataMember(Name = "pan")]
-            [DataTypes(Pattern = @"^[0-9]{23}$")]
+            [DataTypes(Sensitive = true, Pattern = @"^[0-9]{23}$")]
             public string Pan { get; init; }
 
             /// <summary>
@@ -66,10 +66,10 @@ namespace XFS4IoT.PinPad.Commands
             /// <summary>
             /// If this value is null, *key* is used directly for PIN validation. Otherwise, *key* is used to
             /// decrypt the encrypted key passed in *keyEncKey* and the result is used for PIN validation.
-            /// <example>UGluYmxvY2sgZGF0YQ==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "keyEncKey")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> KeyEncKey { get; init; }
 
         }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -115,8 +115,8 @@ namespace XFS4IoTFramework.CardReader
                     _ => throw new InternalErrorException($"Unexpected transaction cardholder action specified for perform transaction command. {track.CardholderAction}"),
                 }, 
                 DataRead: track.DataRead.Count == 0 ?
-                          null :
-                          track.DataRead,
+                null :
+                track.DataRead,
                 ClessOutcome: new(
                     Cvm: track.ClessOutcome.Cvm switch
                     {
@@ -135,56 +135,55 @@ namespace XFS4IoTFramework.CardReader
                     },
                     Receipt: track.ClessOutcome.Receipt,
                     UiOutcome: track.ClessOutcome.UiOutcome is null ? 
-                               null :
-                               new EMVClessUIClass(
-                                   MessageId: track.ClessOutcome.UiOutcome.MessageId,
-                                   Status: track.ClessOutcome.UiOutcome.Status switch
-                                   {
-                                       EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Idle => EMVClessUIClass.StatusEnum.Idle,
-                                       EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.NotReady => EMVClessUIClass.StatusEnum.NotReady,
-                                       EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.CardReadOk => EMVClessUIClass.StatusEnum.CardReadOk,
-                                       EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.ReadyToRead => EMVClessUIClass.StatusEnum.ReadyToRead,
-                                       EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Processing => EMVClessUIClass.StatusEnum.Processing,
-                                       _ => throw new InternalErrorException($"Unexpected transaction outcome specified for the status of UI outcome. {track.ClessOutcome.UiOutcome.Status}"),
-                                   },
-                                   HoldTime: track.ClessOutcome.UiOutcome.HoldTime,
-                                   ValueDetails: track.ClessOutcome.UiOutcome.ValueQualifier == EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.NotApplicable ?
-                                                null :
-                                                new ValueDetailsClass(
-                                                    Qualifier: track.ClessOutcome.UiOutcome.ValueQualifier switch
-                                                    {
-                                                        EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.Amount => ValueDetailsClass.QualifierEnum.Amount,
-                                                        _ => ValueDetailsClass.QualifierEnum.Balance,
-                                                    },
-                                                    Value: track.ClessOutcome.UiOutcome.Value,
-                                                    CurrencyCode: track.ClessOutcome.UiOutcome.CurrencyCode
-                                                    ),
-                                   LanguagePreferenceData: track.ClessOutcome.UiOutcome.LanguagePreferenceData),
+                    null :
+                    new EMVClessUIClass(
+                        MessageId: track.ClessOutcome.UiOutcome.MessageId,
+                        Status: track.ClessOutcome.UiOutcome.Status switch
+                        {
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Idle => EMVClessUIClass.StatusEnum.Idle,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.NotReady => EMVClessUIClass.StatusEnum.NotReady,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.CardReadOk => EMVClessUIClass.StatusEnum.CardReadOk,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.ReadyToRead => EMVClessUIClass.StatusEnum.ReadyToRead,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Processing => EMVClessUIClass.StatusEnum.Processing,
+                            _ => throw new InternalErrorException($"Unexpected transaction outcome specified for the status of UI outcome. {track.ClessOutcome.UiOutcome.Status}"),
+                        },
+                        HoldTime: track.ClessOutcome.UiOutcome.HoldTime,
+                        ValueDetails: track.ClessOutcome.UiOutcome.ValueQualifier == EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.NotApplicable ?
+                        null :
+                        new ValueDetailsClass(
+                            Qualifier: track.ClessOutcome.UiOutcome.ValueQualifier switch
+                            {
+                                EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.Amount => ValueDetailsClass.QualifierEnum.Amount,
+                                _ => ValueDetailsClass.QualifierEnum.Balance,
+                            },
+                            Value: track.ClessOutcome.UiOutcome.Value,
+                            CurrencyCode: track.ClessOutcome.UiOutcome.CurrencyCode),
+                        LanguagePreferenceData: track.ClessOutcome.UiOutcome.LanguagePreferenceData),
                    UiRestart: track.ClessOutcome.UiRestart is null ? 
-                              null :
-                              new EMVClessUIClass(
-                                  MessageId: track.ClessOutcome.UiRestart.MessageId,
-                                  Status: track.ClessOutcome.UiRestart.Status switch
-                                  {
-                                      EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Idle => EMVClessUIClass.StatusEnum.Idle,
-                                      EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.NotReady => EMVClessUIClass.StatusEnum.NotReady,
-                                      EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.CardReadOk => EMVClessUIClass.StatusEnum.CardReadOk,
-                                      EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.ReadyToRead => EMVClessUIClass.StatusEnum.ReadyToRead,
-                                      EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Processing => EMVClessUIClass.StatusEnum.Processing,
-                                      _ => throw new InternalErrorException($"Unexpected transaction outcome specified for the status of UI restart. {track.ClessOutcome.UiRestart.Status}"),
-                                  },
-                                  HoldTime: track.ClessOutcome.UiRestart.HoldTime,
-                                  ValueDetails: track.ClessOutcome.UiRestart.ValueQualifier == EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.NotApplicable ?
-                                      null :
-                                  new ValueDetailsClass(
-                                                    Qualifier: track.ClessOutcome.UiRestart.ValueQualifier switch
-                                                    {
-                                                        EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.Amount => ValueDetailsClass.QualifierEnum.Amount,
-                                                        _ => ValueDetailsClass.QualifierEnum.Balance,
-                                                    },
-                                                    Value: track.ClessOutcome.UiRestart.Value,
-                                                    CurrencyCode: track.ClessOutcome.UiRestart.CurrencyCode),
-                                LanguagePreferenceData: track.ClessOutcome.UiRestart.LanguagePreferenceData),
+                    null :
+                    new EMVClessUIClass(
+                        MessageId: track.ClessOutcome.UiRestart.MessageId,
+                        Status: track.ClessOutcome.UiRestart.Status switch
+                        {
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Idle => EMVClessUIClass.StatusEnum.Idle,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.NotReady => EMVClessUIClass.StatusEnum.NotReady,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.CardReadOk => EMVClessUIClass.StatusEnum.CardReadOk,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.ReadyToRead => EMVClessUIClass.StatusEnum.ReadyToRead,
+                            EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.StatusEnum.Processing => EMVClessUIClass.StatusEnum.Processing,
+                            _ => throw new InternalErrorException($"Unexpected transaction outcome specified for the status of UI restart. {track.ClessOutcome.UiRestart.Status}"),
+                        },
+                        HoldTime: track.ClessOutcome.UiRestart.HoldTime,
+                        ValueDetails: track.ClessOutcome.UiRestart.ValueQualifier == EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.NotApplicable ?
+                        null :
+                        new ValueDetailsClass(
+                            Qualifier: track.ClessOutcome.UiRestart.ValueQualifier switch
+                            {
+                                EMVContactlessTransactionDataOutput.EMVContactlessOutcome.EMVContactlessUI.ValueQualifierEnum.Amount => ValueDetailsClass.QualifierEnum.Amount,
+                                _ => ValueDetailsClass.QualifierEnum.Balance,
+                            },
+                            Value: track.ClessOutcome.UiRestart.Value,
+                            CurrencyCode: track.ClessOutcome.UiRestart.CurrencyCode),
+                    LanguagePreferenceData: track.ClessOutcome.UiRestart.LanguagePreferenceData),
                    FieldOffHoldTime: track.ClessOutcome.FieldOffHoldTime,
                    CardRemovalTimeout: track.ClessOutcome.CardRemovalTimeout,
                    DiscretionaryData: track.ClessOutcome.DiscretionaryData));

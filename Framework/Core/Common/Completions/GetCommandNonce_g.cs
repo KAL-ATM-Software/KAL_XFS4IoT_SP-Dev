@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,10 +35,10 @@ namespace XFS4IoT.Common.Completions
 
             /// <summary>
             /// A nonce that should be included in the Authorization Token in a command used to provide
-            /// end to end protection.
+            /// end-to-end protection.
             /// 
             /// The nonce will be given as an integer string, or HEX (upper case.)
-            /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
+            /// <example>254611E63B2531576314E86527338D61</example>
             /// </summary>
             [DataMember(Name = "commandNonce")]
             [DataTypes(Pattern = @"^[0-9A-F]{32}$|^[0-9]*$")]

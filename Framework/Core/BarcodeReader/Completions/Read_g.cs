@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.BarcodeReader.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "BarcodeReader.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
@@ -131,21 +131,21 @@ namespace XFS4IoT.BarcodeReader.Completions
                 /// The following values are possible:
                 /// * ```ean128``` - GS1-128.
                 /// * ```ean8``` - EAN-8.
-                /// * ```ean8_2``` - EAN-8 with 2 digit add-on.
-                /// * ```ean8_5``` - EAN-8 with 5 digit add-on.
+                /// * ```ean8_2``` - EAN-8 with 2-digit add-on.
+                /// * ```ean8_5``` - EAN-8 with 5-digit add-on.
                 /// * ```ean13``` - EAN-13.
-                /// * ```ean13_2``` - EAN-13 with 2 digit add-on.
-                /// * ```ean13_5``` -  EAN-13 with 5 digit add-on.
+                /// * ```ean13_2``` - EAN-13 with 2-digit add-on.
+                /// * ```ean13_5``` -  EAN-13 with 5-digit add-on.
                 /// * ```jan13``` - JAN-13.
                 /// * ```upcA``` - UPC-A.
                 /// * ```upcE0``` - UPC-E.
-                /// * ```upcE0_2``` - UPC-E with 2 digit add-on.
-                /// * ```upcE0_5``` - UPC-E with 5 digit add-on.
+                /// * ```upcE0_2``` - UPC-E with 2-digit add-on.
+                /// * ```upcE0_5``` - UPC-E with 5-digit add-on.
                 /// * ```upcE1``` - UPC-E with leading 1.
-                /// * ```upcE1_2``` - UPC-E with leading 1and 2 digit add-on.
-                /// * ```upcE1_5``` - UPC-E with leading 1and 5 digit add-on.
-                /// * ```upcA_2``` - UPC-A with2 digit add-on.
-                /// * ```upcA_5``` - UPC-A with 5 digit add-on.
+                /// * ```upcE1_2``` - UPC-E with leading 1and 2-digit add-on.
+                /// * ```upcE1_5``` - UPC-E with leading 1and 5-digit add-on.
+                /// * ```upcA_2``` - UPC-A with 2-digit add-on.
+                /// * ```upcA_5``` - UPC-A with 5-digit add-on.
                 /// * ```codabar``` - CODABAR (NW-7).
                 /// * ```itf``` - Interleaved 2 of 5 (ITF).
                 /// * ```code11``` - CODE 11 (USD-8).
@@ -196,14 +196,14 @@ namespace XFS4IoT.BarcodeReader.Completions
                 /// Contains the Base64 encoded barcode data read from the barcode reader. The format of the data
                 /// will depend on the barcode symbology read. In most cases this will be an array of bytes
                 /// containing ASCII numeric digits. However, the format of the data in this property depends entirely
-                /// on the symbology read, e.g. it may contain 8 bit character values where the symbol is dependent
+                /// on the symbology read, e.g. it may contain 8-bit character values where the symbol is dependent
                 /// on the codepage used to encode the barcode, may contain UNICODE data, or may be a binary block
                 /// of data. The application is responsible for checking the completeness and validity of the data.
                 /// If the read operation could not be completed successfully, this will be null.
-                /// <example>YmFyY29kZSBkYXRh</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "barcodeData")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> BarcodeData { get; init; }
 
                 /// <summary>

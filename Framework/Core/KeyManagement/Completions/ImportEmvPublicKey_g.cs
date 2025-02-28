@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,7 +48,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// * ```duplicateKey``` - A *key* exists with that name and cannot be overwritten.
             /// * ```noKeyRam``` - There is no space left in the key RAM for a key of the specified type.
             /// * ```emvVerifyFailed``` - The verification of the imported key failed and the key was discarded.

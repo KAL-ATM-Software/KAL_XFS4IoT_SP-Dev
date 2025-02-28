@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "KeyManagement.StartKeyExchange")]
     public sealed class StartKeyExchangeCompletion : Completion<StartKeyExchangeCompletion.PayloadData>
     {
@@ -42,7 +42,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
@@ -51,10 +51,10 @@ namespace XFS4IoT.KeyManagement.Completions
             /// The randomly generated number created by the device.
             /// 
             /// This value is null if the device does not support random number generation for data authentication.
-            /// <example>Tm9uY2U=</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "randomItem")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> RandomItem { get; init; }
 
         }

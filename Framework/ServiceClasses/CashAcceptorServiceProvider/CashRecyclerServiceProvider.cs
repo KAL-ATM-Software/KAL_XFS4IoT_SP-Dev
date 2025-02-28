@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -30,7 +30,12 @@ namespace XFS4IoTServer
     /// </remarks>
     public class CashRecyclerServiceProvider : ServiceProvider, ICashAcceptorService, ICashDispenserService, ICashManagementService, ICommonService, IStorageService
     {
-        public CashRecyclerServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public CashRecyclerServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
@@ -59,10 +64,6 @@ namespace XFS4IoTServer
 
         public Task ItemsPresentedEvent(CashManagementCapabilitiesClass.PositionEnum Position, string AdditionalBunches) => CashManagementService.ItemsPresentedEvent(Position, AdditionalBunches);
 
-        [Obsolete("This event is obsolete, The shutter status changed event will be covered by the Common.StatusChangedEvent. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public Task ShutterStatusChangedEvent(CashManagementCapabilitiesClass.PositionEnum Position, CashManagementStatusClass.ShutterEnum Status) => CashManagementService.ShutterStatusChangedEvent(Position, Status);
-
         #endregion
 
         #region Storage Service
@@ -70,18 +71,28 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update storage count from the framework after media movement command is processed
         /// </summary>
-        public Task UpdateCardStorageCount(string storageId, int countDelta, string preservedStorage = null) => throw new NotSupportedException($"CashRecycler service class doesn't support card storage.");
+        public Task UpdateCardStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CashRecycler service class doesn't support card storage.");
 
         /// <summary>
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => await StorageService.UpdateCashAccounting(countDelta, preservedStorage);
+        public async Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta = null) => await StorageService.UpdateCashAccounting(countDelta);
 
         /// <summary>
         /// Update managed check storage information in the framework.
         /// </summary>
-        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => throw new NotSupportedException($"CashRecycler service class doesn't support check storage.");
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null) => throw new NotSupportedException($"CashRecycler service class doesn't support check storage.");
+
+        /// <summary>
+        /// Update managed printer storage information in the framework.
+        /// </summary>
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CashRecycler service class doesn't support printer storage.");
+
+        /// <summary>
+        /// Update managed deposit storage information in the framework.
+        /// </summary>
+        public Task UpdateDepositStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CashRecycler service class doesn't support deposit storage.");
 
         /// <summary>
         /// Store CardUnits and CashUnits persistently
@@ -109,6 +120,21 @@ namespace XFS4IoTServer
         public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
 
         /// <summary>
+        /// Printer storage structure information of this device
+        /// </summary>
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get => StorageService.PrinterUnits; init { } }
+
+        /// <summary>
+        /// IBNS storage structure information of this device
+        /// </summary>
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get => StorageService.IBNSUnits; init { } }
+
+        /// <summary>
+        /// Deposit storage structure information of this device
+        /// </summary>
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get => StorageService.DepositUnits; init { } }
+
+        /// <summary>
         /// Return XFS4IoT storage structured object.
         /// </summary>
         public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
@@ -123,6 +149,14 @@ namespace XFS4IoTServer
         public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
                                CommonStatusClass.ErrorActionEnum Action,
                                string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+
+        #endregion
+
+        #region Storage Unsolicsited events 
+        /// <summary>
+        /// Sending status changed event.
+        /// </summary>
+        public Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => StorageService.StorageChangedEvent(sender, propertyInfo);
 
         #endregion
 

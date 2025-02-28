@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.PinPad.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "PinPad.GetPinBlock")]
     public sealed class GetPinBlockCompletion : Completion<GetPinBlockCompletion.PayloadData>
     {
@@ -51,33 +51,33 @@ namespace XFS4IoT.PinPad.Completions
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// * ```keyNotFound``` - The specified key was not found.
-            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any
+            ///   vendor-specific reason.
             /// * ```keyNoValue``` - The specified key name was found but the corresponding key value has not been
-            /// loaded.
+            ///   loaded.
             /// * ```useViolation``` - The use specified by
-            /// [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) is not
-            /// supported.
-            /// * ```noPin``` - The PIN has not been entered was not long enough or has been cleared.
+            ///   [keyUsage](#common.capabilities.completion.properties.keymanagement.keyattributes.m0) is not
+            ///   supported.
+            /// * ```noPin``` - The PIN has not been entered, was not long enough or has been cleared.
             /// * ```formatNotSupported``` - The specified format is not supported.
             /// * ```invalidKeyLength``` - The length of *secondEncKey* or *key* is not supported by this key or the
-            /// length of an encryption
-            /// key is not compatible with the encryption operation required.
+            ///   length of an encryption
+            ///   key is not compatible with the encryption operation required.
             /// * ```algorithmNotSupported``` - The algorithm specified by algorithm is not supported.
             /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be
-            /// loaded.
+            ///   loaded.
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by cryptoMethod is not
-            /// supported.
+            ///   supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }
 
             /// <summary>
             /// The encrypted PIN block. This value is null if there is no PIN block.
-            /// <example>UGluYmxvY2sgZGF0YQ==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "pinBlock")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> PinBlock { get; init; }
 
         }

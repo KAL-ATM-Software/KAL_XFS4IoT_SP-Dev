@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Printer.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Printer.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
@@ -27,7 +27,7 @@ namespace XFS4IoT.Printer.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(ErrorCodeEnum? ErrorCode = null, Dictionary<string, string> Fields = null)
+            public PayloadData(ErrorCodeEnum? ErrorCode = null, Dictionary<string, List<string>> Fields = null)
                 : base()
             {
                 this.ErrorCode = ErrorCode;
@@ -41,8 +41,6 @@ namespace XFS4IoT.Printer.Completions
                 FieldSpecFailure,
                 FieldError,
                 MediaNotFound,
-                MediaInvalid,
-                FormInvalid,
                 MediaSkewed,
                 RetractBinFull,
                 ShutterFail,
@@ -66,8 +64,6 @@ namespace XFS4IoT.Printer.Completions
             /// * ```fieldError``` - An error occurred while processing a field, causing termination of the print
             ///   request. A [Printer.FieldErrorEvent](#printer.fielderrorevent) event is posted with the details.
             /// * ```mediaNotFound``` - The specified media definition cannot be found.
-            /// * ```mediaInvalid``` - The specified media definition is invalid.
-            /// * ```formInvalid``` - The specified form definition is invalid.
             /// * ```mediaSkewed``` - The media skew exceeded the limit in the form definition.
             /// * ```retractBinFull``` - The retract bin is full. No more media can be retracted. The current media is
             ///   still in the device.
@@ -81,7 +77,7 @@ namespace XFS4IoT.Printer.Completions
             /// * ```mediaRejected``` - The media was rejected during the insertion phase. The
             ///   [Printer.MediaRejectedEvent](#printer.mediarejectedevent) event is posted with the details. The
             ///   device is still operational.
-            /// * ```msfError``` - The MSF read operation specified by the forms definition could not be completed
+            /// * ```msfError``` - The MSF read operation specified by the form definition could not be completed
             ///   successfully due to invalid magnetic stripe data.
             /// * ```noMSF``` -  No magnetic stripe found; media may have been inserted or pulled through the wrong
             ///   way.
@@ -93,7 +89,8 @@ namespace XFS4IoT.Printer.Completions
             /// An object containing fields read. If no fields were read, this is null.
             /// </summary>
             [DataMember(Name = "fields")]
-            public Dictionary<string, string> Fields { get; init; }
+            [System.Text.Json.Serialization.JsonConverter(typeof(StringOrArrayConverter))]
+            public Dictionary<string, List<string>> Fields { get; init; }
 
         }
     }

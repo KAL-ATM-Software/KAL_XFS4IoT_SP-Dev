@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "KeyManagement.ImportKeyToken")]
     public sealed class ImportKeyTokenCompletion : Completion<ImportKeyTokenCompletion.PayloadData>
     {
@@ -56,16 +56,16 @@ namespace XFS4IoT.KeyManagement.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// * ```duplicateKey``` - A *key* exists with that name and cannot be overwritten.
             /// * ```invalidKeyLength``` - The length of the Key Transport Key is not valid.
             /// * ```noKeyRam``` - There is no space left in the key RAM for a key of the specified type.
             /// * ```formatInvalid``` - The format of the message or key block is invalid.
             /// * ```contentInvalid``` - The content of the message or key block is invalid.
             /// * ```useViolation``` - The specified use is not supported, or if a key with the same name has already
-            /// been loaded, the specified use conflicts with the use of the key previously loaded.
+            ///   been loaded, the specified use conflicts with the use of the key previously loaded.
             /// * ```randomInvalid``` - The encrypted random number in the input data does not match the one
-            /// previously provided by the PIN device. Only applies to CRKL load options that use a random number.
+            ///   previously provided by the PIN device. Only applies to CRKL load options that use a random number.
             /// * ```signatureInvalid``` - The signature in the input data is invalid.
             /// * ```invalidCertState``` - A Host certificate has not been previously loaded.
             /// </summary>
@@ -104,10 +104,10 @@ namespace XFS4IoT.KeyManagement.Completions
             /// HOST identifier as an issuerAndSerialNumber sequence.
             /// 
             /// If *keyAcceptAlgorithm* is null, then this will also be null.
-            /// <example>UGluYmxvY2sgZGF0YQ==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "keyAcceptData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> KeyAcceptData { get; init; }
 
             public enum KeyCheckModeEnum
@@ -130,10 +130,10 @@ namespace XFS4IoT.KeyManagement.Completions
             /// null if the device does not have that capability.
             /// 
             /// If *keyCheckMode* is null, then this will also be null.
-            /// <example>MDEwMjAz</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "keyCheckValue")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]*={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> KeyCheckValue { get; init; }
 
         }

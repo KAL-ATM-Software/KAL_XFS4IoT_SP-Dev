@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -84,18 +84,13 @@ namespace XFS4IoTFramework.Printer
         Expelled
     }
 
-    public sealed class ControlMediaRequest
+    /// <summary>
+    /// ControlMediaRequest
+    /// Request action to the device to control media
+    /// </summary>
+    public sealed class ControlMediaRequest(PrinterCapabilitiesClass.ControlEnum Controls)
     {
-        /// <summary>
-        /// ControlMediaRequest
-        /// Request action to the device to control media
-        /// </summary>
-        public ControlMediaRequest(PrinterCapabilitiesClass.ControlEnum Controls)
-        {
-            this.Controls = Controls;
-        }
-
-        public PrinterCapabilitiesClass.ControlEnum Controls { get; init; }
+        public PrinterCapabilitiesClass.ControlEnum Controls { get; init; } = Controls;
     }
 
     public sealed class ControlMediaResult : DeviceResult
@@ -124,32 +119,57 @@ namespace XFS4IoTFramework.Printer
         /// ControlMediaResult
         /// Return result of controlling media.
         /// </summary>
-        public ControlMediaResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  ErrorCodeEnum? ErrorCode = null)
+        public ControlMediaResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            StorageId = null;
+            MediaInCount = 0;
         }
 
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ControlMediaResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  ErrorCodeEnum? ErrorCode = null)
+        /// <summary>
+        /// ControlMediaResult
+        /// Return result of controlling media.
+        /// </summary>
+        public ControlMediaResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string StorageId = null,
+            int MediaInCount = 0,
+            string ErrorDescription = null,
+            ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            this.StorageId = StorageId;
+            this.MediaInCount = MediaInCount;
         }
 
         /// <summary>
         /// Specifies the error code on control media.
         /// </summary>
         public ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Specifies the storage unit where the media is moved.
+        /// </summary>
+        public string StorageId { get; init; }
+
+        /// <summary>
+        /// Specifies the number of medias is moved.
+        /// </summary>
+        public int MediaInCount { get; init; }
     }
 
-    public sealed class ControlPassbookRequest
+    /// <summary>
+    /// This command can turn the pages of a passbook inserted in the printer by a specified number of pages in a
+    /// specified direction and it can close the passbook.
+    /// </summary>
+    public sealed class ControlPassbookRequest(
+        ControlPassbookRequest.ActionEnum Action,
+        int Count)
     {
 
         public enum ActionEnum
@@ -159,114 +179,75 @@ namespace XFS4IoTFramework.Printer
             CloseForward,
             CloseBackward
         }
-        /// <summary>
-        /// This command can turn the pages of a passbook inserted in the printer by a specified number of pages in a
-        /// specified direction and it can close the passbook.
-        /// </summary>
-        public ControlPassbookRequest(ActionEnum Action,
-                                      int Count)
-        {
-            this.Action = Action;
-            this.Count = Count;
-        }
 
         /// <summary>
         /// Specifies the direction of the page turn
         /// </summary>
-        public ActionEnum Action { get; init; }
+        public ActionEnum Action { get; init; } = Action;
 
         /// <summary>
         ///  Specifies the number of pages to be turned.
         /// </summary>
-        public int Count { get; init; }
+        public int Count { get; init; } = Count;
     }
 
-    public sealed class ControlPassbookResult : DeviceResult
+    /// <summary>
+    /// ControlPassbookResult
+    /// Return result of controlling passbook.
+    /// </summary>
+    public sealed class ControlPassbookResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        : DeviceResult(CompletionCode, ErrorDescription)
     {
-        /// <summary>
-        /// ControlPassbookResult
-        /// Return result of controlling passbook.
-        /// </summary>
-        public ControlPassbookResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ControlPassbookResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                     string ErrorDescription = null,
-                                     ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on control passbook.
         /// </summary>
-        public ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public ControlPassbookCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
-    public sealed class DispensePaperRequest
+    /// <summary>
+    /// Move paper (which can also be a new passbook) from a paper source into the print position
+    /// </summary>
+    public sealed class DispensePaperRequest(
+        PaperSourceEnum? Source,
+        string CustomSource = null)
     {
-        /// <summary>
-        /// Move paper (which can also be a new passbook) from a paper source into the print position
-        /// </summary>
-        public DispensePaperRequest(PaperSourceEnum? Source,
-                                    string CustomSource = null)
-        {
-            this.Source = Source;
-            this.CustomSource = CustomSource;
-        }
 
         /// <summary>
         /// Specifies the direction of the page turn
         /// </summary>
-        public PaperSourceEnum? Source { get; init; }
+        public PaperSourceEnum? Source { get; init; } = Source;
 
         /// <summary>
         /// Vendor specific paper source
         /// </summary>
-        public string CustomSource { get; init; }
+        public string CustomSource { get; init; } = CustomSource;
     }
 
-    public sealed class DispensePaperResult : DeviceResult
+    /// <summary>
+    /// DispensePaperResult
+    /// Return result of moving paper.
+    /// </summary>
+    public sealed class DispensePaperResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        /// <summary>
-        /// DispensePaperResult
-        /// Return result of moving paper.
-        /// </summary>
-        public DispensePaperResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DispensePaperResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on moving paper.
         /// </summary>
-        public DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public DispensePaperCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
-    public sealed class AcceptAndReadImageRequest
+    /// <summary>
+    /// Accept media and read data
+    /// </summary>
+    public sealed class AcceptAndReadImageRequest(
+        Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, AcceptAndReadImageRequest.ReadData> DataToRead)
     {
         public enum SourceTypeEnum
         {
@@ -274,7 +255,10 @@ namespace XFS4IoTFramework.Printer
             Back,
         }
 
-        public sealed class ReadData
+        public sealed class ReadData(
+            AcceptAndReadImageRequest.SourceTypeEnum DataType,
+            ReadData.DataFormatEnum DataFormat,
+            ReadData.ColorFormatEnum ColorFormat)
         {
             public enum DataFormatEnum
             {
@@ -295,48 +279,33 @@ namespace XFS4IoTFramework.Printer
                 Fullcolor,
             }
 
-            public ReadData(SourceTypeEnum DataType,
-                            DataFormatEnum DataFormat,
-                            ColorFormatEnum ColorFormat)
-            {
-                this.DataType = DataType;
-                this.DataFormat = DataFormat;
-                this.ColorFormat = ColorFormat;
-            }
-
             /// <summary>
             /// Data type to read
             /// </summary>
-            public SourceTypeEnum DataType { get; init; }
+            public SourceTypeEnum DataType { get; init; } = DataType;
 
             /// <summary>
             /// Data format to read
             /// </summary>
-            public DataFormatEnum DataFormat { get; init; }
+            public DataFormatEnum DataFormat { get; init; } = DataFormat;
 
             /// <summary>
             /// Color to use
             /// </summary>
-            public ColorFormatEnum ColorFormat { get; init; }
-        }
-
-        /// <summary>
-        /// Accept media and read data
-        /// </summary>
-        public AcceptAndReadImageRequest(Dictionary<SourceTypeEnum, ReadData> DataToRead)
-        {
-            this.DataToRead = DataToRead;
+            public ColorFormatEnum ColorFormat { get; init; } = ColorFormat;
         }
 
         /// <summary>
         /// Specifies the data to be read
         /// </summary>
-        public Dictionary<SourceTypeEnum, ReadData> DataToRead { get; init; }
+        public Dictionary<SourceTypeEnum, ReadData> DataToRead { get; init; } = DataToRead;
     }
 
     public sealed class AcceptAndReadImageResult : DeviceResult
     {
-        public sealed class DataRead
+        public sealed class DataRead(
+            DataRead.StatusEnum Status,
+            List<byte> Data)
         {
             public enum StatusEnum
             {
@@ -345,59 +314,32 @@ namespace XFS4IoTFramework.Printer
                 Missing
             }
 
-            public DataRead(StatusEnum Status,
-                            List<byte> Data)
-            {
-                this.Status = Status;
-                this.Data = Data;
-            }
-
             /// <summary>
             /// Status of result of reading data
             /// </summary>
-            public StatusEnum Status { get; init; }
+            public StatusEnum Status { get; init; } = Status;
             /// <summary>
             /// Data read
             /// </summary>
-            public List<byte> Data { get; init; }
+            public List<byte> Data { get; init; } = Data;
         }
 
         /// <summary>
         /// AcceptAndReadImageResult
         /// Return result of reading image
         /// </summary>
-        public AcceptAndReadImageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public AcceptAndReadImageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Data = null;
         }
-        public AcceptAndReadImageResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                        Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Data = Data;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public AcceptAndReadImageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        string ErrorDescription = null,
-                                        ReadImageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Data = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public AcceptAndReadImageResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                        Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data)
+        public AcceptAndReadImageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -415,7 +357,12 @@ namespace XFS4IoTFramework.Printer
         public Dictionary<AcceptAndReadImageRequest.SourceTypeEnum, DataRead> Data { get; init; }
     }
 
-    public sealed class ResetDeviceRequest
+    /// <summary>
+    /// Move paper (which can also be a new passbook) from a paper source into the print position
+    /// </summary>
+    public sealed class ResetDeviceRequest(
+        ResetDeviceRequest.MediaControlEnum MediaControl,
+        int RetractBin)
     {
 
         public enum MediaControlEnum
@@ -425,26 +372,17 @@ namespace XFS4IoTFramework.Printer
             Retract,
             Expel
         }
-        /// <summary>
-        /// Move paper (which can also be a new passbook) from a paper source into the print position
-        /// </summary>
-        public ResetDeviceRequest(MediaControlEnum MediaControl,
-                                  int RetractBin)
-        {
-            this.MediaControl = MediaControl;
-            this.RetractBin = RetractBin;
-        }
 
         /// <summary>
         /// Specifies the media action while in reset operation
         /// </summary>
-        public MediaControlEnum MediaControl { get; init; }
+        public MediaControlEnum MediaControl { get; init; } = MediaControl;
 
         /// <summary>
         /// Retract bin number to retract
         /// If this value is -1, device class to move default location
         /// </summary>
-        public int RetractBin { get; init; }
+        public int RetractBin { get; init; } = RetractBin;
     }
 
     public sealed class ResetDeviceResult : DeviceResult
@@ -453,29 +391,44 @@ namespace XFS4IoTFramework.Printer
         /// ResetResult
         /// Return result of reset operation
         /// </summary>
-        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ResetDeviceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            StorageId = null;
+            MediaInCount = 0;
         }
 
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public ResetDeviceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string StorageId = null,
+            int MediaInCount = 0,
+            string ErrorDescription = null,
+            ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
+            this.StorageId = StorageId;
+            this.MediaInCount = MediaInCount;
         }
 
         /// <summary>
         /// Specifies the error code on reset operation
         /// </summary>
         public ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        /// <summary>
+        /// Specifies the storage unit where the media is moved.
+        /// </summary>
+        public string StorageId { get; init; }
+
+        /// <summary>
+        /// Specifies the number of medias is moved.
+        /// </summary>
+        public int MediaInCount { get; init; }
     }
 
     public sealed class RetractResult : DeviceResult
@@ -484,43 +437,40 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
-        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public RetractResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
-            this.BinNumber = null;
+            BinNumber = null;
+            StorageId = null;
+            MediaInCount = 0;
         }
-
-        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                             int BinNumber)
+        [Obsolete("This property is obsolete property since package version 3.0. Use StorageId and MediaInCount to migrate storage interface.")]
+        public RetractResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            int BinNumber)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.BinNumber = BinNumber;
+            StorageId = null;
+            MediaInCount = 0;
         }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public RetractResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string StorageId = null,
+            int MediaInCount = 0,
+            string ErrorDescription = null,
+            RetractMediaCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
-            this.BinNumber = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             int BinNumber)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.BinNumber = BinNumber;
+            BinNumber = null;
+            this.StorageId = StorageId;
+            this.MediaInCount = MediaInCount;
         }
 
         /// <summary>
@@ -531,41 +481,40 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// The number of the retract bin where the media has actually been deposited.
         /// </summary>
+        [Obsolete("This property is obsolete property since package version 3.0. Use StorageId and MediaInCount to migrate storage interface.")]
         public int? BinNumber { get; init; }
+
+        /// <summary>
+        /// Specifies the storage unit where the media is moved.
+        /// </summary>
+        public string StorageId { get; init; }
+
+        /// <summary>
+        /// Specifies the number of medias is moved.
+        /// </summary>
+        public int MediaInCount { get; init; }
     }
 
-    public sealed class PrintFormResult : DeviceResult
+    /// <summary>
+    /// RetractResult
+    /// Return result of retract operation
+    /// </summary>
+    public sealed class PrintFormResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        /// <summary>
-        /// RetractResult
-        /// Return result of retract operation
-        /// </summary>
-        public PrintFormResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PrintFormResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code for print form command
         /// </summary>
-        public PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
-    public sealed class SupplyReplenishedRequest
+    /// <summary>
+    /// Replenish media
+    /// </summary>
+    public sealed class SupplyReplenishedRequest(SupplyReplenishedRequest.SupplyEnum Supplies)
     {
         [Flags]
         public enum SupplyEnum
@@ -579,133 +528,95 @@ namespace XFS4IoTFramework.Printer
             Toner = 1 << 5,
             Lamp = 1 << 6,
         }
-        /// <summary>
-        /// Replenish media
-        /// </summary>
-        public SupplyReplenishedRequest(SupplyEnum Supplies)
-        {
-            this.Supplies = Supplies;
-        }
 
         /// <summary>
         /// Specifies supplies to replenish
         /// </summary>
-        public SupplyEnum Supplies { get; init; }
+        public SupplyEnum Supplies { get; init; } = Supplies;
     }
 
-    public sealed class PrintTaskRequest
+    public sealed class PrintTaskRequest(
+        PrintJobClass PrintJob,
+        PaperSourceEnum? Source,
+        string CustomSource = null)
     {
-        public PrintTaskRequest(PrintJobClass PrintJob,
-                                PaperSourceEnum? Source,
-                                string CustomSource = null)
-        {
-            this.PrintJob = PrintJob;
-            this.Source = Source;
-            this.CustomSource = CustomSource;
-        }
 
         /// <summary>
         /// Print jobs asking the device class to print
         /// </summary>
-        public PrintJobClass PrintJob { get; init; }
+        public PrintJobClass PrintJob { get; init; } = PrintJob;
         /// <summary>
         /// Specifies the direction of the page turn
         /// </summary>
-        public PaperSourceEnum? Source { get; init; }
+        public PaperSourceEnum? Source { get; init; } = Source;
 
         /// <summary>
         /// Vendor specific paper source
         /// </summary>
-        public string CustomSource { get; init; }
+        public string CustomSource { get; init; } = CustomSource;
     }
 
-    public sealed class PrintTaskResult : DeviceResult
+    /// <summary>
+    /// RetractResult
+    /// Return result of retract operation
+    /// </summary>
+    public sealed class PrintTaskResult(
+        MessageHeader.CompletionCodeEnum CompletionCode,
+        string ErrorDescription = null,
+        PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
     {
-        /// <summary>
-        /// RetractResult
-        /// Return result of retract operation
-        /// </summary>
-        public PrintTaskResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PrintTaskResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
 
         /// <summary>
         /// Specifies the error code on print form operation
         /// </summary>
-        public PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+        public PrintFormCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; } = ErrorCode;
     }
 
-    public sealed class DirectFormPrintRequest
+    public sealed class DirectFormPrintRequest(
+        string FormName,
+        string MediaName,
+        Dictionary<string, string> Fields,
+        PaperSourceEnum? Source,
+        string CustomSource = null)
     {
-        public DirectFormPrintRequest(string FormName,
-                                      string MediaName,
-                                      Dictionary<string, string> Fields,
-                                      PaperSourceEnum? Source,
-                                      string CustomSource = null)
-        {
-            this.FormName = FormName;
-            this.MediaName = MediaName;
-            this.Fields = Fields;
-            this.Source = Source;
-            this.CustomSource = CustomSource;
-        }
 
         /// <summary>
         /// Form name to be used
         /// </summary>
-        public string FormName { get; init; }
+        public string FormName { get; init; } = FormName;
         /// <summary>
         /// Media name to be used
         /// </summary>
-        public string MediaName { get; init; }
+        public string MediaName { get; init; } = MediaName;
         /// <summary>
         /// Dynamic field values to be printed
         /// </summary>
-        public Dictionary<string, string> Fields { get; init; }
+        public Dictionary<string, string> Fields { get; init; } = Fields;
 
         /// <summary>
         /// Specifies the direction of the page turn
         /// </summary>
-        public PaperSourceEnum? Source { get; init; }
+        public PaperSourceEnum? Source { get; init; } = Source;
 
         /// <summary>
         /// Vendor specific paper source
         /// </summary>
-        public string CustomSource { get; init; }
+        public string CustomSource { get; init; } = CustomSource;
     }
 
-    public sealed class RawPrintRequest
+    public sealed class RawPrintRequest(
+        bool Input,
+        List<byte> PrintData)
     {
-        public RawPrintRequest(bool Input,
-                               List<byte> PrintData)
-        {
-            this.Input = Input;
-            this.PrintData = PrintData;
-        }
 
         /// <summary>
         /// If ture. input data from the device is expected in response to sending the raw data, otherwise false
         /// </summary>
-        public bool Input { get; init; }
+        public bool Input { get; init; } = Input;
         /// <summary>
         /// Dynamic field values to be printed
         /// </summary>
-        public List<byte> PrintData { get; init; }
+        public List<byte> PrintData { get; init; } = PrintData;
     }
 
     public sealed class RawPrintResult : DeviceResult
@@ -714,38 +625,18 @@ namespace XFS4IoTFramework.Printer
         /// RetractResult
         /// Return result of retract operation
         /// </summary>
-        public RawPrintResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PrintRawCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public RawPrintResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            PrintRawCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Data = null;
         }
-        public RawPrintResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              List<byte> Data)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Data = Data;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RawPrintResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PrintRawCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Data = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RawPrintResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              List<byte> Data)
+        public RawPrintResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> Data)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -766,77 +657,64 @@ namespace XFS4IoTFramework.Printer
     /// <summary>
     /// Image information class can be used for the PrintToImage method for the device class in the ExecutePrintTasksAsync
     /// </summary>
-    public sealed class ImageInfo
+    public sealed class ImageInfo(
+        int OffsetX,
+        int OffsetY,
+        ImageData Data)
     {
-        public ImageInfo(int OffsetX,
-                         int OffsetY,
-                         ImageData Data)
-        {
-            this.OffsetX = OffsetX;
-            this.OffsetY = OffsetY;
-            this.Data = Data;
-        }
 
         /// <summary>
         /// X Offset of bitmap relative to left of media
         /// </summary>
-        public int OffsetX { get; init; }
+        public int OffsetX { get; init; } = OffsetX;
 
         /// <summary>
         /// Y Offset of bitmap relative to top of media
         /// </summary>
-        public int OffsetY { get; init; }
+        public int OffsetY { get; init; } = OffsetY;
 
         /// <summary>
         /// Image data
         /// </summary>
-        public ImageData Data { get; init; }
+        public ImageData Data { get; init; } = Data;
     }
 
     /// <summary>
     /// Image data information stored
     /// </summary>
-    public sealed class ImageData
+    public sealed class ImageData(
+        int Width,
+        int Height,
+        int BitCount,
+        int Stride,
+        List<uint> Palette,
+        List<byte> Data)
     {
-        public ImageData(int Width,
-                         int Height,
-                         int BitCount,
-                         int Stride,
-                         List<uint> Palette,
-                         List<byte> Data)
-        {
-            this.Width = Width;
-            this.Height = Height;
-            this.BitCount = BitCount;
-            this.Stride = Stride;
-            this.Palette = Palette;
-            this.Data = Data;
-        }
 
         /// <summary>
         /// Height of image relative to left of media
         /// </summary>
-        public int Height { get; init; }
+        public int Height { get; init; } = Height;
 
         /// <summary>
         /// Width of image relative to top of media
         /// </summary>
-        public int Width { get; init; }
+        public int Width { get; init; } = Width;
 
         /// <summary>
         /// Bit count is representing how many bits required for one pixel. i.e. 1 for 2 color black and white
         /// </summary>
-        public int BitCount { get; init; }
+        public int BitCount { get; init; } = BitCount;
 
         /// <summary>
         /// Number of bytes in a row
         /// </summary>
-        public int Stride { get; init; }
+        public int Stride { get; init; } = Stride;
 
         /// <summary>
         /// List of indexed color to be mapped
         /// </summary>
-        public List<uint> Palette { get; init; }
+        public List<uint> Palette { get; init; } = Palette;
 
         /// <summary>
         /// Image data
@@ -845,14 +723,15 @@ namespace XFS4IoTFramework.Printer
         /// with the first scan in memory being the bottommost scan in the image. if the device needs to have format first scanline to be topmost, 
         /// need to re-order bit format to suits your printer device.
         /// </summary>
-        public List<byte> Data { get; init; }
+        public List<byte> Data { get; init; } = Data;
     }
 
     /// <summary>
     /// This class is used to validate form, field or media
     /// </summary>
-    public sealed class ValidationResultClass(ValidationResultClass.ValidateResultEnum Result,
-                                              string Reason = null)
+    public sealed class ValidationResultClass(
+        ValidationResultClass.ValidateResultEnum Result,
+        string Reason = null)
     {
         /// <summary>
         /// Result of validation for the media

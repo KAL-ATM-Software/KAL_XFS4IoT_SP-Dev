@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -51,13 +51,14 @@ namespace XFS4IoTFramework.Keyboard
 
             Logger.Log(Constants.DeviceClass, "KeyboardDev.PinEntry()");
 
-            var result = await Device.PinEntry(new KeyboardCommandEvents(events), 
-                                               new(pinEntry.Payload.MinLen is null ? 0 : (int)pinEntry.Payload.MinLen,
-                                                   pinEntry.Payload.MaxLen is null ? 0 : (int)pinEntry.Payload.MaxLen,
-                                                   pinEntry.Payload.AutoEnd is not null && (bool)pinEntry.Payload.AutoEnd,
-                                                   pinEntry.Payload.Echo,
-                                                   keys), 
-                                               cancel);
+            var result = await Device.PinEntry(
+                new KeyboardCommandEvents(events), 
+                new(pinEntry.Payload.MinLen is null ? 0 : (int)pinEntry.Payload.MinLen,
+                    pinEntry.Payload.MaxLen is null ? 0 : (int)pinEntry.Payload.MaxLen,
+                    pinEntry.Payload.AutoEnd is not null && (bool)pinEntry.Payload.AutoEnd,
+                    pinEntry.Payload.Echo,
+                    keys), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyboardDev.PinEntry() -> {result.CompletionCode}, {result.ErrorCode}");
 

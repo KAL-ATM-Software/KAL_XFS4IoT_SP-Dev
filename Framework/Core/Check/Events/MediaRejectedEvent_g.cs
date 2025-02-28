@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -58,7 +58,7 @@ namespace XFS4IoT.Check.Events
             /// * ```transport``` - The media could not be moved inside the device.
             /// * ```shutter``` - The media was rejected due to the shutter failing to close.
             /// * ```removed``` - The media was removed (no [Check.MediaTakenEvent](#check.mediatakenevent) is expected).
-            /// * ```metal``` - Metal (e.g. staple, paperclip, etc) was detected in the input position.
+            /// * ```metal``` - Metal (e.g. staple, paperclip, etc.) was detected in the input position.
             /// * ```foreignItems``` - Foreign items were detected in the input position.
             /// * ```other``` - The item was rejected for some reason not covered by the other reasons.
             /// <example>metal</example>

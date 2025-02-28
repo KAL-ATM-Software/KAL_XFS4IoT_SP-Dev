@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -84,15 +84,15 @@ namespace XFS4IoTFramework.Check
 
                 count = new(
                     ItemsReturned: result.MediaInEndCount.ItemsReturned < 0 ?
-                        null :
-                        result.MediaInEndCount.ItemsReturned,
+                    null :
+                    result.MediaInEndCount.ItemsReturned,
                     ItemsRefused: result.MediaInEndCount.ItemsRefused < 0 ?
-                        null :
-                        result.MediaInEndCount.ItemsRefused,
+                    null :
+                    result.MediaInEndCount.ItemsRefused,
                     BunchesRefused: result.MediaInEndCount.BunchesRefused < 0 ?
-                        null :
-                        result.MediaInEndCount.BunchesRefused,
-                        Storage: units is null ?
+                    null :
+                    result.MediaInEndCount.BunchesRefused,
+                    Storage: units is null ?
                     null :
                     new(units));
             }

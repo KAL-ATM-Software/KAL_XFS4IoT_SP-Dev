@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -43,8 +43,7 @@ namespace XFS4IoT.Printer.Commands
             public string FormName { get; init; }
 
             /// <summary>
-            /// The name of the field about which to retrieve details. If not specified, then details are retrieved for all
-            /// fields on the form.
+            /// The field name. If null, all fields on the form are retrieved.
             /// <example>Field 3</example>
             /// </summary>
             [DataMember(Name = "fieldName")]

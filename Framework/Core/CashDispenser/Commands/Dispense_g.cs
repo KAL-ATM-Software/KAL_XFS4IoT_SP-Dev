@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.CashDispenser.Commands
 {
     //Original name = Dispense
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "CashDispenser.Dispense")]
     public sealed class DispenseCommand : Command<DispenseCommand.PayloadData>
     {
@@ -83,15 +83,10 @@ namespace XFS4IoT.CashDispenser.Commands
             /// The actual amount dispensed will be given by the denomination. The value in the token MUST be
             /// greater or equal to the amount in the *denomination* property. If the Token has a lower value,
             /// or the Token is invalid for any reason, then the command will fail with an invalid data error code.
-            /// 
-            /// Example token is as follows:
-            /// 
-            /// ```
-            /// NONCE=254611E63B2531576314E86527338D61,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=50.00EUR,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2
-            /// ```
-            /// <example>NONCE=254611E63B2531576314E86527338D61, ...</example>
+            /// <example>NONCE=254611E63B2531576314E86527338D61,TOKENFORMAT=1,TOKENLENGTH=0164,DISPENSE1=50.00EUR,HMACSHA256=CB735612FD6141213C2827FB5A6A4F4846D7A7347B15434916FEA6AC16F3D2F2</example>
             /// </summary>
             [DataMember(Name = "token")]
+            [DataTypes(Pattern = @"^(?=[!-~]{0,1024}$)NONCE=[0-9A-F]+,TOKENFORMAT=1,TOKENLENGTH=[0-9]{4},(?:[A-Z0-9]+=[^,=]+?,)+HMACSHA256=[0-9A-F]{64}$")]
             public string Token { get; init; }
 
         }

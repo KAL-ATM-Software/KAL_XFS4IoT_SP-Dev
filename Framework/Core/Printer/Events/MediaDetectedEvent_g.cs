@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Events
 {
 
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Event(Name = "Printer.MediaDetectedEvent")]
     public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
     {
@@ -44,13 +44,12 @@ namespace XFS4IoT.Printer.Events
             /// * ```jammed``` - The media is jammed in the device.
             /// * ```unknown``` - The media is in an unknown position.
             /// * ```expelled``` - The media was expelled during the reset operation.
-            /// * ```unit&lt;retract bin number&gt;``` - Media was retracted to the retract bin specified. The bin number
-            /// is between 1 and the [number of bins](#common.capabilities.completion.properties.printer.retractbins)
-            /// supported by this device.
+            /// * ```[storage unit identifier]``` - Media was retracted to a storage unit as specified by
+            ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit2</example>
             /// </summary>
             [DataMember(Name = "position")]
-            [DataTypes(Pattern = @"^present$|^entering$|^jammed$|^unknown$|^expelled$|^unit[0-9]+$")]
+            [DataTypes(Pattern = @"^present$|^entering$|^jammed$|^unknown$|^expelled$|^unit[0-9A-Za-z]+$")]
             public string Position { get; init; }
 
         }

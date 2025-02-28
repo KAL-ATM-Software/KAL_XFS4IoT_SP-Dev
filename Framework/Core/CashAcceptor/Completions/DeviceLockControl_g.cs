@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,8 +48,8 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// * ```cashInActive``` - A cash-in transaction is active.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```deviceLockFailure``` - The device and/or the storage units specified could not be locked/unlocked,
-            /// e.g., the lock action could not be performed because the storage unit specified to be locked had been
-            /// removed.
+            ///   e.g., the lock action could not be performed because the storage unit specified to be locked had been
+            ///   removed.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

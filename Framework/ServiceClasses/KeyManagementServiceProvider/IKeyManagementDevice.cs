@@ -1,10 +1,9 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ using XFS4IoTFramework.Common;
 using System.Diagnostics;
 using System.Security.Principal;
 using XFS4IoT.Commands;
+using System;
 
 // KAL specific implementation of keymanagement. 
 namespace XFS4IoTFramework.KeyManagement
@@ -78,7 +78,6 @@ namespace XFS4IoTFramework.KeyManagement
         /// </summary>
         Task<InitializationResult> Initialization(InitializationRequest request, 
                                                   CancellationToken cancellation);
-
         /// <summary>
         /// The encryption key in the secure key buffer or passed by the application is loaded in the encryption module.
         /// The key can be passed in clear text mode or encrypted with an accompanying 'key encryption key'. 
@@ -89,14 +88,14 @@ namespace XFS4IoTFramework.KeyManagement
         /// Key parts loaded with the secureConstruct flag can only be stored once as the encryption key in the secure key buffer is no longer available after this command has been executed. 
         /// The construct and secureConstruct construction flags cannot be used in combination. 
         /// </summary>
-        Task<DeriveKeyResult> DeriveKey(DeriveKeyRequest request, 
+        [Obsolete("This method is no longer available in XFS4IoT 2024-2. This interface will be removed after version 4.")]
+        Task<DeriveKeyResult> DeriveKey(DeriveKeyRequest request,
                                         CancellationToken cancellation);
 
         /// <summary>
         /// Sends a service reset to the Service Provider. 
         /// </summary>
         Task<DeviceResult> ResetDevice(CancellationToken cancellation);
-
 
         /// <summary>
         /// This method is used to export data elements from the device, which have been signed by an offline Signature Issuer or

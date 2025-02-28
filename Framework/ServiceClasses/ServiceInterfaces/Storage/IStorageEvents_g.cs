@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,6 +15,8 @@ namespace XFS4IoTFramework.Storage
 {
     public interface IStorageUnsolicitedEvents
     {
+
+        Task CountsChangedEvent(XFS4IoT.Storage.Events.CountsChangedEvent.PayloadData Payload);
 
         Task StorageChangedEvent(XFS4IoT.Storage.Events.StorageChangedEvent.PayloadData Payload);
 

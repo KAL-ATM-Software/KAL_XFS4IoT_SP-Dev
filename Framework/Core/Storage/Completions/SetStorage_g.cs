@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -45,9 +45,9 @@ namespace XFS4IoT.Storage.Completions
             /// 
             /// * ```invalidUnit``` - Invalid unit.
             /// * ```noExchangeActive``` - The device is not in an exchange state and a request has been made to
-            /// modify information which can only be modified in an exchange state.
+            ///   modify information which can only be modified in an exchange state.
             /// * ```storageUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

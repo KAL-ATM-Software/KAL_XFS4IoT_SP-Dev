@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -31,29 +31,23 @@ namespace XFS4IoTFramework.CashManagement
         public List<ItemClassificationClass> ItemClassifications { get; init; }
     }
 
-    public sealed class ItemClassificationClass
+    public sealed class ItemClassificationClass(
+        string SerialNumber,
+        string Currency,
+        double Value,
+        NoteLevelEnum Level)
     {
-        public ItemClassificationClass(string SerialNumber, 
-                                       string Currency,
-                                       double Value, 
-                                       NoteLevelEnum Level)
-        {
-            this.SerialNumber = SerialNumber;
-            this.Currency = Currency;
-            this.Value = Value;
-            this.Level = Level;
-        }
 
         /// <summary>
         /// This string defines the serial number or a mask of serial numbers of one element with the 
         /// defined currency and value.
         /// </summary>
-        public string SerialNumber { get; init; }
+        public string SerialNumber { get; init; } = SerialNumber;
 
         /// <summary>
         /// ISO 4217 currency identifier
         /// </summary>
-        public string Currency { get; init; }
+        public string Currency { get; init; } = Currency;
 
         /// <summary>
         /// Absolute value of a cash item or items. May be a floating point value to allow for coins and notes which have
@@ -61,11 +55,11 @@ namespace XFS4IoTFramework.CashManagement
         /// If applied to a storage unit, this applies to all contents, may be 0 if mixed and may only be modified in
         /// an exchange state if applicable.
         /// </summary>
-        public double Value { get; init; }
+        public double Value { get; init; } = Value;
 
         /// <summary>
         /// Item type
         /// </summary>
-        public NoteLevelEnum Level { get; init; }
+        public NoteLevelEnum Level { get; init; } = Level;
     }
 }

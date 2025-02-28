@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ImportKey
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "KeyManagement.ImportKey")]
     public sealed class ImportKeyCommand : Command<ImportKeyCommand.PayloadData>
     {
@@ -112,7 +112,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// <example>P0</example>
                 /// </summary>
                 [DataMember(Name = "keyUsage")]
-                [DataTypes(Pattern = @"^B[0-2]$|^C0$|^D[0-2]$|^E[0-6]$|^I0$|^K[0-4]$|^M[0-8]$|^P0$|^S[0-2]$|^V[0-4]$|^[0-9][0-9]$")]
+                [DataTypes(Pattern = @"^B[0-3]$|^C0$|^D[0-3]$|^E[0-7]$|^I0$|^K[0-4]$|^M[0-8]$|^P[0-1]$|^S[0-2]$|^V[0-5]$|^[0-9][0-9]$")]
                 public string KeyUsage { get; init; }
 
                 /// <summary>
@@ -153,9 +153,9 @@ namespace XFS4IoT.KeyManagement.Commands
 
                 /// <summary>
                 /// This property should only be included if the
-                /// [keyUsage](#keymanagement.importkey.command.properties.keyattributes.keyusage) is an key encryption
+                /// [keyUsage](#keymanagement.importkey.command.properties.keyattributes.keyusage) is a key encryption
                 /// key usage (K* e.g. 'K0') and the key can only be used as the *decryptKey* for keys with one of the
-                /// following usages:
+                /// following usages if the keyUsage is a key encryption key usage.
                 /// 
                 /// * ```B0``` - BDK Base Derivation Key.
                 /// * ```B1``` - Initial DUKPT key.
@@ -223,10 +223,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Specifies the Base64 encoded value of key to be loaded.
             /// If it is an RSA key the first 4 bytes contain the exponent and the following 128 the modulus.
             /// This property is not required for secure key entry and can be null.
-            /// <example>a2V5IHZhbHVl</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "value")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Value { get; init; }
 
             /// <summary>
@@ -304,10 +304,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// 
             /// This property can be null if no verification is needed before importing the key, the *constructing*
             /// property is true or *value* contains verification data.
-            /// <example>ZGF0YSB0byBiZSB2ZXJp ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "verificationData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> VerificationData { get; init; }
 
             /// <summary>
@@ -335,7 +335,7 @@ namespace XFS4IoT.KeyManagement.Commands
                     KcvZero,
                     SigNone,
                     RsassaPkcs1V15,
-                    RsassaPs
+                    RsassaPss
                 }
 
                 /// <summary>
@@ -367,7 +367,7 @@ namespace XFS4IoT.KeyManagement.Commands
                 /// property can be one of the following values:
                 /// 
                 /// * ```sigNone``` - No signature algorithm specified. No signature verification will take place and
-                /// the content of verificationData is not required.
+                ///   the content of verificationData is not required.
                 /// * ```rsassaPkcs1V15``` - Use the RSASSA-PKCS1-v1.5 algorithm.
                 /// * ```rsassaPss``` - Use the RSASSA-PSS algorithm.
                 /// </summary>

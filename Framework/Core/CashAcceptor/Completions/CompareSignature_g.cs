@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,10 +46,10 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```cashInActive``` - A cash-in transaction is active. This device requires that no cash-in
-            /// transaction is active in order to perform the command.
+            ///   transaction is active in order to perform the command.
             /// * ```exchangeActive``` - The device is in the exchange state.
             /// * ```invalidReferenceSignature``` - At least one of the reference signatures is invalid. The application should
-            /// prompt the operator to carefully retry the creation of the reference signatures.
+            ///   prompt the operator to carefully retry the creation of the reference signatures.
             /// * ```invalidTransactionSignature``` - At least one of the transaction signatures is invalid.
             /// </summary>
             [DataMember(Name = "errorCode")]

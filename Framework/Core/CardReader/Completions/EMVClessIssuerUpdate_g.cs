@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.CardReader.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "CardReader.EMVClessIssuerUpdate")]
     public sealed class EMVClessIssuerUpdateCompletion : Completion<EMVClessIssuerUpdateCompletion.PayloadData>
     {
@@ -45,7 +45,7 @@ namespace XFS4IoT.CardReader.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```noMedia``` - The card was removed before completion of the read action.
-            /// * ```invalidMedia``` - No track or chip found or card tapped cannot be used with this command (e.g.
+            /// * ```invalidMedia``` - No track or chip found or card tapped cannot be used with this command (e.g.,
             ///   contactless storage cards or a different card than what was used to complete the
             ///   [CardReader.EMVClessPerformTransaction](#cardreader.emvclessperformtransaction) command).
             /// * ```transactionNotInitiated``` - This command was issued before calling the

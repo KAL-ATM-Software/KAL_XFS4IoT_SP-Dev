@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Check.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Check.RetractMedia")]
     public sealed class RetractMediaCompletion : Completion<RetractMediaCompletion.PayloadData>
     {
@@ -75,7 +75,7 @@ namespace XFS4IoT.Check.Completions
                 /// Contains the number of media items retracted as a result of this command. The following values
                 /// are possible:
                 /// 
-                ///   * ```&lt;number&gt;``` - The number of items retracted.
+                ///   * ```[number]``` - The number of items retracted.
                 ///   * ```unknown``` - The number of items is unknown.
                 /// <example>1</example>
                 /// </summary>
@@ -90,8 +90,8 @@ namespace XFS4IoT.Check.Completions
                 /// 
                 /// * ```stacker``` - The device stacker.
                 /// * ```transport``` - The device transport.
-                /// * ```rebuncher``` - The device rebuncher.
-                /// * ```&lt;storage unit identifier&gt;``` - A storage unit as specified by
+                /// * ```rebuncher``` - The device re-buncher.
+                /// * ```[storage unit identifier]``` - A storage unit as specified by
                 ///   [identifier](#storage.getstorage.completion.properties.storage.unit1).
                 /// <example>rebuncher</example>
                 /// </summary>

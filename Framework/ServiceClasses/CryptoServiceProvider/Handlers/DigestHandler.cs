@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,13 +47,15 @@ namespace XFS4IoTFramework.Crypto
 
             Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateDigest()");
 
-            var result = await Device.GenerateDigest(new GenerateDigestRequest(digest.Payload.HashAlgorithm switch
-                                                                               {
-                                                                                   DigestCommand.PayloadData.HashAlgorithmEnum.Sha1=> HashAlgorithmEnum.SHA1,
-                                                                                   _ => HashAlgorithmEnum.SHA256 
-                                                                               }, 
-                                                                               digest.Payload.Data),
-                                                     cancel);
+            var result = await Device.GenerateDigest(
+                new GenerateDigestRequest(
+                    digest.Payload.HashAlgorithm switch
+                    {
+                        DigestCommand.PayloadData.HashAlgorithmEnum.Sha1=> HashAlgorithmEnum.SHA1,
+                        _ => HashAlgorithmEnum.SHA256 
+                    }, 
+                    digest.Payload.Data),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateDigest() -> {result.CompletionCode}, {result.ErrorCode}");
 

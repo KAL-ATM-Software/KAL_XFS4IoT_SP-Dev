@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -21,9 +21,7 @@ namespace XFS4IoTFramework.Lights
 
         private async Task<CommandResult<SetLightCompletion.PayloadData>> HandleSetLight(ISetLightEvents events, SetLightCommand setLight, CancellationToken cancel)
         {
-            if ((setLight.Payload.ExtendedProperties is null ||
-                 setLight.Payload.ExtendedProperties.Count == 0) &&
-                setLight.Payload.NotesDispenser is null &&
+            if (setLight.Payload.NotesDispenser is null &&
                 setLight.Payload.NotesDispenser2 is null &&
                 setLight.Payload.BillAcceptor is null &&
                 setLight.Payload.BillAcceptor2 is null &&
@@ -52,7 +50,7 @@ namespace XFS4IoTFramework.Lights
                     $"No light component specified.");
             }
 
-            Dictionary<LightsCapabilitiesClass.DeviceEnum, LightsStatusClass.LightOperation> stdLights = new();
+            Dictionary<LightsCapabilitiesClass.DeviceEnum, List<LightsStatusClass.LightOperation>> stdLights = [];
             if (setLight.Payload.NotesDispenser is not null)
             {
                 if (!Common.LightsCapabilities.Lights.ContainsKey(LightsCapabilitiesClass.DeviceEnum.NotesDispenser))
@@ -61,48 +59,61 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser}");
                 }
+                
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.NotesDispenser)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
 
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.NotesDispenser,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.NotesDispenser.Position switch
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.NotesDispenser.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.NotesDispenser.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.NotesDispenser.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.NotesDispenser, operations);
             }
             if (setLight.Payload.NotesDispenser2 is not null)
             {
@@ -112,47 +123,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.NotesDispenser2}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.BillAcceptor2,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.NotesDispenser2.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.NotesDispenser2)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.NotesDispenser2.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.NotesDispenser2.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.NotesDispenser2.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.NotesDispenser2, operations);
             }
             if (setLight.Payload.BillAcceptor is not null)
             {
@@ -163,47 +187,60 @@ namespace XFS4IoTFramework.Lights
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor}");
                 }
 
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.BillAcceptor,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.BillAcceptor.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.BillAcceptor)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.BillAcceptor.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.BillAcceptor.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.BillAcceptor.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.BillAcceptor, operations);
             }
             if (setLight.Payload.BillAcceptor2 is not null)
             {
@@ -213,47 +250,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.BillAcceptor2}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.BillAcceptor2,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.BillAcceptor2.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.BillAcceptor2)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.BillAcceptor2.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.BillAcceptor2.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.BillAcceptor2.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.BillAcceptor2, operations);
             }
             if (setLight.Payload.CardReader is not null)
             {
@@ -263,47 +313,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.CardReader,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.CardReader.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.CardReader)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.CardReader.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.CardReader.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.CardReader.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+                    
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.CardReader, operations);
             }
             if (setLight.Payload.CardReader2 is not null)
             {
@@ -313,47 +376,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CardReader2}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.CardReader2,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.CardReader2.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.CardReader2)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.CardReader2.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.CardReader2.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.CardReader2.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.CardReader2, operations);
             }
             if (setLight.Payload.Scanner is not null)
             {
@@ -363,47 +439,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Scanner}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.Scanner,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.Scanner.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.Scanner)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.Scanner.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.Scanner.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.Scanner.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.Scanner, operations);
             }
             if (setLight.Payload.PassbookPrinter is not null)
             {
@@ -413,47 +502,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PassbookPrinter}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.PassbookPrinter,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.PassbookPrinter.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.PassbookPrinter)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.PassbookPrinter.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.PassbookPrinter.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.PassbookPrinter.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.PassbookPrinter, operations);
             }
             if (setLight.Payload.PinPad is not null)
             {
@@ -463,47 +565,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.PinPad}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.PinPad,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.PinPad.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.PinPad)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.PinPad.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.PinPad.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.PinPad.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.PinPad, operations);
             }
             if (setLight.Payload.Contactless is not null)
             {
@@ -513,47 +628,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.Contactless}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.Contactless,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.Contactless.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.Contactless)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.Contactless.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.Contactless.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.Contactless.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.Contactless, operations);
             }
             if (setLight.Payload.CoinAcceptor is not null)
             {
@@ -563,47 +691,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinAcceptor}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.CoinAcceptor,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.CoinAcceptor.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.CoinAcceptor)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.CoinAcceptor.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.CoinAcceptor.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.CoinAcceptor.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.CoinAcceptor, operations);
             }
             if (setLight.Payload.CoinDispenser is not null)
             {
@@ -613,47 +754,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CoinDispenser}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.CoinDispenser,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.CoinDispenser.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.CoinDispenser)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.CoinDispenser.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.CoinDispenser.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.CoinDispenser.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.CoinDispenser, operations);
             }
             if (setLight.Payload.ReceiptPrinter is not null)
             {
@@ -663,47 +817,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.ReceiptPrinter.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.ReceiptPrinter)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.ReceiptPrinter.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.ReceiptPrinter.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.ReceiptPrinter.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.ReceiptPrinter, operations);
             }
             if (setLight.Payload.DocumentPrinter is not null)
             {
@@ -713,47 +880,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.DocumentPrinter}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.DocumentPrinter,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.DocumentPrinter.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.DocumentPrinter)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.DocumentPrinter.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.DocumentPrinter.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.DocumentPrinter.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.DocumentPrinter, operations);
             }
             if (setLight.Payload.EnvelopeDepository is not null)
             {
@@ -763,47 +943,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.EnvelopeDepository.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.EnvelopeDepository)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.EnvelopeDepository.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.EnvelopeDepository.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.EnvelopeDepository.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.EnvelopeDepository, operations);
             }
             if (setLight.Payload.EnvelopeDispenser is not null)
             {
@@ -813,47 +1006,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.EnvelopeDispenser.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.EnvelopeDispenser)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.EnvelopeDispenser.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.EnvelopeDispenser.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.EnvelopeDispenser.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+                
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.EnvelopeDispenser, operations);
             }
             if (setLight.Payload.StatusBad is not null)
             {
@@ -863,47 +1069,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.StatusBad.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.StatusBad)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.StatusBad.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.StatusBad.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.StatusBad.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.StatusBadIndicator, operations);
             }
             if (setLight.Payload.StatusGood is not null)
             {
@@ -913,47 +1132,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.StatusGood.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.StatusGood)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.StatusGood.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.StatusGood.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.StatusGood.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.StatusGoodIndicator, operations);
             }
             if (setLight.Payload.StatusWarning is not null)
             {
@@ -963,47 +1195,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.StatusWarning.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.StatusWarning)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.StatusWarning.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.StatusWarning.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.StatusWarning.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.StatusWarningIndicator, operations);
             }
             if (setLight.Payload.StatusSupervisor is not null)
             {
@@ -1013,47 +1258,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.StatusSupervisor.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.StatusSupervisor)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.StatusSupervisor.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.StatusSupervisor.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.StatusSupervisor.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.StatusSupervisorIndicator, operations);
             }
             if (setLight.Payload.StatusInService is not null)
             {
@@ -1063,47 +1321,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.StatusInService.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.StatusInService)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.StatusInService.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.StatusInService.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.StatusInService.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.StatusInServiceIndicator, operations);
             }
             if (setLight.Payload.FasciaLight is not null)
             {
@@ -1113,47 +1384,60 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.FasciaLight}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.FasciaLight,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.FasciaLight.Position switch
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.FasciaLight)
+                {
+                    if (string.IsNullOrEmpty(position.Key))
+                    {
+                        return new(
+                            MessageHeader.CompletionCodeEnum.InvalidData,
+                            $"An empty position name specified.");
+                    }
+
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
                         {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.FasciaLight.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.FasciaLight.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
                             _ => LightsStatusClass.LightOperation.ColourEnum.Default,
                         },
-                        setLight.Payload.FasciaLight.Direction switch
+                        FlashRate: position.Value.FlashRate switch
                         {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
                             _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
+                }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.FasciaLight, operations);
             }
             if (setLight.Payload.CheckUnit is not null)
             {
@@ -1163,105 +1447,65 @@ namespace XFS4IoTFramework.Lights
                         MessageHeader.CompletionCodeEnum.InvalidData,
                         $"Unsupported light specified. {LightsCapabilitiesClass.DeviceEnum.CheckUnit}");
                 }
-                stdLights.Add(
-                    LightsCapabilitiesClass.DeviceEnum.CheckUnit,
-                    new LightsStatusClass.LightOperation
-                    (
-                        setLight.Payload.CheckUnit.Position switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                            XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                            _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                        },
-                        setLight.Payload.CheckUnit.FlashRate switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                            XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                        },
-                        setLight.Payload.CheckUnit.Color switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                            XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
-                            _ => LightsStatusClass.LightOperation.ColourEnum.Default,
-                        },
-                        setLight.Payload.CheckUnit.Direction switch
-                        {
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                            XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
-                            _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                        }
-                    ));
-            }
-
-            Dictionary<string, LightsStatusClass.LightOperation> customLights = null;
-            if (setLight.Payload.ExtendedProperties?.Count > 0)
-            {
-                customLights = [];
-                foreach (var custom in setLight.Payload.ExtendedProperties)
+                List<LightsStatusClass.LightOperation> operations = [];
+                foreach (var position in setLight.Payload.CheckUnit)
                 {
-
-                    if (!Common.LightsCapabilities.CustomLights.ContainsKey(custom.Key))
+                    if (string.IsNullOrEmpty(position.Key))
                     {
                         return new(
                             MessageHeader.CompletionCodeEnum.InvalidData,
-                            $"Unsupported custom light specified. {custom.Key}");
+                            $"An empty position name specified.");
                     }
 
-                    customLights.Add(custom.Key,
-                        new LightsStatusClass.LightOperation
-                        (
-                            custom.Value.Position switch
-                            {
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Bottom => LightsStatusClass.LightOperation.PositionEnum.Bottom,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Center => LightsStatusClass.LightOperation.PositionEnum.Center,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Front => LightsStatusClass.LightOperation.PositionEnum.Front,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Left => LightsStatusClass.LightOperation.PositionEnum.Left,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Rear => LightsStatusClass.LightOperation.PositionEnum.Rear,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Right => LightsStatusClass.LightOperation.PositionEnum.Right,
-                                XFS4IoT.Lights.LightStateClass.PositionEnum.Top => LightsStatusClass.LightOperation.PositionEnum.Top,
-                                _ => LightsStatusClass.LightOperation.PositionEnum.Default
-                            },
-                            custom.Value.FlashRate switch
-                            {
-                                XFS4IoT.Lights.LightStateClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
-                                XFS4IoT.Lights.LightStateClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
-                                XFS4IoT.Lights.LightStateClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
-                                XFS4IoT.Lights.LightStateClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
-                                _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
-                            },
-                            custom.Value.Color switch
-                            {
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
-                                XFS4IoT.Lights.LightStateClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
-                                _ => LightsStatusClass.LightOperation.ColourEnum.Default,
-                            },
-                            custom.Value.Direction switch
-                            {
-                                XFS4IoT.Lights.LightStateClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
-                                XFS4IoT.Lights.LightStateClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
-                                _ => LightsStatusClass.LightOperation.DirectionEnum.None,
-                            }
-                        ));
+                    var lightPosition = position.Key switch
+                    {
+                        "bottom" => LightsStatusClass.LightOperation.PositionEnum.Bottom,
+                        "center" => LightsStatusClass.LightOperation.PositionEnum.Center,
+                        "front" => LightsStatusClass.LightOperation.PositionEnum.Front,
+                        "left" => LightsStatusClass.LightOperation.PositionEnum.Left,
+                        "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
+                        "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
+                        "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
+                    };
+                    LightsStatusClass.LightOperation operation = new(
+                        Position: lightPosition,
+                        Colour: position.Value.Color switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Blue => LightsStatusClass.LightOperation.ColourEnum.Blue,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Cyan => LightsStatusClass.LightOperation.ColourEnum.Cyan,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Green => LightsStatusClass.LightOperation.ColourEnum.Green,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Magenta => LightsStatusClass.LightOperation.ColourEnum.Magenta,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Red => LightsStatusClass.LightOperation.ColourEnum.Red,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.White => LightsStatusClass.LightOperation.ColourEnum.White,
+                            XFS4IoT.Lights.PositionStatusClass.ColorEnum.Yellow => LightsStatusClass.LightOperation.ColourEnum.Yellow,
+                            _ => LightsStatusClass.LightOperation.ColourEnum.Default,
+                        },
+                        FlashRate: position.Value.FlashRate switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Continuous => LightsStatusClass.LightOperation.FlashRateEnum.Continuous,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Medium => LightsStatusClass.LightOperation.FlashRateEnum.Medium,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Quick => LightsStatusClass.LightOperation.FlashRateEnum.Quick,
+                            XFS4IoT.Lights.PositionStatusClass.FlashRateEnum.Slow => LightsStatusClass.LightOperation.FlashRateEnum.Slow,
+                            _ => LightsStatusClass.LightOperation.FlashRateEnum.Off,
+                        },
+                        Direction: position.Value.Direction switch
+                        {
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Entry => LightsStatusClass.LightOperation.DirectionEnum.Entry,
+                            XFS4IoT.Lights.PositionStatusClass.DirectionEnum.Exit => LightsStatusClass.LightOperation.DirectionEnum.Exit,
+                            _ => LightsStatusClass.LightOperation.DirectionEnum.None,
+                        },
+                        CustomPosition: lightPosition == LightsStatusClass.LightOperation.PositionEnum.Custom ? position.Key : null);
+
+                    operations.Add(operation);
                 }
+
+                stdLights.Add(LightsCapabilitiesClass.DeviceEnum.CheckUnit, operations);
             }
+
+            Dictionary<string, List<LightsStatusClass.LightOperation>> customLights = null;
+            // CUSTOM LIGHTS IS NOT SUPPORTED BY CONVERTER NEED A FIX
+
             Logger.Log(Constants.DeviceClass, "LightsDev.SetLightAsync()");
             var result = await Device.SetLightAsync(new SetLightRequest(stdLights, customLights),
                                                     cancel);

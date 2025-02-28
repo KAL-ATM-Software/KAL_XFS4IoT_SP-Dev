@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -14,41 +14,30 @@ using XFS4IoT;
 
 namespace XFS4IoTFramework.PinPad
 {
-    public sealed class VerifyPINLocalDESRequest
+    public sealed class VerifyPINLocalDESRequest(
+        string ValidationData,
+        string Offset,
+        byte Padding,
+        int MaxPIN,
+        int ValDigits,
+        bool NoLeadingZero,
+        string KeyName,
+        string KeyEncKeyName,
+        string DecTable)
     {
-        public VerifyPINLocalDESRequest(string ValidationData,
-                                        string Offset,
-                                        byte Padding,
-                                        int MaxPIN,
-                                        int ValDigits,
-                                        bool NoLeadingZero,
-                                        string KeyName,
-                                        string KeyEncKeyName,
-                                        string DecTable)
-        {
-            this.ValidationData = ValidationData;
-            this.Offset = Offset;
-            this.Padding = Padding;
-            this.MaxPIN = MaxPIN;
-            this.ValDigits = ValDigits;
-            this.NoLeadingZero = NoLeadingZero;
-            this.KeyName = KeyName;
-            this.KeyEncKeyName = KeyEncKeyName;
-            this.DecTable = DecTable;
-        }
 
         /// <summary>
         /// Customer specific data (normally obtained from card track data) used to validate the correctness of the PIN. 
         /// The validation data should be an ASCII string.
         /// </summary>
-        public string ValidationData { get; init; }
+        public string ValidationData { get; init; } = ValidationData;
 
         /// <summary>
         /// ASCII string defining the offset data for the PIN block as an ASCII string.
         /// if this property is omitted then no offset is used.
         /// The character must be in the ranges ‘0’ to ‘9’, ‘a’ to ‘f’ and ‘A’ to ‘F’
         /// </summary>
-        public string Offset { get; init; }
+        public string Offset { get; init; } = Offset;
 
         /// <summary>
         /// Specifies the padding character for the validation data. 
@@ -56,43 +45,43 @@ namespace XFS4IoTFramework.PinPad
         /// If padding is in the range 00 to 0F in 16 character string, padding is applied after the validation data has been compressed. 
         /// The valid range is 0 to 15.
         /// </summary>
-        public byte Padding { get; init; }
+        public byte Padding { get; init; } = Padding;
 
         /// <summary>
         /// Maximum number of PIN digits to be used for validation.
         /// This parameter corresponds to PINMINL in the IBM 3624 specification.
         /// </summary>
-        public int MaxPIN { get; init; }
+        public int MaxPIN { get; init; } = MaxPIN;
 
         /// <summary>
         /// Number of Validation digits from the validation data to be used for validation.
         /// This is the length of the *validationData*.
         /// </summary>
-        public int ValDigits { get; init; }
+        public int ValDigits { get; init; } = ValDigits;
 
         /// <summary>
         /// If set to TRUE and the first digit of result of the modulo 10 addition is a 0x0, it is replaced with 0x1 before performing the 
         /// verification against the entered PIN. If set to FALSE, a leading zero is allowed in entered PINs.
         /// </summary>
-        public bool NoLeadingZero { get; init; }
+        public bool NoLeadingZero { get; init; } = NoLeadingZero;
 
         /// <summary>
         /// Name of the key to be used for validation. 
         /// The key referenced by key must have the 'V0' attribute.
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// If this property is null or empty string, key is used directly for PIN validation.
         /// Otherwise, key is used to decrypt the encrypted key used for PIN validation.
         /// </summary>
-        public string KeyEncKeyName { get; init; }
+        public string KeyEncKeyName { get; init; } = KeyEncKeyName;
 
         /// <summary>
         /// ASCII decimalization table (16 character string containing characters '0' to '9'). 
         /// This table is used to convert the hexadecimal digits (0x0 to 0xF) of the encrypted validation data to decimal digits (0x0 to 0x9).
         /// </summary>
-        public string DecTable { get; init; }
+        public string DecTable { get; init; } = DecTable;
 
     }
 
@@ -109,40 +98,20 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public VerifyPINLocalResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    ErrorCodeEnum? ErrorCode = null)
+        public VerifyPINLocalResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Verified = false;
         }
 
-        public VerifyPINLocalResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                      bool Verified)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Verified = Verified;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public VerifyPINLocalResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Verified = false;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public VerifyPINLocalResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      bool Verified)
-                : base(CompletionCode, null)
+        public VerifyPINLocalResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            bool Verified)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.Verified = Verified;
@@ -156,45 +125,46 @@ namespace XFS4IoTFramework.PinPad
         public bool Verified { get; init; }
     }
 
-    public sealed class VerifyPINLocalVISARequest
+    public sealed class VerifyPINLocalVISARequest(
+        string CustomerData,
+        string PINValidationValue,
+        string KeyName,
+        List<byte> KeyEncryptionKey)
     {
-        public VerifyPINLocalVISARequest(string CustomerData,
-                                         string PINValidationValue,
-                                         string KeyName,
-                                         List<byte> KeyEncryptionKey)
-        {
-            this.CustomerData = CustomerData;
-            this.PINValidationValue = PINValidationValue;
-            this.KeyName = KeyName;
-            this.KeyEncryptionKey = KeyEncryptionKey;
-        }
 
         /// <summary>
         /// Primary Account Number from track data, as an ASCII string. 
         /// PAN should contain the eleven rightmost digits of the PAN (excluding the check digit ), 
         /// followed by the pvki indicator in the 12th byte.
         /// </summary>
-        public string CustomerData { get; init; }
+        public string CustomerData { get; init; } = CustomerData;
 
         /// <summary>
         /// PIN Validation Value from track data. The valid range is '0' to '9'. 
         /// This string should contain 4 digits. 
         /// </summary>
-        public string PINValidationValue { get; init; }
+        public string PINValidationValue { get; init; } = PINValidationValue;
 
         /// <summary>
         /// Name of the validation key. The key referenced by key must have the 'V2' attribute.
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// If this value is an empry list, KeyName property is used directly for PIN validation. Otherwise, KeyName property is used to
         /// decrypt the encrypted key passed in KeyEncryptionKey property and the result is used for PIN validation.
         /// </summary>
-        public List<byte> KeyEncryptionKey { get; init; }
+        public List<byte> KeyEncryptionKey { get; init; } = KeyEncryptionKey;
     }
 
-    public sealed class PINBlockRequest
+    public sealed class PINBlockRequest(
+        string CustomerData,
+        string XorData,
+        byte Padding,
+        PINBlockRequest.PINFormatEnum Format,
+        string KeyName,
+        string SecondEncKeyName,
+        PINBlockRequest.EncryptionAlgorithmEnum EncryptionAlgorithm)
     {
         public enum PINFormatEnum
         {
@@ -226,23 +196,6 @@ namespace XFS4IoTFramework.PinPad
             RSAES_OAEP
         }
 
-        public PINBlockRequest(string CustomerData,
-                               string XorData,
-                               byte Padding,
-                               PINFormatEnum Format,
-                               string KeyName,
-                               string SecondEncKeyName,
-                               EncryptionAlgorithmEnum EncryptionAlgorithm)
-        {
-            this.CustomerData = CustomerData;
-            this.XorData = XorData;
-            this.Padding = Padding;
-            this.Format = Format;
-            this.KeyName = KeyName;
-            this.SecondEncKeyName = SecondEncKeyName;
-            this.EncryptionAlgorithm = EncryptionAlgorithm;
-        }
-
         /// <summary>
         /// The customer data should be an ASCII string. Used for ANSI, ISO-0 and ISO-1 algorithm to build the formatted PIN. 
         /// For ANSI and ISO-0 the PAN (Primary Account Number, without the check number) is supplied, for ISO-1 a ten digit 
@@ -252,7 +205,7 @@ namespace XFS4IoTFramework.PinPad
         /// 0x38 0x39 0x41 0x42 0x43 0x44 0x45 0x46 For AP PIN blocks, the data must be a concatenation of the PAN (18 digits 
         /// including the check digit), and the CCS (8 digits).
         /// </summary>
-        public string CustomerData { get; init; }
+        public string CustomerData { get; init; } = CustomerData;
 
         /// <summary>
         /// If the formatted PIN is encrypted twice to build the resulting PIN block, this data can be used to modify the result 
@@ -262,13 +215,13 @@ namespace XFS4IoTFramework.PinPad
         /// The hex digits 0xA to 0xF can be represented by characters in the ranges ‘a’ to ‘f’ or ‘A’ to ‘F’. If this value is omitted 
         /// no XOR-operation will be performed. If the formatted PIN is not encrypted twice, this value is ignored.
         /// </summary>
-        public string XorData { get; init; }
+        public string XorData { get; init; } = XorData;
 
         /// <summary>
         /// Specifies the padding character. The valid range is 0 to 15. 
         /// Only the least significant nibble is used. This property is ignored for PIN block formats with fixed, sequential or random padding.
         /// </summary>
-        public byte Padding { get; init; }
+        public byte Padding { get; init; } = Padding;
 
         /// <summary>
         /// Specifies the format of the PIN block.
@@ -295,23 +248,23 @@ namespace XFS4IoTFramework.PinPad
         /// * ```AP``` - PIN is formatted according to the Italian Bancomat specifications. It is known as the Authentication Parameter PIN block and is created with a
         /// 5 digit PIN, an 18 digit PAN, and the 8 digit CCS from the track data. 
         /// </summary>
-        public PINFormatEnum Format { get; init; }
+        public PINFormatEnum Format { get; init; } = Format;
 
         /// <summary>
         /// Specifies the key used to encrypt the formatted PIN for the first time, this property is not required if no encryption is required. 
         /// If this specifies a double-length or triple-length key, triple DES encryption will be performed. 
         /// If this specifies an RSA key, RSA encryption will be performed
         /// </summary>
-        public string KeyName { get; init; }
+        public string KeyName { get; init; } = KeyName;
 
         /// <summary>
         /// Specifies the _key_ used to format the once encrypted formatted PIN, this property can be omitted if no second encryption required. 
         /// The key referenced by _secondEncKey_ must have the keyUsage 'P0' attribute. 
         /// If this specifies a double-length or triple-length key, triple DES encryption will be performed.
         /// </summary>
-        public string SecondEncKeyName { get; init; }
+        public string SecondEncKeyName { get; init; } = SecondEncKeyName;
 
-       
+
         /// <summary>
         /// This parameter specifies the cryptographic method [cryptomethod](#common.capabilities.completion.properties.pinpad.pinblockattributes.p0.t.e.cryptomethod) that will be used with the encryption algorithm.
         /// If the algorithm is ['A', 'D', or 'T'](#common.capabilities.completion.properties.pinpad.pinblockattributes.p0.t), then this property can be one of the following values:" 
@@ -328,7 +281,7 @@ namespace XFS4IoTFramework.PinPad
         /// * ```RSAES_PKCS1-V1.5``` - Use the RSAES_PKCS1-v1.5 algorithm. 
         /// * ```RSAES_OAEP``` - Use the RSAES OAEP algorithm.
         /// </summary>
-        public EncryptionAlgorithmEnum EncryptionAlgorithm { get; init; }
+        public EncryptionAlgorithmEnum EncryptionAlgorithm { get; init; } = EncryptionAlgorithm;
     }
 
     public sealed class PINBlockResult : DeviceResult
@@ -344,40 +297,20 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public PINBlockResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              GetPinBlockCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public PINBlockResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            GetPinBlockCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.PINBlock = null;
         }
 
-        public PINBlockResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              List<byte> PINBlock)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.PINBlock = PINBlock;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PINBlockResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              GetPinBlockCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.PINBlock = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PINBlockResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              List<byte> PINBlock)
-                : base(CompletionCode, null)
+        public PINBlockResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<byte> PINBlock)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.PINBlock = PINBlock;
@@ -391,53 +324,43 @@ namespace XFS4IoTFramework.PinPad
         public List<byte> PINBlock { get; init; }
     }
 
-    public sealed class PresentIDCRequest
+    public sealed class PresentIDCRequest(
+        string ChipProtocol,
+        List<byte> ChipData,
+        PresentIDCRequest.PresentClearClass PresentClear)
     {
-        public PresentIDCRequest(string ChipProtocol,
-                                 List<byte> ChipData,
-                                 PresentClearClass PresentClear)
-        {
-            this.ChipProtocol = ChipProtocol;
-            this.ChipData = ChipData;
-            this.PresentClear = PresentClear;
-        }
         /// <summary>
         /// Identifies the protocol that is used to communicate with the chip. Possible values are: 
         /// (see command [chipProtocols](#common.capabilities.completion.properties.cardreader.chipProtocols) in the Identification Card Device Class Interface)
         /// </summary>
-        public string ChipProtocol { get; init; }
+        public string ChipProtocol { get; init; } = ChipProtocol;
 
         /// <summary>
         /// The Base64 encoded data to be sent to the chip.
         /// </summary>
-        public List<byte> ChipData { get; init; }
+        public List<byte> ChipData { get; init; } = ChipData;
 
-        public sealed class PresentClearClass
+        public sealed class PresentClearClass(int PinPointer, int PinOffset)
         {
-            public PresentClearClass(int PinPointer, int PinOffset)
-            {
-                this.PinPointer = PinPointer;
-                this.PinOffset = PinOffset;
-            }
 
             /// <summary>
             /// The byte offset where to start inserting the PIN into chipData. 
             /// The leftmost byte is numbered zero. See below for an example
             /// </summary>
-            public int PinPointer { get; init; }
+            public int PinPointer { get; init; } = PinPointer;
 
             /// <summary>
             /// The bit offset within the byte specified by *pinPointer* property where to start inserting the PIN. 
             /// The leftmost bit numbered zero.
             /// </summary>
-            public int PinOffset { get; init; }
+            public int PinOffset { get; init; } = PinOffset;
 
         }
 
         /// <summary>
         /// Contains the data required
         /// </summary>
-        public PresentClearClass PresentClear { get; init; }
+        public PresentClearClass PresentClear { get; init; } = PresentClear;
     }
 
     public sealed class PresentIDCResult : DeviceResult
@@ -453,9 +376,10 @@ namespace XFS4IoTFramework.PinPad
             InvalidKeyLength
         }
 
-        public PresentIDCResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PresentIDCCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public PresentIDCResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            PresentIDCCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -463,35 +387,11 @@ namespace XFS4IoTFramework.PinPad
             this.ChipData = null;
         }
 
-        public PresentIDCResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                string ChipProtocol,
-                                List<byte> ChipData)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.ChipProtocol = ChipProtocol;
-            this.ChipData = ChipData;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PresentIDCResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PresentIDCCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.ChipProtocol = string.Empty;
-            this.ChipData = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PresentIDCResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                string ChipProtocol,
-                                List<byte> ChipData)
-                : base(CompletionCode, null)
+        public PresentIDCResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ChipProtocol,
+            List<byte> ChipData)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.ChipProtocol = ChipProtocol;

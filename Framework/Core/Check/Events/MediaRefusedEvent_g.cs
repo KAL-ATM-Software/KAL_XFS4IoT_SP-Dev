@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -65,7 +65,7 @@ namespace XFS4IoT.Check.Events
             /// Specified the reason why the media was refused. Specified as one of the following values:
             /// 
             /// * ```foreignItems``` - Foreign items were detected in the input position.
-            /// * ```stackerFull``` - The stacker is full or the maximum number of items that the application wants to be allowed on the stacker has been reached (see usMaxMediaOnStacker input parameter in the WFS_CMD_IPM_MEDIA_IN command).
+            /// * ```stackerFull``` - The stacker is full or the maximum number of items that the application wants to be allowed on the stacker has been reached.
             /// * ```codelineInvalid``` - The code line data was found but was invalid.
             /// * ```invalidMedia``` - The media item is not a check, and in the case of Mixed Media processing not a cash item either.
             /// * ```tooLong``` - The media item (or bunch of items) long edge was too long.
@@ -81,7 +81,7 @@ namespace XFS4IoT.Check.Events
             /// * ```otherItem``` - The item was refused for some reason not covered by the other reasons.
             /// * ```otherBunch``` - The bunch was refused for some reason not covered by the other reasons.
             /// * ```jamming``` - The media item is causing a jam.
-            /// * ```metal``` - Metal (e.g. staple, paperclip, etc) was detected in the input position.
+            /// * ```metal``` - Metal (e.g. staple, paperclip, etc.) was detected in the input position.
             /// <example>metal</example>
             /// </summary>
             [DataMember(Name = "reason")]
@@ -110,9 +110,9 @@ namespace XFS4IoT.Check.Events
 
             /// <summary>
             /// This indicates whether the media needs to be presented to the customer before any additional media movement
-            /// commands can be executed. If true then the media must be presented to the customer via the
+            /// commands can be executed. If true, then the media must be presented to the customer via the
             /// [Check.PresentMedia](#check.presentmedia) command before further media movement commands can be executed. If
-            /// false then the device can continue without the media being returned to the customer.
+            /// false, then the device can continue without the media being returned to the customer.
             /// <example>true</example>
             /// </summary>
             [DataMember(Name = "presentRequired")]

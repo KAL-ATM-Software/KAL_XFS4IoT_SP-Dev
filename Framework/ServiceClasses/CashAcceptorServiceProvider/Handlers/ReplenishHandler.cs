@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -71,10 +71,12 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.Replenish()");
 
-            var result = await Device.Replenish(new ReplenishCommandEvents(Storage, events),
-                                                new ReplenishRequest(replenish.Payload.Source,
-                                                                     replenish.Payload.ReplenishTargets.ToDictionary(t => t.Target, t => t.NumberOfItemsToMove is null ? 0 : (int)t.NumberOfItemsToMove)),
-                                                cancel);
+            var result = await Device.Replenish(
+                new ReplenishCommandEvents(Storage, events),
+                new ReplenishRequest(
+                    replenish.Payload.Source,
+                    replenish.Payload.ReplenishTargets.ToDictionary(t => t.Target, t => t.NumberOfItemsToMove is null ? 0 : (int)t.NumberOfItemsToMove)),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.Replenish() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -90,9 +92,12 @@ namespace XFS4IoTFramework.CashAcceptor
                     targetResults = [];
                     foreach (var targetResult in result.OperationResult.TargetResults)
                     {
-                        targetResults.Add(new ReplenishCompletion.PayloadData.ReplenishTargetResultsClass(targetResult.Key,
-                                                                                                          targetResult.Value.CashItem,
-                                                                                                          targetResult.Value.NumberOfItemsReceived));
+                        targetResults.Add(
+                            new ReplenishCompletion.PayloadData.ReplenishTargetResultsClass(
+                                targetResult.Key,
+                                targetResult.Value.CashItem,
+                                targetResult.Value.NumberOfItemsReceived)
+                            );
                     }
                 }
 

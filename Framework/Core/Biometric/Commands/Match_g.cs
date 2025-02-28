@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,7 +46,7 @@ namespace XFS4IoT.Biometric.Commands
             /// <summary>
             /// Specifies the type of match operation that is being done. The following values are possible:
             /// 
-            /// * ```verify```\t- The biometric data will be compared as a one-to-one verification operation.
+            /// * ```verify``` - The biometric data will be compared as a one-to-one verification operation.
             /// * ```identity``` - The biometric data will be compared as a one-to-many identification operation.
             /// </summary>
             [DataMember(Name = "compareMode")]

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,9 +53,9 @@ namespace XFS4IoT.KeyManagement.Completions
             ///   previously provided by the device.
             /// * ```keyNoValue``` - A required key was not specified in *authentication.key*.
             /// * ```keyNotFound``` - The key specified in *authentication.key* was not found.
-            /// * ```useViolation``` - The key specified in *authentication.key* can not be used for the specified
+            /// * ```useViolation``` - The key specified in *authentication.key* cannot be used for the specified
             /// *authentication.method*.
-            /// * ```modeOfUseNotSupported``` - The key specified in *authentication.key* can not be used for
+            /// * ```modeOfUseNotSupported``` - The key specified in *authentication.key* cannot be used for
             ///   authentication.
             /// * ```macInvalid``` - The MAC included in *authentication/data* is invalid.
             /// * ```signatureInvalid``` - The signature included in *authentication/data* is invalid.

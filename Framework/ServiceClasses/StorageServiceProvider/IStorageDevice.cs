@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -98,7 +98,7 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// Return cheeck storage information for current configuration and capabilities on the startup.
         /// </summary>
-        /// <returns>Return true if the cash unit configuration or capabilities are changed, otherwise false</returns>
+        /// <returns>Return true if the check storage configuration or capabilities are changed, otherwise false</returns>
         bool GetCheckStorageConfiguration(out Dictionary<string, CheckUnitStorageConfiguration> newCheckUnits);
 
         /// <summary>
@@ -130,6 +130,49 @@ namespace XFS4IoTFramework.Storage
         /// </summary>
         /// <returns>Return operation is completed successfully or not and report updates storage information.</returns>
         Task<SetCheckStorageResult> SetCheckStorageAsync(SetCheckStorageRequest request, CancellationToken cancellation);
+
+        #endregion
+
+        #region Printer
+        /// <summary>
+        /// Return printer storage (retract bin, passbook storage) information for current configuration and capabilities on the startup.
+        /// </summary>
+        /// <returns>Return true if the storage configuration or capabilities are changed, otherwise false</returns>
+        bool GetPrinterStorageConfiguration(out Dictionary<string, PrinterUnitStorageConfiguration> newPrinterUnits);
+
+        /// <summary>
+        /// Return printer storage counts maintained by the device class
+        /// </summary>
+        /// <returns>Return true if the device class maintained counts, otherwise false</returns>
+        bool GetPrinterUnitCounts(out Dictionary<string, PrinterUnitCount> unitCounts);
+
+        /// <summary>
+        /// Return printer storage status (retract bin, passbook storage).
+        /// </summary>
+        /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
+        bool GetPrinterStorageStatus(out Dictionary<string, PrinterUnitStorage.StatusEnum> storageStatus);
+
+        /// <summary>
+        /// Return printer unit status (retract bin, passbook storage) maintained by the device class
+        /// </summary>
+        /// <returns>Return true if the device class uses hardware status, otherwise false</returns>
+        bool GetPrinterUnitStatus(out Dictionary<string, PrinterStatusClass.ReplenishmentStatusEnum> unitStatus);
+
+        /// <summary>
+        /// Set new configuration and counters for printer storage.
+        /// </summary>
+        /// <returns>Return operation is completed successfully or not and report updates storage information.</returns>
+        Task<SetPrinterStorageResult> SetPrinterStorageAsync(SetPrinterStorageRequest request, CancellationToken cancellation);
+
+        #endregion
+
+        #region IBNS
+        /// <summary>
+        /// Return IBNS storage (retract bin, passbook storage) information for current configuration and capabilities on the startup.
+        /// Status object is a reference to report status changes.
+        /// </summary>
+        /// <returns>Return true if the storage configuration or capabilities are changed, otherwise false</returns>
+        bool GetIBNSStorageInfo(out Dictionary<string, IBNSStorageInfo> newIBNSUnits);
 
         #endregion
 

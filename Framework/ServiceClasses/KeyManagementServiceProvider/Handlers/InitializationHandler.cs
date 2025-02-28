@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,20 +53,21 @@ namespace XFS4IoTFramework.KeyManagement
                             $"Specified authentication key doesn't exist. {initialization.Payload.Authentication.Key}");
                     }
 
-                    authData = new AuthenticationData(initialization.Payload.Authentication.Method switch
-                                                      {
-                                                          AuthenticationMethodEnum.Ca => AuthenticationData.SigningMethodEnum.CA,
-                                                          AuthenticationMethodEnum.Cbcmac => AuthenticationData.SigningMethodEnum.CBCMAC,
-                                                          AuthenticationMethodEnum.Certhost => AuthenticationData.SigningMethodEnum.CertHost,
-                                                          AuthenticationMethodEnum.Cmac => AuthenticationData.SigningMethodEnum.CMAC,
-                                                          AuthenticationMethodEnum.Hl => AuthenticationData.SigningMethodEnum.HL,
-                                                          AuthenticationMethodEnum.Reserved1 => AuthenticationData.SigningMethodEnum.Reserved1,
-                                                          AuthenticationMethodEnum.Reserved2 => AuthenticationData.SigningMethodEnum.Reserved2,
-                                                          AuthenticationMethodEnum.Reserved3 => AuthenticationData.SigningMethodEnum.Reserved3,
-                                                          _ => AuthenticationData.SigningMethodEnum.None,
-                                                      },
-                                                      initialization.Payload.Authentication.Key,
-                                                      initialization.Payload.Authentication.Data);
+                    authData = new AuthenticationData(
+                        initialization.Payload.Authentication.Method switch
+                        {
+                            AuthenticationMethodEnum.Ca => AuthenticationData.SigningMethodEnum.CA,
+                            AuthenticationMethodEnum.Cbcmac => AuthenticationData.SigningMethodEnum.CBCMAC,
+                            AuthenticationMethodEnum.Certhost => AuthenticationData.SigningMethodEnum.CertHost,
+                            AuthenticationMethodEnum.Cmac => AuthenticationData.SigningMethodEnum.CMAC,
+                            AuthenticationMethodEnum.Hl => AuthenticationData.SigningMethodEnum.HL,
+                            AuthenticationMethodEnum.Reserved1 => AuthenticationData.SigningMethodEnum.Reserved1,
+                            AuthenticationMethodEnum.Reserved2 => AuthenticationData.SigningMethodEnum.Reserved2,
+                            AuthenticationMethodEnum.Reserved3 => AuthenticationData.SigningMethodEnum.Reserved3,
+                            _ => AuthenticationData.SigningMethodEnum.None,
+                        },
+                        initialization.Payload.Authentication.Key,
+                        initialization.Payload.Authentication.Data);
                 }
             }
 

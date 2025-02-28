@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -41,7 +41,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```exit``` - The card will be moved from the exit position.
             /// * ```transport``` - The card will be moved from the transport position. This is the only value
             ///   applicable to latched dip card readers.
-            /// * ```&lt;storage unit identifier&gt;``` - The card will be moved from the storage unit with matching
+            /// * ```[storage unit identifier]``` - The card will be moved from the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   either *dispense* or *park*.
             /// <example>unit1</example>
@@ -56,7 +56,7 @@ namespace XFS4IoT.CardReader.Commands
             /// * ```exit``` - The card will be moved to the exit. This is the only value applicable to latched dip
             ///   card readers.
             /// * ```transport``` - The card will be moved to the transport just behind the exit slot.
-            /// * ```&lt;storage unit identifier&gt;``` - The card will be moved to the storage unit with matching
+            /// * ```[storage unit identifier]``` - The card will be moved to the storage unit with matching
             ///   [identifier](#storage.getstorage.completion.properties.storage.unit1). The storage unit type must be
             ///   either *retain* or *park*.
             /// <example>exit</example>

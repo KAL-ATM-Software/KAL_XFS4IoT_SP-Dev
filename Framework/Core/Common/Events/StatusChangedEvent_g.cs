@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Common.Events
 {
 
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Event(Name = "Common.StatusChangedEvent")]
     public sealed class StatusChangedEvent : UnsolicitedEvent<StatusChangedEvent.PayloadData>
     {
@@ -30,7 +30,7 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(StatusPropertiesChangedClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
+            public PayloadData(StatusPropertiesChangedClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null)
                 : base()
             {
                 this.Common = Common;
@@ -49,8 +49,10 @@ namespace XFS4IoT.Common.Events
                 this.Camera = Camera;
                 this.Lights = Lights;
                 this.Auxiliaries = Auxiliaries;
+                this.Deposit = Deposit;
                 this.VendorMode = VendorMode;
                 this.VendorApplication = VendorApplication;
+                this.PowerManagement = PowerManagement;
             }
 
             [DataMember(Name = "common")]
@@ -101,11 +103,17 @@ namespace XFS4IoT.Common.Events
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.StatusClass Auxiliaries { get; init; }
 
+            [DataMember(Name = "deposit")]
+            public Deposit.StatusClass Deposit { get; init; }
+
             [DataMember(Name = "vendorMode")]
             public VendorMode.StatusClass VendorMode { get; init; }
 
             [DataMember(Name = "vendorApplication")]
             public VendorApplication.StatusClass VendorApplication { get; init; }
+
+            [DataMember(Name = "powerManagement")]
+            public PowerManagement.StatusClass PowerManagement { get; init; }
 
         }
 

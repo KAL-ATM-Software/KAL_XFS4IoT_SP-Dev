@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -139,8 +139,8 @@ namespace XFS4IoT.PinPad
             public bool? Iso3 { get; init; }
 
             /// <summary>
-            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. pinpad-5](#ref-pinpad-5)]). It is known as the Authentication Parameter PIN block and is created with a 5 digit PIN, an 18 digit PAN,
-            /// and the 8 digit CCS from the track data.
+            /// PIN is formatted according to the Italian Bancomat specifications (see [[Ref. pinpad-5](#ref-pinpad-5)]). It is known as the Authentication Parameter PIN block and is created with a 5-digit PIN, an 18-digit PAN,
+            /// and the 8-digit CCS from the track data.
             /// </summary>
             [DataMember(Name = "ap")]
             public bool? Ap { get; init; }
@@ -169,7 +169,7 @@ namespace XFS4IoT.PinPad
 
             /// <summary>
             /// Algorithm for the presentation of a clear text PIN to a chipcard.
-            /// Each digit of the clear text PIN is inserted as one nibble (=halfbyte) into ChipData.
+            /// Each digit of the clear text PIN is inserted as one nibble (=half byte) into ChipData.
             /// </summary>
             [DataMember(Name = "presentClear")]
             public bool? PresentClear { get; init; }
@@ -263,7 +263,7 @@ namespace XFS4IoT.PinPad
 
         /// <summary>
         /// Specifies whether the keypad used in the secure PIN pad module is integrated within a
-        /// generic Win32 keyboard. true means the secure PIN keypad is integrated within a generic
+        /// generic Win32 keyboard. True means the secure PIN keypad is integrated within a generic
         /// Win32 keyboard and standard Win32 key events will be generated for any key when there is
         /// no active [Keyboard.GetData](#keyboard.dataentry) or [Keyboard.GetPin](#keyboard.pinentry)
         /// command.  Note that XFS continues to support defined PIN keys only, and is not extended

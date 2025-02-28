@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,10 +15,10 @@ using XFS4IoT.Auxiliaries.Completions;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    public partial class GetAutoStartUpTimeHandler
+    public partial class GetAutoStartupTimeHandler
     {
 
-        private async Task<CommandResult<GetAutoStartUpTimeCompletion.PayloadData>> HandleGetAutoStartUpTime(IGetAutoStartUpTimeEvents events, GetAutoStartUpTimeCommand getAutoStartupTime, CancellationToken cancel)
+        private async Task<CommandResult<GetAutoStartupTimeCompletion.PayloadData>> HandleGetAutoStartupTime(IGetAutoStartupTimeEvents events, GetAutoStartupTimeCommand getAutoStartupTime, CancellationToken cancel)
         {
             if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
             {
@@ -35,32 +35,32 @@ namespace XFS4IoTFramework.Auxiliaries
 
             if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
-                return new (new GetAutoStartUpTimeCompletion.PayloadData(
+                return new (new GetAutoStartupTimeCompletion.PayloadData(
                     Mode: result.Mode switch
                     {
-                        AutoStartupTimeModeEnum.Specific => GetAutoStartUpTimeCompletion.PayloadData.ModeEnum.Specific,
-                        AutoStartupTimeModeEnum.Daily => GetAutoStartUpTimeCompletion.PayloadData.ModeEnum.Daily,
-                        AutoStartupTimeModeEnum.Weekly => GetAutoStartUpTimeCompletion.PayloadData.ModeEnum.Weekly,
+                        AutoStartupTimeModeEnum.Specific => GetAutoStartupTimeCompletion.PayloadData.ModeEnum.Specific,
+                        AutoStartupTimeModeEnum.Daily => GetAutoStartupTimeCompletion.PayloadData.ModeEnum.Daily,
+                        AutoStartupTimeModeEnum.Weekly => GetAutoStartupTimeCompletion.PayloadData.ModeEnum.Weekly,
                         _ => null,
                     },
                     StartTime: result.StartupTime == null ?
-                               null :
-                               new(Year: result.StartupTime.Year,
-                                   Month: result.StartupTime.Month,
-                                   DayOfWeek: result.StartupTime.DayOfWeek switch
-                                   {
-                                       DayOfWeek.Saturday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Saturday,
-                                       DayOfWeek.Sunday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Sunday,
-                                       DayOfWeek.Monday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Monday,
-                                       DayOfWeek.Tuesday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Tuesday,
-                                       DayOfWeek.Wednesday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Wednesday,
-                                       DayOfWeek.Thursday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Thursday,
-                                       DayOfWeek.Friday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Friday,
-                                       _ => null,
-                                   },
-                                   Day: result.StartupTime.Day,
-                                   Hour: result.StartupTime.Hour,
-                                   Minute: result.StartupTime.Minute)),
+                    null :
+                    new(Year: result.StartupTime.Year,
+                        Month: result.StartupTime.Month,
+                        DayOfWeek: result.StartupTime.DayOfWeek switch
+                        {
+                            DayOfWeek.Saturday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Saturday,
+                            DayOfWeek.Sunday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Sunday,
+                            DayOfWeek.Monday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Monday,
+                            DayOfWeek.Tuesday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Tuesday,
+                            DayOfWeek.Wednesday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Wednesday,
+                            DayOfWeek.Thursday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Thursday,
+                            DayOfWeek.Friday => XFS4IoT.Auxiliaries.SystemTimeClass.DayOfWeekEnum.Friday,
+                            _ => null,
+                        },
+                        Day: result.StartupTime.Day,
+                        Hour: result.StartupTime.Hour,
+                        Minute: result.StartupTime.Minute)),
                     CompletionCode: result.CompletionCode,
                     ErrorDescription: result.ErrorDescription);
             }

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -93,7 +93,7 @@ namespace XFS4IoTFramework.Storage
     /// Status of the card unit
     /// </summary>
     [Serializable()]
-    public sealed record CardStatusClass
+    public sealed record CardStatusClass : StorageChangedBaseRecord
     {
         public enum ReplenishmentStatusEnum
         {
@@ -109,31 +109,83 @@ namespace XFS4IoTFramework.Storage
                                int RetainCount, 
                                ReplenishmentStatusEnum ReplenishmentStatus)
         {
-            this.InitialCount = InitialCount;
-            this.Count = Count;
-            this.RetainCount = RetainCount;
-            this.ReplenishmentStatus = ReplenishmentStatus;
+            initialCount = InitialCount;
+            count = Count;
+            retainCount = RetainCount;
+            replenishmentStatus = ReplenishmentStatus;
         }
 
         /// <summary>
         /// The initial number of cards in the storage unit.
         /// </summary>
-        public int InitialCount { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
+        public int InitialCount
+        {
+            get { return initialCount; }
+            set
+            {
+                if (initialCount != value)
+                {
+                    initialCount = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int initialCount;
 
         /// <summary>
         /// The number of cards in the storage unit.
         /// </summary>
-        public int Count { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
+        public int Count
+        {
+            get { return count; }
+            set
+            {
+                if (count != value)
+                {
+                    count = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int count;
 
         /// <summary>
         /// The number of cards from this storage unit which are in a retain storage unit.
         /// </summary>
-        public int RetainCount { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
+        public int RetainCount
+        {
+            get { return retainCount; }
+            set
+            {
+                if (retainCount != value)
+                {
+                    retainCount = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private int retainCount;
 
         /// <summary>
         /// The state of the cards in the storage unit if it can be determined. 
         /// </summary>
-        public ReplenishmentStatusEnum ReplenishmentStatus { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.StorageChanged)]
+        public ReplenishmentStatusEnum ReplenishmentStatus
+        {
+            get { return replenishmentStatus; }
+            set
+            {
+                if (replenishmentStatus != value)
+                {
+                    replenishmentStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ReplenishmentStatusEnum replenishmentStatus;
     }
 
     /// <summary>

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -43,7 +43,7 @@ namespace XFS4IoT.CashManagement.Events
             /// <summary>
             /// Specifies how many more bunches will be required to present the request. Following values are possible:
             /// 
-            ///   * ```&lt;number&gt;``` - The number of additional bunches to be presented.
+            ///   * ```[number]``` - The number of additional bunches to be presented.
             ///   * ```unknown``` - More than one additional bunch is required but the precise number is unknown.
             /// <example>1</example>
             /// </summary>

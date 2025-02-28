@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -108,7 +108,7 @@ namespace XFS4IoT.KeyManagement.Completions
                 /// * ```yes``` - The key is loaded and ready to be used in cryptographic operations.
                 /// * ```unknown``` -\tThe State of the key is unknown.
                 /// * ```construct``` -\tThe key is under construction, meaning that at least one key part has been loaded but
-                /// the key is not activated and ready to be used in other cryptographic operations.
+                ///   the key is not activated and ready to be used in other cryptographic operations.
                 /// </summary>
                 [DataMember(Name = "loaded")]
                 public LoadedEnum? Loaded { get; init; }
@@ -233,7 +233,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```V5``` - PIN Verification Key, ANSI X9.132 algorithm 3.
                     /// * ```00 - 99``` - These numeric values are reserved for proprietary use.
                     /// 
-                    /// This value can be null if the key usage is not an key encryption usage or restricted key encryption keys
+                    /// This value can be null if the key usage is not a key encryption usage or restricted key encryption keys
                     /// are not supported or required.
                     /// <example>D0</example>
                     /// </summary>
@@ -297,7 +297,7 @@ namespace XFS4IoT.KeyManagement.Completions
                     /// * ```N``` - Non-exportable by the receiver of the key block, or from storage.
                     ///             Does not preclude exporting keys derived from a non-exportable key.
                     /// * ```S``` - Sensitive, Exportable under a KEK in a form not necessarily meeting the requirements of
-                    /// X9.24 Parts 1 or 2.
+                    ///   X9.24 Parts 1 or 2.
                     /// * ```0 - 9``` - These numeric values are reserved for proprietary use.
                     /// <example>N</example>
                     /// </summary>

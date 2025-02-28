@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,27 +46,29 @@ namespace XFS4IoTFramework.KeyManagement
             Dictionary<string, GetKeyDetailCompletion.PayloadData.KeyDetailsClass> keyInfo = [];
             foreach (var key in keyDetails)
             {
-                GetKeyDetailCompletion.PayloadData.KeyDetailsClass.KeyBlockInfoClass keyblockInfo = new(key.KeyUsage,
-                                                                                                        key.RestrictedKeyUsage,
-                                                                                                        key.Algorithm,
-                                                                                                        key.ModeOfUse,
-                                                                                                        key.KeyVersionNumber,
-                                                                                                        key.Exportability,
-                                                                                                        key.OptionalKeyBlockHeader is null ? null : Convert.ToBase64String(key.OptionalKeyBlockHeader.ToArray()),
-                                                                                                        key.KeyLength);
+                GetKeyDetailCompletion.PayloadData.KeyDetailsClass.KeyBlockInfoClass keyblockInfo = new(
+                    key.KeyUsage,
+                    key.RestrictedKeyUsage,
+                    key.Algorithm,
+                    key.ModeOfUse,
+                    key.KeyVersionNumber,
+                    key.Exportability,
+                    key.OptionalKeyBlockHeader is null ? null : Convert.ToBase64String(key.OptionalKeyBlockHeader.ToArray()),
+                    key.KeyLength);
 
-                keyInfo.Add(key.KeyName, new GetKeyDetailCompletion.PayloadData.KeyDetailsClass(key.Generation,
-                                                                                                key.Version,
-                                                                                                key.ActivatingDate?.ToString("yyyyMMdd"),
-                                                                                                key.ExpiryDate?.ToString("yyyyMMdd"),
-                                                                                                key.KeyStatus switch
-                                                                                                {
-                                                                                                    KeyDetail.KeyStatusEnum.Loaded => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Yes,
-                                                                                                    KeyDetail.KeyStatusEnum.Construct => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Construct,
-                                                                                                    KeyDetail.KeyStatusEnum.NotLoaded => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.No,
-                                                                                                    _ => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Unknown
-                                                                                                },
-                                                                                                keyblockInfo));
+                keyInfo.Add(key.KeyName, new GetKeyDetailCompletion.PayloadData.KeyDetailsClass(
+                    key.Generation,
+                    key.Version,
+                    key.ActivatingDate?.ToString("yyyyMMdd"),
+                    key.ExpiryDate?.ToString("yyyyMMdd"),
+                    key.KeyStatus switch
+                    {
+                        KeyDetail.KeyStatusEnum.Loaded => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Yes,
+                        KeyDetail.KeyStatusEnum.Construct => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Construct,
+                        KeyDetail.KeyStatusEnum.NotLoaded => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.No,
+                        _ => GetKeyDetailCompletion.PayloadData.KeyDetailsClass.LoadedEnum.Unknown
+                    },
+                    keyblockInfo));
             }
 
             return Task.FromResult(

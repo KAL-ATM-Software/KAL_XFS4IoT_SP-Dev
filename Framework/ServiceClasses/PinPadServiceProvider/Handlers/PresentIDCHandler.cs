@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -73,10 +73,12 @@ namespace XFS4IoTFramework.PinPad
             
             Logger.Log(Constants.DeviceClass, "PinPadDev.PresentIDC()");
 
-            var result = await Device.PresentIDC(new PresentIDCRequest(presentIDC.Payload.ChipProtocol,
-                                                                       presentIDC.Payload.ChipData,
-                                                                       presentIDC.Payload.PresentAlgorithm == PresentIDCCommand.PayloadData.PresentAlgorithmEnum.PresentClear ? new PresentIDCRequest.PresentClearClass((int)presentIDC.Payload.AlgorithmData.PinOffset, (int)presentIDC.Payload.AlgorithmData.PinPointer) : null), 
-                                                 cancel);
+            var result = await Device.PresentIDC(
+                new PresentIDCRequest(
+                    presentIDC.Payload.ChipProtocol,
+                    presentIDC.Payload.ChipData,
+                    presentIDC.Payload.PresentAlgorithm == PresentIDCCommand.PayloadData.PresentAlgorithmEnum.PresentClear ? new PresentIDCRequest.PresentClearClass((int)presentIDC.Payload.AlgorithmData.PinOffset, (int)presentIDC.Payload.AlgorithmData.PinPointer) : null), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.PresentIDC() -> {result.CompletionCode}");
 

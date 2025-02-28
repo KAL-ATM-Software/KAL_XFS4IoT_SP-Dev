@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -174,13 +174,15 @@ namespace XFS4IoTFramework.KeyManagement
 
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.ImportKeyPart()");
 
-                var importKeyPartResult = await Device.ImportKeyPart(new ImportKeyPartRequest(importKey.Payload.Key,
-                                                                                              componentNumber,
-                                                                                              importKey.Payload.KeyAttributes.KeyUsage,
-                                                                                              importKey.Payload.KeyAttributes.Algorithm,
-                                                                                              importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                                              importKey.Payload.KeyAttributes.RestrictedKeyUsage),
-                                                                     cancel);
+                var importKeyPartResult = await Device.ImportKeyPart(
+                    new ImportKeyPartRequest(
+                        importKey.Payload.Key,
+                        componentNumber,
+                        importKey.Payload.KeyAttributes.KeyUsage,
+                        importKey.Payload.KeyAttributes.Algorithm,
+                        importKey.Payload.KeyAttributes.ModeOfUse,
+                        importKey.Payload.KeyAttributes.RestrictedKeyUsage),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportKeyPart() -> {importKeyPartResult.CompletionCode}, {importKeyPartResult.ErrorCode}");
 
@@ -189,15 +191,16 @@ namespace XFS4IoTFramework.KeyManagement
                 {
                     secureKeyEntryStatus.KeyPartLoaded((SecureKeyEntryStatusClass.KeyPartEnum)componentNumber, importKey.Payload.Key);
                     // Successfully loaded and add key information managing internally
-                    KeyManagement.AddKey(importKey.Payload.Key,
-                                         keySlot,
-                                         importKey.Payload.KeyAttributes.KeyUsage,
-                                         importKey.Payload.KeyAttributes.Algorithm,
-                                         importKey.Payload.KeyAttributes.ModeOfUse,
-                                         importKeyPartResult.KeyLength,
-                                         KeyDetail.KeyStatusEnum.Construct,
-                                         false,
-                                         importKey.Payload.KeyAttributes.RestrictedKeyUsage);
+                    KeyManagement.AddKey(
+                        importKey.Payload.Key,
+                        keySlot,
+                        importKey.Payload.KeyAttributes.KeyUsage,
+                        importKey.Payload.KeyAttributes.Algorithm,
+                        importKey.Payload.KeyAttributes.ModeOfUse,
+                        importKeyPartResult.KeyLength,
+                        KeyDetail.KeyStatusEnum.Construct,
+                        false,
+                        importKey.Payload.KeyAttributes.RestrictedKeyUsage);
 
                     if (importKeyPartResult.VerifyAttribute is not null)
                     {
@@ -211,14 +214,16 @@ namespace XFS4IoTFramework.KeyManagement
                                 ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVSelf => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvSelf,
                                 ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVZero => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvZero,
                                 ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PKCS1_V1_5 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15,
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPs,
+                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPss,
                                 _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.SigNone
                             },
-                            importKeyPartResult.VerifyAttribute.HashAlgorithm is null ? null : importKeyPartResult.VerifyAttribute.HashAlgorithm switch 
-                                                                                               {
-                                                                                                   ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum.SHA1 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha1,
-                                                                                                   _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha256
-                                                                                               });
+                            importKeyPartResult.VerifyAttribute.HashAlgorithm is null ? 
+                            null : 
+                            importKeyPartResult.VerifyAttribute.HashAlgorithm switch 
+                            {
+                                ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum.SHA1 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha1,
+                                _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha256
+                            });
                     }
                 }
 
@@ -480,7 +485,7 @@ namespace XFS4IoTFramework.KeyManagement
                          !cryptoMethodCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.SignatureNone)) ||
                         (importKey.Payload.VerifyAttributes.CryptoMethod == ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15 &&
                          !cryptoMethodCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PKCS1_V1_5)) ||
-                        (importKey.Payload.VerifyAttributes.CryptoMethod == ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPs &&
+                        (importKey.Payload.VerifyAttributes.CryptoMethod == ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPss &&
                          !cryptoMethodCap.HasFlag(KeyManagementCapabilitiesClass.VerifyMethodClass.CryptoMethodEnum.RSASSA_PSS)))
                     {
                         return new(
@@ -492,7 +497,7 @@ namespace XFS4IoTFramework.KeyManagement
                     verifyMethod = importKey.Payload.VerifyAttributes.CryptoMethod switch
                     {
                         ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15 => ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PKCS1_V1_5,
-                        ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPs => ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS,
+                        ImportKeyCommand.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPss => ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS,
                         _ =>  ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.SignatureNone
                     };
 
@@ -536,15 +541,17 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.AssemblyKeyParts()");
 
-                result = await Device.AssemblyKeyParts(new AssemblyKeyPartsRequest(importKey.Payload.Key,
-                                                                                   keySlot,
-                                                                                   importKey.Payload.KeyAttributes.KeyUsage,
-                                                                                   importKey.Payload.KeyAttributes.Algorithm,
-                                                                                   importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                                   importKey.Payload.KeyAttributes.RestrictedKeyUsage,
-                                                                                   verifyKeyAttribute,
-                                                                                   importKey.Payload.VendorAttributes),
-                                                       cancel);
+                result = await Device.AssemblyKeyParts(
+                    new AssemblyKeyPartsRequest(
+                        importKey.Payload.Key,
+                        keySlot,
+                        importKey.Payload.KeyAttributes.KeyUsage,
+                        importKey.Payload.KeyAttributes.Algorithm,
+                        importKey.Payload.KeyAttributes.ModeOfUse,
+                        importKey.Payload.KeyAttributes.RestrictedKeyUsage,
+                        verifyKeyAttribute,
+                        importKey.Payload.VendorAttributes),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.AssemblyKeyParts() -> {result.CompletionCode}, {result.ErrorCode}");
             }
@@ -552,17 +559,19 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.ImportKey()");
 
-                result = await Device.ImportKey(new ImportKeyRequest(importKey.Payload.Key,
-                                                                     keySlot,
-                                                                     importKey.Payload.Value,
-                                                                     importKey.Payload.KeyAttributes.KeyUsage,
-                                                                     importKey.Payload.KeyAttributes.Algorithm,
-                                                                     importKey.Payload.KeyAttributes.ModeOfUse,
-                                                                     importKey.Payload.KeyAttributes.RestrictedKeyUsage,
-                                                                     verifyKeyAttribute,
-                                                                     decryptKeyAttribute,
-                                                                     importKey.Payload.VendorAttributes),
-                                                cancel);
+                result = await Device.ImportKey(
+                    new ImportKeyRequest(
+                        importKey.Payload.Key,
+                        keySlot,
+                        importKey.Payload.Value,
+                        importKey.Payload.KeyAttributes.KeyUsage,
+                        importKey.Payload.KeyAttributes.Algorithm,
+                        importKey.Payload.KeyAttributes.ModeOfUse,
+                        importKey.Payload.KeyAttributes.RestrictedKeyUsage,
+                        verifyKeyAttribute,
+                        decryptKeyAttribute,
+                        importKey.Payload.VendorAttributes),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ImportKey() -> {result.CompletionCode}, {result.ErrorCode}");
             }
@@ -575,41 +584,44 @@ namespace XFS4IoTFramework.KeyManagement
                 if (result.VerifyAttribute is not null)
                 {
                     importKeyVerifyAttib = new(
-                            result.VerifyAttribute.KeyUsage,
-                            result.VerifyAttribute.Algorithm,
-                            result.VerifyAttribute.ModeOfUse,
-                            result.VerifyAttribute.VerifyMethod switch 
-                            {
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVNone => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvNone,
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVSelf => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvSelf,
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVZero => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvZero,
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PKCS1_V1_5 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15,
-                                ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPs,
-                                _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.SigNone
-                            },
-                            result.VerifyAttribute.HashAlgorithm is null ? null : result.VerifyAttribute.HashAlgorithm switch 
-                                                                                  {
-                                                                                      ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum.SHA1 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha1,
-                                                                                      _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha256
-                                                                                  });
+                        result.VerifyAttribute.KeyUsage,
+                        result.VerifyAttribute.Algorithm,
+                        result.VerifyAttribute.ModeOfUse,
+                        result.VerifyAttribute.VerifyMethod switch 
+                        {
+                            ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVNone => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvNone,
+                            ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVSelf => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvSelf,
+                            ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.KCVZero => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.KcvZero,
+                            ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PKCS1_V1_5 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPkcs1V15,
+                            ImportKeyRequest.VerifyAttributeClass.VerifyMethodEnum.RSASSA_PSS => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.RsassaPss,
+                            _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.CryptoMethodEnum.SigNone
+                        },
+                        result.VerifyAttribute.HashAlgorithm is null ? 
+                        null : 
+                        result.VerifyAttribute.HashAlgorithm switch 
+                        {
+                            ImportKeyRequest.VerifyAttributeClass.HashAlgorithmEnum.SHA1 => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha1,
+                            _ => ImportKeyCompletion.PayloadData.VerifyAttributesClass.HashAlgorithmEnum.Sha256
+                        });
                 }
                 // Successfully loaded and add key information managing internally
-                KeyManagement.AddKey(importKey.Payload.Key,
-                                     result.UpdatedKeySlot is null ? keySlot : (int)result.UpdatedKeySlot,
-                                     importKey.Payload.KeyAttributes.KeyUsage,
-                                     importKey.Payload.KeyAttributes.Algorithm,
-                                     importKey.Payload.KeyAttributes.ModeOfUse,
-                                     result.KeyLength,
-                                     KeyDetail.KeyStatusEnum.Loaded,
-                                     false,
-                                     importKey.Payload.KeyAttributes.RestrictedKeyUsage,
-                                     result.KeyInformation?.KeyVersionNumber,
-                                     result.KeyInformation?.Exportability,
-                                     result.KeyInformation?.OptionalKeyBlockHeader,
-                                     result.KeyInformation?.Generation,
-                                     result.KeyInformation?.ActivatingDate,
-                                     result.KeyInformation?.ExpiryDate,
-                                     result.KeyInformation?.Version);
+                KeyManagement.AddKey(
+                    importKey.Payload.Key,
+                    result.UpdatedKeySlot is null ? keySlot : (int)result.UpdatedKeySlot,
+                    importKey.Payload.KeyAttributes.KeyUsage,
+                    importKey.Payload.KeyAttributes.Algorithm,
+                    importKey.Payload.KeyAttributes.ModeOfUse,
+                    result.KeyLength,
+                    KeyDetail.KeyStatusEnum.Loaded,
+                    false,
+                    importKey.Payload.KeyAttributes.RestrictedKeyUsage,
+                    result.KeyInformation?.KeyVersionNumber,
+                    result.KeyInformation?.Exportability,
+                    result.KeyInformation?.OptionalKeyBlockHeader,
+                    result.KeyInformation?.Generation,
+                    result.KeyInformation?.ActivatingDate,
+                    result.KeyInformation?.ExpiryDate,
+                    result.KeyInformation?.Version);
             }
 
             if (result.ErrorCode is not null ||

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = EMVClessConfigure
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "CardReader.EMVClessConfigure")]
     public sealed class EMVClessConfigureCommand : Command<EMVClessConfigureCommand.PayloadData>
     {
@@ -37,15 +37,15 @@ namespace XFS4IoT.CardReader.Commands
             }
 
             /// <summary>
-            /// Base64 encoded representation of the BER-TLV formatted data for the terminal e.g. Terminal Type,
+            /// Base64 encoded representation of the BER-TLV formatted data for the terminal, e.g., Terminal Type,
             /// Transaction Category Code, Merchant Name &amp; Location etc. Any terminal based data elements referenced
             /// in the Payment Systems Specifications or EMVCo Contactless Payment Systems Specifications Books may be
             /// included (see [[Ref. cardreader-1](#ref-cardreader-1)], [[Ref. cardreader-2](#ref-cardreader-2)] and
             /// [[Ref. cardreader-3](#ref-cardreader-3)] for more details).
-            /// <example>wCAAAQgwMDAwMDAwMA==</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "terminalData")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> TerminalData { get; init; }
 
             [DataContract]
@@ -64,10 +64,10 @@ namespace XFS4IoT.CardReader.Commands
                 /// The application identifier to be accepted by the contactless chip card reader. The
                 /// [CardReader.EMVClessQueryApplications](#cardreader.emvclessqueryapplications) command will
                 /// return the list of supported application identifiers.
-                /// <example>oAAAAAMQEA==</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "aid")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Aid { get; init; }
 
                 /// <summary>
@@ -89,20 +89,20 @@ namespace XFS4IoT.CardReader.Commands
                 /// <summary>
                 /// Base64 encoded representation of the EMVCo defined kernel identifier associated with the *aid*.
                 /// This will be ignored if the reader does not support kernel identifiers. This property is null if not applicable.
-                /// <example>Ag==</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "kernelIdentifier")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> KernelIdentifier { get; init; }
 
                 /// <summary>
                 /// Base64 encoded representation of the list of BER-TLV formatted configuration data, applicable to
                 /// the specific AID-Kernel ID-Transaction Type combination. The appropriate payment systems
                 /// specifications define the BER-TLV tags to be configured.
-                /// <example>nwYHoAAAASFHEQ==</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "configData")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> ConfigData { get; init; }
 
             }
@@ -131,9 +131,10 @@ namespace XFS4IoT.CardReader.Commands
                 /// <summary>
                 /// Specifies the payment system's Registered Identifier (RID). RID is the first 5 bytes of the AID
                 /// and identifies the payments system.
-                /// <example>oAAAAAM=</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "rid")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Rid { get; init; }
 
                 [DataContract]
@@ -169,28 +170,28 @@ namespace XFS4IoT.CardReader.Commands
                     /// Base64 encoded representation of the CA Public Key Exponent for the specific RID. This value
                     /// is represented by the minimum number of bytes required. A detailed description of public key
                     /// exponent values is given in EMV Book 2, Annex B2; see
-                    /// [[Ref. cardreader-2](#ref-cardreader-2)]. For example, representing value ‘2&lt;sup&gt;16&lt;/sup&gt; +
+                    /// [[Ref. cardreader-2](#ref-cardreader-2)]. For example, representing value ‘2[sup]16[/sup] +
                     /// 1’ requires 3 bytes in hexadecimal (0x01, 0x00, 0x01), while value ‘3’ is coded as 0x03.
-                    /// <example>AQAB</example>
+                    /// <example>O2gAUACFyEARAJAC</example>
                     /// </summary>
                     [DataMember(Name = "exponent")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                     public List<byte> Exponent { get; init; }
 
                     /// <summary>
                     /// Base64 encoded representation of the CA Public Key Modulus for the specific RID.
-                    /// <example>Kjyq8qcAWnJB66p3cREs ...</example>
+                    /// <example>O2gAUACFyEARAJAC</example>
                     /// </summary>
                     [DataMember(Name = "modulus")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                     public List<byte> Modulus { get; init; }
 
                     /// <summary>
                     /// Base64 encoded representation of the 20 byte checksum value for the CA Public Key.
-                    /// <example>7hURzscQIKm5BEOzex1f ...</example>
+                    /// <example>O2gAUACFyEARAJAC</example>
                     /// </summary>
                     [DataMember(Name = "checksum")]
-                    [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                    [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                     public List<byte> Checksum { get; init; }
 
                 }

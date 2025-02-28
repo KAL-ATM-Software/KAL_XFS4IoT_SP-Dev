@@ -1,10 +1,10 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * GetAutoStartUpTime_g.cs uses automatically generated parts.
+ * GetAutoStartupTime_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 using System;
@@ -14,13 +14,13 @@ using XFS4IoT.Commands;
 
 namespace XFS4IoT.Auxiliaries.Commands
 {
-    //Original name = GetAutoStartUpTime
+    //Original name = GetAutoStartupTime
     [DataContract]
     [XFS4Version(Version = "2.0")]
-    [Command(Name = "Auxiliaries.GetAutoStartUpTime")]
-    public sealed class GetAutoStartUpTimeCommand : Command<MessagePayload>
+    [Command(Name = "Auxiliaries.GetAutoStartupTime")]
+    public sealed class GetAutoStartupTimeCommand : Command<MessagePayload>
     {
-        public GetAutoStartUpTimeCommand(int RequestId, int Timeout)
+        public GetAutoStartupTimeCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }
 

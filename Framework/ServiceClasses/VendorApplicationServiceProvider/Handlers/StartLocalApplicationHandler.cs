@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -34,15 +34,17 @@ namespace XFS4IoTFramework.VendorApplication
             }
 
             Logger.Log(Constants.DeviceClass, "VendorApplicationDev.StartLocalApplicationRequest()");
-            var result = await Device.StartLocalApplication(new StartLocalApplicationRequest(startLocalApplication.Payload.AppName,
-                                                                                             startLocalApplication.Payload.AccessLevel switch
-                                                                                             {
-                                                                                                 StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Basic => StartLocalApplicationRequest.AccessLevelEnum.Basic,
-                                                                                                 StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Intermediate => StartLocalApplicationRequest.AccessLevelEnum.Intermediate,
-                                                                                                 StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Full => StartLocalApplicationRequest.AccessLevelEnum.Full,
-                                                                                                 _ => null,
-                                                                                             }),
-                                                            cancel);
+            var result = await Device.StartLocalApplication(
+                new StartLocalApplicationRequest(
+                    startLocalApplication.Payload.AppName,
+                    startLocalApplication.Payload.AccessLevel switch
+                    {
+                        StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Basic => StartLocalApplicationRequest.AccessLevelEnum.Basic,
+                        StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Intermediate => StartLocalApplicationRequest.AccessLevelEnum.Intermediate,
+                        StartLocalApplicationCommand.PayloadData.AccessLevelEnum.Full => StartLocalApplicationRequest.AccessLevelEnum.Full,
+                        _ => null,
+                    }),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"VendorApplicationDev.StartLocalApplicationRequest() -> {result.CompletionCode}");
 
             if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success &&

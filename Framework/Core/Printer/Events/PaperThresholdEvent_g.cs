@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```external``` - The external paper.
             /// * ```aux``` - The auxiliary paper source.
             /// * ```aux2``` - The second auxiliary paper source.
-            /// * ```&lt;paper source identifier&gt;``` - The vendor specific paper source.
+            /// * ```[paper source identifier]``` - The vendor specific paper source.
             /// <example>lower</example>
             /// </summary>
             [DataMember(Name = "paperSource")]

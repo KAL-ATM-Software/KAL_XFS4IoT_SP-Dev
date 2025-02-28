@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,19 +52,20 @@ namespace XFS4IoT.CashAcceptor.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```tooManyItems``` - There were too many items inserted previously. The cash-in stacker is full at
-            /// the beginning of this command. This may also be reported where a limit specified by
-            /// [CashAcceptor.CashInStart](#cashacceptor.cashinstart) has already been reached at the beginning
+            ///   the beginning of this command. This may also be reported where a limit specified by
+            ///   [CashAcceptor.CashInStart](#cashacceptor.cashinstart) has already been reached at the beginning
             /// of this command.
             /// * ```noItems``` - There were no items to cash-in.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```shutterNotClosed``` - Shutter failed to close. In the case of explicit shutter control the
-            /// application should close the shutter first.
+            ///   application should close the shutter first.
             /// * ```noCashInActive``` - There is no cash-in transaction active.
             /// * ```positionNotEmpty``` - The output position is not empty so a cash-in is not possible.
             /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order
-            /// to perform this command. (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
+            ///   to perform this command (see [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)
+            ///   property).
             /// * ```foreignItemsDetected``` - Foreign items have been detected inside the input position.
             /// * ```shutterNotOpen``` - Shutter failed to open.
             /// </summary>

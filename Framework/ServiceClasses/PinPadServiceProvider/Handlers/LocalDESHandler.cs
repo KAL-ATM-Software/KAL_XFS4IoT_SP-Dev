@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -178,16 +178,20 @@ namespace XFS4IoTFramework.PinPad
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.VerifyPINLocalDES()");
 
-            var result = await Device.VerifyPINLocalDES(new VerifyPINLocalDESRequest(localDES.Payload.ValidationData,
-                                                                                     localDES.Payload.Offset,
-                                                                                     padding,
-                                                                                     (int)localDES.Payload.MaxPIN,
-                                                                                     (int)localDES.Payload.ValDigits,
-                                                                                     localDES.Payload.NoLeadingZero is null ? false : (bool)localDES.Payload.NoLeadingZero,
-                                                                                     localDES.Payload.Key,
-                                                                                     localDES.Payload.KeyEncKey,
-                                                                                     localDES.Payload.DecTable),
-                                                        cancel);
+            var result = await Device.VerifyPINLocalDES(
+                new VerifyPINLocalDESRequest(
+                    localDES.Payload.ValidationData,
+                    localDES.Payload.Offset,
+                    padding,
+                    (int)localDES.Payload.MaxPIN,
+                    (int)localDES.Payload.ValDigits,
+                    localDES.Payload.NoLeadingZero is null ? 
+                    false : 
+                    (bool)localDES.Payload.NoLeadingZero,
+                    localDES.Payload.Key,
+                    localDES.Payload.KeyEncKey,
+                    localDES.Payload.DecTable),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"PinPadDev.VerifyPINLocalDES() -> {result.CompletionCode}, {result.ErrorCode}");
 

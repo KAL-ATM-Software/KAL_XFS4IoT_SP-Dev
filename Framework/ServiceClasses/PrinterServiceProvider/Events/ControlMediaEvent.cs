@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -22,6 +22,10 @@ namespace XFS4IoTFramework.Printer
         {
             PrintForm = MediaEvent;
         }
+        public ControlMediaEvent(IClearBufferEvents MediaEvent)
+        {
+            ClearBuffer = MediaEvent;
+        }
 
         public async Task MediaPresentedEvent(MediaPresentedEvent.PayloadData Payload)
         {
@@ -35,5 +39,6 @@ namespace XFS4IoTFramework.Printer
 
         private IControlMediaEvents ControlMedia { get; init; } = null;
         private IPrintFormEvents PrintForm { get; init; } = null;
+        private IClearBufferEvents ClearBuffer { get; init; } = null;
     }
 }

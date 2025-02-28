@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -34,22 +34,23 @@ namespace XFS4IoTServer
         /// <summary>
         /// Add new key into the collection and return key slot
         /// </summary>
-        void AddKey(string KeyName,
-                    int KeySlot,
-                    string KeyUsage,
-                    string Algorithm,
-                    string ModeOfUse,
-                    int KeyLength,
-                    KeyDetail.KeyStatusEnum KeyStatus,
-                    bool Preloaded = false,
-                    string RestrictedKeyUsage = null,
-                    string KeyVersionNumber = null,
-                    string Exportability = null,
-                    List<byte> OptionalKeyBlockHeader = null,
-                    int? Generation = null,
-                    DateTime? ActivatingDate = null,
-                    DateTime? ExpiryDate = null,
-                    int? Version = null);
+        void AddKey(
+            string KeyName,
+            int KeySlot,
+            string KeyUsage,
+            string Algorithm,
+            string ModeOfUse,
+            int KeyLength,
+            KeyDetail.KeyStatusEnum KeyStatus,
+            bool Preloaded = false,
+            string RestrictedKeyUsage = null,
+            string KeyVersionNumber = null,
+            string Exportability = null,
+            List<byte> OptionalKeyBlockHeader = null,
+            int? Generation = null,
+            DateTime? ActivatingDate = null,
+            DateTime? ExpiryDate = null,
+            int? Version = null);
 
 
         /// <summary>

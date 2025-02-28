@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,8 +52,8 @@ namespace XFS4IoT.CashAcceptor.Commands
                 public string Item { get; init; }
 
                 /// <summary>
-                /// If true the banknote reader will accept this note type during a cash-in operations.
-                /// If false the banknote reader will refuse this note type, unless it must be retained by note classification
+                /// If true, the banknote reader will accept this note type during a cash-in operations.
+                /// If false, the banknote reader will refuse this note type, unless it must be retained by note classification
                 /// rules.
                 /// </summary>
                 [DataMember(Name = "enabled")]

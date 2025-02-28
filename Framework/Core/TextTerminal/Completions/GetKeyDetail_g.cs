@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,10 +35,10 @@ namespace XFS4IoT.TextTerminal.Completions
             }
 
             /// <summary>
-            /// String array which contains the printable characters numeric and alphanumeric keys
+            /// String array which contains the printable characters, numeric and alphanumeric keys
             /// on the Text Terminal Unit,
             /// e.g. ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "A", "B", "C", "a", "b", "c" ]
-            /// if those text terminal input keys are present. This property will be null if no keys supported.
+            /// if those text terminal input keys are present. This property will be null if no keys are supported.
             /// 
             /// The following prefixed key names are defined:
             /// 
@@ -61,7 +61,7 @@ namespace XFS4IoT.TextTerminal.Completions
 
             /// <summary>
             /// Supporting command keys on the Text Terminal Unit.
-            /// This property can be null if no command keys supported.
+            /// This property can be null if no command keys are supported.
             /// </summary>
             [DataMember(Name = "commandKeys")]
             public Dictionary<string, KeyClass> CommandKeys { get; init; }

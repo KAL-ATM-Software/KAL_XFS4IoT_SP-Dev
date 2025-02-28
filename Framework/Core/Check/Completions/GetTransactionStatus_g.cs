@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Check.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Check.GetTransactionStatus")]
     public sealed class GetTransactionStatusCompletion : Completion<GetTransactionStatusCompletion.PayloadData>
     {
@@ -74,7 +74,7 @@ namespace XFS4IoT.Check.Completions
             /// Contains the total number of media items currently on the stacker or null if the device has no stacker. This
             /// value can change outside of a transaction as the media moves within the device. Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>5</example>
             /// </summary>
@@ -83,11 +83,11 @@ namespace XFS4IoT.Check.Completions
             public string MediaOnStacker { get; init; }
 
             /// <summary>
-            /// Contains the number of media items processed by the last [MediaIn](#check.mediain) command. This count is
+            /// Contains the number of media items processed by the last [Check.MediaIn](#check.mediain) command. This count is
             /// not modified for bunches of items which are refused as a single entity. This count only applies to devices
             /// with stackers is persistent and is therefore null if not applicable. Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>10</example>
             /// </summary>
@@ -97,15 +97,15 @@ namespace XFS4IoT.Check.Completions
 
             /// <summary>
             /// Contains the number of media items on the stacker successfully accepted by the last
-            /// [MediaIn](#check.mediain) command.  This count is persistent and is null if the device has no stacker.
+            /// [Check.MediaIn](#check.mediain) command.  This count is persistent and is null if the device has no stacker.
             /// 
             /// The number of media items refused during the last command can be determined by
-            /// *lastMediaInTotal* - *lastMediaAddedToStacker*. This is only possible if these values contain values,
-            /// and would not include bunches of items refused as a single entity.
+            /// *lastMediaInTotal* - *lastMediaAddedToStacker*. This is only possible if these values are known 
+            /// and do not include bunches of refused items as a single entity.
             /// 
             /// Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>3</example>
             /// </summary>
@@ -120,7 +120,7 @@ namespace XFS4IoT.Check.Completions
             /// 
             /// Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>8</example>
             /// </summary>
@@ -133,7 +133,7 @@ namespace XFS4IoT.Check.Completions
             /// not include bunches of items which are refused as a single entity without being processed as single items.
             /// This count is persistent. Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>2</example>
             /// </summary>
@@ -145,7 +145,7 @@ namespace XFS4IoT.Check.Completions
             /// Contains the total number of refused bunches of items that were not processed as single items.
             /// This count is persistent. Following values are possible:
             /// 
-            /// * ```&lt;number&gt;``` - The number of items.
+            /// * ```[number]``` - The number of items.
             /// * ```unknown``` - The precise number of items is unknown.
             /// <example>1</example>
             /// </summary>
@@ -155,12 +155,12 @@ namespace XFS4IoT.Check.Completions
 
             /// <summary>
             /// This array contains details of the media items processed during the current or last transaction
-            /// (depending on the value of *mediaInTransaction*). The array contains one element for every item that has
-            /// been allocated a media ID (i.e. items that have been reported to the application). If there are no media
-            /// items then mediaInfo is null. The media info is available until a new transaction is started
-            /// with the [MediaIn](#check.mediain) command. The media location information may be updated after a
-            /// transaction is completed, e.g. if media that was presented to the customer is subsequently retracted.
-            /// The media info is persistent.
+            /// (depending on the value of [mediaInTransaction](#check.gettransactionstatus.completion.description.mediaintransaction)). 
+            /// The array contains one element for every item that has been allocated a media ID (i.e. items that have been 
+            /// reported to the application). If there are no media items, then mediaInfo is null. The media info is available 
+            /// until a new transaction is started with the [Check.MediaIn](#check.mediain) command. The media location 
+            /// information may be updated after a transaction is completed, e.g. if media that was presented to the customer 
+            /// is subsequently retracted. The media info is persistent.
             /// </summary>
             [DataMember(Name = "mediaInfo")]
             public List<MediaStatusClass> MediaInfo { get; init; }

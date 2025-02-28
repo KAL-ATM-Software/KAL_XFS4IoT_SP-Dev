@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,7 +47,7 @@ namespace XFS4IoT.Biometric.Commands
             /// Available values are described in the [persistenceModes](#common.capabilities.completion.properties.biometric.persistencemodes).
             /// The following values are possible:
             /// 
-            /// * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
+            /// * ```persist``` - Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
             ///                   sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read)
             ///                   is requested again. This captured biometric data can also be explicitly cleared using the
             ///                   [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).

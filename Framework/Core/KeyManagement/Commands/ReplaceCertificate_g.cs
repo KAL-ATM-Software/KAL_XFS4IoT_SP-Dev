@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ReplaceCertificate
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "KeyManagement.ReplaceCertificate")]
     public sealed class ReplaceCertificateCommand : Command<ReplaceCertificateCommand.PayloadData>
     {
@@ -37,12 +37,12 @@ namespace XFS4IoT.KeyManagement.Commands
             /// <summary>
             /// The PKCS#7 (See [[Ref. keymanagement-1](#ref-keymanagement-1)]) message that will replace the current
             /// Certificate Authority. The outer content uses the Signed-data content type, the inner content is a
-            /// degenerate certificate only content containing the new CA certificate and Inner Signed Data type The
+            /// degenerate certificate only content containing the new CA certificate and Inner Signed Data type. The
             /// certificate should be in a format represented in DER encoded ASN.1 notation.
-            /// <example>UEtDUyAjNyBkYXRh</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "replaceCertificate")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> ReplaceCertificate { get; init; }
 
         }

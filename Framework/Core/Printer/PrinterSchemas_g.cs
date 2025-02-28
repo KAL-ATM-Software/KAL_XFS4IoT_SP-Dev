@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,14 +35,13 @@ namespace XFS4IoT.Printer
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(MediaEnum? Media = null, PaperClass Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, List<RetractBinsClass> RetractBins = null, int? MediaOnStacker = null, PaperTypeClass PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
+        public StatusClass(MediaEnum? Media = null, PaperClass Paper = null, TonerEnum? Toner = null, InkEnum? Ink = null, LampEnum? Lamp = null, int? MediaOnStacker = null, PaperTypeClass PaperType = null, BlackMarkModeEnum? BlackMarkMode = null)
         {
             this.Media = Media;
             this.Paper = Paper;
             this.Toner = Toner;
             this.Ink = Ink;
             this.Lamp = Lamp;
-            this.RetractBins = RetractBins;
             this.MediaOnStacker = MediaOnStacker;
             this.PaperType = PaperType;
             this.BlackMarkMode = BlackMarkMode;
@@ -90,37 +89,37 @@ namespace XFS4IoT.Printer
             }
 
             /// <summary>
-            /// The state of the upper paper supply.
+            /// The state of the upper paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "upper")]
             public PaperSupplyEnum? Upper { get; init; }
 
             /// <summary>
-            /// The state of the lower paper supply.
+            /// The state of the lower paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "lower")]
             public PaperSupplyEnum? Lower { get; init; }
 
             /// <summary>
-            /// The state of the external paper supply.
+            /// The state of the external paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "external")]
             public PaperSupplyEnum? External { get; init; }
 
             /// <summary>
-            /// The state of the auxiliary paper supply.
+            /// The state of the auxiliary paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "aux")]
             public PaperSupplyEnum? Aux { get; init; }
 
             /// <summary>
-            /// The state of the second auxiliary paper supply.
+            /// The state of the second auxiliary paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "aux2")]
             public PaperSupplyEnum? Aux2 { get; init; }
 
             /// <summary>
-            /// The state of the parking station paper supply.
+            /// The state of the parking station paper supply. See paper for valid values.
             /// </summary>
             [DataMember(Name = "park")]
             public PaperSupplyEnum? Park { get; init; }
@@ -215,56 +214,8 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "lamp")]
         public LampEnum? Lamp { get; init; }
 
-        [DataContract]
-        public sealed class RetractBinsClass
-        {
-            public RetractBinsClass(StateEnum? State = null, int? Count = null)
-            {
-                this.State = State;
-                this.Count = Count;
-            }
-
-            public enum StateEnum
-            {
-                Unknown,
-                Ok,
-                Full,
-                High,
-                Missing
-            }
-
-            /// <summary>
-            /// Specifies the state of the printer retract bin as one of the following. This may be null in
-            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
-            /// 
-            /// * ```ok``` - The retract bin of the printer is in a healthy state.
-            /// * ```full``` - The retract bin of the printer is full.
-            /// * ```unknown``` - Status cannot be determined with device in its current state.
-            /// * ```high``` - The retract bin of the printer is nearly full.
-            /// * ```missing``` - The retract bin is missing.
-            /// </summary>
-            [DataMember(Name = "state")]
-            public StateEnum? State { get; init; }
-
-            /// <summary>
-            /// The number of media retracted to this bin. This value is persistent; it may be reset to 0 by the
-            /// [Printer.ResetCount](#printer.resetcount) command. This may be null in
-            /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
-            /// </summary>
-            [DataMember(Name = "count")]
-            [DataTypes(Minimum = 0)]
-            public int? Count { get; init; }
-
-        }
-
         /// <summary>
-        /// An array of bin state objects. If no retain bins are supported, the property will be null.
-        /// </summary>
-        [DataMember(Name = "retractBins")]
-        public List<RetractBinsClass> RetractBins { get; init; }
-
-        /// <summary>
-        /// The number of media on stacker; applicable only to printers with stacking capability therefore null if
+        /// The number of media on the stacker; applicable only to printers with stacking capability therefore null if
         /// not applicable.
         /// <example>7</example>
         /// </summary>
@@ -286,37 +237,37 @@ namespace XFS4IoT.Printer
             }
 
             /// <summary>
-            /// The upper paper supply paper type.
+            /// The upper paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "upper")]
             public PaperTypeEnum? Upper { get; init; }
 
             /// <summary>
-            /// The lower paper supply paper type.
+            /// The lower paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "lower")]
             public PaperTypeEnum? Lower { get; init; }
 
             /// <summary>
-            /// The external paper supply paper type.
+            /// The external paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "external")]
             public PaperTypeEnum? External { get; init; }
 
             /// <summary>
-            /// The auxililliary paper supply paper type.
+            /// The auxiliary paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "aux")]
             public PaperTypeEnum? Aux { get; init; }
 
             /// <summary>
-            /// The second auxililliary paper supply paper type.
+            /// The second auxiliary paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "aux2")]
             public PaperTypeEnum? Aux2 { get; init; }
 
             /// <summary>
-            /// The parking station paper supply paper type.
+            /// The parking station paper supply paper type. See paperType for valid values.
             /// </summary>
             [DataMember(Name = "park")]
             public PaperTypeEnum? Park { get; init; }
@@ -369,7 +320,7 @@ namespace XFS4IoT.Printer
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(TypeClass Type = null, ResolutionClass Resolution = null, ReadFormClass ReadForm = null, WriteFormClass WriteForm = null, ExtentsClass Extents = null, ControlClass Control = null, int? MaxMediaOnStacker = null, bool? AcceptMedia = null, bool? MultiPage = null, PaperSourcesClass PaperSources = null, bool? MediaTaken = null, int? RetractBins = null, List<int> MaxRetract = null, ImageTypeClass ImageType = null, FrontImageColorFormatClass FrontImageColorFormat = null, BackImageColorFormatClass BackImageColorFormat = null, ImageSourceClass ImageSource = null, bool? DispensePaper = null, string OsPrinter = null, bool? MediaPresented = null, int? AutoRetractPeriod = null, bool? RetractToTransport = null, CoercivityTypeClass CoercivityType = null, ControlPassbookClass ControlPassbook = null, PrintSidesEnum? PrintSides = null)
+        public CapabilitiesClass(TypeClass Type = null, ResolutionClass Resolution = null, ReadFormClass ReadForm = null, WriteFormClass WriteForm = null, ExtentsClass Extents = null, ControlClass Control = null, int? MaxMediaOnStacker = null, bool? AcceptMedia = null, bool? MultiPage = null, PaperSourcesClass PaperSources = null, bool? MediaTaken = null, ImageTypeClass ImageType = null, FrontImageColorFormatClass FrontImageColorFormat = null, BackImageColorFormatClass BackImageColorFormat = null, ImageSourceClass ImageSource = null, bool? DispensePaper = null, string OsPrinter = null, bool? MediaPresented = null, int? AutoRetractPeriod = null, bool? RetractToTransport = null, CoercivityTypeClass CoercivityType = null, ControlPassbookClass ControlPassbook = null, PrintSidesEnum? PrintSides = null)
         {
             this.Type = Type;
             this.Resolution = Resolution;
@@ -382,8 +333,6 @@ namespace XFS4IoT.Printer
             this.MultiPage = MultiPage;
             this.PaperSources = PaperSources;
             this.MediaTaken = MediaTaken;
-            this.RetractBins = RetractBins;
-            this.MaxRetract = MaxRetract;
             this.ImageType = ImageType;
             this.FrontImageColorFormat = FrontImageColorFormat;
             this.BackImageColorFormat = BackImageColorFormat;
@@ -712,7 +661,7 @@ namespace XFS4IoT.Printer
             public bool? Retract { get; init; }
 
             /// <summary>
-            /// Device can stack media items before ejecting as a bundle.
+            /// Device can stack items before ejecting as a bundle.
             /// </summary>
             [DataMember(Name = "stack")]
             public bool? Stack { get; init; }
@@ -778,7 +727,7 @@ namespace XFS4IoT.Printer
             public bool? Rotate180 { get; init; }
 
             /// <summary>
-            /// The Service can clear buffered data.
+            /// The service can clear buffered data.
             /// </summary>
             [DataMember(Name = "clearBuffer")]
             public bool? ClearBuffer { get; init; }
@@ -792,7 +741,7 @@ namespace XFS4IoT.Printer
         public ControlClass Control { get; init; }
 
         /// <summary>
-        /// Specifies the maximum number of media items that the stacker can hold.
+        /// Specifies the maximum number of items that the stacker can hold.
         /// <example>5</example>
         /// </summary>
         [DataMember(Name = "maxMediaOnStacker")]
@@ -888,33 +837,18 @@ namespace XFS4IoT.Printer
         [DataMember(Name = "mediaTaken")]
         public bool? MediaTaken { get; init; }
 
-        /// <summary>
-        /// Specifies the number of retract bins.
-        /// <example>1</example>
-        /// </summary>
-        [DataMember(Name = "retractBins")]
-        [DataTypes(Minimum = 0)]
-        public int? RetractBins { get; init; }
-
-        /// <summary>
-        /// An array of the length [retractBins](#common.capabilities.completion.properties.printer.retractbins) with
-        /// the maximum number of media items that each retract bin can hold (one count for each supported bin, starting
-        /// from zero for bin number 1 to *retractBins* - 1 for bin number *retractBins*). This will be null if there
-        /// are no retract bins.
-        /// </summary>
-        [DataMember(Name = "maxRetract")]
-        [DataTypes(Minimum = 0)]
-        public List<int> MaxRetract { get; init; }
-
         [DataContract]
         public sealed class ImageTypeClass
         {
-            public ImageTypeClass(bool? Tif = null, bool? Wmf = null, bool? Bmp = null, bool? Jpg = null)
+            public ImageTypeClass(bool? Tif = null, bool? Wmf = null, bool? Bmp = null, bool? Jpg = null, bool? Png = null, bool? Gif = null, bool? Svg = null)
             {
                 this.Tif = Tif;
                 this.Wmf = Wmf;
                 this.Bmp = Bmp;
                 this.Jpg = Jpg;
+                this.Png = Png;
+                this.Gif = Gif;
+                this.Svg = Svg;
             }
 
             /// <summary>
@@ -940,6 +874,24 @@ namespace XFS4IoT.Printer
             /// </summary>
             [DataMember(Name = "jpg")]
             public bool? Jpg { get; init; }
+
+            /// <summary>
+            /// The device can return scanned images in PNG format.
+            /// </summary>
+            [DataMember(Name = "png")]
+            public bool? Png { get; init; }
+
+            /// <summary>
+            /// The device can return scanned images in GIF format.
+            /// </summary>
+            [DataMember(Name = "gif")]
+            public bool? Gif { get; init; }
+
+            /// <summary>
+            /// The device can return scanned images in SVG format.
+            /// </summary>
+            [DataMember(Name = "svg")]
+            public bool? Svg { get; init; }
 
         }
 
@@ -1026,10 +978,12 @@ namespace XFS4IoT.Printer
         [DataContract]
         public sealed class ImageSourceClass
         {
-            public ImageSourceClass(bool? ImageFront = null, bool? ImageBack = null)
+            public ImageSourceClass(bool? ImageFront = null, bool? ImageBack = null, bool? PassportDataGroup1 = null, bool? PassportDataGroup2 = null)
             {
                 this.ImageFront = ImageFront;
                 this.ImageBack = ImageBack;
+                this.PassportDataGroup1 = PassportDataGroup1;
+                this.PassportDataGroup2 = PassportDataGroup2;
             }
 
             /// <summary>
@@ -1043,6 +997,18 @@ namespace XFS4IoT.Printer
             /// </summary>
             [DataMember(Name = "imageBack")]
             public bool? ImageBack { get; init; }
+
+            /// <summary>
+            /// The device can scan a passport for Data Group 1 using RFID (see [[Ref. printer-1](#ref-printer-1)]).
+            /// </summary>
+            [DataMember(Name = "passportDataGroup1")]
+            public bool? PassportDataGroup1 { get; init; }
+
+            /// <summary>
+            /// The device can scan a passport for Data Group 2 using RFID (see [[Ref. printer-1](#ref-printer-1)]).
+            /// </summary>
+            [DataMember(Name = "passportDataGroup2")]
+            public bool? PassportDataGroup2 { get; init; }
 
         }
 
@@ -1060,9 +1026,9 @@ namespace XFS4IoT.Printer
         public bool? DispensePaper { get; init; }
 
         /// <summary>
-        /// Specifies the name of the default logical operating system printer that is associated with this Service.
+        /// Specifies the name of the default logical operating system printer that is associated with this service.
         /// Applications should use this printer name to generate native printer files to be printed through
-        /// the [Printer.PrintNative](#printer.printnative) command. This will be null if the Service
+        /// the [Printer.PrintNative](#printer.printnative) command. This will be null if the service
         /// does not support the *Printer.PrintNative* command.
         /// <example>example printer</example>
         /// </summary>
@@ -1115,7 +1081,7 @@ namespace XFS4IoT.Printer
             public bool? High { get; init; }
 
             /// <summary>
-            /// The Service or the device is capable of automatically determining whether low or high
+            /// The service or the device is capable of automatically determining whether low or high
             /// coercivity magnetic stripe should be written.
             /// </summary>
             [DataMember(Name = "auto")]
@@ -1189,6 +1155,561 @@ namespace XFS4IoT.Printer
         /// </summary>
         [DataMember(Name = "printSides")]
         public PrintSidesEnum? PrintSides { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageCapabilitiesClass
+    {
+        public StorageCapabilitiesClass(int? MaxRetracts = null)
+        {
+            this.MaxRetracts = MaxRetracts;
+        }
+
+        /// <summary>
+        /// Specifies the maximum number of media items that the storage unit can hold.
+        /// <example>5</example>
+        /// </summary>
+        [DataMember(Name = "maxRetracts")]
+        [DataTypes(Minimum = 1)]
+        public int? MaxRetracts { get; init; }
+
+    }
+
+
+    public enum ReplenishmentStatusEnum
+    {
+        Ok,
+        Full,
+        Unknown,
+        High
+    }
+
+
+    [DataContract]
+    public sealed class StorageStatusClass
+    {
+        public StorageStatusClass(int? Index = null, int? Initial = null, int? In = null, ReplenishmentStatusEnum? ReplenishmentStatus = null)
+        {
+            this.Index = Index;
+            this.Initial = Initial;
+            this.In = In;
+            this.ReplenishmentStatus = ReplenishmentStatus;
+        }
+
+        /// <summary>
+        /// Assigned by the Service. Will be a unique number which can be used to determine
+        /// the index of the retract bin in XFS 3.x migration.
+        /// <example>4</example>
+        /// </summary>
+        [DataMember(Name = "index")]
+        [DataTypes(Minimum = 1)]
+        public int? Index { get; init; }
+
+        /// <summary>
+        /// The printer related count as set at the last replenishment. May be null in events where status has not changed.
+        /// <example>10</example>
+        /// </summary>
+        [DataMember(Name = "initial")]
+        [DataTypes(Minimum = 0)]
+        public int? Initial { get; init; }
+
+        /// <summary>
+        /// The printer related items added to the unit since the last replenishment. The total number of items in the
+        /// storage unit may be determined by adding this to *initial*. May be null in events where status has not changed.
+        /// <example>3</example>
+        /// </summary>
+        [DataMember(Name = "in")]
+        [DataTypes(Minimum = 0)]
+        public int? In { get; init; }
+
+        [DataMember(Name = "replenishmentStatus")]
+        public ReplenishmentStatusEnum? ReplenishmentStatus { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageClass
+    {
+        public StorageClass(StorageCapabilitiesClass Capabilities = null, StorageStatusClass Status = null)
+        {
+            this.Capabilities = Capabilities;
+            this.Status = Status;
+        }
+
+        [DataMember(Name = "capabilities")]
+        public StorageCapabilitiesClass Capabilities { get; init; }
+
+        [DataMember(Name = "status")]
+        public StorageStatusClass Status { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class UnitClass
+    {
+        public UnitClass(BaseEnum? Base = null, int? X = null, int? Y = null)
+        {
+            this.Base = Base;
+            this.X = X;
+            this.Y = Y;
+        }
+
+        public enum BaseEnum
+        {
+            Inch,
+            Mm,
+            RowColumn
+        }
+
+        /// <summary>
+        /// Specifies the base unit of measurement of the item as one of the following:
+        /// 
+        /// * ```inch``` - The base unit is inches.
+        /// * ```mm``` - The base unit is millimeters.
+        /// * ```rowColumn``` - The base unit is rows and columns.
+        /// </summary>
+        [DataMember(Name = "base")]
+        public BaseEnum? Base { get; init; }
+
+        /// <summary>
+        /// Specifies the horizontal resolution of the base units as a fraction of the *base* value. For example, a
+        /// value of 16 applied to the base unit inch means that the base horizontal resolution is 1/16".
+        /// <example>16</example>
+        /// </summary>
+        [DataMember(Name = "x")]
+        [DataTypes(Minimum = 1)]
+        public int? X { get; init; }
+
+        /// <summary>
+        /// Specifies the vertical resolution of the base units as a fraction of the *base* value. For example, a
+        /// value of 10 applied to the base unit mm means that the base vertical resolution is 0.1 mm.
+        /// <example>10</example>
+        /// </summary>
+        [DataMember(Name = "y")]
+        [DataTypes(Minimum = 1)]
+        public int? Y { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class SizeClass
+    {
+        public SizeClass(int? Width = null, int? Height = null)
+        {
+            this.Width = Width;
+            this.Height = Height;
+        }
+
+        /// <summary>
+        /// Specifies the width in terms of the base horizontal resolution.
+        /// <example>50</example>
+        /// </summary>
+        [DataMember(Name = "width")]
+        [DataTypes(Minimum = 1)]
+        public int? Width { get; init; }
+
+        /// <summary>
+        /// Specifies the height in terms of the base vertical resolution. For media definitions, 0 means unlimited, i.e.,
+        /// paper roll.
+        /// <example>100</example>
+        /// </summary>
+        [DataMember(Name = "height")]
+        [DataTypes(Minimum = 1)]
+        public int? Height { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class PositionClass
+    {
+        public PositionClass(int? X = null, int? Y = null, int? Z = null)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.Z = Z;
+        }
+
+        /// <summary>
+        /// Horizontal position relative to left side.
+        /// <example>20</example>
+        /// </summary>
+        [DataMember(Name = "x")]
+        [DataTypes(Minimum = 0)]
+        public int? X { get; init; }
+
+        /// <summary>
+        /// Vertical position relative to the top.
+        /// <example>12</example>
+        /// </summary>
+        [DataMember(Name = "y")]
+        [DataTypes(Minimum = 0)]
+        public int? Y { get; init; }
+
+        /// <summary>
+        /// Specifies the page number (relative to 0). Required where the top of the form/sub-form
+        /// is other than the first page of the form/sub-form.
+        /// <example>2</example>
+        /// </summary>
+        [DataMember(Name = "z")]
+        [DataTypes(Minimum = 0)]
+        public int? Z { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class AreaClass
+    {
+        public AreaClass(int? X = null, int? Y = null, int? Width = null, int? Height = null)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.Width = Width;
+            this.Height = Height;
+        }
+
+        /// <summary>
+        /// Horizontal position relative to left side.
+        /// <example>5</example>
+        /// </summary>
+        [DataMember(Name = "x")]
+        [DataTypes(Minimum = 0)]
+        public int? X { get; init; }
+
+        /// <summary>
+        /// Vertical position relative to the top.
+        /// <example>6</example>
+        /// </summary>
+        [DataMember(Name = "y")]
+        [DataTypes(Minimum = 0)]
+        public int? Y { get; init; }
+
+        /// <summary>
+        /// Specifies the width in terms of the base horizontal resolution.
+        /// <example>50</example>
+        /// </summary>
+        [DataMember(Name = "width")]
+        [DataTypes(Minimum = 1)]
+        public int? Width { get; init; }
+
+        /// <summary>
+        /// Specifies the height in terms of the base vertical resolution.
+        /// <example>100</example>
+        /// </summary>
+        [DataMember(Name = "height")]
+        [DataTypes(Minimum = 1)]
+        public int? Height { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class MediaControlClass
+    {
+        public MediaControlClass(MoveEnum? Move = null, bool? Perforate = null, bool? Cut = null, bool? Skip = null, bool? Flush = null, bool? PartialCut = null, bool? Alarm = null, TurnPageEnum? TurnPage = null, bool? TurnMedia = null, bool? Stamp = null, bool? Rotate180 = null)
+        {
+            this.Move = Move;
+            this.Perforate = Perforate;
+            this.Cut = Cut;
+            this.Skip = Skip;
+            this.Flush = Flush;
+            this.PartialCut = PartialCut;
+            this.Alarm = Alarm;
+            this.TurnPage = TurnPage;
+            this.TurnMedia = TurnMedia;
+            this.Stamp = Stamp;
+            this.Rotate180 = Rotate180;
+        }
+
+        public enum MoveEnum
+        {
+            Eject,
+            Retract,
+            Park,
+            Expel,
+            EjectToTransport,
+            Stack
+        }
+
+        /// <summary>
+        /// Describes how the media is to be moved as one of the following. If null, none of the actions apply:
+        /// 
+        /// * ```eject``` - Flush data, then eject the media. Only supported if
+        ///   [eject](#common.capabilities.completion.description.printer.control.eject) is *true*.
+        /// * ```retract``` - Flush data, then retract the media to the first retract bin. For devices with more than
+        ///   one bin the command [Printer.RetractMedia](#printer.retractmedia) should be used if the media should be
+        ///   retracted to another bin. Only supported if
+        ///   [retract](#common.capabilities.completion.description.printer.control.retract) is *true*.
+        /// * ```park``` - Park the media in the parking station. Only supported if
+        ///   [park](#common.capabilities.completion.description.printer.control.park) is *true*.
+        /// * ```expel``` - Flush data, then throw the media out of the exit slot. Only supported if
+        ///   [expel](#common.capabilities.completion.description.printer.control.expel) is *true*.
+        /// * ```ejectToTransport``` - Flush data, then move the media to a position on the transport just behind the
+        ///   exit slot. Only supported if
+        ///   [ejectToTransport](#common.capabilities.completion.description.printer.control.ejectToTransport) is *true*.
+        /// * ```stack``` - Flush data, then move the media item on the internal stacker. Only supported if
+        ///   [stack](#common.capabilities.completion.description.printer.control.stack) is *true*.
+        /// </summary>
+        [DataMember(Name = "move")]
+        public MoveEnum? Move { get; init; }
+
+        /// <summary>
+        /// Flush data, then perforate the media. Only supported if
+        /// [perforate](#common.capabilities.completion.description.printer.control.perforate) is *true*.
+        /// </summary>
+        [DataMember(Name = "perforate")]
+        public bool? Perforate { get; init; }
+
+        /// <summary>
+        /// Flush data, then cut the media. For printers which have the ability to stack multiple cut
+        /// sheets and deliver them as a single bundle to the customer, cut causes the media to be stacked and eject
+        /// causes the bundle to be moved to the exit slot. Only supported if
+        /// [cut](#common.capabilities.completion.description.printer.control.cut) is *true*.
+        /// </summary>
+        [DataMember(Name = "cut")]
+        public bool? Cut { get; init; }
+
+        /// <summary>
+        /// Flush data, then skip the media to mark. Only supported if
+        /// [skip](#common.capabilities.completion.description.printer.control.skip) is *true*.
+        /// </summary>
+        [DataMember(Name = "skip")]
+        public bool? Skip { get; init; }
+
+        /// <summary>
+        /// Flush data. This will synchronize the application with the device to ensure that all data has been
+        /// physically printed. Only supported if
+        /// [flush](#common.capabilities.completion.description.printer.control.flush) is *true*.
+        /// </summary>
+        [DataMember(Name = "flush")]
+        public bool? Flush { get; init; }
+
+        /// <summary>
+        /// Flush data, then partially cut the media. Only supported if
+        /// [partialCut](#common.capabilities.completion.description.printer.control.partialCut) is *true*.
+        /// </summary>
+        [DataMember(Name = "partialCut")]
+        public bool? PartialCut { get; init; }
+
+        /// <summary>
+        /// Cause the printer to ring a bell, beep, or otherwise sound an audible alarm. Only supported if
+        /// [alarm](#common.capabilities.completion.description.printer.control.alarm) is *true*.
+        /// </summary>
+        [DataMember(Name = "alarm")]
+        public bool? Alarm { get; init; }
+
+        public enum TurnPageEnum
+        {
+            Forward,
+            Backward
+        }
+
+        /// <summary>
+        /// Flush data then turn the page as described by one of the following options. If null, the page is not turned.
+        /// 
+        /// * ```forward``` - Turn one page forward. Only supported if
+        ///   [forward](#common.capabilities.completion.description.printer.control.forward) is *true*.
+        /// * ```backward``` - Turn one page backward. Only supported if
+        ///   [backward](#common.capabilities.completion.description.printer.control.backward) is *true*.
+        /// </summary>
+        [DataMember(Name = "turnPage")]
+        public TurnPageEnum? TurnPage { get; init; }
+
+        /// <summary>
+        /// Flush data, then turn inserted media. Only supported if
+        /// [turnMedia](#common.capabilities.completion.description.printer.control.turnMedia) is *true*.
+        /// </summary>
+        [DataMember(Name = "turnMedia")]
+        public bool? TurnMedia { get; init; }
+
+        /// <summary>
+        /// Flush data, then stamp on inserted media. Only supported if
+        /// [stamp](#common.capabilities.completion.description.printer.control.stamp) is *true*.
+        /// </summary>
+        [DataMember(Name = "stamp")]
+        public bool? Stamp { get; init; }
+
+        /// <summary>
+        /// Flush data, then rotate media 180 degrees in the printing plane. Only supported if
+        /// [rotate180](#common.capabilities.completion.description.printer.control.rotate180) is *true*.
+        /// </summary>
+        [DataMember(Name = "rotate180")]
+        public bool? Rotate180 { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class MediaControlNullableClass
+    {
+        public MediaControlNullableClass(MoveEnum? Move = null, bool? Perforate = null, bool? Cut = null, bool? Skip = null, bool? Flush = null, bool? PartialCut = null, bool? Alarm = null, TurnPageEnum? TurnPage = null, bool? TurnMedia = null, bool? Stamp = null, bool? Rotate180 = null)
+        {
+            this.Move = Move;
+            this.Perforate = Perforate;
+            this.Cut = Cut;
+            this.Skip = Skip;
+            this.Flush = Flush;
+            this.PartialCut = PartialCut;
+            this.Alarm = Alarm;
+            this.TurnPage = TurnPage;
+            this.TurnMedia = TurnMedia;
+            this.Stamp = Stamp;
+            this.Rotate180 = Rotate180;
+        }
+
+        public enum MoveEnum
+        {
+            Eject,
+            Retract,
+            Park,
+            Expel,
+            EjectToTransport,
+            Stack
+        }
+
+        /// <summary>
+        /// Describes how the media is to be moved as one of the following. If null, none of the actions apply:
+        /// 
+        /// * ```eject``` - Flush data, then eject the media. Only supported if
+        ///   [eject](#common.capabilities.completion.description.printer.control.eject) is *true*.
+        /// * ```retract``` - Flush data, then retract the media to the first retract bin. For devices with more than
+        ///   one bin the command [Printer.RetractMedia](#printer.retractmedia) should be used if the media should be
+        ///   retracted to another bin. Only supported if
+        ///   [retract](#common.capabilities.completion.description.printer.control.retract) is *true*.
+        /// * ```park``` - Park the media in the parking station. Only supported if
+        ///   [park](#common.capabilities.completion.description.printer.control.park) is *true*.
+        /// * ```expel``` - Flush data, then throw the media out of the exit slot. Only supported if
+        ///   [expel](#common.capabilities.completion.description.printer.control.expel) is *true*.
+        /// * ```ejectToTransport``` - Flush data, then move the media to a position on the transport just behind the
+        ///   exit slot. Only supported if
+        ///   [ejectToTransport](#common.capabilities.completion.description.printer.control.ejectToTransport) is *true*.
+        /// * ```stack``` - Flush data, then move the media item on the internal stacker. Only supported if
+        ///   [stack](#common.capabilities.completion.description.printer.control.stack) is *true*.
+        /// </summary>
+        [DataMember(Name = "move")]
+        public MoveEnum? Move { get; init; }
+
+        /// <summary>
+        /// Flush data, then perforate the media. Only supported if
+        /// [perforate](#common.capabilities.completion.description.printer.control.perforate) is *true*.
+        /// </summary>
+        [DataMember(Name = "perforate")]
+        public bool? Perforate { get; init; }
+
+        /// <summary>
+        /// Flush data, then cut the media. For printers which have the ability to stack multiple cut
+        /// sheets and deliver them as a single bundle to the customer, cut causes the media to be stacked and eject
+        /// causes the bundle to be moved to the exit slot. Only supported if
+        /// [cut](#common.capabilities.completion.description.printer.control.cut) is *true*.
+        /// </summary>
+        [DataMember(Name = "cut")]
+        public bool? Cut { get; init; }
+
+        /// <summary>
+        /// Flush data, then skip the media to mark. Only supported if
+        /// [skip](#common.capabilities.completion.description.printer.control.skip) is *true*.
+        /// </summary>
+        [DataMember(Name = "skip")]
+        public bool? Skip { get; init; }
+
+        /// <summary>
+        /// Flush data. This will synchronize the application with the device to ensure that all data has been
+        /// physically printed. Only supported if
+        /// [flush](#common.capabilities.completion.description.printer.control.flush) is *true*.
+        /// </summary>
+        [DataMember(Name = "flush")]
+        public bool? Flush { get; init; }
+
+        /// <summary>
+        /// Flush data, then partially cut the media. Only supported if
+        /// [partialCut](#common.capabilities.completion.description.printer.control.partialCut) is *true*.
+        /// </summary>
+        [DataMember(Name = "partialCut")]
+        public bool? PartialCut { get; init; }
+
+        /// <summary>
+        /// Cause the printer to ring a bell, beep, or otherwise sound an audible alarm. Only supported if
+        /// [alarm](#common.capabilities.completion.description.printer.control.alarm) is *true*.
+        /// </summary>
+        [DataMember(Name = "alarm")]
+        public bool? Alarm { get; init; }
+
+        public enum TurnPageEnum
+        {
+            Forward,
+            Backward
+        }
+
+        /// <summary>
+        /// Flush data then turn the page as described by one of the following options. If null, the page is not turned.
+        /// 
+        /// * ```forward``` - Turn one page forward. Only supported if
+        ///   [forward](#common.capabilities.completion.description.printer.control.forward) is *true*.
+        /// * ```backward``` - Turn one page backward. Only supported if
+        ///   [backward](#common.capabilities.completion.description.printer.control.backward) is *true*.
+        /// </summary>
+        [DataMember(Name = "turnPage")]
+        public TurnPageEnum? TurnPage { get; init; }
+
+        /// <summary>
+        /// Flush data, then turn inserted media. Only supported if
+        /// [turnMedia](#common.capabilities.completion.description.printer.control.turnMedia) is *true*.
+        /// </summary>
+        [DataMember(Name = "turnMedia")]
+        public bool? TurnMedia { get; init; }
+
+        /// <summary>
+        /// Flush data, then stamp on inserted media. Only supported if
+        /// [stamp](#common.capabilities.completion.description.printer.control.stamp) is *true*.
+        /// </summary>
+        [DataMember(Name = "stamp")]
+        public bool? Stamp { get; init; }
+
+        /// <summary>
+        /// Flush data, then rotate media 180 degrees in the printing plane. Only supported if
+        /// [rotate180](#common.capabilities.completion.description.printer.control.rotate180) is *true*.
+        /// </summary>
+        [DataMember(Name = "rotate180")]
+        public bool? Rotate180 { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageStatusSetClass
+    {
+        public StorageStatusSetClass(int? Initial = null)
+        {
+            this.Initial = Initial;
+        }
+
+        /// <summary>
+        /// The printer related count as set at the last replenishment. May be null in events where status has not changed.
+        /// <example>10</example>
+        /// </summary>
+        [DataMember(Name = "initial")]
+        [DataTypes(Minimum = 0)]
+        public int? Initial { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class StorageSetClass
+    {
+        public StorageSetClass(StorageStatusSetClass Status = null)
+        {
+            this.Status = Status;
+        }
+
+        [DataMember(Name = "status")]
+        public StorageStatusSetClass Status { get; init; }
 
     }
 

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -87,12 +87,13 @@ namespace XFS4IoTFramework.CashAcceptor
 
             Logger.Log(Constants.DeviceClass, "CashAcceptorDev.Deplete()");
 
-            var result = await Device.Deplete(new DepleteCommandEvents(Storage, events), 
-                                              new DepleteRequest(
-                                                  deplete.Payload.DepleteSources.ToDictionary(s => s.Source, s => (int)s.NumberOfItemsToMove),
-                                                  deplete.Payload.CashUnitTarget
-                                                  ), 
-                                              cancel);
+            var result = await Device.Deplete(
+                new DepleteCommandEvents(Storage, events), 
+                new DepleteRequest(
+                    deplete.Payload.DepleteSources.ToDictionary(s => s.Source, s => (int)s.NumberOfItemsToMove),
+                    deplete.Payload.CashUnitTarget
+                    ), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashAcceptorDev.Deplete() -> {result.CompletionCode}, {result.ErrorCode}");
 
@@ -108,9 +109,12 @@ namespace XFS4IoTFramework.CashAcceptor
                     depleteSrouceResults = new();
                     foreach (var sourceResult in result.OperationResult.SourceResults)
                     {
-                        depleteSrouceResults.Add(new DepleteCompletion.PayloadData.DepleteSourceResultsClass(sourceResult.Key,
-                                                                                                             sourceResult.Value.CashItem,
-                                                                                                             sourceResult.Value.NumberOfItemsRemoved));
+                        depleteSrouceResults.Add(
+                            new DepleteCompletion.PayloadData.DepleteSourceResultsClass(
+                                sourceResult.Key,
+                                sourceResult.Value.CashItem,
+                                sourceResult.Value.NumberOfItemsRemoved)
+                            );
                     }
                 }
 

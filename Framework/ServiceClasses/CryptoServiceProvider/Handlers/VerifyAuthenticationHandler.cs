@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -223,14 +223,16 @@ namespace XFS4IoTFramework.Crypto
                     // it then send it as a clear IV
                     Logger.Log(Constants.DeviceClass, "CryptoDev.Crypto()");
 
-                    var decryptResult = await Device.Crypto(null,
-                                                            new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
-                                                            CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                            verifyAuthentication.Payload.Iv.Key,
-                                                            KeyManagement.GetKeyDetail(verifyAuthentication.Payload.Iv?.Key).KeySlot,
-                                                            verifyAuthentication.Payload.Iv.Value,
-                                                            0),
-                                                     cancel);
+                    var decryptResult = await Device.Crypto(
+                        null,
+                        new CryptoDataRequest(
+                            CryptoDataRequest.CryptoModeEnum.Decrypt,
+                            CryptoDataRequest.CryptoAlgorithmEnum.ECB,
+                            verifyAuthentication.Payload.Iv.Key,
+                            KeyManagement.GetKeyDetail(verifyAuthentication.Payload.Iv?.Key).KeySlot,
+                            verifyAuthentication.Payload.Iv.Value,
+                            0),
+                    cancel);
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
@@ -268,15 +270,16 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.VerifySignature()");
 
-                result = await Device.VerifySignature(new CryptoCommandEvents(events),
-                                                      new VerifySignatureRequest(verifyAuthentication.Payload.Key,
-                                                                                 KeyManagement.GetKeyDetail(verifyAuthentication.Payload.Key).KeySlot,
-                                                                                 verifyAuthentication.Payload.Data,
-                                                                                 verifyAuthentication.Payload.VerifyData,
-                                                                                 (VerifySignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm,
-                                                                                  padding),
-                                                      cancel);
-
+                result = await Device.VerifySignature(
+                    new CryptoCommandEvents(events),
+                    new VerifySignatureRequest(
+                        verifyAuthentication.Payload.Key,
+                        KeyManagement.GetKeyDetail(verifyAuthentication.Payload.Key).KeySlot,
+                        verifyAuthentication.Payload.Data,
+                        verifyAuthentication.Payload.VerifyData,
+                        (VerifySignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm,
+                        padding),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.VerifySignature() -> {result.CompletionCode}, {result.ErrorCode}");
             }
@@ -284,17 +287,18 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.VerifyMAC()");
 
-                result = await Device.VerifyMAC(new CryptoCommandEvents(events),
-                                                new VerifyMACRequest(keyDetail.KeyName,
-                                                                     keyDetail.KeySlot,
-                                                                     verifyAuthentication.Payload.Data,
-                                                                     verifyAuthentication.Payload.VerifyData,
-                                                                     padding,
-                                                                     ivKeyName,
-                                                                     ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
-                                                                     ivData),
-                                                cancel);
-
+                result = await Device.VerifyMAC(
+                    new CryptoCommandEvents(events),
+                    new VerifyMACRequest(
+                        keyDetail.KeyName,
+                        keyDetail.KeySlot,
+                        verifyAuthentication.Payload.Data,
+                        verifyAuthentication.Payload.VerifyData,
+                        padding,
+                        ivKeyName,
+                        ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
+                        ivData),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.VerifyMAC() -> {result.CompletionCode}, {result.ErrorCode}");
             }

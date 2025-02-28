@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -76,7 +76,7 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specify the area of the text terminal unit screen to clear.
+            /// Specifies the area of the Text Terminal Unit screen to clear.
             /// If this property is null, the whole screen will be cleared.
             /// </summary>
             [DataMember(Name = "screen")]

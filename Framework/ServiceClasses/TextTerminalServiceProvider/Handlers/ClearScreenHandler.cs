@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -29,7 +29,11 @@ namespace XFS4IoTFramework.TextTerminal
                  clearScreen.Payload.Screen.Width is null && 
                  clearScreen.Payload.Screen.Height is null))
             {
-                request = new ClearScreenRequest(0, 0, Device.CurrentHeight, Device.CurrentWidth);
+                request = new ClearScreenRequest(
+                    0, 
+                    0, 
+                    Device.CurrentHeight, 
+                    Device.CurrentWidth);
             }
             // Check if PositionX is null
             else if (clearScreen.Payload.Screen.PositionX is null)
@@ -78,7 +82,11 @@ namespace XFS4IoTFramework.TextTerminal
             // Else we have a valid rectangle to use
             else
             {
-                request = new ClearScreenRequest((int)clearScreen.Payload.Screen.PositionX, (int)clearScreen.Payload.Screen.PositionY, (int)clearScreen.Payload.Screen.Height, (int)clearScreen.Payload.Screen.Width);
+                request = new ClearScreenRequest(
+                    (int)clearScreen.Payload.Screen.PositionX,
+                    (int)clearScreen.Payload.Screen.PositionY, 
+                    (int)clearScreen.Payload.Screen.Height, 
+                    (int)clearScreen.Payload.Screen.Width);
             }
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.ClearScreenAsync()");

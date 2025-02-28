@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.KeyManagement.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "KeyManagement.GenerateKCV")]
     public sealed class GenerateKCVCompletion : Completion<GenerateKCVCompletion.PayloadData>
     {
@@ -47,7 +47,7 @@ namespace XFS4IoT.KeyManagement.Completions
             /// * ```keyNotFound``` - The specified key encryption key was not found.
             /// * ```keyNoValue``` - The specified key exists but has no value loaded.
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// * ```modeNotSupported``` - The KCV mode is not supported.
             /// </summary>
             [DataMember(Name = "errorCode")]
@@ -55,10 +55,10 @@ namespace XFS4IoT.KeyManagement.Completions
 
             /// <summary>
             /// Contains KCV data that can be used for verification of the key. If the command fails, this will be null.
-            /// <example>a2N2</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "kcv")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Kcv { get; init; }
 
         }

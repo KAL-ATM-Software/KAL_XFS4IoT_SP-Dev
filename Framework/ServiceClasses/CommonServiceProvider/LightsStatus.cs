@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -19,10 +19,12 @@ namespace XFS4IoTFramework.Common
     /// </summary>
     public sealed class LightsStatusClass : StatusBase
     {
-        public sealed class LightOperation(LightOperation.PositionEnum Position,
-        LightOperation.FlashRateEnum FlashRate,
-        LightOperation.ColourEnum Colour,
-        LightOperation.DirectionEnum Direction)
+        public sealed class LightOperation(
+            LightOperation.PositionEnum Position,
+            LightOperation.FlashRateEnum FlashRate,
+            LightOperation.ColourEnum Colour,
+            LightOperation.DirectionEnum Direction,
+            string CustomPosition = null)
         {
             public enum PositionEnum
             {
@@ -33,7 +35,7 @@ namespace XFS4IoTFramework.Common
                 Bottom,
                 Front,
                 Rear,
-                Default,
+                Custom,
             }
 
             public enum FlashRateEnum
@@ -104,6 +106,11 @@ namespace XFS4IoTFramework.Common
             /// * ```exit``` -  The light is indicating exit.
             /// </summary>
             public DirectionEnum Direction { get; set; } = Direction;
+
+            /// <summary>
+            /// The name of vendor specific light.
+            /// </summary>
+            public string CustomPosition { get; init; } = CustomPosition;
         }
 
         /// <summary>

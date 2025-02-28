@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -190,7 +190,7 @@ namespace XFS4IoTServer
 
         private record HandlerDetails(Type Type, bool Async);
 
-        private readonly ILogger Logger;
+        private protected readonly ILogger Logger;
 
         public IEnumerable<Type> Commands { get => MessageHandlers.Keys; }
         public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; }

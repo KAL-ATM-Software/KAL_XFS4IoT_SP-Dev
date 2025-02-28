@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -201,20 +201,20 @@ namespace XFS4IoTFramework.Storage
     /// Status of the cash unit
     /// </summary>
     [Serializable()]
-    public sealed record CashStatusClass
+    public sealed record CashStatusClass : StorageChangedBaseRecord
     {
         public CashStatusClass(CashUnitAdditionalInfoClass AdditionalInfo)
         {
             Index = AdditionalInfo.Index;
-            InitialCounts = new();
-            StorageCashOutCount = new();
-            StorageCashInCount = new();
+            initialCounts = new();
+            storageCashOutCount = new();
+            storageCashInCount = new();
             Count = 0;
             if (AdditionalInfo.AccuracySupported)
                 Accuracy = AccuracyEnum.Unknown;
             else
                 Accuracy = AccuracyEnum.NotSupported;
-            ReplenishmentStatus = ReplenishmentStatusEnum.Empty;
+            replenishmentStatus = ReplenishmentStatusEnum.Empty;
         }
 
         public enum AccuracyEnum
@@ -248,31 +248,54 @@ namespace XFS4IoTFramework.Storage
         public StorageCashCountClass InitialCounts
         {
             get { return initialCounts; }
-            set { initialCounts = value with { }; }
+            set
+            {
+                if (initialCounts != value)
+                {
+                    initialCounts = value with { };
+                    NotifyPropertyChanged();
+                }
+            }
         }
-        private StorageCashCountClass initialCounts = new();
+        private StorageCashCountClass initialCounts;
 
         /// <summary>
         /// The items moved from this storage unit by cash commands to another destination since the last 
         /// replenishment of this unit.
         /// </summary>
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashOutCountClass StorageCashOutCount
         {
             get { return storageCashOutCount; }
-            set { storageCashOutCount = value with { }; }
+            set
+            {
+                if (storageCashOutCount != value)
+                {
+                    storageCashOutCount = value with { };
+                    NotifyPropertyChanged();
+                }
+            }
         }
-        private StorageCashOutCountClass storageCashOutCount = new();
+        private StorageCashOutCountClass storageCashOutCount;
 
         /// <summary>
         /// List of items inserted in this storage unit by cash commands from another source since the last 
         /// replenishment of this unit.
         /// </summary>
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashInCountClass StorageCashInCount
         {
             get { return storageCashInCount; }
-            set { storageCashInCount = value with { }; }
+            set
+            {
+                if (storageCashInCount != value)
+                {
+                    storageCashInCount = value with { };
+                    NotifyPropertyChanged();
+                }
+            }
         }
-        private StorageCashInCountClass storageCashInCount = new();
+        private StorageCashInCountClass storageCashInCount;
 
         /// <summary>
         /// Total count of the items in the unit
@@ -287,7 +310,20 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The state of the media in the unit if it can be determined.
         /// </summary>
-        public ReplenishmentStatusEnum ReplenishmentStatus { get; set; }
+        [Event(Type = EventAttribute.EventTypeEnum.StorageChanged)]
+        public ReplenishmentStatusEnum ReplenishmentStatus
+        {
+            get { return replenishmentStatus; }
+            set
+            {
+                if (replenishmentStatus != value)
+                {
+                    replenishmentStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ReplenishmentStatusEnum replenishmentStatus;
     }
 
     /// <summary>

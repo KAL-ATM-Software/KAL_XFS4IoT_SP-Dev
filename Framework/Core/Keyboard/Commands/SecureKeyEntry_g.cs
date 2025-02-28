@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Keyboard.Commands
 {
     //Original name = SecureKeyEntry
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "2.1")]
     [Command(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCommand : Command<SecureKeyEntryCommand.PayloadData>
     {
@@ -42,13 +42,18 @@ namespace XFS4IoT.Keyboard.Commands
             {
                 Number16,
                 Number32,
-                Number48
+                Number48,
+                Number64
             }
 
             /// <summary>
-            /// Specifies the number of digits which must be entered for the encryption key, 16 for a single-length key,
-            /// 32 for a double-length key and 48 for a triple-length key.
-            /// The only valid values are 16, 32 and 48.
+            /// Specifies the number of digits which must be entered for the encryption key as one of the following:
+            /// 
+            /// * ```16``` - For a single-length DES key.
+            /// * ```32``` - For a double-length TDES or AES 128 key.
+            /// * ```48``` - For a triple-length TDES or AES 192 key.
+            /// * ```64``` - For an AES 256 key.
+            /// <example>32</example>
             /// </summary>
             [DataMember(Name = "keyLen")]
             public KeyLenEnum? KeyLen { get; init; }
@@ -123,7 +128,7 @@ namespace XFS4IoT.Keyboard.Commands
             /// Specifies the cryptographic method to be used for the verification.
             /// If this property is null, *keyLen* will determine the cryptographic method used.
             /// If *keyLen* is 16, the cryptographic method will be Single DES.
-            /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES
+            /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES.
             /// The following values are possible:
             /// 
             /// * ```des``` - Single DES

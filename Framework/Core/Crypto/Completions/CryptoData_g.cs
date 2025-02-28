@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Crypto.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCompletion : Completion<CryptoDataCompletion.PayloadData>
     {
@@ -50,13 +50,13 @@ namespace XFS4IoT.Crypto.Completions
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
             /// * ```accessDenied``` - The encryption module is either not initialized or not ready for any vendor
-            /// specific reason.
+            ///   specific reason.
             /// * ```keyNotFound``` - The *key* name does not exist.
             /// * ```keyNoValue``` - The *key* name exists but the key is not loaded.
             /// * ```useViolation``` - The *key* usage is not supported.
             /// * ```modeOfUseNotSupported``` - The *key* Mode of Use or the *modeOfUse* qualifier is not supported.
             /// * ```invalidKeyLength``` - The length of *iv* is not supported or the length of an encryption key is
-            /// not compatible with the encryption operation required.
+            ///   not compatible with the encryption operation required.
             /// * ```cryptoMethodNotSupported``` - The cryptographic method specified by *cryptoMethod* is not
             /// supported.
             /// * ```noChipTransactionActive``` - A chipcard key is used as encryption key and there is no chip
@@ -67,10 +67,10 @@ namespace XFS4IoT.Crypto.Completions
 
             /// <summary>
             /// The encrypted or decrypted data. If the command fails, this will be null.
-            /// <example>U2FtcGxlIERhdGE=</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "data")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Data { get; init; }
 
         }

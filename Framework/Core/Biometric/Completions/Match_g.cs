@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Biometric.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Biometric.Match")]
     public sealed class MatchCompletion : Completion<MatchCompletion.PayloadData>
     {
@@ -37,6 +37,7 @@ namespace XFS4IoT.Biometric.Completions
             public enum ErrorCodeEnum
             {
                 NoImportedData,
+                InvalidIdentifier,
                 ModeNotSupported,
                 NoCaptureData,
                 InvalidCompareMode,
@@ -48,8 +49,8 @@ namespace XFS4IoT.Biometric.Completions
             /// 
             /// * ```noImportedData``` - The command failed because no data was imported previously using the [Biometric.Import](#biometric.import).
             /// * ```invalidIdentifier``` - The command failed because data was imported but *identifier* was not found.
-            /// * ```modeNotSupported``` -\tThe type of match specified in *compareMode* is not supported.
-            /// * ```noCaptureData``` -\tNo captured data is present. Typically means that the [Biometric.Read](#biometric.read)
+            /// * ```modeNotSupported``` - The type of match specified in *compareMode* is not supported.
+            /// * ```noCaptureData``` - No captured data is present. Typically means that the [Biometric.Read](#biometric.read)
             ///                         command has not been called, or the captured data has been cleared using the [Biometric.Clear](#biometric.clear).
             /// * ```invalidCompareMode``` - The compare mode specified by the *compareMode* input parameter is not supported.
             /// * ```invalidThreshold``` - The *Threshold* input parameter is greater than the maximum allowed of 100.
@@ -79,10 +80,10 @@ namespace XFS4IoT.Biometric.Completions
                 /// Contains the biometric template data that was matched.
                 /// This data may be used as justification for the biometric data match or confidence level.
                 /// This property is null if no additional comparison data is returned.
-                /// <example>dGVtcGxhdGUgZGF0YQ==</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "templateData")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}?$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> TemplateData { get; init; }
 
             }

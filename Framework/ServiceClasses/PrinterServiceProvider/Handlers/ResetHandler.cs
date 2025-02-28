@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -48,15 +48,24 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.ResetDeviceAsync()");
-            var result = await Device.ResetDeviceAsync(new ResetDeviceRequest(mediaControl,
-                                                                              binNumber),
-                                                       cancel);
+            var result = await Device.ResetDeviceAsync(
+                new ResetDeviceRequest(
+                    mediaControl,
+                    binNumber),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
+
+            if (!string.IsNullOrEmpty(result.StorageId))
+            {
+                await Storage.UpdateCardStorageCount(result.StorageId, result.MediaInCount);
+            }
 
             return new(
                 result.ErrorCode is not null ? new(result.ErrorCode) : null,
                 result.CompletionCode,
                 result.ErrorDescription);
         }
+
+        private XFS4IoTFramework.Storage.IStorageService Storage { get => Provider.IsA<XFS4IoTFramework.Storage.IStorageService>(); }
     }
 }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -68,7 +68,7 @@ namespace XFS4IoT.CashAcceptor.Completions
             }
 
             /// <summary>
-            /// Specifies whether or not additional bunches of items are remaining to be presented as a result of the
+            /// Specifies whether additional bunches of items are remaining to be presented as a result of the
             /// most recent operation. The following values are possible:
             /// 
             /// * ```none``` - No additional bunches remain.
@@ -79,11 +79,11 @@ namespace XFS4IoT.CashAcceptor.Completions
             public AdditionalBunchesEnum? AdditionalBunches { get; init; }
 
             /// <summary>
-            /// If *additionalBunches* is ```oneMore```, specifies the number of additional bunches of items remaining to
+            /// If *additionalBunches* is *oneMore*, specifies the number of additional bunches of items remaining to
             /// be presented as a result of the current operation.
             /// This property is null if any of the following are true:
             /// * If the number of additional bunches is at least one, but the precise number is unknown.
-            /// * *additionalBunches* is not ```oneMore```.
+            /// * *additionalBunches* is not *oneMore*.
             /// </summary>
             [DataMember(Name = "bunchesRemaining")]
             [DataTypes(Minimum = 0)]

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2024
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -32,7 +32,8 @@ namespace XFS4IoTFramework.MixedMedia
     public sealed class SetModeResult(
         MessageHeader.CompletionCodeEnum CompletionCode,
         string ErrorDescription = null,
-        SetModeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) : DeviceResult(CompletionCode, ErrorDescription)
+        SetModeCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null) 
+        : DeviceResult(CompletionCode, ErrorDescription)
     {
 
         /// <summary>

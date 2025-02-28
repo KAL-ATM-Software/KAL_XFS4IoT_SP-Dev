@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -52,8 +52,9 @@ namespace XFS4IoTFramework.TextTerminal
 
             Logger.Log(Constants.DeviceClass, "TextTerminalDev.BeepAsync()");
             
-            var result = await Device.BeepAsync(new BeepRequest(type, action), 
-                                                cancel);
+            var result = await Device.BeepAsync(
+                new BeepRequest(type, action), 
+                cancel);
             
             Logger.Log(Constants.DeviceClass, $"TextTerminalDev.BeepAsync() -> {result.CompletionCode}");
 

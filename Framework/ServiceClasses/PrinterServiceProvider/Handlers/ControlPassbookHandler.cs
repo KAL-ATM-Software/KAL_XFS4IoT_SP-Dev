@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -57,15 +57,17 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.ControlPassbookAsync()");
-            var result = await Device.ControlPassbookAsync(new ControlPassbookRequest(controlPassbook.Payload.Action switch
-                                                                                      {
-                                                                                          ControlPassbookCommand.PayloadData.ActionEnum.Backward => ControlPassbookRequest.ActionEnum.TurnBackward,
-                                                                                          ControlPassbookCommand.PayloadData.ActionEnum.Forward => ControlPassbookRequest.ActionEnum.TurnForward,
-                                                                                          ControlPassbookCommand.PayloadData.ActionEnum.CloseBackward => ControlPassbookRequest.ActionEnum.CloseBackward,
-                                                                                          _ => ControlPassbookRequest.ActionEnum.CloseForward,
-                                                                                      },
-                                                                                      count),
-                                                           cancel);
+            var result = await Device.ControlPassbookAsync(
+                new ControlPassbookRequest(
+                    controlPassbook.Payload.Action switch
+                    {
+                        ControlPassbookCommand.PayloadData.ActionEnum.Backward => ControlPassbookRequest.ActionEnum.TurnBackward,
+                        ControlPassbookCommand.PayloadData.ActionEnum.Forward => ControlPassbookRequest.ActionEnum.TurnForward,
+                        ControlPassbookCommand.PayloadData.ActionEnum.CloseBackward => ControlPassbookRequest.ActionEnum.CloseBackward,
+                        _ => ControlPassbookRequest.ActionEnum.CloseForward,
+                    },
+                    count),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ControlPassbookAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             return new(

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -87,12 +87,16 @@ namespace XFS4IoTFramework.CashManagement
                 {
                     foreach (var total in setTellerInfo.Payload.TellerDetails.TellerTotals)
                     {
-                        totals.Add(total.Key, new TellerDetail.TellerTotal((double)total.Value.ItemsReceived,
-                                                                           (double)total.Value.ItemsDispensed,
-                                                                           (double)total.Value.CoinsReceived,
-                                                                           (double)total.Value.CoinsReceived,
-                                                                           (double)total.Value.CashBoxReceived,
-                                                                           (double)total.Value.CashBoxReceived));
+                        totals.Add(
+                            total.Key, 
+                            new TellerDetail.TellerTotal(
+                                (double)total.Value.ItemsReceived,
+                                (double)total.Value.ItemsDispensed,
+                                (double)total.Value.CoinsReceived,
+                                (double)total.Value.CoinsReceived,
+                                (double)total.Value.CashBoxReceived,
+                                (double)total.Value.CashBoxReceived)
+                            );
                     }
                 }
 
@@ -127,14 +131,16 @@ namespace XFS4IoTFramework.CashManagement
 
             Logger.Log(Constants.DeviceClass, "CashDispenserDev.SetTellerInfoAsync()");
 
-            var result = await Device.SetTellerInfoAsync(new SetTellerInfoRequest(setTellerInfo.Payload.Action switch
-                                                                                  {
-                                                                                      SetTellerInfoCommand.PayloadData.ActionEnum.Create => SetTellerInfoRequest.ActionEnum.Create,
-                                                                                      SetTellerInfoCommand.PayloadData.ActionEnum.Delete => SetTellerInfoRequest.ActionEnum.Delete,
-                                                                                      _ => SetTellerInfoRequest.ActionEnum.Modify,
-                                                                                  },
-                                                                                  detail),
-                                                          cancel);
+            var result = await Device.SetTellerInfoAsync(
+                new SetTellerInfoRequest(
+                    setTellerInfo.Payload.Action switch
+                    {
+                        SetTellerInfoCommand.PayloadData.ActionEnum.Create => SetTellerInfoRequest.ActionEnum.Create,
+                        SetTellerInfoCommand.PayloadData.ActionEnum.Delete => SetTellerInfoRequest.ActionEnum.Delete,
+                        _ => SetTellerInfoRequest.ActionEnum.Modify,
+                    },
+                    detail),
+                    cancel);
 
             Logger.Log(Constants.DeviceClass, $"CashDispenserDev.SetTellerInfoAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

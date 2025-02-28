@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Crypto.Commands
 {
     //Original name = GenerateAuthentication
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Crypto.GenerateAuthentication")]
     public sealed class GenerateAuthenticationCommand : Command<GenerateAuthenticationCommand.PayloadData>
     {
@@ -53,10 +53,10 @@ namespace XFS4IoT.Crypto.Commands
 
             /// <summary>
             /// The data used to generate the authentication data.
-            /// <example>VGhlIEJhc2U2NCBlbmNv ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "data")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Data { get; init; }
 
             /// <summary>
@@ -81,7 +81,7 @@ namespace XFS4IoT.Crypto.Commands
                 /// The name of a key used to decrypt the *value*.
                 /// This specifies the name of a key (usage 'K0') used to decrypt the *value*.
                 /// This is only used when the *key* usage is 'D0' and *cryptoMethod* is either CBC or
-                /// CFB. if this property is null, *value* is used as the Initialization Vector.
+                /// CFB. If this property is null, *value* is used as the Initialization Vector.
                 /// 
                 /// <example>KeyToDecrypt</example>
                 /// </summary>
@@ -90,10 +90,10 @@ namespace XFS4IoT.Crypto.Commands
 
                 /// <summary>
                 /// The plaintext or encrypted IV for use with the CBC or CFB encryption methods.
-                /// <example>VGhlIGluaXRpYWxpemF0 ...</example>
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "value")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Value { get; init; }
 
             }
@@ -160,10 +160,9 @@ namespace XFS4IoT.Crypto.Commands
             /// 
             /// * ```sha1``` - The SHA1 digest algorithm.
             /// * ```sha256``` - The SHA 256 digest algorithm, as defined in ISO/IEC 10118-3:2004.
-            /// * ```na``` - Not applicable.
             /// [[Ref. crypto-1](#ref-crypto-1)] and FIPS 180-2 [[Ref. crypto-2](#ref-crypto-2)].
             /// 
-            /// If the *key* usage is a MAC usage (e.g. 'M0') this property will be ignored.
+            /// If the *key* usage is a MAC usage (e.g. 'M0') this property will be ignored. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "hashAlgorithm")]
             public HashAlgorithmEnum? HashAlgorithm { get; init; }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -52,7 +52,7 @@ namespace XFS4IoT.Check.Commands
             /// Specifies where the item(s) specified by *mediaID* are to be moved to. Following values are possible:
             /// 
             /// * ```customer``` - The item or items are to be returned to the customer.
-            /// * ```&lt;storage unit identifier&gt;``` - The item or items are to be sored in a storage unit with matching
+            /// * ```[storage unit identifier]``` - The item or items are to be stored in a storage unit with matching
             /// [identifier](#storage.getstorage.completion.properties.storage.unit1).
             /// <example>unit1</example>
             /// </summary>

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -42,7 +42,7 @@ namespace XFS4IoT.Biometric.Completions
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```noImportedData``` -\tNo data to return. Typically means that no data has been imported using the 
+            /// * ```noImportedData``` - No data to return. Typically means that no data has been imported using the 
             ///                           [Biometric.Import](#biometric.import).
             /// </summary>
             [DataMember(Name = "errorCode")]

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -57,7 +57,7 @@ namespace XFS4IoT.Camera.Commands
             /// [manAdd](#common.capabilities.completion.properties.camera.camdata.manadd). If the
             /// [maximum text length](#common.capabilities.completion.properties.camera.maxdatalength) is
             /// exceeded it will be truncated. In this case or if the text given is invalid, a
-            /// [Camera.InvalidDataEvent](#camera.invaliddataevent) event will be generated. Nevertheless
+            /// [Camera.InvalidDataEvent](#camera.invaliddataevent) event will be generated. Nevertheless,
             /// the picture is taken.
             /// <example>Camera 1 Text</example>
             /// </summary>

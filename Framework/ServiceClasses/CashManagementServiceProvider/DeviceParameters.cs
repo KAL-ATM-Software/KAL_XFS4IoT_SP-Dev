@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 
@@ -107,8 +107,9 @@ namespace XFS4IoTFramework.CashManagement
     /// </summary>
     public sealed record Retract
     {
-        public Retract(CashManagementCapabilitiesClass.RetractAreaEnum RetractArea,
-                       int? Index = null)
+        public Retract(
+            CashManagementCapabilitiesClass.RetractAreaEnum RetractArea,
+            int? Index = null)
         {
             this.RetractArea = RetractArea;
             this.Index = Index;
@@ -232,13 +233,14 @@ namespace XFS4IoTFramework.CashManagement
 
     public sealed record ItemInfoClass
     {
-        public ItemInfoClass(OrientationEnum Orientation, 
-                             List<byte> Signature, 
-                             NoteLevelEnum Level, 
-                             string SerialNumber, 
-                             List<byte> Image, 
-                             ClassificationListEnum ClassificationList,
-                             string ItemLocation)
+        public ItemInfoClass(
+            OrientationEnum Orientation, 
+            List<byte> Signature, 
+            NoteLevelEnum Level, 
+            string SerialNumber, 
+            List<byte> Image, 
+            ClassificationListEnum ClassificationList,
+            string ItemLocation)
         {
             this.Orientation = Orientation;
             this.Signature = new(Signature);
@@ -300,31 +302,26 @@ namespace XFS4IoTFramework.CashManagement
     /// CalibrateCashUnitRequest
     /// Request to perform calibration of cash unit
     /// </summary>
-    public sealed class CalibrateCashUnitRequest
+    public sealed class CalibrateCashUnitRequest(
+        string CashUnit,
+        int NumOfBills,
+        ItemDestination Position)
     {
-        public CalibrateCashUnitRequest(string CashUnit,
-                                        int NumOfBills,
-                                        ItemDestination Position)
-        {
-            this.CashUnit = CashUnit;
-            this.NumOfBills = NumOfBills;
-            this.Position = Position;
-        }
 
         /// <summary>
         /// The object name of the cash unit where items to be dispensed
         /// </summary>
-        public string CashUnit { get; init; }
+        public string CashUnit { get; init; } = CashUnit;
 
         /// <summary>
         /// The number of bills to be dispensed during the calibration process.
         /// </summary>
-        public int NumOfBills { get; init; }
+        public int NumOfBills { get; init; } = NumOfBills;
 
         /// <summary>
         /// Specifies where the dispensed items should be moved to
         /// </summary>
-        public ItemDestination Position { get; init; }
+        public ItemDestination Position { get; init; } = Position;
     }
 
     /// <summary>
@@ -340,9 +337,10 @@ namespace XFS4IoTFramework.CashManagement
         /// <param name="CompletionCode"></param>
         /// <param name="ErrorDescription"></param>
         /// <param name="ErrorCode"></param>
-        public CalibrateCashUnitResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public CalibrateCashUnitResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -350,34 +348,10 @@ namespace XFS4IoTFramework.CashManagement
             this.MovementResult = null;
         }
 
-        public CalibrateCashUnitResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                       ItemDestination Position,
-                                       Dictionary<string, CashUnitCountClass> MovementResult = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Position = Position;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public CalibrateCashUnitResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       string ErrorDescription = null,
-                                       CalibrateCashUnitCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Position = null;
-            this.MovementResult = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public CalibrateCashUnitResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                       ItemDestination Position,
-                                       Dictionary<string, CashUnitCountClass> MovementResult = null)
+        public CalibrateCashUnitResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            ItemDestination Position,
+            Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -406,7 +380,15 @@ namespace XFS4IoTFramework.CashManagement
     /// OpenCloseShutterRequest
     /// Open or Close shutter for the specified output position
     /// </summary>
-    public sealed class OpenCloseShutterRequest
+    /// <remarks>
+    /// OpenCloseShutterRequest
+    /// Open or Close shutter for the specified output position
+    /// </remarks>
+    /// <param name="Action">Either Open or Close for the shutter operation</param>
+    /// <param name="ShutterPosition">Position of shutter to control.</param>
+    public sealed class OpenCloseShutterRequest(
+        OpenCloseShutterRequest.ActionEnum Action, 
+        CashManagementCapabilitiesClass.PositionEnum ShutterPosition)
     {
         public enum ActionEnum
         {
@@ -414,21 +396,9 @@ namespace XFS4IoTFramework.CashManagement
             Close
         }
 
-        /// <summary>
-        /// OpenCloseShutterRequest
-        /// Open or Close shutter for the specified output position
-        /// </summary>
-        /// <param name="Action">Either Open or Close for the shutter operation</param>
-        /// <param name="ShutterPosition">Position of shutter to control.</param>
-        public OpenCloseShutterRequest(ActionEnum Action, CashManagementCapabilitiesClass.PositionEnum ShutterPosition)
-        {
-            this.Action = Action;
-            this.ShutterPosition = ShutterPosition;
-        }
+        public ActionEnum Action { get; init; } = Action;
 
-        public ActionEnum Action { get; init; }
-
-        public CashManagementCapabilitiesClass.PositionEnum ShutterPosition { get; init; }
+        public CashManagementCapabilitiesClass.PositionEnum ShutterPosition { get; init; } = ShutterPosition;
     }
 
     /// <summary>
@@ -437,10 +407,11 @@ namespace XFS4IoTFramework.CashManagement
     /// </summary>
     public sealed class OpenCloseShutterResult : DeviceResult
     {
-        public OpenCloseShutterResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription,
-                                      ErrorCodeEnum? ErrorCode,
-                                      bool Jammed)
+        public OpenCloseShutterResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription,
+            ErrorCodeEnum? ErrorCode,
+            bool Jammed)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -448,28 +419,6 @@ namespace XFS4IoTFramework.CashManagement
         }
 
         public OpenCloseShutterResult(MessageHeader.CompletionCodeEnum CompletionCode)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Jammed = false;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                      string ErrorDescription,
-                                      ErrorCodeEnum? ErrorCode,
-                                      bool Jammed)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Jammed = Jammed;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public OpenCloseShutterResult(MessagePayload.CompletionCodeEnum CompletionCode)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -501,21 +450,17 @@ namespace XFS4IoTFramework.CashManagement
     /// ResetDeviceRequest
     /// The parameter class for the reset device operation
     /// </summary>
-    public sealed class ResetDeviceRequest
+    /// <remarks>
+    /// ResetRequest
+    /// The parameter class for the reset device operation
+    /// </remarks>
+    public sealed class ResetDeviceRequest(ItemDestination Position)
     {
-        /// <summary>
-        /// ResetRequest
-        /// The parameter class for the reset device operation
-        /// </summary>
-        public ResetDeviceRequest(ItemDestination Position)
-        {
-            this.Position = Position;
-        }
 
         /// <summary>
         /// Specifies where the dispensed items should be moved to.
         /// </summary>
-        public ItemDestination Position { get; init; }
+        public ItemDestination Position { get; init; } = Position;
     }
 
     /// <summary>
@@ -528,41 +473,20 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetDeviceResult
         /// Return result of reset device
         /// </summary>
-        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 Dictionary<string, CashUnitCountClass> MovementResult = null)
+        public ResetDeviceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+            Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.MovementResult = MovementResult;
         }
 
-        public ResetDeviceResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 Dictionary<string, CashUnitCountClass> MovementResult)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null,
-                                 ResetCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                 Dictionary<string, CashUnitCountClass> MovementResult = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public ResetDeviceResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 Dictionary<string, CashUnitCountClass> MovementResult)
+        public ResetDeviceResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, CashUnitCountClass> MovementResult)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -584,22 +508,18 @@ namespace XFS4IoTFramework.CashManagement
     /// RetractRequest
     /// The parameter class for the retract operation
     /// </summary>
-    public sealed class RetractRequest
+    /// <remarks>
+    /// ResetRequest
+    /// The parameter class for the retract operation
+    /// </remarks>
+    public sealed class RetractRequest(RetractPosition Position)
     {
-        /// <summary>
-        /// ResetRequest
-        /// The parameter class for the retract operation
-        /// </summary>
-        public RetractRequest(RetractPosition Position)
-        {
-            this.Position = Position;
-        }
 
         /// <summary>
         /// Specifies where the dispensed items should be moved to.
         /// If tnis value is null, the retract items to the default position
         /// </summary>
-        public RetractPosition Position { get; init; }
+        public RetractPosition Position { get; init; } = Position;
     }
 
     /// <summary>
@@ -612,41 +532,20 @@ namespace XFS4IoTFramework.CashManagement
         /// ResetDeviceResult
         /// Return result of retract items
         /// </summary>
-        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                             Dictionary<string, CashUnitCountClass> MovementResult = null)
+        public RetractResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+            Dictionary<string, CashUnitCountClass> MovementResult = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.MovementResult = MovementResult;
         }
 
-        public RetractResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                             Dictionary<string, CashUnitCountClass> MovementResult)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.MovementResult = MovementResult;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             string ErrorDescription = null,
-                             RetractCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                             Dictionary<string, CashUnitCountClass> MovementResult = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.MovementResult = MovementResult;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public RetractResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                             Dictionary<string, CashUnitCountClass> MovementResult)
+        public RetractResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, CashUnitCountClass> MovementResult)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -668,121 +567,102 @@ namespace XFS4IoTFramework.CashManagement
     /// GetTellerInfoRequest
     /// The parameter class for get teller info from the  device
     /// </summary>
-    public sealed class GetTellerInfoRequest
+    /// <remarks>
+    /// ResetRequest
+    /// The parameter class for the reset device operation
+    /// </remarks>
+    public sealed class GetTellerInfoRequest(
+        int TellerId,
+        string CurrencyId)
     {
-        /// <summary>
-        /// ResetRequest
-        /// The parameter class for the reset device operation
-        /// </summary>
-        public GetTellerInfoRequest(int TellerId,
-                                    string CurrencyId)
-        {
-            this.TellerId = TellerId;
-            this.CurrencyId = CurrencyId;
-        }
 
         /// <summary>
         /// Identification of the teller. If invalid the error InvalidTellerId is reported. If it is negative value specified, all
         /// </summary>
-        public int TellerId { get; init; }
+        public int TellerId { get; init; } = TellerId;
 
         /// <summary>
         /// Three character ISO 4217 format currency identifier. If not specified, all currencies are reported for TellerID.
         /// </summary>
-        public string CurrencyId { get; init; }
+        public string CurrencyId { get; init; } = CurrencyId;
     }
 
     /// <summary>
     /// Details of the teller information
     /// </summary>
-    public sealed class TellerDetail
+    public sealed class TellerDetail(
+        int TellerId,
+        CashManagementCapabilitiesClass.PositionEnum InputPosition,
+        CashManagementCapabilitiesClass.PositionEnum OutputPosition,
+        Dictionary<string, TellerDetail.TellerTotal> Totals)
     {
-        public TellerDetail(int TellerId,
-                            CashManagementCapabilitiesClass.PositionEnum InputPosition,
-                            CashManagementCapabilitiesClass.PositionEnum OutputPosition,
-                            Dictionary<string, TellerTotal> Totals)
+        /// <summary>
+        /// teller totals
+        /// </summary>
+        public sealed class TellerTotal(
+            double ItemsReceived,
+            double ItemsDispensed,
+            double CoinsReceived,
+            double CoinsDispensed,
+            double CashBoxReceived,
+            double CashBoxDispensed)
         {
-            this.TellerId = TellerId;
-            this.InputPosition = InputPosition;
-            this.OutputPosition = OutputPosition;
-            this.Totals = Totals;
-        }
-
-        public sealed class TellerTotal
-        {
-            /// <summary>
-            /// teller totals
-            /// </summary>
-            public TellerTotal(double ItemsReceived,
-                               double ItemsDispensed,
-                               double CoinsReceived,
-                               double CoinsDispensed,
-                               double CashBoxReceived,
-                               double CashBoxDispensed)
-            {
-                this.ItemsReceived = ItemsReceived;
-                this.ItemsDispensed = ItemsDispensed;
-                this.CoinsReceived = CoinsReceived;
-                this.CoinsDispensed = CoinsDispensed;
-                this.CashBoxReceived = CashBoxReceived;
-                this.CashBoxDispensed = CashBoxDispensed;
-            }
 
             /// <summary>
             /// The total absolute value of items(other than coins) of the specified currency accepted.
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double ItemsReceived { get; init; }
+            public double ItemsReceived { get; init; } = ItemsReceived;
 
             /// <summary>
             /// The total absolute value of items (other than coins) of the specified currency dispensed.
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double ItemsDispensed { get; init; }
+            public double ItemsDispensed { get; init; } = ItemsDispensed;
 
             /// <summary>
             /// The total absolute value of coin currency accepted. 
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double CoinsReceived { get; init; }
+            public double CoinsReceived { get; init; } = CoinsReceived;
 
             /// <summary>
             /// The total absolute value of coin currency dispensed. 
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double CoinsDispensed { get; init; }
+            public double CoinsDispensed { get; init; } = CoinsDispensed;
 
             /// <summary>
             /// The total absolute value of cash box currency accepted.
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double CashBoxReceived { get; init; }
+            public double CashBoxReceived { get; init; } = CashBoxReceived;
 
             /// <summary>
             /// The total absolute value of cash box currency dispensed. 
             /// The amount is expressed as a floating point value.
             /// </summary>
-            public double CashBoxDispensed { get; init; }
+            public double CashBoxDispensed { get; init; } = CashBoxDispensed;
         }
-        
+
         /// <summary>
         /// Teller ID
         /// </summary>
-        public int TellerId { get; init; }
+        public int TellerId { get; init; } = TellerId;
         /// <summary>
         /// The input position assigned to the teller for cash entry
         /// </summary>
-        public CashManagementCapabilitiesClass.PositionEnum InputPosition { get; init; }
+        public CashManagementCapabilitiesClass.PositionEnum InputPosition { get; init; } = InputPosition;
 
         /// <summary>
         /// The output position from which cash is presented to the teller
         /// </summary>
-        public CashManagementCapabilitiesClass.PositionEnum OutputPosition { get; init; }
+        public CashManagementCapabilitiesClass.PositionEnum OutputPosition { get; init; } = OutputPosition;
 
         /// <summary>
         /// List of teller totals
         /// </summary>
-        public Dictionary<string, TellerTotal> Totals { get; init; }
+        public Dictionary<string, TellerTotal> Totals { get; init; } = Totals;
     }
 
     public sealed class GetTellerInfoResult : DeviceResult
@@ -791,41 +671,20 @@ namespace XFS4IoTFramework.CashManagement
         /// GetTellerInfoResult
         /// Return result of teller info inquired
         /// </summary>
-        public GetTellerInfoResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   GetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                   List<TellerDetail> Details = null)
+        public GetTellerInfoResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            GetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
+            List<TellerDetail> Details = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
             this.Details = Details;
         }
 
-        public GetTellerInfoResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   List<TellerDetail> Details = null)
-            : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Details = Details;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   GetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null,
-                                   List<TellerDetail> Details = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Details = Details;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   List<TellerDetail> Details = null)
+        public GetTellerInfoResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            List<TellerDetail> Details = null)
             : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -843,7 +702,13 @@ namespace XFS4IoTFramework.CashManagement
         public List<TellerDetail> Details { get; init; }
     }
 
-    public sealed class SetTellerInfoRequest
+    /// <summary>
+    /// ResetRequest
+    /// The parameter class for the reset device operation
+    /// </summary>
+    public sealed class SetTellerInfoRequest(
+        SetTellerInfoRequest.ActionEnum Action,
+        TellerDetail Detail)
     {
         public enum ActionEnum
         {
@@ -853,25 +718,14 @@ namespace XFS4IoTFramework.CashManagement
         }
 
         /// <summary>
-        /// ResetRequest
-        /// The parameter class for the reset device operation
-        /// </summary>
-        public SetTellerInfoRequest(ActionEnum Action,
-                                    TellerDetail Detail)
-        {
-            this.Action = Action;
-            this.Detail = Detail;
-        }
-
-        /// <summary>
         /// The action to be performed.
         /// </summary>
-        public ActionEnum Action { get; init; }
+        public ActionEnum Action { get; init; } = Action;
 
         /// <summary>
         /// Specifies the details of the teller information to be set
         /// </summary>
-        public TellerDetail Detail { get; init; }
+        public TellerDetail Detail { get; init; } = Detail;
     }
 
     public sealed class SetTellerInfoResult : DeviceResult
@@ -880,20 +734,10 @@ namespace XFS4IoTFramework.CashManagement
         /// SetTellerInfoResult
         /// Return result of setting teller info inquired
         /// </summary>
-        public SetTellerInfoResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SetTellerInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                   string ErrorDescription = null,
-                                   SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public SetTellerInfoResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -905,35 +749,31 @@ namespace XFS4IoTFramework.CashManagement
         public SetTellerInfoCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 
-    public sealed class GetItemInfoRequest
+    /// <summary>
+    /// GetItemInfoRequest
+    /// Which item information to be retrieved.
+    /// </summary>
+    public sealed class GetItemInfoRequest(
+        int Index,
+        NoteLevelEnum NoteLevel,
+        ItemInfoTypeEnum ItemInfoType)
     {
-        /// <summary>
-        /// GetItemInfoRequest
-        /// Which item information to be retrieved.
-        /// </summary>
-        public GetItemInfoRequest(int Index,
-                                  NoteLevelEnum NoteLevel,
-                                  ItemInfoTypeEnum ItemInfoType)
-        {
-            this.Index = Index;
-            this.ItemInfoType = ItemInfoType;
-        }
 
         /// <summary>
         /// The index being used for sending InfoAvailableEvent.
         /// If the NoteLevel is specified to zero, this value is ignored.
         /// </summary>
-        public int Index { get; init; }
+        public int Index { get; init; } = Index;
 
         /// <summary>
         /// Note level to be reported. if the value is zero, all types are reported.
         /// </summary>
-        public NoteLevelEnum NoteLevel { get; init; }
+        public NoteLevelEnum NoteLevel { get; init; } = NoteLevel;
 
         /// <summary>
         /// Specifies the type of information required. if the value is zero, all types to be reported
         /// </summary>
-        public ItemInfoTypeEnum ItemInfoType { get; init; }
+        public ItemInfoTypeEnum ItemInfoType { get; init; } = ItemInfoType;
     }
 
     public sealed class GetItemInfoResult : DeviceResult
@@ -942,34 +782,17 @@ namespace XFS4IoTFramework.CashManagement
         /// GetitemInfoResult
         /// Return item infomation requested by the client.
         /// </summary>
-        public GetItemInfoResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null)
+        public GetItemInfoResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ItemInfos = null;
         }
 
-        public GetItemInfoResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                 Dictionary<string, ItemInfoClass> ItemInfos)
-            : base(CompletionCode, null)
-        {
-            this.ItemInfos = ItemInfos;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetItemInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 string ErrorDescription = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ItemInfos = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public GetItemInfoResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                 Dictionary<string, ItemInfoClass> ItemInfos)
+        public GetItemInfoResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, ItemInfoClass> ItemInfos)
             : base(CompletionCode, null)
         {
             this.ItemInfos = ItemInfos;

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Commands
 {
     //Original name = ImportEmvPublicKey
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "KeyManagement.ImportEmvPublicKey")]
     public sealed class ImportEmvPublicKeyCommand : Command<ImportEmvPublicKeyCommand.PayloadData>
     {
@@ -78,17 +78,17 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Defines the import scheme used. The following values are possible:
             /// 
             /// * ```plainCA``` - This scheme is used by VISA. A plain text CA public key is imported with no verification.
-            /// The two parts of the key (modulus and exponent) are passed in clear mode as a DER encoded PKCS#1 public key.
-            /// The key is loaded directly in the security module.
+            ///   The two parts of the key (modulus and exponent) are passed in clear mode as a DER encoded PKCS#1 public key.
+            ///   The key is loaded directly in the security module.
             /// * ```checksumCA``` - This scheme is used by VISA. A plain text CA public key is imported using the EMV 2000
-            /// Book II verification algorithm and it is verified before being loaded in the security module.
+            ///   Book II verification algorithm and it is verified before being loaded in the security module.
             /// * ```epiCA``` - This scheme is used by MasterCard Europe. A CA public key is imported using the self-signed
-            /// scheme.
+            ///   scheme.
             /// * ```issuer``` - An Issuer public key is imported as defined in EMV 2000 Book II.
             /// * ```icc``` - An ICC public key is imported as defined in EMV 2000 Book II.
             /// * ```iccPIN``` - An ICC PIN public key is imported as defined in EMV 2000 Book II.
             /// * ```pkcsV1_5_CA``` - A CA public key is imported and verified using a signature generated with a private
-            /// key for which the public key is already loaded.
+            ///   key for which the public key is already loaded.
             /// </summary>
             [DataMember(Name = "importScheme")]
             public ImportSchemeEnum? ImportScheme { get; init; }
@@ -103,10 +103,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// [[Ref. keymanagement-3](#ref-keymanagement-3)]). The plain text key is verified as defined within EMV 2000
             /// Book 2, page 73. *verifyKey* is ignored (See [[Ref. keymanagement-3](#ref-keymanagement-3)]).
             /// 
-            /// If *importScheme* is WFS_PIN_EMV_IMPORT_EPI_CA then *value* contains the concatenation of tables 4 and 13,
+            /// If *importScheme* is *epiCA* then *value* contains the concatenation of tables 4 and 13,
             /// as specified in [[Ref. keymanagement-4](#ref-keymanagement-4)], Europay International, EPI CA Module
             /// Technical – Interface specification Version 1.4. These tables are also described in the EMV Support
-            /// Appendix. The self-signed public key is verified as defined by the reference document. *sigKey* is ignored.
+            /// Appendix. The self-signed public key is verified as defined by the reference document. *verifyKey* is ignored.
             /// 
             /// If *importScheme* is *issuer* then *value* contains the EMV public key certificate. Within the following
             /// descriptions tags are documented to indicate the source of the data, but they are not sent down to the
@@ -147,9 +147,10 @@ namespace XFS4IoT.KeyManagement.Commands
             /// Table 23 + 8 byte random number + Signature (See [[Ref. keymanagement-3](#ref-keymanagement-3)]). The
             /// 8-byte random number is not used for validation; it is used to ensure the signature is unique. The
             /// Signature consists of all the bytes in the *value* buffer after table 23 and the 8-byte random number.
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "value")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Value { get; init; }
 
             /// <summary>

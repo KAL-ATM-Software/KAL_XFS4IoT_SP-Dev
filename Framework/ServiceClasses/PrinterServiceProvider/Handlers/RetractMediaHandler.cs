@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -59,6 +59,11 @@ namespace XFS4IoTFramework.Printer
                 mediaResult = retractMedia.Payload.MediaControl;
             }
 
+            if (!string.IsNullOrEmpty(result.StorageId))
+            {
+                await Storage.UpdateCardStorageCount(result.StorageId, result.MediaInCount);
+            }
+
             RetractMediaCompletion.PayloadData payload = null;
             if (result.ErrorCode is not null ||
                 !string.IsNullOrEmpty(mediaResult))
@@ -73,5 +78,7 @@ namespace XFS4IoTFramework.Printer
                 result.CompletionCode,
                 result.ErrorDescription);
         }
+
+        private XFS4IoTFramework.Storage.IStorageService Storage { get => Provider.IsA<XFS4IoTFramework.Storage.IStorageService>(); }
     }
 }

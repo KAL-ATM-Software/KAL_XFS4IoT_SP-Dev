@@ -1,10 +1,10 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * SetAutoStartUpTimeHandler_g.cs uses automatically generated parts.
+ * SetAutoStartupTimeHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -20,41 +20,41 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartUpTimeCommand))]
-    public partial class SetAutoStartUpTimeHandler : ICommandHandler
+    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(SetAutoStartupTimeCommand))]
+    public partial class SetAutoStartupTimeHandler : ICommandHandler
     {
-        public SetAutoStartUpTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
+        public SetAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
-            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Dispatcher)}");
+            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Provider.Device)}")
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IAuxiliariesDevice>();
 
             Auxiliaries = Provider.IsA<IAuxiliariesService>();
             Common = Provider.IsA<ICommonService>();
 
-            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(logger)}");
-            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartUpTimeHandler)} constructor. {nameof(Connection)}");
+            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(SetAutoStartupTimeHandler)} constructor. {nameof(Connection)}");
         }
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var setAutoStartUpTimeCmd = command.IsA<SetAutoStartUpTimeCommand>($"Invalid parameter in the SetAutoStartUpTime Handle method. {nameof(SetAutoStartUpTimeCommand)}");
-            setAutoStartUpTimeCmd.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartupTimeCmd = command.IsA<SetAutoStartupTimeCommand>($"Invalid parameter in the SetAutoStartupTime Handle method. {nameof(SetAutoStartupTimeCommand)}");
+            setAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
 
-            ISetAutoStartUpTimeEvents events = new SetAutoStartUpTimeEvents(Connection, setAutoStartUpTimeCmd.Header.RequestId.Value);
+            ISetAutoStartupTimeEvents events = new SetAutoStartupTimeEvents(Connection, setAutoStartupTimeCmd.Header.RequestId.Value);
 
-            var result = await HandleSetAutoStartUpTime(events, setAutoStartUpTimeCmd, cancel);
-            await Connection.SendMessageAsync(new SetAutoStartUpTimeCompletion(setAutoStartUpTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
+            var result = await HandleSetAutoStartupTime(events, setAutoStartupTimeCmd, cancel);
+            await Connection.SendMessageAsync(new SetAutoStartupTimeCompletion(setAutoStartupTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var setAutoStartUpTimeCommand = command.IsA<SetAutoStartUpTimeCommand>();
-            setAutoStartUpTimeCommand.Header.RequestId.HasValue.IsTrue();
+            var setAutoStartupTimeCommand = command.IsA<SetAutoStartupTimeCommand>();
+            setAutoStartupTimeCommand.Header.RequestId.HasValue.IsTrue();
 
             MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
@@ -75,7 +75,7 @@ namespace XFS4IoTFramework.Auxiliaries
                 _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new SetAutoStartUpTimeCompletion(setAutoStartUpTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
+            var response = new SetAutoStartupTimeCompletion(setAutoStartupTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -35,75 +35,87 @@ namespace XFS4IoTFramework.CardReader
 
             if (writeRawData.Payload.Track1 is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track1.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track1.Data));
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track1,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track1.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track1Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track1.Data)
+                    );
             }
             if (writeRawData.Payload.Track2 is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track2,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track2.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track2.Data));
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track2,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track2.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track2Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track2.Data)
+                    );
             }
             if (writeRawData.Payload.Track3 is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track3,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track3.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track3.Data));
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track3,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track3.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track3Class.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track3.Data)
+                    );
             }
             if (writeRawData.Payload.Track1JIS is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1JIS,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track1JIS.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track1JIS.Data));
-            }
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track1JIS,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track1JIS.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track1JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track1JIS.Data)
+                    );
+}
             if (writeRawData.Payload.Track1Front is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track1Front,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track1Front.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track1Front.Data));
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track1Front,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track1Front.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track1FrontClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track1Front.Data)
+                    );
             }
             if (writeRawData.Payload.Track3JIS is not null)
             {
-                dataToWrite.Add(WriteCardRequest.DestinationEnum.Track3JIS,
-                                new WriteCardRequest.CardData(
-                                    WriteMethod: writeRawData.Payload.Track3JIS.WriteMethod switch
-                                    {
-                                        WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
-                                        WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
-                                        _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
-                                    },
-                                    Data: writeRawData.Payload.Track3JIS.Data));
+                dataToWrite.Add(
+                    WriteCardRequest.DestinationEnum.Track3JIS,
+                    new WriteCardRequest.CardData(
+                        WriteMethod: writeRawData.Payload.Track3JIS.WriteMethod switch
+                        {
+                            WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Hico => WriteCardRequest.CardData.WriteMethodEnum.Hico,
+                            WriteRawDataCommand.PayloadData.Track3JISClass.WriteMethodEnum.Loco => WriteCardRequest.CardData.WriteMethodEnum.Loco,
+                            _ => WriteCardRequest.CardData.WriteMethodEnum.Auto,
+                        },
+                        Data: writeRawData.Payload.Track3JIS.Data)
+                    );
             }
 
             foreach (var data in dataToWrite)
@@ -158,9 +170,13 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            var acceptCardResult = await Device.AcceptCardAsync(new ReadRawDataCommandEvents(events),
-                                                                new AcceptCardRequest(ReadCardRequest.CardDataTypesEnum.NoDataRead, false, writeRawData.Header.Timeout ?? 0),
-                                                                cancel);
+            var acceptCardResult = await Device.AcceptCardAsync(
+                new ReadRawDataCommandEvents(events),
+                new AcceptCardRequest(
+                    ReadCardRequest.CardDataTypesEnum.NoDataRead, 
+                    false, 
+                    writeRawData.Header.Timeout ?? 0),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
             if (acceptCardResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
@@ -237,22 +253,18 @@ namespace XFS4IoTFramework.CardReader
             return true;
         }
 
-        private class ValidTrackDataRange
+        private class ValidTrackDataRange(
+            int MaxLength, 
+            byte MinLegal, 
+            byte MaxLegal, 
+            byte StartSentinel, 
+            byte EndSentinel)
         {
-            public ValidTrackDataRange(int MaxLength, byte MinLegal, byte MaxLegal, byte StartSentinel, byte EndSentinel)
-            {
-                this.MaxLength = MaxLength;
-                this.MinLegal = MinLegal;
-                this.MaxLegal = MaxLegal;
-                this.StartSentinel = StartSentinel;
-                this.EndSentinel = EndSentinel;
-            }
-
-            public int MaxLength { get; private set; }
-            public byte MinLegal { get; private set; }
-            public byte MaxLegal { get; private set; }
-            public byte StartSentinel { get; private set; }
-            public byte EndSentinel { get; private set; }
+            public int MaxLength { get; private set; } = MaxLength;
+            public byte MinLegal { get; private set; } = MinLegal;
+            public byte MaxLegal { get; private set; } = MaxLegal;
+            public byte StartSentinel { get; private set; } = StartSentinel;
+            public byte EndSentinel { get; private set; } = EndSentinel;
         }
 
         private readonly Dictionary<WriteCardRequest.DestinationEnum, ValidTrackDataRange> validTrackDataRange = new()

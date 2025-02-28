@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -14,6 +14,7 @@ using XFS4IoT.Keyboard.Commands;
 using XFS4IoT.Keyboard.Completions;
 using XFS4IoT.Completions;
 using XFS4IoT.Keyboard;
+using static XFS4IoTFramework.Keyboard.FrameClass;
 
 namespace XFS4IoTFramework.Keyboard
 {
@@ -60,23 +61,29 @@ namespace XFS4IoTFramework.Keyboard
                 List<LayoutFrameClass> resultFrames = [];
                 foreach (var frame in entryType.Value)
                 {
-                    List<LayoutFrameClass.KeysClass> functionKeys = [];
+                    List<KeyClass> functionKeys = [];
                     foreach (var functionKey in frame.FunctionKeys)
                     {
-                        functionKeys.Add(new LayoutFrameClass.KeysClass(XPos:functionKey.XPos,
-                                                                        YPos: functionKey.YPos,
-                                                                        XSize:functionKey.XSize,
-                                                                        YSize: functionKey.YSize,
-                                                                        Key: functionKey.Key,
-                                                                        ShiftKey: functionKey.ShiftKey));
+                        functionKeys.Add(
+                            new KeyClass(
+                                XPos:functionKey.XPos,
+                                YPos: functionKey.YPos,
+                                XSize:functionKey.XSize,
+                                YSize: functionKey.YSize,
+                                Key: functionKey.Key,
+                                ShiftKey: functionKey.ShiftKey)
+                            );
                     }
 
-                    resultFrames.Add(new(frame.XPos, 
-                                         frame.YPos, 
-                                         frame.XSize, 
-                                         frame.YSize,
-                                         frame.FloatAction != FrameClass.FloatEnum.NotSupported ? new LayoutFrameClass.FloatClass(frame.FloatAction.HasFlag(FrameClass.FloatEnum.X), frame.FloatAction.HasFlag(FrameClass.FloatEnum.Y)) : null,
-                                         functionKeys));
+                    resultFrames.Add(
+                        new(
+                            frame.XPos, 
+                            frame.YPos, 
+                            frame.XSize, 
+                            frame.YSize,
+                            frame.FloatAction != FrameClass.FloatEnum.NotSupported ? new LayoutFrameClass.FloatClass(frame.FloatAction.HasFlag(FrameClass.FloatEnum.X), frame.FloatAction.HasFlag(FrameClass.FloatEnum.Y)) : null,
+                            functionKeys)
+                        );
                 }
 
                 if (inquiry is null or EntryModeEnum.Data &&
@@ -105,10 +112,11 @@ namespace XFS4IoTFramework.Keyboard
                 secure is not null)
             {
                 payload = new(
-                        Layout: new LayoutNullableClass(
-                            Data: data,
-                            Pin: pin,
-                            Secure: secure));
+                    Layout: new LayoutNullableClass(
+                        Data: data,
+                        Pin: pin,
+                        Secure: secure)
+                    );
             }
 
             return Task.FromResult(

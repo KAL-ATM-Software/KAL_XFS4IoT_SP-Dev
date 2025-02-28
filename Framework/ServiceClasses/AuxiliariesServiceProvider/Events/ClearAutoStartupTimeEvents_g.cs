@@ -1,10 +1,10 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * ClearAutoStartUpTimeEvents_g.cs uses automatically generated parts.
+ * ClearAutoStartupTimeEvents_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    internal class ClearAutoStartUpTimeEvents : AuxiliariesEvents, IClearAutoStartUpTimeEvents
+    internal class ClearAutoStartupTimeEvents : AuxiliariesEvents, IClearAutoStartupTimeEvents
     {
 
-        public ClearAutoStartUpTimeEvents(IConnection connection, int requestId)
+        public ClearAutoStartupTimeEvents(IConnection connection, int requestId)
             : base(connection, requestId)
         { }
 

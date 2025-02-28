@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -232,14 +232,16 @@ namespace XFS4IoTFramework.Crypto
                     // it then send it as a clear IV
                     Logger.Log(Constants.DeviceClass, "CryptoDev.Crypto()");
 
-                    var decryptResult = await Device.Crypto(null,
-                                                            new CryptoDataRequest(CryptoDataRequest.CryptoModeEnum.Decrypt,
-                                                                                  CryptoDataRequest.CryptoAlgorithmEnum.ECB,
-                                                                                  generateAuthentication.Payload.Iv.Key,
-                                                                                  KeyManagement.GetKeyDetail(generateAuthentication.Payload.Iv.Key).KeySlot,
-                                                                                  generateAuthentication.Payload.Iv.Value,
-                                                                                  0),
-                                                            cancel);
+                    var decryptResult = await Device.Crypto(
+                        null,
+                        new CryptoDataRequest(
+                            CryptoDataRequest.CryptoModeEnum.Decrypt,
+                            CryptoDataRequest.CryptoAlgorithmEnum.ECB,
+                            generateAuthentication.Payload.Iv.Key,
+                            KeyManagement.GetKeyDetail(generateAuthentication.Payload.Iv.Key).KeySlot,
+                            generateAuthentication.Payload.Iv.Value,
+                            0),
+                        cancel);
 
                     Logger.Log(Constants.DeviceClass, $"CryptoDev.Crypto() -> {decryptResult.CompletionCode}, {decryptResult.ErrorCode}");
 
@@ -283,13 +285,15 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateSignature()");
 
-                result = await Device.GenerateSignature(new CryptoCommandEvents(events),
-                                                        new GenerateSignatureRequest(generateAuthentication.Payload.Key,
-                                                                                     KeyManagement.GetKeyDetail(generateAuthentication.Payload.Key).KeySlot,
-                                                                                     generateAuthentication.Payload.Data,
-                                                                                     padding,
-                                                                                     (GenerateSignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm),
-                                                        cancel);
+                result = await Device.GenerateSignature(
+                    new CryptoCommandEvents(events),
+                    new GenerateSignatureRequest(
+                        generateAuthentication.Payload.Key,
+                        KeyManagement.GetKeyDetail(generateAuthentication.Payload.Key).KeySlot,
+                        generateAuthentication.Payload.Data,
+                        padding,
+                        (GenerateSignatureRequest.RSASignatureAlgorithmEnum)sigAlgorithm),
+                    cancel);
 
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateSignature() -> {result.CompletionCode}, {result.ErrorCode}");
@@ -298,15 +302,17 @@ namespace XFS4IoTFramework.Crypto
             {
                 Logger.Log(Constants.DeviceClass, "CryptoDev.GenerateMAC()");
 
-                result = await Device.GenerateMAC(new CryptoCommandEvents(events),
-                                                  new GenerateMACRequest(keyDetail.KeyName,
-                                                                         keyDetail.KeySlot,
-                                                                         generateAuthentication.Payload.Data,
-                                                                         padding,
-                                                                         ivKeyName,
-                                                                         ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
-                                                                         ivData),
-                                                  cancel);
+                result = await Device.GenerateMAC(
+                    new CryptoCommandEvents(events),
+                    new GenerateMACRequest(
+                        keyDetail.KeyName,
+                        keyDetail.KeySlot,
+                        generateAuthentication.Payload.Data,
+                        padding,
+                        ivKeyName,
+                        ivKeyDetail is not null ? ivKeyDetail.KeySlot : -1,
+                        ivData),
+                    cancel);
 
 
                 Logger.Log(Constants.DeviceClass, $"CryptoDev.GenerateMAC() -> {result.CompletionCode}, {result.ErrorCode}");

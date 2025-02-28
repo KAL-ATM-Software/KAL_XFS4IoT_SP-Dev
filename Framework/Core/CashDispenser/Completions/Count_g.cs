@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -47,10 +47,10 @@ namespace XFS4IoT.CashDispenser.Completions
             /// 
             /// * ```cashUnitError``` - A storage unit caused a problem. A [Storage.StorageErrorEvent](#storage.storageerrorevent) will be posted with the details.
             /// * ```unsupportedPosition``` - The position specified is not supported.
-            /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order to perform this operation.
-            /// (See [Common.Status](#common.status.completion.properties.auxiliaries.safedoor)) property.
-            /// * ```exchangeActive``` - The device is in an exchange state (see
-            /// [Storage.StartExchange](#storage.startexchange)).
+            /// * ```safeDoorOpen``` - The safe door is open. This device requires the safe door to be closed in order to perform this operation
+            ///   (see [Common.Status](#common.status.completion.properties.auxiliaries.safedoor) property).
+            /// * ```exchangeActive``` - The device is in an exchange state (see command
+            ///   [Storage.StartExchange](#storage.startexchange)).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

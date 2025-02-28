@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -43,10 +43,10 @@ namespace XFS4IoT.PinPad.Commands
             /// <summary>
             /// The customer data should be an ASCII string. Used for ANSI, ISO-0 and ISO-1 algorithm
             /// (See [[Ref. pinpad-1](#ref-pinpad-1)], [[Ref. pinpad-2](#ref-pinpad-2)], [[Ref. pinpad-3](#ref-pinpad-3)]) to build the formatted PIN.
-            /// For ANSI and ISO-0 the PAN (Primary Account Number, without the check number) is supplied, for ISO-1 a ten digit
+            /// For ANSI and ISO-0 the PAN (Primary Account Number, without the check number) is supplied, for ISO-1 a ten-digit
             /// transaction field is required. If not used, this value is null.
             /// 
-            /// Used for DIEBOLD with coordination number, as a two digit coordination number.
+            /// Used for DIEBOLD with coordination number, as a two-digit coordination number.
             /// 
             /// Used for EMV with challenge number (8 bytes) coming from the chip card.
             /// This number is passed as unpacked string, for example: 0123456789ABCDEF = 0x30 0x31 0x32 0x33 0x34 0x35 0x36 0x37
@@ -56,7 +56,7 @@ namespace XFS4IoT.PinPad.Commands
             /// <example>9385527846382726</example>
             /// </summary>
             [DataMember(Name = "customerData")]
-            [DataTypes(Pattern = @"^[0-9a-fA-F]{2,}$")]
+            [DataTypes(Sensitive = true, Pattern = @"^[0-9a-fA-F]{2,}$")]
             public string CustomerData { get; init; }
 
             /// <summary>

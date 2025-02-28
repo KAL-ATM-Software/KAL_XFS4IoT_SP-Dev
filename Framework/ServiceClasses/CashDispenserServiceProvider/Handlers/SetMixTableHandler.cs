@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.CashDispenser
                 }
             }
 
-            Dictionary<double, List<MixTable.Table>> mixTables = new();
+            Dictionary<double, List<MixTable.Table>> mixTables = [];
             foreach (var row in setMixTable.Payload.MixRows)
             {
                 if (row.Amount is null)
@@ -107,7 +107,7 @@ namespace XFS4IoTFramework.CashDispenser
                 if (mixTables.ContainsKey((double)row.Amount))
                     mixTables[(double)row.Amount].Add(mixTable);
                 else
-                    mixTables.Add((double)row.Amount, new List<MixTable.Table>() { mixTable });
+                    mixTables.Add((double)row.Amount, [mixTable]);
             }
 
             CashDispenser.AddMix("mixTable" + setMixTable.Payload.MixNumber.ToString(), 

@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -13,6 +13,7 @@ using System.Runtime.Versioning;
 using XFS4IoT;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
+using XFS4IoTFramework.Storage;
 using System.ComponentModel;
 
 namespace XFS4IoTServer
@@ -29,20 +30,13 @@ namespace XFS4IoTServer
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(PrinterServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IPrinterDevice>();
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(PrinterServiceClass)}");
+            StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(PrinterServiceClass)}");
 
             this.PersistentData = PersistentData;
             
             // Load forms and medias stored in persistent data
-            Forms = PersistentData.Load<Dictionary<string, Form>>(typeof(Form).FullName);
-            if (Forms is null)
-            {
-                Forms = new();
-            }
-            Medias = PersistentData.Load<Dictionary<string, Media>>(typeof(Media).FullName);
-            if (Medias is null)
-            {
-                Medias = new();
-            }
+            Forms = PersistentData.Load<Dictionary<string, Form>>(typeof(Form).FullName) ?? [];
+            Medias = PersistentData.Load<Dictionary<string, Media>>(typeof(Media).FullName) ?? [];
 
             GetCapabilities();
             GetStatus();
@@ -54,13 +48,18 @@ namespace XFS4IoTServer
         public ICommonService CommonService { get; init; }
 
         /// <summary>
+        /// Storage service interface
+        /// </summary>
+        public IStorageService StorageService { get; init; }
+
+        /// <summary>
         /// Persistent data storage access
         /// </summary>
         private readonly IPersistentData PersistentData;
 
         private void GetCapabilities()
         {
-            Logger.Log(Constants.DeviceClass, "PrinterrDev.PrinterCapabilities");
+            Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterCapabilities");
             CommonService.PrinterCapabilities = Device.PrinterCapabilities;
             Logger.Log(Constants.DeviceClass, "PrinterDev.PrinterCapabilities=");
 
@@ -75,13 +74,6 @@ namespace XFS4IoTServer
 
             CommonService.PrinterStatus.IsNotNull($"The device class set PrinterStatus property to null. The device class must report device status.");
             CommonService.PrinterStatus.PropertyChanged += StatusChangedEventFowarder;
-            if (CommonService.PrinterStatus.RetractBins is not null)
-            {
-                foreach (var retractBin in CommonService.PrinterStatus.RetractBins)
-                {
-                    retractBin.PropertyChanged += StatusChangedEventFowarder;
-                }
-            }
             if (CommonService.PrinterStatus.Paper is not null)
             {
                 foreach (var paper in CommonService.PrinterStatus.Paper)
@@ -99,115 +91,38 @@ namespace XFS4IoTServer
         }
 
         /// <summary>
-        /// Load form or media definition 
+        /// Load form  definition 
         /// </summary>
-        public bool LoadDefinition(string definition, bool overwrite)
+        public bool SetForm(string definition, Form from)
         {
-            try
+            from.IsNotNull($"Unexpected form object set. {nameof(SetForm)}");
+
+            if (!Forms.ContainsKey(from.Name))
             {
-                XFSFormReader formReader = new(definition);
-                PrinterDefinitionReader definitionReader = new(Logger, Device);
-
-                while(formReader.ReadNextToken() is not XFSFormReader.TokenType.EOF)
-                {
-                    switch (formReader.CurrentTokenType)
-                    {
-                        case XFSFormReader.TokenType.XFSMEDIA:
-                            Media media = definitionReader.ReadPrinterMedia(formReader);
-                            if (!Medias.ContainsKey(media.Name))
-                                Medias.Add(media.Name, media);
-                            else if (overwrite)
-                                Medias[media.Name] = media;
-                            else
-                                Logger.Log(Constants.DeviceName, $"Media {media.Name} already exists and overwrite is false. Skipping media..");
-                            break;
-
-                        case XFSFormReader.TokenType.XFSFORM:
-                            Form form = definitionReader.ReadPrinterForm(formReader);
-                            if (!Forms.ContainsKey(form.Name))
-                                Forms.Add(form.Name, form);
-                            else if (overwrite)
-                                Forms[form.Name] = form;
-                            else
-                                Logger.Log(Constants.DeviceName, $"Form {form.Name} already exists and overwrite is false. Skipping form..");
-                            break;
-
-                        default:
-                            formReader.FormReaderAssert(false, "Unexpected CurrentTokenType when loading definitions.");
-                            break;
-                    }
-                }
+                Forms.Add(from.Name, from);
             }
-            catch (XFSFormReader.FormParseException parseException)
+            else
             {
-                Logger.Log(Constants.DeviceName, parseException.Message);
-                return false;
+                Forms[from.Name] = from;
             }
 
             return true;
         }
 
         /// <summary>
-        /// Load a single form or media definition 
+        /// Load media definition 
         /// </summary>
-        public bool LoadSingleDefinition(string definition, bool overwrite, out XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum? type, out string name, out string errorMsg)
+        public bool SetMedia(string definition, Media media)
         {
-            type = null;
-            name = null;
-            errorMsg = null;
-            try
+            media.IsNotNull($"Unexpected media object set. {nameof(SetMedia)}");
+
+            if (!Medias.ContainsKey(media.Name))
             {
-                XFSFormReader formReader = new(definition);
-                PrinterDefinitionReader definitionReader = new(Logger, Device);
-
-                formReader.FormReaderAssert(formReader.ReadNextToken() is XFSFormReader.TokenType.XFSMEDIA or XFSFormReader.TokenType.XFSFORM, "Expected XFSMEDIA or XFSFORM as first token.");
-                
-                if (formReader.CurrentTokenType is XFSFormReader.TokenType.XFSMEDIA)
-                {
-                    type = XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum.Media;
-                    Media media = definitionReader.ReadPrinterMedia(formReader);
-                    name = media.Name;
-
-                    if (Medias.ContainsKey(media.Name))
-                    {
-                        if (overwrite)
-                            Medias[media.Name] = media;
-                        else
-                        {
-                            type = null;
-                            return false;
-                        }
-                    }
-                    else
-                        Medias.Add(media.Name, media);
-                    PersistentData.Store<Dictionary<string, Media>>(typeof(Media).FullName, Medias);
-                }
-                else if (formReader.CurrentTokenType is XFSFormReader.TokenType.XFSFORM)
-                {
-                    type = XFS4IoT.Printer.Events.DefinitionLoadedEvent.PayloadData.TypeEnum.Form;
-                    Form form = definitionReader.ReadPrinterForm(formReader);
-                    name = form.Name;
-
-                    if (Forms.ContainsKey(form.Name))
-                    {
-                        if (overwrite)
-                            Forms[form.Name] = form;
-                        else
-                        {
-                            type = null;
-                            return false;
-                        }
-                    }
-                    else
-                        Forms.Add(form.Name, form);
-                    PersistentData.Store<Dictionary<string, Form>>(typeof(Form).FullName, Forms);
-                }
+                Medias.Add(media.Name, media);
             }
-            catch (XFSFormReader.FormParseException parseException)
+            else
             {
-                Logger.Log(Constants.DeviceClass, parseException.Message);
-                errorMsg = parseException.Message;
-                return false;
+                Medias[media.Name] = media;
             }
 
             return true;

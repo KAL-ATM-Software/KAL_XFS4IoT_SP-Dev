@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -46,7 +46,7 @@ namespace XFS4IoT.Printer.Completions
             /// <summary>
             /// Specifies the error code if applicable, otherwise null. The following values are possible:
             /// 
-            /// * ```noMediaPresent``` - No media present in a position where it should be or the media was removed
+            /// * ```noMediaPresent``` - No media present in a position where it should be, or the media was removed
             ///   during the operation.
             /// * ```pageTurnFail``` - The device was not able to turn the page.
             /// * ```mediaJammed``` - The media is jammed. Operator intervention is required.

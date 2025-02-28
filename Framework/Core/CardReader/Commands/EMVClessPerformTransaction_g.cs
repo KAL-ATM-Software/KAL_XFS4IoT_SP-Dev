@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = EMVClessPerformTransaction
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCommand : Command<EMVClessPerformTransactionCommand.PayloadData>
     {
@@ -51,10 +51,10 @@ namespace XFS4IoT.CardReader.Commands
             /// *Tags 9A and 9F21 could be managed internally by the reader. If tags are not supplied, tag values may
             /// be used from the configuration sent previously in the
             /// [CardReader.EMVClessConfigure](#cardreader.emvclessconfigure) command.
-            /// <example>XyoCCXiaAxcICJwBAJ8C ...</example>
+            /// <example>O2gAUACFyEARAJAC</example>
             /// </summary>
             [DataMember(Name = "data")]
-            [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+            [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
             public List<byte> Data { get; init; }
 
         }

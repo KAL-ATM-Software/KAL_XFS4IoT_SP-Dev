@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -59,15 +59,17 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.ExportEPPId()");
 
-                result = await Device.ExportEPPId(new ExportEPPIdRequest(SignerEnum.EPP,
-                                                                         exportRSADeviceSignedItem.Payload.SignatureAlgorithm switch
-                                                                         {
-                                                                             XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15 => ExportEPPIdRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
-                                                                             XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss => ExportEPPIdRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
-                                                                             _ => ExportEPPIdRequest.RSASignatureAlgorithmEnum.NoSignature
-                                                                         },
-                                                                         exportRSADeviceSignedItem.Payload.SigKey),
-                                                  cancel);
+                result = await Device.ExportEPPId(
+                    new ExportEPPIdRequest(
+                        SignerEnum.EPP,
+                        exportRSADeviceSignedItem.Payload.SignatureAlgorithm switch
+                        {
+                            XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15 => ExportEPPIdRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
+                            XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss => ExportEPPIdRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
+                            _ => ExportEPPIdRequest.RSASignatureAlgorithmEnum.NoSignature
+                        },
+                        exportRSADeviceSignedItem.Payload.SigKey),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportEPPId() -> {result.CompletionCode}");
             }
@@ -75,16 +77,18 @@ namespace XFS4IoTFramework.KeyManagement
             {
                 Logger.Log(Constants.DeviceClass, "KeyManagementDev.ExportRSAPublicKey()");
 
-                result = await Device.ExportRSAPublicKey(new ExportRSAPublicKeyRequest(SignerEnum.EPP,
-                                                                                       exportRSADeviceSignedItem.Payload.Name,
-                                                                                       exportRSADeviceSignedItem.Payload.SignatureAlgorithm switch
-                                                                                       {
-                                                                                           XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15 => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
-                                                                                           XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
-                                                                                           _ => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.NoSignature
-                                                                                       },
-                                                                                       exportRSADeviceSignedItem.Payload.SigKey),
-                                                         cancel);
+                result = await Device.ExportRSAPublicKey(
+                    new ExportRSAPublicKeyRequest(
+                        SignerEnum.EPP,
+                        exportRSADeviceSignedItem.Payload.Name,
+                        exportRSADeviceSignedItem.Payload.SignatureAlgorithm switch
+                        {
+                            XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPkcs1V15 => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.RSASSA_PKCS1_V1_5,
+                            XFS4IoT.KeyManagement.RSASignatureAlgorithmEnum.RsassaPss => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.RSASSA_PSS,
+                            _ => ExportRSAPublicKeyRequest.RSASignatureAlgorithmEnum.NoSignature
+                        },
+                        exportRSADeviceSignedItem.Payload.SigKey),
+                    cancel);
 
                 Logger.Log(Constants.DeviceClass, $"KeyManagementDev.ExportRSAPublicKey() -> {result.CompletionCode}, {result.ErrorCode}");
             }

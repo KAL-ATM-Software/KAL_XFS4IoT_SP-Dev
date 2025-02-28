@@ -32,13 +32,14 @@ namespace XFS4IoTFramework.Printer
         [Flags]
         public enum SourceEnum
         {
-            ANY = 0,
-            UPPER = 1 << 0,
-            LOWER = 1 << 1,
-            EXTERNAL = 1 << 2,
-            AUX = 1 << 3,
-            AUX2 = 1 << 4,
-            PARK = 1 << 5,
+            ANY,
+            UPPER,
+            LOWER,
+            EXTERNAL,
+            AUX,
+            AUX2,
+            PARK,
+            CUSTOM,
         }
 
         public enum BaseEnum
@@ -58,33 +59,33 @@ namespace XFS4IoTFramework.Printer
         // Constructor
         // Used by form designer for creating new forms
         public Media(ILogger Logger,
-                    IPrinterDevice Device,
-                    string Name,
-                    TypeEnum Type,
-                    SourceEnum Sources,
-                    BaseEnum Base,
-                    int UnitX,
-                    int UnitY,
-                    int Width,
-                    int Height,
-                    int PrintAreaX,
-                    int PrintAreaY,
-                    int PrintAreaWidth,
-                    int PrintAreaHeight,
-                    int RestrictedAreaX,
-                    int RestrictedAreaY,
-                    int RestrictedAreaWidth,
-                    int RestrictedAreaHeight,
-                    FoldEnum Fold,
-                    int Staggering,
-                    int Pages,
-                    int Lines,
-                    Dictionary<string, bool> CustomSources = null)
+                     IPrinterDevice Device,
+                     string Name,
+                     TypeEnum Type,
+                     SourceEnum Source,
+                     BaseEnum Base,
+                     int UnitX,
+                     int UnitY,
+                     int Width,
+                     int Height,
+                     int PrintAreaX,
+                     int PrintAreaY,
+                     int PrintAreaWidth,
+                     int PrintAreaHeight,
+                     int RestrictedAreaX,
+                     int RestrictedAreaY,
+                     int RestrictedAreaWidth,
+                     int RestrictedAreaHeight,
+                     FoldEnum Fold,
+                     int Staggering,
+                     int Pages,
+                     int Lines,
+                     string CustomSource = null)
         {
             this.Logger = Logger;
             this.Name = Name;
             this.Type = Type;
-            this.Sources = Sources;
+            this.Source = Source;
             this.Base = Base;
             this.UnitX = UnitX;
             this.UnitY = UnitY;
@@ -102,7 +103,7 @@ namespace XFS4IoTFramework.Printer
             this.Staggering = Staggering;
             this.Pages = Pages;
             this.Lines = Lines;
-            this.CustomSources = CustomSources;
+            this.CustomSource = CustomSource;
 
             // Get the appropriate conversion factor (Enum/Denom) according to the base units
             switch (Base)
@@ -163,66 +164,70 @@ namespace XFS4IoTFramework.Printer
             if (result.Result != ValidationResultClass.ValidateResultEnum.Valid)
             {
                 return new(
-                    new(ErrorCode: GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaInvalid),
+                    new(ErrorCode: GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
                     MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                    $"Media {Name} is not supported by the device.");
+                    $"Media {Name} is invalid.");
             }
 
-            GetQueryMediaCompletion.PayloadData.PaperSourcesClass paperSource = null;
-
-            if (Sources != SourceEnum.ANY)
+            string paperSource;
+            if (Source != SourceEnum.CUSTOM)
             {
-                paperSource = new(Sources.HasFlag(SourceEnum.UPPER),
-                                  Sources.HasFlag(SourceEnum.LOWER),
-                                  Sources.HasFlag(SourceEnum.EXTERNAL),
-                                  Sources.HasFlag(SourceEnum.AUX),
-                                  Sources.HasFlag(SourceEnum.AUX2),
-                                  Sources.HasFlag(SourceEnum.PARK));
-
-                if (CustomSources is not null)
-                {
-                    paperSource.ExtendedProperties = CustomSources;
-                }
+                paperSource = Source.ToString().ToLower();
             }
-            
+            else
+            {
+                paperSource = CustomSource;
+            }
 
-            return new(
-                new(
+            GetQueryMediaCompletion.PayloadData payload = new(
+                Media: new(
                     MediaType: Type switch
                     {
-                        TypeEnum.GENERIC => GetQueryMediaCompletion.PayloadData.MediaTypeEnum.Generic,
-                        TypeEnum.MULTIPART => GetQueryMediaCompletion.PayloadData.MediaTypeEnum.Multipart,
-                        _ => GetQueryMediaCompletion.PayloadData.MediaTypeEnum.Passbook,
+                        TypeEnum.GENERIC => GetQueryMediaCompletion.PayloadData.MediaClass.MediaTypeEnum.Generic,
+                        TypeEnum.MULTIPART => GetQueryMediaCompletion.PayloadData.MediaClass.MediaTypeEnum.Multipart,
+                        _ => GetQueryMediaCompletion.PayloadData.MediaClass.MediaTypeEnum.Passbook,
                     },
-                    Base: Base switch
+                    Source: paperSource,
+                    Unit: new XFS4IoT.Printer.UnitClass(
+                        Base: Base switch
+                        {
+                            BaseEnum.INCH => XFS4IoT.Printer.UnitClass.BaseEnum.Inch,
+                            BaseEnum.MM => XFS4IoT.Printer.UnitClass.BaseEnum.Mm,
+                            _ => XFS4IoT.Printer.UnitClass.BaseEnum.RowColumn,
+                        },
+                        X: UnitX,
+                        Y: UnitY),
+                    Size: new XFS4IoT.Printer.SizeClass(
+                        Width: Width,
+                        Height: Height),
+                    PrintArea: (PrintAreaX < 0 || PrintAreaY < 0 || PrintAreaWidth < 0 || PrintAreaHeight < 0) ? 
+                        null :
+                        new XFS4IoT.Printer.AreaClass(
+                            X: PrintAreaX,
+                            Y: PrintAreaY,
+                            Width: PrintAreaWidth,
+                            Height: PrintAreaHeight),
+                    Restricted: (RestrictedAreaX < 0 || RestrictedAreaY < 0 || RestrictedAreaWidth < 0 || RestrictedAreaHeight < 0) ? 
+                        null :
+                        new XFS4IoT.Printer.AreaClass(
+                            X: RestrictedAreaX,
+                            Y: RestrictedAreaY,
+                            Width: RestrictedAreaWidth,
+                            Height: RestrictedAreaHeight),
+                    Fold: Fold switch
                     {
-                        BaseEnum.INCH => GetQueryMediaCompletion.PayloadData.BaseEnum.Inch,
-                        BaseEnum.MM => GetQueryMediaCompletion.PayloadData.BaseEnum.Mm,
-                        _ => GetQueryMediaCompletion.PayloadData.BaseEnum.Rowcolumn,
+                        FoldEnum.HORIZONTAL => GetQueryMediaCompletion.PayloadData.MediaClass.FoldEnum.Horizontal,
+                        FoldEnum.VERTICAL => GetQueryMediaCompletion.PayloadData.MediaClass.FoldEnum.Vertical,
+                        _ => null,
                     },
-                    UnitX: UnitX,
-                    UnitY: UnitY,
-                    SizeWidth: Width,
-                    SizeHeight: Height,
-                    PageCount: Pages,
-                    LineCount: Lines,
-                    PrintAreaX: PrintAreaX,
-                    PrintAreaY: PrintAreaY,
-                    PrintAreaWidth: PrintAreaWidth,
-                    PrintAreaHeight: PrintAreaHeight,
-                    RestrictedAreaX: RestrictedAreaX,
-                    RestrictedAreaY: RestrictedAreaY,
-                    RestrictedAreaWidth: RestrictedAreaWidth,
-                    RestrictedAreaHeight: RestrictedAreaHeight,
-                    Stagger: Staggering,
-                    FoldType: Fold switch
-                    {
-                        FoldEnum.HORIZONTAL => GetQueryMediaCompletion.PayloadData.FoldTypeEnum.Horizontal,
-                        FoldEnum.VERTICAL => GetQueryMediaCompletion.PayloadData.FoldTypeEnum.Vertical,
-                        _ => GetQueryMediaCompletion.PayloadData.FoldTypeEnum.None,
-                    },
-                    PaperSources: paperSource),
-                    MessageHeader.CompletionCodeEnum.Success
+                    Staggering: Staggering,
+                    Page: Pages,
+                    Lines: Lines)
+                );
+
+            return new(
+                Payload: payload,
+                CompletionCode: MessageHeader.CompletionCodeEnum.Success
                 );
         }
 
@@ -309,7 +314,7 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// Specifies the source of media
         /// </summary>
-        public SourceEnum Sources { get; init; }
+        public SourceEnum Source { get; init; }
         /// <summary>
         /// Specifies the base unit of measurement of the media
         /// </summary>
@@ -323,7 +328,7 @@ namespace XFS4IoTFramework.Printer
         /// <summary>
         /// vendor specific paper source
         /// </summary>
-        public Dictionary<string, bool> CustomSources { get; init; }
+        public string CustomSource { get; init; }
 
         /// <summary>
         /// Size of media in Units

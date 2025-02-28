@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -27,7 +27,7 @@ namespace XFS4IoT.Storage
     [DataContract]
     public sealed class StorageUnitClass
     {
-        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null, Check.StorageClass Check = null)
+        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null, Check.StorageClass Check = null, Deposit.StorageClass Deposit = null, IntelligentBanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization = null, Printer.StorageClass Printer = null)
         {
             this.Id = Id;
             this.PositionName = PositionName;
@@ -37,6 +37,9 @@ namespace XFS4IoT.Storage
             this.Cash = Cash;
             this.Card = Card;
             this.Check = Check;
+            this.Deposit = Deposit;
+            this.BanknoteNeutralization = BanknoteNeutralization;
+            this.Printer = Printer;
         }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace XFS4IoT.Storage
 
         /// <summary>
         /// The nominal capacity of the unit. This may be an estimate as the quality and thickness of the items
-        /// stored in the unit may affect how many items can be stored. 0 means the capacity is unknown, null means capacity
+        /// stored in the unit may affect how many items can be stored. 0 means the capacity is unknown; null means capacity
         /// is not applicable.
         /// <example>100</example>
         /// </summary>
@@ -83,17 +86,28 @@ namespace XFS4IoT.Storage
         [DataMember(Name = "check")]
         public Check.StorageClass Check { get; init; }
 
+        [DataMember(Name = "deposit")]
+        public Deposit.StorageClass Deposit { get; init; }
+
+        [DataMember(Name = "banknoteNeutralization")]
+        public IntelligentBanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization { get; init; }
+
+        [DataMember(Name = "printer")]
+        public Printer.StorageClass Printer { get; init; }
+
     }
 
 
     [DataContract]
     public sealed class SetStorageUnitClass
     {
-        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null, CardReader.StorageSetClass Card = null, Check.StorageSetClass Check = null)
+        public SetStorageUnitClass(CashManagement.StorageSetCashClass Cash = null, CardReader.StorageSetClass Card = null, Check.StorageSetClass Check = null, Deposit.StorageSetClass Deposit = null, Printer.StorageSetClass Printer = null)
         {
             this.Cash = Cash;
             this.Card = Card;
             this.Check = Check;
+            this.Deposit = Deposit;
+            this.Printer = Printer;
         }
 
         [DataMember(Name = "cash")]
@@ -104,6 +118,12 @@ namespace XFS4IoT.Storage
 
         [DataMember(Name = "check")]
         public Check.StorageSetClass Check { get; init; }
+
+        [DataMember(Name = "deposit")]
+        public Deposit.StorageSetClass Deposit { get; init; }
+
+        [DataMember(Name = "printer")]
+        public Printer.StorageSetClass Printer { get; init; }
 
     }
 

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -36,15 +36,14 @@ namespace XFS4IoT.TextTerminal.Commands
             }
 
             /// <summary>
-            /// Specifies the form name.
+            /// The form name.
             /// <example>My form name</example>
             /// </summary>
             [DataMember(Name = "formName")]
             public string FormName { get; init; }
 
             /// <summary>
-            /// Specifies the name of the field about which to retrieve details. If this property is null,
-            /// then retrieve details for all fields on the form.
+            /// The field name. If null, all fields on the form are retrieved.
             /// <example>My form field</example>
             /// </summary>
             [DataMember(Name = "fieldName")]

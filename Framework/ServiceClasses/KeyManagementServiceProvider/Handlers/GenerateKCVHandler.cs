@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -72,12 +72,15 @@ namespace XFS4IoTFramework.KeyManagement
             }
             Logger.Log(Constants.DeviceClass, "KeyManagementDev.GenerateKCV()");
 
-            var result = await Device.GenerateKCV(new GenerateKCVRequest(generateKCV.Payload.Key,
-                                                                         generateKCV.Payload.KeyCheckMode switch
-                                                                         {
-                                                                             GenerateKCVCommand.PayloadData.KeyCheckModeEnum.Self => GenerateKCVRequest.KeyCheckValueEnum.Self,
-                                                                             _ => GenerateKCVRequest.KeyCheckValueEnum.Zero
-                                                                         }), cancel);
+            var result = await Device.GenerateKCV(
+                new GenerateKCVRequest(
+                    generateKCV.Payload.Key,
+                    generateKCV.Payload.KeyCheckMode switch
+                    {
+                        GenerateKCVCommand.PayloadData.KeyCheckModeEnum.Self => GenerateKCVRequest.KeyCheckValueEnum.Self,
+                        _ => GenerateKCVRequest.KeyCheckValueEnum.Zero
+                    }), 
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"KeyManagementDev.GenerateKCV() -> {result.CompletionCode}, {result.ErrorCode}");
 

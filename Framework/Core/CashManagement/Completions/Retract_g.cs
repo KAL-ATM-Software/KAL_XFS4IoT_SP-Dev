@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -54,17 +54,20 @@ namespace XFS4IoT.CashManagement.Completions
             /// Specifies the error code if applicable, otherwise null. Following values are possible:
             /// 
             /// * ```cashUnitError``` - A problem occurred with a storage unit. A
-            /// [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
+            ///   [Storage.StorageErrorEvent](#storage.storageerrorevent) will be sent with the details.
             /// * ```noItems``` - There were no items to retract.
             /// * ```exchangeActive``` - The device is in an exchange state.
             /// * ```shutterNotClosed``` - The shutter failed to close.
             /// * ```itemsTaken``` - Items were present at the output position at the start of the operation, but were
-            /// removed before the operation was complete - some or all of the items were not retracted.
+            ///   removed before the operation was complete - some or all of the items were not retracted.
             /// * ```invalidRetractPosition``` - The *index* is not supported.
             /// * ```notRetractArea``` - The retract area specified in *retractArea* is not supported.
             /// * ```foreignItemsDetected``` - Foreign items have been detected inside the input position.
-            /// * ```positionNotEmpty``` - The retract area specified in *retractArea* is not empty so the retract operation is not possible.
-            /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by other error codes. The detail will be reported with the Dispenser.IncompleteRetractEvent.
+            /// * ```positionNotEmpty``` - The retract area specified in *retractArea* is not empty so the retract
+            ///   operation is not possible.
+            /// * ```incompleteRetract``` - Some or all of the items were not retracted for a reason not covered by
+            ///   other error codes. The detail will be reported with a
+            ///   [CashManagement.IncompleteRetractEvent](#cashmanagement.incompleteretractevent).
             /// </summary>
             [DataMember(Name = "errorCode")]
             public ErrorCodeEnum? ErrorCode { get; init; }

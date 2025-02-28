@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -34,10 +34,12 @@ namespace XFS4IoTFramework.Printer
             }
 
             Logger.Log(Constants.DeviceClass, "PrinterDev.RawPrintAsync()");
-            var result = await Device.RawPrintAsync(new RawPrintCommandEvents(events),
-                                                    new RawPrintRequest(printRaw.Payload.InputData == PrintRawCommand.PayloadData.InputDataEnum.Yes,
-                                                                        printRaw.Payload.Data), 
-                                                    cancel);
+            var result = await Device.RawPrintAsync(
+                new RawPrintCommandEvents(events),
+                new RawPrintRequest(
+                    printRaw.Payload.InputData == PrintRawCommand.PayloadData.InputDataEnum.Yes,
+                    printRaw.Payload.Data), 
+                cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.RawPrintAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
             PrintRawCompletion.PayloadData payload = null;

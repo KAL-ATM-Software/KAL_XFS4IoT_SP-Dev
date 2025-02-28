@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -74,7 +74,7 @@ namespace XFS4IoT.Printer.Events
             /// * ```notFound``` - The specified field does not exist.
             /// * ```notRead``` - The specified field is not an input field.
             /// * ```notWrite``` - An attempt was made to write to an input field.
-            /// * ```hwerror``` - The specified field uses special hardware (e.g. OCR, Low/High coercivity, etc) and an error occurred.
+            /// * ```hwerror``` - The specified field uses special hardware (e.g. OCR, Low/High coercivity, etc.) and an error occurred.
             /// * ```graphic``` - The specified graphic image could not be printed.
             /// </summary>
             [DataMember(Name = "failure")]

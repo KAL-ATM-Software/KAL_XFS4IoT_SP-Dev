@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,9 +15,9 @@ using XFS4IoT.Auxiliaries.Completions;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    public partial class ClearAutoStartUpTimeHandler
+    public partial class ClearAutoStartupTimeHandler
     {
-        private async Task<CommandResult<MessagePayloadBase>> HandleClearAutoStartUpTime(IClearAutoStartUpTimeEvents events, ClearAutoStartUpTimeCommand clearAutoStartupTime, CancellationToken cancel)
+        private async Task<CommandResult<MessagePayloadBase>> HandleClearAutoStartupTime(IClearAutoStartupTimeEvents events, ClearAutoStartupTimeCommand clearAutoStartupTime, CancellationToken cancel)
         {
             if (Device.AuxiliariesCapabilities.AutoStartupMode == AuxiliariesCapabilitiesClass.AutoStartupModes.NotAvailable)
             {

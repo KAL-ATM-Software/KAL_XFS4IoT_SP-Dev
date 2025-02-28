@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -42,7 +42,7 @@ namespace XFS4IoT.CashDispenser.Commands
             /// A nonce value to be used when creating the end-to-end security token in the
             /// response. If no token is requested this property should be null. See the
             /// generic end-to-end security documentation for more details.
-            /// <example>646169ECDD0E440C2CECC8DDD7C27C22</example>
+            /// <example>254611E63B2531576314E86527338D61</example>
             /// </summary>
             [DataMember(Name = "nonce")]
             [DataTypes(Pattern = @"^[0-9A-F]{32}$|^[0-9]*$")]

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -35,7 +35,7 @@ namespace XFS4IoT.Biometric
         /// <summary>
         /// Specifies the state of the subject to be scanned (e.g. finger, palm, retina, etc) as one of the following values:
         /// 
-        /// * ```present```\t- The subject to be scanned is on the scanning position.
+        /// * ```present``` - The subject to be scanned is on the scanning position.
         /// * ```notPresent``` - The subject to be scanned is not on the scanning position.
         /// * ```unknown``` - The subject to be scanned cannot be determined with the device in its
         ///                          current state (e.g. the value of [device](#common.status.completion.properties.common.device) is noDevice, powerOff, offline, or hwError).
@@ -67,7 +67,7 @@ namespace XFS4IoT.Biometric
         /// both properties [persist](#common.capabilities.completion.description.biometric.persistencemodes.persist) and [clear](#common.capabilities.completion.description.biometric.persistencemodes.clear) are false.
         /// The following values are possible:
         /// 
-        ///   * ```persist```\t- Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
+        ///   * ```persist``` - Biometric data captured using the [Biometric.Read](#biometric.read) can persist until all
         ///                     sessions are closed, the device is power failed or rebooted, or the [Biometric.Read](#biometric.read)
         ///                     is requested again. This captured biometric data can also be explicitly cleared using the
         ///                     [Biometric.Clear](#biometric.clear) or [Biometric.Reset](#biometric.reset).
@@ -200,7 +200,7 @@ namespace XFS4IoT.Biometric
 
         /// <summary>
         /// Specifies the maximum number of times that the device can attempt to capture biometric data during a
-        /// [Biometric.Read](#biometric.read). If this is zero then the device or the Service determines
+        /// [Biometric.Read](#biometric.read). If this is zero, then the device or the Service determines
         /// how many captures will be attempted.
         /// </summary>
         [DataMember(Name = "maxCapture")]
@@ -433,12 +433,12 @@ namespace XFS4IoT.Biometric
         /// and/or [Biometric.SetMatch](#biometric.setmatch) command. This property is null if the device does not support matching.
         /// This will be one of the following values:
         /// 
-        ///   * ```storedMatch``` -\tThe device scans biometric data using the [Biometric.Read](#biometric.read) command
+        ///   * ```storedMatch``` - The device scans biometric data using the [Biometric.Read](#biometric.read) command
         ///                         and stores it, then the scanned data can be compared with imported biometric data
         ///                         using the [Biometric.Match](#biometric.match).
-        ///   * ```combinedMatch``` -\tThe device scans biometric data and performs a match against imported biometric
+        ///   * ```combinedMatch``` - The device scans biometric data and performs a match against imported biometric
         ///                           data as a single operation. The [Biometric.SetMatch](#biometric.setmatch)
-        ///                           must be called before the [Biometric.Read](#biometric.read) in order to set
+        ///                           must be called before the [Biometric.Read](#biometric.read) to set
         ///                           the matching criteria. Then the [Biometric.Match](#biometric.match) can be
         ///                           called to return the result.
         /// </summary>
@@ -486,13 +486,13 @@ namespace XFS4IoT.Biometric
             }
 
             /// <summary>
-            /// The biometric data can be compared as a one to one verification operation.
+            /// The biometric data can be compared as a one-to-one verification operation.
             /// </summary>
             [DataMember(Name = "verify")]
             public bool? Verify { get; init; }
 
             /// <summary>
-            /// The biometric data can be compared as a one to many identification operation.
+            /// The biometric data can be compared as a one-to-many identification operation.
             /// </summary>
             [DataMember(Name = "identity")]
             public bool? Identity { get; init; }
@@ -576,17 +576,17 @@ namespace XFS4IoT.Biometric
         /// Available values are described in the [dataFormats](#common.capabilities.completion.description.biometric.dataformats).
         /// The following values are possible:
         /// 
-        /// * ```isoFid```\t- Raw ISO FID format [[Ref. biometric-3](#ref-biometric-3)].
+        /// * ```isoFid``` - Raw ISO FID format [[Ref. biometric-3](#ref-biometric-3)].
         /// * ```isoFmd``` - ISO FMD template format [[Ref. biometric-4](#ref-biometric-4)].
-        /// * ```ansiFid```\t- Raw ANSI FID format [[Ref. biometric-1](#ref-biometric-1)].
+        /// * ```ansiFid``` - Raw ANSI FID format [[Ref. biometric-1](#ref-biometric-1)].
         /// * ```ansiFmd``` - ANSI FMD template format [[Ref. biometric-2](#ref-biometric-2)].
-        /// * ```qso```\t- Raw QSO image format.
+        /// * ```qso``` - Raw QSO image format.
         /// * ```wso``` - WSQ image format.
-        /// * ```reservedRaw1```\t- Reserved for a vendor-defined Raw format.
+        /// * ```reservedRaw1``` - Reserved for a vendor-defined Raw format.
         /// * ```reservedTemplate1``` - Reserved for a vendor-defined Template format.
-        /// * ```reservedRaw2```\t- Reserved for a vendor-defined Raw format.
+        /// * ```reservedRaw2``` - Reserved for a vendor-defined Raw format.
         /// * ```reservedTemplate2``` - Reserved for a vendor-defined Template format.
-        /// * ```reservedRaw3```\t- Reserved for a vendor-defined Raw format.
+        /// * ```reservedRaw3``` - Reserved for a vendor-defined Raw format.
         /// * ```reservedTemplate3``` - Reserved for a vendor-defined Template format.
         /// </summary>
         [DataMember(Name = "format")]
@@ -642,10 +642,10 @@ namespace XFS4IoT.Biometric
 
         /// <summary>
         /// It contains the individual binary data stream encoded in base64.
-        /// <example>1a987D000012Bb</example>
+        /// <example>O2gAUACFyEARAJAC</example>
         /// </summary>
         [DataMember(Name = "data")]
-        [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+        [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
         public List<byte> Data { get; init; }
 
     }

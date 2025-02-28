@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -34,7 +34,15 @@ namespace XFS4IoT.KeyManagement
         }
 
         /// <summary>
-        /// Specifies the state of the encryption module. This may be null in
+        /// Specifies the state of the encryption module.
+        /// * ```ready``` - The encryption module is initialized and ready (at least one key is imported into the encryption module).
+        /// * ```notReady``` - The encryption module is not available or not ready due to hardware error or communication error.
+        /// * ```notInitialized``` - The encryption module is not initialized (no master key loaded).
+        /// * ```busy``` - The encryption module is busy (implies that the device is busy).
+        /// * ```undefined``` - The encryption module state is undefined.
+        /// * ```initialized``` - The encryption module is initialized and master key (where required) 
+        /// and any other initial keys are loaded; ready to import other keys.
+        /// This may be null in
         /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// </summary>
         [DataMember(Name = "encryptionState")]
@@ -49,7 +57,16 @@ namespace XFS4IoT.KeyManagement
         }
 
         /// <summary>
-        /// Specifies the state of the public verification or encryption key in the PIN certificate modules. This may be null in
+        /// Specifies the state of the public verification or encryption key in the PIN certificate module.
+        /// * ```unknown``` - The state of the certificate module is unknown or the device does not have this capability.
+        /// * ```primary``` - All pre-loaded certificates have been loaded and that primary verification certificates will be
+        /// accepted for the commands [LoadCertificate](#keymanagement.loadcertificate) or [ReplaceCertificate](#keymanagement.replacecertificate).
+        /// * ```secondary``` - Primary verification certificates will not be accepted and only secondary verification certificates
+        /// will be accepted. If primary certificates have been compromised (which the certificate authority or the host detects),
+        /// then secondary certificates should be used in any transaction.
+        /// This is done by the commands [LoadCertificate](#keymanagement.loadcertificate) or [ReplaceCertificate](#keymanagement.replacecertificate).
+        /// * ```notReady``` - The certificate module is not ready. (The device is powered off or physically not present).
+        /// This may be null in
         /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
         /// </summary>
         [DataMember(Name = "certificateState")]
@@ -61,12 +78,10 @@ namespace XFS4IoT.KeyManagement
     [DataContract]
     public sealed class CapabilitiesClass
     {
-        public CapabilitiesClass(int? KeyNum = null, DerivationAlgorithmsClass DerivationAlgorithms = null, KeyCheckModesClass KeyCheckModes = null, string HsmVendor = null, RsaAuthenticationSchemeClass RsaAuthenticationScheme = null, RsaSignatureAlgorithmClass RsaSignatureAlgorithm = null, RsaCryptAlgorithmClass RsaCryptAlgorithm = null, RsaKeyCheckModeClass RsaKeyCheckMode = null, SignatureSchemeClass SignatureScheme = null, EmvImportSchemesClass EmvImportSchemes = null, KeyBlockImportFormatsClass KeyBlockImportFormats = null, bool? KeyImportThroughParts = null, DesKeyLengthClass DesKeyLength = null, CertificateTypesClass CertificateTypes = null, Dictionary<string, LoadCertOptionsClass> LoadCertOptions = null, CrklLoadOptionsClass CrklLoadOptions = null, SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods = null, Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributesClass>>> KeyAttributes = null, Dictionary<string, DecryptAttributesClass> DecryptAttributes = null, Dictionary<string, Dictionary<string, Dictionary<string, VerifyAttributesClass>>> VerifyAttributes = null)
+        public CapabilitiesClass(int? KeyNum = null, KeyCheckModesClass KeyCheckModes = null, RsaAuthenticationSchemeClass RsaAuthenticationScheme = null, RsaSignatureAlgorithmClass RsaSignatureAlgorithm = null, RsaCryptAlgorithmClass RsaCryptAlgorithm = null, RsaKeyCheckModeClass RsaKeyCheckMode = null, SignatureSchemeClass SignatureScheme = null, EmvImportSchemesClass EmvImportSchemes = null, KeyBlockImportFormatsClass KeyBlockImportFormats = null, bool? KeyImportThroughParts = null, DesKeyLengthClass DesKeyLength = null, CertificateTypesClass CertificateTypes = null, Dictionary<string, LoadCertOptionsClass> LoadCertOptions = null, CrklLoadOptionsClass CrklLoadOptions = null, SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods = null, Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributesClass>>> KeyAttributes = null, Dictionary<string, DecryptAttributesClass> DecryptAttributes = null, Dictionary<string, Dictionary<string, Dictionary<string, VerifyAttributesClass>>> VerifyAttributes = null)
         {
             this.KeyNum = KeyNum;
-            this.DerivationAlgorithms = DerivationAlgorithms;
             this.KeyCheckModes = KeyCheckModes;
-            this.HsmVendor = HsmVendor;
             this.RsaAuthenticationScheme = RsaAuthenticationScheme;
             this.RsaSignatureAlgorithm = RsaSignatureAlgorithm;
             this.RsaCryptAlgorithm = RsaCryptAlgorithm;
@@ -93,28 +108,6 @@ namespace XFS4IoT.KeyManagement
         public int? KeyNum { get; init; }
 
         [DataContract]
-        public sealed class DerivationAlgorithmsClass
-        {
-            public DerivationAlgorithmsClass(bool? ChipZka = null)
-            {
-                this.ChipZka = ChipZka;
-            }
-
-            /// <summary>
-            /// Algorithm for the derivation of a chip card individual key as described by the German ZKA.
-            /// </summary>
-            [DataMember(Name = "chipZka")]
-            public bool? ChipZka { get; init; }
-
-        }
-
-        /// <summary>
-        /// Supported derivation algorithms. This property is null if not supported.
-        /// </summary>
-        [DataMember(Name = "derivationAlgorithms")]
-        public DerivationAlgorithmsClass DerivationAlgorithms { get; init; }
-
-        [DataContract]
         public sealed class KeyCheckModesClass
         {
             public KeyCheckModesClass(bool? Self = null, bool? Zero = null)
@@ -125,7 +118,7 @@ namespace XFS4IoT.KeyManagement
 
             /// <summary>
             /// The key check value is created by an encryption of the key with itself. For a double-length or
-            /// triple-length key the KCV is generated using 3DES encryption using the first 8 bytes of the key as the
+            /// triple-length key the KCV is generated using 3DES encryption using the first 8-bytes of the key as the
             /// source data for the encryption.
             /// </summary>
             [DataMember(Name = "self")]
@@ -147,15 +140,6 @@ namespace XFS4IoT.KeyManagement
         /// </summary>
         [DataMember(Name = "keyCheckModes")]
         public KeyCheckModesClass KeyCheckModes { get; init; }
-
-        /// <summary>
-        /// Identifies the Hardware Security Module (HSM) Vendor.
-        /// 
-        /// This should be null if not supported or the HSM vendor is unknown.
-        /// <example>HSM Vendor</example>
-        /// </summary>
-        [DataMember(Name = "hsmVendor")]
-        public string HsmVendor { get; init; }
 
         [DataContract]
         public sealed class RsaAuthenticationSchemeClass
@@ -311,8 +295,8 @@ namespace XFS4IoT.KeyManagement
             /// <summary>
             /// Specifies that the service supports the Enhanced Signature Remote Key Scheme. This scheme
             /// allows the customer to manage their own public keys independently of the Signature Issuer. When this
-            /// mode is supported then the key loaded signed with the Signature Issuer key is the host root public key
-            /// PK&lt;sub&gt;ROOT&lt;/sub&gt;, rather than PK&lt;sub&gt;HOST&lt;/sub&gt;.
+            /// mode is supported, the key loaded signed with the Signature Issuer key is the host root public key
+            /// PK[sub]ROOT[/sub], rather than PK[sub]HOST[/sub].
             /// </summary>
             [DataMember(Name = "enhancedRkl")]
             public bool? EnhancedRkl { get; init; }
@@ -379,7 +363,7 @@ namespace XFS4IoT.KeyManagement
 
             /// <summary>
             /// A CA public key is imported and verified using a signature generated with a private key for which the
-            /// public key is already loaded..
+            /// public key is already loaded.
             /// </summary>
             [DataMember(Name = "pkcsv15CA")]
             public bool? Pkcsv15CA { get; init; }
@@ -452,19 +436,19 @@ namespace XFS4IoT.KeyManagement
             }
 
             /// <summary>
-            /// 8 byte DES keys are supported.
+            /// 8-byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "single")]
             public bool? Single { get; init; }
 
             /// <summary>
-            /// 16 byte DES keys are supported.
+            /// 16-byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "double")]
             public bool? Double { get; init; }
 
             /// <summary>
-            /// 24 byte DES keys are supported.
+            /// 24-byte DES keys are supported.
             /// </summary>
             [DataMember(Name = "triple")]
             public bool? Triple { get; init; }
@@ -623,7 +607,7 @@ namespace XFS4IoT.KeyManagement
         }
 
         /// <summary>
-        /// Specifies the Symmentric Key Management modes. This property is null if not supported.
+        /// Specifies the Symmetric Key Management modes. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "symmetricKeyManagementMethods")]
         public SymmetricKeyManagementMethodsClass SymmetricKeyManagementMethods { get; init; }
@@ -697,7 +681,7 @@ namespace XFS4IoT.KeyManagement
 
         /// <summary>
         /// Attributes supported by [KeyManagement.ImportKey](#keymanagement.importkey) command for
-        /// the key to be loaded.
+        /// the key to be loaded. This property is null if not supported.
         /// </summary>
         [DataMember(Name = "keyAttributes")]
         public Dictionary<string, Dictionary<string, Dictionary<string, KeyAttributesClass>>> KeyAttributes { get; init; }
@@ -880,7 +864,7 @@ namespace XFS4IoT.KeyManagement
             /// If the algorithm is 'R' and the key usage is not '00', then one of properties must be set true.
             /// 
             /// * ```sigNone``` - No signature algorithm specified. No signature verification will take place
-            /// and the content of verificationData must be set.
+            ///   and the content of verificationData must be set.
             /// * ```rsassaPkcs1V15``` - Use the RSASSA-PKCS1-v1.5 algorithm.
             /// * ```rsassaPss``` - Use the RSASSA-PSS algorithm.
             /// </summary>

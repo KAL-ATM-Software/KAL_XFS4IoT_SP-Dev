@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -33,7 +33,12 @@ namespace XFS4IoTServer
     /// </remarks>
     public class CardReaderServiceProvider : ServiceProvider, ICardReaderService, ICommonService, ILightsService, IStorageService
     {
-        public CardReaderServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public CardReaderServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
@@ -92,14 +97,12 @@ namespace XFS4IoTServer
             return StorageService.StorageThresholdEvent(paylod);
         }
 
-        public Task StorageChangedEvent(List<string> CardUnitIds)
-        {
-            StorageChangedEvent.PayloadData paylod = new()
-            {
-                ExtendedProperties = GetStorages(CardUnitIds)
-            };
-            return StorageService.StorageChangedEvent(paylod);
-        }
+        /// <summary>
+        /// Sending status changed event.
+        /// </summary>
+        public Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => StorageService.StorageChangedEvent(sender, propertyInfo);
+
+
         #endregion
 
         #region Common unsolicited events
@@ -108,9 +111,10 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the CardReader Service.");
 
-        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
-                               CommonStatusClass.ErrorActionEnum Action,
-                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(
+            CommonStatusClass.ErrorEventIdEnum EventId,
+            CommonStatusClass.ErrorActionEnum Action,
+            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -119,18 +123,29 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update storage count from the framework after media movement command is processed
         /// </summary>
-        public async Task UpdateCardStorageCount(string storageId, int count, string preservedStorage) => await StorageService.UpdateCardStorageCount(storageId, count, preservedStorage);
+        public async Task UpdateCardStorageCount(string storageId, int count) => await StorageService.UpdateCardStorageCount(storageId, count);
 
         /// <summary>
         /// UpdateCashAccounting
         /// Update cash unit status and counts managed by the device specific class.
         /// </summary>
-        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta, Dictionary<string, string> preservedStorage) => throw new NotSupportedException($"CardReader service doesn't support cash storage.");
+        public Task UpdateCashAccounting(Dictionary<string, CashUnitCountClass> countDelta) => throw new NotSupportedException($"CardReader service doesn't support cash storage.");
 
         /// <summary>
         /// Update managed check storage information in the framework.
         /// </summary>
-        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null, Dictionary<string, string> preservedStorage = null) => throw new NotSupportedException($"CardReader service class doesn't support check storage.");
+        public Task UpdateCheckStorageCount(Dictionary<string, StorageCheckCountClass> countDelta = null) => throw new NotSupportedException($"CardReader service class doesn't support check storage.");
+
+        /// <summary>
+        /// Update managed printer storage information in the framework.
+        /// </summary>
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CardReader service class doesn't support printer storage.");
+
+        /// <summary>
+        /// Update managed deposit storage information in the framework.
+        /// </summary>
+        public Task UpdateDepositStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CardReader service class doesn't support deposit storage.");
+
 
         /// <summary>
         /// Return which type of storage SP is using
@@ -156,6 +171,21 @@ namespace XFS4IoTServer
         /// Check storage structure information of this device
         /// </summary>
         public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+
+        /// <summary>
+        /// Printer storage structure information of this device
+        /// </summary>
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get => StorageService.PrinterUnits; init { } }
+
+        /// <summary>
+        /// IBNS storage structure information of this device
+        /// </summary>
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get => StorageService.IBNSUnits; init { } }
+
+        /// <summary>
+        /// Deposit storage structure information of this device
+        /// </summary>
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get => StorageService.DepositUnits; init { } }
 
         /// <summary>
         /// Return XFS4IoT storage structured object.

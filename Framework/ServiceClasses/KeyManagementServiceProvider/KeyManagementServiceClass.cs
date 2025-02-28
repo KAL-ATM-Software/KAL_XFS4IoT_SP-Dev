@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -100,41 +100,46 @@ namespace XFS4IoTServer
         /// <summary>
         /// Add new key into the collection and return key slot
         /// </summary>
-        public void AddKey(string KeyName,
-                           int KeySlot,
-                           string KeyUsage,
-                           string Algorithm,
-                           string ModeOfUse,
-                           int KeyLength,
-                           KeyDetail.KeyStatusEnum KeyStatus,
-                           bool Preloaded,
-                           string RestrictedKeyUsage,
-                           string KeyVersionNumber,
-                           string Exportability,
-                           List<byte> OptionalKeyBlockHeader,
-                           int? Generation,
-                           DateTime? ActivatingDate,
-                           DateTime? ExpiryDate,
-                           int? Version)
+        public void AddKey(
+            string KeyName,
+            int KeySlot,
+            string KeyUsage,
+            string Algorithm,
+            string ModeOfUse,
+            int KeyLength,
+            KeyDetail.KeyStatusEnum KeyStatus,
+            bool Preloaded,
+            string RestrictedKeyUsage,
+            string KeyVersionNumber,
+            string Exportability,
+            List<byte> OptionalKeyBlockHeader,
+            int? Generation,
+            DateTime? ActivatingDate,
+            DateTime? ExpiryDate,
+            int? Version)
         {
             if (KeyDetails.ContainsKey(KeyName))
                 KeyDetails.Remove(KeyName);
-            KeyDetails.Add(KeyName, new KeyDetail(KeyName,
-                                                  KeySlot,
-                                                  KeyUsage,
-                                                  Algorithm,
-                                                  ModeOfUse,
-                                                  KeyLength,
-                                                  KeyStatus,
-                                                  Preloaded,
-                                                  RestrictedKeyUsage,
-                                                  KeyVersionNumber,
-                                                  Exportability,
-                                                  OptionalKeyBlockHeader,
-                                                  Generation,
-                                                  ActivatingDate,
-                                                  ExpiryDate,
-                                                  Version));
+            KeyDetails.Add(
+                KeyName, 
+                new KeyDetail(
+                    KeyName,
+                    KeySlot,
+                    KeyUsage,
+                    Algorithm,
+                    ModeOfUse,
+                    KeyLength,
+                    KeyStatus,
+                    Preloaded,
+                    RestrictedKeyUsage,
+                    KeyVersionNumber,
+                    Exportability,
+                    OptionalKeyBlockHeader,
+                    Generation,
+                    ActivatingDate,
+                    ExpiryDate,
+                    Version)
+                );
 
             PersistentData.Store<Dictionary<string, KeyDetail>>(ServiceProvider.Name + typeof(KeyDetail).FullName, KeyDetails);
         }
@@ -168,22 +173,26 @@ namespace XFS4IoTServer
             KeyDetail keyDetail = GetKeyDetail(KeyName);
             DeleteKey(KeyName);
 
-            KeyDetails.Add(KeyName, new KeyDetail(KeyName,
-                                                  keyDetail.KeySlot,
-                                                  keyDetail.KeyUsage,
-                                                  keyDetail.Algorithm,
-                                                  keyDetail.ModeOfUse,
-                                                  keyDetail.KeyLength,
-                                                  Status,
-                                                  keyDetail.Preloaded,
-                                                  keyDetail.RestrictedKeyUsage,
-                                                  keyDetail.KeyVersionNumber,
-                                                  keyDetail.Exportability,
-                                                  keyDetail.OptionalKeyBlockHeader,
-                                                  keyDetail.Generation,
-                                                  keyDetail.ActivatingDate,
-                                                  keyDetail.ExpiryDate,
-                                                  keyDetail.Version));
+            KeyDetails.Add(
+                KeyName, 
+                new KeyDetail(
+                    KeyName,
+                    keyDetail.KeySlot,
+                    keyDetail.KeyUsage,
+                    keyDetail.Algorithm,
+                    keyDetail.ModeOfUse,
+                    keyDetail.KeyLength,
+                    Status,
+                    keyDetail.Preloaded,
+                    keyDetail.RestrictedKeyUsage,
+                    keyDetail.KeyVersionNumber,
+                    keyDetail.Exportability,
+                    keyDetail.OptionalKeyBlockHeader,
+                    keyDetail.Generation,
+                    keyDetail.ActivatingDate,
+                    keyDetail.ExpiryDate,
+                    keyDetail.Version)
+                );
 
             PersistentData.Store<Dictionary<string, KeyDetail>>(ServiceProvider.Name + typeof(KeyDetail).FullName, KeyDetails);
         }
@@ -198,7 +207,7 @@ namespace XFS4IoTServer
 
         public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => IllegalKeyAccessEvent(new IllegalKeyAccessEvent.PayloadData(KeyName, ErrorCode switch
         {
-            KeyAccessErrorCodeEnum.AlgorithmNotSupp => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.AlgorithmNotSupp,
+            KeyAccessErrorCodeEnum.AlgorithmNotSupp => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.AlgorithmNotSupported,
             KeyAccessErrorCodeEnum.KeyNotFound => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNotFound,
             KeyAccessErrorCodeEnum.KeyNoValue => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.KeyNoValue,
             _ => XFS4IoT.KeyManagement.Events.IllegalKeyAccessEvent.PayloadData.ErrorCodeEnum.UseViolation,

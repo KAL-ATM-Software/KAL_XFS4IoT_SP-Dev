@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -89,14 +89,14 @@ namespace XFS4IoT.TextTerminal
         }
 
         /// <summary>
-        /// Specifies the horizontal size of the display of the text terminal unit (the number of columns that can be displayed).
+        /// Specifies the horizontal size of the display of the Text Terminal Unit (the number of columns that can be displayed).
         /// </summary>
         [DataMember(Name = "sizeX")]
         [DataTypes(Minimum = 0)]
         public int? SizeX { get; init; }
 
         /// <summary>
-        /// Specifies the vertical size of the display of the text terminal unit (the number of rows that can be displayed).
+        /// Specifies the vertical size of the display of the Text Terminal Unit (the number of rows that can be displayed).
         /// </summary>
         [DataMember(Name = "sizeY")]
         [DataTypes(Minimum = 0)]
@@ -162,101 +162,58 @@ namespace XFS4IoT.TextTerminal
 
 
     [DataContract]
-    public sealed class FieldDetailsClass
+    public sealed class SizeClass
     {
-        public FieldDetailsClass(TypeEnum? Type = null, ClassEnum? Class = null, AccessClass Access = null, OverflowEnum? Overflow = null, string Format = null)
+        public SizeClass(int? Width = null, int? Height = null)
         {
-            this.Type = Type;
-            this.Class = Class;
-            this.Access = Access;
-            this.Overflow = Overflow;
-            this.Format = Format;
-        }
-
-        public enum TypeEnum
-        {
-            Text,
-            Invisible,
-            Password
+            this.Width = Width;
+            this.Height = Height;
         }
 
         /// <summary>
-        /// Specifies the type of field and can be one of the following:
-        ///   * ```text``` - A text field.
-        ///   * ```invisible``` - An invisible text field.
-        ///   * ```password``` - A password field, input is echoed as '\\*'.
+        /// Specifies the width in terms of the base horizontal resolution.
+        /// <example>50</example>
         /// </summary>
-        [DataMember(Name = "type")]
-        public TypeEnum? Type { get; init; }
+        [DataMember(Name = "width")]
+        [DataTypes(Minimum = 1)]
+        public int? Width { get; init; }
 
-        public enum ClassEnum
+        /// <summary>
+        /// Specifies the height in terms of the base vertical resolution. For media definitions, 0 means unlimited, i.e.,
+        /// paper roll.
+        /// <example>100</example>
+        /// </summary>
+        [DataMember(Name = "height")]
+        [DataTypes(Minimum = 1)]
+        public int? Height { get; init; }
+
+    }
+
+
+    [DataContract]
+    public sealed class PositionClass
+    {
+        public PositionClass(int? X = null, int? Y = null)
         {
-            Static,
-            Optional,
-            Required
+            this.X = X;
+            this.Y = Y;
         }
 
         /// <summary>
-        /// Specifies the class of the field and can be one of the following:
-        /// * ```static``` - The field data cannot be set by the application.
-        /// * ```optional``` - The field data can be set by the application.
-        /// * ```required``` - The field data must be set by the application.
+        /// Horizontal position relative to left side.
+        /// <example>20</example>
         /// </summary>
-        [DataMember(Name = "class")]
-        public ClassEnum? Class { get; init; }
-
-        [DataContract]
-        public sealed class AccessClass
-        {
-            public AccessClass(bool? Read = null, bool? Write = null)
-            {
-                this.Read = Read;
-                this.Write = Write;
-            }
-
-            /// <summary>
-            /// The field is used for input from the physical device.
-            /// </summary>
-            [DataMember(Name = "read")]
-            public bool? Read { get; init; }
-
-            /// <summary>
-            /// The field is used for output to the physical device.
-            /// </summary>
-            [DataMember(Name = "write")]
-            public bool? Write { get; init; }
-
-        }
+        [DataMember(Name = "x")]
+        [DataTypes(Minimum = 0)]
+        public int? X { get; init; }
 
         /// <summary>
-        /// Specifies whether the field is to be used for input, output or both.
+        /// Vertical position relative to the top.
+        /// <example>12</example>
         /// </summary>
-        [DataMember(Name = "access")]
-        public AccessClass Access { get; init; }
-
-        public enum OverflowEnum
-        {
-            Terminate,
-            Truncate,
-            Overwrite
-        }
-
-        /// <summary>
-        /// Specifies how an overflow of field data should be handled and can be one of the following:
-        /// * ```terminate``` - Return an error and terminate display of the form.
-        /// * ```truncate``` - Truncate the field data to fit in the field.
-        /// * ```overwrite``` - Print the field data beyond the extents of the field boundary.
-        /// </summary>
-        [DataMember(Name = "overflow")]
-        public OverflowEnum? Overflow { get; init; }
-
-        /// <summary>
-        /// Format string as defined in the form for this field. 
-        /// This value will be null if the parameter is not specified in the field definition.
-        /// <example>Format 1</example>
-        /// </summary>
-        [DataMember(Name = "format")]
-        public string Format { get; init; }
+        [DataMember(Name = "y")]
+        [DataTypes(Minimum = 0)]
+        public int? Y { get; init; }
 
     }
 

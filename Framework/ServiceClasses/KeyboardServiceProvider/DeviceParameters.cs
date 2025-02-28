@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  * 
@@ -42,25 +42,20 @@ namespace XFS4IoTFramework.Keyboard
         ContinueFDK
     }
 
-    public class ActiveKeyClass
+    public class ActiveKeyClass(
+        string KeyName,
+        bool Terminate = false)
     {
-
-        public ActiveKeyClass(string KeyName,
-                              bool Terminate = false)
-        {
-            this.KeyName = KeyName;
-            this.Terminate = Terminate;
-        }
-
-        public string KeyName { get; init; }
-        public bool Terminate { get; init; }
+        public string KeyName { get; init; } = KeyName;
+        public bool Terminate { get; init; } = Terminate;
     }
 
     public sealed class DefineLayoutResult : DeviceResult
     {
-        public DefineLayoutResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public DefineLayoutResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -72,83 +67,55 @@ namespace XFS4IoTFramework.Keyboard
             this.ErrorCode = null;
         }
 
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DefineLayoutResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                  string ErrorDescription = null,
-                                  DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DefineLayoutResult(MessagePayload.CompletionCodeEnum CompletionCode)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-        }
-
         public DefineLayoutCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
     }
 
-    public sealed class DataEntryRequest
+    public sealed class DataEntryRequest(
+        int MaxLen,
+        bool AutoEnd,
+        List<ActiveKeyClass> ActiveKeys)
     {
-        public DataEntryRequest(int MaxLen,
-                                bool AutoEnd,
-                                List<ActiveKeyClass> ActiveKeys)
-        {
-            this.MaxLen = MaxLen;
-            this.AutoEnd = AutoEnd;
-            this.ActiveKeys = ActiveKeys;
-
-        }
 
         /// <summary>
         /// Specifies the maximum number of digits which can be returned to the application in the output parameter. 
         /// </summary>
-        public int MaxLen { get; init; }
+        public int MaxLen { get; init; } = MaxLen;
 
         /// <summary>
         /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of digits are entered.
         /// Otherwise, the input is terminated by the user using one of the termination keys. 
         /// autoEnd is ignored when maxLen is set to zero.
         /// </summary>
-        public bool AutoEnd { get; init; }
+        public bool AutoEnd { get; init; } = AutoEnd;
 
         /// <summary>
         /// Specifies Function Keys which are active during the execution of the command.
         /// </summary>
-        public List<ActiveKeyClass> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; } = ActiveKeys;
     }
 
     public sealed class DataEntryResult : DeviceResult
     {
-        public sealed class EnteredKey
+        public sealed class EnteredKey(
+            string Key,
+            EntryCompletionEnum? Completion = null)
         {
-            public EnteredKey(string Key,
-                              EntryCompletionEnum? Completion = null)
-            {
-                this.Key = Key;
-                this.Completion = Completion;
-            }
 
             /// <summary>
             /// Key name pressed
             /// </summary>
-            public string Key { get; init; }
+            public string Key { get; init; } = Key;
 
             /// <summary>
             /// Completion of the entry
             /// </summary>
-            public EntryCompletionEnum? Completion { get; init; }
+            public EntryCompletionEnum? Completion { get; init; } = Completion;
         }
 
-        public DataEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public DataEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -157,10 +124,11 @@ namespace XFS4IoTFramework.Keyboard
             Completion = null;
         }
 
-        public DataEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                               int Keys,
-                               List<EnteredKey> EnteredKeys,
-                               EntryCompletionEnum? Completion)
+        public DataEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            int Keys,
+            List<EnteredKey> EnteredKeys,
+            EntryCompletionEnum? Completion)
                 : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -168,35 +136,6 @@ namespace XFS4IoTFramework.Keyboard
             this.EnteredKeys = EnteredKeys;
             this.Completion = Completion;
         }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DataEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               string ErrorDescription = null,
-                               DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Keys = 0;
-            EnteredKeys = null;
-            Completion = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public DataEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                               int Keys,
-                               List<EnteredKey> EnteredKeys,
-                               EntryCompletionEnum? Completion)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Keys = Keys;
-            this.EnteredKeys = EnteredKeys;
-            this.Completion = Completion;
-        }
-
         public DataEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
 
         /// <summary>
@@ -215,57 +154,51 @@ namespace XFS4IoTFramework.Keyboard
         public EntryCompletionEnum? Completion { get; init; }
     }
 
-    public sealed class PinEntryRequest
+    public sealed class PinEntryRequest(
+        int MinLen,
+        int MaxLen,
+        bool AutoEnd,
+        string Echo,
+        List<ActiveKeyClass> ActiveKeys)
     {
-        public PinEntryRequest(int MinLen,
-                               int MaxLen,
-                               bool AutoEnd,
-                               string Echo,
-                               List<ActiveKeyClass> ActiveKeys)
-        {
-            this.MinLen = MinLen;
-            this.MaxLen = MaxLen;
-            this.AutoEnd = AutoEnd;
-            this.Echo = Echo;
-            this.ActiveKeys = ActiveKeys;
-        }
 
         /// <summary>
         /// Specifies the minimum number of digits which must be entered for the PIN. 
         /// A value of zero indicates no minimum PIN length verification.
         /// </summary>
-        public int MinLen { get; init; }
+        public int MinLen { get; init; } = MinLen;
 
         /// <summary>
         /// Specifies the maximum number of digits which can be entered for the PIN.
         /// A value of zero indicates no maximum PIN length verification.
         /// </summary>
-        public int MaxLen { get; init; }
+        public int MaxLen { get; init; } = MaxLen;
 
         /// <summary>
         /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of digits are entered. 
         /// Otherwise, the input is terminated by the user using one of the termination keys. 
         /// autoEnd is ignored when maxLen is set to zero.
         /// </summary>
-        public bool AutoEnd { get; init; }
+        public bool AutoEnd { get; init; } = AutoEnd;
 
         /// <summary>
         /// Specifies the replace character to be echoed on a local display for the PIN digit. 
         /// </summary>
-        public string Echo { get; init; }
+        public string Echo { get; init; } = Echo;
 
         /// <summary>
         /// Specifies function keys which are active during the execution of the command.
         /// </summary>
-        public List<ActiveKeyClass> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; } = ActiveKeys;
 
     }
 
     public sealed class PinEntryResult : DeviceResult
     {
-        public PinEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PinEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public PinEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            PinEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -273,34 +206,10 @@ namespace XFS4IoTFramework.Keyboard
             Completion = null;
         }
 
-        public PinEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                              int Digits,
-                              EntryCompletionEnum? Completion)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Digits = Digits;
-            this.Completion = Completion;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PinEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              string ErrorDescription = null,
-                              PinEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Digits = 0;
-            Completion = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public PinEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                              int Digits,
-                              EntryCompletionEnum? Completion)
+        public PinEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            int Digits,
+            EntryCompletionEnum? Completion)
                 : base(CompletionCode, null)
         {
             this.ErrorCode = null;
@@ -323,7 +232,12 @@ namespace XFS4IoTFramework.Keyboard
         public EntryCompletionEnum? Completion { get; init; }
     }
 
-    public sealed class SecureKeyEntryRequest
+    public sealed class SecureKeyEntryRequest(
+        int KeyLen,
+        bool AutoEnd,
+        List<ActiveKeyClass> ActiveKeys,
+        SecureKeyEntryRequest.VerificationTypeEnum VerificationType,
+        SecureKeyEntryRequest.CryptoMethodEnum CryptoMethod)
     {
         public enum VerificationTypeEnum
         {
@@ -339,43 +253,30 @@ namespace XFS4IoTFramework.Keyboard
             AES
         }
 
-        public SecureKeyEntryRequest(int KeyLen,
-                               bool AutoEnd,
-                               List<ActiveKeyClass> ActiveKeys,
-                               VerificationTypeEnum VerificationType,
-                               CryptoMethodEnum CryptoMethod)
-        {
-            this.KeyLen = KeyLen;
-            this.AutoEnd = AutoEnd;
-            this.ActiveKeys = ActiveKeys;
-            this.VerificationType = VerificationType;
-            this.CryptoMethod = CryptoMethod;
-        }
-
         /// <summary>
         /// Specifies the number of digits which must be entered for the encryption key, 16 for a singlelength key, 
         /// 32 for a double-length key and 48 for a triple-length key.
         /// The only valid values are 16, 32 and 48.
         /// </summary>
-        public int KeyLen { get; init; }
+        public int KeyLen { get; init; } = KeyLen;
 
         /// <summary>
         /// If autoEnd is set to true, the Service Provider terminates the command when the maximum number of encryption 
         /// key digits are entered. Otherwise, the input is terminated by the user using Enter, Cancel or any terminating key. 
         /// When keyLen is reached, the Service Provider will disable all keys associated with an encryption key digit.
         /// </summary>
-        public bool AutoEnd { get; init; }
+        public bool AutoEnd { get; init; } = AutoEnd;
 
         /// <summary>
         /// Specifies those function keys which are active during the execution of the command.
         /// This parameter should include those FDKs mapped to edit functions.
         /// </summary>
-        public List<ActiveKeyClass> ActiveKeys { get; init; }
+        public List<ActiveKeyClass> ActiveKeys { get; init; } = ActiveKeys;
 
         /// <summary>
         /// Specifies the type of verification to be done on the entered key.
         /// </summary>
-        public VerificationTypeEnum VerificationType { get; init; }
+        public VerificationTypeEnum VerificationType { get; init; } = VerificationType;
 
         /// <summary>
         /// Specifies the cryptographic method to be used for the verification.
@@ -383,14 +284,15 @@ namespace XFS4IoTFramework.Keyboard
         /// If *keyLen* is 16, the cryptographic method will be Single DES. 
         /// If *keyLen* is 32 or 48, the cryptographic method will be Triple DES
         /// </summary>
-        public CryptoMethodEnum? CryptoMethod { get; init; }
+        public CryptoMethodEnum? CryptoMethod { get; init; } = CryptoMethod;
     }
 
     public sealed class SecureKeyEntryResult : DeviceResult
     {
-        public SecureKeyEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+        public SecureKeyEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
             : base(CompletionCode, ErrorDescription)
         {
             this.ErrorCode = ErrorCode;
@@ -399,39 +301,12 @@ namespace XFS4IoTFramework.Keyboard
             KeyCheckValue = null;
         }
 
-        public SecureKeyEntryResult(MessageHeader.CompletionCodeEnum CompletionCode,
-                                    int Digits,
-                                    EntryCompletionEnum? Completion,
-                                    List<byte> KeyCheckValue)
-                : base(CompletionCode, null)
-        {
-            this.ErrorCode = null;
-            this.Digits = Digits;
-            this.Completion = Completion;
-            this.KeyCheckValue = KeyCheckValue;
-        }
-
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SecureKeyEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    string ErrorDescription = null,
-                                    SecureKeyEntryCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
-            : base(CompletionCode, ErrorDescription)
-        {
-            this.ErrorCode = ErrorCode;
-            this.Digits = 0;
-            Completion = null;
-            KeyCheckValue = null;
-        }
-        [Obsolete("This constructor is obsolete, use constructor has a first parameter MessageHeader." +
-            "CompletionCodeEnum. This class will not be supported in the package version 3.0. " +
-            "Please migrate changes in the device class before applying 3.0 package.", false)]
-        public SecureKeyEntryResult(MessagePayload.CompletionCodeEnum CompletionCode,
-                                    int Digits,
-                                    EntryCompletionEnum? Completion,
-                                    List<byte> KeyCheckValue)
-                : base(CompletionCode, null)
+        public SecureKeyEntryResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            int Digits,
+            EntryCompletionEnum? Completion,
+            List<byte> KeyCheckValue)
+            : base(CompletionCode, null)
         {
             this.ErrorCode = null;
             this.Digits = Digits;

@@ -1,10 +1,10 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
  * This file was created automatically as part of the XFS4IoT Auxiliaries interface.
- * ClearAutoStartUpTimeHandler_g.cs uses automatically generated parts.
+ * ClearAutoStartupTimeHandler_g.cs uses automatically generated parts.
 \***********************************************************************************************/
 
 
@@ -20,41 +20,41 @@ using IServiceProvider = XFS4IoTServer.IServiceProvider;
 
 namespace XFS4IoTFramework.Auxiliaries
 {
-    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(ClearAutoStartUpTimeCommand))]
-    public partial class ClearAutoStartUpTimeHandler : ICommandHandler
+    [CommandHandler(XFSConstants.ServiceClass.Auxiliaries, typeof(ClearAutoStartupTimeCommand))]
+    public partial class ClearAutoStartupTimeHandler : ICommandHandler
     {
-        public ClearAutoStartUpTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
+        public ClearAutoStartupTimeHandler(IConnection Connection, ICommandDispatcher Dispatcher, ILogger logger)
         {
-            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Dispatcher)}");
+            Dispatcher.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Dispatcher)}");
             Provider = Dispatcher.IsA<IServiceProvider>();
 
-            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Provider.Device)}")
+            Provider.Device.IsNotNull($"Invalid parameter received in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Provider.Device)}")
                            .IsA<IAuxiliariesDevice>();
 
             Auxiliaries = Provider.IsA<IAuxiliariesService>();
             Common = Provider.IsA<ICommonService>();
 
-            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(logger)}");
-            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartUpTimeHandler)} constructor. {nameof(Connection)}");
+            this.Logger = logger.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(logger)}");
+            this.Connection = Connection.IsNotNull($"Invalid parameter in the {nameof(ClearAutoStartupTimeHandler)} constructor. {nameof(Connection)}");
         }
 
         public async Task Handle(object command, CancellationToken cancel)
         {
-            var clearAutoStartUpTimeCmd = command.IsA<ClearAutoStartUpTimeCommand>($"Invalid parameter in the ClearAutoStartUpTime Handle method. {nameof(ClearAutoStartUpTimeCommand)}");
-            clearAutoStartUpTimeCmd.Header.RequestId.HasValue.IsTrue();
+            var clearAutoStartupTimeCmd = command.IsA<ClearAutoStartupTimeCommand>($"Invalid parameter in the ClearAutoStartupTime Handle method. {nameof(ClearAutoStartupTimeCommand)}");
+            clearAutoStartupTimeCmd.Header.RequestId.HasValue.IsTrue();
 
-            IClearAutoStartUpTimeEvents events = new ClearAutoStartUpTimeEvents(Connection, clearAutoStartUpTimeCmd.Header.RequestId.Value);
+            IClearAutoStartupTimeEvents events = new ClearAutoStartupTimeEvents(Connection, clearAutoStartupTimeCmd.Header.RequestId.Value);
 
-            var result = await HandleClearAutoStartUpTime(events, clearAutoStartUpTimeCmd, cancel);
-            await Connection.SendMessageAsync(new ClearAutoStartUpTimeCompletion(clearAutoStartUpTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
+            var result = await HandleClearAutoStartupTime(events, clearAutoStartupTimeCmd, cancel);
+            await Connection.SendMessageAsync(new ClearAutoStartupTimeCompletion(clearAutoStartupTimeCmd.Header.RequestId.Value, result.CompletionCode, result.ErrorDescription));
 
             await this.IsA<ICommandHandler>().CommandPostProcessing(result);
         }
 
         public async Task HandleError(object command, Exception commandException)
         {
-            var clearAutoStartUpTimeCommand = command.IsA<ClearAutoStartUpTimeCommand>();
-            clearAutoStartUpTimeCommand.Header.RequestId.HasValue.IsTrue();
+            var clearAutoStartupTimeCommand = command.IsA<ClearAutoStartupTimeCommand>();
+            clearAutoStartupTimeCommand.Header.RequestId.HasValue.IsTrue();
 
             MessageHeader.CompletionCodeEnum errorCode = commandException switch
             {
@@ -75,7 +75,7 @@ namespace XFS4IoTFramework.Auxiliaries
                 _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 
-            var response = new ClearAutoStartUpTimeCompletion(clearAutoStartUpTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
+            var response = new ClearAutoStartupTimeCompletion(clearAutoStartupTimeCommand.Header.RequestId.Value, errorCode, commandException.Message);
 
             await Connection.SendMessageAsync(response);
         }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.Printer.Commands
 {
     //Original name = MediaExtents
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCommand : Command<MediaExtentsCommand.PayloadData>
     {
@@ -28,46 +28,14 @@ namespace XFS4IoT.Printer.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(BaseEnum? Base = null, int? UnitX = null, int? UnitY = null)
+            public PayloadData(UnitClass Unit = null)
                 : base()
             {
-                this.Base = Base;
-                this.UnitX = UnitX;
-                this.UnitY = UnitY;
+                this.Unit = Unit;
             }
 
-            public enum BaseEnum
-            {
-                Inches,
-                Mm,
-                RowColumn
-            }
-
-            /// <summary>
-            /// Specifies the base unit of measurement of the media and can be one of the following values:
-            /// 
-            /// * ```inches``` - The base unit is inches.
-            /// * ```mm``` - The base unit is millimeters.
-            /// * ```rowColumn``` - The base unit is rows and columns.
-            /// </summary>
-            [DataMember(Name = "base")]
-            public BaseEnum? Base { get; init; }
-
-            /// <summary>
-            /// Specifies the horizontal resolution of the base units as a fraction of the base value. For example, a
-            /// value of 16 applied to the base unit, inches, means that the base horizontal resolution is 1/16.
-            /// </summary>
-            [DataMember(Name = "unitX")]
-            [DataTypes(Minimum = 0)]
-            public int? UnitX { get; init; }
-
-            /// <summary>
-            /// Specifies the vertical resolution of the base units as a fraction of the base value. For example, a
-            /// value of 10 applied to the base unit, mm, means that the base vertical resolution is 0.1 mm.
-            /// </summary>
-            [DataMember(Name = "unitY")]
-            [DataTypes(Minimum = 0)]
-            public int? UnitY { get; init; }
+            [DataMember(Name = "unit")]
+            public UnitClass Unit { get; init; }
 
         }
     }

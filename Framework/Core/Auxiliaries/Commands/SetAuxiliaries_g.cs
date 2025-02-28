@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -361,24 +361,24 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// one of the following values:
             /// 
             /// * ```publicAudioManual``` - Set the Enhanced Audio Controller to manual mode, public
-            /// state (i.e. audio will be played through speakers only).
+            ///   state (i.e. audio will be played through speakers only).
             /// * ```publicAudioAuto``` - Set the Enhanced Audio Controller to auto mode, public state
-            /// (i.e. audio will be played through speakers). When a Privacy Device is activated (headset
-            /// connected/handset off-hook), the device will go to the private state.
+            ///   (i.e. audio will be played through speakers). When a Privacy Device is activated (headset
+            ///   connected/handset off-hook), the device will go to the private state.
             /// * ```publicAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode, public
-            /// state (i.e. audio will be played through speakers). When a Privacy Device is activated,
-            /// the device will go to the private state.
+            ///   state (i.e. audio will be played through speakers). When a Privacy Device is activated,
+            ///   the device will go to the private state.
             /// * ```privateAudioManual``` - Set the Enhanced Audio Controller to manual mode, private
-            /// state (i.e. audio will be played only through a connected Privacy Device). In private
-            /// mode, no audio is transmitted through the speakers.
+            ///   state (i.e. audio will be played only through a connected Privacy Device). In private
+            ///   mode, no audio is transmitted through the speakers.
             /// * ```privateAudioAuto``` - Set the Enhanced Audio Controller to auto mode, private state
-            /// (i.e. audio will be played only through an activated Privacy Device). In private mode,
-            /// no audio is transmitted through the speakers. When a Privacy Device is deactivated
-            /// (headset disconnected/handset on-hook), the device will go to the public state.
+            ///   (i.e. audio will be played only through an activated Privacy Device). In private mode,
+            ///   no audio is transmitted through the speakers. When a Privacy Device is deactivated
+            ///   (headset disconnected/handset on-hook), the device will go to the public state.
             /// * ```privateAudioSemiAuto``` - Set the Enhanced Audio Controller to semi-auto mode,
-            /// private state (i.e. audio will be played only through an activated Privacy Device). In
-            /// private mode, no audio is transmitted through the speakers. When a Privacy Device is
-            /// deactivated, the device will remain in the private state.
+            ///   private state (i.e. audio will be played only through an activated Privacy Device). In
+            ///   private mode, no audio is transmitted through the speakers. When a Privacy Device is
+            ///   deactivated, the device will remain in the private state.
             /// 
             /// This property is null if not applicable.
             /// </summary>
@@ -400,24 +400,24 @@ namespace XFS4IoT.Auxiliaries.Commands
             /// one of the following values:
             /// 
             /// * ```publicAudioManual``` - Set the Enhanced Microphone Controller to manual mode, public
-            /// state (i.e. only the microphone in the fascia is active).
+            ///   state (i.e. only the microphone in the fascia is active).
             /// * ```publicAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, public
-            /// state (i.e. only the microphone in the fascia is active). When a Privacy Device with a
-            /// microphone is activated (headset connected/handset off-hook), the device will go to the private state.
+            ///   state (i.e. only the microphone in the fascia is active). When a Privacy Device with a
+            ///   microphone is activated (headset connected/handset off-hook), the device will go to the private state.
             /// * ```publicAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, public state
-            /// (i.e. only the microphone in the fascia is active). When a Privacy Device with a microphone is
-            /// activated, the device will go to the private state.
+            ///   (i.e. only the microphone in the fascia is active). When a Privacy Device with a microphone is
+            ///   activated, the device will go to the private state.
             /// * ```privateAudioManual``` - Set the Enhanced Microphone Controller to manual mode, private state
-            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
-            /// input is transmitted through the fascia microphone.
+            ///   (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
+            ///   input is transmitted through the fascia microphone.
             /// * ```privateAudioAuto``` - Set the Enhanced Microphone Controller to auto mode, private state
-            /// (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
-            /// input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
-            /// deactivated (headset disconnected/handset on-hook), the device will go to the public state.
+            ///   (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no audio
+            ///   input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
+            ///   deactivated (headset disconnected/handset on-hook), the device will go to the public state.
             /// * ```privateAudioSemiAuto``` - Set the Enhanced Microphone Controller to semi-auto mode, private
-            /// state (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no
-            /// audio input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
-            /// deactivated, the device will remain in the private state.
+            ///   state (i.e. audio input will be only via a microphone in the Privacy Device). In private mode, no
+            ///   audio input is transmitted through the fascia microphone. When a Privacy Device with a microphone is
+            ///   deactivated, the device will remain in the private state.
             /// 
             /// This property is null if not applicable.
             /// </summary>

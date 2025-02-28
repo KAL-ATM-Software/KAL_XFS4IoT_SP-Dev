@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -53,7 +53,7 @@ namespace XFS4IoT.Common.Commands
             /// <summary>
             /// Specifies a string which identifies the transaction ID.
             /// 
-            /// if *state* is *inactive*, this property:
+            /// If *state* is *inactive*, this property:
             ///   - Is ignored in [Common.SetTransactionState](#common.settransactionstate)
             ///   - Is null in [Common.GetTransactionState](#common.gettransactionstate).
             /// <example>Example transaction ID</example>

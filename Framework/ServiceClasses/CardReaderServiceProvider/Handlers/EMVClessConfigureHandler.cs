@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -115,19 +115,26 @@ namespace XFS4IoTFramework.CardReader
                         "No checksum of the CA Public Key is supplied.");
                 }
 
-                PublicKeys.Add(new PublicKeyInfo(PKs.Rid,
-                                                 new PublicKey(AlgorithmIndicator: (int)PKs.CaPublicKey.AlgorithmIndicator,
-                                                               Index: (int)PKs.CaPublicKey.Index,
-                                                               Exponent: PKs.CaPublicKey.Exponent,
-                                                               Modulus: PKs.CaPublicKey.Modulus,
-                                                               Checksum: PKs.CaPublicKey.Checksum)));
+                PublicKeys.Add(
+                    new PublicKeyInfo(
+                        PKs.Rid,
+                        new PublicKey(
+                            AlgorithmIndicator: (int)PKs.CaPublicKey.AlgorithmIndicator,
+                            Index: (int)PKs.CaPublicKey.Index,
+                            Exponent: PKs.CaPublicKey.Exponent,
+                            Modulus: PKs.CaPublicKey.Modulus,
+                            Checksum: PKs.CaPublicKey.Checksum)
+                        )
+                    );
             }
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.EMVContactlessConfigureAsync()");
-            var result = await Device.EMVContactlessConfigureAsync(new EMVContactlessConfigureRequest(eMVClessConfigure.Payload.TerminalData, 
-                                                                   AIDs, 
-                                                                   PublicKeys),
-                                                                   cancel);
+            var result = await Device.EMVContactlessConfigureAsync(
+                new EMVContactlessConfigureRequest(
+                    eMVClessConfigure.Payload.TerminalData, 
+                    AIDs, 
+                    PublicKeys),
+                cancel);
 
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.EMVContactlessConfigureAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 

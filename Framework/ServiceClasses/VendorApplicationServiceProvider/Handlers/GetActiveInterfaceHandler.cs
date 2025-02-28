@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -25,7 +25,9 @@ namespace XFS4IoTFramework.VendorApplication
 
             return Task.FromResult(
                 new CommandResult<GetActiveInterfaceCompletion.PayloadData>(
-                    result.ActiveInterface is null ? null : new(
+                    result.ActiveInterface is null ? 
+                    null : 
+                    new(
                         result.ActiveInterface switch
                         {
                             ActiveInterfaceEnum.Consumer => GetActiveInterfaceCompletion.PayloadData.ActiveInterfaceEnum.Consumer,

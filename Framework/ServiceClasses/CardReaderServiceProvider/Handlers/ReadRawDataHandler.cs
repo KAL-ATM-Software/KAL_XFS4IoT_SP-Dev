@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
@@ -105,9 +105,13 @@ namespace XFS4IoTFramework.CardReader
 
             Logger.Log(Constants.DeviceClass, "CardReaderDev.AcceptCardAsync()");
 
-            var acceptCardResult = await Device.AcceptCardAsync(new ReadRawDataCommandEvents(events),
-                                                                new AcceptCardRequest(dataTypes, fluxInactive, readRawData.Header.Timeout ?? 0),
-                                                                cancel);
+            var acceptCardResult = await Device.AcceptCardAsync(
+                new ReadRawDataCommandEvents(events),
+                new AcceptCardRequest(
+                    dataTypes, 
+                    fluxInactive, 
+                    readRawData.Header.Timeout ?? 0),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.AcceptCardAsync() -> {acceptCardResult.CompletionCode}, {acceptCardResult.ErrorCode}");
 
             if (acceptCardResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success ||
@@ -145,18 +149,20 @@ namespace XFS4IoTFramework.CardReader
 
             // Card is accepted now and in the device, try to read card data now
             Logger.Log(Constants.DeviceClass, "CardReaderDev.ReadCardAsync()");
-            var readCardDataResult = await Device.ReadCardAsync(new ReadCardCommandEvents(events),
-                                                                new ReadCardRequest(dataTypes),
-                                                                cancel);
+            var readCardDataResult = await Device.ReadCardAsync(
+                new ReadCardCommandEvents(events),
+                new ReadCardRequest(dataTypes),
+                cancel);
             Logger.Log(Constants.DeviceClass, $"CardReaderDev.ReadCardAsync() -> {readCardDataResult.CompletionCode}, {readCardDataResult.ErrorCode}");
 
             if (readCardDataResult.CompletionCode != MessageHeader.CompletionCodeEnum.Success ||
                 readCardDataResult.ErrorCode is not null)
             {
                 return new(
-                    new(readCardDataResult.ErrorCode),
-                    readCardDataResult.CompletionCode,
-                    readCardDataResult.ErrorDescription);
+                    new(
+                        readCardDataResult.ErrorCode),
+                        readCardDataResult.CompletionCode,
+                        readCardDataResult.ErrorDescription);
             }
 
             // build output data
@@ -356,10 +362,10 @@ namespace XFS4IoTFramework.CardReader
 
                 // Bug in the 2023-2 specification. missing pattern and format keywords in the spec.
                 // Should be fixed in the next version.
-                string base64Data = null;
+                List<byte> memoryChipData = null;
                 if (readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].Data.Count > 0)
                 {
-                    base64Data = Convert.ToBase64String(readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].Data.ToArray());
+                    memoryChipData = readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].Data;
                 }
 
                 memoryChip = new ReadRawDataCompletion.PayloadData.MemoryChipClass(
@@ -374,7 +380,7 @@ namespace XFS4IoTFramework.CardReader
                         _ => null
                     },
                     Protocol: readCardDataResult.DataRead[ReadCardRequest.CardDataTypesEnum.MemoryChip].MemcoryChipDataStatus,
-                    Data: base64Data);
+                    Data: memoryChipData);
             }
 
             List<CardDataClass> chip = null;

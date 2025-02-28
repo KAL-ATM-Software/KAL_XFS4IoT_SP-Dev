@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -24,7 +24,7 @@ namespace XFS4IoT.MixedMedia
         }
 
         /// <summary>
-        /// Specifies whether transactions can accept cash. This property may be null if no change required or its state has not changed in
+        /// Specifies whether transactions can accept cash. This property may be null if no change is required, or if its state has not changed in
         /// [Common.StatusChangedEvent](#common.statuschangedevent).
         /// <example>true</example>
         /// </summary>
@@ -32,7 +32,7 @@ namespace XFS4IoT.MixedMedia
         public bool? CashAccept { get; init; }
 
         /// <summary>
-        /// Specifies whether transactions can accept checks. This property may be null if no change required or its state has not changed in
+        /// Specifies whether transactions can accept checks. This property may be null if no change is required, or if its state has not changed in
         /// [Common.StatusChangedEvent](#common.statuschangedevent).
         /// <example>true</example>
         /// </summary>

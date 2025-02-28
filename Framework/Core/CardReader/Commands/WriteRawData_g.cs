@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.CardReader.Commands
 {
     //Original name = WriteRawData
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Command(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCommand : Command<WriteRawDataCommand.PayloadData>
     {
@@ -28,7 +28,7 @@ namespace XFS4IoT.CardReader.Commands
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(Track1Class Track1 = null, Track2Class Track2 = null, Track3Class Track3 = null, Track1FrontClass Track1Front = null, Track1JISClass Track1JIS = null, Track3JISClass Track3JIS = null, AdditonalPropertiesClass AdditonalProperties = null)
+            public PayloadData(Track1Class Track1 = null, Track2Class Track2 = null, Track3Class Track3 = null, Track1FrontClass Track1Front = null, Track1JISClass Track1JIS = null, Track3JISClass Track3JIS = null, AdditionalPropertiesClass AdditionalProperties = null)
                 : base()
             {
                 this.Track1 = Track1;
@@ -37,7 +37,7 @@ namespace XFS4IoT.CardReader.Commands
                 this.Track1Front = Track1Front;
                 this.Track1JIS = Track1JIS;
                 this.Track3JIS = Track3JIS;
-                this.AdditonalProperties = AdditonalProperties;
+                this.AdditionalProperties = AdditionalProperties;
             }
 
             [DataContract]
@@ -50,11 +50,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -64,11 +64,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -93,11 +93,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -107,11 +107,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -136,11 +136,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -150,11 +150,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -179,11 +179,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -193,11 +193,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -207,7 +207,8 @@ namespace XFS4IoT.CardReader.Commands
             }
 
             /// <summary>
-            /// Specifies data is to be written to the front track 1. In some countries this track is known as JIS II track. This property is null if not applicable.
+            /// Specifies data is to be written to the front track 1. In some countries this track
+            /// is known as JIS II track. This property is null if not applicable.
             /// </summary>
             [DataMember(Name = "track1Front")]
             public Track1FrontClass Track1Front { get; init; }
@@ -222,11 +223,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -236,11 +237,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -265,11 +266,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -279,11 +280,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -299,20 +300,20 @@ namespace XFS4IoT.CardReader.Commands
             public Track3JISClass Track3JIS { get; init; }
 
             [DataContract]
-            public sealed class AdditonalPropertiesClass
+            public sealed class AdditionalPropertiesClass
             {
-                public AdditonalPropertiesClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
+                public AdditionalPropertiesClass(List<byte> Data = null, WriteMethodEnum? WriteMethod = null)
                 {
                     this.Data = Data;
                     this.WriteMethod = WriteMethod;
                 }
 
                 /// <summary>
-                /// Base64 encoded representation of the data
-                /// <example>QmFzZTY0IGVuY29kZWQg ...</example>
+                /// Base64 encoded representation of the data.
+                /// <example>O2gAUACFyEARAJAC</example>
                 /// </summary>
                 [DataMember(Name = "data")]
-                [DataTypes(Pattern = @"^[A-Za-z0-9+/]+={0,2}$")]
+                [DataTypes(Pattern = @"^([a-zA-Z0-9+/]{4})*([a-zA-Z0-9+/]{4}|[a-zA-Z0-9+/]{2}([a-zA-Z0-9+/]|=)=)$")]
                 public List<byte> Data { get; init; }
 
                 public enum WriteMethodEnum
@@ -322,11 +323,11 @@ namespace XFS4IoT.CardReader.Commands
                 }
 
                 /// <summary>
-                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null, 
+                /// Indicates whether a low coercivity or high coercivity magnetic stripe is to be written. If this property is null,
                 /// the service will determine whether low or high coercivity is to be used.
-                ///           
-                /// Specifies as one of the following:
-                ///           
+                /// 
+                /// Specifies the write method as one of the following:
+                /// 
                 /// * ```loco``` - Write using low coercivity.
                 /// * ```hico``` - Write using high coercivity.
                 /// </summary>
@@ -338,8 +339,8 @@ namespace XFS4IoT.CardReader.Commands
             /// <summary>
             /// Specifies data is to be written to vendor specific track. This property is null if not applicable.
             /// </summary>
-            [DataMember(Name = "additonalProperties")]
-            public AdditonalPropertiesClass AdditonalProperties { get; init; }
+            [DataMember(Name = "additionalProperties")]
+            public AdditionalPropertiesClass AdditionalProperties { get; init; }
 
         }
     }

@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -16,7 +16,7 @@ namespace XFS4IoT.KeyManagement.Events
 {
 
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Event(Name = "KeyManagement.IllegalKeyAccessEvent")]
     public sealed class IllegalKeyAccessEvent : UnsolicitedEvent<IllegalKeyAccessEvent.PayloadData>
     {
@@ -49,12 +49,12 @@ namespace XFS4IoT.KeyManagement.Events
                 KeyNotFound,
                 KeyNoValue,
                 UseViolation,
-                AlgorithmNotSupp,
+                AlgorithmNotSupported,
                 DukptOverflow
             }
 
             /// <summary>
-            /// Specifies the type of illegal key access that occurred
+            /// Specifies the type of illegal key access that occurred.
             /// The following values are possible:
             /// 
             /// * ```keyNotFound``` - The specified key was not loaded or attempting to delete a non-existent key.
@@ -62,7 +62,7 @@ namespace XFS4IoT.KeyManagement.Events
             /// * ```useViolation``` - The specified use is not supported by this key.
             /// * ```algorithmNotSupported``` - The specified algorithm is not supported by this key.
             /// * ```dukptOverflow``` - The DUKPT KSN encryption counter has overflowed to zero. A new IPEK must be
-            /// loaded.
+            ///   loaded.
             /// 
             /// </summary>
             [DataMember(Name = "errorCode")]

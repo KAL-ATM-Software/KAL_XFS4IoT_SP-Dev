@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2022
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -50,9 +50,9 @@ namespace XFS4IoTFramework.Printer
                 {
                     return Task.FromResult(
                         new CommandResult<GetQueryFieldCompletion.PayloadData>(
-                            new(result.Result == ValidationResultClass.ValidateResultEnum.Invalid ? GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldInvalid : GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
-                            MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                            $"Specified field {getQueryField.Payload.FieldName} is invalid. {result.Reason}")
+                            Payload: new(GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
+                            CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                            ErrorDescription: $"Specified field {getQueryField.Payload.FieldName} is invalid. {result.Reason}")
                         );
                 }
 
@@ -67,9 +67,9 @@ namespace XFS4IoTFramework.Printer
                     {
                         return Task.FromResult(
                             new CommandResult<GetQueryFieldCompletion.PayloadData>(
-                                new(result.Result == ValidationResultClass.ValidateResultEnum.Invalid ? GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldInvalid : GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
-                                MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                                $"Specified field {field.Key} is invalid. {result.Reason}")
+                                Payload: new(GetQueryFieldCompletion.PayloadData.ErrorCodeEnum.FieldNotFound),
+                                CompletionCode: MessageHeader.CompletionCodeEnum.CommandErrorCode,
+                                ErrorDescription: $"Specified field {field.Key} is invalid. {result.Reason}")
                             );
                     }
 

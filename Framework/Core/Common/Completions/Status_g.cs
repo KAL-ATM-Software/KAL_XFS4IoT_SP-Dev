@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -15,7 +15,7 @@ using XFS4IoT.Completions;
 namespace XFS4IoT.Common.Completions
 {
     [DataContract]
-    [XFS4Version(Version = "2.0")]
+    [XFS4Version(Version = "3.0")]
     [Completion(Name = "Common.Status")]
     public sealed class StatusCompletion : Completion<StatusCompletion.PayloadData>
     {
@@ -27,7 +27,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null)
+            public PayloadData(StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, IntelligentBanknoteNeutralization.StatusClass BanknoteNeutralization = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null)
                 : base()
             {
                 this.Common = Common;
@@ -45,9 +45,12 @@ namespace XFS4IoT.Common.Completions
                 this.Biometric = Biometric;
                 this.Camera = Camera;
                 this.Lights = Lights;
+                this.BanknoteNeutralization = BanknoteNeutralization;
                 this.Auxiliaries = Auxiliaries;
+                this.Deposit = Deposit;
                 this.VendorMode = VendorMode;
                 this.VendorApplication = VendorApplication;
+                this.PowerManagement = PowerManagement;
             }
 
             [DataMember(Name = "common")]
@@ -95,14 +98,23 @@ namespace XFS4IoT.Common.Completions
             [DataMember(Name = "lights")]
             public Lights.StatusClass Lights { get; init; }
 
+            [DataMember(Name = "banknoteNeutralization")]
+            public IntelligentBanknoteNeutralization.StatusClass BanknoteNeutralization { get; init; }
+
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.StatusClass Auxiliaries { get; init; }
+
+            [DataMember(Name = "deposit")]
+            public Deposit.StatusClass Deposit { get; init; }
 
             [DataMember(Name = "vendorMode")]
             public VendorMode.StatusClass VendorMode { get; init; }
 
             [DataMember(Name = "vendorApplication")]
             public VendorApplication.StatusClass VendorApplication { get; init; }
+
+            [DataMember(Name = "powerManagement")]
+            public PowerManagement.StatusClass PowerManagement { get; init; }
 
         }
     }

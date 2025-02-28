@@ -1,5 +1,5 @@
 /***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2023
+ * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
@@ -42,7 +42,7 @@ namespace XFS4IoT.Common.Commands
             public Dictionary<string, int> Commands { get; init; }
 
             /// <summary>
-            /// The events for which a version is being set
+            /// The events for which a version is being set.
             /// </summary>
             [DataMember(Name = "events")]
             public Dictionary<string, int> Events { get; init; }
