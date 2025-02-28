@@ -18,7 +18,7 @@ namespace XFS4IoTFramework.Common
     public partial class PowerSaveControlHandler
     {
         [Obsolete("This power save control command is not longer supported in the framework. Migrate it in the PowerManagement interface.")]
-        private async Task<CommandResult<MessagePayloadBase>> HandlePowerSaveControl(IPowerSaveControlEvents events, PowerSaveControlCommand powerSaveControl, CancellationToken cancel)
+        private Task<CommandResult<MessagePayloadBase>> HandlePowerSaveControl(IPowerSaveControlEvents events, PowerSaveControlCommand powerSaveControl, CancellationToken cancel)
         {
             throw new NotSupportedException($"Common.PowerSaveControl command is not supported. Use PowerManagement.PowerSaveControl command instead.");
         }

@@ -23,29 +23,29 @@ namespace XFS4IoTFramework.Printer
 {
     public partial class SetFormHandler
     {
-        private async Task<CommandResult<SetFormCompletion.PayloadData>> HandleSetForm(ISetFormEvents events, SetFormCommand setForm, CancellationToken cancel)
+        private Task<CommandResult<SetFormCompletion.PayloadData>> HandleSetForm(ISetFormEvents events, SetFormCommand setForm, CancellationToken cancel)
         {
             SetFormCommand.PayloadData.FormClass payloadForm = setForm.Payload.Form;
 
             if (payloadForm is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"No form specified.");
+                    $"No form specified."));
             }
             if (string.IsNullOrEmpty(setForm.Payload.Name))
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"No form name specified.");
+                    $"No form name specified."));
             }
 
             // Check required keyword are there
             if (payloadForm.Unit is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Missing required keyword {nameof(payloadForm.Unit)}.");
+                    $"Missing required keyword {nameof(payloadForm.Unit)}."));
             }
             else
             {
@@ -53,48 +53,48 @@ namespace XFS4IoTFramework.Printer
                     payloadForm.Unit.Y is null ||
                     payloadForm.Unit.Base is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Missing required keyword under {nameof(payloadForm.Unit)} property.");
+                        $"Missing required keyword under {nameof(payloadForm.Unit)} property."));
                 }
             }
             if (payloadForm.Size is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Missing required keyword {nameof(payloadForm.Size)}.");
+                    $"Missing required keyword {nameof(payloadForm.Size)}."));
             }
             else
             {
                 if (payloadForm.Size.Width is null ||
                     payloadForm.Size.Height is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Missing required keyword under {nameof(payloadForm.Size)}property.");
+                        $"Missing required keyword under {nameof(payloadForm.Size)}property."));
                 }
                 if (payloadForm.Size.Width < 1 ||
                     payloadForm.Size.Height < 1)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Invalid property value for {nameof(payloadForm.Size.Width)}/{nameof(payloadForm.Size.Height)} property.");
+                        $"Invalid property value for {nameof(payloadForm.Size.Width)}/{nameof(payloadForm.Size.Height)} property."));
                 }
             }
             if (payloadForm.Fields is null ||
                 payloadForm.Fields.Count == 0)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Missing required keyword {nameof(payloadForm.Fields)}.");
+                    $"Missing required keyword {nameof(payloadForm.Fields)}."));
             }
 
             string formVersion = payloadForm.Version?.Version;
             if (formVersion is not null && !Regex.IsMatch(formVersion, "^[1-9][0-9]*(\\.[0-9]+)?$"))
             {
-                return new(
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Invalid version number {formVersion}.");
+                    $"Invalid version number {formVersion}."));
             }
             string[] version = formVersion?.Split('.');
             (version is null || version.Length == 2).IsTrue($"Invalid version number {formVersion}");
@@ -143,57 +143,57 @@ namespace XFS4IoTFramework.Printer
             {
                 if (payloadField.Value is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Missing field value.");
+                        $"Missing field value."));
                 }
 
                 if (payloadField.Value.Size is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Missing required field {payloadField.Value.Size}.");
+                        $"Missing required field {payloadField.Value.Size}."));
                 }
                 else
                 {
                     if (payloadField.Value.Size.Height is null ||
                         payloadField.Value.Size.Width is null)
                     {
-                        return new(
+                        return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                             new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                             MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                            $"Missing required field under ${payloadField.Value.Size} property.");
+                            $"Missing required field under ${payloadField.Value.Size} property."));
                     }
                 }
 
                 if (payloadField.Value.Position is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Missing required field {payloadField.Value.Position}.");
+                        $"Missing required field {payloadField.Value.Position}."));
                 }
                 else
                 {
                     if (payloadField.Value.Position.X is null ||
                         payloadField.Value.Position.Y is null)
                     {
-                        return new(
+                        return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                             new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                             MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                            $"Missing required field under ${payloadField.Value.Position} property.");
+                            $"Missing required field under ${payloadField.Value.Position} property."));
                     }
                 }
 
                 if (!string.IsNullOrEmpty(payloadField.Value.Color) &&
                     !Regex.IsMatch(payloadField.Value.Color, "^black$|^white$|^gray$|^red$|^blue$|^green$|^yellow$|^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$"))
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(
                         new(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Invalid color {payloadField.Value.Color}.");
+                        $"Invalid color {payloadField.Value.Color}."));
                 }
 
                 FieldStyleEnum style = FieldStyleEnum.NORMAL;
@@ -418,7 +418,7 @@ namespace XFS4IoTFramework.Printer
 
             Printer.SetForm(setForm.Payload.Name, form);
 
-            return new(MessageHeader.CompletionCodeEnum.Success);
+            return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(MessageHeader.CompletionCodeEnum.Success));
         }
     }
 }

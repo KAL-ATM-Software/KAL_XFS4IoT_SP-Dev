@@ -427,7 +427,7 @@ namespace XFS4IoTFramework.CashAcceptor
             this.SignatureCaptured = SignatureCaptured;
         }
 
-        // <summary>
+        /// <summary>
         /// Specifies the error code on scanning note signature data
         /// </summary>
         public CreateSignatureCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }

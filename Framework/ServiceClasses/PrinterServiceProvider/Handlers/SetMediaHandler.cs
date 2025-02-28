@@ -22,29 +22,29 @@ namespace XFS4IoTFramework.Printer
     public partial class SetMediaHandler
     {
 
-        private async Task<CommandResult<SetMediaCompletion.PayloadData>> HandleSetMedia(ISetMediaEvents events, SetMediaCommand setMedia, CancellationToken cancel)
+        private Task<CommandResult<SetMediaCompletion.PayloadData>> HandleSetMedia(ISetMediaEvents events, SetMediaCommand setMedia, CancellationToken cancel)
         {
             SetMediaCommand.PayloadData.MediaClass payloadMedia = setMedia.Payload.Media;
 
             if (payloadMedia is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"No media specified.");
+                    $"No media specified."));
             }
             if (string.IsNullOrEmpty(setMedia.Payload.Name))
             {
-                return new(
+                return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"No media name specified.");
+                    $"No media name specified."));
             }
 
             // Check required keyword are there
             if (payloadMedia.Unit is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Missing required keyword {nameof(payloadMedia.Unit)}.");
+                    $"Missing required keyword {nameof(payloadMedia.Unit)}."));
             }
             else
             {
@@ -52,33 +52,33 @@ namespace XFS4IoTFramework.Printer
                     payloadMedia.Unit.Y is null ||
                     payloadMedia.Unit.Base is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Missing required keyword under {nameof(payloadMedia.Unit)} property.");
+                        $"Missing required keyword under {nameof(payloadMedia.Unit)} property."));
                 }
             }
             if (payloadMedia.Size is null)
             {
-                return new(
+                return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Missing required keyword {nameof(payloadMedia.Size)}.");
+                    $"Missing required keyword {nameof(payloadMedia.Size)}."));
             }
             else
             {
                 if (payloadMedia.Size.Width is null ||
                     payloadMedia.Size.Height is null)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Missing required keyword under {nameof(payloadMedia.Size)} property.");
+                        $"Missing required keyword under {nameof(payloadMedia.Size)} property."));
                 }
 
                 if (payloadMedia.Size.Width  < 1 ||
                     payloadMedia.Size.Height < 1)
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                         MessageHeader.CompletionCodeEnum.InvalidData,
-                        $"Invalid property value for {nameof(payloadMedia.Size.Width)}/{nameof(payloadMedia.Size.Height)} property.");
+                        $"Invalid property value for {nameof(payloadMedia.Size.Width)}/{nameof(payloadMedia.Size.Height)} property."));
                 }
             }
 
@@ -88,9 +88,9 @@ namespace XFS4IoTFramework.Printer
             {
                 if (!Regex.IsMatch(payloadMedia.Source, "^any$|^upper$|^lower$|^external$|^aux$|^aux2$|^park$|^[a-zA-Z]([a-zA-Z0-9]*)$"))
                 {
-                    return new(
+                    return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(
                     MessageHeader.CompletionCodeEnum.InvalidData,
-                    $"Invalid value specified to the {nameof(payloadMedia.Source)}.");
+                    $"Invalid value specified to the {nameof(payloadMedia.Source)}."));
                 }
                 mediaSource = payloadMedia.Source switch
                 {
@@ -155,7 +155,7 @@ namespace XFS4IoTFramework.Printer
 
             Printer.SetMedia(setMedia.Payload.Name, media);
 
-            return new(MessageHeader.CompletionCodeEnum.Success);
+            return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(MessageHeader.CompletionCodeEnum.Success));
         }
     }
 }
