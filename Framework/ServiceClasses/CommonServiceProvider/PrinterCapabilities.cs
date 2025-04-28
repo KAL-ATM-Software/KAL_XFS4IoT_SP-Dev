@@ -13,34 +13,115 @@ using System.Threading.Tasks;
 
 namespace XFS4IoTFramework.Common
 {
-    public sealed class PrinterCapabilitiesClass(
-        PrinterCapabilitiesClass.TypeEnum Types,
-        PrinterCapabilitiesClass.ResolutionEnum Resolutions,
-        PrinterCapabilitiesClass.ReadFormEnum ReadForms,
-        PrinterCapabilitiesClass.WriteFormEnum WriteForms,
-        PrinterCapabilitiesClass.ExtentEnum Extents,
-        PrinterCapabilitiesClass.ControlEnum Controls,
-        int MaxMediaOnStacker,
-        bool AcceptMedia,
-        bool MultiPage,
-        PrinterCapabilitiesClass.PaperSourceEnum PaperSources,
-        bool MediaTaken,
-        int RetractBins,
-        List<int> MaxRetract,
-        PrinterCapabilitiesClass.ImageTypeEnum ImageTypes,
-        PrinterCapabilitiesClass.FrontImageColorFormatEnum FrontImageColorFormats,
-        PrinterCapabilitiesClass.BackImageColorFormatEnum BackImageColorFormats,
-        PrinterCapabilitiesClass.ImageSourceTypeEnum ImageSourceTypes,
-        bool DispensePaper,
-        string OSPrinter,
-        bool MediaPresented,
-        int AutoRetractPeriod,
-        bool RetractToTransport,
-        PrinterCapabilitiesClass.CoercivityTypeEnum CoercivityTypes,
-        PrinterCapabilitiesClass.ControlPassbookEnum ControlPassbook,
-        PrinterCapabilitiesClass.PrintSidesEnum PrintSides,
-        Dictionary<string, bool> CustomPaperSources = null)
+    public sealed class PrinterCapabilitiesClass
     {
+        public PrinterCapabilitiesClass(
+            PrinterCapabilitiesClass.TypeEnum Types,
+            PrinterCapabilitiesClass.ResolutionEnum Resolutions,
+            PrinterCapabilitiesClass.ReadFormEnum ReadForms,
+            PrinterCapabilitiesClass.WriteFormEnum WriteForms,
+            PrinterCapabilitiesClass.ExtentEnum Extents,
+            PrinterCapabilitiesClass.ControlEnum Controls,
+            int MaxMediaOnStacker,
+            bool AcceptMedia,
+            bool MultiPage,
+            PrinterCapabilitiesClass.PaperSourceEnum PaperSources,
+            bool MediaTaken,
+            PrinterCapabilitiesClass.ImageTypeEnum ImageTypes,
+            PrinterCapabilitiesClass.FrontImageColorFormatEnum FrontImageColorFormats,
+            PrinterCapabilitiesClass.BackImageColorFormatEnum BackImageColorFormats,
+            PrinterCapabilitiesClass.ImageSourceTypeEnum ImageSourceTypes,
+            bool DispensePaper,
+            string OSPrinter,
+            bool MediaPresented,
+            int AutoRetractPeriod,
+            bool RetractToTransport,
+            PrinterCapabilitiesClass.CoercivityTypeEnum CoercivityTypes,
+            PrinterCapabilitiesClass.ControlPassbookEnum ControlPassbook,
+            PrinterCapabilitiesClass.PrintSidesEnum PrintSides,
+            Dictionary<string, bool> CustomPaperSources = null)
+        {
+            this.Types = Types;
+            this.Resolutions = Resolutions;
+            this.ReadForms = ReadForms;
+            this.WriteForms = WriteForms;
+            this.Extents = Extents;
+            this.Controls = Controls;
+            this.MaxMediaOnStacker = MaxMediaOnStacker;
+            this.AcceptMedia = AcceptMedia;
+            this.MultiPage = MultiPage;
+            this.PaperSources = PaperSources;
+            this.MediaTaken = MediaTaken;
+            this.ImageTypes = ImageTypes;
+            this.FrontImageColorFormats = FrontImageColorFormats;
+            this.BackImageColorFormats = BackImageColorFormats;
+            this.ImageSourceTypes = ImageSourceTypes;
+            this.DispensePaper = DispensePaper;
+            this.OSPrinter = OSPrinter;
+            this.MediaPresented = MediaPresented;
+            this.AutoRetractPeriod = AutoRetractPeriod;
+            this.RetractToTransport = RetractToTransport;
+            this.CoercivityTypes = CoercivityTypes;
+            this.ControlPassbook = ControlPassbook;
+            this.PrintSides = PrintSides;
+            this.CustomPaperSources = CustomPaperSources;
+        }
+
+        [Obsolete("The RetractBins and MaxRetract properties are removed from the printer interface. Migrate them in the Storage interface. This constructor will be removed from the package version 4.")]
+        public PrinterCapabilitiesClass(
+            PrinterCapabilitiesClass.TypeEnum Types,
+            PrinterCapabilitiesClass.ResolutionEnum Resolutions,
+            PrinterCapabilitiesClass.ReadFormEnum ReadForms,
+            PrinterCapabilitiesClass.WriteFormEnum WriteForms,
+            PrinterCapabilitiesClass.ExtentEnum Extents,
+            PrinterCapabilitiesClass.ControlEnum Controls,
+            int MaxMediaOnStacker,
+            bool AcceptMedia,
+            bool MultiPage,
+            PrinterCapabilitiesClass.PaperSourceEnum PaperSources,
+            bool MediaTaken,
+            int RetractBins,
+            List<int> MaxRetract,
+            PrinterCapabilitiesClass.ImageTypeEnum ImageTypes,
+            PrinterCapabilitiesClass.FrontImageColorFormatEnum FrontImageColorFormats,
+            PrinterCapabilitiesClass.BackImageColorFormatEnum BackImageColorFormats,
+            PrinterCapabilitiesClass.ImageSourceTypeEnum ImageSourceTypes,
+            bool DispensePaper,
+            string OSPrinter,
+            bool MediaPresented,
+            int AutoRetractPeriod,
+            bool RetractToTransport,
+            PrinterCapabilitiesClass.CoercivityTypeEnum CoercivityTypes,
+            PrinterCapabilitiesClass.ControlPassbookEnum ControlPassbook,
+            PrinterCapabilitiesClass.PrintSidesEnum PrintSides,
+            Dictionary<string, bool> CustomPaperSources = null)
+        {
+            this.Types = Types;
+            this.Resolutions = Resolutions;
+            this.ReadForms = ReadForms;
+            this.WriteForms = WriteForms;
+            this.Extents = Extents;
+            this.Controls = Controls;
+            this.MaxMediaOnStacker = MaxMediaOnStacker;
+            this.AcceptMedia = AcceptMedia;
+            this.MultiPage = MultiPage;
+            this.PaperSources = PaperSources;
+            this.MediaTaken = MediaTaken;
+            this.ImageTypes = ImageTypes;
+            this.FrontImageColorFormats = FrontImageColorFormats;
+            this.BackImageColorFormats = BackImageColorFormats;
+            this.ImageSourceTypes = ImageSourceTypes;
+            this.DispensePaper = DispensePaper;
+            this.OSPrinter = OSPrinter;
+            this.MediaPresented = MediaPresented;
+            this.AutoRetractPeriod = AutoRetractPeriod;
+            this.RetractToTransport = RetractToTransport;
+            this.CoercivityTypes = CoercivityTypes;
+            this.ControlPassbook = ControlPassbook;
+            this.PrintSides = PrintSides;
+            this.CustomPaperSources = CustomPaperSources;
+        }
+
         [Flags]
         public enum TypeEnum
         {
@@ -197,65 +278,66 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Specifies the type(s) of the physical device driven by the logical service.
         /// </summary>
-        public TypeEnum Types { get; init; } = Types;
+        public TypeEnum Types { get; init; }
 
         /// <summary>
         /// Specifies at which resolution(s) the physical device can print. Used by the application to select the level
         /// of print quality desired; does not imply any absolute level of resolution, only relative.
         /// </summary>
-        public ResolutionEnum Resolutions { get; init; } = Resolutions;
+        public ResolutionEnum Resolutions { get; init; }
 
         /// <summary>
         /// Specifies whether the device can read data from media
         /// </summary>
-        public ReadFormEnum ReadForms { get; init; } = ReadForms;
+        public ReadFormEnum ReadForms { get; init; }
 
         /// <summary>
         /// Specifies whether the device can write data to the media
         /// </summary>
-        public WriteFormEnum WriteForms { get; init; } = WriteForms;
+        public WriteFormEnum WriteForms { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to measure the inserted media
         /// </summary>
-        public ExtentEnum Extents { get; init; } = Extents;
+        public ExtentEnum Extents { get; init; }
 
         /// <summary>
         /// Specifies the manner in which media can be controlled
         /// </summary>
-        public ControlEnum Controls { get; init; } = Controls;
+        public ControlEnum Controls { get; init; }
 
         /// <summary>
         /// Specifies the maximum number of media items that the stacker can hold (zero if not available).
         /// </summary>
-        public int MaxMediaOnStacker { get; init; } = MaxMediaOnStacker;
+        public int MaxMediaOnStacker { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to accept media while no execute command is running that is waiting
         /// explicitly for media to be inserted.
         /// </summary>
-        public bool AcceptMedia { get; init; } = AcceptMedia;
+        public bool AcceptMedia { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to support multiple page print jobs.
         /// </summary>
-        public bool MultiPage { get; init; } = MultiPage;
+        public bool MultiPage { get; init; }
 
         /// <summary>
         /// Specifies the Paper sources available for this printer
         /// </summary>
-        public PaperSourceEnum PaperSources { get; init; } = PaperSources;
+        public PaperSourceEnum PaperSources { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to detect when the media is taken from the exit slot. If false, the
         /// [Printer.MediaTakenEvent](#printer.mediatakenevent) event is not fired.
         /// </summary>
-        public bool MediaTaken { get; init; } = MediaTaken;
+        public bool MediaTaken { get; init; }
 
         /// <summary>
         /// Specifies the number of retract bins (zero if not supported).
         /// </summary>
-        public int RetractBins { get; init; } = RetractBins;
+        [Obsolete("This property is deprecated in 2024-3, This property will be removed in the framework from package version 4.")]
+        public int RetractBins { get; init; } = 0;
 
         /// <summary>
         /// An array of the length [retractBins](#common.capabilities.completion.properties.printer.retractbins) with
@@ -263,33 +345,34 @@ namespace XFS4IoTFramework.Common
         /// from zero for bin number one to retractBins - 1 for bin number retractBins). This will be omitted if there
         /// are no retract bins.
         /// </summary>
-        public List<int> MaxRetract { get; init; } = MaxRetract;
+        [Obsolete("This property is deprecated in 2024-3, This property will be removed in the framework from package version 4.")]
+        public List<int> MaxRetract { get; init; } = null;
 
         /// <summary>
         /// Specifies the image format supported by this device
         /// </summary>
-        public ImageTypeEnum ImageTypes { get; init; } = ImageTypes;
+        public ImageTypeEnum ImageTypes { get; init; }
 
         /// <summary>
         /// Specifies the front image color formats supported by this device
         /// </summary>
-        public FrontImageColorFormatEnum FrontImageColorFormats { get; init; } = FrontImageColorFormats;
+        public FrontImageColorFormatEnum FrontImageColorFormats { get; init; }
 
         /// <summary>
         /// Specifies the back image color formats supported by this device
         /// </summary>
-        public BackImageColorFormatEnum BackImageColorFormats { get; init; } = BackImageColorFormats;
+        public BackImageColorFormatEnum BackImageColorFormats { get; init; }
 
         /// <summary>
         /// Specifies the source for the read image command supported by this device
         /// flags.
         /// </summary>
-        public ImageSourceTypeEnum ImageSourceTypes { get; init; } = ImageSourceTypes;
+        public ImageSourceTypeEnum ImageSourceTypes { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to dispense paper.
         /// </summary>
-        public bool DispensePaper { get; init; } = DispensePaper;
+        public bool DispensePaper { get; init; }
 
         /// <summary>
         /// Specifies the name of the default logical operating system printer that is associated with this Service
@@ -297,36 +380,36 @@ namespace XFS4IoTFramework.Common
         /// the Printer.PrintRawFile command. This value will be omitted if the Service
         /// Provider does not support the Printer.PrintRawFile command.
         /// </summary>
-        public string OSPrinter { get; init; } = OSPrinter;
+        public string OSPrinter { get; init; } 
 
         /// <summary>
         /// Specifies whether the device is able to detect when the media is presented to the user for removal. If true,
         /// the Printer.MediaPresentedEvent event is fired. If false, the Printer.MediaPresentedEvent event is not fired.
         /// </summary>
-        public bool MediaPresented { get; init; } = MediaPresented;
+        public bool MediaPresented { get; init; }
 
         /// <summary>
         /// Specifies the number of seconds before the device will automatically retract the presented media. If the
         /// command that generated the media is still active when the media is automatically retracted, the command will
         /// complete with an error. If the device does not retract media automatically this value will be zero.
         /// </summary>
-        public int AutoRetractPeriod { get; init; } = AutoRetractPeriod;
+        public int AutoRetractPeriod { get; init; }
 
         /// <summary>
         /// Specifies whether the device is able to retract the previously ejected media to the transport.
         /// </summary>
-        public bool RetractToTransport { get; init; } = RetractToTransport;
+        public bool RetractToTransport { get; init; }
 
         /// <summary>
         /// Specifies the form write modes supported by this device
         /// </summary>
-        public CoercivityTypeEnum CoercivityTypes { get; init; } = CoercivityTypes;
+        public CoercivityTypeEnum CoercivityTypes { get; init; }
 
         /// <summary>
         /// Specifies how the passbook can be controlled with the [Printer.ControlPassbook](#printer.controlpassbook)
         /// command, as a combination of the following flags.
         /// </summary>
-        public ControlPassbookEnum ControlPassbook { get; init; } = ControlPassbook;
+        public ControlPassbookEnum ControlPassbook { get; init; }
 
         /// <summary>
         /// Specifies on which sides of the media this device can print as one of the following values.
@@ -335,11 +418,11 @@ namespace XFS4IoTFramework.Common
         /// * ```Single``` - The device is capable of printing on one side of the media.
         /// * ```Dual``` - The device is capable of printing on two sides of the media.
         /// </summary>
-        public PrintSidesEnum PrintSides { get; init; } = PrintSides;
+        public PrintSidesEnum PrintSides { get; init; }
 
         /// <summary>
         /// Custom vendor specific paper sources
         /// </summary>
-        public Dictionary<string, bool> CustomPaperSources { get; init; } = CustomPaperSources;
+        public Dictionary<string, bool> CustomPaperSources { get; init; }
     }
 }

@@ -46,9 +46,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Server\Server.csproj" />
+    <ProjectReference Include="..\BanknoteNeutralizationServiceProvider\BanknoteNeutralizationServiceProvider.csproj" />
     <ProjectReference Include="..\CashManagementServiceProvider\CashManagementServiceProvider.csproj" />
     <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
-    <ProjectReference Include="..\IntelligentBanknoteNeutralizationServiceProvider\IntelligentBanknoteNeutralizationServiceProvider.csproj" />
     <ProjectReference Include="..\LightsServiceProvider\LightsServiceProvider.csproj" />
     <ProjectReference Include="..\ServiceInterfaces\ServiceInterfaces.csproj" />
     <ProjectReference Include="..\StorageServiceProvider\StorageServiceProvider.csproj" />

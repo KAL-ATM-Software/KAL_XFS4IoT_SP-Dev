@@ -556,54 +556,54 @@ namespace XFS4IoTServer
                                 {
                                     ibnsStatus.StorageId,
                                     new StorageUnitClass(
-                                        BanknoteNeutralization: new XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass(
+                                        BanknoteNeutralization: new XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass(
                                             Identifier: propertyInfo.PropertyName != nameof(ibnsStatus.Identifier) ? null : ibnsStatus.Identifier,
                                             Protection: propertyInfo.PropertyName != nameof(ibnsStatus.Protection) ? null : ibnsStatus.Protection switch
                                             {
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Armed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Armed,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.NeutralizationTriggered => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.NeutralizationTriggered,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Fault,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Disarmed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Disarmed,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Armed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Armed,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.NeutralizationTriggered => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.NeutralizationTriggered,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Fault,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Disarmed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Disarmed,
                                                 _ => throw new InternalErrorException($"Unknown protection status received while handing StorageChangedEvent {ibnsStatus.Protection}")
                                             },
                                             Warning: propertyInfo.PropertyName != nameof(ibnsStatus.Warning) ? null : ibnsStatus.Warning switch
                                             {
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.Alarm => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.Alarm,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.CassetteRunsAutonomously => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.CassetteRunsAutonomously,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.Alarm => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.WarningEnum.Alarm,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.CassetteRunsAutonomously => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.WarningEnum.CassetteRunsAutonomously,
                                                 _ => throw new InternalErrorException($"Unknown warning status received while handing StorageChangedEvent {ibnsStatus.Warning}")
                                             },
                                             PowerSupply: null,
                                             Tilt: propertyInfo.PropertyName != nameof(ibnsStatus.TiltState) ? null : ibnsStatus.TiltState switch
                                             {
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Fault,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Tilted,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.NotTilted,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Disabled,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Fault,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Tilted,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.NotTilted,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Disabled,
                                                 _ => throw new InternalErrorException($"Unknown tilt status received while handing StorageChangedEvent {ibnsStatus.TiltState}")
                                             },
                                             Temperature: propertyInfo.PropertyName != nameof(ibnsStatus.TemperatureState) ? null : ibnsStatus.TemperatureState switch
                                             {
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooCold,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooHot,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Fault,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Ok,
-                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Disabled,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooCold,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooHot,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Fault,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Ok,
+                                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Disabled,
                                                 _ => throw new InternalErrorException($"Unknown temparature status received while handing StorageChangedEvent {ibnsStatus.TemperatureState}")
                                             },
                                             Lid: propertyInfo.PropertyName != nameof(ibnsStatus.LidStatus) ? null : ibnsStatus.LidStatus switch
                                             {
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Fault,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Closed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Closed,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Disabled,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Opened => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Opened,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Fault,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Closed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Closed,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Disabled => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Disabled,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Opened => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Opened,
                                                 _ => throw new InternalErrorException($"Unknown lid status received while handing StorageChangedEvent {ibnsStatus.LidStatus}")
                                             },
                                             NeutralizationTrigger: propertyInfo.PropertyName != nameof(ibnsStatus.NeutralizationTrigger) ? null : ibnsStatus.NeutralizationTrigger switch
                                             {
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Initializing => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Initializing,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Ready => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Ready,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Fault,
-                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Disabled,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Initializing => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Initializing,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Ready => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Ready,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Fault,
+                                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Disabled => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Disabled,
                                                 _ => throw new InternalErrorException($"Unknown neutralization trigger status received while handing StorageChangedEvent {ibnsStatus.NeutralizationTrigger}")
                                             },
                                             StorageUnitIdentifier: propertyInfo.PropertyName != nameof(ibnsStatus.StorageUnitIdentifier) ? null : ibnsStatus.StorageUnitIdentifier)
@@ -660,7 +660,7 @@ namespace XFS4IoTServer
                                 {
                                     ibnsStatus.StorageId,
                                     new StorageUnitClass(
-                                        BanknoteNeutralization: new XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass(
+                                        BanknoteNeutralization: new XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass(
                                             PowerSupply: powerStatus)
                                         )
                                 }

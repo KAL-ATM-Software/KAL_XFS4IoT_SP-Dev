@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoT.Events;
+using static XFS4IoTFramework.Storage.DepositStatusClass;
 
 namespace XFS4IoTFramework.Storage
 {
@@ -22,7 +23,6 @@ namespace XFS4IoTFramework.Storage
     public sealed record DepositUnitStorage : UnitStorageBase
     {
         public DepositUnitStorage(
-            int Index,
             DepositUnitStorageConfiguration StorageConfiguration) :
             base(StorageConfiguration.PositionName,
                  StorageConfiguration.Capacity,
@@ -88,6 +88,7 @@ namespace XFS4IoTFramework.Storage
             Inoperative, //The deposit container is inoperative.
             Missing,     //The deposit container is missing.
             Unknown,     //Due to a hardware error or other condition, the state of the deposit container cannot be determined.
+            NotSupported,
         }
 
         public enum EnvelopSupplyStatusEnum
@@ -99,6 +100,7 @@ namespace XFS4IoTFramework.Storage
             Missing,     //The envelope supply unit is missing.
             Unlocked,    //The envelope supply unit is unlocked.
             Unknown,     //Due to a hardware error or other condition, the state of the envelope supply cannot be determined.
+            NotSupported,
         }
 
         public DepositStatusClass(
@@ -222,16 +224,42 @@ namespace XFS4IoTFramework.Storage
     }
 
     /// <summary>
-    /// Structure to update deposit unit from the device
+    /// Structure to update deposit unit information from the device
     /// </summary>
-    public sealed record DepositUnitCount
+    public sealed record DepositUnitInfo
     {
-        public DepositUnitCount(
-            int NumberOfDeposits)
+        public DepositUnitInfo(
+            int NumberOfDeposits,
+            DepositUnitStorage.StatusEnum StorageStatus,
+            DepositoryContainerStatusEnum DepositoryContainerStatus = DepositoryContainerStatusEnum.NotSupported,
+            EnvelopSupplyStatusEnum EnvelopSupplyStatus = EnvelopSupplyStatusEnum.NotSupported)
         {
+            this.StorageStatus = StorageStatus;
             this.NumberOfDeposits = NumberOfDeposits;
+            this.DepositoryContainerStatus = DepositoryContainerStatus;
+            this.EnvelopSupplyStatus = EnvelopSupplyStatus;
         }
 
+        /// <summary>
+        /// Number of media in the storage.
+        /// </summary>
         public int NumberOfDeposits { get; init; }
+
+        /// <summary>
+        /// Set status of storage
+        /// </summary>
+        public DepositUnitStorage.StatusEnum StorageStatus { get; init; }
+
+        /// <summary>
+        /// The state of the deposit container that contains the deposited envelopes or bags.
+        /// null if the device doesn't support
+        /// </summary>
+        public DepositoryContainerStatusEnum DepositoryContainerStatus { get; init; }
+
+        /// <summary>
+        /// The state of the envelope supply unit.
+        /// null if the device doesn't support
+        /// </summary>
+        public EnvelopSupplyStatusEnum EnvelopSupplyStatus { get; init; }
     }
 }

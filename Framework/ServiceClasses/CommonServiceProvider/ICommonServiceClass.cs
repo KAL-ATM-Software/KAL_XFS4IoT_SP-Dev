@@ -124,7 +124,7 @@ namespace XFS4IoTFramework.Common
         /// <summary>
         /// Stores German DK capabilities
         /// </summary>
-        GermanSpecificCapabilitiesClass GermanSpecificCapabilities { get => null; set { } }
+        GermanCapabilitiesClass GermanCapabilities { get => null; set { } }
 
         /// <summary>
         /// Stores Deposit capabilities

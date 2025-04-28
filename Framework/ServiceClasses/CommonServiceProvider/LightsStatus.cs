@@ -35,6 +35,7 @@ namespace XFS4IoTFramework.Common
                 Bottom,
                 Front,
                 Rear,
+                Default,
                 Custom,
             }
 
@@ -71,10 +72,11 @@ namespace XFS4IoTFramework.Common
             /// * ```left``` -  The left position.
             /// * ```right``` -  The right position.
             /// * ```center``` -  The center position.
-            ///  * ```top``` -  The top position.
+            /// * ```top``` -  The top position.
             /// * ```bottom``` -  The bottom position.
             /// * ```front``` -  The front position.
             /// * ```rear``` -  The rear position.
+            /// * ```default``` -  The default position.
             /// </summary>
             public PositionEnum Position { get; set; } = Position;
 

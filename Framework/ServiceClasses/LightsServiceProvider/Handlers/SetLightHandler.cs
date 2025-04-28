@@ -79,6 +79,7 @@ namespace XFS4IoTFramework.Lights
                         "rear" => LightsStatusClass.LightOperation.PositionEnum.Rear,
                         "right" => LightsStatusClass.LightOperation.PositionEnum.Right,
                         "top" => LightsStatusClass.LightOperation.PositionEnum.Top,
+                        "default" => LightsStatusClass.LightOperation.PositionEnum.Default,
                         _ => LightsStatusClass.LightOperation.PositionEnum.Custom,
                     };
                     LightsStatusClass.LightOperation operation = new(

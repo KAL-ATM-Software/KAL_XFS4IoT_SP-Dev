@@ -176,6 +176,28 @@ namespace XFS4IoTFramework.Storage
 
         #endregion
 
+        #region Deposit
+
+        /// <summary>
+        /// Return deposit storage (retract bin, passbook storage) information for current configuration and capabilities on the startup.
+        /// </summary>
+        /// <returns>Return true if the storage configuration or capabilities are changed, otherwise false</returns>
+        bool GetDepositStorageConfiguration(out Dictionary<string, DepositUnitStorageConfiguration> newDepositUnits);
+
+        /// <summary>
+        /// Return deposit storage counts maintained by the device class
+        /// </summary>
+        /// <returns>Return true if the device class maintained counts, otherwise false</returns>
+        bool GetDepositUnitInfo(out Dictionary<string, DepositUnitInfo> unitCounts);
+
+        /// <summary>
+        /// Set new configuration and counters for deposit storage.
+        /// </summary>
+        /// <returns>Return operation is completed successfully or not and report updates storage information.</returns>
+        Task<SetPrinterStorageResult> SetDepositStorageAsync(SetDepositStorageRequest request, CancellationToken cancellation);
+
+        #endregion
+
         /// <summary>
         /// This command puts the device in an exchange state, i.e. a state in which storage units can be emptied, replenished,
         /// removed or replaced.The command will initiate any physical processes which may be necessary to make the storage units

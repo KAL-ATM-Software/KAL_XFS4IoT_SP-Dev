@@ -55,6 +55,9 @@ namespace XFS4IoTFramework.Storage
             }
         }
 
+        /// <summary>
+        /// These properties are set by the framework
+        /// </summary>
         public string StorageId { get; set; } = null;
 
         public string ParentPropertyName { get; set; } = null;

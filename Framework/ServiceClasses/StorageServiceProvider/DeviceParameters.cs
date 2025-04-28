@@ -410,4 +410,60 @@ namespace XFS4IoTFramework.Storage
 
         public Dictionary<string, SetPrinterUnitStorage> NewPrinterStorage { get; init; }
     }
+
+    /// <summary>
+    /// Configuration of the deposit unit
+    /// </summary>
+    public sealed record SetDepositConfiguration
+    {
+        public SetDepositConfiguration()
+        { }
+    }
+
+    public sealed class SetDepositUnitStorage(
+        SetDepositConfiguration Configuration = null,
+        int? InitialCount = null)
+    {
+
+        /// <summary>
+        /// Deposit configuration is not supported in the specification -3.
+        /// </summary>
+        public SetDepositConfiguration Configuration { get; init; } = Configuration;
+
+        /// <summary>
+        /// If specified, the deposit related count (box or bag) as set at the last replenishment.
+        /// </summary>
+        public int? InitialCount { get; init; } = InitialCount;
+    }
+
+    public sealed class SetDepositStorageRequest(Dictionary<string, SetDepositUnitStorage> DepositStorageToSet)
+    {
+        public Dictionary<string, SetDepositUnitStorage> PrinterStorageToSet { get; init; } = DepositStorageToSet;
+    }
+
+    public sealed class SetDepositStorageResult : DeviceResult
+    {
+        public SetDepositStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            string ErrorDescription = null,
+            SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode = null)
+            : base(CompletionCode, ErrorDescription)
+        {
+            this.ErrorCode = ErrorCode;
+            NewDepositStorage = null;
+        }
+
+        public SetDepositStorageResult(
+            MessageHeader.CompletionCodeEnum CompletionCode,
+            Dictionary<string, SetDepositUnitStorage> NewDepositStorage)
+            : base(CompletionCode, null)
+        {
+            this.ErrorCode = null;
+            this.NewDepositStorage = NewDepositStorage;
+        }
+
+        public SetStorageCompletion.PayloadData.ErrorCodeEnum? ErrorCode { get; init; }
+
+        public Dictionary<string, SetDepositUnitStorage> NewDepositStorage { get; init; }
+    }
 }

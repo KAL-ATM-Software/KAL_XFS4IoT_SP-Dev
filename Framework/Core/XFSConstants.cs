@@ -65,8 +65,8 @@ namespace XFS4IoT
             Check,
             MixedMedia,
             Deposit,
-            GermanSpecific,
-            IntelligentBanknoteNeutralization,
+            German,
+            BanknoteNeutralization,
             PowerManagement,
         }
 

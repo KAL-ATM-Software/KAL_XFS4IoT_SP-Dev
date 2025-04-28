@@ -27,7 +27,7 @@ namespace XFS4IoT.Storage
     [DataContract]
     public sealed class StorageUnitClass
     {
-        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null, Check.StorageClass Check = null, Deposit.StorageClass Deposit = null, IntelligentBanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization = null, Printer.StorageClass Printer = null)
+        public StorageUnitClass(string Id = null, string PositionName = null, int? Capacity = null, StatusEnum? Status = null, string SerialNumber = null, CashManagement.StorageCashClass Cash = null, CardReader.StorageClass Card = null, Check.StorageClass Check = null, Deposit.StorageClass Deposit = null, BanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization = null, Printer.StorageClass Printer = null)
         {
             this.Id = Id;
             this.PositionName = PositionName;
@@ -90,7 +90,7 @@ namespace XFS4IoT.Storage
         public Deposit.StorageClass Deposit { get; init; }
 
         [DataMember(Name = "banknoteNeutralization")]
-        public IntelligentBanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization { get; init; }
+        public BanknoteNeutralization.StorageUnitStatusClass BanknoteNeutralization { get; init; }
 
         [DataMember(Name = "printer")]
         public Printer.StorageClass Printer { get; init; }

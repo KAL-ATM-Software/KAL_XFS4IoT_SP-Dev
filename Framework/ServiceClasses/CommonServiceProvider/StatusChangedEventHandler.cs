@@ -21,6 +21,7 @@ using XFS4IoT.Commands;
 using XFS4IoT.Common;
 using XFS4IoT.Common.Events;
 using XFS4IoTFramework.Common;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XFS4IoTServer
 {
@@ -1452,11 +1453,240 @@ namespace XFS4IoTServer
                         ));
                 }
             }
-            if (sender.GetType() == typeof(IBNSStatusClass))
+            if (sender.GetType() == typeof(IBNSStatusClass) ||
+                sender.GetType() == typeof(IBNSStatusClass.StateClass) ||
+                sender.GetType() == typeof(IBNSStatusClass.WarningStateClass) ||
+                sender.GetType() == typeof(IBNSStatusClass.ErrorStateClass) ||
+                sender.GetType() == typeof(IBNSStatusClass.CustomInputStatusClass))
             {
-                IBNSStatusClass ibnsStatus = sender as IBNSStatusClass;
-                ibnsStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
-                // IBNS status changed event is not covered by the 2024-3 specification.
+                if (sender.GetType() == typeof(IBNSStatusClass))
+                {
+                    IBNSStatusClass ibnsStatus = sender as IBNSStatusClass;
+                    ibnsStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        BanknoteNeutralization: new(
+                            SafeDoor: propertyInfo.PropertyName != nameof(ibnsStatus.SafeDoorState) ?
+                            null :
+                            ibnsStatus.SafeDoorState switch
+                            {
+                                IBNSStatusClass.SafeDoorStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.Fault,
+                                IBNSStatusClass.SafeDoorStateEnum.DoorClosed => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.DoorClosed,
+                                IBNSStatusClass.SafeDoorStateEnum.DoorOpened => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.DoorOpened,
+                                IBNSStatusClass.SafeDoorStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS safe door status specified. {ibnsStatus.SafeDoorState}"),
+                            },
+                            SafeBolt: propertyInfo.PropertyName != nameof(ibnsStatus.SafeBoltState) ?
+                            null :
+                            ibnsStatus.SafeBoltState switch
+                            {
+                                IBNSStatusClass.SafeBoltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.Fault,
+                                IBNSStatusClass.SafeBoltStateEnum.BoltLocked => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.BoltLocked,
+                                IBNSStatusClass.SafeBoltStateEnum.BoltUnlocked => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.BoltUnlocked,
+                                IBNSStatusClass.SafeBoltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS safe bolt status specified. {ibnsStatus.SafeBoltState}"),
+                            },
+                            Tilt: propertyInfo.PropertyName != nameof(ibnsStatus.TiltState) ?
+                            null :
+                            ibnsStatus.TiltState switch
+                            {
+                                IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Fault,
+                                IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Tilted,
+                                IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.NotTilted,
+                                IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS tilt status specified. {ibnsStatus.TiltState}"),
+                            },
+                            Light: propertyInfo.PropertyName != nameof(ibnsStatus.LightState) ?
+                            null :
+                            ibnsStatus.LightState switch
+                            {
+                                IBNSStatusClass.LightStateEnum.Fault => XFS4IoT.BanknoteNeutralization.LightStateEnum.Fault,
+                                IBNSStatusClass.LightStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.LightStateEnum.NotConfigured,
+                                IBNSStatusClass.LightStateEnum.Detected => XFS4IoT.BanknoteNeutralization.LightStateEnum.Detected,
+                                IBNSStatusClass.LightStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.LightStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS light status specified. {ibnsStatus.LightState}"),
+                            },
+                            Gas: propertyInfo.PropertyName != nameof(ibnsStatus.GasState) ?
+                            null :
+                            ibnsStatus.GasState switch
+                            {
+                                IBNSStatusClass.GasStateEnum.Fault => XFS4IoT.BanknoteNeutralization.GasStateEnum.Fault,
+                                IBNSStatusClass.GasStateEnum.Initializing => XFS4IoT.BanknoteNeutralization.GasStateEnum.Initializing,
+                                IBNSStatusClass.GasStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.GasStateEnum.NotConfigured,
+                                IBNSStatusClass.GasStateEnum.PartialWarningLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.PartialWarningLevel,
+                                IBNSStatusClass.GasStateEnum.PartialCriticalLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.PartialCriticalLevel,
+                                IBNSStatusClass.GasStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.GasStateEnum.Disabled,
+                                IBNSStatusClass.GasStateEnum.WarningLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.WarningLevel,
+                                IBNSStatusClass.GasStateEnum.CriticalLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.CriticalLevel,
+                                IBNSStatusClass.GasStateEnum.NotDetected => XFS4IoT.BanknoteNeutralization.GasStateEnum.NotDetected,
+                                _ => throw new InternalErrorException($"Unexpected IBNS GAS status specified. {ibnsStatus.GasState}"),
+                            },
+                            Temperature: propertyInfo.PropertyName != nameof(ibnsStatus.TemperatureState) ?
+                            null :
+                            ibnsStatus.TemperatureState switch
+                            {
+                                IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Fault,
+                                IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Ok,
+                                IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooCold,
+                                IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooHot,
+                                IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS temperature status specified. {ibnsStatus.TemperatureState}"),
+                            },
+                            Seismic: propertyInfo.PropertyName != nameof(ibnsStatus.SeismicState) ?
+                            null :
+                            ibnsStatus.SeismicState switch
+                            {
+                                IBNSStatusClass.SeismicStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.Fault,
+                                IBNSStatusClass.SeismicStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.NotConfigured,
+                                IBNSStatusClass.SeismicStateEnum.CriticalLevel => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.CriticalLevel,
+                                IBNSStatusClass.SeismicStateEnum.WarningLevel => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.WarningLevel,
+                                IBNSStatusClass.SeismicStateEnum.NotDetected => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.NotDetected,
+                                IBNSStatusClass.SeismicStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.Disabled,
+                                _ => throw new InternalErrorException($"Unexpected IBNS seismic status specified. {ibnsStatus.SeismicState}"),
+                            })
+                        ));
+                }
+                else if (sender.GetType() == typeof(IBNSStatusClass.StateClass))
+                {
+                    IBNSStatusClass.StateClass state = sender as IBNSStatusClass.StateClass;
+                    state.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        BanknoteNeutralization: new(
+                            State: new XFS4IoT.BanknoteNeutralization.StateClass(
+                                Mode: propertyInfo.PropertyName != nameof(state.Mode) ?
+                                null :
+                                state.Mode switch
+                                {
+                                    IBNSStatusClass.StateClass.ModeEnum.NeutralizationTriggered => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.NeutralizationTriggered,
+                                    IBNSStatusClass.StateClass.ModeEnum.Fault => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Fault,
+                                    IBNSStatusClass.StateClass.ModeEnum.Disarmed => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Disarmed,
+                                    IBNSStatusClass.StateClass.ModeEnum.Armed => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Armed,
+                                    _ => throw new InternalErrorException($"Unexpected mode state specified. {state.Mode}")
+                                },
+                                Submode: propertyInfo.PropertyName != nameof(state.SubMode) ?
+                                null :
+                                state.SubMode switch
+                                {
+                                    IBNSStatusClass.StateClass.SubModeEnum.AllSafeSensorsIgnored => XFS4IoT.BanknoteNeutralization.StateClass.SubmodeEnum.AllSafeSensorsIgnored,
+                                    IBNSStatusClass.StateClass.SubModeEnum.ArmPending => XFS4IoT.BanknoteNeutralization.StateClass.SubmodeEnum.ArmPending,
+                                    _ => throw new InternalErrorException($"Unexpected submode status specified. {state.SubMode}"),
+                                })
+                            ))
+                        );
+                }
+                else if (sender.GetType() == typeof(IBNSStatusClass.WarningStateClass))
+                {
+                    IBNSStatusClass.WarningStateClass warningState = sender as IBNSStatusClass.WarningStateClass;
+                    warningState.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        BanknoteNeutralization: new(
+                            Warnings: new(
+                                ProtectionArmingFault: propertyInfo.PropertyName != nameof(warningState.ProtectionArmingFault) ?
+                                    null :
+                                    warningState.ProtectionArmingFault,
+                                ProtectionDisarmingFault: propertyInfo.PropertyName != nameof(warningState.ProtectionDisarmingFault) ?
+                                    null :
+                                    warningState.ProtectionDisarmingFault,
+                                ExternalMainPowerOutage: propertyInfo.PropertyName != nameof(warningState.ExternalMainPowerOutage) ?
+                                    null :
+                                    warningState.ExternalMainPowerOutage,
+                                StorageUnitLowPowerSupply: propertyInfo.PropertyName != nameof(warningState.StorageUnitLowPowerSupply) ?
+                                    null :
+                                    warningState.StorageUnitLowPowerSupply,
+                                ArmedAutonomous: propertyInfo.PropertyName != nameof(warningState.ArmedAutonomous) ?
+                                    null :
+                                    warningState.ArmedAutonomous,
+                                ArmedAlarm: propertyInfo.PropertyName != nameof(warningState.ArmedAlarm) ?
+                                    null :
+                                    warningState.ArmedAlarm,
+                                GasWarningLevel: propertyInfo.PropertyName != nameof(warningState.GasWarningLevel) ?
+                                    null :
+                                    warningState.GasWarningLevel,
+                                SeismicActivityWarningLevel: propertyInfo.PropertyName != nameof(warningState.SeismicActivityWarningLevel) ?
+                                    null :
+                                    warningState.SeismicActivityWarningLevel
+                                ))
+                        ));
+                }
+                else if (sender.GetType() == typeof(IBNSStatusClass.ErrorStateClass))
+                {
+                    IBNSStatusClass.ErrorStateClass errorState = sender as IBNSStatusClass.ErrorStateClass;
+                    errorState.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    await StatusChangedEvent(new(
+                        BanknoteNeutralization: new(
+                            Errors: new(
+                                ProtectionEnablingFailure: propertyInfo.PropertyName != nameof(errorState.ProtectionEnablingFailure) ?
+                                    null :
+                                    errorState.ProtectionEnablingFailure,
+                                ProtectionDisarmingFailure: propertyInfo.PropertyName != nameof(errorState.ProtectionDisarmingFailure) ?
+                                    null :
+                                    errorState.ProtectionDisarmingFailure,
+                                StorageUnitPowerSupplyFailure: propertyInfo.PropertyName != nameof(errorState.StorageUnitPowerSupplyFailure) ?
+                                    null :
+                                    errorState.StorageUnitPowerSupplyFailure,
+                                BackupBatteryFailure: propertyInfo.PropertyName != nameof(errorState.BackupBatteryFailure) ?
+                                    null :
+                                    errorState.BackupBatteryFailure,
+                                GasCriticalLevel: propertyInfo.PropertyName != nameof(errorState.GasCriticalLevel) ?
+                                    null :
+                                    errorState.GasCriticalLevel,
+                                Light: propertyInfo.PropertyName != nameof(errorState.Light) ?
+                                    null :
+                                    errorState.Light,
+                                Tilted: propertyInfo.PropertyName != nameof(errorState.Tilted) ?
+                                    null :
+                                    errorState.Tilted,
+                                SeismicActivityCriticalLevel: propertyInfo.PropertyName != nameof(errorState.SeismicActivityCriticalLevel) ?
+                                    null :
+                                    errorState.SeismicActivityCriticalLevel)
+                            ))
+                        );
+                }
+                else if (sender.GetType() == typeof(IBNSStatusClass.CustomInputStatusClass))
+                {
+                    IBNSStatusClass.CustomInputStatusClass inputStatus = sender as IBNSStatusClass.CustomInputStatusClass;
+                    inputStatus.IsNotNull($"Unexpected type received. {sender.GetType()}");
+
+                    Dictionary<string, XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass> customInputs = [];
+                    if (inputStatus.CustomInputPosition is not null)
+                    {
+                        customInputs.Add(
+                            inputStatus.CustomInputPosition.ToString().ToCamelCase(),
+                            new(inputStatus.InputState switch
+                            {
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
+                                _ => throw new InternalErrorException($"Unexpected input state specified. {inputStatus.CustomInputPosition} {inputStatus.InputState}")
+                            }));
+                    }
+                    if (!string.IsNullOrEmpty(inputStatus.VendorSpecificCustomInputPosition))
+                    {
+                        customInputs.Add(
+                            inputStatus.VendorSpecificCustomInputPosition.ToCamelCase(),
+                            new(inputStatus.InputState switch
+                            {
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
+                                _ => throw new InternalErrorException($"Unexpected input state specified.{inputStatus.VendorSpecificCustomInputPosition} {inputStatus.InputState}")
+                            }));
+                    }
+
+                    if (customInputs.Count > 0)
+                    {
+                        await StatusChangedEvent(new(
+                            BanknoteNeutralization: new(
+                                CustomInputs: customInputs
+                            ))
+                        );
+                    }
+                }
             }
             if (sender.GetType() == typeof(PowerManagementStatusClass) ||
                 sender.GetType() == typeof(PowerManagementStatusClass.PowerInfoClass))

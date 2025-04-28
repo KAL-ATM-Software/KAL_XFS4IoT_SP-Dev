@@ -347,6 +347,11 @@ namespace XFS4IoTFramework.Common
                                 _ => null
                             });
 
+                        if (light.Value.Position == LightsStatusClass.LightOperation.PositionEnum.Custom)
+                        {
+                            throw new InternalErrorException($"Custom lights are not supported by the framework.");
+                        }
+
                         string lightPositionName = light.Value.Position.ToString().ToCamelCase();
 
                         Dictionary<string, PositionStatusClass> thisLight = new()
@@ -464,7 +469,7 @@ namespace XFS4IoTFramework.Common
                             });
 
                         string lightPositionName = custom.Value.CustomPosition;
-                        if (string.IsNullOrEmpty(lightPositionName))
+                        if (!string.IsNullOrEmpty(lightPositionName))
                         {
                             Logger.Warning(Constants.Framework, "Custom light position name is not specified for status. Skip this light.");
                             continue;
@@ -1480,10 +1485,10 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
-            XFS4IoT.IntelligentBanknoteNeutralization.StatusClass ibns = null;
+            XFS4IoT.BanknoteNeutralization.StatusClass ibns = null;
             if (Common.IBNSStatus is not null)
             {
-                Dictionary<string, XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass> customInputs = null;
+                Dictionary<string, XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass> customInputs = null;
                 if (Common.IBNSStatus.CustomInputStatus is not null &&
                     Common.IBNSStatus.CustomInputStatus.Count > 0)
                 {
@@ -1494,10 +1499,10 @@ namespace XFS4IoTFramework.Common
                             customInput.Key.ToString().ToCamelCase(),
                             new(customInput.Value.InputState switch
                             {
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
                                 _ => throw new InternalErrorException($"Unexpected input state specified. {customInput.Key} {customInput.Value.InputState}")
                             }));
                     }
@@ -1511,93 +1516,154 @@ namespace XFS4IoTFramework.Common
                             customInput.Key.ToCamelCase(),
                             new(customInput.Value.InputState switch
                             {
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
-                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.IntelligentBanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Ok,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Fault => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Fault,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Disabled,
+                                IBNSStatusClass.CustomInputStatusClass.InputStateEnum.Triggered => XFS4IoT.BanknoteNeutralization.StatusClass.CustomInputsClass.InputStateEnum.Triggered,
                                 _ => throw new InternalErrorException($"Unexpected input state specified.{customInput.Key} {customInput.Value.InputState}")
                             }));
                     }
                 }
 
-                ibns = new XFS4IoT.IntelligentBanknoteNeutralization.StatusClass(
-                    State: Common.IBNSStatus.State is null ? null : new XFS4IoT.IntelligentBanknoteNeutralization.StateClass(
-                        Mode: Common.IBNSStatus.State.Mode switch
-                        {
-                            IBNSStatusClass.StateClass.ModeEnum.NeutralizationTriggered => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.ModeEnum.NeutralizationTriggered,
-                            IBNSStatusClass.StateClass.ModeEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.ModeEnum.Fault,
-                            IBNSStatusClass.StateClass.ModeEnum.Disarmed => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.ModeEnum.Disarmed,
-                            IBNSStatusClass.StateClass.ModeEnum.Armed => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.ModeEnum.Armed,
-                            _ => throw new InternalErrorException($"Unexpected mode state specified. {Common.IBNSStatus.State.Mode}")
-                        },
-                        Submode: Common.IBNSStatus.State.SubMode switch
-                        {
-                            IBNSStatusClass.StateClass.SubModeEnum.AllSafeSensorsIgnored => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.SubmodeEnum.AllSafeSensorsIgnored,
-                            IBNSStatusClass.StateClass.SubModeEnum.ArmPending => XFS4IoT.IntelligentBanknoteNeutralization.StateClass.SubmodeEnum.ArmPending,
-                            _ => null,
-                        }),
+                XFS4IoT.BanknoteNeutralization.WarningsClass warnings = Common.IBNSStatus.WarningState is null ? null :
+                    new(
+                        ProtectionArmingFault: Common.IBNSStatus.WarningState.ProtectionArmingFault is true ? true : null,
+                        ProtectionDisarmingFault: Common.IBNSStatus.WarningState.ProtectionDisarmingFault is true ? true : null,
+                        ExternalMainPowerOutage: Common.IBNSStatus.WarningState.ExternalMainPowerOutage is true ? true : null,
+                        StorageUnitLowPowerSupply: Common.IBNSStatus.WarningState.StorageUnitLowPowerSupply is true ? true : null,
+                        ArmedAutonomous: Common.IBNSStatus.WarningState.ArmedAutonomous is true ? true : null,
+                        ArmedAlarm: Common.IBNSStatus.WarningState.ArmedAlarm is true ? true : null,
+                        GasWarningLevel: Common.IBNSStatus.WarningState.GasWarningLevel is true ? true : null,
+                        SeismicActivityWarningLevel: Common.IBNSStatus.WarningState.SeismicActivityWarningLevel is true ? true : null
+                        );
+
+                if (warnings is not null)
+                {
+                    if (warnings.ProtectionArmingFault is null && 
+                        warnings.ProtectionDisarmingFault is null &&
+                        warnings.ExternalMainPowerOutage is null &&
+                        warnings.StorageUnitLowPowerSupply is null &&
+                        warnings.ArmedAutonomous is null &&
+                        warnings.ArmedAlarm is null &&
+                        warnings.GasWarningLevel is null &&
+                        warnings.SeismicActivityWarningLevel is null)
+                    {
+                        warnings = null;
+                    }
+                }
+
+                XFS4IoT.BanknoteNeutralization.ErrorsClass errors = Common.IBNSStatus.ErrorState is null ? null :
+                    new(
+                        ProtectionEnablingFailure: Common.IBNSStatus.ErrorState.ProtectionEnablingFailure is true ? true : null,
+                        ProtectionDisarmingFailure: Common.IBNSStatus.ErrorState.ProtectionDisarmingFailure is true ? true : null,
+                        StorageUnitPowerSupplyFailure: Common.IBNSStatus.ErrorState.StorageUnitPowerSupplyFailure is true ? true : null,
+                        BackupBatteryFailure: Common.IBNSStatus.ErrorState.BackupBatteryFailure is true ? true : null,
+                        GasCriticalLevel: Common.IBNSStatus.ErrorState.GasCriticalLevel is true ? true : null,
+                        Light: Common.IBNSStatus.ErrorState.Light is true ? true : null,
+                        Tilted: Common.IBNSStatus.ErrorState.Tilted is true ? true : null,
+                        SeismicActivityCriticalLevel: Common.IBNSStatus.ErrorState.SeismicActivityCriticalLevel is true ? true : null
+                        );
+
+                if (errors is not null)
+                {
+                    if (errors.ProtectionDisarmingFailure is null &&
+                        errors.StorageUnitPowerSupplyFailure is null &&
+                        errors.BackupBatteryFailure is null &&
+                        errors.GasCriticalLevel is null &&
+                        errors.Light is null &&
+                        errors.Tilted is null &&
+                        errors.SeismicActivityCriticalLevel is null)
+                    {
+                        errors = null;
+                    }
+                }
+
+                if (Common.IBNSStatus.State is null)
+                {
+                    throw new InternalErrorException($"IBNS State object is a required property and must be set.");
+                }
+
+                ibns = new XFS4IoT.BanknoteNeutralization.StatusClass(
+                    State: Common.IBNSStatus.State is null ?
+                        throw new InternalErrorException($"IBNS State object is a required property and must be set.") : 
+                        new XFS4IoT.BanknoteNeutralization.StateClass(
+                            Mode: Common.IBNSStatus.State.Mode switch
+                            {
+                                IBNSStatusClass.StateClass.ModeEnum.NeutralizationTriggered => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.NeutralizationTriggered,
+                                IBNSStatusClass.StateClass.ModeEnum.Fault => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Fault,
+                                IBNSStatusClass.StateClass.ModeEnum.Disarmed => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Disarmed,
+                                IBNSStatusClass.StateClass.ModeEnum.Armed => XFS4IoT.BanknoteNeutralization.StateClass.ModeEnum.Armed,
+                                _ => throw new InternalErrorException($"Unexpected mode state specified. {Common.IBNSStatus.State.Mode}")
+                            },
+                            Submode: Common.IBNSStatus.State.SubMode switch
+                            {
+                                IBNSStatusClass.StateClass.SubModeEnum.AllSafeSensorsIgnored => XFS4IoT.BanknoteNeutralization.StateClass.SubmodeEnum.AllSafeSensorsIgnored,
+                                IBNSStatusClass.StateClass.SubModeEnum.ArmPending => XFS4IoT.BanknoteNeutralization.StateClass.SubmodeEnum.ArmPending,
+                                _ => null,
+                            }
+                        ),
                     SafeDoor: Common.IBNSStatus.SafeDoorState switch
                     {
-                        IBNSStatusClass.SafeDoorStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.SafeDoorStateEnum.Fault,
-                        IBNSStatusClass.SafeDoorStateEnum.DoorClosed => XFS4IoT.IntelligentBanknoteNeutralization.SafeDoorStateEnum.DoorClosed,
-                        IBNSStatusClass.SafeDoorStateEnum.DoorOpened => XFS4IoT.IntelligentBanknoteNeutralization.SafeDoorStateEnum.DoorOpened,
-                        IBNSStatusClass.SafeDoorStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.SafeDoorStateEnum.Disabled,
+                        IBNSStatusClass.SafeDoorStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.Fault,
+                        IBNSStatusClass.SafeDoorStateEnum.DoorClosed => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.DoorClosed,
+                        IBNSStatusClass.SafeDoorStateEnum.DoorOpened => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.DoorOpened,
+                        IBNSStatusClass.SafeDoorStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SafeDoorStateEnum.Disabled,
                         _ => null,
                     },
                     SafeBolt: Common.IBNSStatus.SafeBoltState switch
                     {
-                        IBNSStatusClass.SafeBoltStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.SafeBoltStateEnum.Fault,
-                        IBNSStatusClass.SafeBoltStateEnum.BoltLocked => XFS4IoT.IntelligentBanknoteNeutralization.SafeBoltStateEnum.BoltLocked,
-                        IBNSStatusClass.SafeBoltStateEnum.BoltUnlocked => XFS4IoT.IntelligentBanknoteNeutralization.SafeBoltStateEnum.BoltUnlocked,
-                        IBNSStatusClass.SafeBoltStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.SafeBoltStateEnum.Disabled,
+                        IBNSStatusClass.SafeBoltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.Fault,
+                        IBNSStatusClass.SafeBoltStateEnum.BoltLocked => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.BoltLocked,
+                        IBNSStatusClass.SafeBoltStateEnum.BoltUnlocked => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.BoltUnlocked,
+                        IBNSStatusClass.SafeBoltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SafeBoltStateEnum.Disabled,
                         _ => null,
                     },
                     Tilt: Common.IBNSStatus.TiltState switch
                     {
-                        IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Fault,
-                        IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Tilted,
-                        IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.NotTilted,
-                        IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Disabled,
+                        IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Fault,
+                        IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Tilted,
+                        IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.NotTilted,
+                        IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Disabled,
                         _ => null,
                     },
                     Light: Common.IBNSStatus.LightState switch
                     {
-                        IBNSStatusClass.LightStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.LightStateEnum.Fault,
-                        IBNSStatusClass.LightStateEnum.NotConfigured => XFS4IoT.IntelligentBanknoteNeutralization.LightStateEnum.NotConfigured,
-                        IBNSStatusClass.LightStateEnum.Detected => XFS4IoT.IntelligentBanknoteNeutralization.LightStateEnum.Detected,
-                        IBNSStatusClass.LightStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.LightStateEnum.Disabled,
+                        IBNSStatusClass.LightStateEnum.Fault => XFS4IoT.BanknoteNeutralization.LightStateEnum.Fault,
+                        IBNSStatusClass.LightStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.LightStateEnum.NotConfigured,
+                        IBNSStatusClass.LightStateEnum.Detected => XFS4IoT.BanknoteNeutralization.LightStateEnum.Detected,
+                        IBNSStatusClass.LightStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.LightStateEnum.Disabled,
                         _ => null,
                     },
                     Gas: Common.IBNSStatus.GasState switch
                     {
-                        IBNSStatusClass.GasStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.Fault,
-                        IBNSStatusClass.GasStateEnum.Initializing => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.Initializing,
-                        IBNSStatusClass.GasStateEnum.NotConfigured => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.NotConfigured,
-                        IBNSStatusClass.GasStateEnum.PartialWarningLevel => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.PartialWarningLevel,
-                        IBNSStatusClass.GasStateEnum.PartialCriticalLevel => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.PartialCriticalLevel,
-                        IBNSStatusClass.GasStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.Disabled,
-                        IBNSStatusClass.GasStateEnum.WarningLevel => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.WarningLevel,
-                        IBNSStatusClass.GasStateEnum.CriticalLevel => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.CriticalLevel,
-                        IBNSStatusClass.GasStateEnum.NotDetected => XFS4IoT.IntelligentBanknoteNeutralization.GasStateEnum.NotDetected,
+                        IBNSStatusClass.GasStateEnum.Fault => XFS4IoT.BanknoteNeutralization.GasStateEnum.Fault,
+                        IBNSStatusClass.GasStateEnum.Initializing => XFS4IoT.BanknoteNeutralization.GasStateEnum.Initializing,
+                        IBNSStatusClass.GasStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.GasStateEnum.NotConfigured,
+                        IBNSStatusClass.GasStateEnum.PartialWarningLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.PartialWarningLevel,
+                        IBNSStatusClass.GasStateEnum.PartialCriticalLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.PartialCriticalLevel,
+                        IBNSStatusClass.GasStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.GasStateEnum.Disabled,
+                        IBNSStatusClass.GasStateEnum.WarningLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.WarningLevel,
+                        IBNSStatusClass.GasStateEnum.CriticalLevel => XFS4IoT.BanknoteNeutralization.GasStateEnum.CriticalLevel,
+                        IBNSStatusClass.GasStateEnum.NotDetected => XFS4IoT.BanknoteNeutralization.GasStateEnum.NotDetected,
                         _ => null,
                     },
                     Temperature: Common.IBNSStatus.TemperatureState switch
                     {
-                        IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Fault,
-                        IBNSStatusClass.TemperatureStateEnum.Healthy=> XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Ok,
-                        IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooCold,
-                        IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooHot,
-                        IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Disabled,
+                        IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Fault,
+                        IBNSStatusClass.TemperatureStateEnum.Healthy=> XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Ok,
+                        IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooCold,
+                        IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooHot,
+                        IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Disabled,
                         _ => null,
                     },
                     Seismic: Common.IBNSStatus.SeismicState switch
                     {
-                        IBNSStatusClass.SeismicStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.Fault,
-                        IBNSStatusClass.SeismicStateEnum.NotConfigured => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.NotConfigured,
-                        IBNSStatusClass.SeismicStateEnum.CriticalLevel => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.CriticalLevel,
-                        IBNSStatusClass.SeismicStateEnum.WarningLevel => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.WarningLevel,
-                        IBNSStatusClass.SeismicStateEnum.NotDetected => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.NotDetected,
-                        IBNSStatusClass.SeismicStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.SeismicStateEnum.Disabled,
+                        IBNSStatusClass.SeismicStateEnum.Fault => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.Fault,
+                        IBNSStatusClass.SeismicStateEnum.NotConfigured => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.NotConfigured,
+                        IBNSStatusClass.SeismicStateEnum.CriticalLevel => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.CriticalLevel,
+                        IBNSStatusClass.SeismicStateEnum.WarningLevel => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.WarningLevel,
+                        IBNSStatusClass.SeismicStateEnum.NotDetected => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.NotDetected,
+                        IBNSStatusClass.SeismicStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.SeismicStateEnum.Disabled,
                         _ => null,
                     },
                     CustomInputs: customInputs,
@@ -1632,27 +1698,8 @@ namespace XFS4IoTFramework.Common
                             PowerManagementStatusClass.PowerInfoClass.BatteryChargingStatusEnum.Discharging => XFS4IoT.PowerManagement.BatteryChargingStatusEnum.Discharging,
                             _ => null
                         })),
-                    Warnings: Common.IBNSStatus.WarningState is null ? null :
-                    new(
-                        ProtectionArmingFault: Common.IBNSStatus.WarningState.ProtectionArmingFault is true ? true : null,
-                        ProtectionDisarmingFault: Common.IBNSStatus.WarningState.ProtectionDisarmingFault is true ? true : null,
-                        ExternalMainPowerOutage: Common.IBNSStatus.WarningState.ExternalMainPowerOutage is true ? true : null,
-                        StorageUnitLowPowerSupply: Common.IBNSStatus.WarningState.StorageUnitLowPowerSupply is true ? true : null,
-                        ArmedAutonomous: Common.IBNSStatus.WarningState.ArmedAutonomous is true ? true : null,
-                        ArmedAlarm: Common.IBNSStatus.WarningState.ArmedAlarm is true ? true : null,
-                        GasWarningLevel: Common.IBNSStatus.WarningState.GasWarningLevel is true ? true : null,
-                        SeismicActivityWarningLevel: Common.IBNSStatus.WarningState.SeismicActivityWarningLevel is true ? true : null
-                        ),
-                    Errors: Common.IBNSStatus.ErrorState is null ? null :
-                    new(
-                        ProtectionEnablingFailure: Common.IBNSStatus.ErrorState.ProtectionEnablingFailure is true ? true : null,
-                        ProtectionDisarmingFailure: Common.IBNSStatus.ErrorState.ProtectionDisarmingFailure is true ? true : null,
-                        StorageUnitPowerSupplyFailure: Common.IBNSStatus.ErrorState.StorageUnitPowerSupplyFailure is true ? true : null,
-                        BackupBatteryFailure: Common.IBNSStatus.ErrorState.BackupBatteryFailure is true ? true : null,
-                        GasCriticalLevel: Common.IBNSStatus.ErrorState.GasCriticalLevel is true ? true : null,
-                        Light: Common.IBNSStatus.ErrorState.Light is true ? true : null,
-                        Tilted: Common.IBNSStatus.ErrorState.Tilted is true ? true : null,
-                        SeismicActivityCriticalLevel: Common.IBNSStatus.ErrorState.SeismicActivityCriticalLevel is true ? true : null));
+                    Warnings: warnings,
+                    Errors: errors);
             }
 
             XFS4IoT.Deposit.StatusClass deposit = null;

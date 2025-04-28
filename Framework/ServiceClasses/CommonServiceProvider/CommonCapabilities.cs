@@ -38,10 +38,10 @@ namespace XFS4IoTFramework.Common
         CommonCapabilitiesClass.CameraInterfaceClass CameraInterface = null,
         CommonCapabilitiesClass.CheckScannerInterfaceClass CheckScannerInterface = null,
         CommonCapabilitiesClass.MixedMediaInterfaceClass MixedMediaInterface = null,
-        CommonCapabilitiesClass.IntelligentBanknoteNeutralizationClass IntelligentBanknoteNeutralizationInterface = null,
+        CommonCapabilitiesClass.BanknoteNeutralizationInterfaceClass BanknoteNeutralizationInterface = null,
         CommonCapabilitiesClass.DepositInterfaceClass DepositInterface = null,
         CommonCapabilitiesClass.PowerManagementInterfaceClass PowerManagementInterface = null,
-        CommonCapabilitiesClass.GermanSpecificInterfaceClass GermanSpecificInterface = null,
+        CommonCapabilitiesClass.GermanInterfaceClass GermanInterface = null,
         List<CommonCapabilitiesClass.DeviceInformationClass> DeviceInformation = null,
         bool? PowerSaveControl = null, // Obsolete property
         bool? AntiFraudModule = null,
@@ -420,8 +420,6 @@ namespace XFS4IoTFramework.Common
                 MediaTakenEvent,
                 NoMediaEvent,
                 PaperThresholdEvent,
-                RetractBinStatusEvent,
-                RetractBinThresholdEvent,
                 TonerThresholdEvent,
             }
 
@@ -680,9 +678,9 @@ namespace XFS4IoTFramework.Common
             public List<EventEnum> Events { get; init; } = Events;
         }
 
-        public sealed class GermanSpecificInterfaceClass(
-            List<GermanSpecificInterfaceClass.CommandEnum> Commands = null,
-            List<GermanSpecificInterfaceClass.EventEnum> Events = null)
+        public sealed class GermanInterfaceClass(
+            List<GermanInterfaceClass.CommandEnum> Commands = null,
+            List<GermanInterfaceClass.EventEnum> Events = null)
         {
             public enum CommandEnum
             {
@@ -703,9 +701,9 @@ namespace XFS4IoTFramework.Common
             public List<EventEnum> Events { get; init; } = Events;
         }
 
-        public sealed class IntelligentBanknoteNeutralizationClass(
-            List<IntelligentBanknoteNeutralizationClass.CommandEnum> Commands = null,
-            List<IntelligentBanknoteNeutralizationClass.EventEnum> Events = null)
+        public sealed class BanknoteNeutralizationInterfaceClass(
+            List<BanknoteNeutralizationInterfaceClass.CommandEnum> Commands = null,
+            List<BanknoteNeutralizationInterfaceClass.EventEnum> Events = null)
         {
             public enum CommandEnum
             {
@@ -761,10 +759,10 @@ namespace XFS4IoTFramework.Common
         public CameraInterfaceClass CameraInterface { get; init; } = CameraInterface;
         public CheckScannerInterfaceClass CheckScannerInterface { get; init; } = CheckScannerInterface;
         public MixedMediaInterfaceClass MixedMediaInterface { get; init; } = MixedMediaInterface;
-        public IntelligentBanknoteNeutralizationClass IntelligentBanknoteNeutralizationInterface { get; init; } = IntelligentBanknoteNeutralizationInterface;
+        public BanknoteNeutralizationInterfaceClass BanknoteNeutralizationInterface { get; init; } = BanknoteNeutralizationInterface;
         public DepositInterfaceClass DepositInterface { get; init; } = DepositInterface;
         public PowerManagementInterfaceClass PowerManagementInterface { get; init; } = PowerManagementInterface;
-        public GermanSpecificInterfaceClass GermanSpecificInterface { get; init; } = GermanSpecificInterface;
+        public GermanInterfaceClass GermanInterface { get; init; } = GermanInterface;
 
         /// <summary>
         /// Array of deviceInformation structures. If the service uses more than one device there will be on array

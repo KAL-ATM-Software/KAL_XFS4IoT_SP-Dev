@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoTServer;
 using XFS4IoTFramework.Common;
+using System;
 
 namespace XFS4IoTFramework.Printer
 {
@@ -57,6 +58,7 @@ namespace XFS4IoTFramework.Printer
         /// for printers with retract capability.
         /// if the binNumber is -1, all retract bin counter to be reset
         /// </summary>
+        [Obsolete("This method is no longer used by the common interface. Migrate reset bin counter in the storage interface. this interface will be removed after version 4.")]
         Task<DeviceResult> ResetBinCounterAsync(int binNumber,
                                                 CancellationToken cancellation);
 

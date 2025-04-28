@@ -27,7 +27,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, Check.CapabilitiesClass Check = null, MixedMedia.CapabilitiesClass MixedMedia = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, GermanSpecific.CapabilitiesClass German = null, Lights.CapabilitiesClass Lights = null, IntelligentBanknoteNeutralization.CapabilitiesClass BanknoteNeutralization = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, Deposit.CapabilitiesClass Deposit = null, VendorApplication.CapabilitiesClass VendorApplication = null, PowerManagement.CapabilitiesClass PowerManagement = null)
+            public PayloadData(List<InterfaceClass> Interfaces = null, CapabilityPropertiesClass Common = null, CardReader.CapabilitiesClass CardReader = null, CashAcceptor.CapabilitiesClass CashAcceptor = null, CashDispenser.CapabilitiesClass CashDispenser = null, CashManagement.CapabilitiesClass CashManagement = null, Check.CapabilitiesClass Check = null, MixedMedia.CapabilitiesClass MixedMedia = null, PinPad.CapabilitiesClass PinPad = null, Crypto.CapabilitiesClass Crypto = null, KeyManagement.CapabilitiesClass KeyManagement = null, Keyboard.CapabilitiesClass Keyboard = null, TextTerminal.CapabilitiesClass TextTerminal = null, Printer.CapabilitiesClass Printer = null, BarcodeReader.CapabilitiesClass BarcodeReader = null, Biometric.CapabilitiesClass Biometric = null, Camera.CapabilitiesClass Camera = null, German.CapabilitiesClass German = null, Lights.CapabilitiesClass Lights = null, BanknoteNeutralization.CapabilitiesClass BanknoteNeutralization = null, Auxiliaries.CapabilitiesClass Auxiliaries = null, Deposit.CapabilitiesClass Deposit = null, VendorApplication.CapabilitiesClass VendorApplication = null, PowerManagement.CapabilitiesClass PowerManagement = null)
                 : base()
             {
                 this.Interfaces = Interfaces;
@@ -111,13 +111,13 @@ namespace XFS4IoT.Common.Completions
             public Camera.CapabilitiesClass Camera { get; init; }
 
             [DataMember(Name = "german")]
-            public GermanSpecific.CapabilitiesClass German { get; init; }
+            public German.CapabilitiesClass German { get; init; }
 
             [DataMember(Name = "lights")]
             public Lights.CapabilitiesClass Lights { get; init; }
 
             [DataMember(Name = "banknoteNeutralization")]
-            public IntelligentBanknoteNeutralization.CapabilitiesClass BanknoteNeutralization { get; init; }
+            public BanknoteNeutralization.CapabilitiesClass BanknoteNeutralization { get; init; }
 
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.CapabilitiesClass Auxiliaries { get; init; }

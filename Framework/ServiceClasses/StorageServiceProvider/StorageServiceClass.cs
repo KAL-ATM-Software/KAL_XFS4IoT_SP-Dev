@@ -69,7 +69,7 @@ namespace XFS4IoTServer
                 Logger.Warning(Constants.Framework, "Failed to load persistent data for IBNS units. It could be a first run, service is not IBNS or no persistent exists on the file system.");
                 IBNSUnits = [];
             }
-            DepositUnits = PersistentData.Load<Dictionary<string, DepositUnitStorage>>(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName);
+            DepositUnits = PersistentData.Load<Dictionary<string, DepositUnitStorage>>(ServiceProvider.Name + typeof(DepositUnitStorage).FullName);
             if (DepositUnits is null)
             {
                 Logger.Warning(Constants.Framework, "Failed to load persistent data for Deposit units. It could be a first run, service is not Deposit or no persistent exists on the file system.");
@@ -1477,7 +1477,7 @@ namespace XFS4IoTServer
             {
                 foreach (var status in unitCounts)
                 {
-                    if (!CardUnits.ContainsKey(status.Key))
+                    if (!PrinterUnits.ContainsKey(status.Key))
                     {
                         Logger.Warning(Constants.Framework, $"Specified printer unit ID is not found on GetPrinterUnitCounts. {status.Key}");
                         continue;
@@ -1741,7 +1741,101 @@ namespace XFS4IoTServer
         /// </summary>
         private void ConstructDepositUnits()
         {
-            // Not supported yet
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetDepositStorageConfiguration()");
+
+            bool newConfiguration = Device.GetDepositStorageConfiguration(out Dictionary<string, DepositUnitStorageConfiguration> newDepositUnits);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetDepositStorageConfiguration()-> {newConfiguration}");
+
+            if (newConfiguration)
+            {
+                if (newDepositUnits is null ||
+                    newDepositUnits?.Count == 0)
+                {
+                    Logger.Warning(Constants.Framework, $"The function GetPrinterStorageConfiguration returned true. however, there is not output data supplied.");
+                    newConfiguration = false;
+                }
+                else
+                {
+                    PrinterUnits.Clear();
+                    foreach (var unit in newDepositUnits)
+                    {
+                        DepositUnits.Add(unit.Key, new DepositUnitStorage(unit.Value));
+                    }
+                }
+            }
+
+            if (!newConfiguration)
+            {
+                bool identical = newDepositUnits?.Count == PrinterUnits.Count;
+                if (newDepositUnits is not null)
+                {
+                    foreach (var unit in newDepositUnits)
+                    {
+                        identical = DepositUnits.ContainsKey(unit.Key);
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing deposit unit information doesn't contain key specified by the device class. {unit.Key}. Construct new printer unit infomation.");
+                            break;
+                        }
+
+                        identical = DepositUnits[unit.Key].Unit.Configuration == unit.Value.Configuration &&
+                                    DepositUnits[unit.Key].Unit.Capabilities == unit.Value.Capabilities &&
+                                    DepositUnits[unit.Key].Capacity == unit.Value.Capacity &&
+                                    DepositUnits[unit.Key].PositionName == unit.Value.PositionName &&
+                                    DepositUnits[unit.Key].SerialNumber == unit.Value.SerialNumber;
+
+                        if (!identical)
+                        {
+                            Logger.Warning(Constants.Framework, $"Existing deposit unit information doesn't have an identical storage structure information specified by the device class. {unit.Key}. Construct new printer unit infomation.");
+                            break;
+                        }
+                    }
+                }
+
+                if (!identical)
+                {
+                    DepositUnits.Clear();
+                    if (newDepositUnits is not null)
+                    {
+                        foreach (var unit in newDepositUnits)
+                        {
+                            DepositUnits.Add(unit.Key, new DepositUnitStorage(unit.Value));
+                        }
+                    }
+                }
+            }
+
+            // Update count from device
+            Logger.Log(Constants.DeviceClass, "StorageDev.GetDepositUnitInfo()");
+
+            bool updateCounts = Device.GetDepositUnitInfo(out Dictionary<string, DepositUnitInfo> unitInfo);
+
+            Logger.Log(Constants.DeviceClass, $"StorageDev.GetDepositUnitInfo()-> {updateCounts}");
+
+            if (updateCounts &&
+                unitInfo is not null)
+            {
+                foreach (var status in unitInfo)
+                {
+                    if (!CardUnits.ContainsKey(status.Key))
+                    {
+                        Logger.Warning(Constants.Framework, $"Specified deposit unit ID is not found on GetPrinterUnitCounts. {status.Key}");
+                        continue;
+                    }
+                    DepositUnits[status.Key].Unit.Status.NumberOfDeposits = status.Value.NumberOfDeposits;
+                    DepositUnits[status.Key].Unit.Status.DepositoryContainerStatus = status.Value.DepositoryContainerStatus;
+                    DepositUnits[status.Key].Unit.Status.EnvelopSupplyStatus = status.Value.EnvelopSupplyStatus;
+                    DepositUnits[status.Key].Status = status.Value.StorageStatus;
+                }
+            }
+
+            // Save printer units info persistently
+            bool success = PersistentData.Store(ServiceProvider.Name + typeof(DepositUnitStorage).FullName, DepositUnits);
+            if (!success)
+            {
+                Logger.Warning(Constants.Framework, $"Failed to save deposit unit counts.");
+            }
         }
 
         /// <summary>
@@ -1781,6 +1875,11 @@ namespace XFS4IoTServer
                 Logger.Warning(Constants.Framework, "Failed to save persistent data for printer units.");
             }
             if (IBNSUnits is not null &&
+                !PersistentData.Store(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName, IBNSUnits))
+            {
+                Logger.Warning(Constants.Framework, "Failed to save persistent data for IBNS units.");
+            }
+            if (DepositUnits is not null &&
                 !PersistentData.Store(ServiceProvider.Name + typeof(IBNSUnitStorage).FullName, IBNSUnits))
             {
                 Logger.Warning(Constants.Framework, "Failed to save persistent data for IBNS units.");
@@ -1838,7 +1937,7 @@ namespace XFS4IoTServer
             Dictionary<string, XFS4IoT.Check.StorageClass> checkStorage = [];
             Dictionary<string, XFS4IoT.Deposit.StorageClass> depositStorage = [];
             Dictionary<string, XFS4IoT.Printer.StorageClass> printerStorage = [];
-            Dictionary<string, XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass> ibnsStorage = [];
+            Dictionary<string, XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass> ibnsStorage = [];
 
             if (StorageType.HasFlag(StorageTypeEnum.Card))
             {
@@ -2090,16 +2189,16 @@ namespace XFS4IoTServer
                             Identifier: storage.Value.Unit.Status.Identifier,
                             Protection: storage.Value.Unit.Status.Protection switch
                             {
-                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.NeutralizationTriggered => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.NeutralizationTriggered,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Fault,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Disarmed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Disarmed,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Armed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Armed,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.NeutralizationTriggered => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.NeutralizationTriggered,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Fault,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Disarmed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Disarmed,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.ProtectionEnum.Armed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.ProtectionEnum.Armed,
                                 _ => throw new InternalErrorException($"Unexpected IBNS protection status specified. Unit:{storage.Key} Status:{storage.Value.Unit.Status.Protection}"),
                             },
                             Warning: storage.Value.Unit.Status.Warning switch
                             {
-                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.CassetteRunsAutonomously => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.CassetteRunsAutonomously,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.Alarm => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.WarningEnum.Alarm,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.CassetteRunsAutonomously => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.WarningEnum.CassetteRunsAutonomously,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.WarningEnum.Alarm => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.WarningEnum.Alarm,
                                 _ => null,
                             },
                             PowerSupply: storage.Value.Unit.Status.PowerInfo is null ? null :
@@ -2134,35 +2233,35 @@ namespace XFS4IoTServer
                                 }),
                             Tilt: storage.Value.Unit.Status.TiltState switch
                             {
-                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Fault,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Tilted,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.NotTilted,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TiltStateEnum.Disabled,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Fault,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Tilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Tilted,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.NotTilted => XFS4IoT.BanknoteNeutralization.TiltStateEnum.NotTilted,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TiltStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TiltStateEnum.Disabled,
                                 _ => null,
                             },
                             Temperature: storage.Value.Unit.Status.TemperatureState switch
                             {
-                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Fault,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooCold,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Ok,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.TooHot,
-                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.TemperatureStateEnum.Disabled,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Fault => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Fault,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooCold => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooCold,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Healthy => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Ok,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.TooHot => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.TooHot,
+                                XFS4IoTFramework.Common.IBNSStatusClass.TemperatureStateEnum.Disabled => XFS4IoT.BanknoteNeutralization.TemperatureStateEnum.Disabled,
                                 _ => null,
                             },
                             Lid: storage.Value.Unit.Status.LidStatus switch
                             {
-                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Fault,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Opened => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Opened,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Closed => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Closed,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.LidEnum.Disabled,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Fault,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Opened => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Opened,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Closed => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Closed,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.LidStatusEnum.Disabled => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.LidEnum.Disabled,
                                 _ => null,
                             },
                             NeutralizationTrigger: storage.Value.Unit.Status.NeutralizationTrigger switch
                             {
-                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Initializing => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Initializing,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Ready => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Ready,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Disabled => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Disabled,
-                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Fault => XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Fault,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Initializing => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Initializing,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Ready => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Ready,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Disabled => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Disabled,
+                                XFS4IoTFramework.Storage.IBNSStatusClass.NeutralizationTriggerEnum.Fault => XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass.NeutralizationTriggerEnum.Fault,
                                 _ => null,
                             },
                             StorageUnitIdentifier: storage.Value.Unit.Status.StorageUnitIdentifier
@@ -2231,7 +2330,7 @@ namespace XFS4IoTServer
                 XFS4IoT.Check.StorageClass thisCheckStorage = null;
                 XFS4IoT.Deposit.StorageClass thisDepositStorage = null;
                 XFS4IoT.Printer.StorageClass thisPrinterStorage = null;
-                XFS4IoT.IntelligentBanknoteNeutralization.StorageUnitStatusClass thisIBNSStorage = null;
+                XFS4IoT.BanknoteNeutralization.StorageUnitStatusClass thisIBNSStorage = null;
 
                 if (cashStorage.ContainsKey(storage.Key))
                 {
@@ -2291,20 +2390,23 @@ namespace XFS4IoTServer
         {
             foreach (var unit in CardUnits)
             {
+                unit.Value.StorageId = unit.Key;
                 unit.Value.Unit.Status.StorageId = unit.Key;
                 unit.Value.PropertyChanged += StorageChangedEventFowarder;
                 unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
             }
             foreach (var unit in CashUnits)
             {
-                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.StorageId = unit.Key;
                 unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.StorageId = unit.Key;
                 unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
             }
             foreach (var unit in CheckUnits)
             {
-                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.StorageId = unit.Key;
                 unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.StorageId = unit.Key;
                 unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
                 unit.Value.Unit.Status.CheckInCounts.StorageId = unit.Key;
                 unit.Value.Unit.Status.CheckInCounts.PropertyChanged += StorageChangedEventFowarder;
@@ -2319,14 +2421,18 @@ namespace XFS4IoTServer
             }
             foreach (var unit in IBNSUnits)
             {
-                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.StorageId = unit.Key;
                 unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.StorageId = unit.Key;
                 unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.PowerInfo.StorageId = unit.Key;
+                unit.Value.Unit.Status.PowerInfo.PropertyChanged += StorageChangedEventFowarder;
             }
             foreach (var unit in DepositUnits)
             {
-                unit.Value.Unit.Status.StorageId = unit.Key;
+                unit.Value.StorageId = unit.Key;
                 unit.Value.PropertyChanged += StorageChangedEventFowarder;
+                unit.Value.Unit.Status.StorageId = unit.Key;
                 unit.Value.Unit.Status.PropertyChanged += StorageChangedEventFowarder;
             }
         }

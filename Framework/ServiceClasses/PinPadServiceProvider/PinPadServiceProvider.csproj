@@ -44,7 +44,7 @@
     <ProjectReference Include="..\..\Server\Server.csproj" />
     <ProjectReference Include="..\CommonServiceProvider\CommonServiceProvider.csproj" />
     <ProjectReference Include="..\CryptoServiceProvider\CryptoServiceProvider.csproj" />
-    <ProjectReference Include="..\GermanSpecificServiceProvider\GermanSpecificServiceProvider.csproj" />
+    <ProjectReference Include="..\GermanServiceProvider\GermanServiceProvider.csproj" />
     <ProjectReference Include="..\KeyboardServiceProvider\KeyboardServiceProvider.csproj" />
     <ProjectReference Include="..\KeyManagementServiceProvider\KeyManagementServiceProvider.csproj" />
 	<ProjectReference Include="..\LightsServiceProvider\LightsServiceProvider.csproj" />

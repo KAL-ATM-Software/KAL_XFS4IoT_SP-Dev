@@ -30,7 +30,7 @@ namespace XFS4IoT.Common.Events
         public sealed class PayloadData : MessagePayloadBase
         {
 
-            public PayloadData(StatusPropertiesChangedClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null)
+            public PayloadData(StatusPropertiesChangedClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null, BanknoteNeutralization.StatusClass BanknoteNeutralization = null)
                 : base()
             {
                 this.Common = Common;
@@ -53,6 +53,7 @@ namespace XFS4IoT.Common.Events
                 this.VendorMode = VendorMode;
                 this.VendorApplication = VendorApplication;
                 this.PowerManagement = PowerManagement;
+                this.BanknoteNeutralization = BanknoteNeutralization;
             }
 
             [DataMember(Name = "common")]
@@ -114,6 +115,9 @@ namespace XFS4IoT.Common.Events
 
             [DataMember(Name = "powerManagement")]
             public PowerManagement.StatusClass PowerManagement { get; init; }
+
+            [DataMember(Name = "banknoteNeutralization")]
+            public BanknoteNeutralization.StatusClass BanknoteNeutralization { get; init; }
 
         }
 

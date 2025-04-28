@@ -146,12 +146,12 @@ namespace XFS4IoTFramework.Common
                 supportedInterfaces.Add(InterfaceClass.NameEnum.PowerManagement);
             }
             // IBNS media interface
-            if (Common.CommonCapabilities.IntelligentBanknoteNeutralizationInterface is not null)
+            if (Common.CommonCapabilities.BanknoteNeutralizationInterface is not null)
             {
                 supportedInterfaces.Add(InterfaceClass.NameEnum.BanknoteNeutralization);
             }
             // German specific interface
-            if (Common.CommonCapabilities.GermanSpecificInterface is not null)
+            if (Common.CommonCapabilities.GermanInterface is not null)
             {
                 supportedInterfaces.Add(InterfaceClass.NameEnum.German);
             }
@@ -1705,10 +1705,10 @@ namespace XFS4IoTFramework.Common
                     );
             }
 
-            XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass ibns = null;
+            XFS4IoT.BanknoteNeutralization.CapabilitiesClass ibns = null;
             if (Common.IBNSCapabilities is not null)
             {
-                Dictionary<string, XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.CustomInputsClass> customInputCapabilities = null;
+                Dictionary<string, XFS4IoT.BanknoteNeutralization.CapabilitiesClass.CustomInputsClass> customInputCapabilities = null;
                 if (Common.IBNSCapabilities.CustomInputStatus is not null &&
                     Common.IBNSCapabilities.CustomInputStatus.Count > 0)
                 {
@@ -1726,12 +1726,12 @@ namespace XFS4IoTFramework.Common
                         (customInputCapabilities ??= []).Add(inputState.Key.ToCamelCase(), new(inputState.Value.ActiveInput));
                     }
                 }
-                ibns = new XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass(
+                ibns = new XFS4IoT.BanknoteNeutralization.CapabilitiesClass(
                     Mode: Common.IBNSCapabilities.Mode switch
                     {
-                        IBNSCapabilitiesClass.ModeEnum.ClientControlled => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.ClientControlled,
-                        IBNSCapabilitiesClass.ModeEnum.VendorSpecific => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.VendorSpecific,
-                        IBNSCapabilitiesClass.ModeEnum.Autonomous => XFS4IoT.IntelligentBanknoteNeutralization.CapabilitiesClass.ModeEnum.Autonomous,
+                        IBNSCapabilitiesClass.ModeEnum.ClientControlled => XFS4IoT.BanknoteNeutralization.CapabilitiesClass.ModeEnum.ClientControlled,
+                        IBNSCapabilitiesClass.ModeEnum.VendorSpecific => XFS4IoT.BanknoteNeutralization.CapabilitiesClass.ModeEnum.VendorSpecific,
+                        IBNSCapabilitiesClass.ModeEnum.Autonomous => XFS4IoT.BanknoteNeutralization.CapabilitiesClass.ModeEnum.Autonomous,
                         _ => throw new InternalErrorException($"Unexpected IBNS mode specified. {Common.IBNSCapabilities.Mode}")
                     },
                     GasSensor: Common.IBNSCapabilities.GasSensor is true ? true : null,
@@ -1744,10 +1744,10 @@ namespace XFS4IoTFramework.Common
                     CustomInputs: customInputCapabilities);
             }
 
-            XFS4IoT.GermanSpecific.CapabilitiesClass germanSpecific = null;
-            if (Common.GermanSpecificCapabilities is not null)
+            XFS4IoT.German.CapabilitiesClass germanSpecific = null;
+            if (Common.GermanCapabilities is not null)
             {
-                germanSpecific = new(Common.GermanSpecificCapabilities.HSMVendor);
+                germanSpecific = new(Common.GermanCapabilities.HSMVendor);
             }
             
             XFS4IoT.Deposit.CapabilitiesClass deposit = null;

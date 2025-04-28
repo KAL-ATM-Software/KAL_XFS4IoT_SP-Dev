@@ -25,7 +25,7 @@ namespace XFS4IoTServer
     /// <summary>
     /// Default implimentation of a dispenser service provider with IBNS compound device
     /// </summary>
-    public class CashDispenserIBNSServiceProvider : ServiceProvider, ICashDispenserService, ICashManagementService, ICommonService, IStorageService, ILightsService, IIntelligentBanknoteNeutralizationService
+    public class CashDispenserIBNSServiceProvider : ServiceProvider, ICashDispenserService, ICashManagementService, ICommonService, IStorageService, ILightsService, IBanknoteNeutralizationService
     {
         public CashDispenserIBNSServiceProvider(
             EndpointDetails endpointDetails,
@@ -44,14 +44,14 @@ namespace XFS4IoTServer
             StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);
             CashManagementService = new CashManagementServiceClass(this, logger, persistentData);
             CashDispenserService = new CashDispenserServiceClass(this, logger, persistentData);
-            IBNSService = new IntelligentBanknoteNeutralizationServiceClass(this, logger, persistentData);
+            IBNSService = new BanknoteNeutralizationServiceClass(this, logger, persistentData);
         }
 
         private readonly CashDispenserServiceClass CashDispenserService;
         private readonly CashManagementServiceClass CashManagementService;
         private readonly CommonServiceClass CommonService;
         private readonly StorageServiceClass StorageService;
-        private readonly IntelligentBanknoteNeutralizationServiceClass IBNSService;
+        private readonly BanknoteNeutralizationServiceClass IBNSService;
 
         #region CashManagement unsolicited events
 
@@ -274,6 +274,15 @@ namespace XFS4IoTServer
         /// Store classification list persistently
         /// </summary>
         public void StoreItemClassificationList() => CashManagementService.StoreItemClassificationList();
+
+        #endregion
+
+        #region IBNS Service
+
+        /// <summary>
+        /// Set storage status from the device class
+        /// </summary>
+        public void UpdateStorageStatus(string storageId, UnitStorageBase.StatusEnum storageStatus) => IBNSService.UpdateStorageStatus(storageId, storageStatus);
 
         #endregion
     }

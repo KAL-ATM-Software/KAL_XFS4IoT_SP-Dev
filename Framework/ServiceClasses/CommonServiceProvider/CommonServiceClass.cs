@@ -144,7 +144,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Stores German DK capabilities
         /// </summary>
-        public GermanSpecificCapabilitiesClass GermanSpecificCapabilities { get; set; } = null;
+        public GermanCapabilitiesClass GermanCapabilities { get; set; } = null;
 
         /// <summary>
         /// Stores Deposit capabilities
@@ -513,31 +513,31 @@ namespace XFS4IoTServer
                     CommonCapabilities.PowerManagementInterface.Events);
             }
             // IntelligentBanknoteNeutralization interface supported (IBNS)
-            if (CommonCapabilities.IntelligentBanknoteNeutralizationInterface is not null)
+            if (CommonCapabilities.BanknoteNeutralizationInterface is not null)
             {
                 supportedServiceMessages.AddMatches(
                     InterfaceClass.NameEnum.BanknoteNeutralization,
                     MessageTypeInfo.MessageTypeEnum.Command,
                     supportedFrameworkMessages,
-                    CommonCapabilities.IntelligentBanknoteNeutralizationInterface.Commands);
+                    CommonCapabilities.BanknoteNeutralizationInterface.Commands);
                 supportedServiceMessages.AddMatches(
                     InterfaceClass.NameEnum.BanknoteNeutralization,
                     MessageTypeInfo.MessageTypeEnum.Event,
                     supportedFrameworkMessages,
-                    CommonCapabilities.IntelligentBanknoteNeutralizationInterface.Events);
+                    CommonCapabilities.BanknoteNeutralizationInterface.Events);
             }
-            if (CommonCapabilities.GermanSpecificInterface is not null)
+            if (CommonCapabilities.GermanInterface is not null)
             {
                 supportedServiceMessages.AddMatches(
                     InterfaceClass.NameEnum.German,
                     MessageTypeInfo.MessageTypeEnum.Command,
                     supportedFrameworkMessages,
-                    CommonCapabilities.GermanSpecificInterface.Commands);
+                    CommonCapabilities.GermanInterface.Commands);
                 supportedServiceMessages.AddMatches(
                     InterfaceClass.NameEnum.German,
                     MessageTypeInfo.MessageTypeEnum.Event,
                     supportedFrameworkMessages,
-                    CommonCapabilities.GermanSpecificInterface.Events);
+                    CommonCapabilities.GermanInterface.Events);
             }
             if (CommonCapabilities.DepositInterface is not null)
             {

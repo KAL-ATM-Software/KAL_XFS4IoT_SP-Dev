@@ -27,7 +27,7 @@ namespace XFS4IoT.Common.Completions
         public sealed class PayloadData : MessagePayload
         {
 
-            public PayloadData(StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, IntelligentBanknoteNeutralization.StatusClass BanknoteNeutralization = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null)
+            public PayloadData(StatusPropertiesClass Common = null, CardReader.StatusClass CardReader = null, CashAcceptor.StatusClass CashAcceptor = null, CashDispenser.StatusClass CashDispenser = null, CashManagement.StatusClass CashManagement = null, Check.StatusClass Check = null, MixedMedia.StatusClass MixedMedia = null, KeyManagement.StatusClass KeyManagement = null, Keyboard.StatusClass Keyboard = null, TextTerminal.StatusClass TextTerminal = null, Printer.StatusClass Printer = null, BarcodeReader.StatusClass BarcodeReader = null, Biometric.StatusClass Biometric = null, Camera.StatusClass Camera = null, Lights.StatusClass Lights = null, BanknoteNeutralization.StatusClass BanknoteNeutralization = null, Auxiliaries.StatusClass Auxiliaries = null, Deposit.StatusClass Deposit = null, VendorMode.StatusClass VendorMode = null, VendorApplication.StatusClass VendorApplication = null, PowerManagement.StatusClass PowerManagement = null)
                 : base()
             {
                 this.Common = Common;
@@ -99,7 +99,7 @@ namespace XFS4IoT.Common.Completions
             public Lights.StatusClass Lights { get; init; }
 
             [DataMember(Name = "banknoteNeutralization")]
-            public IntelligentBanknoteNeutralization.StatusClass BanknoteNeutralization { get; init; }
+            public BanknoteNeutralization.StatusClass BanknoteNeutralization { get; init; }
 
             [DataMember(Name = "auxiliaries")]
             public Auxiliaries.StatusClass Auxiliaries { get; init; }

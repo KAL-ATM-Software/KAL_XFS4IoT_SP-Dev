@@ -131,12 +131,12 @@ namespace XFS4IoTServer
         /// <summary>
         /// Return forms loaded
         /// </summary>
-        public Dictionary<string, Form> GetForms() => Forms.ToDictionary(x => x.Key, x => x.Value);
+        public Dictionary<string, Form> GetForms() => Forms;
 
         /// <summary>
         /// Return a list of medias loaded
         /// </summary>
-        public Dictionary<string, Media> GetMedias() => Medias.ToDictionary(x => x.Key, x => x.Value);
+        public Dictionary<string, Media> GetMedias() => Medias;
 
         /// <summary>
         /// The method can convert print job to a single image that can be sent to the printer.

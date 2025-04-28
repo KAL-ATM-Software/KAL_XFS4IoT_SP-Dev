@@ -17,7 +17,7 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTFramework.PinPad;
 using XFS4IoTFramework.Keyboard;
-using XFS4IoTFramework.GermanSpecific;
+using XFS4IoTFramework.German;
 using System.ComponentModel;
 
 namespace XFS4IoTServer
@@ -25,7 +25,7 @@ namespace XFS4IoTServer
     /// <summary>
     /// Default implimentation of a pinpad service provider with DK feature. 
     /// </summary>
-    public class PinPadDKServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService, IGermanSpecificService
+    public class PinPadDKServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService, IGermanService
     {
         public PinPadDKServiceProvider(
             EndpointDetails endpointDetails, 
@@ -41,7 +41,7 @@ namespace XFS4IoTServer
                   XFSConstants.ServiceClass.Keyboard, 
                   XFSConstants.ServiceClass.KeyManagement, 
                   XFSConstants.ServiceClass.PinPad, 
-                  XFSConstants.ServiceClass.GermanSpecific],
+                  XFSConstants.ServiceClass.German],
                  device,
                  logger)
         {
@@ -50,7 +50,7 @@ namespace XFS4IoTServer
             CryptoService = new CryptoServiceClass(this, logger);
             KeyboardService = new KeyboardServiceClass(this, logger);
             PinPadService = new PinPadServiceClass(this, logger);
-            DKService = new GermanSpecificServiceClass(this, logger);
+            DKService = new GermanServiceClass(this, logger);
         }
 
         private readonly PinPadServiceClass PinPadService;
@@ -58,7 +58,7 @@ namespace XFS4IoTServer
         private readonly KeyboardServiceClass KeyboardService;
         private readonly CryptoServiceClass CryptoService;
         private readonly CommonServiceClass CommonService;
-        private readonly GermanSpecificServiceClass DKService;
+        private readonly GermanServiceClass DKService;
 
         #region KeyManagement unsolicited events
         public Task InitializedEvent() => KeyManagementService.InitializedEvent();
@@ -120,6 +120,12 @@ namespace XFS4IoTServer
         /// Keyboard Status
         /// </summary>
         public KeyboardStatusClass KeyboardStatus { get => CommonService.KeyboardStatus; set => CommonService.KeyboardStatus = value; }
+
+        /// <summary>
+        /// German capabilities
+        /// </summary>
+        public GermanCapabilitiesClass GermanCapabilities { get => CommonService.GermanCapabilities; set => CommonService.GermanCapabilities = value; }
+
 
         #endregion
 
@@ -220,6 +226,29 @@ namespace XFS4IoTServer
         /// Keyboard layout device supported
         /// </summary>
         public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get => KeyboardService.KeyboardLayouts; set { } }
+
+        #endregion
+
+        #region German DK unsolicited events
+
+        public Task HSMTDataChangedEvent(
+            string TerminalId,
+            string BankCode,
+            string OnlineDateAndtime,
+            string ZKAId,
+            int? HSMStatus,
+            string HSMManufacturerId,
+            string HSMSerialNumber) => DKService.HSMTDataChangedEvent(
+            new(
+                TerminalId: TerminalId,
+                BankCode: BankCode,
+                OnlineDateAndTime: OnlineDateAndtime,
+                ZkaId: ZKAId,
+                HsmStatus: HSMStatus,
+                HsmManufacturerId: HSMManufacturerId,
+                HsmSerialNumber: HSMSerialNumber));
+
+        public Task OPTRequiredEvent() => DKService.OPTRequiredEvent();
 
         #endregion
     }
