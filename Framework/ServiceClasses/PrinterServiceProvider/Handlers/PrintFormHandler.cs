@@ -480,11 +480,9 @@ namespace XFS4IoTFramework.Printer
             // For ROWCOLUMN Forms, all chars must be aligned on ROWCOLUMN boundaries.
             // For other forms don't care.  
             // Calculate RowUnit and ColumnUnit which are minimum char spacing in order to 
-            // check & ensure this alignment.
+            // check & ensure this alignment with in the GetTaskDimensions method.
             if (form.Base == Form.BaseEnum.ROWCOLUMN)
             {
-                (Device.DotsPerRowTop % Device.DotsPerRowBottom == 0).IsTrue($"Unexpected top and bottom (Row) in dots reported by the device class. DotsPerRowTop:{Device.DotsPerRowTop}, DotsPerRowBottom:{Device.DotsPerRowBottom}");
-                (Device.DotsPerColumnTop % Device.DotsPerColumnBottom == 0).IsTrue($"Unexpected top and bottom (Column) in dots reported by the device class. DotsPerColumnTop:{Device.DotsPerColumnTop}, DotsPerColumnBottom:{Device.DotsPerColumnBottom}");
                 RowUnit = Device.DotsPerRowTop / Device.DotsPerRowBottom;
                 ColumnUnit = Device.DotsPerColumnTop / Device.DotsPerColumnBottom;
             }

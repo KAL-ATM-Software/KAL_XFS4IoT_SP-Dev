@@ -166,7 +166,7 @@ namespace XFS4IoTFramework.Printer
                 return new(
                     new(ErrorCode: GetQueryMediaCompletion.PayloadData.ErrorCodeEnum.MediaNotFound),
                     MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                    $"Media {Name} is invalid.");
+                    $"Media {Name} is invalid. {result.Reason}");
             }
 
             string paperSource;

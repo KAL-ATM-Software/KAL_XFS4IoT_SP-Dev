@@ -361,7 +361,7 @@ namespace XFS4IoTFramework.Printer
                 return new(
                     new(ErrorCode: GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
                     MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                    $"Form {Name} is not supported by the device.");
+                    $"Form {Name} is not supported by the device. {result.Reason}");
             }
 
             Dictionary<string, GetQueryFormCompletion.PayloadData.FormClass.FieldsClass> fields = [];
@@ -587,7 +587,7 @@ namespace XFS4IoTFramework.Printer
                     return new(
                         new(GetQueryFormCompletion.PayloadData.ErrorCodeEnum.FormNotFound),
                         MessageHeader.CompletionCodeEnum.CommandErrorCode,
-                        $"Specified field {field.Key} is invalid. {result.Reason}");
+                        $"Specified field {field.Key} is invalid. {fieldResult.Reason}");
                 }
             }
 
@@ -964,7 +964,7 @@ namespace XFS4IoTFramework.Printer
             if (!rules.ValidAccess.HasFlag(Fields[FieldName].Access))
             {
                 return new(ValidationResultClass.ValidateResultEnum.Invalid,
-                           $"SIDE is not valid.");
+                           $"ACCESS is not valid.");
             }
 
             // Check OVERWRITE
