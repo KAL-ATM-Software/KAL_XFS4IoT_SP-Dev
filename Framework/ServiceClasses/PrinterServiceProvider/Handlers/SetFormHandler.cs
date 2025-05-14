@@ -416,6 +416,21 @@ namespace XFS4IoTFramework.Printer
                     );
             }
 
+            // Validate form and field agaist the form rule reported by the device class.
+            var valid = form.ValidateForm(Device);
+            if (valid.Result != ValidationResultClass.ValidateResultEnum.Valid)
+            {
+                return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(new SetFormCompletion.PayloadData(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid), MessageHeader.CompletionCodeEnum.CommandErrorCode, $"Invalid form: {valid.Reason}"));
+            }
+            foreach (var field in form.Fields)
+            {
+                valid = form.ValidateField(field.Key, Device);
+                if (valid.Result != ValidationResultClass.ValidateResultEnum.Valid)
+                {
+                    return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(new SetFormCompletion.PayloadData(SetFormCompletion.PayloadData.ErrorCodeEnum.FormInvalid), MessageHeader.CompletionCodeEnum.CommandErrorCode, $"Invalid field: {field.Key} {valid.Reason}"));
+                }
+            }
+
             Printer.SetForm(setForm.Payload.Name, form);
 
             return Task.FromResult<CommandResult<SetFormCompletion.PayloadData>>(new(MessageHeader.CompletionCodeEnum.Success));

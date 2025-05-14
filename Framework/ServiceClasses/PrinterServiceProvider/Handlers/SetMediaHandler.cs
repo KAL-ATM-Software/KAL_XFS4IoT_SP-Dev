@@ -153,6 +153,13 @@ namespace XFS4IoTFramework.Printer
                 payloadMedia.Lines ?? 0,
                 customSource);
 
+            // Validate media agaist the media rule reported by the device class.
+            var valid = media.ValidateMedia(Device);
+            if (valid.Result != ValidationResultClass.ValidateResultEnum.Valid)
+            {
+                return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(new SetMediaCompletion.PayloadData(SetMediaCompletion.PayloadData.ErrorCodeEnum.MediaInvalid), MessageHeader.CompletionCodeEnum.CommandErrorCode, $"Invalid media: {valid.Reason}"));
+            }
+
             Printer.SetMedia(setMedia.Payload.Name, media);
 
             return Task.FromResult<CommandResult<SetMediaCompletion.PayloadData>>(new(MessageHeader.CompletionCodeEnum.Success));
