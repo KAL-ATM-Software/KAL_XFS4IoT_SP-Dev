@@ -141,7 +141,7 @@ namespace XFS4IoTServer
 
             if (!newConfiguration)
             {
-                bool identical = newCardUnits?.Count == newCardUnits.Count;
+                bool identical = newCardUnits?.Count == CardUnits.Count;
                 if (newCardUnits is not null)
                 {
                     foreach (var unit in newCardUnits)
@@ -1767,7 +1767,7 @@ namespace XFS4IoTServer
 
             if (!newConfiguration)
             {
-                bool identical = newDepositUnits?.Count == PrinterUnits.Count;
+                bool identical = newDepositUnits?.Count == DepositUnits.Count;
                 if (newDepositUnits is not null)
                 {
                     foreach (var unit in newDepositUnits)
