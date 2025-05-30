@@ -47,7 +47,7 @@ namespace XFS4IoTFramework.German
             Logger.Log(Constants.DeviceClass, $"GermanDev.SecureMsgSend() -> {result.CompletionCode}");
 
             return new(
-                Payload: result.ErrorCode is null ? null :
+                Payload: result.ErrorCode is null && (result.Message is null || result.Message?.Count == 0) ? null :
                 new(
                     ErrorCode: result.ErrorCode switch
                     {
@@ -58,7 +58,7 @@ namespace XFS4IoTFramework.German
                         SecureMsgSendResponse.ErrorCodeEnum.ContentInvalid => SecureMsgSendCompletion.PayloadData.ErrorCodeEnum.ContentInvalid,
                         SecureMsgSendResponse.ErrorCodeEnum.AccessDenied => SecureMsgSendCompletion.PayloadData.ErrorCodeEnum.AccessDenied,
                         SecureMsgSendResponse.ErrorCodeEnum.NoPin => SecureMsgSendCompletion.PayloadData.ErrorCodeEnum.NoPin,
-                        _ => throw new InternalErrorException($"Unexpected error code. {result.ErrorCode}"),
+                        _ => null,
                     },
                     Msg: result.Message),
                 CompletionCode: result.CompletionCode,
