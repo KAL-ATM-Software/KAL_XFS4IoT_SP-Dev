@@ -410,9 +410,19 @@ namespace XFS4IoTFramework.CashDispenser
 
             // Update an internal present status
             if (result.CompletionCode != MessageHeader.CompletionCodeEnum.Success)
+            {
                 CashDispenser.LastCashDispenserPresentStatus[position].Status = CashDispenserPresentStatus.PresentStatusEnum.Unknown;
+            }
             else
+            {
                 CashDispenser.LastCashDispenserPresentStatus[position].LastDenomination = denomToDispense.Denomination;
+                if (!Common.CashDispenserCapabilities.IntermediateStacker &&
+                    Common.CashDispenserCapabilities.ShutterControl)
+                {
+                    // it's a spray dispenser and dispense operation presents notes.
+                    CashDispenser.LastCashDispenserPresentStatus[position].Status = CashDispenserPresentStatus.PresentStatusEnum.Presented;
+                }
+            }
 
             if (presentStatus is not null)
             {
