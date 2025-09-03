@@ -37,28 +37,8 @@ namespace XFS4IoTServer
 
                     if (propertyInfo.PropertyName == nameof(cardStatus.Count) ||
                         propertyInfo.PropertyName == nameof(cardStatus.InitialCount) ||
-                        propertyInfo.PropertyName == nameof(cardStatus.RetainCount))
-                    {
-                        await CountsChangedEvent(
-                            Payload: new()
-                            {
-                                ExtendedProperties = new Dictionary<string, StorageUnitClass>()
-                                {
-                                {
-                                    cardStatus.StorageId,
-                                    new StorageUnitClass(
-                                        Card: new XFS4IoT.CardReader.StorageClass(
-                                            Status: new XFS4IoT.CardReader.StorageStatusClass(
-                                                InitialCount: (propertyInfo.PropertyName == nameof(cardStatus.InitialCount)) ? cardStatus.InitialCount : null,
-                                                Count: (propertyInfo.PropertyName == nameof(cardStatus.Count)) ? cardStatus.Count : null,
-                                                RetainCount: (propertyInfo.PropertyName == nameof(cardStatus.RetainCount)) ? cardStatus.RetainCount : null)
-                                            )
-                                        )
-                                }
-                                }
-                            });
-                    }
-                    else if (propertyInfo.PropertyName == nameof(cardStatus.ReplenishmentStatus))
+                        propertyInfo.PropertyName == nameof(cardStatus.RetainCount) ||
+                        propertyInfo.PropertyName == nameof(cardStatus.ReplenishmentStatus))
                     {
                         await StorageChangedEvent(
                             Payload: new()
@@ -70,7 +50,10 @@ namespace XFS4IoTServer
                                     new StorageUnitClass(
                                         Card: new XFS4IoT.CardReader.StorageClass(
                                             Status: new XFS4IoT.CardReader.StorageStatusClass(
-                                                ReplenishmentStatus: cardStatus.ReplenishmentStatus switch
+                                                InitialCount: (propertyInfo.PropertyName == nameof(cardStatus.InitialCount)) ? cardStatus.InitialCount : null,
+                                                Count: (propertyInfo.PropertyName == nameof(cardStatus.Count)) ? cardStatus.Count : null,
+                                                RetainCount: (propertyInfo.PropertyName == nameof(cardStatus.RetainCount)) ? cardStatus.RetainCount : null,
+                                                ReplenishmentStatus: propertyInfo.PropertyName == nameof(cardStatus.ReplenishmentStatus) ? cardStatus.ReplenishmentStatus switch
                                                 {
                                                     CardStatusClass.ReplenishmentStatusEnum.Empty => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Empty,
                                                     CardStatusClass.ReplenishmentStatusEnum.Low => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Low,
@@ -78,7 +61,7 @@ namespace XFS4IoTServer
                                                     CardStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.High,
                                                     CardStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.CardReader.StorageStatusClass.ReplenishmentStatusEnum.Ok,
                                                     _ => throw new InternalErrorException($"Unknown replenishment status received while handing StorageChangedEvent {cardStatus.ReplenishmentStatus}")
-                                                })
+                                                } : null)
                                             )
                                         )
                                 }
@@ -436,27 +419,8 @@ namespace XFS4IoTServer
                     }
 
                     if (propertyInfo.PropertyName == nameof(printerStatus.InCount) ||
-                        propertyInfo.PropertyName == nameof(printerStatus.InitialCount))
-                    {
-                        await CountsChangedEvent(
-                            Payload: new()
-                            {
-                                ExtendedProperties = new Dictionary<string, StorageUnitClass>()
-                                {
-                                {
-                                    printerStatus.StorageId,
-                                    new StorageUnitClass(
-                                        Printer: new XFS4IoT.Printer.StorageClass(
-                                            Status: new XFS4IoT.Printer.StorageStatusClass(
-                                                Initial: (propertyInfo.PropertyName == nameof(printerStatus.InitialCount)) ? printerStatus.InitialCount : null,
-                                                In: (propertyInfo.PropertyName == nameof(printerStatus.InCount)) ? printerStatus.InCount : null)
-                                            )
-                                        )
-                                }
-                                }
-                            });
-                    }
-                    else if (propertyInfo.PropertyName == nameof(printerStatus.ReplenishmentStatus))
+                        propertyInfo.PropertyName == nameof(printerStatus.InitialCount) ||
+                        propertyInfo.PropertyName == nameof(printerStatus.ReplenishmentStatus))
                     {
                         await StorageChangedEvent(
                             Payload: new()
@@ -468,14 +432,16 @@ namespace XFS4IoTServer
                                     new StorageUnitClass(
                                         Printer: new XFS4IoT.Printer.StorageClass(
                                             Status: new XFS4IoT.Printer.StorageStatusClass(
-                                                ReplenishmentStatus: printerStatus.ReplenishmentStatus switch
+                                                In: (propertyInfo.PropertyName == nameof(printerStatus.InCount)) ? printerStatus.InCount : null,
+                                                Initial: (propertyInfo.PropertyName == nameof(printerStatus.InitialCount)) ? printerStatus.InitialCount : null,
+                                                ReplenishmentStatus: propertyInfo.PropertyName == nameof(printerStatus.ReplenishmentStatus) ? printerStatus.ReplenishmentStatus switch
                                                 {
                                                     XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Unknown => XFS4IoT.Printer.ReplenishmentStatusEnum.Unknown,
                                                     XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Full => XFS4IoT.Printer.ReplenishmentStatusEnum.Full,
                                                     XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.High => XFS4IoT.Printer.ReplenishmentStatusEnum.High,
                                                     XFS4IoTFramework.Storage.PrinterStatusClass.ReplenishmentStatusEnum.Healthy => XFS4IoT.Printer.ReplenishmentStatusEnum.Ok,
                                                     _ => throw new InternalErrorException($"Unknown replenishment status received while handing StorageChangedEvent {printerStatus.ReplenishmentStatus}")
-                                                }
+                                                } : null
                                                 )
                                             )
                                         )

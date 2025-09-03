@@ -501,7 +501,7 @@ namespace XFS4IoTFramework.KeyManagement
         /// <summary>
         /// KCV mode to generate
         /// </summary>
-        public KeyCheckValueEnum KVCMode { get; init; }
+        public KeyCheckValueEnum KVCMode { get; init; } = KCVMode;
     }
 
     public sealed class GenerateKCVResult : DeviceResult
