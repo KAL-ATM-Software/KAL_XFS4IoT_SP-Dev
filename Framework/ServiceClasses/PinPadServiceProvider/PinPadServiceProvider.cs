@@ -17,53 +17,65 @@ using XFS4IoTFramework.Common;
 using XFS4IoTFramework.KeyManagement;
 using XFS4IoTFramework.PinPad;
 using XFS4IoTFramework.Keyboard;
+using XFS4IoTFramework.German;
+using XFS4IoTFramework.Crypto;
 using System.ComponentModel;
 
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a pinpad service provider. 
+    /// Default implimentation of a pinpad service provider with DK feature. 
     /// </summary>
-    /// <remarks> 
-    /// This represents a typical pinpad, which implements the PinPad, KeyManagement, Keyboard, Crypto and Common interfaces. 
-    /// It's possible to create other service provider types by combining multiple service classes in the 
-    /// same way. 
-    /// </remarks>
-    public class PinPadServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService
+    public class PinPadServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService, IGermanService
     {
         public PinPadServiceProvider(
-            EndpointDetails endpointDetails, 
-            string ServiceName, 
-            IDevice device, 
-            ILogger logger, 
+            EndpointDetails endpointDetails,
+            string ServiceName,
+            IDevice device,
+            ILogger logger,
             IPersistentData persistentData)
             :
             base(endpointDetails,
                  ServiceName,
-                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Crypto, XFSConstants.ServiceClass.Keyboard, XFSConstants.ServiceClass.KeyManagement, XFSConstants.ServiceClass.PinPad],
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.PinPad, XFSConstants.ServiceClass.KeyManagement, XFSConstants.ServiceClass.Keyboard ],
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);
-            CryptoService = new CryptoServiceClass(this, logger);
-            KeyboardService = new KeyboardServiceClass(this, logger);
             PinPadService = new PinPadServiceClass(this, logger);
+            KeyboardService = new KeyboardServiceClass(this, logger);
+
+            List<XFSConstants.ServiceClass> services = [.. ServiceClasses];
+            // Check optional services
+            if (device as ICryptoDevice is not null)
+            {
+                CryptoService = new CryptoServiceClass(this, logger);
+                services.Add(XFSConstants.ServiceClass.Crypto);
+            }
+            if (device as IGermanDevice is not null)
+            {
+                DKService = new GermanServiceClass(this, logger);
+                services.Add(XFSConstants.ServiceClass.German);
+            }
+
+            ServiceClasses = services;
         }
 
-        private readonly PinPadServiceClass PinPadService;
-        private readonly KeyManagementServiceClass KeyManagementService;
-        private readonly KeyboardServiceClass KeyboardService;
-        private readonly CryptoServiceClass CryptoService;
         private readonly CommonServiceClass CommonService;
-
+        // Optional services
+        private readonly PinPadServiceClass PinPadService = null;
+        private readonly KeyManagementServiceClass KeyManagementService = null;
+        private readonly KeyboardServiceClass KeyboardService = null;
+        private readonly CryptoServiceClass CryptoService = null;
+        private readonly GermanServiceClass DKService = null;
 
         #region KeyManagement unsolicited events
-        public Task InitializedEvent() => KeyManagementService.InitializedEvent();
+        public Task InitializedEvent() => KeyManagementService?.InitializedEvent();
 
-        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService.IllegalKeyAccessEvent(KeyName, ErrorCode);
+        public Task IllegalKeyAccessEvent(string KeyName, KeyAccessErrorCodeEnum ErrorCode) => KeyManagementService?.IllegalKeyAccessEvent(KeyName, ErrorCode);
 
-        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService.CertificateChangeEvent(CertificateChange);
+        public Task CertificateChangeEvent(CertificateChangeEnum CertificateChange) => KeyManagementService?.CertificateChangeEvent(CertificateChange);
 
         #endregion
 
@@ -119,6 +131,12 @@ namespace XFS4IoTServer
         /// </summary>
         public KeyboardStatusClass KeyboardStatus { get => CommonService.KeyboardStatus; set => CommonService.KeyboardStatus = value; }
 
+        /// <summary>
+        /// German capabilities
+        /// </summary>
+        public GermanCapabilitiesClass GermanCapabilities { get => CommonService.GermanCapabilities; set => CommonService.GermanCapabilities = value; }
+
+
         #endregion
 
         #region Key Management Service
@@ -126,17 +144,17 @@ namespace XFS4IoTServer
         /// <summary>
         /// Find keyslot available or being used
         /// </summary>
-        public int FindKeySlot(string KeyName) => KeyManagementService.FindKeySlot(KeyName);
+        public int FindKeySlot(string KeyName) => KeyManagementService?.FindKeySlot(KeyName) ?? throw new InternalErrorException($"{nameof(FindKeySlot)} is used when the service is not supported.");
 
         /// <summary>
         /// Stored key information of this device
         /// </summary>
-        public List<KeyDetail> GetKeyTable() => KeyManagementService.GetKeyTable();
+        public List<KeyDetail> GetKeyTable() => KeyManagementService?.GetKeyTable();
 
         /// <summary>
         /// Return detailed stored key information
         /// </summary>
-        public KeyDetail GetKeyDetail(string KeyName) => KeyManagementService.GetKeyDetail(KeyName);
+        public KeyDetail GetKeyDetail(string KeyName) => KeyManagementService?.GetKeyDetail(KeyName);
 
         /// <summary>
         /// Add new key into the collection and return key slot
@@ -198,7 +216,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Return list of PCI Security Standards Council PIN transaction security (PTS) certification held by the PIN device
         /// </summary>
-        public PCIPTSDeviceIdClass PCIPTSDeviceId { get => PinPadService.PCIPTSDeviceId; set { } }
+        public PCIPTSDeviceIdClass PCIPTSDeviceId { get => PinPadService?.PCIPTSDeviceId; set { } }
 
         #endregion
 
@@ -207,17 +225,40 @@ namespace XFS4IoTServer
         /// <summary>
         /// Function keys device supported
         /// </summary>
-        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeys { get => KeyboardService.SupportedFunctionKeys; set { } }
+        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeys { get => KeyboardService?.SupportedFunctionKeys; set { } }
 
         /// <summary>
         /// Function keys device supported with shift key
         /// </summary>
-        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeysWithShift { get => KeyboardService.SupportedFunctionKeysWithShift; set { } }
+        public Dictionary<EntryModeEnum, List<string>> SupportedFunctionKeysWithShift { get => KeyboardService?.SupportedFunctionKeysWithShift; set { } }
 
         /// <summary>
         /// Keyboard layout device supported
         /// </summary>
-        public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get => KeyboardService.KeyboardLayouts; set { } }
+        public Dictionary<EntryModeEnum, List<FrameClass>> KeyboardLayouts { get => KeyboardService?.KeyboardLayouts; set { } }
+
+        #endregion
+
+        #region German DK unsolicited events
+
+        public Task HSMTDataChangedEvent(
+            string TerminalId,
+            string BankCode,
+            string OnlineDateAndtime,
+            string ZKAId,
+            int? HSMStatus,
+            string HSMManufacturerId,
+            string HSMSerialNumber) => DKService.HSMTDataChangedEvent(
+            new(
+                TerminalId: TerminalId,
+                BankCode: BankCode,
+                OnlineDateAndTime: OnlineDateAndtime,
+                ZkaId: ZKAId,
+                HsmStatus: HSMStatus,
+                HsmManufacturerId: HSMManufacturerId,
+                HsmSerialNumber: HSMSerialNumber));
+
+        public Task OPTRequiredEvent() => DKService?.OPTRequiredEvent();
 
         #endregion
     }

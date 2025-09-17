@@ -7,28 +7,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XFS4IoT;
+using XFS4IoT.Common.Events;
+using XFS4IoTFramework.CashAcceptor;
+using XFS4IoTFramework.CashDispenser;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
-using XFS4IoTFramework.CashAcceptor;
-using XFS4IoT.Common.Events;
-using System.ComponentModel;
+using XFS4IoTFramework.BanknoteNeutralization;
+using XFS4IoTFramework.Check;
 
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a cash acceptor service provider. 
+    /// Default implimentation of a cash acceptor service provider.
+    /// This Service allows to combine CashDispenser for a cash recycler device, or 
+    /// CheckScanner for cash and check recycler configuration with IBNS.
     /// </summary>
-    /// <remarks> 
-    /// This represents a typical cash acceptor device, which only implements the CashAcceptor, CashManagement, Storage and Common interfaces. 
-    /// It's possible to create other service provider types by combining multiple service classes in the 
-    /// same way. 
-    /// </remarks>
-    public class CashAcceptorServiceProvider : ServiceProvider, ICashAcceptorService, ICashManagementService, ICommonService, IStorageService
+    public class CashAcceptorServiceProvider : ServiceProvider, ICashAcceptorService, ICashManagementService, ICommonService, IStorageService, ICashDispenserService, IBanknoteNeutralizationService, ICheckService
     {
         public CashAcceptorServiceProvider(
             EndpointDetails endpointDetails, 
@@ -47,12 +47,36 @@ namespace XFS4IoTServer
             StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);
             CashManagementService = new CashManagementServiceClass(this, logger, persistentData);
             CashAcceptor = new CashAcceptorServiceClass(this, logger);
+
+            List<XFSConstants.ServiceClass> services = [.. ServiceClasses];
+            // Check optional services
+            if (device as ICashDispenserDevice is not null)
+            {
+                CashDispenserService = new CashDispenserServiceClass(this, logger, persistentData);
+                services.Add(XFSConstants.ServiceClass.CashDispenser);
+            }
+            if (device as IBanknoteNeutralizationDevice is not null)
+            {
+                IBNSService = new BanknoteNeutralizationServiceClass(this, logger, persistentData);
+                services.Add(XFSConstants.ServiceClass.BanknoteNeutralization);
+            }
+            if (device as ICheckDevice is not null)
+            {
+                CheckService = new CheckServiceClass(this, logger, persistentData);
+                services.Add(XFSConstants.ServiceClass.Check);
+            }
+
+            ServiceClasses = services;
         }
 
         private readonly CashAcceptorServiceClass CashAcceptor;
         private readonly CashManagementServiceClass CashManagementService;
         private readonly StorageServiceClass StorageService;
         private readonly CommonServiceClass CommonService;
+        // Optional service
+        private readonly CashDispenserServiceClass CashDispenserService = null;
+        private readonly BanknoteNeutralizationServiceClass IBNSService = null;
+        private readonly CheckServiceClass CheckService = null;
 
         #region CashManagement unsolicited events
 
@@ -227,6 +251,8 @@ namespace XFS4IoTServer
 
         #endregion
 
+        #region CashAcceptor Service
+
         /// <summary>
         /// The information about the status of the currently active cash-in transaction or 
         /// in the case where no cash-in transaction is active the status of the most recently ended cash-in transaction. 
@@ -249,5 +275,61 @@ namespace XFS4IoTServer
         /// Which storage units can be specified as targets for a given source storage unit with the CashAcceptor.Replenish command
         /// </summary>
         public List<string> ReplenishTargets { get => CashAcceptor.ReplenishTargets; init { } }
+
+        #endregion
+
+        #region CashDispenser Service
+
+        /// <summary>
+        /// Add vendor specific mix algorithm
+        /// </summary>
+        /// <param name="mixId">ID for the mix</param>
+        /// <param name="mix">new mix algorithm to support for a customization</param>
+        public void AddMix(string mixId, Mix mix) => CashDispenserService?.AddMix(mixId, mix);
+
+        /// <summary>
+        /// Return mix algorithm available
+        /// </summary>
+        public Mix GetMix(string mixId) => CashDispenserService?.GetMix(mixId);
+
+        /// <summary>
+        /// Return mix algorithm supported by the framework or the application set mix tables
+        /// </summary>
+        public Dictionary<string, Mix> GetMixAlgorithms() => CashDispenserService?.GetMixAlgorithms();
+
+        /// <summary>
+        /// Keep last present status
+        /// </summary>
+        public Dictionary<CashManagementCapabilitiesClass.OutputPositionEnum, CashDispenserPresentStatus> LastCashDispenserPresentStatus { get => CashDispenserService?.LastCashDispenserPresentStatus; init { } }
+
+        /// <summary>
+        /// Store present status persistently
+        /// </summary>
+        public void StoreCashDispenserPresentStatus() => CashDispenserService?.StoreCashDispenserPresentStatus();
+
+        #endregion
+
+        #region IBNS Service
+
+        /// <summary>
+        /// Set storage status from the device class
+        /// </summary>
+        public void UpdateStorageStatus(string storageId, UnitStorageBase.StatusEnum storageStatus) => IBNSService?.UpdateStorageStatus(storageId, storageStatus);
+
+        #endregion
+
+        #region Check Service
+
+        /// <summary>
+        /// Store transaction status
+        /// </summary>
+        public TransactionStatus LastTransactionStatus { get => CheckService?.LastTransactionStatus; init { } }
+
+        /// <summary>
+        /// Store transaction status persistently
+        /// </summary>
+        public void StoreTransactionStatus() => CheckService?.StoreTransactionStatus();
+
+        #endregion
     }
 }

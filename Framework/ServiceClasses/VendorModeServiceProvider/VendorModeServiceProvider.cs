@@ -25,27 +25,34 @@ namespace XFS4IoTServer
     /// <summary>
     /// The vendor mode service provider
     /// </summary>
-    public class VendorModeServiceProvider : ServiceProvider, IVendorModeService, ICommonService
+    public class VendorModeServiceProvider : ServiceProvider, ICommonService, IVendorModeService, IVendorApplicationService
     {
-        public VendorModeServiceProvider(
-            EndpointDetails endpointDetails, 
-            string ServiceName, 
-            IDevice device, 
-            ILogger logger)
+        public VendorModeServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
             :
             base(endpointDetails,
                  ServiceName,
-                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.VendorMode],
+                 [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.VendorMode ],
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             VendorModeService = new VendorModeServiceClass(this, logger);
+            
+            List<XFSConstants.ServiceClass> services = [.. ServiceClasses];
+            // Check optional services
+            if (device as IVendorApplicationService is not null)
+            {
+                VendorApplicationService = new VendorApplicationServiceClass(this, logger);
+                services.Add(XFSConstants.ServiceClass.VendorApplication);
+            }
+
+            ServiceClasses = services;
         }
 
-        private readonly VendorModeServiceClass VendorModeService;
         private readonly CommonServiceClass CommonService;
-
+        private readonly VendorModeServiceClass VendorModeService;
+        // Optional service
+        private readonly VendorApplicationServiceClass VendorApplicationService = null;
 
         #region Common unsolicited events
 
@@ -53,10 +60,9 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => throw new NotImplementedException("NonceClearedEvent is not supported in the VendorMode Service.");
 
-        public Task ErrorEvent(
-            CommonStatusClass.ErrorEventIdEnum EventId,
-            CommonStatusClass.ErrorActionEnum Action,
-            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -101,6 +107,40 @@ namespace XFS4IoTServer
         /// </summary>
         public VendorModeStatusClass VendorModeStatus { get => CommonService.VendorModeStatus; set => CommonService.VendorModeStatus = value; }
 
+        /// <summary>
+        /// Stores vendor application capabilites
+        /// </summary>
+        public VendorApplicationCapabilitiesClass VendorApplicationCapabilities { get => CommonService.VendorApplicationCapabilities; set => CommonService.VendorApplicationCapabilities = value; }
+
+        /// <summary>
+        /// Stores vendor application status
+        /// </summary>
+        public VendorApplicationStatusClass VendorApplicationStatus { get => CommonService.VendorApplicationStatus; set => CommonService.VendorApplicationStatus = value; }
+
+
+        #endregion
+
+        #region VendorApplication unsolicited events
+
+        /// <summary>
+        /// This event is used to indicate the vendor dependent application has exited, 
+        /// allowing an application the opportunity to exit Vendor Mode.
+        /// </summary>
+        public Task VendorAppExitedEvent() => VendorApplicationService.VendorAppExitedEvent();
+
+        /// <summary>
+        /// This event is used to indicate that the required interface has changed. 
+        /// </summary>
+        public Task InterfaceChangedEvent(ActiveInterfaceEnum ActiveInterface)
+        {
+            return VendorApplicationService?.InterfaceChangedEvent(new XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData(
+                                                                        ActiveInterface switch
+                                                                        {
+                                                                            ActiveInterfaceEnum.Consumer => XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData.ActiveInterfaceEnum.Consumer,
+                                                                            _ => XFS4IoT.VendorApplication.Events.InterfaceChangedEvent.PayloadData.ActiveInterfaceEnum.Operator,
+                                                                        })
+                                                                  );
+        }
 
         #endregion
 

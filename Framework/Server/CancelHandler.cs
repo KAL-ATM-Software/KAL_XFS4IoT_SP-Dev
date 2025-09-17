@@ -72,6 +72,7 @@ namespace XFS4IoTServer
                 NotImplementedException or NotSupportedException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
                 TimeoutCanceledException t when t.IsCancelRequested => MessageHeader.CompletionCodeEnum.Canceled,
                 TimeoutCanceledException => MessageHeader.CompletionCodeEnum.TimeOut,
+                UnsupportedCommandException => MessageHeader.CompletionCodeEnum.UnsupportedCommand,
                 _ => MessageHeader.CompletionCodeEnum.InternalError
             };
 

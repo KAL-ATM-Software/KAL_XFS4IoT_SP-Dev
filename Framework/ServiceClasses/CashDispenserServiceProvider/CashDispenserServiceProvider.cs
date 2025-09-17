@@ -1,10 +1,9 @@
 ﻿/***********************************************************************************************\
- * (C) KAL ATM Software GmbH, 2025
+ * (C) KAL ATM Software GmbH, 2022
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,28 +15,26 @@ using XFS4IoT;
 using XFS4IoT.CashManagement.Events;
 using XFS4IoT.Common.Events;
 using XFS4IoT.Storage.Events;
+using XFS4IoTFramework.BanknoteNeutralization;
 using XFS4IoTFramework.CashDispenser;
 using XFS4IoTFramework.CashManagement;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;
+using XFS4IoTFramework.Check;
 
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a dispenser service provider. 
+    /// Default implimentation of a dispenser service provider.
+    /// This Service allows to combile with IBNS and Check device in one service provider.
     /// </summary>
-    /// <remarks> 
-    /// This represents a typical dispenser, which only implements the Dispenser, CashManagement and Common interfaces. 
-    /// It's possible to create other service provider types by combining multiple service classes in the 
-    /// same way. 
-    /// </remarks>
-    public class CashDispenserServiceProvider : ServiceProvider, ICashDispenserService, ICashManagementService, ICommonService, IStorageService, ILightsService
+    public class CashDispenserServiceProvider : ServiceProvider, ICashDispenserService, ICashManagementService, ICommonService, IStorageService, ILightsService, IBanknoteNeutralizationService, ICheckService
     {
         public CashDispenserServiceProvider(
-            EndpointDetails endpointDetails, 
-            string ServiceName, 
-            IDevice device, 
-            ILogger logger, 
+            EndpointDetails endpointDetails,
+            string ServiceName,
+            IDevice device,
+            ILogger logger,
             IPersistentData persistentData)
             :
             base(endpointDetails,
@@ -50,12 +47,30 @@ namespace XFS4IoTServer
             StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);
             CashManagementService = new CashManagementServiceClass(this, logger, persistentData);
             CashDispenserService = new CashDispenserServiceClass(this, logger, persistentData);
+
+            List<XFSConstants.ServiceClass> services = [.. ServiceClasses];
+            // Check optional services
+            if (device as IBanknoteNeutralizationDevice is not null)
+            {
+                IBNSService = new BanknoteNeutralizationServiceClass(this, logger, persistentData);
+                services.Add(XFSConstants.ServiceClass.BanknoteNeutralization);
+            }
+            if (device as ICheckDevice is not null)
+            {
+                CheckService = new CheckServiceClass(this, logger, persistentData);
+                services.Add(XFSConstants.ServiceClass.Check);
+            }
+
+            ServiceClasses = services;
         }
 
         private readonly CashDispenserServiceClass CashDispenserService;
         private readonly CashManagementServiceClass CashManagementService;
         private readonly CommonServiceClass CommonService;
         private readonly StorageServiceClass StorageService;
+        // Optional services
+        private readonly BanknoteNeutralizationServiceClass IBNSService = null;
+        private readonly CheckServiceClass CheckService = null;
 
         #region CashManagement unsolicited events
 
@@ -72,10 +87,9 @@ namespace XFS4IoTServer
 
         public Task NonceClearedEvent(string ReasonDescription) => CommonService.NonceClearedEvent(ReasonDescription);
 
-        public Task ErrorEvent(
-            CommonStatusClass.ErrorEventIdEnum EventId,
-            CommonStatusClass.ErrorActionEnum Action,
-            string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
+        public Task ErrorEvent(CommonStatusClass.ErrorEventIdEnum EventId,
+                               CommonStatusClass.ErrorActionEnum Action,
+                               string VendorDescription) => CommonService.ErrorEvent(EventId, Action, VendorDescription);
 
         #endregion
 
@@ -119,6 +133,12 @@ namespace XFS4IoTServer
         public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
 
         /// <summary>
+        /// Stores IBNS interface capabilites internally
+        /// </summary>
+        public XFS4IoTFramework.Common.IBNSCapabilitiesClass IBNSCapabilities { get => CommonService.IBNSCapabilities; set => CommonService.IBNSCapabilities = value; }
+
+
+        /// <summary>
         /// CashDispenser Status
         /// </summary>
         public CashDispenserStatusClass CashDispenserStatus { get => CommonService.CashDispenserStatus; set => CommonService.CashDispenserStatus = value; }
@@ -127,6 +147,12 @@ namespace XFS4IoTServer
         /// CashManagement Status
         /// </summary>
         public CashManagementStatusClass CashManagementStatus { get => CommonService.CashManagementStatus; set => CommonService.CashManagementStatus = value; }
+
+        /// <summary>
+        /// IBNS Status
+        /// </summary>
+        public XFS4IoTFramework.Common.IBNSStatusClass IBNSStatus { get => CommonService.IBNSStatus; set => CommonService.IBNSStatus = value; }
+
 
         #endregion
 
@@ -267,6 +293,29 @@ namespace XFS4IoTServer
         /// Store classification list persistently
         /// </summary>
         public void StoreItemClassificationList() => CashManagementService.StoreItemClassificationList();
+
+        #endregion
+
+        #region IBNS Service
+
+        /// <summary>
+        /// Set storage status from the device class
+        /// </summary>
+        public void UpdateStorageStatus(string storageId, UnitStorageBase.StatusEnum storageStatus) => IBNSService?.UpdateStorageStatus(storageId, storageStatus);
+
+        #endregion
+
+        #region Check Service
+
+        /// <summary>
+        /// Store transaction status
+        /// </summary>
+        public TransactionStatus LastTransactionStatus { get => CheckService?.LastTransactionStatus; init { } }
+
+        /// <summary>
+        /// Store transaction status persistently
+        /// </summary>
+        public void StoreTransactionStatus() => CheckService?.StoreTransactionStatus();
 
         #endregion
     }

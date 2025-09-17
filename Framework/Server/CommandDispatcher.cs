@@ -151,6 +151,10 @@ namespace XFS4IoTServer
 
         private (ICommandHandler handler, bool async) CreateHandler(Type type, IConnection Connection)
         {
+            if (!MessageHandlers.ContainsKey(type))
+            {
+                throw new UnsupportedCommandException($"No message handler imported. {type}"); 
+            }
             Type handlerClass = MessageHandlers[type].Type;
             bool async = MessageHandlers[type].Async;
             Contracts.IsTrue(
@@ -193,7 +197,7 @@ namespace XFS4IoTServer
         private protected readonly ILogger Logger;
 
         public IEnumerable<Type> Commands { get => MessageHandlers.Keys; }
-        public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; }
+        public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; protected set; }
 
         /// <summary>
         /// Storing the commands and events supported by the device class for received command check
