@@ -21,6 +21,10 @@ namespace XFS4IoT.KeyManagement.Events
     public sealed class CertificateChangeEvent : UnsolicitedEvent<CertificateChangeEvent.PayloadData>
     {
 
+        public CertificateChangeEvent()
+            : base()
+        { }
+
         public CertificateChangeEvent(PayloadData Payload)
             : base(Payload)
         { }

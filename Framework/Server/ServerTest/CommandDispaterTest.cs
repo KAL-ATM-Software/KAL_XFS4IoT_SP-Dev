@@ -4,14 +4,17 @@
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
-using System;
-using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Server;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
-using System.Collections.Generic;
 using XFS4IoT.Commands;
+using XFS4IoT.ServicePublisher.Commands;
+using XFS4IoT.ServicePublisher.Completions;
 
 namespace XFS4IoTServer.Test
 {
@@ -25,9 +28,9 @@ namespace XFS4IoTServer.Test
         {
             var dispatcher = new TestServiceProvider(new[] { XFSConstants.ServiceClass.Publisher }, new TestLogger());
 
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage1(), CancellationToken.None);
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage2(), CancellationToken.None);
-            await dispatcher.Dispatch(new TestConnection(), new TestMessage3(), CancellationToken.None);
+            await dispatcher.Dispatch(dispatcher, new TestConnection(), new TestMessage1(), CancellationToken.None);
+            await dispatcher.Dispatch(dispatcher, new TestConnection(), new TestMessage2(), CancellationToken.None);
+            await dispatcher.Dispatch(dispatcher, new TestConnection(), new TestMessage3(), CancellationToken.None);
         }
 
         public sealed class TestServiceProvider : CommandDispatcher, IServiceProvider
@@ -46,6 +49,16 @@ namespace XFS4IoTServer.Test
                     Assert.AreEqual(true, versionAttrib is not null);
 
                     supportedMsgs.Add(commandAttrib.Name, new MessageTypeInfo(MessageTypeInfo.MessageTypeEnum.Command, new([versionAttrib.Version])));
+
+                    MessageCollection.Add(MessageHeader.TypeEnum.Command, commandAttrib.Name, type);
+                    if (type == typeof(TestMessage1))
+                    {
+                        AddHandler(this, type, (connection, dispatcher, logger) => new TestMessageHandler1(connection, dispatcher, logger), true);
+                    }
+                    else
+                    {
+                        AddHandler(this, type, (connection, dispatcher, logger) => new TestMessageHandler2(connection, dispatcher, logger), true);
+                    }
                 }
 
                 SetMessagesSupported(supportedMsgs);
@@ -88,8 +101,8 @@ namespace XFS4IoTServer.Test
         public Task BroadcastEvent(IEnumerable<IConnection> connections, object payload) => throw new NotImplementedException();
         public Task<bool> AnyValidRequestID(IConnection Connection, List<int> RequestIds, CancellationToken token) => throw new NotImplementedException();
         public Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();
-        public Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken Token) => throw new NotImplementedException();
-        public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
+        public Task Dispatch(IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, CancellationToken Token) => throw new NotImplementedException();
+        public Task DispatchError(IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync(CancellationSource cancellationSource) => throw new NotImplementedException();
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => throw new NotImplementedException();
         /// <summary>

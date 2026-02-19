@@ -19,6 +19,10 @@ namespace XFS4IoT.BanknoteNeutralization.Completions
     [Completion(Name = "BanknoteNeutralization.SetProtection")]
     public sealed class SetProtectionCompletion : Completion<SetProtectionCompletion.PayloadData>
     {
+        public SetProtectionCompletion()
+            : base()
+        { }
+
         public SetProtectionCompletion(int RequestId, SetProtectionCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetQueryMedia")]
     public sealed class GetQueryMediaCommand : Command<GetQueryMediaCommand.PayloadData>
     {
+        public GetQueryMediaCommand()
+            : base()
+        { }
+
         public GetQueryMediaCommand(int RequestId, GetQueryMediaCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

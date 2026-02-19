@@ -20,6 +20,10 @@ namespace XFS4IoT.Keyboard.Commands
     [Command(Name = "Keyboard.DataEntry")]
     public sealed class DataEntryCommand : Command<DataEntryCommand.PayloadData>
     {
+        public DataEntryCommand()
+            : base()
+        { }
+
         public DataEntryCommand(int RequestId, DataEntryCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.SetMediaParameters")]
     public sealed class SetMediaParametersCommand : Command<SetMediaParametersCommand.PayloadData>
     {
+        public SetMediaParametersCommand()
+            : base()
+        { }
+
         public SetMediaParametersCommand(int RequestId, SetMediaParametersCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

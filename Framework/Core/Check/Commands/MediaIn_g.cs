@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.MediaIn")]
     public sealed class MediaInCommand : Command<MediaInCommand.PayloadData>
     {
+        public MediaInCommand()
+            : base()
+        { }
+
         public MediaInCommand(int RequestId, MediaInCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

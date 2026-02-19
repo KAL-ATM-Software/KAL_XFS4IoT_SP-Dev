@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.SetTransactionState")]
     public sealed class SetTransactionStateCommand : Command<SetTransactionStateCommand.PayloadData>
     {
+        public SetTransactionStateCommand()
+            : base()
+        { }
+
         public SetTransactionStateCommand(int RequestId, SetTransactionStateCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

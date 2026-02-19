@@ -19,6 +19,10 @@ namespace XFS4IoT.CashDispenser.Completions
     [Completion(Name = "CashDispenser.GetMixTypes")]
     public sealed class GetMixTypesCompletion : Completion<GetMixTypesCompletion.PayloadData>
     {
+        public GetMixTypesCompletion()
+            : base()
+        { }
+
         public GetMixTypesCompletion(int RequestId, GetMixTypesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

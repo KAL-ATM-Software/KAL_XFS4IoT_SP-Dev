@@ -19,6 +19,10 @@ namespace XFS4IoT.Camera.Completions
     [Completion(Name = "Camera.TakePicture")]
     public sealed class TakePictureCompletion : Completion<TakePictureCompletion.PayloadData>
     {
+        public TakePictureCompletion()
+            : base()
+        { }
+
         public TakePictureCompletion(int RequestId, TakePictureCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

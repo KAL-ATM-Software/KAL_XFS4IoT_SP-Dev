@@ -21,6 +21,10 @@ namespace XFS4IoT.ServicePublisher.Events
     public sealed class ServiceDetailEvent : Event<ServiceDetailEvent.PayloadData>
     {
 
+        public ServiceDetailEvent()
+            : base()
+        { }
+
         public ServiceDetailEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

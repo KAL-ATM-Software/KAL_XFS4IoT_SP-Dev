@@ -20,6 +20,10 @@ namespace XFS4IoT.Biometric.Commands
     [Command(Name = "Biometric.Clear")]
     public sealed class ClearCommand : Command<ClearCommand.PayloadData>
     {
+        public ClearCommand()
+            : base()
+        { }
+
         public ClearCommand(int RequestId, ClearCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

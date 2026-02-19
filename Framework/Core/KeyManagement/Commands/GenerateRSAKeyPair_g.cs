@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.GenerateRSAKeyPair")]
     public sealed class GenerateRSAKeyPairCommand : Command<GenerateRSAKeyPairCommand.PayloadData>
     {
+        public GenerateRSAKeyPairCommand()
+            : base()
+        { }
+
         public GenerateRSAKeyPairCommand(int RequestId, GenerateRSAKeyPairCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

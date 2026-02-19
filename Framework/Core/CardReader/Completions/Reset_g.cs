@@ -19,6 +19,10 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.Reset")]
     public sealed class ResetCompletion : Completion<ResetCompletion.PayloadData>
     {
+        public ResetCompletion()
+            : base()
+        { }
+
         public ResetCompletion(int RequestId, ResetCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

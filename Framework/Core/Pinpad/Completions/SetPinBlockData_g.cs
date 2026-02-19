@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.SetPinBlockData")]
     public sealed class SetPinBlockDataCompletion : Completion<SetPinBlockDataCompletion.PayloadData>
     {
+        public SetPinBlockDataCompletion()
+            : base()
+        { }
+
         public SetPinBlockDataCompletion(int RequestId, SetPinBlockDataCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -359,10 +359,9 @@ namespace XFS4IoTFramework.Common
         {
             public enum CommandEnum
             {
-                ClearAutoStartUpTime,
-                GetAutoStartUpTime,
-                Register,
-                SetAutoStartUpTime,
+                ClearAutoStartupTime,
+                GetAutoStartupTime,
+                SetAutoStartupTime,
                 SetAuxiliaries,
             }
 

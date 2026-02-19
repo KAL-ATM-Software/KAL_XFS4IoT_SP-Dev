@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.GetTransactionState")]
     public sealed class GetTransactionStateCompletion : Completion<GetTransactionStateCompletion.PayloadData>
     {
+        public GetTransactionStateCompletion()
+            : base()
+        { }
+
         public GetTransactionStateCompletion(int RequestId, GetTransactionStateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

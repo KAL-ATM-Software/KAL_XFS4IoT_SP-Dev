@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetMediaList")]
     public sealed class GetMediaListCommand : Command<MessagePayload>
     {
+        public GetMediaListCommand()
+            : base()
+        { }
+
         public GetMediaListCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

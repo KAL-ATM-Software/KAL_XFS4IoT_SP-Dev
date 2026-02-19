@@ -19,6 +19,10 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.ActionItem")]
     public sealed class ActionItemCompletion : Completion<ActionItemCompletion.PayloadData>
     {
+        public ActionItemCompletion()
+            : base()
+        { }
+
         public ActionItemCompletion(int RequestId, ActionItemCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

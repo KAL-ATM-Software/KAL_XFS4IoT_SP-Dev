@@ -19,6 +19,10 @@ namespace XFS4IoT.Storage.Completions
     [Completion(Name = "Storage.GetStorage")]
     public sealed class GetStorageCompletion : Completion<GetStorageCompletion.PayloadData>
     {
+        public GetStorageCompletion()
+            : base()
+        { }
+
         public GetStorageCompletion(int RequestId, GetStorageCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

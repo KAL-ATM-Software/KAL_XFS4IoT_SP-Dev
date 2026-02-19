@@ -21,6 +21,10 @@ namespace XFS4IoT.Deposit.Events
     public sealed class DepositErrorEvent : UnsolicitedEvent<DepositErrorEvent.PayloadData>
     {
 
+        public DepositErrorEvent()
+            : base()
+        { }
+
         public DepositErrorEvent(PayloadData Payload)
             : base(Payload)
         { }

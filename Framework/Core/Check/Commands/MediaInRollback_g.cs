@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.MediaInRollback")]
     public sealed class MediaInRollbackCommand : Command<MessagePayload>
     {
+        public MediaInRollbackCommand()
+            : base()
+        { }
+
         public MediaInRollbackCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

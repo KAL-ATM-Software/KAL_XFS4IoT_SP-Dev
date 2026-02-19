@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.Dispense")]
     public sealed class DispenseCommand : Command<DispenseCommand.PayloadData>
     {
+        public DispenseCommand()
+            : base()
+        { }
+
         public DispenseCommand(int RequestId, DispenseCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

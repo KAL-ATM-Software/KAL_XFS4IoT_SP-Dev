@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class NoMediaEvent : Event<NoMediaEvent.PayloadData>
     {
 
+        public NoMediaEvent()
+            : base()
+        { }
+
         public NoMediaEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

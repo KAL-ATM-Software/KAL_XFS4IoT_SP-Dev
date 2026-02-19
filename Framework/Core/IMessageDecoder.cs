@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace XFS4IoT
 {
-    public interface IMessageDecoder: IEnumerable
+    public interface IMessageDecoder
     {
         bool TryUnserialise(string JSON, out object result);
     }

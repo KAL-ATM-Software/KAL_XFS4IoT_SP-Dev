@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.StartAuthenticate")]
     public sealed class StartAuthenticateCompletion : Completion<StartAuthenticateCompletion.PayloadData>
     {
+        public StartAuthenticateCompletion()
+            : base()
+        { }
+
         public StartAuthenticateCompletion(int RequestId, StartAuthenticateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

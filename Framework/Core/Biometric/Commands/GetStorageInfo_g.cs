@@ -20,6 +20,10 @@ namespace XFS4IoT.Biometric.Commands
     [Command(Name = "Biometric.GetStorageInfo")]
     public sealed class GetStorageInfoCommand : Command<MessagePayload>
     {
+        public GetStorageInfoCommand()
+            : base()
+        { }
+
         public GetStorageInfoCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.VendorApplication.Commands
     [Command(Name = "VendorApplication.StartLocalApplication")]
     public sealed class StartLocalApplicationCommand : Command<StartLocalApplicationCommand.PayloadData>
     {
+        public StartLocalApplicationCommand()
+            : base()
+        { }
+
         public StartLocalApplicationCommand(int RequestId, StartLocalApplicationCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

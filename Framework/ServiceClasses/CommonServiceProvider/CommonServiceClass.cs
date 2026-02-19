@@ -28,6 +28,8 @@ namespace XFS4IoTServer
     {
         public CommonServiceClass(IServiceProvider ServiceProvider, ILogger logger, string ServiceName)
         {
+            RegisterFactory(ServiceProvider);
+
             this.ServiceProvider = ServiceProvider.IsNotNull();
             this.Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CommonServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICommonDevice>();

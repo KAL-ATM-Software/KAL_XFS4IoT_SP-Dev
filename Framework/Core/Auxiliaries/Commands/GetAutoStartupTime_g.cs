@@ -20,6 +20,10 @@ namespace XFS4IoT.Auxiliaries.Commands
     [Command(Name = "Auxiliaries.GetAutoStartupTime")]
     public sealed class GetAutoStartupTimeCommand : Command<MessagePayload>
     {
+        public GetAutoStartupTimeCommand()
+            : base()
+        { }
+
         public GetAutoStartupTimeCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

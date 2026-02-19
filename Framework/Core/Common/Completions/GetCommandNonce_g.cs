@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.GetCommandNonce")]
     public sealed class GetCommandNonceCompletion : Completion<GetCommandNonceCompletion.PayloadData>
     {
+        public GetCommandNonceCompletion()
+            : base()
+        { }
+
         public GetCommandNonceCompletion(int RequestId, GetCommandNonceCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

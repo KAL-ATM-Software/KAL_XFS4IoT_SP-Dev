@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.GetQueryForm")]
     public sealed class GetQueryFormCommand : Command<GetQueryFormCommand.PayloadData>
     {
+        public GetQueryFormCommand()
+            : base()
+        { }
+
         public GetQueryFormCommand(int RequestId, GetQueryFormCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

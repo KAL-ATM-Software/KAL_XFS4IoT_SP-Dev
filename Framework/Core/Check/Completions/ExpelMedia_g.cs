@@ -19,6 +19,10 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.ExpelMedia")]
     public sealed class ExpelMediaCompletion : Completion<ExpelMediaCompletion.PayloadData>
     {
+        public ExpelMediaCompletion()
+            : base()
+        { }
+
         public ExpelMediaCompletion(int RequestId, ExpelMediaCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ReadRawData")]
     public sealed class ReadRawDataCommand : Command<ReadRawDataCommand.PayloadData>
     {
+        public ReadRawDataCommand()
+            : base()
+        { }
+
         public ReadRawDataCommand(int RequestId, ReadRawDataCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

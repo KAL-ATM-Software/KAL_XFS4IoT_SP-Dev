@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.ReadImage")]
     public sealed class ReadImageCommand : Command<ReadImageCommand.PayloadData>
     {
+        public ReadImageCommand()
+            : base()
+        { }
+
         public ReadImageCommand(int RequestId, ReadImageCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

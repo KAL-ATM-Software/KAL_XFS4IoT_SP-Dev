@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.GetKeyDetail")]
     public sealed class GetKeyDetailCommand : Command<GetKeyDetailCommand.PayloadData>
     {
+        public GetKeyDetailCommand()
+            : base()
+        { }
+
         public GetKeyDetailCommand(int RequestId, GetKeyDetailCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

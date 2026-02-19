@@ -21,6 +21,10 @@ namespace XFS4IoT.CardReader.Events
     public sealed class TrackDetectedEvent : Event<TrackDetectedEvent.PayloadData>
     {
 
+        public TrackDetectedEvent()
+            : base()
+        { }
+
         public TrackDetectedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

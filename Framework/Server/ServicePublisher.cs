@@ -4,15 +4,18 @@
  * See the LICENSE file in the project root for more information.
 \***********************************************************************************************/
 
+using Server;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using XFS4IoT;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using XFS4IoT;
+using XFS4IoT.ServicePublisher.Commands;
+using XFS4IoT.ServicePublisher.Completions;
 
 namespace XFS4IoTServer
 {
@@ -48,11 +51,17 @@ namespace XFS4IoTServer
 
             this.JsonSchemaValidator = JsonSchemaValidator;
 
+            // Register command handler for ServicePublisher service.
+            AddHandler(this, typeof(XFS4IoT.ServicePublisher.Commands.GetServicesCommand), (connection, dispatcher, logger) => new GetServiceHandler(connection, dispatcher, logger), true);
+            // Register service publisher messages explicitly.
+            MessageCollection.Add(MessageHeader.TypeEnum.Completion, "ServicePublisher.GetServices", typeof(GetServicesCompletion));
+            MessageCollection.Add(MessageHeader.TypeEnum.Command, "ServicePublisher.GetServices", typeof(GetServicesCommand));
+            
             // Set service publisher specific command name and version to the dispacher.
             Type type = typeof(XFS4IoT.ServicePublisher.Commands.GetServicesCommand);
             CommandAttribute commandAttrib = Attribute.GetCustomAttribute(type, typeof(CommandAttribute)) as CommandAttribute;
             commandAttrib.IsNotNull($"Internal command object XFS4IoT.ServicePublisher.Commands.GetServicesCommand has no Command attribute.");
-
+            
             XFS4VersionAttribute versionAttrib = Attribute.GetCustomAttribute(type, typeof(XFS4VersionAttribute)) as XFS4VersionAttribute;
             versionAttrib.IsNotNull($"Internal command object XFS4IoT.ServicePublisher.Commands.GetServicesCommand has no XFS4Version attribute.");
 
@@ -122,6 +131,7 @@ namespace XFS4IoTServer
                     EndPoint = new EndPoint(Uri,
                                             CommandDecoder: CommandDecoder,
                                             CommandDispatcher: this,
+                                            ServiceProvider: this,
                                             Logger);
 
                     return;
@@ -187,7 +197,7 @@ namespace XFS4IoTServer
 
         // Autopopulate the CommandDecoder with reflection based on the Command attribute added
         // to the relevant classes. 
-        private readonly MessageDecoder CommandDecoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command);
+        private readonly MessageDecoder CommandDecoder = new MessageDecoder();
 
         // JSON schema validator
         private IJsonSchemaValidator JsonSchemaValidator;

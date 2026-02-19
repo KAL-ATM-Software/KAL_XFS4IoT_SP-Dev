@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaAutoRetractedEvent : UnsolicitedEvent<MediaAutoRetractedEvent.PayloadData>
     {
 
+        public MediaAutoRetractedEvent()
+            : base()
+        { }
+
         public MediaAutoRetractedEvent(PayloadData Payload)
             : base(Payload)
         { }

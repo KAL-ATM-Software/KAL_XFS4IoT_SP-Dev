@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.CreateSignature")]
     public sealed class CreateSignatureCompletion : Completion<CreateSignatureCompletion.PayloadData>
     {
+        public CreateSignatureCompletion()
+            : base()
+        { }
+
         public CreateSignatureCompletion(int RequestId, CreateSignatureCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

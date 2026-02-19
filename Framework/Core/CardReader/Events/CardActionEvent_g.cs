@@ -21,6 +21,10 @@ namespace XFS4IoT.CardReader.Events
     public sealed class CardActionEvent : UnsolicitedEvent<CardActionEvent.PayloadData>
     {
 
+        public CardActionEvent()
+            : base()
+        { }
+
         public CardActionEvent(PayloadData Payload)
             : base(Payload)
         { }

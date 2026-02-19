@@ -19,6 +19,10 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.Retract")]
     public sealed class RetractCompletion : Completion<RetractCompletion.PayloadData>
     {
+        public RetractCompletion()
+            : base()
+        { }
+
         public RetractCompletion(int RequestId, RetractCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

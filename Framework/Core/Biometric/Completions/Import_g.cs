@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.Import")]
     public sealed class ImportCompletion : Completion<ImportCompletion.PayloadData>
     {
+        public ImportCompletion()
+            : base()
+        { }
+
         public ImportCompletion(int RequestId, ImportCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

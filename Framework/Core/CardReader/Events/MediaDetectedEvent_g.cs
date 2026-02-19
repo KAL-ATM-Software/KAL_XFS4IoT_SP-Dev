@@ -21,6 +21,10 @@ namespace XFS4IoT.CardReader.Events
     public sealed class MediaDetectedEvent : UnsolicitedEvent<MediaDetectedEvent.PayloadData>
     {
 
+        public MediaDetectedEvent()
+            : base()
+        { }
+
         public MediaDetectedEvent(PayloadData Payload)
             : base(Payload)
         { }

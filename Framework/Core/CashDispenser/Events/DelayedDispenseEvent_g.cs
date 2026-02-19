@@ -21,6 +21,10 @@ namespace XFS4IoT.CashDispenser.Events
     public sealed class DelayedDispenseEvent : Event<DelayedDispenseEvent.PayloadData>
     {
 
+        public DelayedDispenseEvent()
+            : base()
+        { }
+
         public DelayedDispenseEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

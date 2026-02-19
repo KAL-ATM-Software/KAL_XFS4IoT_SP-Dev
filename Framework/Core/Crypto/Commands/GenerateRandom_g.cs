@@ -20,6 +20,10 @@ namespace XFS4IoT.Crypto.Commands
     [Command(Name = "Crypto.GenerateRandom")]
     public sealed class GenerateRandomCommand : Command<MessagePayload>
     {
+        public GenerateRandomCommand()
+            : base()
+        { }
+
         public GenerateRandomCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

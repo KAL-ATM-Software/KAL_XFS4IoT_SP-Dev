@@ -21,6 +21,10 @@ namespace XFS4IoT.Common.Events
     public sealed class NonceClearedEvent : UnsolicitedEvent<NonceClearedEvent.PayloadData>
     {
 
+        public NonceClearedEvent()
+            : base()
+        { }
+
         public NonceClearedEvent(PayloadData Payload)
             : base(Payload)
         { }

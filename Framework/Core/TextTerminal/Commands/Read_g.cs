@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Read")]
     public sealed class ReadCommand : Command<ReadCommand.PayloadData>
     {
+        public ReadCommand()
+            : base()
+        { }
+
         public ReadCommand(int RequestId, ReadCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

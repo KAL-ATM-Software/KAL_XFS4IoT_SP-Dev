@@ -20,6 +20,10 @@ namespace XFS4IoT.Auxiliaries.Commands
     [Command(Name = "Auxiliaries.SetAuxiliaries")]
     public sealed class SetAuxiliariesCommand : Command<SetAuxiliariesCommand.PayloadData>
     {
+        public SetAuxiliariesCommand()
+            : base()
+        { }
+
         public SetAuxiliariesCommand(int RequestId, SetAuxiliariesCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

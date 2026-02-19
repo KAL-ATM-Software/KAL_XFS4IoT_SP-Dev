@@ -20,6 +20,10 @@ namespace XFS4IoT.Biometric.Commands
     [Command(Name = "Biometric.Match")]
     public sealed class MatchCommand : Command<MatchCommand.PayloadData>
     {
+        public MatchCommand()
+            : base()
+        { }
+
         public MatchCommand(int RequestId, MatchCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

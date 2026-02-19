@@ -19,6 +19,10 @@ namespace XFS4IoT.ServicePublisher.Completions
     [Completion(Name = "ServicePublisher.GetServices")]
     public sealed class GetServicesCompletion : Completion<GetServicesCompletion.PayloadData>
     {
+        public GetServicesCompletion()
+            : base()
+        { }
+
         public GetServicesCompletion(int RequestId, GetServicesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

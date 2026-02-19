@@ -23,20 +23,18 @@ namespace XFS4IoT
     public abstract class MessageBase : ICloneable
     {
         /// <summary>
-        /// JsonSerializerOptions for the serializer.
+        /// Default constructor is required for JsonSerializer to create an instance of the class
         /// </summary>
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+        public MessageBase()
         {
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase), new Base64Converter() },
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
+            Header = null;
+        }
 
         /// <summary>
         /// Header of the message for command
         /// </summary>
         [DataMember(IsRequired = true, Name = "header")]
-        public MessageHeader Header { get; private set; }
+        public MessageHeader Header { get; set; } = null;
 
         /// <summary>
         /// Constructor of the base message object
@@ -136,6 +134,18 @@ namespace XFS4IoT
 
             return null;
         }
+
+        ///
+        /// 
+        /// TODO: Need use JsonSerializerContext to avoid using reflection
+        ///
+        ///
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions()
+        {
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase), new Base64Converter() },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
 
         internal static Dictionary<string, T> ParseExtendedProperties<T>(Dictionary<string, JsonElement> elements)
         {

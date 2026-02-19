@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.PrintNative")]
     public sealed class PrintNativeCommand : Command<PrintNativeCommand.PayloadData>
     {
+        public PrintNativeCommand()
+            : base()
+        { }
+
         public PrintNativeCommand(int RequestId, PrintNativeCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

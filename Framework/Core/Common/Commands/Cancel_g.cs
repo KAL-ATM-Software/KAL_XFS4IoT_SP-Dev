@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.Cancel")]
     public sealed class CancelCommand : Command<CancelCommand.PayloadData>
     {
+        public CancelCommand()
+            : base()
+        { }
+
         public CancelCommand(int RequestId, CancelCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

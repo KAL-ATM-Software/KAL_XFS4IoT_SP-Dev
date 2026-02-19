@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.GetFormList")]
     public sealed class GetFormListCommand : Command<MessagePayload>
     {
+        public GetFormListCommand()
+            : base()
+        { }
+
         public GetFormListCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.ExportRSAIssuerSignedItem")]
     public sealed class ExportRSAIssuerSignedItemCompletion : Completion<ExportRSAIssuerSignedItemCompletion.PayloadData>
     {
+        public ExportRSAIssuerSignedItemCompletion()
+            : base()
+        { }
+
         public ExportRSAIssuerSignedItemCompletion(int RequestId, ExportRSAIssuerSignedItemCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

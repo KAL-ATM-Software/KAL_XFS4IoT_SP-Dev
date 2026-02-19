@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.ReplaceCertificate")]
     public sealed class ReplaceCertificateCommand : Command<ReplaceCertificateCommand.PayloadData>
     {
+        public ReplaceCertificateCommand()
+            : base()
+        { }
+
         public ReplaceCertificateCommand(int RequestId, ReplaceCertificateCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.Initialization")]
     public sealed class InitializationCompletion : Completion<InitializationCompletion.PayloadData>
     {
+        public InitializationCompletion()
+            : base()
+        { }
+
         public InitializationCompletion(int RequestId, InitializationCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

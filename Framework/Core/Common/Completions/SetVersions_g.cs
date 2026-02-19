@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.SetVersions")]
     public sealed class SetVersionsCompletion : Completion<MessagePayload>
     {
+        public SetVersionsCompletion()
+            : base()
+        { }
+
         public SetVersionsCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.DeviceLockControl")]
     public sealed class DeviceLockControlCommand : Command<DeviceLockControlCommand.PayloadData>
     {
+        public DeviceLockControlCommand()
+            : base()
+        { }
+
         public DeviceLockControlCommand(int RequestId, DeviceLockControlCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

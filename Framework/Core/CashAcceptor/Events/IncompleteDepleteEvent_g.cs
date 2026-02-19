@@ -21,6 +21,10 @@ namespace XFS4IoT.CashAcceptor.Events
     public sealed class IncompleteDepleteEvent : Event<IncompleteDepleteEvent.PayloadData>
     {
 
+        public IncompleteDepleteEvent()
+            : base()
+        { }
+
         public IncompleteDepleteEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.ImportKeyToken")]
     public sealed class ImportKeyTokenCommand : Command<ImportKeyTokenCommand.PayloadData>
     {
+        public ImportKeyTokenCommand()
+            : base()
+        { }
+
         public ImportKeyTokenCommand(int RequestId, ImportKeyTokenCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

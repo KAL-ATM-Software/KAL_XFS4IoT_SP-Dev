@@ -20,6 +20,10 @@ namespace XFS4IoT.Keyboard.Commands
     [Command(Name = "Keyboard.GetLayout")]
     public sealed class GetLayoutCommand : Command<GetLayoutCommand.PayloadData>
     {
+        public GetLayoutCommand()
+            : base()
+        { }
+
         public GetLayoutCommand(int RequestId, GetLayoutCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

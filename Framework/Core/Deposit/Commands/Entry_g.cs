@@ -20,6 +20,10 @@ namespace XFS4IoT.Deposit.Commands
     [Command(Name = "Deposit.Entry")]
     public sealed class EntryCommand : Command<EntryCommand.PayloadData>
     {
+        public EntryCommand()
+            : base()
+        { }
+
         public EntryCommand(int RequestId, EntryCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

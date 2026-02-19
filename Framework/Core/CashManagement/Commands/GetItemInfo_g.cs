@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.GetItemInfo")]
     public sealed class GetItemInfoCommand : Command<GetItemInfoCommand.PayloadData>
     {
+        public GetItemInfoCommand()
+            : base()
+        { }
+
         public GetItemInfoCommand(int RequestId, GetItemInfoCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

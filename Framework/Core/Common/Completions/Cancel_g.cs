@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.Cancel")]
     public sealed class CancelCompletion : Completion<CancelCompletion.PayloadData>
     {
+        public CancelCompletion()
+            : base()
+        { }
+
         public CancelCompletion(int RequestId, CancelCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

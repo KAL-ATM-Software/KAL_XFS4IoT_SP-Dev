@@ -20,6 +20,10 @@ namespace XFS4IoT.VendorMode.Commands
     [Command(Name = "VendorMode.Register")]
     public sealed class RegisterCommand : Command<RegisterCommand.PayloadData>
     {
+        public RegisterCommand()
+            : base()
+        { }
+
         public RegisterCommand(int RequestId, RegisterCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

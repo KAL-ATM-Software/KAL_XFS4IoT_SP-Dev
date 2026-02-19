@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class IncompleteRetractEvent : Event<IncompleteRetractEvent.PayloadData>
     {
 
+        public IncompleteRetractEvent()
+            : base()
+        { }
+
         public IncompleteRetractEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

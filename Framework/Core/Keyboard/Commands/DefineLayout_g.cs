@@ -20,6 +20,10 @@ namespace XFS4IoT.Keyboard.Commands
     [Command(Name = "Keyboard.DefineLayout")]
     public sealed class DefineLayoutCommand : Command<DefineLayoutCommand.PayloadData>
     {
+        public DefineLayoutCommand()
+            : base()
+        { }
+
         public DefineLayoutCommand(int RequestId, DefineLayoutCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

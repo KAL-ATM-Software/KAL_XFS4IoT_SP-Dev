@@ -19,6 +19,10 @@ namespace XFS4IoT.CashDispenser.Completions
     [Completion(Name = "CashDispenser.Count")]
     public sealed class CountCompletion : Completion<CountCompletion.PayloadData>
     {
+        public CountCompletion()
+            : base()
+        { }
+
         public CountCompletion(int RequestId, CountCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

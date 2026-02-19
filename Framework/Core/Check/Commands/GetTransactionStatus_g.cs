@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.GetTransactionStatus")]
     public sealed class GetTransactionStatusCommand : Command<GetTransactionStatusCommand.PayloadData>
     {
+        public GetTransactionStatusCommand()
+            : base()
+        { }
+
         public GetTransactionStatusCommand(int RequestId, GetTransactionStatusCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Beep")]
     public sealed class BeepCommand : Command<BeepCommand.PayloadData>
     {
+        public BeepCommand()
+            : base()
+        { }
+
         public BeepCommand(int RequestId, BeepCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

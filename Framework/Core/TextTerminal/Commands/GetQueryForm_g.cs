@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.GetQueryForm")]
     public sealed class GetQueryFormCommand : Command<GetQueryFormCommand.PayloadData>
     {
+        public GetQueryFormCommand()
+            : base()
+        { }
+
         public GetQueryFormCommand(int RequestId, GetQueryFormCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

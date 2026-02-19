@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.GetNextItem")]
     public sealed class GetNextItemCommand : Command<MessagePayload>
     {
+        public GetNextItemCommand()
+            : base()
+        { }
+
         public GetNextItemCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

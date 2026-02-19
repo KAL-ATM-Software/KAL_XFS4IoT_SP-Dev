@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -17,56 +18,14 @@ namespace XFS4IoTServer
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        public CommandDispatcher(IEnumerable<XFSConstants.ServiceClass> Services, ILogger Logger, AssemblyName AssemblyName = null)
+        public CommandDispatcher(IEnumerable<XFSConstants.ServiceClass> Services, ILogger Logger)
         {
             this.Logger = Logger.IsNotNull();
             this.ServiceClasses = Services.IsNotNull();
             CommandQueue = new(Logger);
-
-            // Find all the classes (in the named assembly if a name is give,) which 
-            // have the CommandHandlerAttribute, and match them with the 'Type' value on 
-            // that attribute. 
-            // that is, for [CommandHandler(typeof(MessageA))] class HandlerA : ICommandHandler
-            // record that MessageA is handled by HandlerA
-
-            Add(from assem in AppDomain.CurrentDomain.GetAssemblies()
-                where assem.IsDynamic == false && (AssemblyName == null || assem.GetName().FullName == AssemblyName.FullName)
-                from type in assem.ExportedTypes
-                from CustomAttributeData attrib in type.CustomAttributes
-                where attrib.AttributeType == typeof(CommandHandlerAttribute)
-                where attrib.ConstructorArguments.Count == 2
-                where attrib.ConstructorArguments[0].ArgumentType == typeof(XFSConstants.ServiceClass) && ServiceClasses.Contains((XFSConstants.ServiceClass)attrib.ConstructorArguments[0].Value)
-                where attrib.ConstructorArguments[1].ArgumentType == typeof(Type)
-                let namedArg = attrib.ConstructorArguments[1].Value
-                let async = (
-                                from asyncAttrib in type.CustomAttributes
-                                where asyncAttrib.AttributeType == typeof(CommandHandlerAsyncAttribute)
-                                select asyncAttrib
-                            )
-                            .FirstOrDefault() != default
-                select (message: namedArg as Type, handler: type, async)
-                );
-
-            var handlers = string.Join("\n", from next in MessageHandlers select $"{next.Key} => {next.Value.Type} Async:{next.Value.Async}");
-            Logger.Log(Constants.Component, $"Dispatch, found Command Handler classes:\n{handlers}");
-
-            // Double check that command handler classes were declared with the right constructor so that we'll be able to use them. 
-            // Would be nice to be able to test this at compile time. 
-            foreach (Type handlerClass in from x in MessageHandlers.Values select x.Type )
-            {
-                try
-                {
-                    ConstructorInfo constructorInfo = handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) });
-                    Contracts.IsNotNull(constructorInfo, $"Failed to find constructor for {handlerClass}");
-                }
-                catch (Exception e) when (e.Message.Contains("Failed to find constructor"))
-                {
-                    Contracts.Fail($"Handler class {handlerClass.FullName} doesn't have a constructor that takes ({nameof(ICommandDispatcher)},{nameof(ILogger)}). Exception: {e.Message}");
-                }
-            }
         }
 
-        public async Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken token)
+        public async Task Dispatch(IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, CancellationToken token)
         {
             try
             {
@@ -82,7 +41,7 @@ namespace XFS4IoTServer
                 if (Command.Header.Timeout is not null && Command.Header.Timeout > 0)
                     cts.CancelAfter((int)Command.Header.Timeout);
 
-                (ICommandHandler handler, bool async) = CreateHandler(Command.GetType(), Connection);
+                (ICommandHandler handler, bool async) = CreateHandler(ServiceProvider, Command.GetType(), Connection);
 
                 // Check supported command and version by the device class
                 if (!MessagesSupported.ContainsKey(Command.Header.Name) ||
@@ -134,41 +93,62 @@ namespace XFS4IoTServer
                 Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
 
                 Exception ex = new TimeoutCanceledException(e.Message, e, false);
-                var (handler, _) = CreateHandler(Command.GetType(), Connection);
+                var (handler, _) = CreateHandler(ServiceProvider, Command.GetType(), Connection);
                 await handler.HandleError(Command, ex);
             }
         }
 
-        public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandErrorexception)
+        public Task DispatchError(IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, Exception CommandErrorexception)
         {
             Connection.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Connection)}");
             Command.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(Command)}");
             CommandErrorexception.IsNotNull($"Invalid parameter in the {nameof(Dispatch)} method. {nameof(CommandErrorexception)}");
 
-            var (handler, _) = CreateHandler(Command.GetType(), Connection);
+            var (handler, _) = CreateHandler(ServiceProvider, Command.GetType(), Connection);
             return handler.HandleError( Command, CommandErrorexception ) ?? Task.CompletedTask;
         }
 
-        private (ICommandHandler handler, bool async) CreateHandler(Type type, IConnection Connection)
+        // Add supported command handlers mapping with the command type
+        // This method must be called from each device class implementation
+        public static void AddHandler(IServiceProvider ServiceProvider, Type commandType, Func<IConnection, ICommandDispatcher, ILogger, ICommandHandler> factory, bool async)
         {
-            if (!MessageHandlers.ContainsKey(type))
+            Dictionary<Type, HandlerFactoryClass> newHandler = new()
             {
-                throw new UnsupportedCommandException($"No message handler imported. {type}"); 
-            }
-            Type handlerClass = MessageHandlers[type].Type;
-            bool async = MessageHandlers[type].Async;
-            Contracts.IsTrue(
-                typeof(ICommandHandler).IsAssignableFrom(handlerClass),
-                $"Class {handlerClass.Name} is registered to handle {type.Name} but isn't a {nameof(ICommandHandler)}");
-
-            // Create a new handler object. Effectively the same as: 
-            // ICommandHandler handler = new handlerClass( this, Logger );
-            var handler =  handlerClass.GetConstructor(new Type[] { typeof(IConnection), typeof(ICommandDispatcher), typeof(ILogger) })
-                               .IsNotNull($"Failed to find constructor for {handlerClass}")
-                               .Invoke(parameters: new object[] { Connection, this, Logger })
-                               .IsA<ICommandHandler>();
-            return (handler, async);
+                { commandType, new(factory, async) }
+            };
+            handlerFactories.TryAdd(ServiceProvider, newHandler);
+            handlerFactories.TryGetValue(ServiceProvider, out var existingFactory).IsTrue($"Faild to find handler list per connection.  {ServiceProvider.GetType().Name}");
+            existingFactory.TryAdd(commandType, new HandlerFactoryClass(factory, async));
         }
+
+        /// <summary>
+        /// Return the handler associated with command type to execute.
+        /// </summary>
+        private (ICommandHandler handler, bool async) CreateHandler(IServiceProvider ServiceProvider, Type type, IConnection connection)
+        {
+            handlerFactories.TryGetValue(ServiceProvider, out var handlers).IsTrue($"No handler registered for {connection.GetType().Name}");
+            handlers.TryGetValue(type, out var hander).IsTrue($"No handler registered for {type.Name}");
+
+            try
+            {
+                return (hander.Factory(connection, this, Logger), hander.Async);
+            }
+            catch (Exception ex)
+            {
+                Contracts.Fail($"Caught exception while assigning hander for {type.Name}. {ex}");
+            }
+
+            // won't reach here, but to make the compiler happy.
+            return (null, false);
+        }
+
+        // Hold handers supported by the framework
+        private sealed class HandlerFactoryClass(Func<IConnection, ICommandDispatcher, ILogger, ICommandHandler> Factory, bool Async)
+        {
+            public bool Async { get; init; } = Async;
+            public Func<IConnection, ICommandDispatcher, ILogger, ICommandHandler> Factory { get; init; } = Factory.IsNotNull($"Invalid parameter in the {nameof(HandlerFactoryClass)} constructor. {nameof(Factory)}");
+        }
+        private static readonly Dictionary<IServiceProvider, Dictionary<Type, HandlerFactoryClass>> handlerFactories = [];
 
         private readonly CommandQueue CommandQueue;
 
@@ -184,19 +164,10 @@ namespace XFS4IoTServer
             await CommandQueue.TryCancelItemsAsync(Connection, RequestIds, token);
         }
 
-        private void Add(IEnumerable<(Type, Type, bool Async)> types)
-        {
-            foreach (var (Message, Handler, async) in types)
-                MessageHandlers.Add(Message, new HandlerDetails(Handler, async));
-        }
-
-        private readonly Dictionary<Type, HandlerDetails > MessageHandlers = [];
-
         private record HandlerDetails(Type Type, bool Async);
 
         private protected readonly ILogger Logger;
 
-        public IEnumerable<Type> Commands { get => MessageHandlers.Keys; }
         public IEnumerable<XFSConstants.ServiceClass> ServiceClasses { get; protected set; }
 
         /// <summary>

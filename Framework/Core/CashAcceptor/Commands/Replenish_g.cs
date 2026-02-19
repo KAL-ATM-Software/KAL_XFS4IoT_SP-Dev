@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.Replenish")]
     public sealed class ReplenishCommand : Command<ReplenishCommand.PayloadData>
     {
+        public ReplenishCommand()
+            : base()
+        { }
+
         public ReplenishCommand(int RequestId, ReplenishCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

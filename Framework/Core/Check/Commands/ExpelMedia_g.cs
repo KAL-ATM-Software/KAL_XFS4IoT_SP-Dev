@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.ExpelMedia")]
     public sealed class ExpelMediaCommand : Command<MessagePayload>
     {
+        public ExpelMediaCommand()
+            : base()
+        { }
+
         public ExpelMediaCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

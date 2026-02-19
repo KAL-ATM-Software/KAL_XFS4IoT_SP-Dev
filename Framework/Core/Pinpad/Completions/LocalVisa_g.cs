@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.LocalVisa")]
     public sealed class LocalVisaCompletion : Completion<LocalVisaCompletion.PayloadData>
     {
+        public LocalVisaCompletion()
+            : base()
+        { }
+
         public LocalVisaCompletion(int RequestId, LocalVisaCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

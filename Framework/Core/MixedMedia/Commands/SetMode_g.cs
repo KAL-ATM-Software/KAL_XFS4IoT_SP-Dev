@@ -20,6 +20,10 @@ namespace XFS4IoT.MixedMedia.Commands
     [Command(Name = "MixedMedia.SetMode")]
     public sealed class SetModeCommand : Command<SetModeCommand.PayloadData>
     {
+        public SetModeCommand()
+            : base()
+        { }
+
         public SetModeCommand(int RequestId, SetModeCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.German.Commands
     [Command(Name = "German.GetHSMTData")]
     public sealed class GetHSMTDataCommand : Command<MessagePayload>
     {
+        public GetHSMTDataCommand()
+            : base()
+        { }
+
         public GetHSMTDataCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.PrintForm")]
     public sealed class PrintFormCommand : Command<PrintFormCommand.PayloadData>
     {
+        public PrintFormCommand()
+            : base()
+        { }
+
         public PrintFormCommand(int RequestId, PrintFormCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

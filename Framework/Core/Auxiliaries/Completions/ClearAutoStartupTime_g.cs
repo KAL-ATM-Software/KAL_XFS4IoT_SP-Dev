@@ -19,6 +19,10 @@ namespace XFS4IoT.Auxiliaries.Completions
     [Completion(Name = "Auxiliaries.ClearAutoStartupTime")]
     public sealed class ClearAutoStartupTimeCompletion : Completion<MessagePayload>
     {
+        public ClearAutoStartupTimeCompletion()
+            : base()
+        { }
+
         public ClearAutoStartupTimeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

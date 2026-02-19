@@ -19,6 +19,10 @@ namespace XFS4IoT.VendorMode.Completions
     [Completion(Name = "VendorMode.Register")]
     public sealed class RegisterCompletion : Completion<MessagePayload>
     {
+        public RegisterCompletion()
+            : base()
+        { }
+
         public RegisterCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

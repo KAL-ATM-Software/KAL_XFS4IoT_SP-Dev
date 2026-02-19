@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.Reset")]
     public sealed class ResetCompletion : Completion<MessagePayload>
     {
+        public ResetCompletion()
+            : base()
+        { }
+
         public ResetCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.ClearCommandNonce")]
     public sealed class ClearCommandNonceCommand : Command<MessagePayload>
     {
+        public ClearCommandNonceCommand()
+            : base()
+        { }
+
         public ClearCommandNonceCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

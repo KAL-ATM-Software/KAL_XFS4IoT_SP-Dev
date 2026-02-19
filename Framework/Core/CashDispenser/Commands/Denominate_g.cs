@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.Denominate")]
     public sealed class DenominateCommand : Command<DenominateCommand.PayloadData>
     {
+        public DenominateCommand()
+            : base()
+        { }
+
         public DenominateCommand(int RequestId, DenominateCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

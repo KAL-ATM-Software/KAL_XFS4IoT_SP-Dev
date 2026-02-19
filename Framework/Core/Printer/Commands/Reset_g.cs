@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
+        public ResetCommand()
+            : base()
+        { }
+
         public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

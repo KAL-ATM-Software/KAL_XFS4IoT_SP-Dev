@@ -20,6 +20,10 @@ namespace XFS4IoT.Camera.Commands
     [Command(Name = "Camera.TakePicture")]
     public sealed class TakePictureCommand : Command<TakePictureCommand.PayloadData>
     {
+        public TakePictureCommand()
+            : base()
+        { }
+
         public TakePictureCommand(int RequestId, TakePictureCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

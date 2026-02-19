@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.Initialization")]
     public sealed class InitializationCommand : Command<InitializationCommand.PayloadData>
     {
+        public InitializationCommand()
+            : base()
+        { }
+
         public InitializationCommand(int RequestId, InitializationCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

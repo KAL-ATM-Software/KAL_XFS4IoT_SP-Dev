@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class TonerThresholdEvent : UnsolicitedEvent<TonerThresholdEvent.PayloadData>
     {
 
+        public TonerThresholdEvent()
+            : base()
+        { }
+
         public TonerThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.DeviceLockControl")]
     public sealed class DeviceLockControlCompletion : Completion<DeviceLockControlCompletion.PayloadData>
     {
+        public DeviceLockControlCompletion()
+            : base()
+        { }
+
         public DeviceLockControlCompletion(int RequestId, DeviceLockControlCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ReadForm")]
     public sealed class ReadFormCompletion : Completion<ReadFormCompletion.PayloadData>
     {
+        public ReadFormCompletion()
+            : base()
+        { }
+
         public ReadFormCompletion(int RequestId, ReadFormCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

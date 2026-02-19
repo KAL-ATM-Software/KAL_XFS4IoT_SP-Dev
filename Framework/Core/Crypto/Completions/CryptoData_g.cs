@@ -19,6 +19,10 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCompletion : Completion<CryptoDataCompletion.PayloadData>
     {
+        public CryptoDataCompletion()
+            : base()
+        { }
+
         public CryptoDataCompletion(int RequestId, CryptoDataCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

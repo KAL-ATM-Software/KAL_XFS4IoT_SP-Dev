@@ -20,6 +20,10 @@ namespace XFS4IoT.Crypto.Commands
     [Command(Name = "Crypto.Digest")]
     public sealed class DigestCommand : Command<DigestCommand.PayloadData>
     {
+        public DigestCommand()
+            : base()
+        { }
+
         public DigestCommand(int RequestId, DigestCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -26,6 +26,9 @@ namespace XFS4IoTServer
             EndpointDetails.IsNotNull($"The endpoint details are invalid. {nameof(EndpointDetails)}");
             Device.IsNotNull($"The device interface is an invalid. {nameof(Device)}");
 
+            // Add special command handlers for all services.
+            AddHandler(this, typeof(XFS4IoT.Common.Commands.CancelCommand), (connection, dispatcher, logger) => new CancelHandler(connection, dispatcher, logger), true);
+
             this.Device = Device;
             this.logger = Logger.IsNotNull();
             this.Name = ServiceName;
@@ -37,6 +40,7 @@ namespace XFS4IoTServer
             this.EndPoint = new EndPoint(Uri,
                                          CommandDecoder,
                                          this,
+                                         this,
                                          Logger);
         }
 
@@ -46,7 +50,7 @@ namespace XFS4IoTServer
         private readonly EndPoint EndPoint;
         private readonly ILogger logger;
 
-        private MessageDecoder CommandDecoder { get; } = new MessageDecoder(MessageDecoder.AutoPopulateType.Command);
+        private MessageDecoder CommandDecoder { get; } = new MessageDecoder();
         public Uri Uri { get; }
         public Uri WSUri { get; }
 

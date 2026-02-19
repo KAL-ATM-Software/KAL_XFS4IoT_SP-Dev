@@ -21,6 +21,10 @@ namespace XFS4IoT.TextTerminal.Events
     public sealed class FieldErrorEvent : Event<FieldErrorEvent.PayloadData>
     {
 
+        public FieldErrorEvent()
+            : base()
+        { }
+
         public FieldErrorEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

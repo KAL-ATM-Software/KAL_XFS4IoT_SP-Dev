@@ -27,7 +27,9 @@ namespace XFS4IoTServer
             this.ServiceProvider = ServiceProvider.IsNotNull();
             Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CardReaderServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICardReaderDevice>();
-            
+
+            RegisterFactory(ServiceProvider);
+
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(CardReaderServiceClass)}");
             StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(CardReaderServiceClass)}");
 

@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.GetCashInStatus")]
     public sealed class GetCashInStatusCompletion : Completion<GetCashInStatusCompletion.PayloadData>
     {
+        public GetCashInStatusCompletion()
+            : base()
+        { }
+
         public GetCashInStatusCompletion(int RequestId, GetCashInStatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

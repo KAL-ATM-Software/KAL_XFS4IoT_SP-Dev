@@ -33,6 +33,8 @@ namespace XFS4IoTServer
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(BanknoteNeutralizationServiceClass)}");
             StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(BanknoteNeutralizationServiceClass)}");
 
+            RegisterFactory(ServiceProvider);
+
             this.PersistentData = PersistentData;
 
             GetCapabilities();

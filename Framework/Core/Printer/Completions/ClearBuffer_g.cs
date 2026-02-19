@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ClearBuffer")]
     public sealed class ClearBufferCompletion : Completion<MessagePayload>
     {
+        public ClearBufferCompletion()
+            : base()
+        { }
+
         public ClearBufferCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

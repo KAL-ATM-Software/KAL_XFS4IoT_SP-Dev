@@ -19,6 +19,10 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.Write")]
     public sealed class WriteCompletion : Completion<WriteCompletion.PayloadData>
     {
+        public WriteCompletion()
+            : base()
+        { }
+
         public WriteCompletion(int RequestId, WriteCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

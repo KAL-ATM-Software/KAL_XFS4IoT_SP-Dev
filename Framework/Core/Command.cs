@@ -12,6 +12,12 @@ namespace XFS4IoT.Commands
     public abstract class Command<T> : Message<T> where T : MessagePayloadBase
     {
         /// <summary>
+        /// Default constructor is required for JsonSerializer to create an instance of the class
+        /// </summary>
+        public Command() : base()
+        { }
+
+        /// <summary>
         /// Initialise any command objects
         /// </summary>
         /// <param name="RequestId">request id</param>

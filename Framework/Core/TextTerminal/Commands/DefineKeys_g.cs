@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.DefineKeys")]
     public sealed class DefineKeysCommand : Command<DefineKeysCommand.PayloadData>
     {
+        public DefineKeysCommand()
+            : base()
+        { }
+
         public DefineKeysCommand(int RequestId, DefineKeysCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

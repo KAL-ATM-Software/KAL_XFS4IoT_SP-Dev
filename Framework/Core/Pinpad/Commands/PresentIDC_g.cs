@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.PresentIDC")]
     public sealed class PresentIDCCommand : Command<PresentIDCCommand.PayloadData>
     {
+        public PresentIDCCommand()
+            : base()
+        { }
+
         public PresentIDCCommand(int RequestId, PresentIDCCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

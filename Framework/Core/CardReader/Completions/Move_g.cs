@@ -19,6 +19,10 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.Move")]
     public sealed class MoveCompletion : Completion<MoveCompletion.PayloadData>
     {
+        public MoveCompletion()
+            : base()
+        { }
+
         public MoveCompletion(int RequestId, MoveCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

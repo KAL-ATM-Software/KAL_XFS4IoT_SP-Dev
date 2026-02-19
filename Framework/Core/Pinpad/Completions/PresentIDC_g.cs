@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.PresentIDC")]
     public sealed class PresentIDCCompletion : Completion<PresentIDCCompletion.PayloadData>
     {
+        public PresentIDCCompletion()
+            : base()
+        { }
+
         public PresentIDCCompletion(int RequestId, PresentIDCCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

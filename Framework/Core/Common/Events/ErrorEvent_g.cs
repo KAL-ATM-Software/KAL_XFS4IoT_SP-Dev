@@ -21,6 +21,10 @@ namespace XFS4IoT.Common.Events
     public sealed class ErrorEvent : UnsolicitedEvent<ErrorEvent.PayloadData>
     {
 
+        public ErrorEvent()
+            : base()
+        { }
+
         public ErrorEvent(PayloadData Payload)
             : base(Payload)
         { }

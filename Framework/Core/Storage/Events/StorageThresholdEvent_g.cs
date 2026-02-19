@@ -21,6 +21,10 @@ namespace XFS4IoT.Storage.Events
     public sealed class StorageThresholdEvent : UnsolicitedEvent<StorageThresholdEvent.PayloadData>
     {
 
+        public StorageThresholdEvent()
+            : base()
+        { }
+
         public StorageThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

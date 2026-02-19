@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.DeleteKey")]
     public sealed class DeleteKeyCommand : Command<DeleteKeyCommand.PayloadData>
     {
+        public DeleteKeyCommand()
+            : base()
+        { }
+
         public DeleteKeyCommand(int RequestId, DeleteKeyCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

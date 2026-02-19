@@ -19,6 +19,10 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCompletion : Completion<SecureKeyEntryCompletion.PayloadData>
     {
+        public SecureKeyEntryCompletion()
+            : base()
+        { }
+
         public SecureKeyEntryCompletion(int RequestId, SecureKeyEntryCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

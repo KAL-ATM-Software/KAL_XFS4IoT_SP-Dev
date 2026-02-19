@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class InfoAvailableEvent : Event<InfoAvailableEvent.PayloadData>
     {
 
+        public InfoAvailableEvent()
+            : base()
+        { }
+
         public InfoAvailableEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

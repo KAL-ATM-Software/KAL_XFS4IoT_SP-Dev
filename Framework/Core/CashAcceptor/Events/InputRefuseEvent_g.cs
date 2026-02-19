@@ -21,6 +21,10 @@ namespace XFS4IoT.CashAcceptor.Events
     public sealed class InputRefuseEvent : Event<InputRefuseEvent.PayloadData>
     {
 
+        public InputRefuseEvent()
+            : base()
+        { }
+
         public InputRefuseEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

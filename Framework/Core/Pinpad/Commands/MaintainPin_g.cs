@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.MaintainPin")]
     public sealed class MaintainPinCommand : Command<MaintainPinCommand.PayloadData>
     {
+        public MaintainPinCommand()
+            : base()
+        { }
+
         public MaintainPinCommand(int RequestId, MaintainPinCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

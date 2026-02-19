@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.SetDataPersistence")]
     public sealed class SetDataPersistenceCompletion : Completion<SetDataPersistenceCompletion.PayloadData>
     {
+        public SetDataPersistenceCompletion()
+            : base()
+        { }
+
         public SetDataPersistenceCompletion(int RequestId, SetDataPersistenceCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

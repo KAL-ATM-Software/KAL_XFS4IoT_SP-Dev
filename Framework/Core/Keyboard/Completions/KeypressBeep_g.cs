@@ -19,6 +19,10 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.KeypressBeep")]
     public sealed class KeypressBeepCompletion : Completion<MessagePayload>
     {
+        public KeypressBeepCompletion()
+            : base()
+        { }
+
         public KeypressBeepCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

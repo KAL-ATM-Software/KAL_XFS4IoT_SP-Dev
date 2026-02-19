@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ControlPassbook")]
     public sealed class ControlPassbookCommand : Command<ControlPassbookCommand.PayloadData>
     {
+        public ControlPassbookCommand()
+            : base()
+        { }
+
         public ControlPassbookCommand(int RequestId, ControlPassbookCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

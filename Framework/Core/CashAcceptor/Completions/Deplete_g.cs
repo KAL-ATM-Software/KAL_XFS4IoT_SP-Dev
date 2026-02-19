@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.Deplete")]
     public sealed class DepleteCompletion : Completion<DepleteCompletion.PayloadData>
     {
+        public DepleteCompletion()
+            : base()
+        { }
+
         public DepleteCompletion(int RequestId, DepleteCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

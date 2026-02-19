@@ -26,12 +26,14 @@ namespace XFS4IoTServer
         public ClientConnection(WebSocket socket, 
                                 IMessageDecoder CommandDecoder, 
                                 ICommandDispatcher CommandDispatcher,
+                                IServiceProvider ServiceProvider,
                                 ILogger Logger,
                                 IJsonSchemaValidator JsonSchemaValidator)
         {
             this.socket = socket;
             this.CommandDecoder = CommandDecoder;
             this.CommandDispatcher = CommandDispatcher;
+            this.ServiceProvider = ServiceProvider;
             this.Logger = Logger;
             this.JsonSchemaValidator = JsonSchemaValidator;
         }
@@ -122,7 +124,7 @@ namespace XFS4IoTServer
             }
             catch (XFS4IoT.InvalidDataException ex)
             {
-                await CommandDispatcher.DispatchError(this, commandBase, ex);
+                await CommandDispatcher.DispatchError(ServiceProvider, this, commandBase, ex);
                 return;
             }
             catch (Exception ex)
@@ -144,18 +146,18 @@ namespace XFS4IoTServer
             }
             catch (Exception ex)
             {
-                await CommandDispatcher.DispatchError(this, commandBase, ex);
+                await CommandDispatcher.DispatchError(ServiceProvider, this, commandBase, ex);
                 return;
             }
 
             // Process command
             try
             {
-                await CommandDispatcher.Dispatch(this, commandBase, token);
+                await CommandDispatcher.Dispatch(ServiceProvider, this, commandBase, token);
             }
             catch (NotImplementedException ex) // Add more exception can be thrown by the device specific class
             {
-                await CommandDispatcher.DispatchError(this, commandBase, ex);
+                await CommandDispatcher.DispatchError(ServiceProvider, this, commandBase, ex);
             }
             catch (Exception ex)
             {
@@ -206,6 +208,7 @@ namespace XFS4IoTServer
         private readonly ILogger Logger;
         private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
         private readonly ICommandDispatcher CommandDispatcher;
+        private readonly IServiceProvider ServiceProvider;
         private readonly IJsonSchemaValidator JsonSchemaValidator;
         private readonly SemaphoreSlim SendSyncObject = new(1, 1);
     }

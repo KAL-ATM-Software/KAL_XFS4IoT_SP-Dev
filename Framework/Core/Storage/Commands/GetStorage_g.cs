@@ -20,6 +20,10 @@ namespace XFS4IoT.Storage.Commands
     [Command(Name = "Storage.GetStorage")]
     public sealed class GetStorageCommand : Command<MessagePayload>
     {
+        public GetStorageCommand()
+            : base()
+        { }
+
         public GetStorageCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

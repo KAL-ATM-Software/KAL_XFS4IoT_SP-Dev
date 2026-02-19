@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCommand : Command<WriteRawDataCommand.PayloadData>
     {
+        public WriteRawDataCommand()
+            : base()
+        { }
+
         public WriteRawDataCommand(int RequestId, WriteRawDataCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

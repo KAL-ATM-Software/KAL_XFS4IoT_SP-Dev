@@ -20,6 +20,10 @@ namespace XFS4IoT.Auxiliaries.Commands
     [Command(Name = "Auxiliaries.Register")]
     public sealed class RegisterCommand : Command<RegisterCommand.PayloadData>
     {
+        public RegisterCommand()
+            : base()
+        { }
+
         public RegisterCommand(int RequestId, RegisterCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

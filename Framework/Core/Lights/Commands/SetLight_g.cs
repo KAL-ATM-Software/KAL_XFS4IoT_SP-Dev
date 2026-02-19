@@ -20,6 +20,10 @@ namespace XFS4IoT.Lights.Commands
     [Command(Name = "Lights.SetLight")]
     public sealed class SetLightCommand : Command<SetLightCommand.PayloadData>
     {
+        public SetLightCommand()
+            : base()
+        { }
+
         public SetLightCommand(int RequestId, SetLightCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

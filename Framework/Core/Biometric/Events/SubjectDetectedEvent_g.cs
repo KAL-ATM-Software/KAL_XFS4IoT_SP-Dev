@@ -21,6 +21,10 @@ namespace XFS4IoT.Biometric.Events
     public sealed class SubjectDetectedEvent : Event<MessagePayloadBase>
     {
 
+        public SubjectDetectedEvent()
+            : base()
+        { }
+
         public SubjectDetectedEvent(int RequestId)
             : base(RequestId)
         { }

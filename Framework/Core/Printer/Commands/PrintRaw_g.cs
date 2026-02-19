@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.PrintRaw")]
     public sealed class PrintRawCommand : Command<PrintRawCommand.PayloadData>
     {
+        public PrintRawCommand()
+            : base()
+        { }
+
         public PrintRawCommand(int RequestId, PrintRawCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

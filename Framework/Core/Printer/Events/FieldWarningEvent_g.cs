@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class FieldWarningEvent : Event<FieldWarningEvent.PayloadData>
     {
 
+        public FieldWarningEvent()
+            : base()
+        { }
+
         public FieldWarningEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

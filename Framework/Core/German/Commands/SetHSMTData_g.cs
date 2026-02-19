@@ -20,6 +20,10 @@ namespace XFS4IoT.German.Commands
     [Command(Name = "German.SetHSMTData")]
     public sealed class SetHSMTDataCommand : Command<SetHSMTDataCommand.PayloadData>
     {
+        public SetHSMTDataCommand()
+            : base()
+        { }
+
         public SetHSMTDataCommand(int RequestId, SetHSMTDataCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

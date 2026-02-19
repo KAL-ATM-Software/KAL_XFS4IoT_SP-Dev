@@ -21,6 +21,10 @@ namespace XFS4IoT.German.Events
     public sealed class HSMTDataChangedEvent : UnsolicitedEvent<HSMTDataChangedEvent.PayloadData>
     {
 
+        public HSMTDataChangedEvent()
+            : base()
+        { }
+
         public HSMTDataChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

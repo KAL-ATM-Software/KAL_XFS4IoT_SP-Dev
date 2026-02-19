@@ -19,6 +19,10 @@ namespace XFS4IoT.Auxiliaries.Completions
     [Completion(Name = "Auxiliaries.Register")]
     public sealed class RegisterCompletion : Completion<RegisterCompletion.PayloadData>
     {
+        public RegisterCompletion()
+            : base()
+        { }
+
         public RegisterCompletion(int RequestId, RegisterCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

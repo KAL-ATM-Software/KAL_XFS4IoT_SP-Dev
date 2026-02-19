@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.Capabilities")]
     public sealed class CapabilitiesCommand : Command<MessagePayload>
     {
+        public CapabilitiesCommand()
+            : base()
+        { }
+
         public CapabilitiesCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

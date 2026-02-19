@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.ClearScreen")]
     public sealed class ClearScreenCommand : Command<ClearScreenCommand.PayloadData>
     {
+        public ClearScreenCommand()
+            : base()
+        { }
+
         public ClearScreenCommand(int RequestId, ClearScreenCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

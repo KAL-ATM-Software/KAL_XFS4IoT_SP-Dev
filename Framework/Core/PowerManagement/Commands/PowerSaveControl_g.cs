@@ -20,6 +20,10 @@ namespace XFS4IoT.PowerManagement.Commands
     [Command(Name = "PowerManagement.PowerSaveControl")]
     public sealed class PowerSaveControlCommand : Command<PowerSaveControlCommand.PayloadData>
     {
+        public PowerSaveControlCommand()
+            : base()
+        { }
+
         public PowerSaveControlCommand(int RequestId, PowerSaveControlCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

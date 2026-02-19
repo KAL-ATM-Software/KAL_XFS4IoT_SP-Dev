@@ -26,15 +26,18 @@ namespace XFS4IoTServer
         public EndPoint(Uri EndPointUri, 
                         IMessageDecoder CommandDecoder,
                         ICommandDispatcher CommandDispatcher,
+                        IServiceProvider ServiceProvider,
                         ILogger Logger)
         {
             EndPointUri.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(EndPointUri)}");
             CommandDecoder.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(CommandDecoder)}");
             CommandDispatcher.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(CommandDispatcher)}");
+            ServiceProvider.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(ServiceProvider)}");
             Logger.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(Logger)}");
 
             this.CommandDecoder = CommandDecoder;
             this.CommandDispatcher = CommandDispatcher;
+            this.ServiceProvider = ServiceProvider;
             this.Logger = Logger;
             
             HttpListener = new HttpListener()
@@ -93,6 +96,7 @@ namespace XFS4IoTServer
                         ClientConnection clientConnection = new(client,
                                                                 CommandDecoder,
                                                                 CommandDispatcher,
+                                                                ServiceProvider,
                                                                 Logger,
                                                                 JsonSchemaValidator);
                         var task = clientConnection.RunAsync(token);
@@ -125,6 +129,7 @@ namespace XFS4IoTServer
 
         private readonly IMessageDecoder CommandDecoder;
         private readonly ICommandDispatcher CommandDispatcher;
+        private readonly IServiceProvider ServiceProvider;
         private readonly ILogger Logger;
 
         public void Dispose()

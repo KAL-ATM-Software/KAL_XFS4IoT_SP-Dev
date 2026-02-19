@@ -12,6 +12,9 @@ namespace XFS4IoT.Completions
     [DataContract]
     public abstract class Completion<T> : Message<T> where T : MessagePayloadBase
     {
+        public Completion() : base()
+        { }
+
         /// <summary>
         /// Initialise any response object
         /// </summary>

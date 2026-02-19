@@ -19,6 +19,10 @@ namespace XFS4IoT.Deposit.Completions
     [Completion(Name = "Deposit.Entry")]
     public sealed class EntryCompletion : Completion<EntryCompletion.PayloadData>
     {
+        public EntryCompletion()
+            : base()
+        { }
+
         public EntryCompletion(int RequestId, EntryCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

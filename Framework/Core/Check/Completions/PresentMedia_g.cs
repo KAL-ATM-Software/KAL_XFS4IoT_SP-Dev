@@ -19,6 +19,10 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.PresentMedia")]
     public sealed class PresentMediaCompletion : Completion<PresentMediaCompletion.PayloadData>
     {
+        public PresentMediaCompletion()
+            : base()
+        { }
+
         public PresentMediaCompletion(int RequestId, PresentMediaCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.Reject")]
     public sealed class RejectCommand : Command<MessagePayload>
     {
+        public RejectCommand()
+            : base()
+        { }
+
         public RejectCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

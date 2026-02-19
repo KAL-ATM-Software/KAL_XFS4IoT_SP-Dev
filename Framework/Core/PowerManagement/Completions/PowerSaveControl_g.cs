@@ -19,6 +19,10 @@ namespace XFS4IoT.PowerManagement.Completions
     [Completion(Name = "PowerManagement.PowerSaveControl")]
     public sealed class PowerSaveControlCompletion : Completion<MessagePayload>
     {
+        public PowerSaveControlCompletion()
+            : base()
+        { }
+
         public PowerSaveControlCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

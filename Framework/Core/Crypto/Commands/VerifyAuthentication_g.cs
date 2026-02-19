@@ -20,6 +20,10 @@ namespace XFS4IoT.Crypto.Commands
     [Command(Name = "Crypto.VerifyAuthentication")]
     public sealed class VerifyAuthenticationCommand : Command<VerifyAuthenticationCommand.PayloadData>
     {
+        public VerifyAuthenticationCommand()
+            : base()
+        { }
+
         public VerifyAuthenticationCommand(int RequestId, VerifyAuthenticationCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

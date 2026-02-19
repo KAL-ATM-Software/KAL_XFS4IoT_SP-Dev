@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.GetPresentStatus")]
     public sealed class GetPresentStatusCommand : Command<MessagePayload>
     {
+        public GetPresentStatusCommand()
+            : base()
+        { }
+
         public GetPresentStatusCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

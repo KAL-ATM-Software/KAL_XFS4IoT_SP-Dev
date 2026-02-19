@@ -20,6 +20,10 @@ namespace XFS4IoT.Keyboard.Commands
     [Command(Name = "Keyboard.SecureKeyEntry")]
     public sealed class SecureKeyEntryCommand : Command<SecureKeyEntryCommand.PayloadData>
     {
+        public SecureKeyEntryCommand()
+            : base()
+        { }
+
         public SecureKeyEntryCommand(int RequestId, SecureKeyEntryCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

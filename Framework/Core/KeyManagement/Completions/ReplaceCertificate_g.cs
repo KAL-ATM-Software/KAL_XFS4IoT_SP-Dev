@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.ReplaceCertificate")]
     public sealed class ReplaceCertificateCompletion : Completion<ReplaceCertificateCompletion.PayloadData>
     {
+        public ReplaceCertificateCompletion()
+            : base()
+        { }
+
         public ReplaceCertificateCompletion(int RequestId, ReplaceCertificateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

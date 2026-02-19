@@ -19,6 +19,10 @@ namespace XFS4IoT.VendorApplication.Completions
     [Completion(Name = "VendorApplication.StartLocalApplication")]
     public sealed class StartLocalApplicationCompletion : Completion<MessagePayload>
     {
+        public StartLocalApplicationCompletion()
+            : base()
+        { }
+
         public StartLocalApplicationCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

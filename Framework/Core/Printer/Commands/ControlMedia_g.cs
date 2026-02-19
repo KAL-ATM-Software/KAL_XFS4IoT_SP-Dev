@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ControlMedia")]
     public sealed class ControlMediaCommand : Command<ControlMediaCommand.PayloadData>
     {
+        public ControlMediaCommand()
+            : base()
+        { }
+
         public ControlMediaCommand(int RequestId, ControlMediaCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

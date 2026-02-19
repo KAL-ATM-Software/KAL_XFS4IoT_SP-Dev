@@ -21,6 +21,10 @@ namespace XFS4IoT.Biometric.Events
     public sealed class DataClearedEvent : UnsolicitedEvent<DataClearedEvent.PayloadData>
     {
 
+        public DataClearedEvent()
+            : base()
+        { }
+
         public DataClearedEvent(PayloadData Payload)
             : base(Payload)
         { }

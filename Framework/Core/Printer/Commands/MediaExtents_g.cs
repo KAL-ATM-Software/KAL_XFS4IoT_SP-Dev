@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.MediaExtents")]
     public sealed class MediaExtentsCommand : Command<MediaExtentsCommand.PayloadData>
     {
+        public MediaExtentsCommand()
+            : base()
+        { }
+
         public MediaExtentsCommand(int RequestId, MediaExtentsCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Deposit.Commands
     [Command(Name = "Deposit.SupplyReplenish")]
     public sealed class SupplyReplenishCommand : Command<SupplyReplenishCommand.PayloadData>
     {
+        public SupplyReplenishCommand()
+            : base()
+        { }
+
         public SupplyReplenishCommand(int RequestId, SupplyReplenishCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

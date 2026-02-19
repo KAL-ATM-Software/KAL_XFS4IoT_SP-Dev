@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.Reset")]
     public sealed class ResetCommand : Command<ResetCommand.PayloadData>
     {
+        public ResetCommand()
+            : base()
+        { }
+
         public ResetCommand(int RequestId, ResetCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

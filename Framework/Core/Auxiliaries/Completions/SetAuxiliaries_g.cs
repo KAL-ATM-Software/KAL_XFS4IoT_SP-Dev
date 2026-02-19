@@ -19,6 +19,10 @@ namespace XFS4IoT.Auxiliaries.Completions
     [Completion(Name = "Auxiliaries.SetAuxiliaries")]
     public sealed class SetAuxiliariesCompletion : Completion<SetAuxiliariesCompletion.PayloadData>
     {
+        public SetAuxiliariesCompletion()
+            : base()
+        { }
+
         public SetAuxiliariesCompletion(int RequestId, SetAuxiliariesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

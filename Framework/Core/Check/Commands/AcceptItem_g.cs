@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.AcceptItem")]
     public sealed class AcceptItemCommand : Command<AcceptItemCommand.PayloadData>
     {
+        public AcceptItemCommand()
+            : base()
+        { }
+
         public AcceptItemCommand(int RequestId, AcceptItemCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

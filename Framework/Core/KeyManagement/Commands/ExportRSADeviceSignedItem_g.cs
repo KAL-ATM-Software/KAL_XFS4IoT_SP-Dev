@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.ExportRSADeviceSignedItem")]
     public sealed class ExportRSADeviceSignedItemCommand : Command<ExportRSADeviceSignedItemCommand.PayloadData>
     {
+        public ExportRSADeviceSignedItemCommand()
+            : base()
+        { }
+
         public ExportRSADeviceSignedItemCommand(int RequestId, ExportRSADeviceSignedItemCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -21,6 +21,10 @@ namespace XFS4IoT.Check.Events
     public sealed class NoMediaEvent : Event<MessagePayloadBase>
     {
 
+        public NoMediaEvent()
+            : base()
+        { }
+
         public NoMediaEvent(int RequestId)
             : base(RequestId)
         { }

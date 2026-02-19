@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.GetQueryPCIPTSDeviceId")]
     public sealed class GetQueryPCIPTSDeviceIdCommand : Command<MessagePayload>
     {
+        public GetQueryPCIPTSDeviceIdCommand()
+            : base()
+        { }
+
         public GetQueryPCIPTSDeviceIdCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

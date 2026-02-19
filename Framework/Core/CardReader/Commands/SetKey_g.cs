@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.SetKey")]
     public sealed class SetKeyCommand : Command<SetKeyCommand.PayloadData>
     {
+        public SetKeyCommand()
+            : base()
+        { }
+
         public SetKeyCommand(int RequestId, SetKeyCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.GetDepleteSource")]
     public sealed class GetDepleteSourceCommand : Command<GetDepleteSourceCommand.PayloadData>
     {
+        public GetDepleteSourceCommand()
+            : base()
+        { }
+
         public GetDepleteSourceCommand(int RequestId, GetDepleteSourceCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -21,6 +21,10 @@ namespace XFS4IoT.KeyManagement.Events
     public sealed class DUKPTKSNEvent : Event<DUKPTKSNEvent.PayloadData>
     {
 
+        public DUKPTKSNEvent()
+            : base()
+        { }
+
         public DUKPTKSNEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

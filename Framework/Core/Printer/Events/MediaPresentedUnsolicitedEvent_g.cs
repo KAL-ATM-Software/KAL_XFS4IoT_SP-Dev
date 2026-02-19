@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaPresentedUnsolicitedEvent : UnsolicitedEvent<MediaPresentedUnsolicitedEvent.PayloadData>
     {
 
+        public MediaPresentedUnsolicitedEvent()
+            : base()
+        { }
+
         public MediaPresentedUnsolicitedEvent(PayloadData Payload)
             : base(Payload)
         { }

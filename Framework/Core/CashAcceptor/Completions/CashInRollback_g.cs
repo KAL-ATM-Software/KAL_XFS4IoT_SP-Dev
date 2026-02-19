@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.CashInRollback")]
     public sealed class CashInRollbackCompletion : Completion<CashInRollbackCompletion.PayloadData>
     {
+        public CashInRollbackCompletion()
+            : base()
+        { }
+
         public CashInRollbackCompletion(int RequestId, CashInRollbackCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

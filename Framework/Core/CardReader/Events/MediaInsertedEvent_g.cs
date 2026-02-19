@@ -21,6 +21,10 @@ namespace XFS4IoT.CardReader.Events
     public sealed class MediaInsertedEvent : Event<MessagePayloadBase>
     {
 
+        public MediaInsertedEvent()
+            : base()
+        { }
+
         public MediaInsertedEvent(int RequestId)
             : base(RequestId)
         { }

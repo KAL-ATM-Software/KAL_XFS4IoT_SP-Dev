@@ -21,6 +21,10 @@ namespace XFS4IoT.KeyManagement.Events
     public sealed class IllegalKeyAccessEvent : UnsolicitedEvent<IllegalKeyAccessEvent.PayloadData>
     {
 
+        public IllegalKeyAccessEvent()
+            : base()
+        { }
+
         public IllegalKeyAccessEvent(PayloadData Payload)
             : base(Payload)
         { }

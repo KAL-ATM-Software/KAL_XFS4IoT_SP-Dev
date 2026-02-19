@@ -19,6 +19,10 @@ namespace XFS4IoT.BanknoteNeutralization.Completions
     [Completion(Name = "BanknoteNeutralization.TriggerNeutralization")]
     public sealed class TriggerNeutralizationCompletion : Completion<MessagePayload>
     {
+        public TriggerNeutralizationCompletion()
+            : base()
+        { }
+
         public TriggerNeutralizationCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

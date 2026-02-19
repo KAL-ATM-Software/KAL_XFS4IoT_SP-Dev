@@ -19,6 +19,10 @@ namespace XFS4IoT.VendorMode.Completions
     [Completion(Name = "VendorMode.EnterModeAcknowledge")]
     public sealed class EnterModeAcknowledgeCompletion : Completion<MessagePayload>
     {
+        public EnterModeAcknowledgeCompletion()
+            : base()
+        { }
+
         public EnterModeAcknowledgeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

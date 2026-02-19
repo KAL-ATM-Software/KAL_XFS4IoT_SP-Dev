@@ -21,6 +21,10 @@ namespace XFS4IoT.Check.Events
     public sealed class MediaDataEvent : Event<MediaDataEvent.PayloadData>
     {
 
+        public MediaDataEvent()
+            : base()
+        { }
+
         public MediaDataEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

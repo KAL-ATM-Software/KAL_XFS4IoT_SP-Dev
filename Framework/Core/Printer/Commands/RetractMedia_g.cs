@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.RetractMedia")]
     public sealed class RetractMediaCommand : Command<RetractMediaCommand.PayloadData>
     {
+        public RetractMediaCommand()
+            : base()
+        { }
+
         public RetractMediaCommand(int RequestId, RetractMediaCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

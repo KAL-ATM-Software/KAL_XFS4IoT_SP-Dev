@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.CashUnitCount")]
     public sealed class CashUnitCountCommand : Command<CashUnitCountCommand.PayloadData>
     {
+        public CashUnitCountCommand()
+            : base()
+        { }
+
         public CashUnitCountCommand(int RequestId, CashUnitCountCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

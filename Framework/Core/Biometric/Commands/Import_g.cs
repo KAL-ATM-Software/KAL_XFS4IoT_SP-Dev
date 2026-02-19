@@ -20,6 +20,10 @@ namespace XFS4IoT.Biometric.Commands
     [Command(Name = "Biometric.Import")]
     public sealed class ImportCommand : Command<ImportCommand.PayloadData>
     {
+        public ImportCommand()
+            : base()
+        { }
+
         public ImportCommand(int RequestId, ImportCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

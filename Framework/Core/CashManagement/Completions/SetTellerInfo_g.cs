@@ -19,6 +19,10 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.SetTellerInfo")]
     public sealed class SetTellerInfoCompletion : Completion<SetTellerInfoCompletion.PayloadData>
     {
+        public SetTellerInfoCompletion()
+            : base()
+        { }
+
         public SetTellerInfoCompletion(int RequestId, SetTellerInfoCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

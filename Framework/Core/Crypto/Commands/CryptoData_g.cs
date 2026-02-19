@@ -20,6 +20,10 @@ namespace XFS4IoT.Crypto.Commands
     [Command(Name = "Crypto.CryptoData")]
     public sealed class CryptoDataCommand : Command<CryptoDataCommand.PayloadData>
     {
+        public CryptoDataCommand()
+            : base()
+        { }
+
         public CryptoDataCommand(int RequestId, CryptoDataCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

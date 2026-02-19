@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.Read")]
     public sealed class ReadCompletion : Completion<ReadCompletion.PayloadData>
     {
+        public ReadCompletion()
+            : base()
+        { }
+
         public ReadCompletion(int RequestId, ReadCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

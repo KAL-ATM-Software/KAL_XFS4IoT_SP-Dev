@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.StartAuthenticate")]
     public sealed class StartAuthenticateCommand : Command<StartAuthenticateCommand.PayloadData>
     {
+        public StartAuthenticateCommand()
+            : base()
+        { }
+
         public StartAuthenticateCommand(int RequestId, StartAuthenticateCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

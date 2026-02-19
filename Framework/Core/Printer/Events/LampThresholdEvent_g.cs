@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class LampThresholdEvent : UnsolicitedEvent<LampThresholdEvent.PayloadData>
     {
 
+        public LampThresholdEvent()
+            : base()
+        { }
+
         public LampThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

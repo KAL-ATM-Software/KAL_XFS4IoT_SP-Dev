@@ -19,6 +19,10 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.DefineKeys")]
     public sealed class DefineKeysCompletion : Completion<DefineKeysCompletion.PayloadData>
     {
+        public DefineKeysCompletion()
+            : base()
+        { }
+
         public DefineKeysCompletion(int RequestId, DefineKeysCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

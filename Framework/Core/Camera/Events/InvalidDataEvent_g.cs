@@ -21,6 +21,10 @@ namespace XFS4IoT.Camera.Events
     public sealed class InvalidDataEvent : Event<MessagePayloadBase>
     {
 
+        public InvalidDataEvent()
+            : base()
+        { }
+
         public InvalidDataEvent(int RequestId)
             : base(RequestId)
         { }

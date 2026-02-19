@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EMVClessConfigure")]
     public sealed class EMVClessConfigureCommand : Command<EMVClessConfigureCommand.PayloadData>
     {
+        public EMVClessConfigureCommand()
+            : base()
+        { }
+
         public EMVClessConfigureCommand(int RequestId, EMVClessConfigureCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -21,6 +21,10 @@ namespace XFS4IoT.Check.Events
     public sealed class MediaTakenEvent : UnsolicitedEvent<MediaTakenEvent.PayloadData>
     {
 
+        public MediaTakenEvent()
+            : base()
+        { }
+
         public MediaTakenEvent(PayloadData Payload)
             : base(Payload)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.PreparePresent")]
     public sealed class PreparePresentCompletion : Completion<PreparePresentCompletion.PayloadData>
     {
+        public PreparePresentCompletion()
+            : base()
+        { }
+
         public PreparePresentCompletion(int RequestId, PreparePresentCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

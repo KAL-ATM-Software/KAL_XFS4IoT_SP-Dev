@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.GetCommandNonce")]
     public sealed class GetCommandNonceCommand : Command<MessagePayload>
     {
+        public GetCommandNonceCommand()
+            : base()
+        { }
+
         public GetCommandNonceCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

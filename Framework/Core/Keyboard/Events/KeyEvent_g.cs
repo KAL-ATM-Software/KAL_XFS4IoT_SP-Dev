@@ -21,6 +21,10 @@ namespace XFS4IoT.Keyboard.Events
     public sealed class KeyEvent : Event<KeyEvent.PayloadData>
     {
 
+        public KeyEvent()
+            : base()
+        { }
+
         public KeyEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

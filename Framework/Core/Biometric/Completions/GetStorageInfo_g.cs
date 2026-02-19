@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.GetStorageInfo")]
     public sealed class GetStorageInfoCompletion : Completion<GetStorageInfoCompletion.PayloadData>
     {
+        public GetStorageInfoCompletion()
+            : base()
+        { }
+
         public GetStorageInfoCompletion(int RequestId, GetStorageInfoCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

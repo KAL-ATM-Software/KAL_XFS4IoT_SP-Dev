@@ -20,6 +20,10 @@ namespace XFS4IoT.Crypto.Commands
     [Command(Name = "Crypto.GenerateAuthentication")]
     public sealed class GenerateAuthenticationCommand : Command<GenerateAuthenticationCommand.PayloadData>
     {
+        public GenerateAuthenticationCommand()
+            : base()
+        { }
+
         public GenerateAuthenticationCommand(int RequestId, GenerateAuthenticationCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

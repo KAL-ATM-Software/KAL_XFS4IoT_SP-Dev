@@ -26,6 +26,8 @@ namespace XFS4IoTServer
             Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(KeyboardServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IKeyboardDevice>();
 
+            RegisterFactory(ServiceProvider);
+
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(KeyboardServiceClass)}");
             KeyManagementService = ServiceProvider.IsA<IKeyManagementService>($"Invalid interface parameter specified for key management service. {nameof(KeyboardServiceClass)}");
 

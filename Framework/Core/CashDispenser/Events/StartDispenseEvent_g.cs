@@ -21,6 +21,10 @@ namespace XFS4IoT.CashDispenser.Events
     public sealed class StartDispenseEvent : Event<MessagePayloadBase>
     {
 
+        public StartDispenseEvent()
+            : base()
+        { }
+
         public StartDispenseEvent(int RequestId)
             : base(RequestId)
         { }

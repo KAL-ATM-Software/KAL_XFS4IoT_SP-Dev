@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ReadImage")]
     public sealed class ReadImageCompletion : Completion<ReadImageCompletion.PayloadData>
     {
+        public ReadImageCompletion()
+            : base()
+        { }
+
         public ReadImageCompletion(int RequestId, ReadImageCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

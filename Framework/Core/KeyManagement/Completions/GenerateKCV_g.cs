@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.GenerateKCV")]
     public sealed class GenerateKCVCompletion : Completion<GenerateKCVCompletion.PayloadData>
     {
+        public GenerateKCVCompletion()
+            : base()
+        { }
+
         public GenerateKCVCompletion(int RequestId, GenerateKCVCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.Status")]
     public sealed class StatusCompletion : Completion<StatusCompletion.PayloadData>
     {
+        public StatusCompletion()
+            : base()
+        { }
+
         public StatusCompletion(int RequestId, StatusCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

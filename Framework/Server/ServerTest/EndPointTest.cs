@@ -38,9 +38,12 @@ namespace XFS4IoTServerTest
         //[TestMethod]
         public void TestRunEndpoint()
         {
+            MessageCollection.Add(MessageHeader.TypeEnum.Command, "CardReader.ReadRawData", typeof(ReadRawDataCommand));
+
             var test = new EndPoint(new System.Uri("http://localhost:8088/XFS/CashAcceptor/"),
                 CommandDecoder: CommandDecoder,
                 CommandDispatcher: CommandDispatcher,
+                ServiceProvider: null,
                 Logger: Logger);
 
             test.RunAsync(CancellationToken.None).Wait();
@@ -51,11 +54,7 @@ namespace XFS4IoTServerTest
         /// <summary>
         /// Test set of commands to support
         /// </summary>
-        private readonly IMessageDecoder CommandDecoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, Assembly.GetAssembly(typeof(EndPointTest))?.GetName())
-        {
-            { typeof( ReadRawDataCommand) },
-            //{ typeof( ReadRawData) },
-        };
+        private readonly IMessageDecoder CommandDecoder = new MessageDecoder();
 
         private readonly ICommandDispatcher CommandDispatcher = new TestCommandDispatcher()
         {
@@ -81,8 +80,8 @@ namespace XFS4IoTServerTest
 
         private class TestCommandDispatcher : ICommandDispatcher
         {
-            public Task Dispatch(IConnection Connection, MessageBase Command, CancellationToken Token) => throw new System.NotImplementedException();
-            public Task DispatchError(IConnection Connection, MessageBase Command, Exception CommandException) => throw new System.NotImplementedException();
+            public Task Dispatch(XFS4IoTServer.IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, CancellationToken Token) => throw new System.NotImplementedException();
+            public Task DispatchError(XFS4IoTServer.IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, Exception CommandException) => throw new System.NotImplementedException();
             public Task RunAsync(CancellationSource cancellationSource) => throw new System.NotImplementedException();
             public IEnumerator GetEnumerator() => throw new System.NotImplementedException();
             public Task CancelCommandsAsync(IConnection Connection, List<int> RequestIds, CancellationToken Token) => throw new NotImplementedException();

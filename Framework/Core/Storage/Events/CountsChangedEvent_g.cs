@@ -21,6 +21,10 @@ namespace XFS4IoT.Storage.Events
     public sealed class CountsChangedEvent : UnsolicitedEvent<CountsChangedEvent.PayloadData>
     {
 
+        public CountsChangedEvent()
+            : base()
+        { }
+
         public CountsChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

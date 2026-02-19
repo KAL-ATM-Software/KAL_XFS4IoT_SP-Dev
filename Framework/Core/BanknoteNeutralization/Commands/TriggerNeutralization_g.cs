@@ -20,6 +20,10 @@ namespace XFS4IoT.BanknoteNeutralization.Commands
     [Command(Name = "BanknoteNeutralization.TriggerNeutralization")]
     public sealed class TriggerNeutralizationCommand : Command<TriggerNeutralizationCommand.PayloadData>
     {
+        public TriggerNeutralizationCommand()
+            : base()
+        { }
+
         public TriggerNeutralizationCommand(int RequestId, TriggerNeutralizationCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

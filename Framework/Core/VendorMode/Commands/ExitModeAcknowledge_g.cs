@@ -20,6 +20,10 @@ namespace XFS4IoT.VendorMode.Commands
     [Command(Name = "VendorMode.ExitModeAcknowledge")]
     public sealed class ExitModeAcknowledgeCommand : Command<MessagePayload>
     {
+        public ExitModeAcknowledgeCommand()
+            : base()
+        { }
+
         public ExitModeAcknowledgeCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.GenerateKCV")]
     public sealed class GenerateKCVCommand : Command<GenerateKCVCommand.PayloadData>
     {
+        public GenerateKCVCommand()
+            : base()
+        { }
+
         public GenerateKCVCommand(int RequestId, GenerateKCVCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

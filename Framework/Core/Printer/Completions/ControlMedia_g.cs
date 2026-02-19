@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.ControlMedia")]
     public sealed class ControlMediaCompletion : Completion<ControlMediaCompletion.PayloadData>
     {
+        public ControlMediaCompletion()
+            : base()
+        { }
+
         public ControlMediaCompletion(int RequestId, ControlMediaCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

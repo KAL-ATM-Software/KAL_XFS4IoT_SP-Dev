@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.GetKeyDetail")]
     public sealed class GetKeyDetailCommand : Command<MessagePayload>
     {
+        public GetKeyDetailCommand()
+            : base()
+        { }
+
         public GetKeyDetailCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

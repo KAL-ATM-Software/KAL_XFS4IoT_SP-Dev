@@ -20,6 +20,10 @@ namespace XFS4IoT.Auxiliaries.Commands
     [Command(Name = "Auxiliaries.ClearAutoStartupTime")]
     public sealed class ClearAutoStartupTimeCommand : Command<MessagePayload>
     {
+        public ClearAutoStartupTimeCommand()
+            : base()
+        { }
+
         public ClearAutoStartupTimeCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.German.Completions
     [Completion(Name = "German.SecureMsgReceive")]
     public sealed class SecureMsgReceiveCompletion : Completion<SecureMsgReceiveCompletion.PayloadData>
     {
+        public SecureMsgReceiveCompletion()
+            : base()
+        { }
+
         public SecureMsgReceiveCompletion(int RequestId, SecureMsgReceiveCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.CompareSignature")]
     public sealed class CompareSignatureCommand : Command<CompareSignatureCommand.PayloadData>
     {
+        public CompareSignatureCommand()
+            : base()
+        { }
+
         public CompareSignatureCommand(int RequestId, CompareSignatureCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.GetQueryField")]
     public sealed class GetQueryFieldCompletion : Completion<GetQueryFieldCompletion.PayloadData>
     {
+        public GetQueryFieldCompletion()
+            : base()
+        { }
+
         public GetQueryFieldCompletion(int RequestId, GetQueryFieldCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

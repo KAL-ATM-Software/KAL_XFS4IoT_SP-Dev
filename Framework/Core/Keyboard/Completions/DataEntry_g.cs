@@ -19,6 +19,10 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.DataEntry")]
     public sealed class DataEntryCompletion : Completion<DataEntryCompletion.PayloadData>
     {
+        public DataEntryCompletion()
+            : base()
+        { }
+
         public DataEntryCompletion(int RequestId, DataEntryCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

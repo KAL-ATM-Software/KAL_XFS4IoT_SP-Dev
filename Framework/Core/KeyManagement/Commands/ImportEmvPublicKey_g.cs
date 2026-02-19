@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.ImportEmvPublicKey")]
     public sealed class ImportEmvPublicKeyCommand : Command<ImportEmvPublicKeyCommand.PayloadData>
     {
+        public ImportEmvPublicKeyCommand()
+            : base()
+        { }
+
         public ImportEmvPublicKeyCommand(int RequestId, ImportEmvPublicKeyCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

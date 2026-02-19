@@ -20,6 +20,10 @@ namespace XFS4IoT.Storage.Commands
     [Command(Name = "Storage.SetStorage")]
     public sealed class SetStorageCommand : Command<SetStorageCommand.PayloadData>
     {
+        public SetStorageCommand()
+            : base()
+        { }
+
         public SetStorageCommand(int RequestId, SetStorageCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

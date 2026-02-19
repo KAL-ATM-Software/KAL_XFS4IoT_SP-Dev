@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.PreparePresent")]
     public sealed class PreparePresentCommand : Command<PreparePresentCommand.PayloadData>
     {
+        public PreparePresentCommand()
+            : base()
+        { }
+
         public PreparePresentCommand(int RequestId, PreparePresentCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

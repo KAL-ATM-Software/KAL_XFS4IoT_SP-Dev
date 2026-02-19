@@ -19,6 +19,10 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.SetResolution")]
     public sealed class SetResolutionCompletion : Completion<SetResolutionCompletion.PayloadData>
     {
+        public SetResolutionCompletion()
+            : base()
+        { }
+
         public SetResolutionCompletion(int RequestId, SetResolutionCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

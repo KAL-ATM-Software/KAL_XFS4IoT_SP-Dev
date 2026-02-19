@@ -19,6 +19,10 @@ namespace XFS4IoT.CardReader.Completions
     [Completion(Name = "CardReader.WriteRawData")]
     public sealed class WriteRawDataCompletion : Completion<WriteRawDataCompletion.PayloadData>
     {
+        public WriteRawDataCompletion()
+            : base()
+        { }
+
         public WriteRawDataCompletion(int RequestId, WriteRawDataCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

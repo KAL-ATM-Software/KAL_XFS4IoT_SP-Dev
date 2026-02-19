@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class ShutterStatusChangedEvent : UnsolicitedEvent<ShutterStatusChangedEvent.PayloadData>
     {
 
+        public ShutterStatusChangedEvent()
+            : base()
+        { }
+
         public ShutterStatusChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

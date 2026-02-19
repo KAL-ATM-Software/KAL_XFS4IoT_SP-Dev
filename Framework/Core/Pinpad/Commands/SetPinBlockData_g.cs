@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.SetPinBlockData")]
     public sealed class SetPinBlockDataCommand : Command<SetPinBlockDataCommand.PayloadData>
     {
+        public SetPinBlockDataCommand()
+            : base()
+        { }
+
         public SetPinBlockDataCommand(int RequestId, SetPinBlockDataCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

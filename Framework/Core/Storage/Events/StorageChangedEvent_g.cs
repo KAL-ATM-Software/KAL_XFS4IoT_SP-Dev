@@ -21,6 +21,10 @@ namespace XFS4IoT.Storage.Events
     public sealed class StorageChangedEvent : UnsolicitedEvent<StorageChangedEvent.PayloadData>
     {
 
+        public StorageChangedEvent()
+            : base()
+        { }
+
         public StorageChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

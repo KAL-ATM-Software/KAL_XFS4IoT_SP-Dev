@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.TestCashUnits")]
     public sealed class TestCashUnitsCommand : Command<TestCashUnitsCommand.PayloadData>
     {
+        public TestCashUnitsCommand()
+            : base()
+        { }
+
         public TestCashUnitsCommand(int RequestId, TestCashUnitsCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

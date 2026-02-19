@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.GetCertificate")]
     public sealed class GetCertificateCompletion : Completion<GetCertificateCompletion.PayloadData>
     {
+        public GetCertificateCompletion()
+            : base()
+        { }
+
         public GetCertificateCompletion(int RequestId, GetCertificateCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

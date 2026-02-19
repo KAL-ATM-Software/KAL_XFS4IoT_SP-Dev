@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.DeleteKey")]
     public sealed class DeleteKeyCompletion : Completion<DeleteKeyCompletion.PayloadData>
     {
+        public DeleteKeyCompletion()
+            : base()
+        { }
+
         public DeleteKeyCompletion(int RequestId, DeleteKeyCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

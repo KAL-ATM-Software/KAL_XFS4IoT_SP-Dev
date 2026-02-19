@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.ConfigureNoteTypes")]
     public sealed class ConfigureNoteTypesCompletion : Completion<ConfigureNoteTypesCompletion.PayloadData>
     {
+        public ConfigureNoteTypesCompletion()
+            : base()
+        { }
+
         public ConfigureNoteTypesCompletion(int RequestId, ConfigureNoteTypesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

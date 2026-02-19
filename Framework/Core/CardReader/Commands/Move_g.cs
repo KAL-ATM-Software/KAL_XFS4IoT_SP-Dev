@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.Move")]
     public sealed class MoveCommand : Command<MoveCommand.PayloadData>
     {
+        public MoveCommand()
+            : base()
+        { }
+
         public MoveCommand(int RequestId, MoveCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

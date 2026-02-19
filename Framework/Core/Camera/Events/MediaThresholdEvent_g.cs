@@ -21,6 +21,10 @@ namespace XFS4IoT.Camera.Events
     public sealed class MediaThresholdEvent : UnsolicitedEvent<MediaThresholdEvent.PayloadData>
     {
 
+        public MediaThresholdEvent()
+            : base()
+        { }
+
         public MediaThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

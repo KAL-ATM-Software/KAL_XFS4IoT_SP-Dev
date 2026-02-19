@@ -19,6 +19,10 @@ namespace XFS4IoT.German.Completions
     [Completion(Name = "German.HSMInit")]
     public sealed class HSMInitCompletion : Completion<HSMInitCompletion.PayloadData>
     {
+        public HSMInitCompletion()
+            : base()
+        { }
+
         public HSMInitCompletion(int RequestId, HSMInitCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

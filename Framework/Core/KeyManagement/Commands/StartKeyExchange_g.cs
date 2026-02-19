@@ -20,6 +20,10 @@ namespace XFS4IoT.KeyManagement.Commands
     [Command(Name = "KeyManagement.StartKeyExchange")]
     public sealed class StartKeyExchangeCommand : Command<MessagePayload>
     {
+        public StartKeyExchangeCommand()
+            : base()
+        { }
+
         public StartKeyExchangeCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

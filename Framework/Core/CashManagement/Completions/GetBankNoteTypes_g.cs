@@ -19,6 +19,10 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.GetBankNoteTypes")]
     public sealed class GetBankNoteTypesCompletion : Completion<GetBankNoteTypesCompletion.PayloadData>
     {
+        public GetBankNoteTypesCompletion()
+            : base()
+        { }
+
         public GetBankNoteTypesCompletion(int RequestId, GetBankNoteTypesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

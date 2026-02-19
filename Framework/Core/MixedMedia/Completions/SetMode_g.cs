@@ -19,6 +19,10 @@ namespace XFS4IoT.MixedMedia.Completions
     [Completion(Name = "MixedMedia.SetMode")]
     public sealed class SetModeCompletion : Completion<SetModeCompletion.PayloadData>
     {
+        public SetModeCompletion()
+            : base()
+        { }
+
         public SetModeCompletion(int RequestId, SetModeCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

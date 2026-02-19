@@ -19,6 +19,10 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.GetQueryForm")]
     public sealed class GetQueryFormCompletion : Completion<GetQueryFormCompletion.PayloadData>
     {
+        public GetQueryFormCompletion()
+            : base()
+        { }
+
         public GetQueryFormCompletion(int RequestId, GetQueryFormCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

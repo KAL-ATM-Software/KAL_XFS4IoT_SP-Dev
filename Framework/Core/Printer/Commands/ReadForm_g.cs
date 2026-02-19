@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ReadForm")]
     public sealed class ReadFormCommand : Command<ReadFormCommand.PayloadData>
     {
+        public ReadFormCommand()
+            : base()
+        { }
+
         public ReadFormCommand(int RequestId, ReadFormCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -21,6 +21,10 @@ namespace XFS4IoT.CardReader.Events
     public sealed class EMVClessReadStatusEvent : Event<EMVClessReadStatusEvent.PayloadData>
     {
 
+        public EMVClessReadStatusEvent()
+            : base()
+        { }
+
         public EMVClessReadStatusEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

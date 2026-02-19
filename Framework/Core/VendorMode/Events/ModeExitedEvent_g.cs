@@ -21,6 +21,10 @@ namespace XFS4IoT.VendorMode.Events
     public sealed class ModeExitedEvent : UnsolicitedEvent<ModeExitedEvent.PayloadData>
     {
 
+        public ModeExitedEvent()
+            : base()
+        { }
+
         public ModeExitedEvent(PayloadData Payload)
             : base(Payload)
         { }

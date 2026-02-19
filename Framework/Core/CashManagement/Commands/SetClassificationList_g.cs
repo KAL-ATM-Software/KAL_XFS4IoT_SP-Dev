@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.SetClassificationList")]
     public sealed class SetClassificationListCommand : Command<SetClassificationListCommand.PayloadData>
     {
+        public SetClassificationListCommand()
+            : base()
+        { }
+
         public SetClassificationListCommand(int RequestId, SetClassificationListCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

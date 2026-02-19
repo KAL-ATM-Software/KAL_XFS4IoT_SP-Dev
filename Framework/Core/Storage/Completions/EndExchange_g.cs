@@ -19,6 +19,10 @@ namespace XFS4IoT.Storage.Completions
     [Completion(Name = "Storage.EndExchange")]
     public sealed class EndExchangeCompletion : Completion<EndExchangeCompletion.PayloadData>
     {
+        public EndExchangeCompletion()
+            : base()
+        { }
+
         public EndExchangeCompletion(int RequestId, EndExchangeCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

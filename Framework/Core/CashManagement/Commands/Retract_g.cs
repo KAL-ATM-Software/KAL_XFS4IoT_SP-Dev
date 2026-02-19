@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.Retract")]
     public sealed class RetractCommand : Command<RetractCommand.PayloadData>
     {
+        public RetractCommand()
+            : base()
+        { }
+
         public RetractCommand(int RequestId, RetractCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

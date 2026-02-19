@@ -19,6 +19,10 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.CloseShutter")]
     public sealed class CloseShutterCompletion : Completion<CloseShutterCompletion.PayloadData>
     {
+        public CloseShutterCompletion()
+            : base()
+        { }
+
         public CloseShutterCompletion(int RequestId, CloseShutterCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

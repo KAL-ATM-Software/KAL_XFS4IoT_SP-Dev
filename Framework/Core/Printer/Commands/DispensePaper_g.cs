@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.DispensePaper")]
     public sealed class DispensePaperCommand : Command<DispensePaperCommand.PayloadData>
     {
+        public DispensePaperCommand()
+            : base()
+        { }
+
         public DispensePaperCommand(int RequestId, DispensePaperCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

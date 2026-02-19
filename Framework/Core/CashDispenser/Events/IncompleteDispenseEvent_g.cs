@@ -21,6 +21,10 @@ namespace XFS4IoT.CashDispenser.Events
     public sealed class IncompleteDispenseEvent : Event<IncompleteDispenseEvent.PayloadData>
     {
 
+        public IncompleteDispenseEvent()
+            : base()
+        { }
+
         public IncompleteDispenseEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

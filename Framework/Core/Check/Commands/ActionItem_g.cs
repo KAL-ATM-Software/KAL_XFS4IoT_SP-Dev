@@ -20,6 +20,10 @@ namespace XFS4IoT.Check.Commands
     [Command(Name = "Check.ActionItem")]
     public sealed class ActionItemCommand : Command<MessagePayload>
     {
+        public ActionItemCommand()
+            : base()
+        { }
+
         public ActionItemCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.Deposit.Commands
     [Command(Name = "Deposit.Retract")]
     public sealed class RetractCommand : Command<RetractCommand.PayloadData>
     {
+        public RetractCommand()
+            : base()
+        { }
+
         public RetractCommand(int RequestId, RetractCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

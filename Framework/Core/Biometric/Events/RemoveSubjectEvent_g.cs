@@ -21,6 +21,10 @@ namespace XFS4IoT.Biometric.Events
     public sealed class RemoveSubjectEvent : Event<MessagePayloadBase>
     {
 
+        public RemoveSubjectEvent()
+            : base()
+        { }
+
         public RemoveSubjectEvent(int RequestId)
             : base(RequestId)
         { }

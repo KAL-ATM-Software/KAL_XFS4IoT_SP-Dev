@@ -20,6 +20,10 @@ namespace XFS4IoT.German.Commands
     [Command(Name = "German.SecureMsgReceive")]
     public sealed class SecureMsgReceiveCommand : Command<SecureMsgReceiveCommand.PayloadData>
     {
+        public SecureMsgReceiveCommand()
+            : base()
+        { }
+
         public SecureMsgReceiveCommand(int RequestId, SecureMsgReceiveCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

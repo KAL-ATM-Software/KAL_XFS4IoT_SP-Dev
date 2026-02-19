@@ -19,6 +19,10 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.Digest")]
     public sealed class DigestCompletion : Completion<DigestCompletion.PayloadData>
     {
+        public DigestCompletion()
+            : base()
+        { }
+
         public DigestCompletion(int RequestId, DigestCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

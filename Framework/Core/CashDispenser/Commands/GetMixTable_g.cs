@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.GetMixTable")]
     public sealed class GetMixTableCommand : Command<GetMixTableCommand.PayloadData>
     {
+        public GetMixTableCommand()
+            : base()
+        { }
+
         public GetMixTableCommand(int RequestId, GetMixTableCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

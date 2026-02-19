@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.MaintainPin")]
     public sealed class MaintainPinCompletion : Completion<MessagePayload>
     {
+        public MaintainPinCompletion()
+            : base()
+        { }
+
         public MaintainPinCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

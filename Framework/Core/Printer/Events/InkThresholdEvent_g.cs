@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class InkThresholdEvent : UnsolicitedEvent<InkThresholdEvent.PayloadData>
     {
 
+        public InkThresholdEvent()
+            : base()
+        { }
+
         public InkThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

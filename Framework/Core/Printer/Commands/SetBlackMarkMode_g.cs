@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.SetBlackMarkMode")]
     public sealed class SetBlackMarkModeCommand : Command<SetBlackMarkModeCommand.PayloadData>
     {
+        public SetBlackMarkModeCommand()
+            : base()
+        { }
+
         public SetBlackMarkModeCommand(int RequestId, SetBlackMarkModeCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

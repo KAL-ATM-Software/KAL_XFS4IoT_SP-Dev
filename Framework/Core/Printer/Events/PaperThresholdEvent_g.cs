@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class PaperThresholdEvent : UnsolicitedEvent<PaperThresholdEvent.PayloadData>
     {
 
+        public PaperThresholdEvent()
+            : base()
+        { }
+
         public PaperThresholdEvent(PayloadData Payload)
             : base(Payload)
         { }

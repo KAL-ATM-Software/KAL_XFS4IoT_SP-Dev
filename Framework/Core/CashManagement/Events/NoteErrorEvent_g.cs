@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class NoteErrorEvent : Event<NoteErrorEvent.PayloadData>
     {
 
+        public NoteErrorEvent()
+            : base()
+        { }
+
         public NoteErrorEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

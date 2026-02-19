@@ -19,6 +19,10 @@ namespace XFS4IoT.Check.Completions
     [Completion(Name = "Check.SupplyReplenish")]
     public sealed class SupplyReplenishCompletion : Completion<MessagePayload>
     {
+        public SupplyReplenishCompletion()
+            : base()
+        { }
+
         public SupplyReplenishCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

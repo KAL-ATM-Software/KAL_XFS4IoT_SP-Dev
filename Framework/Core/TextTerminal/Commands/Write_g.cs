@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.Write")]
     public sealed class WriteCommand : Command<WriteCommand.PayloadData>
     {
+        public WriteCommand()
+            : base()
+        { }
+
         public WriteCommand(int RequestId, WriteCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -11,6 +11,9 @@ namespace XFS4IoT.Events
     [DataContract]
     public abstract class Event<T> : Message<T> where T : MessagePayloadBase
     {
+        public Event() : base()
+        { }
+
         /// <summary>
         /// Event message class to be derived from.
         /// </summary>

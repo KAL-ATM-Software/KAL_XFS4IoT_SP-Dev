@@ -20,6 +20,10 @@ namespace XFS4IoT.TextTerminal.Commands
     [Command(Name = "TextTerminal.SetResolution")]
     public sealed class SetResolutionCommand : Command<SetResolutionCommand.PayloadData>
     {
+        public SetResolutionCommand()
+            : base()
+        { }
+
         public SetResolutionCommand(int RequestId, SetResolutionCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

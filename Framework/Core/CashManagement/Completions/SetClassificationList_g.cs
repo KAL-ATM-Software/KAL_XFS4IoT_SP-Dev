@@ -19,6 +19,10 @@ namespace XFS4IoT.CashManagement.Completions
     [Completion(Name = "CashManagement.SetClassificationList")]
     public sealed class SetClassificationListCompletion : Completion<MessagePayload>
     {
+        public SetClassificationListCompletion()
+            : base()
+        { }
+
         public SetClassificationListCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

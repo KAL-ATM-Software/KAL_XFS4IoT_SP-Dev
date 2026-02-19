@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.ChipIO")]
     public sealed class ChipIOCommand : Command<ChipIOCommand.PayloadData>
     {
+        public ChipIOCommand()
+            : base()
+        { }
+
         public ChipIOCommand(int RequestId, ChipIOCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

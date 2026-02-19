@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class ItemsPresentedEvent : UnsolicitedEvent<ItemsPresentedEvent.PayloadData>
     {
 
+        public ItemsPresentedEvent()
+            : base()
+        { }
+
         public ItemsPresentedEvent(PayloadData Payload)
             : base(Payload)
         { }

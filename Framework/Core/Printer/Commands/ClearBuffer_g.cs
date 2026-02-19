@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.ClearBuffer")]
     public sealed class ClearBufferCommand : Command<MessagePayload>
     {
+        public ClearBufferCommand()
+            : base()
+        { }
+
         public ClearBufferCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

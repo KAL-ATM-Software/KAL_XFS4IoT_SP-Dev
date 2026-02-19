@@ -25,7 +25,6 @@ namespace XFS4IoTCoreTest.Command
 
         public UnserialiseTests()
         {
-            AssemblyName = Assembly.GetAssembly(typeof(UnserialiseTests))?.GetName();
         }
 
         [TestMethod]
@@ -57,13 +56,7 @@ namespace XFS4IoTCoreTest.Command
                  }
             }";
 
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCommand))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(ReadRawDataCommand) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCommand))]);
 
             bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
 
@@ -94,13 +87,7 @@ namespace XFS4IoTCoreTest.Command
                 }
             }";
 
-            var assemblyName = Assembly.GetAssembly(typeof(XFS4IoT.CardReader.Events.MediaInsertedEvent))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(XFS4IoT.CardReader.Events.MediaInsertedEvent) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(XFS4IoT.CardReader.Events.MediaInsertedEvent))]);
 
             bool rc = decoder.TryUnserialise(MediaInsertedJSON, out object resultMessage);
 
@@ -142,13 +129,8 @@ namespace XFS4IoTCoreTest.Command
                     ""ddi"":true
             }";
 
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCommand))?.GetName();
-            IsNotNull(assemblyName);
 
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(ReadRawDataCommand) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCommand))]);
 
             bool rc = decoder.TryUnserialise(AcceptCardJSON, out object result);
             IsFalse(rc);
@@ -158,15 +140,9 @@ namespace XFS4IoTCoreTest.Command
         [TestMethod]
         public void UnserialiseStringToObjectNotJSON()
         {
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCommand))?.GetName();
-            IsNotNull(assemblyName);
-
             var AcceptCardJSON = @"Not JSON";
 
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(ReadRawDataCommand) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCommand))]);
 
             bool rc = decoder.TryUnserialise(AcceptCardJSON, out object result);
             IsFalse(rc);
@@ -192,30 +168,6 @@ namespace XFS4IoTCoreTest.Command
         public class TestResponse2 : Completion<XFS4IoT.Completions.MessagePayload>
         {
             public TestResponse2() : base(123456, null, MessageHeader.CompletionCodeEnum.Success, "error") { }
-        }
-
-        [TestMethod]
-        public void MessageDecoderCommandAtributeInit()
-        {
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, AssemblyName);
-
-            var results = (from string x in decoder select x).ToArray();
-
-            AreEqual(2, results.Length);
-            AreEqual("Common.TestCommand1", results[0]);
-            AreEqual("Common.TestCommand2", results[1]);
-        }
-
-        [TestMethod]
-        public void MessageDecoderResponseAtributeInit()
-        {
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, AssemblyName);
-
-            var results = (from string x in decoder select x).ToArray();
-
-            AreEqual(2, results.Length);
-            AreEqual("Common.TestResponse1", results[0]);
-            AreEqual("Common.TestResponse2", results[1]);
         }
     }
 }

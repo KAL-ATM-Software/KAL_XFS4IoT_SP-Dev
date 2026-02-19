@@ -18,6 +18,15 @@ namespace XFS4IoTServer
     public partial class LightsServiceClass : ILightsServiceClass
     {
 
+        protected void RegisterFactory(IServiceProvider ServiceProvider)
+        {
+            // Add command handlers.
+            CommandDispatcher.AddHandler(ServiceProvider, typeof(XFS4IoT.Lights.Commands.SetLightCommand), (connection, dispatcher, logger) => new XFS4IoTFramework.Lights.SetLightHandler(connection, ServiceProvider.IsA<ICommandDispatcher>($"Unexpected type for ServiceProvider. {this.GetType()}, SetLightHandler"), logger), false);
+            // Add supported message structures.
+            MessageCollection.Add(MessageHeader.TypeEnum.Command, "Lights.SetLight", typeof(XFS4IoT.Lights.Commands.SetLightCommand));
+            MessageCollection.Add(MessageHeader.TypeEnum.Completion, "Lights.SetLight", typeof(XFS4IoT.Lights.Completions.SetLightCompletion));
+        }
+
         private IServiceProvider ServiceProvider { get; init; }
         private ILogger Logger { get; init; }
         private ILightsDevice Device { get => ServiceProvider.Device.IsA<ILightsDevice>(); }

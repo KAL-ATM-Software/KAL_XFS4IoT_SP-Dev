@@ -21,6 +21,10 @@ namespace XFS4IoT.VendorApplication.Events
     public sealed class InterfaceChangedEvent : UnsolicitedEvent<InterfaceChangedEvent.PayloadData>
     {
 
+        public InterfaceChangedEvent()
+            : base()
+        { }
+
         public InterfaceChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

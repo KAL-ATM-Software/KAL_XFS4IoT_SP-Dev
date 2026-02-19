@@ -21,6 +21,10 @@ namespace XFS4IoT.Check.Events
     public sealed class MediaRejectedEvent : Event<MediaRejectedEvent.PayloadData>
     {
 
+        public MediaRejectedEvent()
+            : base()
+        { }
+
         public MediaRejectedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

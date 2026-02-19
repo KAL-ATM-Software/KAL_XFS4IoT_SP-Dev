@@ -24,7 +24,6 @@ namespace XFS4IoTCoreTest.Response
 
         public UnserialiseTests()
         {
-            AssemblyName = Assembly.GetAssembly(typeof(UnserialiseTests))?.GetName();
         }
 
         [TestMethod]
@@ -33,13 +32,7 @@ namespace XFS4IoTCoreTest.Response
             // header has completion code and error description
             var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion"",""completionCode"":""success"",""errorDescription"":""OK""}}";
 
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, assemblyName)
-            {
-                { typeof(ReadRawDataCompletion) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCompletion))]);
 
             bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
 
@@ -67,13 +60,7 @@ namespace XFS4IoTCoreTest.Response
             // No error description in the header
             var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion"",""completionCode"":""success""}}";
 
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, assemblyName)
-            {
-                { typeof(ReadRawDataCompletion) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCompletion))]);
 
             bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
 
@@ -101,13 +88,7 @@ namespace XFS4IoTCoreTest.Response
             // No completion and error description in the header
             var ReadCardJSON = @"{""payload"":{""track1"":{""data"":""MTIzNDU2Nzg5""},""track2"":{""status"":""dataMissing"",""data"":""MTIzNDU2Nzg5""},""track3"":{""status"":""dataInvalid"",""data"":""MTIzNDU2Nzg5""}},""header"":{""name"":""CardReader.ReadRawData"",""requestId"":123456,""type"":""completion""}}";
 
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCompletion))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Response, assemblyName)
-            {
-                { typeof(ReadRawDataCompletion) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCompletion))]);
 
             bool rc = decoder.TryUnserialise(ReadCardJSON, out object resultMessage);
 
@@ -150,14 +131,7 @@ namespace XFS4IoTCoreTest.Response
                     ""track3JIS"":true,
                     ""ddi"":true
             }";
-
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCommand))?.GetName();
-            IsNotNull(assemblyName);
-
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(ReadRawDataCommand) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCompletion))]);
 
             bool rc = decoder.TryUnserialise(AcceptCardJSON, out object result);
             IsFalse(rc);
@@ -168,13 +142,8 @@ namespace XFS4IoTCoreTest.Response
         public void UnserialiseStringToObjectNotJSON()
         {
             var AcceptCardJSON = @"Not JSON";
-            var assemblyName = Assembly.GetAssembly(typeof(ReadRawDataCommand))?.GetName();
-            IsNotNull(assemblyName);
 
-            var decoder = new MessageDecoder(MessageDecoder.AutoPopulateType.Command, assemblyName)
-            {
-                { typeof(ReadRawDataCommand) }
-            };
+            var decoder = new MessageDecoder([Assembly.GetAssembly(typeof(ReadRawDataCompletion))]);
 
             bool rc = decoder.TryUnserialise(AcceptCardJSON, out object result);
             IsFalse(rc);

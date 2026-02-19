@@ -19,6 +19,10 @@ namespace XFS4IoT.TextTerminal.Completions
     [Completion(Name = "TextTerminal.ClearScreen")]
     public sealed class ClearScreenCompletion : Completion<MessagePayload>
     {
+        public ClearScreenCompletion()
+            : base()
+        { }
+
         public ClearScreenCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

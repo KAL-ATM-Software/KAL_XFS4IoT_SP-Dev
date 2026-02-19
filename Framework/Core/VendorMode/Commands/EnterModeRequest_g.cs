@@ -20,6 +20,10 @@ namespace XFS4IoT.VendorMode.Commands
     [Command(Name = "VendorMode.EnterModeRequest")]
     public sealed class EnterModeRequestCommand : Command<MessagePayload>
     {
+        public EnterModeRequestCommand()
+            : base()
+        { }
+
         public EnterModeRequestCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

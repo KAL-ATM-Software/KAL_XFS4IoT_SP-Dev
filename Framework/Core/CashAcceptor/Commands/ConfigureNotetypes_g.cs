@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.ConfigureNoteTypes")]
     public sealed class ConfigureNoteTypesCommand : Command<ConfigureNoteTypesCommand.PayloadData>
     {
+        public ConfigureNoteTypesCommand()
+            : base()
+        { }
+
         public ConfigureNoteTypesCommand(int RequestId, ConfigureNoteTypesCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

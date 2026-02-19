@@ -20,6 +20,10 @@ namespace XFS4IoT.Printer.Commands
     [Command(Name = "Printer.SetMedia")]
     public sealed class SetMediaCommand : Command<SetMediaCommand.PayloadData>
     {
+        public SetMediaCommand()
+            : base()
+        { }
+
         public SetMediaCommand(int RequestId, SetMediaCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

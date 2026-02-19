@@ -29,6 +29,8 @@ namespace XFS4IoTServer
             Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(CashAcceptorServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<ICashAcceptorDevice>();
 
+            RegisterFactory(ServiceProvider);
+
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(CashAcceptorServiceClass)}");
             CashManagement = ServiceProvider.IsA<XFS4IoTFramework.CashManagement.ICashManagementService>($"Invalid interface parameter specified for cash management service. {nameof(CashAcceptorServiceClass)}");
             Storage = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(CashAcceptorServiceClass)}");

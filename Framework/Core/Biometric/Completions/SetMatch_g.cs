@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.SetMatch")]
     public sealed class SetMatchCompletion : Completion<SetMatchCompletion.PayloadData>
     {
+        public SetMatchCompletion()
+            : base()
+        { }
+
         public SetMatchCompletion(int RequestId, SetMatchCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

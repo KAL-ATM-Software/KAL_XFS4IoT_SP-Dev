@@ -20,6 +20,10 @@ namespace XFS4IoT.Camera.Commands
     [Command(Name = "Camera.Reset")]
     public sealed class ResetCommand : Command<MessagePayload>
     {
+        public ResetCommand()
+            : base()
+        { }
+
         public ResetCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

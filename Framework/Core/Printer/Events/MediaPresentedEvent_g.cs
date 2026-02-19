@@ -21,6 +21,10 @@ namespace XFS4IoT.Printer.Events
     public sealed class MediaPresentedEvent : Event<MediaPresentedEvent.PayloadData>
     {
 
+        public MediaPresentedEvent()
+            : base()
+        { }
+
         public MediaPresentedEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

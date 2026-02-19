@@ -19,6 +19,10 @@ namespace XFS4IoT.Keyboard.Completions
     [Completion(Name = "Keyboard.DefineLayout")]
     public sealed class DefineLayoutCompletion : Completion<DefineLayoutCompletion.PayloadData>
     {
+        public DefineLayoutCompletion()
+            : base()
+        { }
+
         public DefineLayoutCompletion(int RequestId, DefineLayoutCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

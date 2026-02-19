@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.SetBlackMarkMode")]
     public sealed class SetBlackMarkModeCompletion : Completion<MessagePayload>
     {
+        public SetBlackMarkModeCompletion()
+            : base()
+        { }
+
         public SetBlackMarkModeCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

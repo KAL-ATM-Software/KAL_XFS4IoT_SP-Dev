@@ -19,6 +19,10 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.VerifyAuthentication")]
     public sealed class VerifyAuthenticationCompletion : Completion<VerifyAuthenticationCompletion.PayloadData>
     {
+        public VerifyAuthenticationCompletion()
+            : base()
+        { }
+
         public VerifyAuthenticationCompletion(int RequestId, VerifyAuthenticationCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

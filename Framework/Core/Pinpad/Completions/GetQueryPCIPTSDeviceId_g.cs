@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.GetQueryPCIPTSDeviceId")]
     public sealed class GetQueryPCIPTSDeviceIdCompletion : Completion<GetQueryPCIPTSDeviceIdCompletion.PayloadData>
     {
+        public GetQueryPCIPTSDeviceIdCompletion()
+            : base()
+        { }
+
         public GetQueryPCIPTSDeviceIdCompletion(int RequestId, GetQueryPCIPTSDeviceIdCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

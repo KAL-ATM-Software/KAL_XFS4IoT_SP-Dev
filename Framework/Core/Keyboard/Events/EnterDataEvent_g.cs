@@ -21,6 +21,10 @@ namespace XFS4IoT.Keyboard.Events
     public sealed class EnterDataEvent : Event<MessagePayloadBase>
     {
 
+        public EnterDataEvent()
+            : base()
+        { }
+
         public EnterDataEvent(int RequestId)
             : base(RequestId)
         { }

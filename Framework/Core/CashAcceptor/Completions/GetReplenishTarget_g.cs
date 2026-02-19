@@ -19,6 +19,10 @@ namespace XFS4IoT.CashAcceptor.Completions
     [Completion(Name = "CashAcceptor.GetReplenishTarget")]
     public sealed class GetReplenishTargetCompletion : Completion<GetReplenishTargetCompletion.PayloadData>
     {
+        public GetReplenishTargetCompletion()
+            : base()
+        { }
+
         public GetReplenishTargetCompletion(int RequestId, GetReplenishTargetCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

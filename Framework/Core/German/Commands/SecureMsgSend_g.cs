@@ -20,6 +20,10 @@ namespace XFS4IoT.German.Commands
     [Command(Name = "German.SecureMsgSend")]
     public sealed class SecureMsgSendCommand : Command<SecureMsgSendCommand.PayloadData>
     {
+        public SecureMsgSendCommand()
+            : base()
+        { }
+
         public SecureMsgSendCommand(int RequestId, SecureMsgSendCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

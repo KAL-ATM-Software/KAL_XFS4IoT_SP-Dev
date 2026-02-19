@@ -19,6 +19,10 @@ namespace XFS4IoT.Crypto.Completions
     [Completion(Name = "Crypto.GenerateAuthentication")]
     public sealed class GenerateAuthenticationCompletion : Completion<GenerateAuthenticationCompletion.PayloadData>
     {
+        public GenerateAuthenticationCompletion()
+            : base()
+        { }
+
         public GenerateAuthenticationCompletion(int RequestId, GenerateAuthenticationCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

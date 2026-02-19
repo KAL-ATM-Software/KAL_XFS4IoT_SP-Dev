@@ -19,6 +19,10 @@ namespace XFS4IoT.Printer.Completions
     [Completion(Name = "Printer.PrintNative")]
     public sealed class PrintNativeCompletion : Completion<PrintNativeCompletion.PayloadData>
     {
+        public PrintNativeCompletion()
+            : base()
+        { }
+
         public PrintNativeCompletion(int RequestId, PrintNativeCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

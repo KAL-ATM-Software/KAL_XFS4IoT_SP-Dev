@@ -19,6 +19,10 @@ namespace XFS4IoT.Common.Completions
     [Completion(Name = "Common.Capabilities")]
     public sealed class CapabilitiesCompletion : Completion<CapabilitiesCompletion.PayloadData>
     {
+        public CapabilitiesCompletion()
+            : base()
+        { }
+
         public CapabilitiesCompletion(int RequestId, CapabilitiesCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

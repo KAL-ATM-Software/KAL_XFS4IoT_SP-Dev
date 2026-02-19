@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.LocalDES")]
     public sealed class LocalDESCommand : Command<LocalDESCommand.PayloadData>
     {
+        public LocalDESCommand()
+            : base()
+        { }
+
         public LocalDESCommand(int RequestId, LocalDESCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

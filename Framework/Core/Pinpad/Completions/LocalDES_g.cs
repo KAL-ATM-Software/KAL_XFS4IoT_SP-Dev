@@ -19,6 +19,10 @@ namespace XFS4IoT.PinPad.Completions
     [Completion(Name = "PinPad.LocalDES")]
     public sealed class LocalDESCompletion : Completion<LocalDESCompletion.PayloadData>
     {
+        public LocalDESCompletion()
+            : base()
+        { }
+
         public LocalDESCompletion(int RequestId, LocalDESCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

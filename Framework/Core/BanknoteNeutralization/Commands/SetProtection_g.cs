@@ -20,6 +20,10 @@ namespace XFS4IoT.BanknoteNeutralization.Commands
     [Command(Name = "BanknoteNeutralization.SetProtection")]
     public sealed class SetProtectionCommand : Command<SetProtectionCommand.PayloadData>
     {
+        public SetProtectionCommand()
+            : base()
+        { }
+
         public SetProtectionCommand(int RequestId, SetProtectionCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

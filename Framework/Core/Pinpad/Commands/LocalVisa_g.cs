@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.LocalVisa")]
     public sealed class LocalVisaCommand : Command<LocalVisaCommand.PayloadData>
     {
+        public LocalVisaCommand()
+            : base()
+        { }
+
         public LocalVisaCommand(int RequestId, LocalVisaCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

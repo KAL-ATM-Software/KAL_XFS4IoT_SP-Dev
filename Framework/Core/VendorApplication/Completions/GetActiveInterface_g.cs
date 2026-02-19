@@ -19,6 +19,10 @@ namespace XFS4IoT.VendorApplication.Completions
     [Completion(Name = "VendorApplication.GetActiveInterface")]
     public sealed class GetActiveInterfaceCompletion : Completion<GetActiveInterfaceCompletion.PayloadData>
     {
+        public GetActiveInterfaceCompletion()
+            : base()
+        { }
+
         public GetActiveInterfaceCompletion(int RequestId, GetActiveInterfaceCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }

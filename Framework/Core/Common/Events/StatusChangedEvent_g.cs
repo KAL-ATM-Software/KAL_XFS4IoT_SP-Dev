@@ -21,6 +21,10 @@ namespace XFS4IoT.Common.Events
     public sealed class StatusChangedEvent : UnsolicitedEvent<StatusChangedEvent.PayloadData>
     {
 
+        public StatusChangedEvent()
+            : base()
+        { }
+
         public StatusChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

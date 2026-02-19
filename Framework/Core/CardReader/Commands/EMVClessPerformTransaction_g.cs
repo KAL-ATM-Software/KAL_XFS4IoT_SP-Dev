@@ -20,6 +20,10 @@ namespace XFS4IoT.CardReader.Commands
     [Command(Name = "CardReader.EMVClessPerformTransaction")]
     public sealed class EMVClessPerformTransactionCommand : Command<EMVClessPerformTransactionCommand.PayloadData>
     {
+        public EMVClessPerformTransactionCommand()
+            : base()
+        { }
+
         public EMVClessPerformTransactionCommand(int RequestId, EMVClessPerformTransactionCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

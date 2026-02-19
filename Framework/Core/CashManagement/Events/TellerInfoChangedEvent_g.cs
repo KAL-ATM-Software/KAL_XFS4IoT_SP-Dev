@@ -21,6 +21,10 @@ namespace XFS4IoT.CashManagement.Events
     public sealed class TellerInfoChangedEvent : UnsolicitedEvent<TellerInfoChangedEvent.PayloadData>
     {
 
+        public TellerInfoChangedEvent()
+            : base()
+        { }
+
         public TellerInfoChangedEvent(PayloadData Payload)
             : base(Payload)
         { }

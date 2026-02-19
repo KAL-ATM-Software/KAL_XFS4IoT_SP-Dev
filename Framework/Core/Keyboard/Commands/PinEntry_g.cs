@@ -20,6 +20,10 @@ namespace XFS4IoT.Keyboard.Commands
     [Command(Name = "Keyboard.PinEntry")]
     public sealed class PinEntryCommand : Command<PinEntryCommand.PayloadData>
     {
+        public PinEntryCommand()
+            : base()
+        { }
+
         public PinEntryCommand(int RequestId, PinEntryCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

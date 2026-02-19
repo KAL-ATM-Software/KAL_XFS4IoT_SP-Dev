@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.SetTellerInfo")]
     public sealed class SetTellerInfoCommand : Command<SetTellerInfoCommand.PayloadData>
     {
+        public SetTellerInfoCommand()
+            : base()
+        { }
+
         public SetTellerInfoCommand(int RequestId, SetTellerInfoCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

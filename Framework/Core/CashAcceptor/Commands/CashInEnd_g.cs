@@ -20,6 +20,10 @@ namespace XFS4IoT.CashAcceptor.Commands
     [Command(Name = "CashAcceptor.CashInEnd")]
     public sealed class CashInEndCommand : Command<MessagePayload>
     {
+        public CashInEndCommand()
+            : base()
+        { }
+
         public CashInEndCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

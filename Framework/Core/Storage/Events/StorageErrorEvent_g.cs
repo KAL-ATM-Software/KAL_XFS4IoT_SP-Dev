@@ -21,6 +21,10 @@ namespace XFS4IoT.Storage.Events
     public sealed class StorageErrorEvent : Event<StorageErrorEvent.PayloadData>
     {
 
+        public StorageErrorEvent()
+            : base()
+        { }
+
         public StorageErrorEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

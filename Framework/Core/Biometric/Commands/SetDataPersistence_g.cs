@@ -20,6 +20,10 @@ namespace XFS4IoT.Biometric.Commands
     [Command(Name = "Biometric.SetDataPersistence")]
     public sealed class SetDataPersistenceCommand : Command<SetDataPersistenceCommand.PayloadData>
     {
+        public SetDataPersistenceCommand()
+            : base()
+        { }
+
         public SetDataPersistenceCommand(int RequestId, SetDataPersistenceCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

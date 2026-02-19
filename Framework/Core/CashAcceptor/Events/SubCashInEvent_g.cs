@@ -21,6 +21,10 @@ namespace XFS4IoT.CashAcceptor.Events
     public sealed class SubCashInEvent : Event<SubCashInEvent.PayloadData>
     {
 
+        public SubCashInEvent()
+            : base()
+        { }
+
         public SubCashInEvent(int RequestId, PayloadData Payload)
             : base(RequestId, Payload)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.PinPad.Commands
     [Command(Name = "PinPad.Reset")]
     public sealed class ResetCommand : Command<MessagePayload>
     {
+        public ResetCommand()
+            : base()
+        { }
+
         public ResetCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

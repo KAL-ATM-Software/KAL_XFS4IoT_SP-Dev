@@ -20,6 +20,10 @@ namespace XFS4IoT.CashDispenser.Commands
     [Command(Name = "CashDispenser.Present")]
     public sealed class PresentCommand : Command<PresentCommand.PayloadData>
     {
+        public PresentCommand()
+            : base()
+        { }
+
         public PresentCommand(int RequestId, PresentCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

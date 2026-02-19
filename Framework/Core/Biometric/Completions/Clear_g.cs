@@ -19,6 +19,10 @@ namespace XFS4IoT.Biometric.Completions
     [Completion(Name = "Biometric.Clear")]
     public sealed class ClearCompletion : Completion<MessagePayload>
     {
+        public ClearCompletion()
+            : base()
+        { }
+
         public ClearCompletion(int RequestId, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, null, CompletionCode, ErrorDescription)
         { }

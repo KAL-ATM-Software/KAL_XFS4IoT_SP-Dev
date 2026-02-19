@@ -21,6 +21,10 @@ namespace XFS4IoT.CashAcceptor.Events
     public sealed class InsertItemsEvent : Event<MessagePayloadBase>
     {
 
+        public InsertItemsEvent()
+            : base()
+        { }
+
         public InsertItemsEvent(int RequestId)
             : base(RequestId)
         { }

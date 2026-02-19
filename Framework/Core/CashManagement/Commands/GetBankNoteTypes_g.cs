@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.GetBankNoteTypes")]
     public sealed class GetBankNoteTypesCommand : Command<MessagePayload>
     {
+        public GetBankNoteTypesCommand()
+            : base()
+        { }
+
         public GetBankNoteTypesCommand(int RequestId, int Timeout)
             : base(RequestId, null, Timeout)
         { }

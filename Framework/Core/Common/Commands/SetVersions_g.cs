@@ -20,6 +20,10 @@ namespace XFS4IoT.Common.Commands
     [Command(Name = "Common.SetVersions")]
     public sealed class SetVersionsCommand : Command<SetVersionsCommand.PayloadData>
     {
+        public SetVersionsCommand()
+            : base()
+        { }
+
         public SetVersionsCommand(int RequestId, SetVersionsCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

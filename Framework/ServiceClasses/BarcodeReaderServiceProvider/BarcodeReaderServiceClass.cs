@@ -27,6 +27,8 @@ namespace XFS4IoTServer
             Logger = logger;
             this.ServiceProvider.Device.IsNotNull($"Invalid parameter received in the {nameof(BarcodeReaderServiceClass)} constructor. {nameof(ServiceProvider.Device)}").IsA<IBarcodeReaderDevice>();
 
+            RegisterFactory(ServiceProvider);
+
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(BarcodeReaderServiceClass)}");
             
             GetCapabilities();

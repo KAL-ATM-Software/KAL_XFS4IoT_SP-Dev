@@ -30,12 +30,17 @@ namespace XFS4IoT
     [DataContract]
     public class Message<T> : MessageBase where T : MessagePayloadBase
     {
+        public Message()
+        {
+            Payload = null;
+        }
+
         /// <summary>
         /// Payload of the message for response and this set by the derived class
         /// </summary>
         [DataMember(IsRequired = true, Name = "payload")]
         [JsonPropertyOrder(1)]
-        public T Payload { get; protected set; }
+        public T Payload { get; set; }
 
         /// <summary>
         /// Internal constructor of the message object for response

@@ -20,6 +20,10 @@ namespace XFS4IoT.CashManagement.Commands
     [Command(Name = "CashManagement.CalibrateCashUnit")]
     public sealed class CalibrateCashUnitCommand : Command<CalibrateCashUnitCommand.PayloadData>
     {
+        public CalibrateCashUnitCommand()
+            : base()
+        { }
+
         public CalibrateCashUnitCommand(int RequestId, CalibrateCashUnitCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

@@ -20,6 +20,10 @@ namespace XFS4IoT.German.Commands
     [Command(Name = "German.HSMInit")]
     public sealed class HSMInitCommand : Command<HSMInitCommand.PayloadData>
     {
+        public HSMInitCommand()
+            : base()
+        { }
+
         public HSMInitCommand(int RequestId, HSMInitCommand.PayloadData Payload, int Timeout)
             : base(RequestId, Payload, Timeout)
         { }

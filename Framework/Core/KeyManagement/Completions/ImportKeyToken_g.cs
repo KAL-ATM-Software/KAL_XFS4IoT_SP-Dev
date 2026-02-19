@@ -19,6 +19,10 @@ namespace XFS4IoT.KeyManagement.Completions
     [Completion(Name = "KeyManagement.ImportKeyToken")]
     public sealed class ImportKeyTokenCompletion : Completion<ImportKeyTokenCompletion.PayloadData>
     {
+        public ImportKeyTokenCompletion()
+            : base()
+        { }
+
         public ImportKeyTokenCompletion(int RequestId, ImportKeyTokenCompletion.PayloadData Payload, MessageHeader.CompletionCodeEnum CompletionCode, string ErrorDescription)
             : base(RequestId, Payload, CompletionCode, ErrorDescription)
         { }
