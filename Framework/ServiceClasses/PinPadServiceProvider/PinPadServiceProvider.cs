@@ -24,7 +24,7 @@ using System.ComponentModel;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a pinpad service provider with DK feature. 
+    /// Default implementation of a pinpad service provider with DK feature. 
     /// </summary>
     public class PinPadServiceProvider : ServiceProvider, IPinPadService, IKeyManagementService, IKeyboardService, ICryptoService, ICommonService, ILightsService, IGermanService
     {
@@ -92,7 +92,7 @@ namespace XFS4IoTServer
 
         #region Common Service
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -102,7 +102,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores KeyManagement interface capabilites internally
+        /// Stores KeyManagement interface capabilities internally
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
 
@@ -112,17 +112,17 @@ namespace XFS4IoTServer
         public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
 
         /// <summary>
-        /// Stores PinPad interface capabilites internally
+        /// Stores PinPad interface capabilities internally
         /// </summary>
         public PinPadCapabilitiesClass PinPadCapabilities { get => CommonService.PinPadCapabilities; set => CommonService.PinPadCapabilities = value; }
 
         /// <summary>
-        /// Stores Crypto interface capabilites internally
+        /// Stores Crypto interface capabilities internally
         /// </summary>
         public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set => CommonService.CryptoCapabilities = value; }
 
         /// <summary>
-        /// Stores Keyboard interface capabilites internally
+        /// Stores Keyboard interface capabilities internally
         /// </summary>
         public KeyboardCapabilitiesClass KeyboardCapabilities { get => CommonService.KeyboardCapabilities; set => CommonService.KeyboardCapabilities = value; }
 

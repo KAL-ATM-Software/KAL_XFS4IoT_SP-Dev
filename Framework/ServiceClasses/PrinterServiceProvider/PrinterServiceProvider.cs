@@ -21,7 +21,7 @@ using System.ComponentModel;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a printer service provider. 
+    /// Default implementation of a printer service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a service provider for the printer device. 
@@ -237,7 +237,7 @@ namespace XFS4IoTServer
 
         #region Common Service
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -247,7 +247,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Printer interface capabilites internally
+        /// Stores Printer interface capabilities internally
         /// </summary>
         public XFS4IoTFramework.Common.PrinterCapabilitiesClass PrinterCapabilities { get => CommonService.PrinterCapabilities; set => CommonService.PrinterCapabilities = value; }
 

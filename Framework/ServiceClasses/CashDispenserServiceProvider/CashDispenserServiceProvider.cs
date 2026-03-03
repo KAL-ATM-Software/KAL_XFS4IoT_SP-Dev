@@ -25,8 +25,8 @@ using XFS4IoTFramework.Check;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a dispenser service provider.
-    /// This Service allows to combile with IBNS and Check device in one service provider.
+    /// Default implementation of a dispenser service provider.
+    /// This Service allows to combine with IBNS and Check device in one service provider.
     /// </summary>
     public class CashDispenserServiceProvider : ServiceProvider, ICashDispenserService, ICashManagementService, ICommonService, IStorageService, ILightsService, IBanknoteNeutralizationService, ICheckService
     {
@@ -113,7 +113,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -123,20 +123,24 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores CashDispenser interface capabilites internally
+        /// Stores CashDispenser interface capabilities internally
         /// </summary>
         public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
 
         /// <summary>
-        /// Stores CashManagement interface capabilites internally
+        /// Stores CashManagement interface capabilities internally
         /// </summary>
         public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
 
         /// <summary>
-        /// Stores IBNS interface capabilites internally
+        /// Stores IBNS interface capabilities internally
         /// </summary>
         public XFS4IoTFramework.Common.IBNSCapabilitiesClass IBNSCapabilities { get => CommonService.IBNSCapabilities; set => CommonService.IBNSCapabilities = value; }
 
+        /// <summary>
+        /// Stores CheckScanner interface capabilities internally
+        /// </summary>
+        public CheckScannerCapabilitiesClass CheckScannerCapabilities { get => CommonService.CheckScannerCapabilities; set => CommonService.CheckScannerCapabilities = value; }
 
         /// <summary>
         /// CashDispenser Status
@@ -153,6 +157,10 @@ namespace XFS4IoTServer
         /// </summary>
         public XFS4IoTFramework.Common.IBNSStatusClass IBNSStatus { get => CommonService.IBNSStatus; set => CommonService.IBNSStatus = value; }
 
+        /// <summary>
+        /// CheckScanner Status
+        /// </summary>
+        public CheckScannerStatusClass CheckScannerStatus { get => CommonService.CheckScannerStatus; set => CommonService.CheckScannerStatus = value; }
 
         #endregion
 

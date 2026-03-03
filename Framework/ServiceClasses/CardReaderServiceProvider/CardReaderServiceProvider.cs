@@ -24,7 +24,7 @@ using System.Threading;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a card reader service provider. 
+    /// Default implementation of a card reader service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical card reader, which only implements the CardReader and Common interfaces. 
@@ -197,7 +197,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -207,7 +207,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores CardReader interface capabilites internally
+        /// Stores CardReader interface capabilities internally
         /// </summary>
         public CardReaderCapabilitiesClass CardReaderCapabilities { get => CommonService.CardReaderCapabilities; set => CommonService.CardReaderCapabilities = value; }
 

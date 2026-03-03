@@ -19,7 +19,7 @@ using XFS4IoTFramework.KeyManagement;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a biometric service provider. 
+    /// Default implementation of a biometric service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical biometric device, which only implements the Biometric, KeyManagement and Common interfaces. 
@@ -66,7 +66,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -76,7 +76,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Biometric interface capabilites internally
+        /// Stores Biometric interface capabilities internally
         /// </summary>
         public BiometricCapabilitiesClass BiometricCapabilities { get => CommonService.BiometricCapabilities; set => CommonService.BiometricCapabilities = value; }
 
@@ -86,7 +86,7 @@ namespace XFS4IoTServer
         public BiometricStatusClass BiometricStatus { get => CommonService.BiometricStatus; set => CommonService.BiometricStatus = value; }
 
         /// <summary>
-        /// Stores KeyManagement interface capabilites internally
+        /// Stores KeyManagement interface capabilities internally
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
 

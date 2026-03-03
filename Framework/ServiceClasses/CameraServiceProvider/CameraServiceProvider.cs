@@ -19,7 +19,7 @@ using XFS4IoTFramework.Common;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a camera service provider. 
+    /// Default implementation of a camera service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical camera device, which only implements the Camera and Common interfaces. 
@@ -86,7 +86,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -96,7 +96,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Camera interface capabilites internally
+        /// Stores Camera interface capabilities internally
         /// </summary>
         public CameraCapabilitiesClass CameraCapabilities { get => CommonService.CameraCapabilities; set => CommonService.CameraCapabilities = value; }
 

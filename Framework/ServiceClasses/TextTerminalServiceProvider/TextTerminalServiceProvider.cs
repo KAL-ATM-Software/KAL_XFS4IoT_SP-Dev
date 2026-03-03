@@ -20,7 +20,7 @@ using XFS4IoTServer;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a text terminal service provider. 
+    /// Default implementation of a text terminal service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical text terminal, which only implements the TextTerminal and Common interfaces. 
@@ -64,7 +64,7 @@ namespace XFS4IoTServer
 
         #region Common Service
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -74,7 +74,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores TexTerminal interface capabilites internally
+        /// Stores TexTerminal interface capabilities internally
         /// </summary>
         public TextTerminalCapabilitiesClass TextTerminalCapabilities { get => CommonService.TextTerminalCapabilities; set => CommonService.TextTerminalCapabilities = value; }
 
@@ -84,7 +84,7 @@ namespace XFS4IoTServer
         public TextTerminalStatusClass TextTerminalStatus { get => CommonService.TextTerminalStatus; set => CommonService.TextTerminalStatus = value; }
 
         /// <summary>
-        /// Stores Lights interface capabilites internally
+        /// Stores Lights interface capabilities internally
         /// </summary>
         public LightsCapabilitiesClass LightsCapabilities { get => CommonService.LightsCapabilities; set => CommonService.LightsCapabilities = value; }
 

@@ -19,7 +19,7 @@ using XFS4IoTFramework.Common;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a barcode reader service provider. 
+    /// Default implementation of a barcode reader service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical barcode reader, which only implements the BarcodeReader and Common interfaces. 
@@ -63,7 +63,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -73,7 +73,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores BarcodeReader interface capabilites internally
+        /// Stores BarcodeReader interface capabilities internally
         /// </summary>
         public BarcodeReaderCapabilitiesClass BarcodeReaderCapabilities { get => CommonService.BarcodeReaderCapabilities; set => CommonService.BarcodeReaderCapabilities = value; }
 

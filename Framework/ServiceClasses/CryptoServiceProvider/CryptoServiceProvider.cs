@@ -19,7 +19,7 @@ using System.ComponentModel;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a crypto service provider. 
+    /// Default implementation of a crypto service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a service provider for the crypto device. 
@@ -69,7 +69,7 @@ namespace XFS4IoTServer
 
         #region Common Service
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -79,7 +79,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores KeyManagement interface capabilites internally
+        /// Stores KeyManagement interface capabilities internally
         /// </summary>
         public KeyManagementCapabilitiesClass KeyManagementCapabilities { get => CommonService.KeyManagementCapabilities; set => CommonService.KeyManagementCapabilities = value; }
 
@@ -89,7 +89,7 @@ namespace XFS4IoTServer
         public KeyManagementStatusClass KeyManagementStatus { get => CommonService.KeyManagementStatus; set => CommonService.KeyManagementStatus = value; }
 
         /// <summary>
-        /// Stores Crypto interface capabilites internally
+        /// Stores Crypto interface capabilities internally
         /// </summary>
         public CryptoCapabilitiesClass CryptoCapabilities { get => CommonService.CryptoCapabilities; set => CommonService.CryptoCapabilities = value; }
 

@@ -22,7 +22,7 @@ using XFS4IoT.Storage;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of a Check Scanner service provider. 
+    /// Default implementation of a Check Scanner service provider. 
     /// </summary>
     /// <remarks> 
     /// This represents a typical Check Scanner, which only implements the Check Scanner and Common interfaces. 
@@ -195,7 +195,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -205,7 +205,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Check Scanner interface capabilites internally
+        /// Stores Check Scanner interface capabilities internally
         /// </summary>
         public CheckScannerCapabilitiesClass CheckScannerCapabilities { get => CommonService.CheckScannerCapabilities; set => CommonService.CheckScannerCapabilities = value; }
 

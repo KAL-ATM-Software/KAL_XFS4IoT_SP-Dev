@@ -66,7 +66,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -76,7 +76,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores Auxiliaries interface capabilites internally
+        /// Stores Auxiliaries interface capabilities internally
         /// </summary>
         public AuxiliariesCapabilitiesClass AuxiliariesCapabilities { get => CommonService.AuxiliariesCapabilities; set => CommonService.AuxiliariesCapabilities = value; }
 
@@ -86,7 +86,7 @@ namespace XFS4IoTServer
         public AuxiliariesStatusClass AuxiliariesStatus { get => CommonService.AuxiliariesStatus; set => CommonService.AuxiliariesStatus = value; }
 
         /// <summary>
-        /// Stores Lights interface capabilites internally
+        /// Stores Lights interface capabilities internally
         /// </summary>
         public LightsCapabilitiesClass LightsCapabilities { get => CommonService.LightsCapabilities; set => CommonService.LightsCapabilities = value; }
 

@@ -19,7 +19,7 @@ using XFS4IoTFramework.Storage;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Default implimentation of an IBNS service provider. 
+    /// Default implementation of an IBNS service provider. 
     /// </summary>
     public class IBNSServiceProvider : ServiceProvider, IBanknoteNeutralizationService, ICommonService, IStorageService
     {
@@ -138,7 +138,7 @@ namespace XFS4IoTServer
 
         #region Common Service
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -148,7 +148,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores IBNS interface capabilites internally
+        /// Stores IBNS interface capabilities internally
         /// </summary>
         public XFS4IoTFramework.Common.IBNSCapabilitiesClass IBNSCapabilities { get => CommonService.IBNSCapabilities; set => CommonService.IBNSCapabilities = value; }
 

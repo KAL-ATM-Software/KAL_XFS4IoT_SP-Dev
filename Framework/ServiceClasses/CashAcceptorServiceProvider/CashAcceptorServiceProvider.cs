@@ -185,7 +185,7 @@ namespace XFS4IoTServer
         #region Common Service
 
         /// <summary>
-        /// Stores Common interface capabilites internally
+        /// Stores Common interface capabilities internally
         /// </summary>
         public CommonCapabilitiesClass CommonCapabilities { get => CommonService.CommonCapabilities; set => CommonService.CommonCapabilities = value; }
 
@@ -195,7 +195,7 @@ namespace XFS4IoTServer
         public CommonStatusClass CommonStatus { get => CommonService.CommonStatus; set => CommonService.CommonStatus = value; }
 
         /// <summary>
-        /// Stores CashAcceptor interface capabilites internally
+        /// Stores CashAcceptor interface capabilities internally
         /// </summary>
         public CashAcceptorCapabilitiesClass CashAcceptorCapabilities { get => CommonService.CashAcceptorCapabilities; set => CommonService.CashAcceptorCapabilities = value; }
 
@@ -205,7 +205,7 @@ namespace XFS4IoTServer
         public CashAcceptorStatusClass CashAcceptorStatus { get => CommonService.CashAcceptorStatus; set => CommonService.CashAcceptorStatus = value; }
 
         /// <summary>
-        /// Stores CashManagement interface capabilites internally
+        /// Stores CashManagement interface capabilities internally
         /// </summary>
         public CashManagementCapabilitiesClass CashManagementCapabilities { get => CommonService.CashManagementCapabilities; set => CommonService.CashManagementCapabilities = value; }
 
@@ -213,6 +213,36 @@ namespace XFS4IoTServer
         /// CashManagement Status
         /// </summary>
         public CashManagementStatusClass CashManagementStatus { get => CommonService.CashManagementStatus; set => CommonService.CashManagementStatus = value; }
+
+        /// <summary>
+        /// Stores CashDispenser interface capabilities internally
+        /// </summary>
+        public CashDispenserCapabilitiesClass CashDispenserCapabilities { get => CommonService.CashDispenserCapabilities; set => CommonService.CashDispenserCapabilities = value; }
+
+        /// <summary>
+        /// CashDispenser Status
+        /// </summary>
+        public CashDispenserStatusClass CashDispenserStatus { get => CommonService.CashDispenserStatus; set => CommonService.CashDispenserStatus = value; }
+
+        /// <summary>
+        /// Stores CheckScanner interface capabilities internally
+        /// </summary>
+        public CheckScannerCapabilitiesClass CheckScannerCapabilities { get => CommonService.CheckScannerCapabilities; set => CommonService.CheckScannerCapabilities = value; }
+
+        /// <summary>
+        /// CashDispenser Status
+        /// </summary>
+        public CheckScannerStatusClass CheckScannerStatus { get => CommonService.CheckScannerStatus; set => CommonService.CheckScannerStatus = value; }
+
+        /// <summary>
+        /// Stores IBNS interface capabilities internally
+        /// </summary>
+        public XFS4IoTFramework.Common.IBNSCapabilitiesClass IBNSCapabilities { get => CommonService.IBNSCapabilities; set => CommonService.IBNSCapabilities = value; }
+
+        /// <summary>
+        /// Stores IBNS interface status internally
+        /// </summary>
+        public XFS4IoTFramework.Common.IBNSStatusClass IBNSStatus { get => CommonService.IBNSStatus; set => CommonService.IBNSStatus = value; }
 
         #endregion
 
