@@ -2015,7 +2015,7 @@ namespace XFS4IoTServer
                                 HardwareSensors: storage.Value.Unit.Capabilities.HardwareSensors,
                                 RetractAreas: storage.Value.Unit.Capabilities.RetractAreas,
                                 RetractThresholds: storage.Value.Unit.Capabilities.RetractThresholds,
-                                CashItems: storage.Value.Unit.Configuration.BanknoteItems
+                                CashItems: storage.Value.Unit.Capabilities.BanknoteItems
                                 ),
                             Configuration: new(
                                 Types: new(
