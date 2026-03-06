@@ -164,7 +164,7 @@ namespace XFS4IoTServer
 
                 await Task.WhenAll(allTasks);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not TaskCanceledException and not OperationCanceledException)
             {
                 Logger.Warning(Constants.Component, $"Caught an exception thrown in {nameof(ServicePublisher)}: {ex.Message}");
                 // It's a critical error that it cannot recover from and terminate this process.

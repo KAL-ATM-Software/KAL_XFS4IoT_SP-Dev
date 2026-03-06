@@ -2013,7 +2013,7 @@ namespace XFS4IoTServer
                                     Document: storage.Value.Unit.Capabilities.Items.HasFlag(CashCapabilitiesClass.ItemsEnum.Document)
                                     ),
                                 HardwareSensors: storage.Value.Unit.Capabilities.HardwareSensors,
-                                RetractAreas: storage.Value.Unit.Capabilities.RetractAreas,
+                                RetractAreas: (storage.Value.Unit.Capabilities.RetractAreas == 0) ? null : storage.Value.Unit.Capabilities.RetractAreas,
                                 RetractThresholds: storage.Value.Unit.Capabilities.RetractThresholds,
                                 CashItems: storage.Value.Unit.Capabilities.BanknoteItems
                                 ),

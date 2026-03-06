@@ -24,6 +24,13 @@ namespace XFS4IoTFramework.CashManagement
     {
         private async Task<CommandResult<RetractCompletion.PayloadData>> HandleRetract(IRetractEvents events, RetractCommand retract, CancellationToken cancel)
         {
+            if (Common.CashManagementCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.NotSupported)
+            {
+                return new(
+                    MessageHeader.CompletionCodeEnum.InvalidCommand,
+                    $"Retract command is not supported by the Service Provider.");
+            }
+
             if (retract.Payload.Location.RetractArea is not null &&
                 retract.Payload.Location.OutputPosition is not null)
             {
@@ -36,19 +43,18 @@ namespace XFS4IoTFramework.CashManagement
 
             if (retract.Payload.Location.RetractArea is not null)
             {
-                CashManagementCapabilitiesClass.RetractAreaEnum retractArea = CashManagementCapabilitiesClass.RetractAreaEnum.Default;
-                retractArea = retract.Payload.Location.RetractArea switch
+                CashManagementCapabilitiesClass.RetractAreaEnum retractArea = retract.Payload.Location.RetractArea switch
                 {
                     RetractAreaEnum.ItemCassette => CashManagementCapabilitiesClass.RetractAreaEnum.ItemCassette,
                     RetractAreaEnum.Reject => CashManagementCapabilitiesClass.RetractAreaEnum.Reject,
                     RetractAreaEnum.Retract => CashManagementCapabilitiesClass.RetractAreaEnum.Retract,
                     RetractAreaEnum.Stacker => CashManagementCapabilitiesClass.RetractAreaEnum.Stacker,
                     RetractAreaEnum.Transport => CashManagementCapabilitiesClass.RetractAreaEnum.Transport,
-                    _ => CashManagementCapabilitiesClass.RetractAreaEnum.Default
+                    RetractAreaEnum.CashIn => CashManagementCapabilitiesClass.RetractAreaEnum.CashIn,
+                    _ => throw new InvalidDataException($"Unsupported retract area is set. {retract.Payload.Location.RetractArea}")
                 };
 
-                if (retractArea != CashManagementCapabilitiesClass.RetractAreaEnum.Default &&
-                    !Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
+                if (!Common.CashManagementCapabilities.RetractAreas.HasFlag(retractArea))
                 {
                     return new(
                         new(RetractCompletion.PayloadData.ErrorCodeEnum.InvalidRetractPosition),

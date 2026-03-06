@@ -358,4 +358,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-*.cd
+
+# Per user build properties
+*.user.props
+
+# Code Sight IDE Plugin
+*.codesight

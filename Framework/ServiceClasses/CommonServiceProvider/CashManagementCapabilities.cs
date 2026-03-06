@@ -7,16 +7,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using XFS4IoT;
 
 namespace XFS4IoTFramework.Common
 {
     /// <summary>
     /// CashManagementCapabilities
-    /// Store device capabilites for the cash management interface for cash devices
+    /// Store device capabilities for the cash management interface for cash devices
     /// </summary>
     public sealed class CashManagementCapabilitiesClass(
         CashManagementCapabilitiesClass.PositionEnum Positions,
@@ -112,12 +110,18 @@ namespace XFS4IoTFramework.Common
         /// Stacker - The items may be retracted to the intermediate stacker.
         /// Reject - The items may be retracted to a reject cash unit.
         /// ItemCassette - The items may be retracted to the item cassettes, i.e. cassettes that can be dispensed from.
-        /// Default - The item may be retracted to the default position.
+        /// Default - The item may be retracted to the default position. 
+        /// XFS4IoT Specification Release 2021-01 was boolean flags and could be translated to use default position for CashManagement.Retract command property.
+        /// However, the newer specification 2023-02 or later set a required property and not possible to set other than supported value.
+        /// NotSupported - The device doesn't support retracting items.
         /// </summary>
         [Flags]
         public enum RetractAreaEnum
         {
+            [Obsolete("Use new value NotSupported")]
+            [EditorBrowsable(EditorBrowsableState.Never)]
             Default = 0,
+            NotSupported = 0,
             Retract = 1 << 0,
             Transport = 1 << 1,
             Stacker = 1 << 2,

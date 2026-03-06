@@ -340,7 +340,7 @@ namespace XFS4IoTFramework.Common
                     },
                     MaxDispenseItems: Common.CashDispenserCapabilities.MaxDispenseItems,
                     ShutterControl: Common.CashDispenserCapabilities.ShutterControl,
-                    RetractAreas: Common.CashDispenserCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.Default ?
+                    RetractAreas: Common.CashDispenserCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.NotSupported ?
                     null : new(
                         Retract: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
                         Transport: Common.CashDispenserCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),
@@ -1454,7 +1454,7 @@ namespace XFS4IoTFramework.Common
                     IntermediateStacker: Common.CashAcceptorCapabilities.IntermediateStacker,
                     ItemsInsertedSensor: Common.CashAcceptorCapabilities.ItemsTakenSensor,
                     Positions: positions,
-                    RetractAreas: Common.CashAcceptorCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.Default ?
+                    RetractAreas: Common.CashAcceptorCapabilities.RetractAreas == CashManagementCapabilitiesClass.RetractAreaEnum.NotSupported ?
                     null : new(
                         Retract: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Retract),
                         Transport: Common.CashAcceptorCapabilities.RetractAreas.HasFlag(CashManagementCapabilitiesClass.RetractAreaEnum.Transport),

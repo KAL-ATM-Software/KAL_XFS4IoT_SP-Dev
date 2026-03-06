@@ -103,7 +103,7 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         ///  If items can be retracted into this storage unit, this is the number of areas within the storage unit which 
         ///  allow physical separation of different bunches.If there is no physical separation of retracted bunches
-        ///  within this storage unit, this value is 1.
+        ///  within this storage unit, this value is 1. if the device does not support retract operation, value is 0.
         /// </summary>
         public int RetractAreas { get; init; }
 
