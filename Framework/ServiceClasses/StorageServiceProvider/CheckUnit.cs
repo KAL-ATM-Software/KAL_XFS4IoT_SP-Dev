@@ -248,7 +248,6 @@ namespace XFS4IoTFramework.Storage
         /// If the number of items is not counted this is not reported and RetractOperations
         /// is incremented as items are added to the unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int MediaInCount
         {
             get { return mediaInCount; }
@@ -257,7 +256,6 @@ namespace XFS4IoTFramework.Storage
                 if (mediaInCount != value)
                 {
                     mediaInCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -268,7 +266,6 @@ namespace XFS4IoTFramework.Storage
         /// If the number of items is not counted this is not reported and RetractOperations is 
         /// incremented as items are added to the unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int Count
         {
             get { return count; }

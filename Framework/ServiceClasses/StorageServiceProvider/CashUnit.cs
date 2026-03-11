@@ -253,7 +253,6 @@ namespace XFS4IoTFramework.Storage
                 if (initialCounts != value)
                 {
                     initialCounts = value with { };
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -263,7 +262,6 @@ namespace XFS4IoTFramework.Storage
         /// The items moved from this storage unit by cash commands to another destination since the last 
         /// replenishment of this unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashOutCountClass StorageCashOutCount
         {
             get { return storageCashOutCount; }
@@ -272,7 +270,6 @@ namespace XFS4IoTFramework.Storage
                 if (storageCashOutCount != value)
                 {
                     storageCashOutCount = value with { };
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -282,7 +279,6 @@ namespace XFS4IoTFramework.Storage
         /// List of items inserted in this storage unit by cash commands from another source since the last 
         /// replenishment of this unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashInCountClass StorageCashInCount
         {
             get { return storageCashInCount; }
@@ -291,7 +287,6 @@ namespace XFS4IoTFramework.Storage
                 if (storageCashInCount != value)
                 {
                     storageCashInCount = value with { };
-                    NotifyPropertyChanged();
                 }
             }
         }

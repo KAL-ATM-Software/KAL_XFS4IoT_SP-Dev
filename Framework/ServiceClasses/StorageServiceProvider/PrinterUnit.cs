@@ -102,7 +102,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The printer related count as set at the last replenishment.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int InitialCount
         {
             get { return initialCount; }
@@ -111,7 +110,6 @@ namespace XFS4IoTFramework.Storage
                 if (initialCount != value)
                 {
                     initialCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -120,7 +118,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The printer related items added to the unit since the last replenishment.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int InCount
         {
             get { return inCount; }
@@ -129,7 +126,6 @@ namespace XFS4IoTFramework.Storage
                 if (inCount != value)
                 {
                     inCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }

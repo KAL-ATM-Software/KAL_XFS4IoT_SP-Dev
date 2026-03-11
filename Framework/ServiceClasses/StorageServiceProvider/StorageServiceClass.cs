@@ -578,57 +578,6 @@ namespace XFS4IoTServer
                     }
                 }
 
-                // Update status from count
-                foreach (var unit in CashUnits)
-                {
-                    // update status logically first and overwrite status if the device class requires.
-                    if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
-                    {
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Full;
-                    }
-                    else if (unit.Value.Unit.Status.Count == 0)
-                    {
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Empty;
-                    }
-                    else if (unit.Value.Unit.Configuration.LowThreshold != 0)
-                    {
-                        if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
-                            unit.Value.Unit.Status.Count < unit.Value.Unit.Configuration.LowThreshold)
-                        {
-                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Low;
-                        }
-                        else if ((unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn) ||
-                                  unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)) &&
-                                 unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
-                        {
-                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                        }
-                        else if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract) ||
-                                 unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract))
-                        {
-                            if (unit.Value.Unit.Capabilities.RetractThresholds)
-                            {
-                                if (unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
-                                {
-                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                                }
-                            }
-                            else
-                            {
-                                if (unit.Value.Unit.Status.StorageCashInCount is not null &&
-                                    unit.Value.Unit.Status.StorageCashInCount.RetractOperations > unit.Value.Unit.Configuration.HighThreshold)
-                                {
-                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-                    }
-                }
-
                 Logger.Log(Constants.DeviceClass, $"StorageDev.GetCashStorageStatus()");
 
                 bool updateStatus = Device.GetCashStorageStatus(out Dictionary<string, CashUnitStorage.StatusEnum> storageStatus);
@@ -658,6 +607,7 @@ namespace XFS4IoTServer
                 if (updateCounts &&
                     unitStatus is not null)
                 {
+                    // Use status from the device class
                     foreach (var unit in unitStatus)
                     {
                         if (!CashUnits.ContainsKey(unit.Key))
@@ -666,6 +616,59 @@ namespace XFS4IoTServer
                             continue;
                         }
                         CashUnits[unit.Key].Unit.Status.ReplenishmentStatus = unit.Value;
+                    }
+                }
+                else
+                {
+                    // Update status from count
+                    foreach (var unit in CashUnits)
+                    {
+                        // update status logically first and overwrite status if the device class requires.
+                        if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Full;
+                        }
+                        else if (unit.Value.Unit.Status.Count == 0)
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Empty;
+                        }
+                        else if (unit.Value.Unit.Configuration.LowThreshold != 0)
+                        {
+                            if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                                unit.Value.Unit.Status.Count < unit.Value.Unit.Configuration.LowThreshold)
+                            {
+                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Low;
+                            }
+                            else if ((unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn) ||
+                                      unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)) &&
+                                     unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
+                            {
+                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                            }
+                            else if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract) ||
+                                     unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract))
+                            {
+                                if (unit.Value.Unit.Capabilities.RetractThresholds)
+                                {
+                                    if (unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
+                                    {
+                                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                                    }
+                                }
+                                else
+                                {
+                                    if (unit.Value.Unit.Status.StorageCashInCount is not null &&
+                                        unit.Value.Unit.Status.StorageCashInCount.RetractOperations > unit.Value.Unit.Configuration.HighThreshold)
+                                    {
+                                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                        }
                     }
                 }
 
@@ -762,7 +765,6 @@ namespace XFS4IoTServer
 
             Logger.Log(Constants.DeviceClass, $"StoragetDev.GetCashStorageStatus()-> {updateStorageStatus}");
 
-            
             if (updateStorageStatus &&
                 storageStatus is not null)
             {
@@ -779,83 +781,16 @@ namespace XFS4IoTServer
 
             List<string> sendThresholdEvent = [];
 
-            foreach (var unit in CashUnits)
-            {
-                // update status logically first and overwrite status if the device class requires.
-                if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
-                {
-                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Full;
-                }
-                else if (unit.Value.Unit.Status.Count == 0)
-                {
-                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Empty;
-                }
-                else if (unit.Value.Unit.Configuration.LowThreshold != 0)
-                {
-                    if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
-                        unit.Value.Unit.Status.Count < unit.Value.Unit.Configuration.LowThreshold)
-                    {
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Low;
-                    }
-                    else if ((unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn) ||
-                              unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)) &&
-                             unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
-                    {
-                        if (!sendThresholdEvent.Contains(unit.Key))
-                            sendThresholdEvent.Add(unit.Key);
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                    }
-                    else if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract) ||
-                             unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract))
-                    {
-                        if (unit.Value.Unit.Capabilities.RetractThresholds)
-                        {
-                            if (unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
-                            {
-                                if (!sendThresholdEvent.Contains(unit.Key))
-                                    sendThresholdEvent.Add(unit.Key);
-                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                            }
-                            else
-                            {
-                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-                            }
-                        }
-                        else
-                        {
-                            if (unit.Value.Unit.Status.StorageCashInCount is not null &&
-                                unit.Value.Unit.Status.StorageCashInCount.RetractOperations > unit.Value.Unit.Configuration.HighThreshold)
-                            {
-                                if (!sendThresholdEvent.Contains(unit.Key))
-                                    sendThresholdEvent.Add(unit.Key);
-                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
-                            }
-                            else
-                            {
-                                unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-                    }
-                }
-                else
-                {
-                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
-                }
-            }
-
             Logger.Log(Constants.DeviceClass, "StoragetDev.GetCashUnitStatus()");
 
-            bool updateunitStatus = Device.GetCashUnitStatus(out Dictionary<string, CashStatusClass.ReplenishmentStatusEnum> unitStatus);
+            bool updateUnitStatus = Device.GetCashUnitStatus(out Dictionary<string, CashStatusClass.ReplenishmentStatusEnum> unitStatus);
 
-            Logger.Log(Constants.DeviceClass, $"StoragetDev.GetCashUnitStatus()-> {updateunitStatus}");
+            Logger.Log(Constants.DeviceClass, $"StoragetDev.GetCashUnitStatus()-> {updateUnitStatus}");
 
-            if (updateunitStatus &&
+            if (updateUnitStatus &&
                 unitStatus is not null)
             {
+                // Use status from the device class
                 foreach (var unit in unitStatus)
                 {
                     if (!CashUnits.ContainsKey(unit.Key))
@@ -867,6 +802,78 @@ namespace XFS4IoTServer
                 }
                 // status is maintained by the device class and expected threshold event is being sent
                 sendThresholdEvent.Clear();
+            }
+            else
+            {
+                // Update status from count.
+                foreach (var unit in CashUnits)
+                {
+                    // update status logically first and overwrite status if the device class requires.
+                    if (unit.Value.Unit.Status.Count >= unit.Value.Capacity)
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Full;
+                    }
+                    else if (unit.Value.Unit.Status.Count == 0)
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Empty;
+                    }
+                    else if (unit.Value.Unit.Configuration.LowThreshold != 0)
+                    {
+                        if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOut) &&
+                            unit.Value.Unit.Status.Count < unit.Value.Unit.Configuration.LowThreshold)
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Low;
+                        }
+                        else if ((unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashIn) ||
+                                  unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.Reject)) &&
+                                 unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
+                        {
+                            if (!sendThresholdEvent.Contains(unit.Key))
+                                sendThresholdEvent.Add(unit.Key);
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                        }
+                        else if (unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashInRetract) ||
+                                 unit.Value.Unit.Capabilities.Types.HasFlag(CashCapabilitiesClass.TypesEnum.CashOutRetract))
+                        {
+                            if (unit.Value.Unit.Capabilities.RetractThresholds)
+                            {
+                                if (unit.Value.Unit.Status.Count > unit.Value.Unit.Configuration.HighThreshold)
+                                {
+                                    if (!sendThresholdEvent.Contains(unit.Key))
+                                        sendThresholdEvent.Add(unit.Key);
+                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                                }
+                                else
+                                {
+                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                                }
+                            }
+                            else
+                            {
+                                if (unit.Value.Unit.Status.StorageCashInCount is not null &&
+                                    unit.Value.Unit.Status.StorageCashInCount.RetractOperations > unit.Value.Unit.Configuration.HighThreshold)
+                                {
+                                    if (!sendThresholdEvent.Contains(unit.Key))
+                                        sendThresholdEvent.Add(unit.Key);
+                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.High;
+                                }
+                                else
+                                {
+                                    unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                        }
+                    }
+                    else
+                    {
+                        unit.Value.Unit.Status.ReplenishmentStatus = CashStatusClass.ReplenishmentStatusEnum.Healthy;
+                    }
+                }
+
             }
 
             foreach (var unit in from unit in CashUnits

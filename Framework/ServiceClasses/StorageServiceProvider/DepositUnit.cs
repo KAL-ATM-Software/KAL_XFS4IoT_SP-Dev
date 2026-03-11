@@ -116,7 +116,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The number of envelopes or bags in the deposit container.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int NumberOfDeposits
         {
             get { return numberOfDeposits; }

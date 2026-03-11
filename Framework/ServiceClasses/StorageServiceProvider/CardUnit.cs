@@ -118,7 +118,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The initial number of cards in the storage unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int InitialCount
         {
             get { return initialCount; }
@@ -127,7 +126,6 @@ namespace XFS4IoTFramework.Storage
                 if (initialCount != value)
                 {
                     initialCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -136,7 +134,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The number of cards in the storage unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int Count
         {
             get { return count; }
@@ -145,7 +142,6 @@ namespace XFS4IoTFramework.Storage
                 if (count != value)
                 {
                     count = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -154,7 +150,6 @@ namespace XFS4IoTFramework.Storage
         /// <summary>
         /// The number of cards from this storage unit which are in a retain storage unit.
         /// </summary>
-        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public int RetainCount
         {
             get { return retainCount; }
@@ -163,7 +158,6 @@ namespace XFS4IoTFramework.Storage
                 if (retainCount != value)
                 {
                     retainCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }

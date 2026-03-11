@@ -120,7 +120,7 @@ namespace XFS4IoTServer
                         propertyInfo.PropertyName == nameof(cashStatus.StorageCashInCount) ||
                         propertyInfo.PropertyName == nameof(cashStatus.InitialCounts))
                     {
-                        await CountsChangedEvent(
+                        await StorageChangedEvent(
                             Payload: new()
                             {
                                 ExtendedProperties = new Dictionary<string, StorageUnitClass>()
@@ -236,7 +236,7 @@ namespace XFS4IoTServer
                     if (propertyInfo.PropertyName == nameof(checkStatus.InitialCounts) ||
                         propertyInfo.PropertyName == nameof(checkStatus.CheckInCounts))
                     {
-                        await CountsChangedEvent(
+                        await StorageChangedEvent(
                             Payload: new()
                             {
                                 ExtendedProperties = new Dictionary<string, StorageUnitClass>()
@@ -318,7 +318,7 @@ namespace XFS4IoTServer
                                 Count: (propertyInfo.PropertyName == nameof(checkStatus.Count)) ? checkStatus.Count : null);
                         }
 
-                        await CountsChangedEvent(
+                        await StorageChangedEvent(
                             Payload: new()
                             {
                                 ExtendedProperties = new Dictionary<string, StorageUnitClass>()
@@ -682,7 +682,7 @@ namespace XFS4IoTServer
 
                         if (propertyInfo.PropertyName == nameof(depositStatus.NumberOfDeposits))
                         {
-                            await CountsChangedEvent(
+                            await StorageChangedEvent(
                                 Payload: new()
                                 {
                                     ExtendedProperties = new Dictionary<string, StorageUnitClass>()
@@ -698,28 +698,6 @@ namespace XFS4IoTServer
                                 }
                                     }
                                 });
-                        }
-                        else
-                        {
-                            if (propertyInfo.PropertyName == nameof(depositStatus.NumberOfDeposits))
-                            {
-                                await StorageChangedEvent(
-                                    Payload: new()
-                                    {
-                                        ExtendedProperties = new Dictionary<string, StorageUnitClass>()
-                                        {
-                                    {
-                                        depositStatus.StorageId,
-                                        new StorageUnitClass(
-                                            Deposit: new XFS4IoT.Deposit.StorageClass(
-                                                Status: new XFS4IoT.Deposit.StorageStatusClass(
-                                                    NumOfDeposits: depositStatus.NumberOfDeposits)
-                                                )
-                                            )
-                                    }
-                                        }
-                                    });
-                            }
                         }
                     }
                     else if (sender.GetType() == typeof(DepositUnitStorage))
