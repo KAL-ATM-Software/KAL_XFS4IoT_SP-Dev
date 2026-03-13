@@ -220,6 +220,10 @@ namespace XFS4IoTServer
         /// </summary>
         public Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo) => StorageService.StorageChangedEvent(sender, propertyInfo);
 
+        /// <summary>
+        /// This method can use called from the device class when there is a change in the storage outside of the command.
+        /// </summary>
+        public Task UpdateStorageFromDeviceClass() => StorageService.UpdateStorageFromDeviceClass();
         #endregion
 
         #region Common unsolicited events

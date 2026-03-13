@@ -120,7 +120,9 @@ namespace XFS4IoTServer
                         propertyInfo.PropertyName == nameof(cashStatus.StorageCashInCount) ||
                         propertyInfo.PropertyName == nameof(cashStatus.InitialCounts))
                     {
-                        await StorageChangedEvent(
+                        if (propertyInfo.PropertyName == nameof(cashStatus.InitialCounts))
+                        {
+                            await StorageChangedEvent(
                             Payload: new()
                             {
                                 ExtendedProperties = new Dictionary<string, StorageUnitClass>()
@@ -131,7 +133,7 @@ namespace XFS4IoTServer
                                         Cash: new XFS4IoT.CashManagement.StorageCashClass(
                                             Status: new XFS4IoT.CashManagement.StorageCashStatusClass(
                                                 Initial: (propertyInfo.PropertyName == nameof(cashStatus.InitialCounts)) ? cashStatus.InitialCounts.CopyTo() : null,
-                                                Out: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashOutCount)) ? 
+                                                Out: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashOutCount)) ?
                                                 new(
                                                     Presented: cashStatus.StorageCashOutCount.Presented?.CopyTo(),
                                                     Rejected: cashStatus.StorageCashOutCount.Rejected?.CopyTo(),
@@ -141,7 +143,7 @@ namespace XFS4IoTServer
                                                     Diverted: cashStatus.StorageCashOutCount.Diverted?.CopyTo(),
                                                     Transport: cashStatus.StorageCashOutCount.Transport?.CopyTo()
                                                     ) : null,
-                                                In: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashInCount)) ? 
+                                                In: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashInCount)) ?
                                                 new(
                                                     RetractOperations: cashStatus.StorageCashInCount.RetractOperations,
                                                     Deposited: cashStatus.StorageCashInCount.Deposited?.CopyTo(),
@@ -155,6 +157,45 @@ namespace XFS4IoTServer
                                 }
                                 }
                             });
+                        }
+                        else
+                        {
+                            await CountsChangedEvent(
+                            Payload: new()
+                            {
+                                ExtendedProperties = new Dictionary<string, StorageUnitClass>()
+                                {
+                                {
+                                    cashStatus.StorageId,
+                                    new StorageUnitClass(
+                                        Cash: new XFS4IoT.CashManagement.StorageCashClass(
+                                            Status: new XFS4IoT.CashManagement.StorageCashStatusClass(
+                                                Initial: (propertyInfo.PropertyName == nameof(cashStatus.InitialCounts)) ? cashStatus.InitialCounts.CopyTo() : null,
+                                                Out: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashOutCount)) ?
+                                                new(
+                                                    Presented: cashStatus.StorageCashOutCount.Presented?.CopyTo(),
+                                                    Rejected: cashStatus.StorageCashOutCount.Rejected?.CopyTo(),
+                                                    Distributed: cashStatus.StorageCashOutCount.Distributed?.CopyTo(),
+                                                    Unknown: cashStatus.StorageCashOutCount.Unknown?.CopyTo(),
+                                                    Stacked: cashStatus.StorageCashOutCount.Stacked?.CopyTo(),
+                                                    Diverted: cashStatus.StorageCashOutCount.Diverted?.CopyTo(),
+                                                    Transport: cashStatus.StorageCashOutCount.Transport?.CopyTo()
+                                                    ) : null,
+                                                In: (propertyInfo.PropertyName == nameof(cashStatus.StorageCashInCount)) ?
+                                                new(
+                                                    RetractOperations: cashStatus.StorageCashInCount.RetractOperations,
+                                                    Deposited: cashStatus.StorageCashInCount.Deposited?.CopyTo(),
+                                                    Retracted: cashStatus.StorageCashInCount.Retracted?.CopyTo(),
+                                                    Rejected: cashStatus.StorageCashInCount.Rejected?.CopyTo(),
+                                                    Distributed: cashStatus.StorageCashInCount.Distributed?.CopyTo(),
+                                                    Transport: cashStatus.StorageCashInCount.Transport?.CopyTo()
+                                                    ) : null)
+                                            )
+                                        )
+                                }
+                                }
+                            });
+                        }
                     }
                     else if (propertyInfo.PropertyName == nameof(cashStatus.ReplenishmentStatus))
                     {

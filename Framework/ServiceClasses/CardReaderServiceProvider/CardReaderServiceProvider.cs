@@ -192,6 +192,11 @@ namespace XFS4IoTServer
         /// </summary>
         public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
 
+        /// <summary>
+        /// This method can use called from the device class when there is a change in the storage outside of the command.
+        /// </summary>
+        public Task UpdateStorageFromDeviceClass() => StorageService.UpdateStorageFromDeviceClass();
+
         #endregion
 
         #region Common Service

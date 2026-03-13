@@ -116,8 +116,15 @@ namespace XFS4IoTServer
         /// </summary>
         public Task UpdateDepositStorageCount(string storageId, int countDelta) => throw new NotSupportedException($"CashAcceptor service class doesn't support deposit storage.");
 
-
+        /// <summary>
+        /// Save persistent data for storage information.
+        /// </summary>
         public void StorePersistent() => StorageService.StorePersistent();
+
+        /// <summary>
+        /// This method can use called from the device class when there is a change in the storage outside of the command.
+        /// </summary>
+        public Task UpdateStorageFromDeviceClass () => StorageService.UpdateStorageFromDeviceClass();
 
         /// <summary>
         /// Return which type of storage SP is using

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -24,9 +25,10 @@ namespace XFS4IoTFramework.Storage
                  StorageConfiguration.SerialNumber)
         {
             Id = StorageConfiguration.Id;
-            Unit = new CashUnit(StorageConfiguration.Capabilities,
-                                StorageConfiguration.Configuration,
-                                StorageConfiguration.CashUnitAdditionalInfo);
+            Unit = new CashUnit(
+                StorageConfiguration.Capabilities,
+                StorageConfiguration.Configuration,
+                StorageConfiguration.CashUnitAdditionalInfo);
         }
 
         /// <summary>
@@ -70,11 +72,12 @@ namespace XFS4IoTFramework.Storage
             Document = 1 << 7,
         }
 
-        public CashCapabilitiesClass(TypesEnum Types,
-                                     ItemsEnum Items,
-                                     bool HardwareSensors,
-                                     int RetractAreas,
-                                     List<string> BanknoteItems)
+        public CashCapabilitiesClass(
+            TypesEnum Types,
+            ItemsEnum Items,
+            bool HardwareSensors,
+            int RetractAreas,
+            List<string> BanknoteItems)
         {
             this.Types = Types;
             this.Items = Items;
@@ -126,15 +129,16 @@ namespace XFS4IoTFramework.Storage
     [Serializable()]
     public sealed record CashConfigurationClass
     {
-        public CashConfigurationClass(CashCapabilitiesClass.TypesEnum Types,
-                                      CashCapabilitiesClass.ItemsEnum Items,
-                                      string Currency,
-                                      double Value,
-                                      int HighThreshold,
-                                      int LowThreshold,
-                                      bool AppLockIn,
-                                      bool AppLockOut,
-                                      List<string> BanknoteItems)
+        public CashConfigurationClass(
+            CashCapabilitiesClass.TypesEnum Types,
+            CashCapabilitiesClass.ItemsEnum Items,
+            string Currency,
+            double Value,
+            int HighThreshold,
+            int LowThreshold,
+            bool AppLockIn,
+            bool AppLockOut,
+            List<string> BanknoteItems)
         {
             this.Types = Types;
             this.Items = Items;
@@ -250,9 +254,30 @@ namespace XFS4IoTFramework.Storage
             get { return initialCounts; }
             set
             {
+                string oldVal = string.Empty;
+                try
+                {
+                    oldVal = JsonSerializer.Serialize<StorageCashCountClass>(initialCounts);
+                }
+                catch (Exception) { }
+
                 if (initialCounts != value)
                 {
                     initialCounts = value with { };
+                }
+
+                string newVal = string.Empty;
+                try
+                {
+                    newVal = JsonSerializer.Serialize<StorageCashCountClass>(initialCounts);
+                }
+                catch (Exception)  { }
+
+                if (!string.IsNullOrEmpty(newVal) &&
+                    !string.IsNullOrEmpty(oldVal) &&
+                    oldVal != newVal)
+                {
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -262,14 +287,36 @@ namespace XFS4IoTFramework.Storage
         /// The items moved from this storage unit by cash commands to another destination since the last 
         /// replenishment of this unit.
         /// </summary>
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashOutCountClass StorageCashOutCount
         {
             get { return storageCashOutCount; }
             set
             {
+                string oldVal = string.Empty;
+                try
+                {
+                    oldVal = JsonSerializer.Serialize<StorageCashOutCountClass>(storageCashOutCount);
+                }
+                catch (Exception)  { }
+
                 if (storageCashOutCount != value)
                 {
                     storageCashOutCount = value with { };
+                }
+
+                string newVal = string.Empty;
+                try
+                {
+                    newVal = JsonSerializer.Serialize<StorageCashOutCountClass>(storageCashOutCount);
+                }
+                catch (Exception) { }
+
+                if (!string.IsNullOrEmpty(oldVal) &&
+                    !string.IsNullOrEmpty(newVal) &&
+                    oldVal != newVal)
+                {
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -279,14 +326,36 @@ namespace XFS4IoTFramework.Storage
         /// List of items inserted in this storage unit by cash commands from another source since the last 
         /// replenishment of this unit.
         /// </summary>
+        [Event(Type = EventAttribute.EventTypeEnum.CountChanged)]
         public StorageCashInCountClass StorageCashInCount
         {
             get { return storageCashInCount; }
             set
             {
+                string oldVal = string.Empty;
+                try
+                {
+                    oldVal = JsonSerializer.Serialize<StorageCashInCountClass>(storageCashInCount);
+                }
+                catch (Exception) { }
+
                 if (storageCashInCount != value)
                 {
                     storageCashInCount = value with { };
+                }
+
+                string newVal = string.Empty;
+                try
+                {
+                    newVal = JsonSerializer.Serialize<StorageCashInCountClass>(storageCashInCount);
+                }
+                catch (Exception) { }
+
+                if (!string.IsNullOrEmpty(oldVal) &&
+                    !string.IsNullOrEmpty(newVal) &&
+                    oldVal != newVal)
+                {
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -381,7 +450,7 @@ namespace XFS4IoTFramework.Storage
         private Dictionary<string, CashItemCountClass> itemCounts = [];
 
         /// <summary>
-        /// Copty structure to the message class generated automatically.
+        /// Copy structure to the message class generated automatically.
         /// </summary>
         /// <returns></returns>
         public XFS4IoT.CashManagement.StorageCashCountsClass CopyTo()
@@ -440,11 +509,12 @@ namespace XFS4IoTFramework.Storage
             Inked = 0;
         }
 
-        public CashItemCountClass(int Fit,
-                                  int Unfit,
-                                  int Suspect,
-                                  int Counterfeit,
-                                  int Inked)
+        public CashItemCountClass(
+            int Fit,
+            int Unfit,
+            int Suspect,
+            int Counterfeit,
+            int Inked)
         {
             this.Fit = Fit;
             this.Unfit = Unfit;

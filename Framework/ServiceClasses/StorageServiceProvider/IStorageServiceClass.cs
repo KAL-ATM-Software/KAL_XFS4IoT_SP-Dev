@@ -100,6 +100,11 @@ namespace XFS4IoTFramework.Storage
         /// Sending status changed event.
         /// </summary>
         Task StorageChangedEvent(object sender, PropertyChangedEventArgs propertyInfo);
+
+        /// <summary>
+        /// First update storage information from device class to make sure the storage information is up to date before sending response to the client.
+        /// </summary>
+        Task UpdateStorageFromDeviceClass();
     }
 
     public interface IStorageServiceClass : IStorageService, IStorageUnsolicitedEvents
