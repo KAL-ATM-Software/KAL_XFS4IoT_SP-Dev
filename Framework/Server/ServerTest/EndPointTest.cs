@@ -41,10 +41,9 @@ namespace XFS4IoTServerTest
             MessageCollection.Add(MessageHeader.TypeEnum.Command, "CardReader.ReadRawData", typeof(ReadRawDataCommand));
 
             var test = new EndPoint(new System.Uri("http://localhost:8088/XFS/CashAcceptor/"),
-                CommandDecoder: CommandDecoder,
-                CommandDispatcher: CommandDispatcher,
-                ServiceProvider: null,
-                Logger: Logger);
+                CommandDecoder,
+                Logger);
+            test.Register("/XFS/CashAcceptor/", CommandDispatcher, null);
 
             test.RunAsync(CancellationToken.None).Wait();
 

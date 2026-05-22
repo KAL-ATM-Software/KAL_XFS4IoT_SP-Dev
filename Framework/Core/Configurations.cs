@@ -33,6 +33,16 @@ namespace XFS4IoT
         public static readonly string ServerPort = "ServerPort";
 
         /// <summary>
+        /// Path to the PFX certificate file for TLS (wss://). Leave unset for plain WebSocket (ws://).
+        /// </summary>
+        public static readonly string CertificatePath = "CertificatePath";
+
+        /// <summary>
+        /// Password for the PFX certificate file referenced by CertificatePath. May be empty for password-less PFX files.
+        /// </summary>
+        public static readonly string CertificatePassword = "CertificatePassword";
+
+        /// <summary>
         /// Set of default values
         /// </summary>
         public static class Default

@@ -1,4 +1,4 @@
-﻿/***********************************************************************************************\
+/***********************************************************************************************\
  * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
@@ -6,12 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.WebSockets;
-using System.Reflection;
+using System.Net.Security;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
@@ -19,105 +17,127 @@ using XFS4IoT;
 namespace XFS4IoTServer
 {
     /// <summary>
-    /// Endpoint that will receive and process commands from a client
+    /// Single-port endpoint that accepts WebSocket connections and routes them to registered
+    /// services by URL path. All services (Publisher, CardReader, Printer, …) share this one
+    /// TcpListener so they all live on the same port.
     /// </summary>
     public sealed class EndPoint : IDisposable
     {
-        public EndPoint(Uri EndPointUri, 
+        public EndPoint(Uri EndPointUri,
                         IMessageDecoder CommandDecoder,
-                        ICommandDispatcher CommandDispatcher,
-                        IServiceProvider ServiceProvider,
                         ILogger Logger)
         {
             EndPointUri.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(EndPointUri)}");
             CommandDecoder.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(CommandDecoder)}");
-            CommandDispatcher.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(CommandDispatcher)}");
-            ServiceProvider.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(ServiceProvider)}");
             Logger.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(Logger)}");
 
             this.CommandDecoder = CommandDecoder;
-            this.CommandDispatcher = CommandDispatcher;
-            this.ServiceProvider = ServiceProvider;
             this.Logger = Logger;
-            
-            HttpListener = new HttpListener()
-            {
-                IgnoreWriteExceptions = false,
-                Prefixes = { EndPointUri.OriginalString },
-            };
 
-            HttpListener.Start();
+            TcpListener = new TcpListener(IPAddress.Any, EndPointUri.Port);
+            TcpListener.Start();
 
             Logger.Log(Constants.Component, $"New endpoint at {EndPointUri.OriginalString}");
         }
 
-        private readonly HttpListener HttpListener;
+        /// <summary>
+        /// Register a service (or the publisher itself) to handle connections on <paramref name="path"/>.
+        /// Call this once per service before <see cref="RunAsync"/> is started.
+        /// </summary>
+        public void Register(string path, ICommandDispatcher dispatcher, IServiceProvider provider)
+        {
+            string normalized = NormalizePath(path);
+            _routes[normalized] = (dispatcher, provider);
+            _serviceConnections[normalized] = new List<(Task task, IConnection connection)>();
+        }
 
-        private readonly List<(Task task, IConnection socket)> ConnectionDetails = new();
-        public IEnumerable<IConnection> Connections { get => from d in ConnectionDetails select d.socket; }
+        /// <summary>
+        /// Returns a snapshot of active connections for the service registered at <paramref name="path"/>.
+        /// Used by ServiceProvider.BroadcastEvent.
+        /// </summary>
+        public IEnumerable<IConnection> GetConnections(string path)
+        {
+            string normalized = NormalizePath(path);
+            if (!_serviceConnections.TryGetValue(normalized, out var list))
+            {
+                return [];
+            }
+            lock (list)
+            {
+                return [.. list.Select(x => x.connection)];
+            }
+        }
+
+        public IEnumerable<IConnection> Connections { get => from d in _allConnections select d.connection; }
 
         public async Task RunAsync(CancellationToken token)
         {
-            Task<HttpListenerContext> listenerTask = HttpListener.GetContextAsync();
+            Task<TcpClient> acceptTask = TcpListener.AcceptTcpClientAsync();
             Task cancelTask = Task.Delay(-1, token);
             while (!token.IsCancellationRequested)
             {
-                // Wait until client connects
-                // We need to let client connections keep running, so await everything. 
+                Logger.Log(Constants.Component, $"Listening for new connections and on {_allConnections.Count} existing connections");
 
-                Logger.Log(Constants.Component, $"{HttpListener.Prefixes.First()} listing for new connections and on {ConnectionDetails.Count} existing connections");
+                var tasks = from c in _allConnections select c.task;
+                Task completedTask = await Task.WhenAny(Enumerable.Append(Enumerable.Append(tasks, acceptTask), cancelTask));
 
-                // And wait for something to happen. Note that multiple things can happen at the 
-                // same time. 
-                var tasks = from c in ConnectionDetails select c.task; 
-                Task completedTask = await Task.WhenAny(Enumerable.Append(Enumerable.Append(tasks, listenerTask), cancelTask));
-
-                // If it's one of the client connection tasks ending then we just need to stop waiting for it.  
-                if(completedTask == cancelTask) 
-                { 
-                }
-                else if (completedTask != listenerTask)
+                if (completedTask == cancelTask)
                 {
-                    ConnectionDetails.Remove( ConnectionDetails.Find( x => x.task == completedTask) );
                 }
-                // If we got a new connection we need to start handling that connection, and start 
-                // listening for new connections. 
+                else if (completedTask != acceptTask)
+                {
+                    var entry = _allConnections.Find(x => x.task == completedTask);
+                    _allConnections.Remove(entry);
+                    if (entry.path is not null && _serviceConnections.TryGetValue(entry.path, out var connList))
+                    {
+                        lock (connList)
+                        {
+                            connList.RemoveAll(x => x.task == completedTask);
+                        }
+                    }
+                }
                 else
                 {
-                    // Otherwise we know it's a new connection we need to handle. 
-                    HttpListenerContext context = listenerTask.Result;
+                    TcpClient tcpClient = acceptTask.Result;
+                    var (ws, requestPath) = await TcpWebSocket.AcceptAsync(tcpClient, TlsOptions);
 
-                    if (context.Request.IsWebSocketRequest)
+                    if (ws is not null)
                     {
-                        // Turn the HTTP connection into a websocket connection
-                        var client = (await context.AcceptWebSocketAsync(null)).WebSocket;
-
-                        // Create the client connection and run it. 
-                        ClientConnection clientConnection = new(client,
-                                                                CommandDecoder,
-                                                                CommandDispatcher,
-                                                                ServiceProvider,
-                                                                Logger,
-                                                                JsonSchemaValidator);
-                        var task = clientConnection.RunAsync(token);
-
-                        // Remember the connection and the task that's running it so 
-                        // that we can send events to it later, and clean up when it's finished. 
-                        ConnectionDetails.Add((task, clientConnection));
+                        string normalized = NormalizePath(requestPath);
+                        if (_routes.TryGetValue(normalized, out var route))
+                        {
+                            ClientConnection clientConnection = new(ws,
+                                                                    CommandDecoder,
+                                                                    route.dispatcher,
+                                                                    route.provider,
+                                                                    Logger,
+                                                                    JsonSchemaValidator);
+                            var task = clientConnection.RunAsync(token);
+                            _allConnections.Add((task, clientConnection, normalized));
+                            if (_serviceConnections.TryGetValue(normalized, out var connList))
+                            {
+                                lock (connList)
+                                {
+                                    connList.Add((task, clientConnection));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Logger.Warning(Constants.Component, $"No service registered for path '{requestPath}' — closing connection");
+                            ws.Abort();
+                            tcpClient.Dispose();
+                        }
                     }
                     else
                     {
-                        // Return empty body in case http message and return bad request as we only expect websocket
-                        // The 400 Bad Request error is an HTTP status code that means that the request you sent to the website server, 
-                        // often something simple like a request to load a web page, was somehow incorrect or corrupted and the server couldn't understand it.
-                        context.Response.StatusCode = 400;
-                        context.Response.Close();
+                        tcpClient.Dispose();
                     }
-                    // Restart listening for new connections. 
-                    listenerTask = HttpListener.GetContextAsync();
+
+                    acceptTask = TcpListener.AcceptTcpClientAsync();
                 }
             }
-            HttpListener.Close();
+            TcpListener.Stop();
         }
 
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator)
@@ -125,16 +145,29 @@ namespace XFS4IoTServer
             this.JsonSchemaValidator = JsonSchemaValidator;
         }
 
-        private IJsonSchemaValidator JsonSchemaValidator;
-
-        private readonly IMessageDecoder CommandDecoder;
-        private readonly ICommandDispatcher CommandDispatcher;
-        private readonly IServiceProvider ServiceProvider;
-        private readonly ILogger Logger;
+        public void SetTlsOptions(SslServerAuthenticationOptions tlsOptions)
+        {
+            TlsOptions = tlsOptions;
+        }
 
         public void Dispose()
         {
-            HttpListener.Close();
+            TcpListener.Stop();
         }
+
+        private static string NormalizePath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return "/";
+            return path.TrimEnd('/') + "/";
+        }
+
+        private readonly Dictionary<string, (ICommandDispatcher dispatcher, IServiceProvider provider)> _routes = new();
+        private readonly Dictionary<string, List<(Task task, IConnection connection)>> _serviceConnections = new();
+        private readonly List<(Task task, IConnection connection, string path)> _allConnections = new();
+        private readonly TcpListener TcpListener;
+        private readonly IMessageDecoder CommandDecoder;
+        private readonly ILogger Logger;
+        private IJsonSchemaValidator JsonSchemaValidator;
+        private SslServerAuthenticationOptions TlsOptions;
     }
 }

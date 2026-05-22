@@ -253,7 +253,7 @@ namespace XFS4IoTServer
                         Signaled++;
                     }
                 }
-                sourceToSignal?.SetResult(true);
+                sourceToSignal?.TrySetResult(true);
             }
 
             public void RemovedItem()

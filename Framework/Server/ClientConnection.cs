@@ -6,18 +6,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
+using System.IO;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using System.Collections;
-
 using XFS4IoT;
-using System.IO;
 
 namespace XFS4IoTServer
 {
@@ -60,6 +54,7 @@ namespace XFS4IoTServer
                         res = await socket.ReceiveAsync(BufferSlice, token);
                         ReceivedBufferReceived += res.Count;
                     } while (!res.EndOfMessage && ReceivedBufferReceived < receivedBuffer.Length);
+
                     res.EndOfMessage.IsTrue($"Failed to receive message within MAX_BUFFER. {MAX_BUFFER}");
 
                     if (res.MessageType is WebSocketMessageType.Text or WebSocketMessageType.Binary)
@@ -75,7 +70,7 @@ namespace XFS4IoTServer
                     }
                 }
             }
-            catch (WebSocketException ex) when (ex.InnerException is HttpListenerException)
+            catch (IOException)
             {
                 Logger.Warning(Constants.Component, "Client Closed connection");
             }

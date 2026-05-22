@@ -1,4 +1,4 @@
-﻿/***********************************************************************************************\
+/***********************************************************************************************\
  * (C) KAL ATM Software GmbH, 2025
  * KAL ATM Software GmbH licenses this file to you under the MIT license.
  * See the LICENSE file in the project root for more information.
@@ -16,10 +16,10 @@ namespace XFS4IoTServer
 {
     public class ServiceProvider : CommandDispatcher, IServiceProvider
     {
-        public ServiceProvider(EndpointDetails EndpointDetails, 
-                               string ServiceName, 
-                               IEnumerable<XFSConstants.ServiceClass> Services, 
-                               IDevice Device, 
+        public ServiceProvider(EndpointDetails EndpointDetails,
+                               string ServiceName,
+                               IEnumerable<XFSConstants.ServiceClass> Services,
+                               IDevice Device,
                                ILogger Logger)
             : base(Services, Logger)
         {
@@ -36,18 +36,19 @@ namespace XFS4IoTServer
             (Uri, WSUri) = EndpointDetails.ServiceUri(ServiceName);
 
             Logger.Log(Constants.Framework, $"Listening on {Uri}");
-
-            this.EndPoint = new EndPoint(Uri,
-                                         CommandDecoder,
-                                         this,
-                                         this,
-                                         Logger);
+            // Connections are managed by the shared EndPoint in ServicePublisher.
+            // SetConnectionSource() is called by ServicePublisher.Add() after registration.
         }
 
-        public async override Task RunAsync(CancellationSource cancellationSource) => await Task.WhenAll(EndPoint.RunAsync(cancellationSource.Token), Device.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource));
+        /// <summary>
+        /// Called by ServicePublisher.Add() so BroadcastEvent can reach the right connections.
+        /// </summary>
+        internal void SetConnectionSource(Func<IEnumerable<IConnection>> source) => _getConnections = source;
+
+        public async override Task RunAsync(CancellationSource cancellationSource)
+            => await Task.WhenAll(Device.RunAsync(cancellationSource.Token), base.RunAsync(cancellationSource));
 
         public string Name { get; internal set; }
-        private readonly EndPoint EndPoint;
         private readonly ILogger logger;
 
         private MessageDecoder CommandDecoder { get; } = new MessageDecoder();
@@ -60,8 +61,7 @@ namespace XFS4IoTServer
         {
             logger.Log(nameof(ServiceProvider), $"Broadcasting unsolicited event");
 
-            // Create all the send tasks at once so that we can send in parallel. 
-            var sendTasks = from connection in EndPoint.Connections
+            var sendTasks = from connection in _getConnections()
                             select connection.SendMessageAsync(payload);
             await Task.WhenAll(sendTasks);
 
@@ -72,7 +72,8 @@ namespace XFS4IoTServer
         {
             logger.Log(nameof(ServiceProvider), $"Broadcasting unsolicited event to specified connections");
 
-            var sendTasks = from connection in EndPoint.Connections
+            var myConnections = _getConnections();
+            var sendTasks = from connection in myConnections
                             where connections.Contains(connection)
                             select connection.SendMessageAsync(payload);
             await Task.WhenAll(sendTasks);
@@ -80,16 +81,18 @@ namespace XFS4IoTServer
             logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event to specified connections");
         }
 
-        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => EndPoint.SetJsonSchemaValidator(JsonSchemaValidator);
+        // JsonSchemaValidator is managed on the shared EndPoint by ServicePublisher.
+        public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) { }
 
         /// <summary>
         /// Set supported commands and events to the dispatcher.
         /// </summary>
-        /// <param name="MessagesSupported"></param>
         public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported)
         {
             base.MessagesSupported = MessagesSupported;
         }
         public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => base.MessagesSupported;
+
+        private Func<IEnumerable<IConnection>> _getConnections = () => Enumerable.Empty<IConnection>();
     }
 }

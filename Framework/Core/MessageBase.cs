@@ -90,7 +90,7 @@ namespace XFS4IoT
         /// Deep copy of the message object
         /// </summary>
         /// <returns>Copied message object</returns>
-        public object Clone() => MemberwiseClone();
+        public object Clone() => JsonSerializer.Deserialize(Serialise(), GetType(), JsonOptions);
 
         /// <summary>
         /// LookupMessageName

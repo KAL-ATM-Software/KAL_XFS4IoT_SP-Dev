@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Policy;
 using System.Text;
@@ -169,6 +170,7 @@ namespace XFS4IoTServer
             // Store supported command and event version in the framework.
             Dictionary<string, MessageTypeInfo> supportedFrameworkMessages = null;
 
+
             foreach (var assem in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (assem.IsDynamic == true)
@@ -176,12 +178,29 @@ namespace XFS4IoTServer
                     continue;
                 }
 
-                foreach (var type in assem.ExportedTypes)
+                Type[] assemTypes;
+                try
+                {
+                    assemTypes = assem.GetExportedTypes();
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                    // In case of ReflectionTypeLoadException, some dependency errors to access types in the assembly. Ignore.
+                    continue;
+                }
+                catch (Exception)
+                {
+                    // In case of any other exception, ignore this assembly.
+                    continue;
+                }
+
+                foreach (var type in assemTypes)
                 {
                     if (Attribute.GetCustomAttribute(type, typeof(XFS4VersionAttribute)) is not XFS4VersionAttribute versionAttrib)
                     {
                         continue;
                     }
+                        
                     CommandAttribute commandAttrib = Attribute.GetCustomAttribute(type, typeof(CommandAttribute)) as CommandAttribute;
                     if (commandAttrib is not null)
                     {
@@ -196,6 +215,7 @@ namespace XFS4IoTServer
                     }
                 }
             }
+
 
             if (supportedFrameworkMessages is null ||
                 supportedFrameworkMessages.Count == 0)

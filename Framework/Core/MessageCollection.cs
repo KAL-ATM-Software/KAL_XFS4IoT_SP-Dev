@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,8 +69,8 @@ namespace XFS4IoT
             return false;
         }
 
-        private static readonly Dictionary<string, Type> commandMessageTypes = [];
-        private static readonly Dictionary<string, Type> completionMessageTypes = [];
-        private static readonly Dictionary<string, Type> eventMessageTypes = [];
+        private static readonly ConcurrentDictionary<string, Type> commandMessageTypes = new();
+        private static readonly ConcurrentDictionary<string, Type> completionMessageTypes = new();
+        private static readonly ConcurrentDictionary<string, Type> eventMessageTypes = new();
     }
 }

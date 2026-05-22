@@ -54,7 +54,9 @@ namespace XFS4IoT
         /// <param name="InterfaceCommands">List of CommandEnum or EventEnum supported</param>
         public static void AddMatches<T>(this Dictionary<string, MessageTypeInfo> ListToAdd, InterfaceClass.NameEnum InterfaceName, MessageTypeInfo.MessageTypeEnum Type, Dictionary<string, MessageTypeInfo> Messages, List<T> InterfaceCommands)
         {
-            if (InterfaceCommands is null || 
+            ListToAdd.IsNotNull($"{nameof(ListToAdd)} cannot be null in {nameof(AddMatches)}");
+
+            if (InterfaceCommands is null ||
                 InterfaceCommands.Count == 0)
             {
                 return;
@@ -66,21 +68,13 @@ namespace XFS4IoT
                 {
                     continue;
                 }
-
-                if (ListToAdd is null)
+                if (ListToAdd.ContainsKey(msgName))
                 {
-                    ListToAdd = [];
+                    continue;
                 }
-                else
+                if (Messages[msgName].Type != Type)
                 {
-                    if (ListToAdd.ContainsKey(msgName))
-                    {
-                        continue;
-                    }
-                    if (Messages[msgName].Type != Type)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 ListToAdd.Add(msgName, Messages[msgName]);
             }

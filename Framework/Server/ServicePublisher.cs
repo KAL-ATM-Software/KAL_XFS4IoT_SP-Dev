@@ -6,11 +6,11 @@
 
 using Server;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using XFS4IoT;
@@ -37,9 +37,10 @@ namespace XFS4IoTServer
         /// <param name="Logger">To use for all logging</param>
         /// <param name="ServiceConfiguration">To get service configuration</param>
         /// <param name="JsonSchemaValidator">3rd party JSON schema validator can be used</param>
-        public ServicePublisher(ILogger Logger, 
+        public ServicePublisher(ILogger Logger,
                                 IServiceConfiguration ServiceConfiguration,
-                                IJsonSchemaValidator JsonSchemaValidator = null)
+                                IJsonSchemaValidator JsonSchemaValidator = null,
+                                X509Certificate2 Certificate = null)
             : base([XFSConstants.ServiceClass.Publisher ], Logger)
         {
             Logger.IsNotNull($"Invalid parameter received in the {nameof(ServicePublisher)} constructor. {nameof(Logger)}");
@@ -110,6 +111,22 @@ namespace XFS4IoTServer
                 }
             }
 
+            // On Android, binding to ports < 1024 requires root and always fails with EACCES.
+            if (OperatingSystem.IsAndroid())
+                portRanges.RemoveAll(p => p < 1024);
+
+            // Load the server TLS certificate from the configured PFX path when the
+            // caller has not already supplied one.
+            if (Certificate is null)
+            {
+                string certPath = ServiceConfiguration?.Get(Configurations.CertificatePath);
+                if (!string.IsNullOrEmpty(certPath))
+                {
+                    string certPassword = ServiceConfiguration?.Get(Configurations.CertificatePassword);
+                    Certificate = CertificateLoader.Load(certPath, certPassword, Logger);
+                }
+            }
+
             foreach (int port in portRanges)
             {
                 try
@@ -128,16 +145,24 @@ namespace XFS4IoTServer
 
                     Logger.Log(Constants.Component, $"Attempting to bind to {Uri.OriginalString}");
 
-                    EndPoint = new EndPoint(Uri,
-                                            CommandDecoder: CommandDecoder,
-                                            CommandDispatcher: this,
-                                            ServiceProvider: this,
-                                            Logger);
+                    EndPoint = new EndPoint(Uri, CommandDecoder, Logger);
+                    EndPoint.Register(Uri.AbsolutePath, this, this);
+
+                    if (Certificate is not null)
+                    {
+                        EndPoint.SetTlsOptions(new SslServerAuthenticationOptions
+                        {
+                            ServerCertificate = Certificate,
+                            ClientCertificateRequired = false,
+                            EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
+                        });
+                    }
 
                     return;
                 }
-                catch (System.Net.HttpListenerException)
+                catch (System.Net.Sockets.SocketException ex)
                 {
+                    Logger.Warning(Constants.Component, $"Failed to bind to {Uri.OriginalString}. Error: {ex.Message}");
                     continue;
                 }
             }
@@ -178,6 +203,11 @@ namespace XFS4IoTServer
         {
             _Services.Add(Service);
             Service.SetJsonSchemaValidator(JsonSchemaValidator);
+            EndPoint.Register(Service.Uri.AbsolutePath, Service, Service);
+            if (Service is ServiceProvider sp)
+            {
+                sp.SetConnectionSource(() => EndPoint.GetConnections(Service.Uri.AbsolutePath));
+            }
         }
 
         public Task BroadcastEvent(object payload)

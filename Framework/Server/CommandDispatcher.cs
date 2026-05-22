@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -112,13 +113,8 @@ namespace XFS4IoTServer
         // This method must be called from each device class implementation
         public static void AddHandler(IServiceProvider ServiceProvider, Type commandType, Func<IConnection, ICommandDispatcher, ILogger, ICommandHandler> factory, bool async)
         {
-            Dictionary<Type, HandlerFactoryClass> newHandler = new()
-            {
-                { commandType, new(factory, async) }
-            };
-            handlerFactories.TryAdd(ServiceProvider, newHandler);
-            handlerFactories.TryGetValue(ServiceProvider, out var existingFactory).IsTrue($"Faild to find handler list per connection.  {ServiceProvider.GetType().Name}");
-            existingFactory.TryAdd(commandType, new HandlerFactoryClass(factory, async));
+            var handlers = handlerFactories.GetOrAdd(ServiceProvider, _ => new ConcurrentDictionary<Type, HandlerFactoryClass>());
+            handlers.TryAdd(commandType, new HandlerFactoryClass(factory, async));
         }
 
         /// <summary>
@@ -126,7 +122,7 @@ namespace XFS4IoTServer
         /// </summary>
         private (ICommandHandler handler, bool async) CreateHandler(IServiceProvider ServiceProvider, Type type, IConnection connection)
         {
-            handlerFactories.TryGetValue(ServiceProvider, out var handlers).IsTrue($"No handler registered for {connection.GetType().Name}");
+            handlerFactories.TryGetValue(ServiceProvider, out var handlers).IsTrue($"No handler registered for {ServiceProvider.GetType().Name}");
             handlers.TryGetValue(type, out var hander).IsTrue($"No handler registered for {type.Name}");
 
             try
@@ -148,7 +144,7 @@ namespace XFS4IoTServer
             public bool Async { get; init; } = Async;
             public Func<IConnection, ICommandDispatcher, ILogger, ICommandHandler> Factory { get; init; } = Factory.IsNotNull($"Invalid parameter in the {nameof(HandlerFactoryClass)} constructor. {nameof(Factory)}");
         }
-        private static readonly Dictionary<IServiceProvider, Dictionary<Type, HandlerFactoryClass>> handlerFactories = [];
+        private static readonly ConcurrentDictionary<IServiceProvider, ConcurrentDictionary<Type, HandlerFactoryClass>> handlerFactories = new();
 
         private readonly CommandQueue CommandQueue;
 
