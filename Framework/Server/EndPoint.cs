@@ -34,7 +34,8 @@ namespace XFS4IoTServer
             this.CommandDecoder = CommandDecoder;
             this.Logger = Logger;
 
-            TcpListener = new TcpListener(IPAddress.Any, EndPointUri.Port);
+            TcpListener = new TcpListener(IPAddress.IPv6Any, EndPointUri.Port);
+            TcpListener.Server.DualMode = true;  // Accept both IPv4 and IPv6 in order to avoid 2s timeout when client tries ::1 first.
             TcpListener.Start();
 
             Logger.Log(Constants.Component, $"New endpoint at {EndPointUri.OriginalString}");
