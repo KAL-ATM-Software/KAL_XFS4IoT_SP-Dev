@@ -34,9 +34,33 @@ namespace XFS4IoTServer
             this.CommandDecoder = CommandDecoder;
             this.Logger = Logger;
 
-            TcpListener = new TcpListener(IPAddress.IPv6Any, EndPointUri.Port);
-            TcpListener.Server.DualMode = true;  // Accept both IPv4 and IPv6 in order to avoid 2s timeout when client tries ::1 first.
-            TcpListener.Start();
+            bool fallbackIPv4 = true;
+            // Check first OS supports IPv6 protocol
+            if (Socket.OSSupportsIPv6)
+            {
+                try
+                {
+                    TcpListener = new TcpListener(IPAddress.IPv6Any, EndPointUri.Port);
+                    TcpListener.Server.DualMode = true;
+                    TcpListener.Start();
+                    // OK, it must be IPv6 supported and could be mapped to IPv4 successfully, so no need to fallback to IPv4 explicitly.
+                    fallbackIPv4 = false;
+                }
+                catch (Exception)
+                {
+                    try 
+                    { 
+                        TcpListener?.Stop(); 
+                    } 
+                    catch { }
+                }
+            }
+            if (fallbackIPv4)
+            {
+                // If IPv6 is not supported, fallback to IPv4
+                TcpListener = new TcpListener(IPAddress.Any, EndPointUri.Port);
+                TcpListener.Start();
+            }
 
             Logger.Log(Constants.Component, $"New endpoint at {EndPointUri.OriginalString}");
         }
@@ -100,6 +124,7 @@ namespace XFS4IoTServer
                 else
                 {
                     TcpClient tcpClient = acceptTask.Result;
+                    acceptTask = TcpListener.AcceptTcpClientAsync();
                     var (ws, requestPath) = await TcpWebSocket.AcceptAsync(tcpClient, TlsOptions);
 
                     if (ws is not null)
@@ -135,7 +160,6 @@ namespace XFS4IoTServer
                         tcpClient.Dispose();
                     }
 
-                    acceptTask = TcpListener.AcceptTcpClientAsync();
                 }
             }
             TcpListener.Stop();

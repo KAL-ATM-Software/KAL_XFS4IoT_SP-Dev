@@ -39,13 +39,22 @@ namespace XFS4IoTServer
             : 
             base(endpointDetails,
                  ServiceName,
-                 [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Printer, XFSConstants.ServiceClass.Storage ],
+                 [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Printer],
                  device,
                  logger)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             PrinterService = new PrinterServiceClass(this, logger, persistentData);
-            StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Printer);
+
+            List<XFSConstants.ServiceClass> services = [.. ServiceClasses];
+
+            if (device as IStorageDevice is not null)
+            {
+                StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Printer);
+                services.Add(XFSConstants.ServiceClass.Storage);
+            }
+
+            ServiceClasses = services;
         }
 
         private readonly PrinterServiceClass PrinterService;
@@ -163,7 +172,11 @@ namespace XFS4IoTServer
         /// <summary>
         /// Update managed printer storage information in the framework.
         /// </summary>
-        public Task UpdatePrinterStorageCount(string storageId, int countDelta) => StorageService.UpdatePrinterStorageCount(storageId, countDelta);
+        public Task UpdatePrinterStorageCount(string storageId, int countDelta)
+        {
+            Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service.");
+            return StorageService!.UpdatePrinterStorageCount(storageId, countDelta);
+        }
 
         /// <summary>
         /// Update managed deposit storage information in the framework.
@@ -175,42 +188,46 @@ namespace XFS4IoTServer
         /// <summary>
         /// Return which type of storage SP is using
         /// </summary>
-        public StorageTypeEnum StorageType { get => StorageService.StorageType; init { } }
+        public StorageTypeEnum StorageType { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.StorageType; } init { } }
 
         /// <summary>
         /// Card storage structure information of this device
         /// </summary>
-        public Dictionary<string, CardUnitStorage> CardUnits { get => StorageService.CardUnits; init { } }
+        public Dictionary<string, CardUnitStorage> CardUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.CardUnits; } init { } }
 
         /// <summary>
         /// Cash storage structure information of this device
         /// </summary>
-        public Dictionary<string, CashUnitStorage> CashUnits { get => StorageService.CashUnits; init { } }
+        public Dictionary<string, CashUnitStorage> CashUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.CashUnits; } init { } }
 
         /// <summary>
         /// Check storage structure information of this device
         /// </summary>
-        public Dictionary<string, CheckUnitStorage> CheckUnits { get => StorageService.CheckUnits; init { } }
+        public Dictionary<string, CheckUnitStorage> CheckUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.CheckUnits; } init { } }
 
         /// <summary>
         /// Printer storage structure information of this device
         /// </summary>
-        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get => StorageService.PrinterUnits; init { } }
+        public Dictionary<string, PrinterUnitStorage> PrinterUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.PrinterUnits; } init { } }
 
         /// <summary>
         /// IBNS storage structure information of this device
         /// </summary>
-        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get => StorageService.IBNSUnits; init { } }
+        public Dictionary<string, IBNSUnitStorage> IBNSUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.IBNSUnits; } init { } }
 
         /// <summary>
         /// Deposit storage structure information of this device
         /// </summary>
-        public Dictionary<string, DepositUnitStorage> DepositUnits { get => StorageService.DepositUnits; init { } }
+        public Dictionary<string, DepositUnitStorage> DepositUnits { get { Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service."); return StorageService!.DepositUnits; } init { } }
 
         /// <summary>
         /// Return XFS4IoT storage structured object.
         /// </summary>
-        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds) => StorageService.GetStorages(UnitIds);
+        public Dictionary<string, XFS4IoT.Storage.StorageUnitClass> GetStorages(List<string> UnitIds)
+        {
+            Contracts.Assert(StorageService is not null, "Usage error. the device class doesn't support storage service.");
+            return StorageService!.GetStorages(UnitIds);
+        }
 
         #endregion
 

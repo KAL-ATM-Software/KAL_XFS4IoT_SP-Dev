@@ -55,9 +55,10 @@ namespace XFS4IoTFramework.Printer
                 cancel);
             Logger.Log(Constants.DeviceClass, $"PrinterDev.ResetDeviceAsync() -> {result.CompletionCode}, {result.ErrorCode}");
 
-            if (!string.IsNullOrEmpty(result.StorageId))
+            if (!string.IsNullOrEmpty(result.StorageId) &&
+                Storage is not null)
             {
-                await Storage.UpdateCardStorageCount(result.StorageId, result.MediaInCount);
+                await Storage.UpdatePrinterStorageCount(result.StorageId, result.MediaInCount);
             }
 
             return new(

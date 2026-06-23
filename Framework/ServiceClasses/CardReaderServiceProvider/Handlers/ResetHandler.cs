@@ -94,7 +94,10 @@ namespace XFS4IoTFramework.CardReader
                         {
                             Logger.Warning(Constants.Framework, $"The client asked to move media in the retain bin. but the device class stored media to different type of bin. {Storage.CardUnits[storageIdMediaMoved].Unit.Capabilities.Type}");
                         }
-                        await Storage.UpdateCardStorageCount(storageIdMediaMoved, result.CountMoved);
+                        if (Storage is not null)
+                        {
+                            await Storage.UpdateCardStorageCount(storageIdMediaMoved, result.CountMoved);
+                        }
                     }
                 }
             }

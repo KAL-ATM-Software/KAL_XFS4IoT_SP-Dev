@@ -132,7 +132,10 @@ namespace XFS4IoTFramework.CardReader
                     }
                     else
                     {
-                        await Storage.UpdateCardStorageCount(result.StorageId, result.CountMoved);
+                        if (Storage is not null)
+                        {
+                            await Storage.UpdateCardStorageCount(storageId, result.CountMoved);
+                        }
                     }
                 }
             }

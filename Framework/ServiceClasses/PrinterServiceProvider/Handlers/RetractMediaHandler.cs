@@ -59,9 +59,10 @@ namespace XFS4IoTFramework.Printer
                 mediaResult = retractMedia.Payload.MediaControl;
             }
 
-            if (!string.IsNullOrEmpty(result.StorageId))
+            if (!string.IsNullOrEmpty(result.StorageId) && 
+                Storage is not null)
             {
-                await Storage.UpdateCardStorageCount(result.StorageId, result.MediaInCount);
+                await Storage.UpdatePrinterStorageCount(result.StorageId, result.MediaInCount);
             }
 
             RetractMediaCompletion.PayloadData payload = null;

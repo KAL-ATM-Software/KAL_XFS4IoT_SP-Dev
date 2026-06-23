@@ -32,7 +32,10 @@ namespace XFS4IoTServer
             RegisterFactory(ServiceProvider);
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(PrinterServiceClass)}");
-            StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(PrinterServiceClass)}");
+            if (ServiceProvider.Device as IStorageDevice is null)
+            {
+                StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(PrinterServiceClass)}");
+            }
 
             this.PersistentData = PersistentData;
             
@@ -52,7 +55,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Storage service interface
         /// </summary>
-        public IStorageService StorageService { get; init; }
+        public IStorageService StorageService { get; init; } = null;
 
         /// <summary>
         /// Persistent data storage access

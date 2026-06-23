@@ -233,9 +233,10 @@ namespace XFS4IoTFramework.Printer
 
             if (controls.HasFlag(PrinterCapabilitiesClass.ControlEnum.Retract))
             {
-                if (!string.IsNullOrEmpty(result.StorageId))
+                if (!string.IsNullOrEmpty(result.StorageId) &&
+                    Storage is not null)
                 {
-                    await Storage.UpdateCardStorageCount(result.StorageId, result.MediaInCount);
+                    await Storage.UpdatePrinterStorageCount(result.StorageId, result.MediaInCount);
                 }
             }
 

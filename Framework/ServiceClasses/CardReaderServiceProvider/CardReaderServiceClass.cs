@@ -31,8 +31,10 @@ namespace XFS4IoTServer
             RegisterFactory(ServiceProvider);
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(CardReaderServiceClass)}");
-            StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(CardReaderServiceClass)}");
-
+            if (ServiceProvider.Device is IStorageDevice)
+            {
+                StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(CardReaderServiceClass)}");
+            }
             GetCapabilities();
             GetStatus();
         }
@@ -45,7 +47,7 @@ namespace XFS4IoTServer
         /// <summary>
         /// Storage service interface
         /// </summary>
-        public IStorageService StorageService { get; init; }
+        public IStorageService StorageService { get; init; } = null;
 
         private void GetCapabilities()
         {
