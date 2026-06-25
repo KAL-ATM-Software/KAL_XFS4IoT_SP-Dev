@@ -32,20 +32,29 @@ namespace XFS4IoTServer
 
             Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()");
 
-            PCIPTSDeviceIdClass deviceId = Device.GetPCIPTSDeviceId();
-
             string log = "No information";
-            if (deviceId is not null)
+            try
             {
-                log = $"{nameof(deviceId.FirmwareIdentifier)}={deviceId.FirmwareIdentifier}," +
-                      $"{nameof(deviceId.ApplicationIdentifier)}={deviceId.ApplicationIdentifier}," +
-                      $"{nameof(deviceId.HardwareIdentifier)}={deviceId.HardwareIdentifier}," +
-                      $"{nameof(deviceId.ManufacturerIdentifier)}={deviceId.ManufacturerIdentifier}," +
-                      $"{nameof(deviceId.ModelIdentifier)}={deviceId.ModelIdentifier}";
-            }
-            Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()-> " + log);
+                PCIPTSDeviceIdClass deviceId = Device.GetPCIPTSDeviceId();
+                if (deviceId is not null)
+                {
+                    log = $"{nameof(deviceId.FirmwareIdentifier)}={deviceId.FirmwareIdentifier}," +
+                          $"{nameof(deviceId.ApplicationIdentifier)}={deviceId.ApplicationIdentifier}," +
+                          $"{nameof(deviceId.HardwareIdentifier)}={deviceId.HardwareIdentifier}," +
+                          $"{nameof(deviceId.ManufacturerIdentifier)}={deviceId.ManufacturerIdentifier}," +
+                          $"{nameof(deviceId.ModelIdentifier)}={deviceId.ModelIdentifier}";
+                }
 
-            PCIPTSDeviceId = deviceId;
+                PCIPTSDeviceId = deviceId;
+            }
+            catch (Exception ex) when (
+                ex is NotImplementedException ||
+                ex is UnsupportedCommandException)
+            {
+                // The device class does not support this command.
+            }
+
+            Logger.Log(Constants.DeviceClass, "PinPadDev.GetPCIPTSDeviceId()-> " + log);
 
             GetCapabilities();
         }

@@ -393,8 +393,18 @@ namespace XFS4IoTFramework.CardReader
                 foreach (ReadCardResult.CardData atr in readCardDataResult.ChipATRRead)
                 {
                     Contracts.IsNotNull(atr.DataStatus, "Unexpected chip data status is set by the device class. DataStatus field should not be null.");
-                    chip.Add(new CardDataClass((CardDataStatusEnum)atr.DataStatus,
-                                               atr.Data));
+                    chip.Add(new CardDataClass(
+                        atr.DataStatus switch
+                        {
+                            ReadCardResult.CardData.DataStatusEnum.DataMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataMissing,
+                            ReadCardResult.CardData.DataStatusEnum.DataInvalid => XFS4IoT.CardReader.CardDataStatusEnum.DataInvalid,
+                            ReadCardResult.CardData.DataStatusEnum.DataTooLong => XFS4IoT.CardReader.CardDataStatusEnum.DataTooLong,
+                            ReadCardResult.CardData.DataStatusEnum.DataTooShort => XFS4IoT.CardReader.CardDataStatusEnum.DataTooShort,
+                            ReadCardResult.CardData.DataStatusEnum.DataSourceNotSupported => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceNotSupported,
+                            ReadCardResult.CardData.DataStatusEnum.DataSourceMissing => XFS4IoT.CardReader.CardDataStatusEnum.DataSourceMissing,
+                            _ => null
+                        },
+                        atr.Data));
                 }
             }
 
