@@ -61,8 +61,23 @@ namespace XFS4IoTServer
         {
             logger.Log(nameof(ServiceProvider), $"Broadcasting unsolicited event");
 
-            var sendTasks = from connection in _getConnections()
-                            select connection.SendMessageAsync(payload);
+            // Create all the send tasks at once so that we can send in parallel. 
+            async Task SendSafe(IConnection connection)
+            {
+                try
+                {
+                    await connection.SendMessageAsync(payload);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warning(Constants.Component, $"Exception caught while broadcasting event.: {ex.Message}");
+                }
+            }
+
+            var myConnections = _getConnections();
+            var sendTasks = from connection in myConnections
+                            select SendSafe(connection);
+
             await Task.WhenAll(sendTasks);
 
             logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event");
@@ -72,10 +87,24 @@ namespace XFS4IoTServer
         {
             logger.Log(nameof(ServiceProvider), $"Broadcasting unsolicited event to specified connections");
 
+            // Create all the send tasks at once so that we can send in parallel. 
+            async Task SendSafe(IConnection connection)
+            {
+                try
+                {
+                    await connection.SendMessageAsync(payload);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warning(Constants.Component, $"Exception caught while broadcasting event.: {ex.Message}");
+                }
+            }
+
             var myConnections = _getConnections();
             var sendTasks = from connection in myConnections
                             where connections.Contains(connection)
-                            select connection.SendMessageAsync(payload);
+                            select SendSafe(connection);
+
             await Task.WhenAll(sendTasks);
 
             logger.Log(nameof(ServiceProvider), $"Finished broadcasting unsolicited event to specified connections");

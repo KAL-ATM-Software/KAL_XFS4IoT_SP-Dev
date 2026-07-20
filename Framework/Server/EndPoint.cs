@@ -5,6 +5,7 @@
 \***********************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -186,8 +187,8 @@ namespace XFS4IoTServer
             return path.TrimEnd('/') + "/";
         }
 
-        private readonly Dictionary<string, (ICommandDispatcher dispatcher, IServiceProvider provider)> _routes = new();
-        private readonly Dictionary<string, List<(Task task, IConnection connection)>> _serviceConnections = new();
+        private readonly ConcurrentDictionary<string, (ICommandDispatcher dispatcher, IServiceProvider provider)> _routes = new();
+        private readonly ConcurrentDictionary<string, List<(Task task, IConnection connection)>> _serviceConnections = new();
         private readonly List<(Task task, IConnection connection, string path)> _allConnections = new();
         private readonly TcpListener TcpListener;
         private readonly IMessageDecoder CommandDecoder;
