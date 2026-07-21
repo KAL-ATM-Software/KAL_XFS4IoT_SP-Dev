@@ -239,9 +239,9 @@ namespace XFS4IoTServer
         {
             if (_state == WebSocketState.Aborted) return;
 
-            int length = payload.Length;
+            long length = payload.Length;
             int headerLen = length < 126 ? 2 : length < 65536 ? 4 : 10;
-            var frame = new byte[headerLen + length];
+            var frame = new byte[headerLen + payload.Length];
 
             if (length < 126)
             {
@@ -261,7 +261,7 @@ namespace XFS4IoTServer
             }
             frame[0] = (byte)((fin ? 0x80 : 0x00) | opcode);
 
-            if (length > 0)
+            if (payload.Length > 0)
                 payload.CopyTo(frame.AsMemory(headerLen));
 
             await _sendLock.WaitAsync(ct);
