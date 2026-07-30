@@ -4,16 +4,8 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XFS4IoT;
-using XFS4IoT.Commands;
-using XFS4IoT.Common.Events;
 using XFS4IoTFramework.CardReader;
 using XFS4IoTFramework.Common;
 using XFS4IoTFramework.Storage;

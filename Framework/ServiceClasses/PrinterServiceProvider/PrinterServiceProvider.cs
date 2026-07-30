@@ -4,14 +4,11 @@
  * See the LICENSE file in the project root for more information.
  *
 \***********************************************************************************************/
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Runtime.Versioning;
 using XFS4IoT;
-using XFS4IoT.Common.Events;
 using XFS4IoT.Printer.Events;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
