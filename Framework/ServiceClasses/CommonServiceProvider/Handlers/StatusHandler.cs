@@ -130,6 +130,29 @@ namespace XFS4IoTFramework.Common
                         CardReaderStatusClass.BackImageModuleEnum.Ok => XFS4IoT.CardReader.StatusClass.BackImageModuleEnum.Ok,
                         CardReaderStatusClass.BackImageModuleEnum.Unknown => XFS4IoT.CardReader.StatusClass.BackImageModuleEnum.Unknown,
                         _ => null,
+                    },
+                    Dispenser: Common.CardReaderStatus.Dispenser switch
+                    {
+                        CardReaderStatusClass.DispenserEnum.Stop => XFS4IoT.CardReader.StatusClass.DispenserEnum.Stop,
+                        CardReaderStatusClass.DispenserEnum.Ok => XFS4IoT.CardReader.StatusClass.DispenserEnum.Ok,
+                        CardReaderStatusClass.DispenserEnum.State => XFS4IoT.CardReader.StatusClass.DispenserEnum.State,
+                        CardReaderStatusClass.DispenserEnum.Unknown => XFS4IoT.CardReader.StatusClass.DispenserEnum.Unknown,
+                        _ => null,
+                    },
+                    DispenserTransport: Common.CardReaderStatus.DispenserTransport switch
+                    {
+                        CardReaderStatusClass.DispenserTransportEnum.Ok => XFS4IoT.CardReader.StatusClass.DispenserTransportEnum.Ok,
+                        CardReaderStatusClass.DispenserTransportEnum.Inoperative => XFS4IoT.CardReader.StatusClass.DispenserTransportEnum.Inoperative,
+                        CardReaderStatusClass.DispenserTransportEnum.Unknown => XFS4IoT.CardReader.StatusClass.DispenserTransportEnum.Unknown,
+                        _ => null,
+                    },
+                    Shutter: Common.CardReaderStatus.Shutter switch
+                    {
+                        CardReaderStatusClass.ShutterEnum.Closed => XFS4IoT.CardReader.StatusClass.ShutterEnum.Closed,
+                        CardReaderStatusClass.ShutterEnum.Open => XFS4IoT.CardReader.StatusClass.ShutterEnum.Open,
+                        CardReaderStatusClass.ShutterEnum.Unknown => XFS4IoT.CardReader.StatusClass.ShutterEnum.Unknown,
+                        CardReaderStatusClass.ShutterEnum.Jammed => XFS4IoT.CardReader.StatusClass.ShutterEnum.Jammed,
+                        _ => null,
                     }
                     );
             }

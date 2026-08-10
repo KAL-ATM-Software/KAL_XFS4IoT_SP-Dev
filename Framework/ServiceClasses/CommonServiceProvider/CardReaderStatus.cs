@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,7 +21,10 @@ namespace XFS4IoTFramework.Common
         CardReaderStatusClass.ChipModuleEnum ChipModule,
         CardReaderStatusClass.MagWriteModuleEnum MagWriteModule,
         CardReaderStatusClass.FrontImageModuleEnum FrontImageModule,
-        CardReaderStatusClass.BackImageModuleEnum BackImageModule) : StatusBase
+        CardReaderStatusClass.BackImageModuleEnum BackImageModule,
+        CardReaderStatusClass.DispenserEnum Dispenser = CardReaderStatusClass.DispenserEnum.NotSupported,
+        CardReaderStatusClass.DispenserTransportEnum DispenserTransport = CardReaderStatusClass.DispenserTransportEnum.NotSupported,
+        CardReaderStatusClass.ShutterEnum Shutter = CardReaderStatusClass.ShutterEnum.NotSupported) : StatusBase
     {
         public enum MediaEnum
         {
@@ -82,6 +86,32 @@ namespace XFS4IoTFramework.Common
             Inoperable,
             Unknown,
             NotSupported
+        }
+
+        public enum DispenserEnum
+        {
+            Ok,
+            State,
+            Stop,
+            Unknown,
+            NotSupported,
+        }
+
+        public enum DispenserTransportEnum
+        {
+            Ok,
+            Inoperative,
+            Unknown,
+            NotSupported,
+        }
+
+        public enum ShutterEnum
+        {
+            Closed,
+            Open,
+            Jammed,
+            Unknown,
+            NotSupported,
         }
 
         /// <summary>
@@ -253,5 +283,79 @@ namespace XFS4IoTFramework.Common
         }
         private BackImageModuleEnum backImageModule = BackImageModule;
 
+        /// <summary>
+        /// Specifies the state of the dispensing card units as one of the following values. This property will be null
+        /// in [Common.Status](#common.status) if no card dispensing functionality is supported and will also be null in
+        /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```ok``` - All dispense card units present are in a good state.
+        /// * ```state``` - One or more of the dispense card units is in a low, empty or inoperative condition. Items
+        ///   can still be dispensed from at least one of the card units.
+        /// * ```stop``` - Due to a card unit failure dispensing is impossible. No items can be dispensed because all of
+        ///   the card units are in an empty or inoperative condition.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the card units cannot be
+        ///   determined.
+        /// </summary>
+        public DispenserEnum Dispenser 
+        {
+            get { return dispenser; }
+            set
+            {
+                if (dispenser != value)
+                {
+                    dispenser = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private DispenserEnum dispenser = Dispenser;
+
+        /// <summary>
+        /// Specifies the state of the dispenserTransport mechanism as one of the following values. This property will
+        /// be null in [Common.Status](#common.status) if card dispensing functionality is not supported and will also
+        /// be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```ok``` - The dispenser transport is in a good state.
+        /// * ```inoperative``` - The dispenser transport is inoperative due to a hardware failure or media jam.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the dispenser transport cannot be
+        ///   determined.
+        /// </summary>
+        public DispenserTransportEnum DispenserTransport 
+        {
+            get { return dispenserTransport; }
+            set
+            {
+                if (dispenserTransport != value)
+                {
+                    dispenserTransport = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private DispenserTransportEnum dispenserTransport = DispenserTransport;
+
+        /// <summary>
+        /// Specifies the state of the shutter as one of the following values. This property will be null in
+        /// [Common.Status](#common.status) if the device has no shutter or shutter state reporting is not supported. It
+        /// will also be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```closed``` - The shutter is closed.
+        /// * ```open``` - The shutter is opened.
+        /// * ```jammed``` - The shutter is jammed.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
+        /// </summary>
+        public ShutterEnum Shutter
+        {
+            get { return shutter; }
+            set
+            {
+                if (shutter != value)
+                {
+                    shutter = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private ShutterEnum shutter = Shutter;
     }
 }

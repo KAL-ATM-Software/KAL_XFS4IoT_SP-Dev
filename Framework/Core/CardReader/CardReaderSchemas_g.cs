@@ -17,7 +17,7 @@ namespace XFS4IoT.CardReader
     [DataContract]
     public sealed class StatusClass
     {
-        public StatusClass(MediaEnum? Media = null, SecurityEnum? Security = null, ChipPowerEnum? ChipPower = null, ChipModuleEnum? ChipModule = null, MagWriteModuleEnum? MagWriteModule = null, FrontImageModuleEnum? FrontImageModule = null, BackImageModuleEnum? BackImageModule = null)
+        public StatusClass(MediaEnum? Media = null, SecurityEnum? Security = null, ChipPowerEnum? ChipPower = null, ChipModuleEnum? ChipModule = null, MagWriteModuleEnum? MagWriteModule = null, FrontImageModuleEnum? FrontImageModule = null, BackImageModuleEnum? BackImageModule = null, DispenserEnum? Dispenser = null, DispenserTransportEnum? DispenserTransport = null, ShutterEnum? Shutter = null)
         {
             this.Media = Media;
             this.Security = Security;
@@ -26,6 +26,9 @@ namespace XFS4IoT.CardReader
             this.MagWriteModule = MagWriteModule;
             this.FrontImageModule = FrontImageModule;
             this.BackImageModule = BackImageModule;
+            this.Dispenser = Dispenser;
+            this.DispenserTransport = DispenserTransport;
+            this.Shutter = Shutter;
         }
 
         public enum MediaEnum
@@ -44,14 +47,16 @@ namespace XFS4IoT.CardReader
         /// reader), otherwise one of the following values:
         /// 
         /// * ```unknown``` - The media state cannot be determined with the device in its current state (e.g. the value
-        ///   of [device](#common.status.completion.properties.common.device) is *noDevice*, *powerOff*, *offline* or *hardwareError*.
-        /// * ```present``` - Media is present in the device, not in the entering position and not jammed. On the
-        ///   latched dip device, this indicates that the card is present in the device and the card is unlatched.
+        ///   of [device](#common.status.completion.properties.common.device) is *noDevice*, *powerOff*, *offline* or
+        ///   *hardwareError*.
+        /// * ```present``` - Media is present in the device, not in the entering position, and not jammed. On a
+        ///   latched dip device, this indicates the card is accessible to the cardholder.
         /// * ```notPresent``` - Media is not present in the device and not at the entering position.
         /// * ```jammed``` - Media is jammed in the device; operator intervention is required.
         /// * ```entering``` - Media is at the entry/exit slot of a motorized device.
-        /// * ```latched``` - Media is present and latched in a latched dip card unit. This means the card can be used
-        ///   for chip card dialog.
+        /// * ```latched``` - Media is present in a latched dip device. For this device type, this is the only state in
+        ///   which chip communication or chip power control is allowed. Depending on configuration, the card may be
+        ///   physically latched or unlatched.
         /// </summary>
         [DataMember(Name = "media")]
         public MediaEnum? Media { get; init; }
@@ -174,6 +179,71 @@ namespace XFS4IoT.CardReader
         [DataMember(Name = "backImageModule")]
         public BackImageModuleEnum? BackImageModule { get; init; }
 
+        public enum DispenserEnum
+        {
+            Ok,
+            State,
+            Stop,
+            Unknown
+        }
+
+        /// <summary>
+        /// Specifies the state of the dispensing card units as one of the following values. This property will be null
+        /// in [Common.Status](#common.status) if no card dispensing functionality is supported and will also be null in
+        /// [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```ok``` - All dispense card units present are in a good state.
+        /// * ```state``` - One or more of the dispense card units is in a low, empty or inoperative condition. Items
+        ///   can still be dispensed from at least one of the card units.
+        /// * ```stop``` - Due to a card unit failure dispensing is impossible. No items can be dispensed because all of
+        ///   the card units are in an empty or inoperative condition.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the card units cannot be
+        ///   determined.
+        /// </summary>
+        [DataMember(Name = "dispenser")]
+        public DispenserEnum? Dispenser { get; init; }
+
+        public enum DispenserTransportEnum
+        {
+            Ok,
+            Inoperative,
+            Unknown
+        }
+
+        /// <summary>
+        /// Specifies the state of the dispenserTransport mechanism as one of the following values. This property will
+        /// be null in [Common.Status](#common.status) if card dispensing functionality is not supported and will also
+        /// be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```ok``` - The dispenser transport is in a good state.
+        /// * ```inoperative``` - The dispenser transport is inoperative due to a hardware failure or media jam.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the dispenser transport cannot be
+        ///   determined.
+        /// </summary>
+        [DataMember(Name = "dispenserTransport")]
+        public DispenserTransportEnum? DispenserTransport { get; init; }
+
+        public enum ShutterEnum
+        {
+            Closed,
+            Open,
+            Jammed,
+            Unknown
+        }
+
+        /// <summary>
+        /// Specifies the state of the shutter as one of the following values. This property will be null in
+        /// [Common.Status](#common.status) if the device has no shutter or shutter state reporting is not supported. It
+        /// will also be null in [Common.StatusChangedEvent](#common.statuschangedevent) if unchanged.
+        /// 
+        /// * ```closed``` - The shutter is closed.
+        /// * ```open``` - The shutter is opened.
+        /// * ```jammed``` - The shutter is jammed.
+        /// * ```unknown``` - Due to a hardware error or other condition, the state of the shutter cannot be determined.
+        /// </summary>
+        [DataMember(Name = "shutter")]
+        public ShutterEnum? Shutter { get; init; }
+
     }
 
 
@@ -215,16 +285,16 @@ namespace XFS4IoT.CardReader
         /// * ```motor``` - The ID card unit is a motor driven card unit.
         /// * ```swipe``` - The ID card unit is a swipe (pull-through) card unit.
         /// * ```dip``` - The ID card unit is a dip card unit. This dip type is not capable of latching cards entered.
-        /// * ```latchedDip``` - The ID card unit is a latched dip card unit. This device type is used when a dip card
-        ///   unit device supports chip communication. The latch ensures the consumer cannot remove the card during chip
-        ///   communication. Any card entered will automatically latch when a request to initiate a chip dialog is made
-        ///   (via the [CardReader.ReadRawData](#cardreader.readrawdata) command). The
-        ///   [CardReader.Move](#cardreader.move) command is used to unlatch the card.
+        /// * ```latchedDip``` - The ID card unit is a dip card unit that supports chip communication. The device,
+        ///   depending on configuration, may latch the card to prevent removal while communicating with the chip. The
+        ///   [CardReader.Move](#cardreader.move) command must be used to ensure the card is accessible to the
+        ///   cardholder.
         /// * ```contactless``` - The ID card unit is a contactless card unit, i.e. no insertion of the card is required.
         /// * ```intelligentContactless``` - The ID card unit is an intelligent contactless card unit, i.e. no insertion
         ///   of the card is required and the card unit has built-in EMV or smart card application functionality that
-        ///   adheres to the EMVCo Contactless Specifications [[Ref. cardreader-3](#ref-cardreader-3)] or individual payment system's specifications. The ID card
-        ///   unit is capable of performing both magnetic stripe emulation and EMV-like transactions.
+        ///   adheres to the EMVCo Contactless Specifications [[Ref. cardreader-3](#ref-cardreader-3)] or individual
+        ///   payment system's specifications. The ID card unit is capable of performing both magnetic stripe emulation
+        ///   and EMV-like transactions.
         /// * ```permanent``` - The ID card unit is dedicated to a permanently housed chip card (no user interaction is
         /// available with this type of card).
         /// </summary>
@@ -530,7 +600,7 @@ namespace XFS4IoT.CardReader
             public bool? Hico { get; init; }
 
             /// <summary>
-            /// The Service is capable of automatically determining whether loco or hico magnetic stripes should be
+            /// The service is capable of automatically determining whether loco or hico magnetic stripes should be
             /// written.
             /// </summary>
             [DataMember(Name = "auto")]
@@ -577,7 +647,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The chip power management capabilities (in relation to the user or permanent chip controlled by the
-        /// Service. May be null if not applicable.
+        /// service. May be null if not applicable.
         /// </summary>
         [DataMember(Name = "chipPower")]
         public ChipPowerClass ChipPower { get; init; }
@@ -770,7 +840,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// Represents the EMVCo defined message identifier that indicates the text string to be displayed, e.g., 0x1B
-        /// is the “Authorising Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A
+        /// is the “Authorizing Please Wait” message (see EMVCo Contactless Specifications for Payment Systems Book A
         /// [[Ref. cardreader-3](#ref-cardreader-3)], Section 9.4).
         /// </summary>
         [DataMember(Name = "messageId")]
@@ -1241,7 +1311,7 @@ namespace XFS4IoT.CardReader
 
         /// <summary>
         /// The state of the cards in the storage unit if it can be determined. Note that overall
-        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be 
+        /// [status](#storage.getstorage.completion.properties.storage.unit1.status) of the storage unit must be
         /// considered when deciding whether the storage unit is usable and whether replenishment status is
         /// applicable. If the overall status is *missing* this will be null.
         /// The property may also be null in events if it did not change.
