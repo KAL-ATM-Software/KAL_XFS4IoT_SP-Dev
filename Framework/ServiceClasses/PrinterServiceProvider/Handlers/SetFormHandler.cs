@@ -332,7 +332,15 @@ namespace XFS4IoTFramework.Printer
                     CPI: payloadField.Value.Font?.Cpi ?? -1,
                     LPI: payloadField.Value.Font?.Lpi ?? -1,
                     Format: payloadField.Value.Format,
-                    InitialValue: payloadField.Value.InitialValue,
+                    // GRAPHIC fields carry their initial image in InitialGraphic (a byte list) rather
+                    // than InitialValue (a string). FormField only has a single InitialValue string,
+                    // which ConvertGraphicFieldAssignment later base64-decodes for STATIC/OPTIONAL
+                    // graphic fields, so convert InitialGraphic to base64 here when present -- without
+                    // this, InitialValue stays null for graphic fields and Convert.FromBase64String
+                    // throws ArgumentNullException when printing.
+                    InitialValue: payloadField.Value.InitialGraphic is not null
+                        ? Convert.ToBase64String(payloadField.Value.InitialGraphic.ToArray())
+                        : payloadField.Value.InitialValue,
                     Side: payloadField.Value.Side switch
                     {
                         FieldsClass.SideEnum.Front => FieldSideEnum.FRONT,

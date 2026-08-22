@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -27,6 +27,8 @@
 
   <!--Link to Github when SourceLink is enabled and "JustMyCode" is disabled. -->
   <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Graphics" Version="10.0.100" />
+    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="10.0.100" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 

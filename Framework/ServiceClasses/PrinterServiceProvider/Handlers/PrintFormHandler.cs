@@ -858,7 +858,8 @@ namespace XFS4IoTFramework.Printer
             // If from command, the units must be converted to dots.
             int XOff, YOff;
 
-            if (command.Alignment != PrintFormCommand.PayloadData.AlignmentEnum.FormDefinition)
+            if (command.Alignment is not null && 
+                command.Alignment != PrintFormCommand.PayloadData.AlignmentEnum.FormDefinition)
             {
                 XOff = form.XConvertToDots((int)command.OffsetX);
             }
@@ -867,7 +868,8 @@ namespace XFS4IoTFramework.Printer
                 XOff = form.DotXOffset;
             }
 
-            if (command.Alignment != PrintFormCommand.PayloadData.AlignmentEnum.FormDefinition)
+            if (command.Alignment is not null && 
+                command.Alignment != PrintFormCommand.PayloadData.AlignmentEnum.FormDefinition)
             {
                 YOff = form.YConvertToDots((int)command.OffsetY);
             }
@@ -883,7 +885,8 @@ namespace XFS4IoTFramework.Printer
                 PrintFormCommand.PayloadData.AlignmentEnum.TopLeft => Form.AlignmentEnum.TOPLEFT,
                 PrintFormCommand.PayloadData.AlignmentEnum.TopRight => Form.AlignmentEnum.TOPRIGHT,
                 PrintFormCommand.PayloadData.AlignmentEnum.BottomLeft => Form.AlignmentEnum.BOTTOMLEFT,
-                _ => Form.AlignmentEnum.BOTTOMRIGHT,
+                PrintFormCommand.PayloadData.AlignmentEnum.BottomRight => Form.AlignmentEnum.BOTTOMRIGHT,
+                _ => form.Alignment,
             };
 
             // Now calculate x and y position of top left corner of form.
@@ -1921,7 +1924,8 @@ namespace XFS4IoTFramework.Printer
                 fieldAssignment.Field.Barcode,
                 fieldAssignment.Field.Font,
                 fieldAssignment.Width,
-                fieldAssignment.Height);
+                fieldAssignment.Height,
+                fieldAssignment.Field.Side);
            
             // Add the task to the task manager.
             Printer.PrintJob.Tasks.Add(task);
@@ -1941,7 +1945,8 @@ namespace XFS4IoTFramework.Printer
                 fieldAssignment.Height,
                 fieldAssignment.Field.Format == "BMP" ? GraphicTask.ImageFormatEnum.BMP : GraphicTask.ImageFormatEnum.JPG,
                 fieldAssignment.Field.Scaling,
-                Convert.FromBase64String(fieldAssignment.Value).ToList());
+                Convert.FromBase64String(fieldAssignment.Value).ToList(),
+                fieldAssignment.Field.Side);
 
             // Add the task to the task manager.
             Printer.PrintJob.Tasks.Add(task);

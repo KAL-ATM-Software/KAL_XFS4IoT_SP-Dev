@@ -117,12 +117,14 @@ namespace XFS4IoTFramework.Printer
                            int Height,
                            ImageFormatEnum Format,
                            FieldScalingEnum Scaling,
-                           List<byte> Image)
+                           List<byte> Image,
+                           FieldSideEnum Side)
         {
             this.x = x;
             this.y = y;
             this.Width = Width;
             this.Height = Height;
+            this.Side = Side;
             this.Format = Format;
             this.Scaling = Scaling;
             this.Image = Image;
@@ -136,6 +138,7 @@ namespace XFS4IoTFramework.Printer
             Format = task.Format;
             Scaling = task.Scaling;
             Image = task.Image;
+            Side = task.Side;
         }
 
         /// <summary>
@@ -160,6 +163,11 @@ namespace XFS4IoTFramework.Printer
         /// and not losing graphic information.
         /// </summary>
         public FieldScalingEnum Scaling { get; init; }
+
+        /// <summary>
+        /// Side of the media on which the graphic is to be printed. This is used for duplex printing.
+        /// </summary>
+        public FieldSideEnum Side { get; init; }
     }
 
     /// <summary>
@@ -173,12 +181,14 @@ namespace XFS4IoTFramework.Printer
                            FieldBarcodeEnum Position,
                            string BarcodeFontName,
                            int Width,
-                           int Height)
+                           int Height,
+                           FieldSideEnum Side)
         {
             this.x = x;
             this.y = y;
             this.Value = Value;
             this.Position = Position;
+            this.Side = Side;
             this.BarcodeFontName = BarcodeFontName;
             this.Width = Width;
             this.Height = Height;
@@ -192,6 +202,7 @@ namespace XFS4IoTFramework.Printer
             BarcodeFontName = task.BarcodeFontName;
             Width = task.Width;
             Height = task.Height;
+            Side = task.Side;
         }
 
         public override FieldTypeEnum Type { get; init; } = FieldTypeEnum.BARCODE;
@@ -204,6 +215,11 @@ namespace XFS4IoTFramework.Printer
         public string BarcodeFontName { get; init; }
         public int Width { get; init; }
         public int Height { get; init; }
+
+        /// <summary>
+        /// Side of the media on which the graphic is to be printed. This is used for duplex printing.
+        /// </summary>
+        public FieldSideEnum Side { get; init; }
     }
 
     /// <summary>

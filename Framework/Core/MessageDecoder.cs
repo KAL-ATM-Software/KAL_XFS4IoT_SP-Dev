@@ -17,59 +17,13 @@ using XFS4IoT.CardReader.Completions;
 
 namespace XFS4IoT
 {
-    public class GenericMessageClass
+    /// <summary>
+    /// Fallback wrapper the decoder sniffs every incoming message into before it knows the
+    /// concrete Command/Completion/Event/Acknowledge type. Derives from <see cref="MessageBase"/>
+    /// (reusing <see cref="MessageHeader"/> directly.
+    /// </summary>
+    public class GenericMessageClass : MessageBase
     {
-        /// <summary>
-        /// Represents the Header part of a generic message
-        /// </summary>
-        public class HeaderClass
-        {
-            /// <summary>
-            /// Name of the commands, events or completions
-            /// </summary>
-            public string Name { get; set; }
-
-            /// <summary>
-            /// Unique request ID of the message
-            /// </summary>
-            public int? RequestId { get; set; } = default;
-
-            /// <summary>
-            /// Type of the message
-            /// </summary>
-            public MessageHeader.TypeEnum? Type { get; set; } = default;
-
-            /// <summary>
-            /// Version of the message, e.g. "1.0"
-            /// </summary>
-            public string Version { get; set; }
-
-            /// <summary>
-            /// Timeout on handling the message in milliseconds
-            /// </summary>
-            public int? Timeout { get; set; } = default;
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public object Status { get; set; } = default;
-
-            /// <summary>
-            /// Completion code of the message
-            /// </summary>
-            public object CompletionCode { get; set; } = default;
-
-            /// <summary>
-            /// Description of error if any
-            /// </summary>
-            public string ErrorDescription { get; set; } = default;
-        }
-
-        /// <summary>
-        /// Header of the generic message
-        /// </summary>
-        public HeaderClass Header { get; set; } = null;
-
         /// <summary>
         /// Payload of the generic message
         /// </summary>
@@ -78,8 +32,10 @@ namespace XFS4IoT
 
     [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, UseStringEnumConverter = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonSerializable(typeof(GenericMessageClass))]
+    [JsonSerializable(typeof(MessageHeader))]
     [JsonSerializable(typeof(MessageHeader.TypeEnum))]
-    [JsonSerializable(typeof(GenericMessageClass.HeaderClass))]
+    [JsonSerializable(typeof(MessageHeader.StatusEnum))]
+    [JsonSerializable(typeof(MessageHeader.CompletionCodeEnum))]
     public partial class GenericMessageContext : JsonSerializerContext
     {
     }

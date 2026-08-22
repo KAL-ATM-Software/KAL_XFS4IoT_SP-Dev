@@ -117,7 +117,8 @@ namespace XFS4IoTFramework.CardReader
             if (result.CompletionCode == MessageHeader.CompletionCodeEnum.Success)
             {
                 // Update counters and save persistently
-                if (to.Position == MovePosition.MovePositionEnum.Storage)
+                if (to.Position   == MovePosition.MovePositionEnum.Storage /*Retain bin*/ ||
+                    from.Position == MovePosition.MovePositionEnum.Storage /*Disensed from hopper*/)
                 {
                     string storageId = to.StorageId;
                     if (string.IsNullOrEmpty(to.StorageId))

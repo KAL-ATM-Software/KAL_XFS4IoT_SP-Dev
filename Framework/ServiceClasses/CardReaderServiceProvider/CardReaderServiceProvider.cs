@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using XFS4IoT;
 using XFS4IoT.CardReader.Events;
@@ -441,11 +440,15 @@ namespace XFS4IoTServer
         /// <param name="bitCount">Bits per pixel in returned data</param>
         /// <param name="UpsideDown"></param>
         /// <param name="imageInfo">Information bitmap created</param>
-        [SupportedOSPlatform("windows")]
-        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo)
+        /// <param name="FullImage">
+        /// False (default) returns a tight crop around the job's tasks with ImageInfo.OffsetX/OffsetY set
+        /// for the caller to composite elsewhere. True returns an image covering the entire media instead -
+        /// see PrintToBitmapHandler.Convert for details.
+        /// </param>
+        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo, bool FullImage = false)
         {
             Contracts.Assert(PrinterService is not null, "Usage error. the device class doesn't support printer service.");
-            return PrinterService.PrintToBitmap(job, bitCount, UpsideDown, out imageInfo);
+            return PrinterService.PrintToBitmap(job, bitCount, UpsideDown, out imageInfo, FullImage);
         }
 
         /// <summary>
@@ -454,7 +457,6 @@ namespace XFS4IoTServer
         /// <param name="task">Task to print data</param>
         /// <param name="width">Width of rectangle needed to contain the task</param>
         /// <param name="height">Height of rectangle needed to contain the task</param>
-        [SupportedOSPlatform("windows")]
         public bool GetBitmapPrintDimensions(PrintTask task, out int width, out int height)
         {
             Contracts.Assert(PrinterService is not null, "Usage error. the device class doesn't support printer service.");

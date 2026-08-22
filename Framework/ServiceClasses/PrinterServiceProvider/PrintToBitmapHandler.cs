@@ -1,16 +1,18 @@
-﻿using System;
+/***********************************************************************************************\
+ * (C) KAL ATM Software GmbH, 2026
+ * KAL ATM Software GmbH licenses this file to you under the MIT license.
+ * See the LICENSE file in the project root for more information.
+ *
+\***********************************************************************************************/
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Graphics.Skia;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using System.IO;
+using System.Linq;
 using XFS4IoT;
 using XFS4IoTFramework.Printer;
-
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-
 
 namespace XFS4IoTServer
 {
@@ -29,8 +31,16 @@ namespace XFS4IoTServer
         /// <summary>
         /// Convert XFS form data to the image
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        public bool Convert(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo)
+        /// <param name="FullImage">
+        /// When false (default), the returned image is a tight crop around just the tasks present in this
+        /// job, with ImageInfo.OffsetX/OffsetY giving the crop's position relative to the media's top-left -
+        /// callers that need a full-media-sized image must composite the crop onto their own canvas at that
+        /// offset. When true, the image covers the entire media instead: width comes from
+        /// Device.MediaSpecs[0].Width and height from job.PrintLength (falling back to the tight crop's own
+        /// dimensions if either is unavailable), tasks are drawn at their absolute positions, and
+        /// ImageInfo.OffsetX/OffsetY are always 0 since no further compositing is needed.
+        /// </param>
+        public bool Convert(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo, bool FullImage = false)
         {
             imageInfo = null;
 
@@ -85,25 +95,61 @@ namespace XFS4IoTServer
                 currentHeight = 1;
             }
 
-            // Initialise our bitmap to the size of the rectangle
-            using (Bitmap image = new(currentWidth, currentHeight, PixelFormat.Format32bppRgb))
+            if (FullImage)
             {
-                using Graphics graphics = Graphics.FromImage(image);
-                graphics.Clear(Color.White);
+                if (Device.MediaSpecs is { Count: > 0 } && Device.MediaSpecs[0].Width > 0)
+                {
+                    currentWidth = Device.MediaSpecs[0].Width;
+                }
+                if (job.PrintLength > 0)
+                {
+                    currentHeight = job.PrintLength;
+                }
+                // Use real absolute position on the full canvas instead of relative to the crop.
+                offsetX = 0;
+                offsetY = 0;
+            }
 
-                // Print all tasks to the bitmap
-                foreach (PrintTask task in job.Tasks)
+            // Initialise our bitmap to the size of the rectangle
+            SkiaBitmapExportContext image = new(currentWidth, currentHeight, 1.0f);
+            ICanvas canvas = image.Canvas;
+
+            // Turn off antialias for monochrome bitmap to make the output sharper at all. instead of blurry output with anti-alias on
+            if (bitCount == 1)
+            {
+                canvas.Antialias = false;
+            }
+
+            // Set up default colors
+            canvas.FillColor = Colors.White;
+            canvas.FontColor = Colors.Black;
+            canvas.FillRectangle(0, 0, currentWidth, currentHeight);
+
+            // Draw GRAPHIC tasks first, then everything else, so text/barcodes always render on top of any
+            // background image regardless of where each task's position happens to fall in the
+            // position-based sort order PrintJobClass.SortTasks already applied to job.Tasks.
+            foreach (PrintTask task in job.Tasks.Where(t => t.Type == FieldTypeEnum.GRAPHIC))
+            {
+                success = PrintGraphicTask(canvas, task.IsA<GraphicTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
+
+                if (!success)
+                {
+                    Logger.Warning(Constants.Framework, $"Failed to print data on the image. {task.Type}");
+                    break;
+                }
+            }
+
+            if (success)
+            {
+                foreach (PrintTask task in job.Tasks.Where(t => t.Type != FieldTypeEnum.GRAPHIC))
                 {
                     switch (task.Type)
                     {
                         case FieldTypeEnum.TEXT:
-                            success = PrintTextTask(graphics, task.IsA<TextTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
-                            break;
-                        case FieldTypeEnum.GRAPHIC:
-                            success = PrintGraphicTask(graphics, task.IsA<GraphicTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
+                            success = PrintTextTask(canvas, task.IsA<TextTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
                             break;
                         case FieldTypeEnum.BARCODE:
-                            success = PrintBarcodeTask(graphics, task.IsA<BarcodeTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
+                            success = PrintBarcodeTask(canvas, task.IsA<BarcodeTask>($"Unexpected task. {task.Type}"), offsetX, offsetY);
                             break;
                         default:
                             Contracts.Fail($"Unsupported type of task received. {task.Type}");
@@ -116,17 +162,17 @@ namespace XFS4IoTServer
                         break;
                     }
                 }
-
-                if (job.Orientation == FormOrientationEnum.LANDSCAPE)
-                {
-                    // Change orientation
-                    image.RotateFlip(RotateFlipType.Rotate270FlipXY);
-                }
-
-                GetImage(image, bitCount, out ImageData imageData);
-
-                imageInfo = new(offsetX, offsetY, imageData);
             }
+
+            if (job.Orientation == FormOrientationEnum.LANDSCAPE)
+            {
+                // Change orientation
+                canvas.Rotate(90);
+            }
+
+            GetImage(image.Bitmap, bitCount, out ImageData imageData);
+
+            imageInfo = new(offsetX, offsetY, imageData);
 
             return success;
         }
@@ -134,7 +180,6 @@ namespace XFS4IoTServer
         /// <summary>
         /// This method can be called in the device class to obtain the dimensions of a KXTask when printed using PrintToImage
         /// </summary>
-        [SupportedOSPlatform("windows")]
         public bool GetTaskDimensions(PrintTask task, out int width, out int height)
         {
             task.IsNotNull($"An empty task passed in the {nameof(GetTaskDimensions)}");
@@ -142,85 +187,84 @@ namespace XFS4IoTServer
             height = -1;
             bool success = true;
 
-            using (Bitmap image = new(1, 1, PixelFormat.Format32bppRgb))
+            SkiaBitmapExportContext image = new(1, 1, 1.0f);
+            ICanvas canvas = image.Canvas;
+
+            switch (task.Type)
             {
-                switch (task.Type)
-                {
-                    case FieldTypeEnum.TEXT:
+                case FieldTypeEnum.TEXT:
+                    {
+                        TextTask textTask = task.IsA<TextTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected text task. Type:{task.Type.GetType()}");
+
+                        SelectFont(textTask.PointSize, textTask.CPI, textTask.FontName, textTask.Style, out Font font, out float fontSize);
+                        SizeF requiredSize = canvas.GetStringSize(textTask.Text, font, fontSize);
+                        float sizeX = requiredSize.Width;
+                        float sizeY = requiredSize.Height;
+
+                        // For certain types of task, chars are output one by one
+                        if (textTask.CPI > 0)
                         {
-                            TextTask textTask = task.IsA<TextTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected text task. Type:{task.Type.GetType()}");
+                            // If CPI is set, set width using CPI because text is per letter to ensure the CPI is valid
+                            sizeX = (Device.DotsPerInchTopX * textTask.Text.Length) / (Device.DotsPerInchBottomX * textTask.CPI);
 
-                            using Graphics graphics = Graphics.FromImage(image);
-                            SizeF requiredSize = graphics.MeasureString(textTask.Text, SelectFont(textTask.PointSize, textTask.CPI, textTask.FontName, textTask.Style));
-                            float sizeX = requiredSize.Width;
-                            float sizeY = requiredSize.Height;
-
-                            // For certain types of task, chars are output one by one
-                            if (textTask.CPI > 0)
+                            // If double width, take twice as many dots per char etc
+                            if (textTask.Style.HasFlag(FieldStyleEnum.QUADRUPLE))
                             {
-                                // If CPI is set, set width using CPI because text is per letter to ensure the CPI is valid
-                                sizeX = (Device.DotsPerInchTopX * textTask.Text.Length) / (Device.DotsPerInchBottomX * textTask.CPI);
-
-                                // If double width, take twice as many dots per char etc
-                                if (textTask.Style.HasFlag(FieldStyleEnum.QUADRUPLE))
-                                {
-                                    sizeX *= 4;
-                                }
-                                else if (textTask.Style.HasFlag(FieldStyleEnum.TRIPLE))
-                                {
-                                    sizeX *= 3;
-                                }
-                                else if (textTask.Style.HasFlag(FieldStyleEnum.DOUBLE))
-                                {
-                                    sizeX *= 2;
-                                }
+                                sizeX *= 4;
                             }
-                            else if (textTask.RowColumn &&
-                                     textTask.PointSize <= 0 &&
-                                     DefaultCharWidth != 0)
+                            else if (textTask.Style.HasFlag(FieldStyleEnum.TRIPLE))
                             {
-                                float charWidth = DefaultCharWidth;
-                                // If row column based task, and no point size specified,
-                                // chars will be aligned with DefaultCharWidth boundaries
-                                // So set width accordingly and adjust char width for style
-                                if (textTask.Style.HasFlag(FieldStyleEnum.QUADRUPLE))
-                                {
-                                    charWidth = DefaultCharWidth * 4;
-                                }
-                                else if (textTask.Style.HasFlag(FieldStyleEnum.TRIPLE))
-                                {
-                                    charWidth = DefaultCharWidth * 3;
-                                }
-                                else if (textTask.Style.HasFlag(FieldStyleEnum.DOUBLE))
-                                {
-                                    charWidth = DefaultCharWidth * 2;
-                                }
-
-                                sizeX = charWidth * textTask.Text.Length;
-                                sizeY = DefaultCharHeight;
+                                sizeX *= 3;
+                            }
+                            else if (textTask.Style.HasFlag(FieldStyleEnum.DOUBLE))
+                            {
+                                sizeX *= 2;
+                            }
+                        }
+                        else if (textTask.RowColumn &&
+                                    textTask.PointSize <= 0 &&
+                                    DefaultCharWidth != 0)
+                        {
+                            float charWidth = DefaultCharWidth;
+                            // If row column based task, and no point size specified,
+                            // chars will be aligned with DefaultCharWidth boundaries
+                            // So set width accordingly and adjust char width for style
+                            if (textTask.Style.HasFlag(FieldStyleEnum.QUADRUPLE))
+                            {
+                                charWidth = DefaultCharWidth * 4;
+                            }
+                            else if (textTask.Style.HasFlag(FieldStyleEnum.TRIPLE))
+                            {
+                                charWidth = DefaultCharWidth * 3;
+                            }
+                            else if (textTask.Style.HasFlag(FieldStyleEnum.DOUBLE))
+                            {
+                                charWidth = DefaultCharWidth * 2;
                             }
 
-                            width = (int)sizeX;
-                            height = (int)sizeY;
+                            sizeX = charWidth * textTask.Text.Length;
+                            sizeY = DefaultCharHeight;
                         }
-                        break;
-                    case FieldTypeEnum.GRAPHIC:
-                        {
-                            GraphicTask graphicTask = task.IsA<GraphicTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected graphic task. Type:{task.Type.GetType()}");
 
-                            success = GetImageSize(graphicTask, out width, out height);
-                        }
-                        break;
-                    case FieldTypeEnum.BARCODE:
-                        {
-                            BarcodeTask barcodeTask = task.IsA<BarcodeTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected barcode task. Type:{task.Type.GetType()}");
-                            Logger.Warning(Constants.Framework, $"Barcode tasks not supported");
-                        }
-                        break;
-                    default:
-                        Contracts.Fail($"Unsupported task type received. {task.Type.GetType()}");
-                        break;
-                }
+                        width = (int)Math.Ceiling(sizeX);
+                        height = (int)Math.Ceiling(sizeY);
+                    }
+                    break;
+                case FieldTypeEnum.GRAPHIC:
+                    {
+                        GraphicTask graphicTask = task.IsA<GraphicTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected graphic task. Type:{task.Type.GetType()}");
+                        success = GetImageSize(graphicTask, out width, out height);
+                    }
+                    break;
+                case FieldTypeEnum.BARCODE:
+                    {
+                        BarcodeTask barcodeTask = task.IsA<BarcodeTask>($"Unexpected interface detected in {nameof(GetTaskDimensions)} and expected barcode task. Type:{task.Type.GetType()}");
+                        Logger.Warning(Constants.Framework, $"Barcode tasks not supported");
+                    }
+                    break;
+                default:
+                    Contracts.Fail($"Unsupported task type received. {task.Type.GetType()}");
+                    break;
             }
 
             return success;
@@ -229,10 +273,9 @@ namespace XFS4IoTServer
         /// <summary>
         /// Select font and size matches defined in the XFS form
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        private Font SelectFont(int pointSize, int cpi, string fontName, FieldStyleEnum style)
+        private void SelectFont(int pointSize, int cpi, string fontName, FieldStyleEnum style, out Font font, out float requiredSize)
         {
-            float requiredSize = 0;
+            requiredSize = 0;
             // First find out requirements for logical font
             if (pointSize > 0)
             {
@@ -260,50 +303,39 @@ namespace XFS4IoTServer
                 requiredFontName = fontName;
             }
 
-            FontStyle fontStyle = FontStyle.Regular;
+            FontStyleType fontStyle = FontStyleType.Normal;
+            int fontWeights = FontWeights.Normal;
+
             if (style.HasFlag(FieldStyleEnum.BOLD))
             {
-                fontStyle |= FontStyle.Bold;
+                fontWeights = FontWeights.Bold;
             }
             if (style.HasFlag(FieldStyleEnum.ITALIC))
             {
-                fontStyle |= FontStyle.Italic;
-            }
-            if (style.HasFlag(FieldStyleEnum.UNDER))
-            {
-                fontStyle |= FontStyle.Underline;
+                fontStyle = FontStyleType.Italic;
             }
 
-            // Check all installed font and select best match
-            InstalledFontCollection fontInstalled = new();
-            bool fontFound = false;
-            foreach (var font in fontInstalled.Families)
-            {
-                if (font.Name.Equals(requiredFontName, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    fontFound = true;
-                    break;
-                }
-            }
-
-            if (!fontFound)
-            {
-                // Use one of monospace font available
-                FontFamily defaultMono = FontFamily.GenericMonospace;
-                defaultMono.IsNotNull($"Failed to find default monospace font.");
-                requiredFontName = defaultMono.Name;
-                defaultMono.Dispose();
-
-                Logger.Warning(Constants.Framework, $"Specified font '{fontName}' is not found. Use {requiredFontName} instead.");
-            }
-
-            return new Font(requiredFontName, requiredSize, fontStyle, GraphicsUnit.Pixel);
+            font = new Font(requiredFontName, fontWeights, fontStyle);
         }
+
+        /// <summary>
+        /// Maps a field's color enum to the Maui color used to draw it. FieldColorEnum is [Flags], but text is
+        /// drawn in a single color, so this picks the first (lowest-bit) color set rather than combining them.
+        /// </summary>
+        private static Color SelectColor(FieldColorEnum color) => color switch
+        {
+            FieldColorEnum.WHITE => Colors.White,
+            FieldColorEnum.GRAY => Colors.Gray,
+            FieldColorEnum.RED => Colors.Red,
+            FieldColorEnum.BLUE => Colors.Blue,
+            FieldColorEnum.GREEN => Colors.Green,
+            FieldColorEnum.YELLOW => Colors.Yellow,
+            _ => Colors.Black,
+        };
 
         /// <summary>
         /// The method find out the size of image to be used
         /// </summary>
-        [SupportedOSPlatform("windows")]
         private bool GetImageSize(GraphicTask task, out int width, out int height)
         {
             bool success = true;
@@ -316,7 +348,9 @@ namespace XFS4IoTServer
                 {
                     Position = 0
                 };
-                using Bitmap imageToCopy = new(memStream);
+
+                using SKBitmap decodedImage = SKBitmap.Decode(memStream);
+                IImage imageToCopy = new SkiaImage(decodedImage);
 
                 int bitmap_width;
                 int bitmap_height;
@@ -329,23 +363,23 @@ namespace XFS4IoTServer
                 else if (task.Scaling == FieldScalingEnum.ASIS)
                 {
                     // Display is same as bitmap width/height
-                    bitmap_width = imageToCopy.Width;
-                    bitmap_height = imageToCopy.Height;
+                    bitmap_width = (int)imageToCopy.Width;
+                    bitmap_height = (int)imageToCopy.Height;
                 }
                 else
                 {
                     // Stretch maintaining aspect until either width or height limit of field is reached.
-                    // Check if scaling to fit the width would overrun the field height
-                    if ((imageToCopy.Height * task.Width) / task.Width > task.Height)
+                    // Check if scaling to fit the width would overrun the field height.
+                    if ((imageToCopy.Height * task.Width) / imageToCopy.Width > task.Height)
                     {
                         // Should scale to fit the height instead
                         bitmap_height = task.Height;
-                        bitmap_width = (imageToCopy.Width * task.Height) / imageToCopy.Height;
+                        bitmap_width = (int)Math.Ceiling((imageToCopy.Width * task.Height) / imageToCopy.Height);
                     }
                     else
                     {
                         // Scaling to fit width should be fine
-                        bitmap_height = (imageToCopy.Height * task.Width) / imageToCopy.Width;
+                        bitmap_height = (int)Math.Ceiling((imageToCopy.Height * task.Width) / imageToCopy.Width);
                         bitmap_width = task.Width;
                     }
                 }
@@ -366,26 +400,21 @@ namespace XFS4IoTServer
         /// GetImage
         /// The method extracts pixel data and return it to the caller
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        private void GetImage(Bitmap image, int bitCount, out ImageData imageInfo)
+        private void GetImage(SKBitmap image, int bitCount, out ImageData imageInfo)
         {
-            imageInfo = null;
-
-            PixelFormat pixelFormat = bitCount switch
+            if (bitCount != 1 &&
+                bitCount != 24)
             {
-                 1 => PixelFormat.Format1bppIndexed,
-                24 => PixelFormat.Format24bppRgb,
-                32 => PixelFormat.Format32bppRgb,
-                _  => PixelFormat.DontCare
-            };
+                Contracts.Fail($"The framework doesn't support specified bit count for PrintToBitmap. {bitCount}");
+            }
 
-            Contracts.Assert(pixelFormat != PixelFormat.DontCare, $"The framework doesn't support specified bit count. {bitCount}");
-
+            // Multiple of 4 bytes per row
             int stride = ((image.Width * bitCount + 31) & ~31) / 8;
-            List<uint> palette = new();
+            List<uint> palette = [];
             //Create image buffer to convert
             byte[] pixels = new byte[stride * image.Height];
-            if (pixelFormat == PixelFormat.Format1bppIndexed)
+
+            if (bitCount == 1)
             {
                 palette.Add(0xff000000);
                 palette.Add(0xffffffff);
@@ -394,7 +423,15 @@ namespace XFS4IoTServer
                 {
                     for (int j = 0; j < image.Width; j++)
                     {
-                        if (image.GetPixel(j, i).GetBrightness() >= 0.5f)
+                        SKColor color = image.GetPixel(j, i);
+                        // Make a vivid grayscale with perceptual luminance.
+                        float y = (0.2126f * color.Red +
+                                   0.7152f * color.Green +
+                                   0.0722f * color.Blue) / 255f;
+
+                        // Convert luminance to HSL grayscale
+                        SKColor.FromHsl(0f, 0f, y).ToHsl(out float _, out float _, out float lightness);
+                        if (lightness >= 0.5f)
                         {
                             int index = (j >> 3) + stride * i;
                             pixels[index] |= (byte)(0x80 >> (j & 0x7));
@@ -404,36 +441,46 @@ namespace XFS4IoTServer
             }
             else
             {
-                BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, pixelFormat);
-                Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
-                image.UnlockBits(data);
+                for (int i = 0; i < image.Height; i++)
+                {
+                    int bytePerRow = 0;
+                    for (int j = 0; j < image.Width; j++)
+                    {
+                        SKColor color = image.GetPixel(j, i);
+                        // Write the pixel in BGR format, with GDI Format24bppRgb in order to keep backwards compatibility with existing code that expects it.
+                        pixels[i * stride + bytePerRow++] = color.Blue;
+                        pixels[i * stride + bytePerRow++] = color.Green;
+                        pixels[i * stride + bytePerRow++] = color.Red;
+                    }
+                }
             }
 
-            // Copy buffer to the result. 
-            imageInfo = new(image.Width, image.Height, bitCount, stride, palette, new(pixels.ToList()));
+            // Copy buffer to the result.
+            imageInfo = new(image.Width, image.Height, bitCount, stride, palette, [.. pixels.ToList()]);
         }
 
         /// <summary>
         /// PrintTextTask
-        /// Print the text task to draw string using a Graphics object
+        /// Print the text task to the canvas
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        bool PrintTextTask(Graphics graphics, TextTask task, int offsetX, int offsetY)
+        bool PrintTextTask(ICanvas canvas, TextTask task, int offsetX, int offsetY)
         {
             Contracts.Assert(task.Type == FieldTypeEnum.TEXT, $"Unexpected type of field to be printerd. expected text. {task.Type}");
-            graphics.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintTextTask)} is called unexpectedly.");
+            canvas.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintTextTask)} is called unexpectedly.");
 
-            FontStyle fontStyle = FontStyle.Regular;
-            if (task.Style.HasFlag(FieldStyleEnum.BOLD))
+            bool success = GetTaskDimensions(task, out int fieldWidth, out int fieldHeight);
+            if (!success)
             {
-                fontStyle |= FontStyle.Bold;
-            }
-            if (task.Style.HasFlag(FieldStyleEnum.ITALIC))
-            {
-                fontStyle |= FontStyle.Italic;
+                return success;
             }
 
-            bool success = true;
+            // canvas.GetStringSize's measured height is too tight for DrawString's own ClipBounds layout --
+            // passing it back as-is clips away 100% of the glyph (confirmed empirically: anything under
+            // roughly 1.2x the measured height renders nothing at all). Double it for a safe margin.
+            int drawHeight = fieldHeight * 2;
+
+            Color color = SelectColor(task.Color);
+
             char[] text = task.Text.ToArray();
             // If CPI is set jiggle chars to get as near as possible to
             // requested CPI
@@ -459,11 +506,24 @@ namespace XFS4IoTServer
 
                 for (long i=0; i< text.Length; i++)
                 {
-                    graphics.DrawString(text[i].ToString(), SelectFont(task.PointSize, task.CPI, task.FontName, task.Style), Brushes.Black, task.x - offsetX + (i * top) / bottom, task.y - offsetY);
+                    SelectFont(task.PointSize, task.CPI, task.FontName, task.Style, out Font font, out float fontSize);
+                    canvas.Font = font;
+                    canvas.FontSize = fontSize;
+                    canvas.FontColor = color;
+                    canvas.DrawString(
+                        value: text[i].ToString(),
+                        x: task.x - offsetX + (i * top) / bottom,
+                        y: task.y - offsetY,
+                        width: fieldWidth,
+                        height: drawHeight,
+                        horizontalAlignment: HorizontalAlignment.Left,
+                        verticalAlignment: VerticalAlignment.Top,
+                        textFlow: TextFlow.ClipBounds,
+                        lineSpacingAdjustment: 0);
                 }
             }
-            else if (task.RowColumn && 
-                     task.PointSize <= 0 && 
+            else if (task.RowColumn &&
+                     task.PointSize <= 0 &&
                      DefaultCharWidth != 0)
             {
                 // If row column based task, and no point size specified,
@@ -487,12 +547,38 @@ namespace XFS4IoTServer
 
                 for (long i = 0; i < text.Length; i++)
                 {
-                    graphics.DrawString(text[i].ToString(), SelectFont(task.PointSize, task.CPI, task.FontName, task.Style), Brushes.Black, task.x - offsetX + i * width, task.y - offsetY);
+                    SelectFont(task.PointSize, task.CPI, task.FontName, task.Style, out Font font, out float fontSize);
+                    canvas.Font = font;
+                    canvas.FontSize = fontSize;
+                    canvas.FontColor = color;
+                    canvas.DrawString(
+                        value: text[i].ToString(),
+                        x: task.x - offsetX + i * width,
+                        y: task.y - offsetY,
+                        width: fieldWidth,
+                        height: drawHeight,
+                        horizontalAlignment: HorizontalAlignment.Left,
+                        verticalAlignment: VerticalAlignment.Top,
+                        textFlow: TextFlow.ClipBounds,
+                        lineSpacingAdjustment: 0);
                 }
             }
             else
             {
-                graphics.DrawString(task.Text, SelectFont(task.PointSize, task.CPI, task.FontName, task.Style), Brushes.Black, task.x - offsetX, task.y - offsetY);
+                SelectFont(task.PointSize, task.CPI, task.FontName, task.Style, out Font font, out float fontSize);
+                canvas.Font = font;
+                canvas.FontSize = fontSize;
+                canvas.FontColor = color;
+                canvas.DrawString(
+                        value: task.Text,
+                        x: task.x - offsetX,
+                        y: task.y - offsetY,
+                        width: fieldWidth,
+                        height: drawHeight,
+                        horizontalAlignment: HorizontalAlignment.Left,
+                        verticalAlignment: VerticalAlignment.Top,
+                        textFlow: TextFlow.ClipBounds,
+                        lineSpacingAdjustment: 0);
             }
 
             return success;
@@ -500,13 +586,12 @@ namespace XFS4IoTServer
 
         /// <summary>
         /// PrintGraphicTask
-        /// Print the graphic task to draw image using a Graphics object
+        /// Print the graphic task to the canvas
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        private bool PrintGraphicTask(Graphics graphics, GraphicTask task, int offsetX, int offsetY)
+        private bool PrintGraphicTask(ICanvas canvas, GraphicTask task, int offsetX, int offsetY)
         {
             Contracts.Assert(task.Type == FieldTypeEnum.GRAPHIC, $"Unexpected type of field to be printerd. expected graphic. {task.Type}");
-            graphics.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintGraphicTask)} is called unexpectedly.");
+            canvas.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintGraphicTask)} is called unexpectedly.");
 
             bool success = false;
 
@@ -514,16 +599,16 @@ namespace XFS4IoTServer
             {
                 Position = 0
             })
+            using (SKBitmap decodedImage = SKBitmap.Decode(memStream))
             {
-                using Bitmap imageToCopy = new(memStream);
+                IImage imageToCopy = new SkiaImage(decodedImage);
 
                 success = GetImageSize(task, out int width, out int height);
-
                 if (success)
                 {
                     try
                     {
-                        graphics.DrawImage(imageToCopy, task.x - offsetX, task.y - offsetY, width, height);
+                        canvas.DrawImage(imageToCopy, task.x - offsetX, task.y - offsetY, width, height);
                     }
                     catch (Exception ex)
                     {
@@ -540,11 +625,10 @@ namespace XFS4IoTServer
         /// PrintBarcodeTask
         /// Print the barcode task
         /// </summary>
-        [SupportedOSPlatform("windows")]
-        private bool PrintBarcodeTask(Graphics graphics, BarcodeTask task, int offsetX, int offsetY)
+        private bool PrintBarcodeTask(ICanvas canvas, BarcodeTask task, int offsetX, int offsetY)
         {
             Contracts.Assert(task.Type == FieldTypeEnum.BARCODE, $"Unexpected type of field to be printerd. expected barcode. {task.Type}");
-            graphics.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintBarcodeTask)} is called unexpectedly.");
+            canvas.IsNotNull($"The method PrintToImage has not been called, but the {nameof(PrintBarcodeTask)} is called unexpectedly.");
 
             // Not supported
             Contracts.Fail($"The barcode task is not supported.");

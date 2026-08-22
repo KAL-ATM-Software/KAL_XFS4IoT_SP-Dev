@@ -44,7 +44,11 @@ namespace XFS4IoTServer
         /// <param name="bitCount">Bits per pixel in returned data</param>
         /// <param name="UpsideDown"></param>
         /// <param name="imageInfo">Information image created</param>
-        bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo);
+        /// <param name="FullImage">
+        /// False (default) returns a tight crop around the job's tasks with ImageInfo.OffsetX/OffsetY set
+        /// for the caller to composite elsewhere. True returns an image covering the entire media instead.
+        /// </param>
+        bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo, bool FullImage = false);
 
         /// <summary>
         /// This method can be called in the device class to obtain the dimensions of a task object when printed using PrintToImage

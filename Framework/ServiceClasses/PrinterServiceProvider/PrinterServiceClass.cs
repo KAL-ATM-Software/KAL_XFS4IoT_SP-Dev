@@ -7,9 +7,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Runtime.Versioning;
+using System.Threading;
 using XFS4IoT;
 using XFS4IoTFramework.Printer;
 using XFS4IoTFramework.Common;
@@ -32,7 +30,7 @@ namespace XFS4IoTServer
             RegisterFactory(ServiceProvider);
 
             CommonService = ServiceProvider.IsA<ICommonService>($"Invalid interface parameter specified for common service. {nameof(PrinterServiceClass)}");
-            if (ServiceProvider.Device as IStorageDevice is null)
+            if (ServiceProvider.Device is IStorageDevice)
             {
                 StorageService = ServiceProvider.IsA<IStorageService>($"Invalid interface parameter specified for storage service. {nameof(PrinterServiceClass)}");
             }
@@ -150,14 +148,39 @@ namespace XFS4IoTServer
         /// <param name="bitCount">Bits per pixel in returned data</param>
         /// <param name="UpsideDown"></param>
         /// <param name="imageInfo">Information image created</param>
-        [SupportedOSPlatform("windows")]
-        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo)
+        /// <param name="FullImage">
+        /// False (default) returns a tight crop around the job's tasks with ImageInfo.OffsetX/OffsetY set
+        /// for the caller to composite elsewhere. True returns an image covering the entire media instead.
+        /// </param>
+        public bool PrintToBitmap(PrintJobClass job, int bitCount, bool UpsideDown, out ImageInfo imageInfo, bool FullImage = false)
         {
             if (ImageConverter is null)
             {
                 ImageConverter = new PrintToBitmapHandler(Device, Logger);
             }
-            return ImageConverter.IsNotNull($"Failed to create {nameof(PrintToBitmapHandler)} object.").Convert(job, bitCount, UpsideDown, out imageInfo);
+
+            // The default stack size for a .NET ThreadPool worker thread is 1 MB, which may not be sufficient.
+            // Use a larger stack size for the dedicated thread that runs the conversion.
+            const int RenderThreadStackSize = 8 * 1024 * 1024;
+
+            bool result = false;
+            ImageInfo renderedImageInfo = null;
+            Thread renderThread = new(() =>
+            {
+                try
+                {
+                    result = ImageConverter.IsNotNull($"Failed to create {nameof(PrintToBitmapHandler)} object.").Convert(job, bitCount, UpsideDown, out renderedImageInfo, FullImage);
+                }
+                catch (Exception exception)
+                {
+                    throw new InternalErrorException($"Unexpected exception occurred while rendering print job to bitmap: {exception}");
+                }
+            }, maxStackSize: RenderThreadStackSize);
+            renderThread.Start();
+            renderThread.Join();
+
+            imageInfo = renderedImageInfo;
+            return result;
         }
 
         /// <summary>
@@ -166,7 +189,6 @@ namespace XFS4IoTServer
         /// <param name="task">Task to print data</param>
         /// <param name="width">Width of rectangle needed to contain the task</param>
         /// <param name="height">Height of rectangle needed to contain the task</param>
-        [SupportedOSPlatform("windows")]
         public bool GetBitmapPrintDimensions(PrintTask task, out int width, out int height)
         {
             if (ImageConverter is null)

@@ -146,8 +146,12 @@ namespace XFS4IoTFramework.Printer
             DotHeight = YConvertToDots(Height);
             DotPrintAreaX = XConvertToDots(PrintAreaX);
             DotPrintAreaY = YConvertToDots(PrintAreaY);
-            DotPrintAreaWidth = XConvertToDots(PrintAreaWidth);
-            DotPrintAreaHeight = YConvertToDots(PrintAreaHeight);
+            // PrintAreaWidth/Height are -1 when the caller left PRINTAREA unspecified (see
+            // SetMediaHandler.cs), meaning "use the full media extent" -- not a literal negative
+            // width/height. Resolve that sentinel here so CalculateFormOffsets' overflow checks
+            // don't see a negative DotPrintAreaWidth/Height and reject every form as mediaOverflow.
+            DotPrintAreaWidth = XConvertToDots(PrintAreaWidth < 0 ? Width : PrintAreaWidth);
+            DotPrintAreaHeight = YConvertToDots(PrintAreaHeight < 0 ? Height : PrintAreaHeight);
             DotRestrictedAreaX = XConvertToDots(RestrictedAreaX);
             DotRestrictedAreaY = YConvertToDots(RestrictedAreaY);
             DotRestrictedAreaWidth = XConvertToDots(RestrictedAreaWidth);
