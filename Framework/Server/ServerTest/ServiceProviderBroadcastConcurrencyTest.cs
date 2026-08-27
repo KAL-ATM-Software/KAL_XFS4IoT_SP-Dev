@@ -1,3 +1,9 @@
+/***********************************************************************************************\
+ * (C) KAL ATM Software GmbH, 2025
+ * KAL ATM Software GmbH licenses this file to you under the MIT license.
+ * See the LICENSE file in the project root for more information.
+\***********************************************************************************************/
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Concurrent;
@@ -23,14 +29,16 @@ namespace XFS4IoTServerTest
 			using XFS4IoTServer.EndPoint endPoint = new(
 				new Uri($"http://localhost:{port}/xfs4iot/v1.0/"),
 				new MessageDecoder(),
-				new TestLogger());
+				new TestLogger(),
+				null);
 
 			XFS4IoTServer.ServiceProvider serviceProvider = new(
 				new EndpointDetails("http://localhost", "ws://localhost", port),
 				nameof(XFSConstants.ServiceClass.CardReader),
 				[XFSConstants.ServiceClass.CardReader],
 				new TestDevice(),
-				new TestLogger());
+				new TestLogger(),
+				null);
 
 			// Mirrors ServicePublisher.Add(): register the service on the shared EndPoint
 			// and wire ServiceProvider.BroadcastEvent to read connections from it.

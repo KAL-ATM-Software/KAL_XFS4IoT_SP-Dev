@@ -43,6 +43,19 @@ namespace XFS4IoT
         public static readonly string CertificatePassword = "CertificatePassword";
 
         /// <summary>
+        /// Maximum buffer size for sending/receiving messages.
+        /// </summary>
+        public static readonly string MaximumBufferSize = "MaximumBufferSize";
+
+        /////////////////////////////////////////////////////////////////////////////
+        /// Printer Service Provider
+        /// 
+        /// <summary>
+        /// Maximum buffer size for sending/receiving messages.
+        /// </summary>
+        public static readonly string PrintToBitmapStackSize = "PrintToBitmapStackSize";
+
+        /// <summary>
         /// Set of default values
         /// </summary>
         public static class Default
@@ -51,6 +64,22 @@ namespace XFS4IoT
             /// Default value of the server address
             /// </summary>
             public static readonly string ServerAddressUri = "http://localhost";
+
+            /// <summary>
+            /// Default value of the server port
+            /// </summary>
+            public static readonly int ServerPort = 80;
+            
+            /// <summary>
+            /// Default value of the maximum buffer size
+            /// </summary>
+            public static readonly int MaximumBufferSize = 2 * 1024 * 1024; // 2MB;
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            /// Printer Service Provider
+            /// 
+            public static readonly int PrintToBitmapStackSize = 5 * 1024 * 1024; // 5MB
         }
     }
 }

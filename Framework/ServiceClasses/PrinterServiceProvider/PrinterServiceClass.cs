@@ -159,9 +159,15 @@ namespace XFS4IoTServer
                 ImageConverter = new PrintToBitmapHandler(Device, Logger);
             }
 
-            // The default stack size for a .NET ThreadPool worker thread is 1 MB, which may not be sufficient.
-            // Use a larger stack size for the dedicated thread that runs the conversion.
-            const int RenderThreadStackSize = 8 * 1024 * 1024;
+            int RenderThreadStackSize = Configurations.Default.PrintToBitmapStackSize;
+            if (ServiceProvider.ServiceConfiguration is not null)
+            {
+                string stackSize = ServiceProvider.ServiceConfiguration.Get(Configurations.PrintToBitmapStackSize);
+                if (!string.IsNullOrEmpty(stackSize) && int.TryParse(stackSize, out int stackSizeValue))
+                {
+                    RenderThreadStackSize = stackSizeValue;
+                }
+            }
 
             bool result = false;
             ImageInfo renderedImageInfo = null;

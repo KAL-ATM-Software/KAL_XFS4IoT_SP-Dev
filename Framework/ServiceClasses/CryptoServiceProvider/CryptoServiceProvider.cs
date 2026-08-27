@@ -28,13 +28,20 @@ namespace XFS4IoTServer
     /// </remarks>
     public class CryptoServiceProvider : ServiceProvider, ICryptoService, IKeyManagementService, ICommonService
     {
-        public CryptoServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger, IPersistentData persistentData)
+        public CryptoServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger, 
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Crypto, XFSConstants.ServiceClass.KeyManagement ],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);

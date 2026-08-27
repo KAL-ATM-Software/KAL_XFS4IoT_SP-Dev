@@ -31,13 +31,15 @@ namespace XFS4IoTServer
             string ServiceName, 
             IDevice device, 
             ILogger logger, 
-            IPersistentData persistentData) 
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null) 
             : 
             base(endpointDetails,
                  ServiceName,
                  [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Printer],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             PrinterService = new PrinterServiceClass(this, logger, persistentData);

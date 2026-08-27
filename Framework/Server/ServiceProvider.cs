@@ -7,8 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using XFS4IoT;
 
@@ -16,11 +14,13 @@ namespace XFS4IoTServer
 {
     public class ServiceProvider : CommandDispatcher, IServiceProvider
     {
-        public ServiceProvider(EndpointDetails EndpointDetails,
-                               string ServiceName,
-                               IEnumerable<XFSConstants.ServiceClass> Services,
-                               IDevice Device,
-                               ILogger Logger)
+        public ServiceProvider(
+            EndpointDetails EndpointDetails,
+            string ServiceName,
+            IEnumerable<XFSConstants.ServiceClass> Services,
+            IDevice Device,
+            ILogger Logger,
+            IServiceConfiguration ServiceConfiguration)
             : base(Services, Logger)
         {
             EndpointDetails.IsNotNull($"The endpoint details are invalid. {nameof(EndpointDetails)}");
@@ -32,6 +32,7 @@ namespace XFS4IoTServer
             this.Device = Device;
             this.logger = Logger.IsNotNull();
             this.Name = ServiceName;
+            this.ServiceConfiguration = ServiceConfiguration;
 
             (Uri, WSUri) = EndpointDetails.ServiceUri(ServiceName);
 
@@ -56,6 +57,8 @@ namespace XFS4IoTServer
         public Uri WSUri { get; }
 
         public IDevice Device { get; internal set; }
+
+        public IServiceConfiguration ServiceConfiguration { get; }
 
         public async Task BroadcastEvent(object payload)
         {

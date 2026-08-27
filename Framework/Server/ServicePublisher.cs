@@ -51,6 +51,7 @@ namespace XFS4IoTServer
             }
 
             this.JsonSchemaValidator = JsonSchemaValidator;
+            this.ServiceConfiguration = ServiceConfiguration;
 
             // Register command handler for ServicePublisher service.
             AddHandler(this, typeof(XFS4IoT.ServicePublisher.Commands.GetServicesCommand), (connection, dispatcher, logger) => new GetServiceHandler(connection, dispatcher, logger), true);
@@ -145,7 +146,12 @@ namespace XFS4IoTServer
 
                     Logger.Log(Constants.Component, $"Attempting to bind to {Uri.OriginalString}");
 
-                    EndPoint = new EndPoint(Uri, CommandDecoder, Logger);
+                    EndPoint = new EndPoint(
+                        Uri, 
+                        CommandDecoder, 
+                        Logger, 
+                        ServiceConfiguration);
+
                     EndPoint.Register(Uri.AbsolutePath, this, this);
 
                     if (Certificate is not null)
@@ -236,6 +242,8 @@ namespace XFS4IoTServer
         {
             this.JsonSchemaValidator = JsonSchemaValidator;
         }
+
+        public IServiceConfiguration ServiceConfiguration { get; }
 
         /// <summary>
         /// Details relating to endpoints on this publisher. 

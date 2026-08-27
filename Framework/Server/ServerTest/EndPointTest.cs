@@ -76,7 +76,8 @@ namespace XFS4IoTServerTest
             using var endpoint = new EndPoint(
                 new Uri("http://localhost:8099/XFS/CardReader/"),
                 CommandDecoder: CommandDecoder,       // reuse EndPointTest's fields/helpers
-                Logger: new SilentLogger());
+                Logger: new SilentLogger(),
+                ServiceConfiguration: null);
 
             using var cts = new CancellationTokenSource();
             var runTask = endpoint.RunAsync(cts.Token);  // the loop that Add/Removes ConnectionDetails
@@ -170,7 +171,8 @@ namespace XFS4IoTServerTest
 
             var test = new EndPoint(new System.Uri("http://localhost:8088/XFS/CashAcceptor/"),
                 CommandDecoder,
-                Logger);
+                Logger,
+                null);
             test.Register("/XFS/CashAcceptor/", CommandDispatcher, null);
 
             test.RunAsync(CancellationToken.None).Wait();
@@ -250,6 +252,8 @@ namespace XFS4IoTServerTest
             public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) { }
             public void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported) { }
             public Dictionary<string, MessageTypeInfo> GetMessagesSupported() => new();
+
+            public IServiceConfiguration ServiceConfiguration => null;
         }
     }
 }

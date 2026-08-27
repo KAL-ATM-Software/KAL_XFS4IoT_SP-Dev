@@ -51,5 +51,10 @@ namespace XFS4IoTServer
 
         void SetMessagesSupported(Dictionary<string, MessageTypeInfo> MessagesSupported);
         Dictionary<string, MessageTypeInfo> GetMessagesSupported();
+
+        /// <summary>
+        /// Configuration for the service provider.
+        /// </summary>
+        IServiceConfiguration ServiceConfiguration { get; }
     }
 }

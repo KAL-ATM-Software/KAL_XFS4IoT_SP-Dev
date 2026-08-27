@@ -17,12 +17,14 @@ namespace XFS4IoTServer
 {
     internal class ClientConnection : IConnection
     {
-        public ClientConnection(WebSocket socket, 
-                                IMessageDecoder CommandDecoder, 
-                                ICommandDispatcher CommandDispatcher,
-                                IServiceProvider ServiceProvider,
-                                ILogger Logger,
-                                IJsonSchemaValidator JsonSchemaValidator)
+        public ClientConnection(
+            WebSocket socket, 
+            IMessageDecoder CommandDecoder, 
+            ICommandDispatcher CommandDispatcher,
+            IServiceProvider ServiceProvider,
+            ILogger Logger,
+            IJsonSchemaValidator JsonSchemaValidator,
+            IServiceConfiguration ServiceConfiguration)
         {
             this.socket = socket;
             this.CommandDecoder = CommandDecoder;
@@ -30,13 +32,20 @@ namespace XFS4IoTServer
             this.ServiceProvider = ServiceProvider;
             this.Logger = Logger;
             this.JsonSchemaValidator = JsonSchemaValidator;
+            this.ServiceConfiguration = ServiceConfiguration;
+
+            string maxBufferConfig = ServiceConfiguration?.Get(Configurations.MaximumBufferSize);
+            if (!string.IsNullOrEmpty(maxBufferConfig))
+            {
+                _maxBuffer = int.TryParse(maxBufferConfig, out var result) ? result : _maxBuffer;
+            }
         }
 
         public async Task RunAsync(CancellationToken token)
         {
             try
             {
-                var receivedBuffer = new Memory<byte>(new byte[MAX_BUFFER]);
+                var receivedBuffer = new Memory<byte>(new byte[_maxBuffer]);
 
                 while (!token.IsCancellationRequested)
                 {
@@ -55,7 +64,7 @@ namespace XFS4IoTServer
                         ReceivedBufferReceived += res.Count;
                     } while (!res.EndOfMessage && ReceivedBufferReceived < receivedBuffer.Length);
 
-                    res.EndOfMessage.IsTrue($"Failed to receive message within MAX_BUFFER. {MAX_BUFFER}");
+                    res.EndOfMessage.IsTrue($"Failed to receive message within MAX_BUFFER. {_maxBuffer}");
 
                     if (res.MessageType is WebSocketMessageType.Text or WebSocketMessageType.Binary)
                     {
@@ -201,10 +210,11 @@ namespace XFS4IoTServer
         
         private readonly WebSocket socket;
         private readonly ILogger Logger;
-        private const int MAX_BUFFER = 2 * 1024 * 1024; // 2MB
+        private int _maxBuffer = Configurations.Default.MaximumBufferSize;
         private readonly ICommandDispatcher CommandDispatcher;
         private readonly IServiceProvider ServiceProvider;
         private readonly IJsonSchemaValidator JsonSchemaValidator;
         private readonly SemaphoreSlim SendSyncObject = new(1, 1);
+        private readonly IServiceConfiguration ServiceConfiguration;
     }
 }

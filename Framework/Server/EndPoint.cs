@@ -26,14 +26,16 @@ namespace XFS4IoTServer
     {
         public EndPoint(Uri EndPointUri,
                         IMessageDecoder CommandDecoder,
-                        ILogger Logger)
+                        ILogger Logger,
+                        IServiceConfiguration ServiceConfiguration)
         {
             EndPointUri.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(EndPointUri)}");
             CommandDecoder.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(CommandDecoder)}");
             Logger.IsNotNull($"Invalid parameter received in the {nameof(EndPoint)} constructor. {nameof(Logger)}");
-
+            
             this.CommandDecoder = CommandDecoder;
             this.Logger = Logger;
+            this.ServiceConfiguration = ServiceConfiguration;
 
             bool fallbackIPv4 = true;
             // Check first OS supports IPv6 protocol
@@ -133,12 +135,15 @@ namespace XFS4IoTServer
                         string normalized = NormalizePath(requestPath);
                         if (_routes.TryGetValue(normalized, out var route))
                         {
-                            ClientConnection clientConnection = new(ws,
-                                                                    CommandDecoder,
-                                                                    route.dispatcher,
-                                                                    route.provider,
-                                                                    Logger,
-                                                                    JsonSchemaValidator);
+                            ClientConnection clientConnection = new(
+                                ws,
+                                CommandDecoder,
+                                route.dispatcher,
+                                route.provider,
+                                Logger,
+                                JsonSchemaValidator,
+                                ServiceConfiguration);
+
                             var task = clientConnection.RunAsync(token);
                             _allConnections.Add((task, clientConnection, normalized));
                             if (_serviceConnections.TryGetValue(normalized, out var connList))
@@ -195,5 +200,6 @@ namespace XFS4IoTServer
         private readonly ILogger Logger;
         private IJsonSchemaValidator JsonSchemaValidator;
         private SslServerAuthenticationOptions TlsOptions;
+        private readonly IServiceConfiguration ServiceConfiguration;
     }
 }

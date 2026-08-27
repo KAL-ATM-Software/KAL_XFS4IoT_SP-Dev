@@ -33,13 +33,15 @@ namespace XFS4IoTServer
             string ServiceName,
             IDevice device,
             ILogger logger,
-            IPersistentData persistentData)
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.PinPad, XFSConstants.ServiceClass.KeyManagement, XFSConstants.ServiceClass.Keyboard ],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             KeyManagementService = new KeyManagementServiceClass(this, logger, persistentData);

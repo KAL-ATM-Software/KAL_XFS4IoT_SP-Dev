@@ -32,13 +32,15 @@ namespace XFS4IoTServer
             EndpointDetails endpointDetails, 
             string ServiceName, 
             IDevice device, 
-            ILogger logger)
+            ILogger logger,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.BarcodeReader ],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             BarcodeReader = new BarcodeReaderServiceClass(this, logger);

@@ -33,13 +33,15 @@ namespace XFS4IoTServer
             string ServiceName, 
             IDevice device, 
             ILogger logger, 
-            IPersistentData persistentData)
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.Biometric, XFSConstants.ServiceClass.KeyManagement],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             Biometric = new BiometricServiceClass(this, logger);

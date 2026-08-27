@@ -35,13 +35,15 @@ namespace XFS4IoTServer
             string ServiceName, 
             IDevice device, 
             ILogger logger, 
-            IPersistentData persistentData)
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.CashAcceptor, XFSConstants.ServiceClass.CashManagement, XFSConstants.ServiceClass.Storage],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             StorageService = new StorageServiceClass(this, logger, persistentData, StorageTypeEnum.Cash);

@@ -69,6 +69,8 @@ namespace XFS4IoTServer.Test
             public Uri WSUri { get; }
             public IDevice Device { get => Contracts.Fail<IDevice>("A device object was requested from the Publisher service, but the publisher service does not have a device class"); }
 
+            public IServiceConfiguration ServiceConfiguration => null;
+
             public Task BroadcastEvent(object payload)
             {
                 throw Contracts.Fail<Exception>($"No broadcast events defined for test method.");
@@ -105,6 +107,8 @@ namespace XFS4IoTServer.Test
         public Task DispatchError(IServiceProvider ServiceProvider, IConnection Connection, MessageBase Command, Exception CommandException) => throw new NotImplementedException();
         public Task RunAsync(CancellationSource cancellationSource) => throw new NotImplementedException();
         public void SetJsonSchemaValidator(IJsonSchemaValidator JsonSchemaValidator) => throw new NotImplementedException();
+        public IServiceConfiguration ServiceConfiguration { get; } = null;
+
         /// <summary>
         /// Set supported commands and events to the dispatcher.
         /// </summary>

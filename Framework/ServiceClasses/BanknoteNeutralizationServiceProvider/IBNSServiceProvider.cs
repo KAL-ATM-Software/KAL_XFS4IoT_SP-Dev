@@ -28,13 +28,15 @@ namespace XFS4IoTServer
             string ServiceName, 
             IDevice device, 
             ILogger logger, 
-            IPersistentData persistentData)
+            IPersistentData persistentData,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.BanknoteNeutralization, XFSConstants.ServiceClass.Storage ],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             IBNSService = new BanknoteNeutralizationServiceClass(this, logger, persistentData);

@@ -27,13 +27,19 @@ namespace XFS4IoTServer
     /// </summary>
     public class VendorModeServiceProvider : ServiceProvider, ICommonService, IVendorModeService, IVendorApplicationService
     {
-        public VendorModeServiceProvider(EndpointDetails endpointDetails, string ServiceName, IDevice device, ILogger logger)
+        public VendorModeServiceProvider(
+            EndpointDetails endpointDetails, 
+            string ServiceName, 
+            IDevice device, 
+            ILogger logger,
+            IServiceConfiguration serviceConfiguration = null)
             :
             base(endpointDetails,
                  ServiceName,
                  [ XFSConstants.ServiceClass.Common, XFSConstants.ServiceClass.VendorMode ],
                  device,
-                 logger)
+                 logger,
+                 serviceConfiguration)
         {
             CommonService = new CommonServiceClass(this, logger, ServiceName);
             VendorModeService = new VendorModeServiceClass(this, logger);
