@@ -425,13 +425,11 @@ namespace XFS4IoTServer
                     {
                         SKColor color = image.GetPixel(j, i);
                         // Make a vivid grayscale with perceptual luminance.
-                        float y = (0.2126f * color.Red +
-                                   0.7152f * color.Green +
-                                   0.0722f * color.Blue) / 255f;
+                        float luminance = (0.2126f * color.Red +
+                                           0.7152f * color.Green +
+                                           0.0722f * color.Blue) / 255f;
 
-                        // Convert luminance to HSL grayscale
-                        SKColor.FromHsl(0f, 0f, y).ToHsl(out float _, out float _, out float lightness);
-                        if (lightness >= 0.5f)
+                        if (luminance >= 0.5f)
                         {
                             int index = (j >> 3) + stride * i;
                             pixels[index] |= (byte)(0x80 >> (j & 0x7));
